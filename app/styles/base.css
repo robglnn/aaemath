@@ -1,0 +1,97 @@
+/* Shell styling and the design tokens every UI module builds on.
+   Feature modules ship their own stylesheet and may only reference tokens declared here. */
+
+:root {
+  /* Signal palette: cool resonance light reading against warm rock and dusk sky. */
+  --vs-signal: #79f0e4;
+  --vs-signal-hi: #d3fff9;
+  --vs-signal-lo: #1c5f6b;
+  --vs-ember: #ffb15e;
+  --vs-flare: #ff7d86;
+  --vs-orbit: #9d8dff;
+  --vs-void: #050b11;
+  --vs-void-veil: rgba(5, 11, 17, 0.58);
+  --vs-parchment: #e9f7fa;
+  --vs-muted: #9db4bd;
+
+  --vs-ok: #7ce7a8;
+  --vs-warn: #ffcf6b;
+  --vs-bad: #ff8095;
+
+  --vs-scale: 1;
+  --vs-round: 12px;
+  --vs-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+
+  --vs-face: "Rajdhani", "Bahnschrift", "Eurostile", "Segoe UI", system-ui, sans-serif;
+  --vs-read: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --vs-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #04080d;
+  color: var(--vs-parchment);
+  font-family: var(--vs-face);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  outline: none;
+}
+
+/* All 2D UI lives in one overlay that is transparent to input by default;
+   individual controls opt back in with .hit */
+#overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  font-size: calc(16px * var(--vs-scale));
+  z-index: 10;
+}
+
+#overlay .hit {
+  pointer-events: auto;
+}
+
+/* A failed boot must be unmistakable in a headless screenshot — otherwise a black frame
+   gets reviewed as if it were art direction. */
+.vs-fatal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  align-content: center;
+  gap: 1rem;
+  padding: clamp(2rem, 6vw, 6rem);
+  background: #170609;
+  color: #ffd9de;
+  font-family: var(--vs-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
+.vs-fatal h1 {
+  margin: 0;
+  font-family: var(--vs-face);
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  color: #ff9aa6;
+}

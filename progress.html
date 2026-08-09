@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="25">
+<title>Variable Star — build progress</title>
+<style>
+:root{--bg:#070d13;--panel:#0d1720;--line:#1d2b38;--ink:#e6f4f8;--dim:#8ba3b0;
+--good:#6ee7a8;--work:#79dfff;--judge:#ffc46b;--bad:#ff8095;--idle:#4a5f6d;--accent:#79f0e4}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 700px at 70% -10%,#12283a 0%,var(--bg) 60%);
+color:var(--ink);font:15px/1.5 "Inter","Segoe UI",system-ui,sans-serif;padding:28px clamp(16px,4vw,56px) 80px}
+h1{font-size:clamp(24px,3vw,36px);margin:0;letter-spacing:.01em}
+h1 small{display:block;font-size:14px;color:var(--dim);font-weight:400;margin-top:6px}
+.top{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;
+border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:24px}
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat b{display:block;font-size:26px;color:var(--accent);font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.12em}
+.bar{height:8px;border-radius:6px;background:#152230;overflow:hidden;margin-top:16px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#9d8dff);width:0%}
+.wave{margin:34px 0}
+.wave h3{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;
+letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:0 0 2px}
+.wave h3 em{font-style:normal;color:var(--accent);font-variant-numeric:tabular-nums}
+.wnote{margin:0 0 14px;color:#66808e;font-size:13px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(285px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+border-left-width:3px}
+.card.good{border-left-color:var(--good)}.card.work{border-left-color:var(--work)}
+.card.judge{border-left-color:var(--judge)}.card.bad{border-left-color:var(--bad)}
+.card.idle{border-left-color:var(--idle);opacity:.72}
+.card header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pid{font:600 11px var(--mono,ui-monospace,monospace);color:var(--dim);letter-spacing:.1em}
+.pill{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;padding:3px 8px;border-radius:99px;
+background:#16242f;color:var(--dim)}
+.pill.good{color:var(--good)}.pill.work{color:var(--work)}.pill.judge{color:var(--judge)}.pill.bad{color:var(--bad)}
+.card h4{margin:8px 0 6px;font-size:15px;line-height:1.3}
+.judge{margin:8px 0 0;font-size:12px;color:#5f7a88}
+.gap{margin:6px 0;font-size:12.5px;color:#ffd0a8}
+.note{margin:6px 0;font-size:12.5px;color:#a9c3cf}
+.shots{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.shots img{width:100%;border-radius:10px;border:1px solid var(--line);display:block;background:#000}
+.shots figcaption{font-size:11px;color:var(--dim);margin-top:5px;font-family:ui-monospace,monospace}
+.feed{list-style:none;padding:0;margin:0;max-height:340px;overflow:auto;
+border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.feed li{display:grid;grid-template-columns:64px 56px 1fr;gap:10px;padding:7px 14px;
+border-bottom:1px solid #131f2a;font-size:12.5px}
+.feed time{color:#5c7482;font-family:ui-monospace,monospace}
+.lid{color:var(--accent);font-family:ui-monospace,monospace}
+.lmsg{color:#b9ced8}
+h2{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+margin:38px 0 12px;border-top:1px solid var(--line);padding-top:22px}
+.empty{color:var(--dim);font-size:13px}
+</style></head><body>
+<div class="top">
+  <h1>Variable Star<small>An adaptive Algebra I mastery world in the browser.</small></h1>
+  <div class="stats">
+    <div class="stat"><b>0/29</b><span>pieces passed</span></div>
+    <div class="stat"><b>0</b><span>in flight</span></div>
+    <div class="stat"><b>0</b><span>critic rounds</span></div>
+    <div class="stat"><b>19:11Z</b><span>updated</span></div>
+  </div>
+</div>
+<div class="bar"><i></i></div>
+<section class="wave">
+      <h3><span>W0 · Direction</span><em>0/3</em></h3>
+      <p class="wnote">The bibles everything else is judged against.</p>
+      <div class="grid"><article class="card idle">
+        <header><span class="pid">P01</span><span class="pill idle">queued</span></header>
+        <h4>World bible &amp; narrative voice</h4>
+        
+        
+        <p class="judge">Tone blend is unmistakable and original; a stranger can retell the premise after one read.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P02</span><span class="pill idle">queued</span></header>
+        <h4>Art direction bible</h4>
+        
+        
+        <p class="judge">Blind A/B against reference/brief-hero.png names concrete, reproducible rules.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P03</span><span class="pill idle">queued</span></header>
+        <h4>Learning architecture &amp; knowledge graph</h4>
+        
+        
+        <p class="judge">Acyclic prerequisite DAG, every node standards-tagged, mastery math specified with numbers.</p>
+      </article></div>
+    </section><section class="wave">
+      <h3><span>W1 · Feel</span><em>0/5</em></h3>
+      <p class="wnote">Movement, camera, traversal, input, avatar.</p>
+      <div class="grid"><article class="card idle">
+        <header><span class="pid">P04</span><span class="pill idle">queued</span></header>
+        <h4>Character controller &amp; movement feel</h4>
+        
+        
+        <p class="judge">Weight, momentum, coyote time, buffered input; measured curves, not vibes.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P05</span><span class="pill idle">queued</span></header>
+        <h4>Third-person camera rig</h4>
+        
+        
+        <p class="judge">Framing holds under speed and collision; never clips, never fights the player.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P06</span><span class="pill idle">queued</span></header>
+        <h4>Traversal kit — mantle, climb, glide, dash</h4>
+        
+        
+        <p class="judge">The horizon becomes reachable; each verb has commitment and recovery.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P07</span><span class="pill idle">queued</span></header>
+        <h4>Input — keyboard, mouse, gamepad, rebinding</h4>
+        
+        
+        <p class="judge">Whole game playable on a pad; deadzones and buffering feel console-grade.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P08</span><span class="pill idle">queued</span></header>
+        <h4>Avatar — mesh, rig, procedural animation</h4>
+        
+        
+        <p class="judge">Silhouette reads at thumbnail size; run cycle and landings sell the weight.</p>
+      </article></div>
+    </section><section class="wave">
+      <h3><span>W2 · World</span><em>0/6</em></h3>
+      <p class="wnote">Terrain, sky, light, materials, post, scatter, VFX.</p>
+      <div class="grid"><article class="card idle">
+        <header><span class="pid">P09</span><span class="pill idle">queued</span></header>
+        <h4>Level 1 island — terrain &amp; composition</h4>
+        
+        
+        <p class="judge">Sightlines pose questions; landmarks pull; no dead space.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P10</span><span class="pill idle">queued</span></header>
+        <h4>Sky, aurora, atmosphere</h4>
+        
+        
+        <p class="judge">Sky does real work in the frame; aurora is alive, not wallpaper.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P11</span><span class="pill idle">queued</span></header>
+        <h4>Lighting rig &amp; material language</h4>
+        
+        
+        <p class="judge">Warm rock vs cool resonance; contact shadows ground everything; materials read as substances.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P12</span><span class="pill idle">queued</span></header>
+        <h4>Post-processing stack</h4>
+        
+        
+        <p class="judge">Bloom, grade and vignette serve legibility; scales down cleanly on low tiers.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P13</span><span class="pill idle">queued</span></header>
+        <h4>Scatter — crystal, flora, debris, instancing</h4>
+        
+        
+        <p class="judge">Density without noise; instanced within the draw budget.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P14</span><span class="pill idle">queued</span></header>
+        <h4>VFX system</h4>
+        
+        
+        <p class="judge">Every verb has a read; nothing is a white sprite.</p>
+      </article></div>
+    </section><section class="wave">
+      <h3><span>W3 · Learning</span><em>0/6</em></h3>
+      <p class="wnote">KaTeX, knowledge graph, mastery, items, teaching, verbs, i18n.</p>
+      <div class="grid"><article class="card idle">
+        <header><span class="pid">P15</span><span class="pill idle">queued</span></header>
+        <h4>Strict KaTeX pipeline — DOM and in-world</h4>
+        
+        
+        <p class="judge">Zero failures, zero raw TeX, crisp at 4K, legible in 3D at distance.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P16</span><span class="pill idle">queued</span></header>
+        <h4>Mastery engine — graph runtime, ability, spacing</h4>
+        
+        
+        <p class="judge">Simulated median learner reaches 80%+; a guessing bot does not.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P17</span><span class="pill idle">queued</span></header>
+        <h4>Item bank &amp; generators — Algebra I Level 1</h4>
+        
+        
+        <p class="judge">Every item tagged, arithmetic-audited, distractors map to real misconceptions.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P18</span><span class="pill idle">queued</span></header>
+        <h4>Invisible explicit teaching director</h4>
+        
+        
+        <p class="judge">Worked example → faded scaffold → independent, with nothing announced as a lesson.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P19</span><span class="pill idle">queued</span></header>
+        <h4>In-world learning verbs</h4>
+        
+        
+        <p class="judge">A critic describes what they did with their hands, and it was algebra.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P20</span><span class="pill idle">queued</span></header>
+        <h4>Localization EN / ES / PL</h4>
+        
+        
+        <p class="judge">Real localization including math convention; zero missing keys; no layout breakage.</p>
+      </article></div>
+    </section><section class="wave">
+      <h3><span>W4 · Interface</span><em>0/6</em></h3>
+      <p class="wnote">HUD, menus, onboarding, progress, audio, building.</p>
+      <div class="grid"><article class="card idle">
+        <header><span class="pid">P21</span><span class="pill idle">queued</span></header>
+        <h4>HUD</h4>
+        
+        
+        <p class="judge">Console-grade: readable at a glance, silent when it should be.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P22</span><span class="pill idle">queued</span></header>
+        <h4>Menus, settings, accessibility</h4>
+        
+        
+        <p class="judge">Full pad navigation, real accessibility options that actually change the render.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P23</span><span class="pill idle">queued</span></header>
+        <h4>Title screen &amp; first five minutes</h4>
+        
+        
+        <p class="judge">Teaches controls and premise without a tutorial voice; the hook lands.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P24</span><span class="pill idle">queued</span></header>
+        <h4>Mastery &amp; progress visualization</h4>
+        
+        
+        <p class="judge">A learner sees exactly what they know, in-world and honestly.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P25</span><span class="pill idle">queued</span></header>
+        <h4>Audio director</h4>
+        
+        
+        <p class="judge">Adaptive score and diegetic SFX generated in-engine; mix survives chaos.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P26</span><span class="pill idle">queued</span></header>
+        <h4>Construction system</h4>
+        
+        
+        <p class="judge">Fortnite-fast: verb resolves in a few frames, result legible instantly, ties to the math.</p>
+      </article></div>
+    </section><section class="wave">
+      <h3><span>W5 · Whole</span><em>0/3</em></h3>
+      <p class="wnote">Session, coherence, performance, delivery.</p>
+      <div class="grid"><article class="card idle">
+        <header><span class="pid">P27</span><span class="pill idle">queued</span></header>
+        <h4>Session, save, and the Level 1 delivery pipeline</h4>
+        
+        
+        <p class="judge">A full Level 1 run start to finish, resumable, ending above 80% mastery.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P28</span><span class="pill idle">queued</span></header>
+        <h4>Coherence &amp; performance pass</h4>
+        
+        
+        <p class="judge">One coherent thing: shared vocabulary, shared timing, no seams; frame budget met.</p>
+      </article><article class="card idle">
+        <header><span class="pid">P29</span><span class="pill idle">queued</span></header>
+        <h4>Build &amp; delivery</h4>
+        
+        
+        <p class="judge">Production build boots from a static host with zero errors in all three locales.</p>
+      </article></div>
+    </section>
+<h2>Latest real captures</h2>
+<div class="shots"><figure><img src="review/shots/boot.png" loading="lazy" alt=""><figcaption>boot.png · 19:08:28</figcaption></figure></div>
+<h2>Activity</h2>
+<ul class="feed"><li><time>19:11:46</time><span class="lid">P00</span><span class="lmsg">passed — review harness proven: real render, deterministic clock, machine-readable probes</span></li></ul>
+</body></html>

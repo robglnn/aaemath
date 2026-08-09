@@ -1,0 +1,217 @@
+{
+  "project": "Variable Star",
+  "tagline": "An adaptive Algebra I mastery world in the browser.",
+  "waves": [
+    { "id": "W0", "name": "Direction", "note": "The bibles everything else is judged against." },
+    { "id": "W1", "name": "Feel", "note": "Movement, camera, traversal, input, avatar." },
+    { "id": "W2", "name": "World", "note": "Terrain, sky, light, materials, post, scatter, VFX." },
+    { "id": "W3", "name": "Learning", "note": "KaTeX, knowledge graph, mastery, items, teaching, verbs, i18n." },
+    { "id": "W4", "name": "Interface", "note": "HUD, menus, onboarding, progress, audio, building." },
+    { "id": "W5", "name": "Whole", "note": "Session, coherence, performance, delivery." }
+  ],
+  "pieces": [
+    {
+      "id": "P01",
+      "wave": "W0",
+      "title": "World bible & narrative voice",
+      "owns": ["design/world.md", "design/voice.md"],
+      "judge": "Tone blend is unmistakable and original; a stranger can retell the premise after one read."
+    },
+    {
+      "id": "P02",
+      "wave": "W0",
+      "title": "Art direction bible",
+      "owns": ["design/art-direction.md", "design/palette.json"],
+      "judge": "Blind A/B against reference/brief-hero.png names concrete, reproducible rules."
+    },
+    {
+      "id": "P03",
+      "wave": "W0",
+      "title": "Learning architecture & knowledge graph",
+      "owns": ["content/knowledge-graph.json", "content/standards.json", "design/learning-architecture.md"],
+      "judge": "Acyclic prerequisite DAG, every node standards-tagged, mastery math specified with numbers."
+    },
+    {
+      "id": "P04",
+      "wave": "W1",
+      "title": "Character controller & movement feel",
+      "owns": ["app/src/play/Locomotion.js", "app/src/play/CollisionWorld.js"],
+      "judge": "Weight, momentum, coyote time, buffered input; measured curves, not vibes."
+    },
+    {
+      "id": "P05",
+      "wave": "W1",
+      "title": "Third-person camera rig",
+      "owns": ["app/src/play/CameraRig.js"],
+      "judge": "Framing holds under speed and collision; never clips, never fights the player."
+    },
+    {
+      "id": "P06",
+      "wave": "W1",
+      "title": "Traversal kit — mantle, climb, glide, dash",
+      "owns": ["app/src/play/Traversal.js"],
+      "judge": "The horizon becomes reachable; each verb has commitment and recovery."
+    },
+    {
+      "id": "P07",
+      "wave": "W1",
+      "title": "Input — keyboard, mouse, gamepad, rebinding",
+      "owns": ["app/src/play/Input.js", "app/src/play/bindings.js"],
+      "judge": "Whole game playable on a pad; deadzones and buffering feel console-grade."
+    },
+    {
+      "id": "P08",
+      "wave": "W1",
+      "title": "Avatar — mesh, rig, procedural animation",
+      "owns": ["app/src/play/Avatar.js", "app/src/play/Animator.js"],
+      "judge": "Silhouette reads at thumbnail size; run cycle and landings sell the weight."
+    },
+    {
+      "id": "P09",
+      "wave": "W2",
+      "title": "Level 1 island — terrain & composition",
+      "owns": ["app/src/world/Terrain.js", "app/src/world/Level01.js"],
+      "judge": "Sightlines pose questions; landmarks pull; no dead space."
+    },
+    {
+      "id": "P10",
+      "wave": "W2",
+      "title": "Sky, aurora, atmosphere",
+      "owns": ["app/src/world/Sky.js", "app/src/world/Atmosphere.js"],
+      "judge": "Sky does real work in the frame; aurora is alive, not wallpaper."
+    },
+    {
+      "id": "P11",
+      "wave": "W2",
+      "title": "Lighting rig & material language",
+      "owns": ["app/src/world/Lighting.js", "app/src/world/Materials.js"],
+      "judge": "Warm rock vs cool resonance; contact shadows ground everything; materials read as substances."
+    },
+    {
+      "id": "P12",
+      "wave": "W2",
+      "title": "Post-processing stack",
+      "owns": ["app/src/render/PostStack.js", "app/src/render/passes"],
+      "judge": "Bloom, grade and vignette serve legibility; scales down cleanly on low tiers."
+    },
+    {
+      "id": "P13",
+      "wave": "W2",
+      "title": "Scatter — crystal, flora, debris, instancing",
+      "owns": ["app/src/world/Scatter.js"],
+      "judge": "Density without noise; instanced within the draw budget."
+    },
+    {
+      "id": "P14",
+      "wave": "W2",
+      "title": "VFX system",
+      "owns": ["app/src/render/Vfx.js"],
+      "judge": "Every verb has a read; nothing is a white sprite."
+    },
+    {
+      "id": "P15",
+      "wave": "W3",
+      "title": "Strict KaTeX pipeline — DOM and in-world",
+      "owns": ["app/src/math/Tex.js", "app/src/math/TexPanel.js"],
+      "judge": "Zero failures, zero raw TeX, crisp at 4K, legible in 3D at distance."
+    },
+    {
+      "id": "P16",
+      "wave": "W3",
+      "title": "Mastery engine — graph runtime, ability, spacing",
+      "owns": ["app/src/learn/Mastery.js", "app/src/learn/Graph.js", "app/src/learn/Scheduler.js"],
+      "judge": "Simulated median learner reaches 80%+; a guessing bot does not."
+    },
+    {
+      "id": "P17",
+      "wave": "W3",
+      "title": "Item bank & generators — Algebra I Level 1",
+      "owns": ["content/items", "app/src/learn/ItemBank.js"],
+      "judge": "Every item tagged, arithmetic-audited, distractors map to real misconceptions."
+    },
+    {
+      "id": "P18",
+      "wave": "W3",
+      "title": "Invisible explicit teaching director",
+      "owns": ["app/src/learn/Teaching.js"],
+      "judge": "Worked example → faded scaffold → independent, with nothing announced as a lesson."
+    },
+    {
+      "id": "P19",
+      "wave": "W3",
+      "title": "In-world learning verbs",
+      "owns": ["app/src/learn/verbs"],
+      "judge": "A critic describes what they did with their hands, and it was algebra."
+    },
+    {
+      "id": "P20",
+      "wave": "W3",
+      "title": "Localization EN / ES / PL",
+      "owns": ["app/src/i18n", "content/locales"],
+      "judge": "Real localization including math convention; zero missing keys; no layout breakage."
+    },
+    {
+      "id": "P21",
+      "wave": "W4",
+      "title": "HUD",
+      "owns": ["app/src/ui/hud"],
+      "judge": "Console-grade: readable at a glance, silent when it should be."
+    },
+    {
+      "id": "P22",
+      "wave": "W4",
+      "title": "Menus, settings, accessibility",
+      "owns": ["app/src/ui/menus"],
+      "judge": "Full pad navigation, real accessibility options that actually change the render."
+    },
+    {
+      "id": "P23",
+      "wave": "W4",
+      "title": "Title screen & first five minutes",
+      "owns": ["app/src/flow/Onboarding.js", "app/src/flow/Title.js"],
+      "judge": "Teaches controls and premise without a tutorial voice; the hook lands."
+    },
+    {
+      "id": "P24",
+      "wave": "W4",
+      "title": "Mastery & progress visualization",
+      "owns": ["app/src/ui/progress"],
+      "judge": "A learner sees exactly what they know, in-world and honestly."
+    },
+    {
+      "id": "P25",
+      "wave": "W4",
+      "title": "Audio director",
+      "owns": ["app/src/audio"],
+      "judge": "Adaptive score and diegetic SFX generated in-engine; mix survives chaos."
+    },
+    {
+      "id": "P26",
+      "wave": "W4",
+      "title": "Construction system",
+      "owns": ["app/src/build"],
+      "judge": "Fortnite-fast: verb resolves in a few frames, result legible instantly, ties to the math."
+    },
+    {
+      "id": "P27",
+      "wave": "W5",
+      "title": "Session, save, and the Level 1 delivery pipeline",
+      "owns": ["app/src/flow/Session.js", "app/src/flow/Save.js", "app/src/flow/Level01Flow.js"],
+      "judge": "A full Level 1 run start to finish, resumable, ending above 80% mastery."
+    },
+    {
+      "id": "P28",
+      "wave": "W5",
+      "title": "Coherence & performance pass",
+      "owns": ["design/coherence-log.md"],
+      "judge": "One coherent thing: shared vocabulary, shared timing, no seams; frame budget met."
+    },
+    {
+      "id": "P29",
+      "wave": "W5",
+      "title": "Build & delivery",
+      "owns": ["docs", ".github"],
+      "judge": "Production build boots from a static host with zero errors in all three locales."
+    }
+  ]
+}

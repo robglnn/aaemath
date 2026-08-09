@@ -86,9 +86,30 @@ const DEFAULTS = {
 
   // Camera & control feel
   lookSensitivity: 1,
+  lookSensitivityMouse: 1,
+  lookSensitivityPad: 1,
+  invertX: false,
   invertY: false,
   aimAssist: true,
   fovBase: 62,
+
+  // Controller. Declared here rather than left to a fallback inside the input module so a
+  // settings screen has a discoverable contract to build sliders against and `reset()` restores
+  // them. Stick bands are radial inner/outer with a response exponent; 0.24 matches the XInput
+  // standard (0.2395 left / 0.2650 right) and is what a worn pad needs.
+  //
+  // These six are *mirrors*. The source of truth for the feel is `play/bindings.js TUNING.move`
+  // and `TUNING.look`, which carry the reasoning; the values here are the factory position of the
+  // sliders and must be kept equal to it, because `Input._band()` treats a Config value as the
+  // player's setting and it therefore wins over the module constant.
+  rumble: true,
+  swapSticks: false,
+  stickMoveInner: 0.24,
+  stickMoveOuter: 0.94,
+  stickMoveExp: 1.25,
+  stickLookInner: 0.24,
+  stickLookOuter: 0.92,
+  stickLookExp: 1.6,
 
   // Audio
   volumeMaster: 0.85,

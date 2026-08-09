@@ -1,0 +1,555 @@
+(node:53676) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+### 1-lost-tap
+{
+ "padFrames": [
+  {
+   "held": false,
+   "pressed": false,
+   "buffered": true
+  },
+  {
+   "held": false,
+   "pressed": false,
+   "buffered": true
+  },
+  {
+   "held": false,
+   "pressed": false,
+   "buffered": true
+  },
+  {
+   "held": false,
+   "pressed": false,
+   "buffered": false
+  }
+ ],
+ "padJumpEvents": [
+  "down",
+  "up"
+ ],
+ "kbdFrames": [
+  {
+   "held": false,
+   "pressed": false,
+   "buffered": true
+  },
+  {
+   "held": false,
+   "pressed": false,
+   "buffered": true
+  },
+  {
+   "held": false,
+   "pressed": false,
+   "buffered": false
+  },
+  {
+   "held": false,
+   "pressed": false,
+   "buffered": false
+  }
+ ],
+ "kbdJumpEvents": [
+  "down",
+  "up"
+ ]
+}
+
+### 1b-tap-helper
+[
+ "down",
+ "up"
+]
+
+### 2-device-thrash-stick-0.30
+{
+ "deviceEmissions": 1,
+ "devices": [
+  "kbm"
+ ],
+ "finalDevice": "kbm",
+ "switchesTotal": 2
+}
+
+### 2b-device-thrash-RT-0.16
+{
+ "deviceEmissions": 1,
+ "rtHeld": false
+}
+
+### 3-drift-walk
+{
+ "0.15": {
+  "moveMag": 0,
+  "zero": [
+   0,
+   -0.15,
+   0,
+   0
+  ],
+  "metresIn5s": 0
+ },
+ "0.2": {
+  "moveMag": 0,
+  "zero": [
+   0,
+   -0.2,
+   0,
+   0
+  ],
+  "metresIn5s": 0
+ },
+ "0.25": {
+  "moveMag": 0,
+  "zero": [
+   0,
+   -0.25,
+   0,
+   0
+  ],
+  "metresIn5s": 0
+ },
+ "0.3": {
+  "moveMag": 0,
+  "zero": [
+   0,
+   -0.3,
+   0,
+   0
+  ],
+  "metresIn5s": 0
+ }
+}
+
+### 3b-full-stick-still-moves
+{
+ "metresIn1p5s": 7.8346,
+ "moveMag": 1
+}
+
+### 4-menu-nav
+{
+ "navUpWhenDeflectedBeforeOpen": 15,
+ "navUpWhenDeflectedAfterOpen": 15,
+ "confirmFromHeldA": 0
+}
+
+### 4b-direction-live
+{
+ "zero": [
+  0,
+  0,
+  0,
+  0
+ ],
+ "angles": [
+  {
+   "deg": 22.5,
+   "r": 0.35,
+   "outDeg": 22.5219,
+   "mag": 0.0989
+  },
+  {
+   "deg": 22.5,
+   "r": 0.6,
+   "outDeg": 22.5025,
+   "mag": 0.4355
+  },
+  {
+   "deg": 22.5,
+   "r": 1,
+   "outDeg": 22.5004,
+   "mag": 1
+  },
+  {
+   "deg": 30,
+   "r": 0.35,
+   "outDeg": 30.0106,
+   "mag": 0.0989
+  },
+  {
+   "deg": 30,
+   "r": 0.6,
+   "outDeg": 30.0027,
+   "mag": 0.4355
+  },
+  {
+   "deg": 30,
+   "r": 1,
+   "outDeg": 30.0007,
+   "mag": 1
+  },
+  {
+   "deg": 45,
+   "r": 0.35,
+   "outDeg": 45,
+   "mag": 0.0989
+  },
+  {
+   "deg": 45,
+   "r": 0.6,
+   "outDeg": 45,
+   "mag": 0.4355
+  },
+  {
+   "deg": 45,
+   "r": 1,
+   "outDeg": 45,
+   "mag": 1
+  },
+  {
+   "deg": 60,
+   "r": 0.35,
+   "outDeg": 59.9894,
+   "mag": 0.0989
+  },
+  {
+   "deg": 60,
+   "r": 0.6,
+   "outDeg": 59.9973,
+   "mag": 0.4355
+  },
+  {
+   "deg": 60,
+   "r": 1,
+   "outDeg": 59.9993,
+   "mag": 1
+  },
+  {
+   "deg": 67.5,
+   "r": 0.35,
+   "outDeg": 67.4781,
+   "mag": 0.0989
+  },
+  {
+   "deg": 67.5,
+   "r": 0.6,
+   "outDeg": 67.4975,
+   "mag": 0.4355
+  },
+  {
+   "deg": 67.5,
+   "r": 1,
+   "outDeg": 67.4996,
+   "mag": 1
+  }
+ ]
+}
+
+### 5-probe-copy
+{
+ "atCapture": {
+  "x": 0.7071,
+  "y": 0.7071
+ },
+ "captured": {
+  "x": 0.7071,
+  "y": 0.7071
+ },
+ "live": {
+  "x": 0,
+  "y": 0
+ }
+}
+
+### 6-axes
+{
+ "defaults": {
+  "move": {
+   "x": {
+    "axis": 0,
+    "invert": false
+   },
+   "y": {
+    "axis": 1,
+    "invert": true
+   }
+  },
+  "look": {
+   "x": {
+    "axis": 2,
+    "invert": false
+   },
+   "y": {
+    "axis": 3,
+    "invert": false
+   }
+  }
+ },
+ "southpawMove": {
+  "x": 0,
+  "y": 1,
+  "mag": 1,
+  "source": "pad"
+ },
+ "southpawAxes": {
+  "move": {
+   "x": {
+    "axis": 2,
+    "invert": false
+   },
+   "y": {
+    "axis": 3,
+    "invert": true
+   }
+  },
+  "look": {
+   "x": {
+    "axis": 0,
+    "invert": false
+   },
+   "y": {
+    "axis": 1,
+    "invert": false
+   }
+  }
+ },
+ "padMoveChords": [
+  "Pad:LSUp"
+ ],
+ "invertedLookYPitchTotalSign": -1,
+ "conflicts": []
+}
+
+### 7-deadzone
+{
+ "band": {
+  "inner": 0.24,
+  "outer": 0.94,
+  "exp": 1.25
+ },
+ "angles": [
+  {
+   "deg": 22.5,
+   "r": 0.3,
+   "outDeg": 22.5,
+   "mag": 0.0464
+  },
+  {
+   "deg": 22.5,
+   "r": 0.5,
+   "outDeg": 22.5,
+   "mag": 0.29
+  },
+  {
+   "deg": 22.5,
+   "r": 0.8,
+   "outDeg": 22.5,
+   "mag": 0.7566
+  },
+  {
+   "deg": 22.5,
+   "r": 1,
+   "outDeg": 22.5,
+   "mag": 1
+  },
+  {
+   "deg": 45,
+   "r": 0.3,
+   "outDeg": 45,
+   "mag": 0.0464
+  },
+  {
+   "deg": 45,
+   "r": 0.5,
+   "outDeg": 45,
+   "mag": 0.29
+  },
+  {
+   "deg": 45,
+   "r": 0.8,
+   "outDeg": 45,
+   "mag": 0.7566
+  },
+  {
+   "deg": 45,
+   "r": 1,
+   "outDeg": 45,
+   "mag": 1
+  },
+  {
+   "deg": 67.5,
+   "r": 0.3,
+   "outDeg": 67.5,
+   "mag": 0.0464
+  },
+  {
+   "deg": 67.5,
+   "r": 0.5,
+   "outDeg": 67.5,
+   "mag": 0.29
+  },
+  {
+   "deg": 67.5,
+   "r": 0.8,
+   "outDeg": 67.5,
+   "mag": 0.7566
+  },
+  {
+   "deg": 67.5,
+   "r": 1,
+   "outDeg": 67.5,
+   "mag": 1
+  }
+ ],
+ "firstNonZero": {
+  "r": 0.2411,
+  "mag": 0.00033
+ },
+ "maxJump": 0.01263
+}
+
+### 8-rebinding
+{
+ "conflictsDefault": [],
+ "bindDashSpace": {
+  "ok": false,
+  "reason": "conflict",
+  "conflicts": [
+   "jump"
+  ]
+ },
+ "spaceStillJump": [
+  "Space"
+ ],
+ "bindConfirmF": {
+  "ok": true,
+  "conflicts": [],
+  "chords": [
+   "Enter",
+   "Space",
+   "KeyF"
+  ]
+ },
+ "afterReset": {
+  "jump": [
+   "Space"
+  ],
+  "confirm": [
+   "Enter",
+   "Space"
+  ]
+ },
+ "glyphXbox": {
+  "jump": "A",
+  "move": "L ↑"
+ },
+ "buffers": {
+  "jump": 0.18
+ },
+ "padChordsMove": [
+  "Pad:LSUp"
+ ]
+}
+
+### 8b-trigger-hysteresis
+{
+ "0.34": false,
+ "0.36": true,
+ "0.29": true,
+ "0.27": false
+}
+
+### 8c-buffer-window
+{
+ "stepsBuffered": 14,
+ "secondsBuffered": 0.2333
+}
+
+### 8d-consume-once
+{
+ "first": true,
+ "second": false
+}
+
+### 8e-playstation
+{
+ "style": "playstation",
+ "jump": "✕",
+ "crouch": "◯",
+ "menu": "Options",
+ "device": "pad"
+}
+
+### 8f-blur
+{
+ "before": [
+  "moveForward"
+ ],
+ "after": [],
+ "move": {
+  "x": 0,
+  "y": 0,
+  "mag": 0,
+  "source": "none"
+ }
+}
+
+### 8g-determinism
+{
+ "a": {
+  "pos": [
+   6.3202,
+   1.0325,
+   10.5203
+  ],
+  "move": {
+   "x": 0.5167,
+   "y": 0.7751,
+   "mag": 0.9315,
+   "source": "pad"
+  },
+  "stick": {
+   "x": 0.5167,
+   "y": 0.7751
+  }
+ },
+ "b": {
+  "pos": [
+   6.3197,
+   1.0325,
+   10.52
+  ],
+  "move": {
+   "x": 0.5167,
+   "y": 0.7751,
+   "mag": 0.9315,
+   "source": "pad"
+  },
+  "stick": {
+   "x": 0.5167,
+   "y": 0.7751
+  }
+ },
+ "identical": false
+}
+
+### 9-health
+{
+ "ready": true,
+ "errors": [],
+ "consoleErrors": [],
+ "failedRequests": [],
+ "katexFailed": 0,
+ "steps": 3662,
+ "padSamples": 5819
+}
+
+=== SUMMARY ===
+{
+ "1-lost-tap": {
+  "padFrames": [
+   {
+    "held": false,
+    "pressed": false,
+    "buffered": true
+   },
+   {
+    "held": false,
+    "pressed": false,
+    "buffered": true
+   },
+   {
+    "held": f ...

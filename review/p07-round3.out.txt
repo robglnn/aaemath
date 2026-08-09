@@ -1,0 +1,688 @@
+(node:49328) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+### 1a_KEY_INSIDE_DWELL
+{
+ "before": {
+  "device": "pad",
+  "style": "xbox",
+  "pending": null,
+  "switches": 1,
+  "switchedAt": 0.85,
+  "usedAt": {
+   "kbm": -1,
+   "pad": 0.95
+  },
+  "simTime": 1,
+  "glyphJump": "A"
+ },
+ "atKey": {
+  "device": "pad",
+  "style": "xbox",
+  "pending": "kbm",
+  "switches": 1,
+  "switchedAt": 0.85,
+  "usedAt": {
+   "kbm": 1,
+   "pad": 0.95
+  },
+  "simTime": 1,
+  "glyphJump": "A"
+ },
+ "nextStep": {
+  "device": "pad",
+  "style": "xbox",
+  "pending": "kbm",
+  "switches": 1,
+  "switchedAt": 0.85,
+  "usedAt": {
+   "kbm": 1.0167,
+   "pad": 0.95
+  },
+  "simTime": 1.0167,
+  "glyphJump": "A"
+ },
+ "afterDwell": {
+  "device": "kbm",
+  "style": "kbm",
+  "pending": null,
+  "switches": 2,
+  "switchedAt": 1.2167,
+  "usedAt": {
+   "kbm": 1.4167,
+   "pad": 0.95
+  },
+  "simTime": 1.4167,
+  "glyphJump": "Space"
+ }
+}
+PASS  1a pad owns prompts before the keystroke  "pad"
+PASS  1a the keystroke really was inside the dwell  0.15
+PASS  1a a refused claim is parked, not dropped  "kbm"
+PASS  1a parked claim applies once the dwell is over  "kbm"
+PASS  1a glyph follows the device  "Space"
+PASS  1a the switch is late by at most one dwell  0.2167
+
+### 1a2_REAL_KEYSTROKE
+{
+ "device": "kbm",
+ "style": "kbm",
+ "pending": null,
+ "switches": 4,
+ "switchedAt": 2.2667,
+ "usedAt": {
+  "kbm": 2.7667,
+  "pad": 2.05
+ },
+ "simTime": 2.7667,
+ "glyphJump": "Space"
+}
+PASS  1a2 a real trusted keydown takes the prompts  "kbm"
+
+### 1b_PAD_RECLAIMS
+{
+ "device": "pad",
+ "style": "xbox",
+ "pending": null,
+ "switches": 5,
+ "switchedAt": 2.7833,
+ "usedAt": {
+  "kbm": 3.3833,
+  "pad": 3.3
+ },
+ "simTime": 3.3833,
+ "glyphJump": "A"
+}
+PASS  1b pad reclaims on a button edge  "pad"
+PASS  1b glyph is the Xbox face button  "A"
+
+### 1c_HELD_KEY_RECLAIMS
+{
+ "device": "kbm",
+ "style": "kbm",
+ "pending": null,
+ "switches": 6,
+ "switchedAt": 3.6667,
+ "usedAt": {
+  "kbm": 4,
+  "pad": 3.3
+ },
+ "simTime": 4,
+ "glyphJump": "Space"
+}
+PASS  1c a key that was already held reclaims the prompts  "kbm"
+
+### 1d_NO_FLAP
+{
+ "switchesDuring": 1,
+ "mid": {
+  "device": "pad",
+  "style": "xbox",
+  "pending": null,
+  "switches": 7,
+  "switchedAt": 4.0333,
+  "usedAt": {
+   "kbm": 4.4,
+   "pad": 4.4
+  },
+  "simTime": 4.4,
+  "glyphJump": "A"
+ },
+ "end": {
+  "device": "pad",
+  "style": "xbox",
+  "pending": null,
+  "switches": 7,
+  "switchedAt": 4.0333,
+  "usedAt": {
+   "kbm": 7.4,
+   "pad": 7.4
+  },
+  "simTime": 7.4,
+  "glyphJump": "A"
+ }
+}
+PASS  1d stick crossing claims the prompts  "pad"
+PASS  1d 3 s of both devices held produces no further switch  1
+PASS  1d device is stable at the end  "pad"
+
+### 1e_STICK_CENTRED
+{
+ "device": "kbm",
+ "style": "kbm",
+ "pending": null,
+ "switches": 8,
+ "switchedAt": 7.9667,
+ "usedAt": {
+  "kbm": 8.4,
+  "pad": 7.6
+ },
+ "simTime": 8.4,
+ "glyphJump": "Space"
+}
+PASS  1e held key reclaims once the stick centres  "kbm"
+
+### 1f_IDLE_NO_STROBE
+{
+ "switches": 0,
+ "dev": {
+  "device": "kbm",
+  "style": "kbm",
+  "pending": null,
+  "switches": 8,
+  "switchedAt": 7.9667,
+  "usedAt": {
+   "kbm": 8.4,
+   "pad": 7.6
+  },
+  "simTime": 11.4,
+  "glyphJump": "Space"
+ }
+}
+PASS  1f idle pad + idle keyboard causes no switches  0
+
+### 1g_PLAYSTATION
+{
+ "device": "pad",
+ "style": "playstation",
+ "jump": "✕",
+ "cancel": "◯"
+}
+PASS  1g DualSense id detects as playstation  "playstation"
+PASS  1g jump prints ✕  "✕"
+
+### 1_DEVICE_SIGNALS
+[
+ {
+  "t": 0.85,
+  "kind": "pad",
+  "style": "xbox",
+  "id": "Xbox Wireless Controller (STANDARD GAMEPAD)"
+ },
+ {
+  "t": 1.2167,
+  "kind": "kbm",
+  "style": "kbm",
+  "id": null
+ },
+ {
+  "t": 1.5833,
+  "kind": "pad",
+  "style": "xbox",
+  "id": "Xbox Wireless Controller (STANDARD GAMEPAD)"
+ },
+ {
+  "t": 2.2667,
+  "kind": "kbm",
+  "style": "kbm",
+  "id": null
+ },
+ {
+  "t": 2.7833,
+  "kind": "pad",
+  "style": "xbox",
+  "id": "Xbox Wireless Controller (STANDARD GAMEPAD)"
+ },
+ {
+  "t": 3.6667,
+  "kind": "kbm",
+  "style": "kbm",
+  "id": null
+ },
+ {
+  "t": 4.0333,
+  "kind": "pad",
+  "style": "xbox",
+  "id": "Xbox Wireless Controller (STANDARD GAMEPAD)"
+ },
+ {
+  "t": 7.9667,
+  "kind": "kbm",
+  "style": "kbm",
+  "id": null
+ },
+ {
+  "t": 11.9167,
+  "kind": "pad",
+  "style": "playstation",
+  "id": "DualSense Wireless Controller (STANDARD GAMEPAD)"
+ }
+]
+
+### 2_SWAP_STICKS
+{
+ "before": {
+  "move": {
+   "x": {
+    "axis": 0,
+    "invert": false
+   },
+   "y": {
+    "axis": 1,
+    "invert": true
+   }
+  },
+  "look": {
+   "x": {
+    "axis": 2,
+    "invert": false
+   },
+   "y": {
+    "axis": 3,
+    "invert": true
+   }
+  }
+ },
+ "on": true,
+ "swapped": {
+  "move": {
+   "x": {
+    "axis": 2,
+    "invert": false
+   },
+   "y": {
+    "axis": 3,
+    "invert": true
+   }
+  },
+  "look": {
+   "x": {
+    "axis": 0,
+    "invert": false
+   },
+   "y": {
+    "axis": 1,
+    "invert": true
+   }
+  }
+ },
+ "off": false,
+ "back": {
+  "move": {
+   "x": {
+    "axis": 0,
+    "invert": false
+   },
+   "y": {
+    "axis": 1,
+    "invert": true
+   }
+  },
+  "look": {
+   "x": {
+    "axis": 2,
+    "invert": false
+   },
+   "y": {
+    "axis": 3,
+    "invert": true
+   }
+  }
+ },
+ "swappedFlag": false
+}
+PASS  2 look.y invert survives swapSticks(true)  {"axis":1,"invert":true}
+PASS  2 look.y points at the left stick when swapped  {"axis":1,"invert":true}
+PASS  2 move moves to the right stick  {"x":{"axis":2,"invert":false},"y":{"axis":3,"invert":true}}
+PASS  2 move.y invert survives  {"axis":3,"invert":true}
+PASS  2 swapSticks(true) reports true  true
+PASS  2 swapSticks(false) restores look.y  {"axis":3,"invert":true}
+PASS  2 swapSticks(false) restores move  {"x":{"axis":0,"invert":false},"y":{"axis":1,"invert":true}}
+PASS  2 swapSticks(false) reports false  false
+
+### 3_SLOW_WALK_SURVIVES
+{
+ "centred": {
+  "zero": [
+   0,
+   0,
+   0,
+   0
+  ],
+  "max": 0.18
+ },
+ "at05": {
+  "x": 0.0664,
+  "y": 0,
+  "mag": 0.0664,
+  "source": "pad"
+ },
+ "at45": {
+  "x": 0.0664,
+  "y": 0,
+  "mag": 0.0664,
+  "source": "pad"
+ },
+ "zeroAfter": [
+  0,
+  0,
+  0,
+  0
+ ]
+}
+PASS  3 a dead-still 0.32 hold still moves after 4.5 s  {"x":0.0664,"y":0,"mag":0.0664,"source":"pad"}
+PASS  3 the hold is not re-defined as centre  [0,0,0,0]
+PASS  3 magnitude is unchanged over 4 s  {"at05":0.0664,"at45":0.0664}
+PASS  3 maxOffset sits below the inner band  0.18
+
+### 3b_DRIFT_STILL_ZEROED
+{
+ "zero": [
+  0.1,
+  0.06,
+  0,
+  0
+ ],
+ "move": {
+  "x": 0,
+  "y": 0,
+  "mag": 0,
+  "source": "none"
+ },
+ "axesCal": [
+  0,
+  0,
+  0,
+  0
+ ]
+}
+PASS  3b a 0.10/0.06 drift is captured as centre  [0.1,0.06,0,0]
+PASS  3b the avatar does not creep  {"x":0,"y":0,"mag":0,"source":"none"}
+
+### 4_LOOK_CURVE
+{
+ "pts": [
+  {
+   "r": 0.3,
+   "degPerSec": 3.83,
+   "mag": 0.0206,
+   "boost": 1
+  },
+  {
+   "r": 0.35,
+   "degPerSec": 10.1,
+   "mag": 0.0542,
+   "boost": 1
+  },
+  {
+   "r": 0.5,
+   "degPerSec": 39.99,
+   "mag": 0.2148,
+   "boost": 1
+  },
+  {
+   "r": 0.7,
+   "degPerSec": 99.63,
+   "mag": 0.5351,
+   "boost": 1
+  },
+  {
+   "r": 0.92,
+   "degPerSec": 186.73,
+   "mag": 1,
+   "boost": 1.0028
+  },
+  {
+   "r": 1,
+   "degPerSec": 186.73,
+   "mag": 1,
+   "boost": 1.0028
+  }
+ ],
+ "firstSecondDeg": 288.32,
+ "secondSecondDeg": 316.56,
+ "band": {
+  "inner": 0.24,
+  "outer": 0.92,
+  "exp": 1.6
+ },
+ "ramp": {
+  "threshold": 0.9,
+  "seconds": 0.45,
+  "boost": 1.7,
+  "decay": 4
+ }
+}
+PASS  4 sub-deadzone is silent  {"r":0.3,"degPerSec":3.83,"mag":0.0206,"boost":1}
+PASS  4 a third of the stick is fine aim but not dead  {"r":0.35,"degPerSec":10.1,"mag":0.0542,"boost":1}
+PASS  4 half stick is negotiable  {"r":0.5,"degPerSec":39.99,"mag":0.2148,"boost":1}
+PASS  4 steady-state ceiling is a real turn, not a spin  316.56
+PASS  4 dynamic range from 0.35 to ceiling is under 40x  31.3
+
+### 5_DEADZONE
+{
+ "band": {
+  "inner": 0.24,
+  "outer": 0.94,
+  "exp": 1.25
+ },
+ "zeroBefore": [
+  0,
+  0,
+  0,
+  0
+ ],
+ "maxAngleErrorDeg": 0.00436,
+ "angleErr": [
+  0.0033,
+  0.00308,
+  0.00082,
+  0.00287,
+  0,
+  0.00082,
+  0.00436,
+  0.00436,
+  0.00436,
+  0.0033
+ ],
+ "monotonicityViolations": 0,
+ "saturateAt": 0.94,
+ "biggestStepAtBandEdge": 0.0017,
+ "bandEdge": [
+  [
+   0.236,
+   0
+  ],
+  [
+   0.238,
+   0
+  ],
+  [
+   0.24,
+   0
+  ],
+  [
+   0.242,
+   0.0007
+  ],
+  [
+   0.244,
+   0.0016
+  ],
+  [
+   0.246,
+   0.0026
+  ]
+ ],
+ "saturatedRatio": 0.7954,
+ "inputRatio": 0.7954,
+ "saturatedMag": 1
+}
+PASS  5 calibration is neutral before the sweep  [0,0,0,0]
+PASS  5 no axial snapping (10 angles within 0.01°)  0.00436
+PASS  5 monotonic  0
+PASS  5 saturates at the outer band  0.94
+PASS  5 continuous at the band edge  0.0017
+PASS  5 direction preserved at saturation  [0.7954,0.7954]
+
+### 6_BUFFER_WINDOW
+{
+ "heldForAFullStep": true,
+ "lastTrue": {
+  "dt": 0.2,
+  "buffered": true
+ },
+ "firstFalse": {
+  "dt": 0.2167,
+  "buffered": false
+ }
+}
+PASS  6 a sub-frame tap still gets a full step of held  true
+PASS  6 buffer window matches the declared 0.20 s  [0.2,0.2167]
+
+### 6b_CONSUME
+{
+ "first": true,
+ "second": false,
+ "late": false
+}
+PASS  6b consume returns the press exactly once  {"first":true,"second":false,"late":false}
+PASS  6b a stale press is not consumable  false
+
+### 7_REBIND
+{
+ "conflictDefault": [],
+ "dashOnSpace": {
+  "ok": false,
+  "reason": "conflict",
+  "conflicts": [
+   "jump"
+  ]
+ },
+ "jumpOnPadY": {
+  "ok": false,
+  "reason": "conflict",
+  "conflicts": [
+   "buildToggle"
+  ]
+ },
+ "interactOnR": {
+  "ok": true,
+  "conflicts": [],
+  "chords": [
+   "KeyE",
+   "KeyR"
+  ]
+ },
+ "interactOnB": {
+  "ok": false,
+  "reason": "conflict",
+  "conflicts": [
+   "buildToggle"
+  ]
+ },
+ "forced": {
+  "ok": true,
+  "conflicts": [
+   "jump"
+  ],
+  "chords": [
+   "KeyF",
+   "Space"
+  ]
+ },
+ "jumpChords": [],
+ "afterForce": []
+}
+PASS  7 factory table has no conflicts  []
+PASS  7 same-context conflict refused  {"ok":false,"reason":"conflict","conflicts":["jump"]}
+PASS  7 cross-context non-overlap allowed  {"ok":true,"conflicts":[],"chords":["KeyE","KeyR"]}
+PASS  7 overlapping-context refused  {"ok":false,"reason":"conflict","conflicts":["buildToggle"]}
+PASS  7 force strips the loser  []
+PASS  7 no conflicts left after a forced rebind  []
+
+### 8_CONTEXT
+{
+ "play": {
+  "x": -0.53,
+  "y": 0.848,
+  "mag": 1,
+  "source": "pad"
+ },
+ "inMenu": {
+  "move": {
+   "x": 0,
+   "y": 0,
+   "mag": 0,
+   "source": "none"
+  },
+  "navUp": {
+   "held": true,
+   "pressed": false,
+   "released": false,
+   "buffered": false,
+   "value": 1,
+   "hold": 0.2833,
+   "chords": [
+    "Pad:LSUp"
+   ]
+  },
+  "ctx": "menu"
+ },
+ "back": {
+  "x": -0.53,
+  "y": 0.848,
+  "mag": 1,
+  "source": "pad"
+ }
+}
+PASS  8 a menu zeroes movement while the stick is pushed  {"x":0,"y":0,"mag":0,"source":"none"}
+PASS  8 stick direction is re-armed for menu navigation  {"held":true,"pressed":false,"released":false,"buffered":false,"value":1,"hold":0.2833,"chords":["Pad:LSUp"]}
+PASS  8 closing restores the identical vector  [{"x":-0.53,"y":0.848,"mag":1,"source":"pad"},{"x":-0.53,"y":0.848,"mag":1,"source":"pad"}]
+
+### 9_COVERAGE
+{
+ "actions": 31,
+ "missing": {
+  "kbm": [],
+  "pad": []
+ }
+}
+PASS  9 every action is bound on both devices  {"kbm":[],"pad":[]}
+
+### 10_REAL_HARDWARE_PATH
+{
+ "padVirtual": false,
+ "style": "xbox",
+ "device": "pad",
+ "move": {
+  "x": 0,
+  "y": 1,
+  "mag": 1,
+  "source": "pad"
+ },
+ "jumpAtPress": {
+  "held": true,
+  "pressed": true,
+  "released": false,
+  "buffered": true,
+  "value": 1,
+  "hold": 0,
+  "chords": [
+   "Pad:A"
+  ]
+ },
+ "jumpLater": {
+  "held": true,
+  "pressed": false,
+  "released": false,
+  "buffered": false,
+  "value": 1,
+  "hold": 0.5,
+  "chords": [
+   "Pad:A"
+  ]
+ },
+ "glyphJump": "A"
+}
+PASS  10 the synthetic hook is out of the picture  false
+PASS  10 XINPUT id detects as xbox  "xbox"
+PASS  10 a real-shaped pad drives movement  {"x":0,"y":1,"mag":1,"source":"pad"}
+PASS  10 a real-shaped pad drives buttons, buffered  {"held":true,"pressed":true,"released":false,"buffered":true,"value":1,"hold":0,"chords":["Pad:A"]}
+PASS  10 the button stays held  {"held":true,"pressed":false,"released":false,"buffered":false,"value":1,"hold":0.5,"chords":["Pad:A"]}
+PASS  10 prompts follow the real pad  ["pad","A"]
+
+console errors: 0 failed requests: 0
+PASS  boot is clean
+
+===== ALL CHECKS PASSED =====

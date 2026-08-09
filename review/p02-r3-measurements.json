@@ -1,0 +1,245 @@
+{
+  "census": {
+    "muted": 0.535,
+    "warm": 0.3094,
+    "resonance": 0.1375,
+    "bridge": 0.0148,
+    "off": 0.0033,
+    "meanY": 0.354,
+    "meanS": 0.3134,
+    "warmToResonance": 2.25
+  },
+  "resonanceArc": {
+    "shareOfFrameInArc": 0.3637,
+    "shareParkedAtS20to30": 0.0775,
+    "shareAboveS30": 0.1375,
+    "skyFractionInsideArc": 0.4796
+  },
+  "resonanceClassV": {
+    "p05": 0.2,
+    "p25": 0.3137,
+    "p50": 0.498,
+    "p75": 0.7098,
+    "p95": 0.9569
+  },
+  "resonanceClassS": {
+    "p05": 0.3143,
+    "p25": 0.3741,
+    "p50": 0.4429,
+    "p75": 0.5389,
+    "p95": 0.7324
+  },
+  "skyResonanceV": {
+    "n": 16311,
+    "p05": 0.2157,
+    "p50": 0.7765,
+    "p95": 0.9804
+  },
+  "resonanceSplit": {
+    "aboveHorizon": 0.0281,
+    "belowHorizon": 0.9719,
+    "withVcap085": 0.1195
+  },
+  "stress": {
+    "baseline": {
+      "resonanceShare": 0.1375,
+      "warmShare": 0.3094,
+      "warmToResonance": 2.25,
+      "worldResonanceShare": 0.1938,
+      "worldWarmToResonance": 2.164
+    },
+    "skyPlus005": {
+      "resonanceShare": 0.1412,
+      "warmShare": 0.3223,
+      "warmToResonance": 2.282,
+      "worldResonanceShare": 0.1938,
+      "worldWarmToResonance": 2.164
+    },
+    "skyPlus010": {
+      "resonanceShare": 0.1755,
+      "warmShare": 0.3368,
+      "warmToResonance": 1.919,
+      "worldResonanceShare": 0.1938,
+      "worldWarmToResonance": 2.164
+    },
+    "baseline_vcap085": {
+      "resonanceShare": 0.1195,
+      "warmShare": 0.3094,
+      "warmToResonance": 2.59,
+      "worldResonanceShare": 0.17,
+      "worldWarmToResonance": 2.467
+    },
+    "skyPlus005_vcap085": {
+      "resonanceShare": 0.122,
+      "warmShare": 0.3223,
+      "warmToResonance": 2.643,
+      "worldResonanceShare": 0.17,
+      "worldWarmToResonance": 2.467
+    },
+    "skyPlus010_vcap085": {
+      "resonanceShare": 0.1474,
+      "warmShare": 0.3368,
+      "warmToResonance": 2.285,
+      "worldResonanceShare": 0.17,
+      "worldWarmToResonance": 2.467
+    },
+    "baseline_vcap078": {
+      "resonanceShare": 0.1115,
+      "warmShare": 0.3094,
+      "warmToResonance": 2.775,
+      "worldResonanceShare": 0.1588,
+      "worldWarmToResonance": 2.64
+    },
+    "skyPlus005_vcap078": {
+      "resonanceShare": 0.1138,
+      "warmShare": 0.3223,
+      "warmToResonance": 2.832,
+      "worldResonanceShare": 0.1588,
+      "worldWarmToResonance": 2.64
+    },
+    "skyPlus010_vcap078": {
+      "resonanceShare": 0.1257,
+      "warmShare": 0.3368,
+      "warmToResonance": 2.68,
+      "worldResonanceShare": 0.1588,
+      "worldWarmToResonance": 2.64
+    },
+    "baseline_vcap072": {
+      "resonanceShare": 0.1041,
+      "warmShare": 0.3094,
+      "warmToResonance": 2.972,
+      "worldResonanceShare": 0.1493,
+      "worldWarmToResonance": 2.81
+    },
+    "skyPlus005_vcap072": {
+      "resonanceShare": 0.1044,
+      "warmShare": 0.3223,
+      "warmToResonance": 3.087,
+      "worldResonanceShare": 0.1493,
+      "worldWarmToResonance": 2.81
+    },
+    "skyPlus010_vcap072": {
+      "resonanceShare": 0.1061,
+      "warmShare": 0.3368,
+      "warmToResonance": 3.174,
+      "worldResonanceShare": 0.1493,
+      "worldWarmToResonance": 2.81
+    }
+  },
+  "b1Current": {
+    "maskPixels": 735103,
+    "sampled": 2113536,
+    "maskShareOfSampled": 0.3478,
+    "aboveHorizonShareOfMask": 0.3878,
+    "peak": 0.9684,
+    "peakAt": [
+      0.9993,
+      0.3978
+    ],
+    "top200InsideSocketBox": 2
+  },
+  "b1Fixed": {
+    "box": [
+      0.54,
+      0.62,
+      0.74,
+      0.82
+    ],
+    "peak": 0.9496,
+    "peakAt": [
+      0.6344,
+      0.7038
+    ],
+    "hex": "#E7FEFD"
+  },
+  "blownComponents": {
+    "count": 58,
+    "largest": [
+      {
+        "area": 2094,
+        "areaFrac": 0.000495,
+        "at": [
+          0.9919,
+          0.3996
+        ]
+      },
+      {
+        "area": 1994,
+        "areaFrac": 0.000472,
+        "at": [
+          0.826,
+          0.4147
+        ]
+      },
+      {
+        "area": 1557,
+        "areaFrac": 0.000368,
+        "at": [
+          0.6631,
+          0.3603
+        ]
+      },
+      {
+        "area": 1010,
+        "areaFrac": 0.000239,
+        "at": [
+          0.7192,
+          0.4113
+        ]
+      },
+      {
+        "area": 837,
+        "areaFrac": 0.000198,
+        "at": [
+          0.9773,
+          0.4644
+        ]
+      },
+      {
+        "area": 660,
+        "areaFrac": 0.000156,
+        "at": [
+          0.9631,
+          0.4501
+        ]
+      },
+      {
+        "area": 628,
+        "areaFrac": 0.000149,
+        "at": [
+          0.5433,
+          0.3844
+        ]
+      },
+      {
+        "area": 606,
+        "areaFrac": 0.000143,
+        "at": [
+          0.6151,
+          0.3959
+        ]
+      }
+    ]
+  },
+  "blownShare": {
+    "hueOnly": 0.00179,
+    "hueAndS06": 0.0008,
+    "emissiveMask": 0.00405
+  },
+  "terminator": {
+    "hex": "#68704F",
+    "hue": 74.5,
+    "S": 0.295,
+    "V": 0.439,
+    "Y": 0.151
+  },
+  "specular": {
+    "hex": "#FFFCA0",
+    "hue": 58.1,
+    "S": 0.373
+  },
+  "composition": {
+    "quietShare": 0.5347,
+    "borderDarkShare": 0.1778
+  }
+}

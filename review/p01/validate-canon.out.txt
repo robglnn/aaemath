@@ -1,0 +1,64 @@
+  ok   §2.1 declares all six object classes: Span, Aperture, Emitter, Bearer, Vessel, Threshold
+  ok   §11a maps 32 nodes; graph ships 32
+  ok   §11a: zero unmapped nodes
+  ok   §11a: zero phantom node ids
+  ok   §11a: every class is one of the six
+  ok   §11a states class counts
+  ok   §11a class counts are correct: {"Emitter":3,"Bearer":7,"Aperture":5,"Span":9,"Vessel":3,"Threshold":5}
+  ok   all 15 solving/inequality nodes have a class
+  ok   every inequality node is a Threshold
+  ok   world.md says "inequalit*" 3 times
+  ok   world.md: 'Best pun in the file' removed
+  ok   world.md §0: meta-explanation removed
+  ok   world.md: eleven-year-old target removed
+  ok   voice.md: eleven-year-old target removed
+  ok   world.md pins the register at 13–15
+  ok   Rung title "Divider" is gone from both bibles
+  ok   Rung title "Collector" is gone from both bibles
+  ok   Rung title "Substitute" is gone from both bibles
+  ok   voice.md: cut "amb.tare.weigh.01"
+  ok   voice.md: cut "That crab keeps changing shells"
+  ok   voice.md: cut "So do I."
+  ok   §5 Ladder: Provisional → Carrier → Binder → Sharer → Opener → Warden → Walker → Factor → Broker → Solver
+  ok   §12 canon guard lists the same ten titles
+  ok   every voice key cited in prose is defined
+  ok   lore.bell.01's ring count agrees with world.md §9
+  ok   §3/§9 state the Quorum, the prior-year count and the ring count
+  ok   §3 Quorum is 16004
+  ok   Quorum arithmetic holds: 16041 − 37 = 16004
+  ok   sign.quorum.01 is the pre-Bell state: "QUORUM 16 004. BELL RANG IN SPRING."
+  ok   sys.quorum.00 exists and carries Beats 1–3
+  ok   sys.quorum.01 is the post-Bell state
+  ok   amb.quorum.01 is the post-Bell state
+  ok   §3 manifest has 17 presences
+  ok   §3 manifest: 4 presences unnameable in one word — The Bollard, and the Second Lip; Three of something, rating the middle carry; The thing above the certainty field; A several
+  ok   §3 keeps "The Bollard, and the Second Lip"
+  ok   §3 keeps "Three of something, rating the middle carry"
+  ok   §3 keeps "A several"
+  ok   §3 keeps "The thing above the certainty field"
+  ok   §4.4/§4.5 defines "rating" so P09/P13 can place it
+  ok   §4.4/§4.5 defines "a several" so P09/P13 can place it
+  ok   §4.4/§4.5 defines "the Bollard and the Second Lip" so P09/P13 can place it
+  ok   §4.4/§4.5 defines "standing, unattributed" so P09/P13 can place it
+  ok   voice.md §2b has 8 walk-on key families (7 registers + Sixth Vey): tare, nearly, verse, sag, edge, cut, rate, solv
+  ok   voice.md §2b carries the non-human register walk.rate.*
+  ok   §2b states 7 one-line register rules
+  ok   walk.rate.* ships 5 lines
+  ok   every walk.rate line names which part of it is speaking
+  ok   no walk.rate line uses the first-person singular
+  ok   §0 Fourth Wing row speakers matches the string bank: Ix (25), and Dace (8)
+  ok   §0 Fourth Wing row total matches the string bank: | 33 |
+  ok   §0 Red Rising row speakers matches the string bank: Sennar (21); Sixth Vey (3)
+  ok   §0 Hitchhiker's row speakers matches the string bank: Adjuster Camber (17) and the signage (20)
+  ok   §0 Hitchhiker's row total matches the string bank: | 37 |
+  ok   §0 Valerian walk-on count matches the string bank: seven walk-on registers (35, §2b)
+  ok   §0 Valerian world registers matches the string bank: ambient discovery (55), signage (20), plaques (24)
+  ok   §0 Valerian row total matches the string bank: 134, and the count is not the evidence
+  ok   §0 grand total incl. the §4 fail.* table matches the string bank: 254 shippable strings: 238 in the fenced blocks
+  ok   §0 standing budget matches the string bank: Currently 137 against 25.
+  ok   §0 states the Valerian gate beside the count
+  ok   §0 picture paragraph carries 6 non-human living presences
+  ok   §0 states the all-human-frame failure rule
+  ok   §4 header claims 86 terms and the tables hold 86
+
+62 checks passed, 0 failures

@@ -1,0 +1,37 @@
+--- group counts ---
+amb        55
+walk       38
+ix         25
+lore       24
+sennar     21
+sign       20
+sys        19
+camber     17
+dace       8
+mastery    7
+fail       4
+fenced     238
+§4 table   16  (fail.* misconception rows — they ship)
+SHIPPABLE  254
+
+--- tone dials ---
+Fourth Wing (ix): 25
+Red Rising (sennar + walk.solv + dace): 32
+Hitchhiker's (camber + sign): 37
+Valerian (walk minus solv + amb + sign + lore): 134
+
+standing budget: ambient+signage+walk-on+lore = 137 vs largest named speaker = 25 -> HOLDS
+
+--- walk-on registers (Valerian gate, second half) ---
+8 key families: tare, nearly, verse, sag, edge, cut, rate, solv  (walk.rate = the non-human register)
+
+--- exclamation marks ---
+ix.first.solve.01  Ohh. I was a seven. I was a SEVEN and it was loud!
+ix.bark.walker.01  She's walking on a line she drew. A LINE!
+ix.mastery.digit.01  I've got my three back. Say something. Say something about my three!
+
+--- banned vocabulary (§1) ---
+none
+
+--- cap violations ---
+none

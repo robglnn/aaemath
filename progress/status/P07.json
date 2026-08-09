@@ -1,0 +1,9 @@
+{
+  "id": "P07",
+  "state": "building",
+  "round": 3,
+  "gap": "Device arbitration is one-directional: the keyboard asks for the prompt glyphs exactly once per keydown, so a request refused by the 0.35 s dwell is dropped forever, while the pad re-asks at 250 Hz - measured trace shows device stuck on 'pad' through an entire held W",
+  "note": "Round 3: fixing one-directional device arbitration (pending device deferral + held-key re-assert), swapSticks axis preservation, padRest/look tuning",
+  "evidence": [],
+  "updated": "2026-08-09T20:53:29.618Z"
+}

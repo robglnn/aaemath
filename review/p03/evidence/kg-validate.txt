@@ -1,0 +1,91 @@
+== schema ==
+  32 nodes, 96 distinct misconceptions
+
+== misconception separability ==
+  PASS  all 96 diagnostic signatures are distinct, within nodes and across them
+
+== signature form lint (constructed response only) ==
+  PASS  no signature is phrased as a yes/no or a pick-one; every one is evaluable from a constructed response
+
+== prerequisite edges ==
+  48 edges over 32 nodes
+
+== property 1: acyclic ==
+  PASS  Kahn peeled all 32 nodes; no cycle exists
+
+== property 2: transitively reduced ==
+  PASS  no edge is implied transitively; the graph is its own transitive reduction
+
+== form scorability (derived from the caps, not read from the file) ==
+  construct  trueGuess 0.03  modelled 0.050/0.060/0.070/0.080/0.100  -> SCORABLE
+  repair     trueGuess 0.03  modelled 0.050/0.060/0.070/0.080/0.100  -> SCORABLE
+  generate   trueGuess 0.02  modelled 0.030/0.036/0.042/0.048/0.060  -> SCORABLE
+  select4    trueGuess 0.25  modelled 0.170/0.204/0.238/0.272/0.340  -> NOT SCORABLE
+      band 1: modelled guess 0.170 < trueGuess 0.25 (credits luck as knowledge); band 2: modelled guess 0.204 < trueGuess 0.25 (credits luck as knowledge) (+3 more)
+  judge2     trueGuess 0.5   modelled 0.300/0.360/0.420/0.480/0.600  -> NOT SCORABLE
+      trueGuess 0.5 > maxTrueGuess 0.3; trueGuess + maxSlip = 0.66 >= maxSlipPlusGuess 0.5 (+12 more)
+  PASS  model.forms.scored matches the derivation: [construct, repair, generate]
+  PASS  model.bkt.formsEligibleForMastery matches the derivation
+  PASS  all 4 scored surfaces draw only from the eligible forms
+
+== invariant: one lucky answer never clears M1 ==
+  band 1 normal  (t=0.280): all-wrong floor 0.3057 -> +1 correct 0.9209 -> +2 0.9967  
+  band 1 relearn (t=0.320): all-wrong floor 0.3494 -> +1 correct 0.9375 -> +2 0.9975  
+  band 2 normal  (t=0.240): all-wrong floor 0.2686 -> +1 correct 0.8832 -> +2 0.9934  
+  band 2 relearn (t=0.320): all-wrong floor 0.3581 -> +1 correct 0.9274 -> +2 0.9965  
+  band 3 normal  (t=0.200): all-wrong floor 0.2296 -> +1 correct 0.8315 -> +2 0.9873  
+  band 3 relearn (t=0.320): all-wrong floor 0.3674 -> +1 correct 0.9181 -> +2 0.9952  
+  band 4 normal  (t=0.160): all-wrong floor 0.1887 -> +1 correct 0.7600 -> +2 0.9760  
+  band 4 relearn (t=0.256): all-wrong floor 0.3019 -> +1 correct 0.8683 -> +2 0.9897  
+  band 5 normal  (t=0.130): all-wrong floor 0.1581 -> +1 correct 0.6625 -> +2 0.9502  
+  band 5 relearn (t=0.208): all-wrong floor 0.2530 -> +1 correct 0.7940 -> +2 0.9763  
+
+== standards ==
+  62 distinct codes cited across 4 frameworks
+  non-CCSS frameworks in use: FL, VA, TEKS
+  codes marked NEEDS_VERIFICATION: 0
+  registered but not yet cited by a node (available to P17): 11
+
+== topology ==
+  roots (no prerequisites): var-meaning, oo-numeric
+  leaves (nothing depends on them): equivalent-expressions, eq-special-cases, eq-model-context, ineq-two-step
+  longest prerequisite chain: 11 nodes, ending at eq-special-cases, eq-model-context
+  total estMinutes: 354 (5.9 h of scored-item time)
+  nodes per difficulty band: {"1":3,"2":11,"3":8,"4":7,"5":3}
+  PASS  no band inversion: every node is at least as hard as each of its prerequisites
+
+== a valid learning order (topological) ==
+   1. var-meaning  (d1)
+   2. oo-numeric  (d1)
+   3. expr-anatomy  (d1)
+   4. oo-structure  (d2)
+   5. translate-phrase  (d2)
+   6. props-operations  (d2)
+   7. like-terms-id  (d2)
+   8. eval-substitute  (d2)
+   9. translate-order  (d3)
+  10. distribute-numeric  (d2)
+  11. like-terms-combine  (d3)
+  12. eval-signed  (d3)
+  13. eval-formula  (d3)
+  14. eq-meaning  (d2)
+  15. distribute-variable  (d3)
+  16. props-equality  (d2)
+  17. translate-sentence  (d3)
+  18. ineq-meaning  (d2)
+  19. distribute-negative  (d4)
+  20. eq-one-add  (d2)
+  21. eq-one-mult  (d2)
+  22. simplify-expression  (d4)
+  23. eq-two-step  (d3)
+  24. ineq-one-step  (d3)
+  25. equivalent-expressions  (d4)
+  26. eq-combine-side  (d4)
+  27. eq-distribute  (d4)
+  28. ineq-negative-flip  (d4)
+  29. eq-both-sides  (d4)
+  30. ineq-two-step  (d5)
+  31. eq-special-cases  (d5)
+  32. eq-model-context  (d5)
+
+RESULT: PASS — 32 nodes, 48 edges, acyclic, transitively reduced, fully standards-mapped.

@@ -1,0 +1,66 @@
+Worked trace — "like-terms-id" (Identify like terms), difficulty band 2
+  band parameters:  prior 0.25   learn 0.24   slip 0.1   guess 0.06   difficulty centre -0.8 logit
+  gate: P >= 0.95, >= 6 scored, >= 3 at band, >= 2 forms
+
+  learner enters with theta = -0.30 and P(known) = 0.2500 (the band prior)
+
+  #  phase   item b   P(correct|theta)  resp  P(known) after   theta after   scored/atBand/forms
+  1  model    -0.50           0.5498   wrong          0.2660         -0.49   1/1/1   [construct]
+       error matches misconception "all-variable-terms-alike" — Treats every term containing a letter as like every other, so 3x and 2y are sorted into one group.
+  2  guided   -0.80           0.5763    ok           0.8819         -0.34   2/2/1   [construct]
+       after the modelled example, repeats the method on a scaffolded item
+  3  solo     -0.50           0.5389    ok           0.9960         -0.18   3/3/2   [generate]
+       same method, scaffold reduced one level
+  4  solo     -0.50           0.5787   wrong          0.9720         -0.39   4/4/2   [construct]
+       first item at the certification pitch; error matches "constant-like-variable" — Treats a constant as like a variable term and welds it onto the variable group.
+  5  guided   -0.50           0.5286    ok           0.9985         -0.22   5/5/3   [repair]
+       recovers on a same-trap item drawn from that misconception's variant pool
+  6  solo     -0.50           0.5695    ok           1.0000         -0.07   6/6/3   [generate]
+       clean, unscaffolded, at band
+
+  after 6 scored opportunities: P(known) = 1.0000, scored 6, at band 6, forms 3
+  mastery gate M1-M3: OPEN -> status becomes `provisional`
+  next: consolidation pass (+20 min, 2 items), then a retention check no sooner than +12 h
+
+Retention check: 3 of 4, sampled uniformly over the variant pool, never hinted, forms ["construct","repair","generate"]
+  a learner who genuinely knows it   (p = 1 - slip = 0.9000): passes with probability 0.9477
+  a learner who does not             (p = guess = 0.0600):        passes with probability 0.0008
+  false-negative rate for a true master: 0.0523 -> handled as a lapse and re-checked, so it costs time, not credit
+
+Form scorability at band 2 — model belief vs ground truth
+  form        modelled    true   scored?   3-of-4 retention pass rate, blind
+  construct     0.0600  0.0300       yes   1.06e-4
+  repair        0.0600  0.0300       yes   1.06e-4
+  generate      0.0360  0.0200       yes   3.15e-5
+  select4       0.2040  0.2500        NO   5.08e-2   <- never reaches a retention check: the engine refuses the form
+  judge2        0.3600  0.5000        NO   3.13e-1   <- never reaches a retention check: the engine refuses the form
+  A yes/no item is worth 0.5000 blind and the model would have called it 0.3000 after clamping.
+  That gap is not a rounding error, it is a mastery gate a coin can walk through, which is why
+  model.forms.scored excludes judge2 and select4 outright rather than pricing them.
+
+Why a guesser cannot get there (band 2 numbers)
+  1. All-wrong fixed point of the BKT recursion: P(known) settles at 0.2686.
+     The learn rate keeps a floor under P; that floor is far below the 0.95 gate.
+  2. From that floor, consecutive lucky guesses drive P to: 0.8832 -> 0.9934 -> 0.9997 -> 1.0000
+     so 2 consecutive lucky guesses would clear M1 on their own — probability 0.06^2 = 3.60e-3 per attempt window.
+  3. M2 forces >= 6 scored opportunities with >= 3 at band, so the run has to happen late in a long window,
+     and M3 forces >= 2 distinct item forms, so one exploitable interface is not enough.
+  4. M4 then demands 3/4 on an unhinted, uniformly sampled check at least 12 h later: probability 0.0008.
+  5. Bound on certifying ONE knowledge point by guessing, in three currencies:
+       model's own guess parameter 0.0600:  0.06^2 x 0.0008 = 2.97e-6
+       TRUE blind rate of the best scored form (0.0300):  9.50e-8   <- the honest number
+       TRUE blind rate of a yes/no item (0.5000):  7.81e-2   <- what it would be if judge2 were scored
+     The third row is four orders of magnitude worse than the first. It is not a hypothetical:
+     it is what the gate is worth on any node whose items are served as closed questions, and it
+     is why model.forms.scored is a hard list rather than guidance. Measured end to end in
+     review/p03/mastery-sim.mjs, which serves a bot judge2 items on purpose.
+     Expected knowledge points certified across all 32 of Level 1, honest currency: 3.04e-6.
+  6. And a certification that does slip through is revoked by the spaced review at +1 d,
+     which the same guesser passes with probability 0.0591 at best.
+
+  Note: this bound assumes the guesser is patient. The latency floor (900 ms + 120 ms/token)
+  removes upward credit from fast correct responses entirely, so mashing is strictly worse than patient guessing.
+  And the learn rate is the other half of the floor: at 0.2400 the all-wrong fixed point sits at 0.2686,
+  so the relearn boost is capped at 0.32 and withheld until a node has genuinely been
+  mastered once (spacing.relearnRequiresPriorMastery), or the floor rises far enough that a single
+  lucky answer clears M1 on its own.

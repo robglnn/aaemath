@@ -1,0 +1,66 @@
+Worked trace — "ineq-negative-flip" (Multiplying by a negative), difficulty band 4
+  band parameters:  prior 0.12   learn 0.16   slip 0.14   guess 0.08   difficulty centre 0.8 logit
+  gate: P >= 0.95, >= 6 scored, >= 3 at band, >= 2 forms
+
+  learner enters with theta = -0.30 and P(known) = 0.1200 (the band prior)
+
+  #  phase   item b   P(correct|theta)  resp  P(known) after   theta after   scored/atBand/forms
+  1  model     0.20           0.3775   wrong          0.1771         -0.43   1/0/1   [construct]
+       error matches misconception "no-flip-on-negative-divide" — Divides by a negative coefficient and keeps the direction.
+  2  guided    0.20           0.3470    ok           0.7465         -0.20   2/0/1   [construct]
+       after the modelled example, repeats the method on a scaffolded item
+  3  guided    0.20           0.4004    ok           0.9844          0.01   3/0/2   [generate]
+       same method, scaffold reduced one level
+  4  solo      1.10           0.2509   wrong          0.9206         -0.08   4/1/2   [construct]
+       first item at the certification pitch; error matches "flip-but-sign-lost" — Reverses the symbol correctly but reports a positive quotient.
+  5  guided    1.10           0.2348    ok           0.9933          0.19   5/2/3   [repair]
+       recovers on a same-trap item drawn from that misconception's variant pool
+  6  solo      1.10           0.2862    ok           0.9997          0.44   6/3/3   [generate]
+       clean, unscaffolded, at band
+
+  after 6 scored opportunities: P(known) = 0.9997, scored 6, at band 3, forms 3
+  mastery gate M1-M3: OPEN -> status becomes `provisional`
+  next: consolidation pass (+20 min, 2 items), then a retention check no sooner than +12 h
+
+Retention check: 3 of 4, sampled uniformly over the variant pool, never hinted, forms ["construct","repair","generate"]
+  a learner who genuinely knows it   (p = 1 - slip = 0.8600): passes with probability 0.9032
+  a learner who does not             (p = guess = 0.0800):        passes with probability 0.0019
+  false-negative rate for a true master: 0.0968 -> handled as a lapse and re-checked, so it costs time, not credit
+
+Form scorability at band 4 — model belief vs ground truth
+  form        modelled    true   scored?   3-of-4 retention pass rate, blind
+  construct     0.0800  0.0300       yes   1.06e-4
+  repair        0.0800  0.0300       yes   1.06e-4
+  generate      0.0480  0.0200       yes   3.15e-5
+  select4       0.2720  0.2500        NO   5.08e-2   <- never reaches a retention check: the engine refuses the form
+  judge2        0.4800  0.5000        NO   3.13e-1   <- never reaches a retention check: the engine refuses the form
+  A yes/no item is worth 0.5000 blind and the model would have called it 0.3000 after clamping.
+  That gap is not a rounding error, it is a mastery gate a coin can walk through, which is why
+  model.forms.scored excludes judge2 and select4 outright rather than pricing them.
+
+Why a guesser cannot get there (band 4 numbers)
+  1. All-wrong fixed point of the BKT recursion: P(known) settles at 0.1887.
+     The learn rate keeps a floor under P; that floor is far below the 0.95 gate.
+  2. From that floor, consecutive lucky guesses drive P to: 0.7600 -> 0.9760 -> 0.9981 -> 0.9999
+     so 2 consecutive lucky guesses would clear M1 on their own — probability 0.08^2 = 6.40e-3 per attempt window.
+  3. M2 forces >= 6 scored opportunities with >= 3 at band, so the run has to happen late in a long window,
+     and M3 forces >= 2 distinct item forms, so one exploitable interface is not enough.
+  4. M4 then demands 3/4 on an unhinted, uniformly sampled check at least 12 h later: probability 0.0019.
+  5. Bound on certifying ONE knowledge point by guessing, in three currencies:
+       model's own guess parameter 0.0800:  0.08^2 x 0.0019 = 1.23e-5
+       TRUE blind rate of the best scored form (0.0300):  9.50e-8   <- the honest number
+       TRUE blind rate of a yes/no item (0.5000):  7.81e-2   <- what it would be if judge2 were scored
+     The third row is four orders of magnitude worse than the first. It is not a hypothetical:
+     it is what the gate is worth on any node whose items are served as closed questions, and it
+     is why model.forms.scored is a hard list rather than guidance. Measured end to end in
+     review/p03/mastery-sim.mjs, which serves a bot judge2 items on purpose.
+     Expected knowledge points certified across all 32 of Level 1, honest currency: 3.04e-6.
+  6. And a certification that does slip through is revoked by the spaced review at +1 d,
+     which the same guesser passes with probability 0.0591 at best.
+
+  Note: this bound assumes the guesser is patient. The latency floor (900 ms + 120 ms/token)
+  removes upward credit from fast correct responses entirely, so mashing is strictly worse than patient guessing.
+  And the learn rate is the other half of the floor: at 0.1600 the all-wrong fixed point sits at 0.1887,
+  so the relearn boost is capped at 0.32 and withheld until a node has genuinely been
+  mastered once (spacing.relearnRequiresPriorMastery), or the floor rises far enough that a single
+  lucky answer clears M1 on its own.

@@ -1,0 +1,21 @@
+{
+  "id": "P04",
+  "state": "passed",
+  "round": 2,
+  "gap": null,
+  "note": "Round 2: adding real brake/commitment cost to momentum, fixing groundAt arg order, capping turn speed, cutting air authority, shortening apex hang",
+  "evidence": [
+    "review/shots/p04/feel.txt",
+    "review/shots/p04/feel.json",
+    "review/shots/p04/c01-sprint.png",
+    "review/shots/p04/c02-skid.png",
+    "review/shots/p04/c02b-skid-side.png",
+    "review/shots/p04/c03-pivot.png",
+    "review/shots/p04/c04-carve.png",
+    "review/shots/p04/c05-apex.png",
+    "review/shots/p04/c06-land.png",
+    "review/p04-feel.mjs",
+    "review/p04-shots.mjs"
+  ],
+  "updated": "2026-08-09T21:21:52.607Z"
+}

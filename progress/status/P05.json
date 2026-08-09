@@ -1,0 +1,9 @@
+{
+  "id": "P05",
+  "state": "building",
+  "round": 2,
+  "gap": "Camera clips through walls: CameraRig.js:688 clamps the boom to distanceMin 1.15 m as a LOWER bound, overriding the collision result. Walking into an inside corner puts the camera 0.59 m inside solid geometry and the frame goes black (review/shots/p05-critic/73-walked-into-corner.png).",
+  "note": "Round 2: fixing camera wall clipping (min-distance floor overriding collision), honest probe, speed source, frame-rate-independent spring, shoulder framing",
+  "evidence": [],
+  "updated": "2026-08-09T20:50:35.584Z"
+}

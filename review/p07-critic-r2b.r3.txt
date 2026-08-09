@@ -1,0 +1,16 @@
+(node:36796) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+A_TAPS_CLEAN {"ctx0":"play","jumps":10,"all":[{"a":"jump","p":"down","t":0.6},{"a":"jump","p":"up","t":0.6167},{"a":"jump","p":"down","t":0.6333},{"a":"jump","p":"up","t":0.65},{"a":"jump","p":"down","t":0.6667},{"a":"jump","p":"up","t":0.6833},{"a":"jump","p":"down","t":0.7},{"a":"jump","p":"up","t":0.7167},{"a":"jump","p":"down","t":0.7333},{"a":"jump","p":"up","t":0.75},{"a":"jump","p":"down","t":0.7667},{"a":"jump","p":"up","t":0.7833}],"total":20}
+B_FIVE_IN_ONE_STEP {"downsSeenFromFiveInstantTaps":4}
+C_START_DEVICE pad
+C_AFTER_PAD {"device":"pad","glyph":"✕","log":[{"kind":"pad","style":"playstation","t":2.467}]}
+C_AFTER_REAL_KEY {"device":"kbm","glyph":"Space","log":[{"kind":"pad","style":"playstation","t":2.467},{"kind":"kbm","style":"kbm","t":2.733}],"deviceProbe":{"active":"kbm","style":"kbm","padId":"DualSense Wireless Controller (STANDARD GAMEPAD)","padConnected":true,"padVirtual":true,"everPad":true,"switches":2,"switchedAt":2.7333,"dwell":0.35,"pending":null,"usedAt":{"kbm":2.8667,"pad":2.6167}}}
+C_AFTER_MOUSE {"device":"kbm","log":[{"kind":"pad","style":"playstation","t":2.467},{"kind":"kbm","style":"kbm","t":2.733}]}
+C_PAD_TAKES_BACK {"device":"pad","glyph":"✕","log":[{"kind":"pad","style":"playstation","t":2.467},{"kind":"kbm","style":"kbm","t":2.733},{"kind":"pad","style":"playstation","t":3.1}]}
+D_SWAP_VS_INVERT {"setInvert":true,"mid":{"axis":3,"invert":true},"afterSouthpaw":{"x":{"axis":0,"invert":false},"y":{"axis":1,"invert":true}},"afterSouthpawOff":{"x":{"axis":2,"invert":false},"y":{"axis":3,"invert":true}}}
+E_DELIBERATE_HOLD {"zeroAtCentre":[0,0,0,0],"holdTrace":[{"t":0,"mag":0.222},{"t":0.42,"mag":0.222},{"t":0.83,"mag":0.222},{"t":1.25,"mag":0.222},{"t":1.67,"mag":0.222},{"t":2.08,"mag":0.222},{"t":2.5,"mag":0.222},{"t":2.92,"mag":0.222}],"zeroAfterHold":[0,0,0,0],"onRelease":{"x":0,"y":0,"mag":0,"source":"none"},"driftAfterRelease":[{"t":0,"x":0,"mag":0},{"t":0.42,"x":0,"mag":0},{"t":0.83,"x":0,"mag":0},{"t":1.25,"x":0,"mag":0},{"t":1.67,"x":0,"mag":0},{"t":2.08,"x":0,"mag":0}]}
+F_CONTEXT_CONFLICTS {"playOnlyOntoBuildOnly":{"ok":true,"conflicts":[],"chords":["KeyE","KeyR"]},"sameContext":{"ok":false,"reason":"conflict","conflicts":["buildToggle"]},"reset":true}
+G_KBM {"move":{"x":0,"y":1,"mag":1,"source":"kbm"},"loco":3.0119}
+CONSOLE_ERRORS []
+
+===== END B =====

@@ -1,0 +1,1057 @@
+{
+  "schemaVersion": 1,
+  "title": "Variable Star — Algebra I, Level 1 knowledge graph",
+  "subject": "Algebra I",
+  "level": 1,
+  "owner": "P03",
+  "compiled": "2026-08-09",
+  "conventions": {
+    "id": "Stable kebab-case identifier. Never renamed once shipped; it is the `kpId` in learn:* signals.",
+    "prerequisites": "Direct prerequisites only. The relation is a DAG and is transitively reduced: if a -> b -> c then c never lists a. Proved by review/p03/kg-validate.mjs.",
+    "difficulty": "1-5 band. Selects the learner-model parameter row in `model.bands` and the item difficulty centre on the logit scale.",
+    "estMinutes": "Scored-item time only, for a median learner: acquisition + first retention check. Excludes traversal, narrative and review of this node inside later nodes.",
+    "misconceptions[].diagnosticSignature": "A predicate the item bank (P17) must be able to evaluate from item parameters and the learner's response. `item:` names the generated form with its parameters; `response ==` gives the value or structure a learner holding this misconception produces. Three hard rules, all linted by review/p03/kg-validate.mjs. (1) SEPARABLE: no two misconceptions on the same node may share a signature, or the wrong-answer feedback cannot tell them apart and L7 is unachievable on that node. (2) DISCRIMINATING: a generated item is only valid for a misconception if the signature produces a value different from the correct answer. (3) CONSTRUCTED: the signature must be evaluable from a response the learner BUILDS — a value, an expression, a placement, a partition, a counterexample. It must never be phrased as a yes/no or a pick-one, because the item bank will faithfully serve what is written here, and a yes/no item has a blind-success rate of 0.50, which model.formScorability excludes from the scored path entirely.",
+    "standards": "Keys into content/standards.json. Every node carries at least one.",
+    "worldHook": "The physical act in the world that IS this knowledge point. Not a quiz framing. Nouns are provisional until design/world.md lands; the verbs are the contract.",
+    "localization": "Every learner-facing string in this file is EN source text for a locale key, not the string that ships. Key shape: kp.<id>.title, kp.<id>.short, kp.<id>.description, kp.<id>.hook, misconception.<id>.description. P20 owns content/locales. ES and PL must localise the mathematics, not only the words: decimal comma, the ES/PL ordering of 'less than' phrases (which is the whole point of translate-order and cannot be translated literally), locale-appropriate variable letters, and the ES/PL convention of writing multiplication with a centre dot rather than a cross."
+  },
+  "model": {
+    "note": "Single machine-readable source of truth for the numbers argued in design/learning-architecture.md. P16 reads this; it does not hard-code duplicates.",
+    "bkt": {
+      "masteryThreshold": 0.95,
+      "minScoredOpportunities": 6,
+      "minAtBandOpportunities": 3,
+      "minDistinctItemForms": 2,
+      "formsEligibleForMastery": ["construct", "repair", "generate"],
+      "formsEligibleForMasteryNote": "M2 and M3 count ONLY opportunities served in these forms. This is the field the gate reads; it is not advice. A form outside this list may not increment scored, atBand or the form set, and may not trigger a BKT update (see model.forms.scored). Derived, not decreed: see model.trueGuessByForm and the derivation in review/p03/kg-validate.mjs, which recomputes the eligible set from the identifiability caps on every run and fails if it disagrees with this array.",
+      "prerequisiteCreditWeight": 0.5,
+      "identifiabilityCaps": {
+        "maxSlip": 0.16,
+        "maxTrueGuess": 0.30,
+        "maxGuess": 0.30,
+        "maxSlipPlusGuess": 0.5,
+        "onFormExceedingCaps": "reject-form-from-scored-path",
+        "clampTrueRates": false,
+        "note": "These caps are a REJECTION test on a form, never a clamp on an observed rate. Clamping is the bug this field exists to forbid: an engine that clamps a yes/no item's true blind-success rate of 0.50 down to maxGuess 0.30 credits every lucky coin flip with more evidence than it is worth, and the mastery gate leaks. If a form's trueGuess exceeds maxTrueGuess, or trueGuess + maxSlip reaches maxSlipPlusGuess, the form is not scorable at all — the engine must refuse the BKT update, not soften it."
+      }
+    },
+    "bands": [
+      { "difficulty": 1, "prior": 0.35, "learn": 0.28, "slip": 0.08, "guess": 0.05, "logit": -1.6 },
+      { "difficulty": 2, "prior": 0.25, "learn": 0.24, "slip": 0.10, "guess": 0.06, "logit": -0.8 },
+      { "difficulty": 3, "prior": 0.18, "learn": 0.20, "slip": 0.12, "guess": 0.07, "logit": 0.0 },
+      { "difficulty": 4, "prior": 0.12, "learn": 0.16, "slip": 0.14, "guess": 0.08, "logit": 0.8 },
+      { "difficulty": 5, "prior": 0.08, "learn": 0.13, "slip": 0.16, "guess": 0.10, "logit": 1.6 }
+    ],
+    "guessByForm": {
+      "note": "MODEL BELIEF. Multiplier on the band's `guess` parameter, giving the guess the BKT update uses for a form. This is what the engine thinks blind success is worth. It is not evidence of anything on its own — compare it against trueGuessByForm below.",
+      "construct": 1.0,
+      "repair": 1.0,
+      "generate": 0.6,
+      "select4": 3.4,
+      "judge2": 6.0
+    },
+    "trueGuessByForm": {
+      "note": "GROUND TRUTH. The probability a responder with zero knowledge of the knowledge point produces a correct response in this form, derived from the size of the form's answer space — not from any model parameter. review/p03/mastery-sim.mjs draws bot responses from THESE numbers, never from guessByForm, so the simulation can measure the gate instead of restating it. If P17 ships a form whose real answer space is smaller than assumed here, this table is the thing that must change first.",
+      "construct": 0.03,
+      "repair": 0.03,
+      "generate": 0.02,
+      "select4": 0.25,
+      "judge2": 0.5,
+      "derivation": {
+        "construct": "A numeric slot accepts the integers in [-20, 20] plus fraction forms: 1/41 = 0.024. Expression-valued slots are far larger. 0.03 is the conservative ceiling over both.",
+        "repair": "One of about six joints in a shown build is wrong; the error site is not signposted, so a blind responder must both find it and correct it. Rounded up to match construct rather than argued lower.",
+        "generate": "Produce a case with a named property. Many answers are correct, but none is reachable by luck, because the property has to be checked. 0.02.",
+        "select4": "One of four. 0.25 exactly.",
+        "judge2": "Yes/no. 0.50 exactly. A coin."
+      }
+    },
+    "formScorability": {
+      "note": "Which forms may enter the scored path, and why. This block is a DERIVATION, recomputed by review/p03/kg-validate.mjs from bands + guessByForm + trueGuessByForm + identifiabilityCaps on every run; the validator fails if the recomputation disagrees with model.forms.scored or model.bkt.formsEligibleForMastery. A form is scorable iff, for EVERY band: (a) trueGuess <= maxTrueGuess; (b) trueGuess + maxSlip < maxSlipPlusGuess; (c) conservatism — the modelled guess (band.guess x guessByForm) is at least trueGuess, so a correct answer never moves P(known) further than the truth warrants; (d) the modelled guess itself satisfies maxGuess and maxSlipPlusGuess without being clamped.",
+      "construct": { "scorable": true, "reason": "0.03 true against 0.05-0.10 modelled: the model under-credits luck at every band, which is the safe direction." },
+      "repair": { "scorable": true, "reason": "Same arithmetic as construct." },
+      "generate": { "scorable": true, "reason": "0.02 true against 0.030-0.060 modelled after the x0.6 multiplier. Conservative at every band." },
+      "select4": { "scorable": false, "reason": "Fails (c) at bands 1-3: modelled 0.170 / 0.204 / 0.238 against a true 0.25, so every lucky quarter-chance is credited as knowledge. And no repair is possible: making it conservative at band 1 needs a multiplier of at least 5.0 (0.05 x 5.0 = 0.25), while staying under maxGuess at band 5 needs at most 3.0 (0.10 x 3.0 = 0.30). 5.0 > 3.0, so NO multiplier makes select4 scorable across all five bands. It is excluded structurally, not by preference." },
+      "judge2": { "scorable": false, "reason": "Fails (a): true 0.50 > maxTrueGuess 0.30. Fails (b): 0.50 + 0.16 = 0.66, past maxSlipPlusGuess 0.5, so BKT is not identifiable. Fails (d): no multiplier can reach a modelled 0.50 while respecting maxGuess 0.30. A yes/no item is excluded from the scored path entirely — it is not merely discouraged." }
+    },
+    "ability": {
+      "theta0": -0.8,
+      "kSchedule": [ { "untilResponses": 20, "k": 0.6 }, { "untilResponses": 60, "k": 0.35 }, { "untilResponses": null, "k": 0.2 } ],
+      "acquisitionTargetOffset": -0.35,
+      "certificationPitchThreshold": 0.85,
+      "certificationOffset": 0.3,
+      "variantOffsets": [-0.6, -0.3, 0.0, 0.3, 0.6],
+      "modelPhaseTriggerGap": 0.6
+    },
+    "forms": {
+      "order": ["construct", "repair", "generate"],
+      "beforeThreshold": "construct",
+      "cycleAbove": 0.5,
+      "cycleIndexedOn": "scoredCount",
+      "cycleIndexNote": "The acquisition form is order[scoredCount % order.length], where scoredCount is the node's CUMULATIVE count of scored opportunities so far — the same counter M2 reads — evaluated BEFORE the current response is scored. The cycle is never restarted at `construct` when P crosses cycleAbove; it is a running index into a fixed list. This is load-bearing arithmetic, not a style note: restarting the cycle serves `construct` (guess x1.0) where the running index serves `generate` (guess x0.6), and the third item of the worked trace in design/learning-architecture.md 5.1 comes out 0.8256 instead of 0.9920. review/p03/kp-trace.mjs and review/p03/mastery-sim.mjs both index on scoredCount.",
+      "scored": ["construct", "repair", "generate"],
+      "unscored": ["select4", "judge2"],
+      "unscoredPolicy": "An unscored form produces NO BKT update, NO M2 or M3 credit, no prerequisite credit and no theta movement. It is legal in exactly two places: inside a `model` phase, where the world is demonstrating and the learner is confirming what they just watched, and in narrative surfaces that are not learning opportunities. P17 must not generate a scored item in an unscored form; P16 must refuse to score one if it arrives anyway. learn:respond still fires so P18/P24 can react, with scored:false.",
+      "itemBankRule": "Every diagnosticSignature in this file is written so it can be evaluated from a CONSTRUCTED response. If a signature ever reads as a yes/no or pick-one question, the item bank will serve it as judge2 or select4 and the gate leaks. review/p03/kg-validate.mjs lints for that shape and fails the build."
+    },
+    "spacing": {
+      "consolidationMinutes": 20,
+      "consolidation": { "items": 2, "passAtLeast": 0, "forms": ["construct", "repair", "generate"], "hinted": false, "atBandCentre": true },
+      "consolidationNote": "passAtLeast is 0 on purpose and it is written down rather than left implicit. Consolidation is a PRACTICE PASS, not a second gate: its two items are scored normally, so getting them wrong pushes P(known) down and can strand the node below masteryThreshold at the retention check — but the transition provisional -> awaiting-retention is not itself conditional on how many of the two were right. The gate that certifies is retentionCheck, and it carries both passAtLeast and requiresThresholdAtCheck. An engineer implementing section 2 must not invent a pass requirement here; the anti-guessing numbers in section 5.0 were measured against exactly this shape.",
+      "ladderDays": [1, 2, 5, 11, 24],
+      "growthFactor": 2.2,
+      "capDays": 45,
+      "retentionCheck": { "items": 4, "passAtLeast": 3, "requiresThresholdAtCheck": true, "minHours": 12, "minInterveningSessions": 1, "sampling": "uniform-over-variant-pool", "forms": ["construct", "repair", "generate"], "hinted": false },
+      "retentionCheckNote": "requiresThresholdAtCheck means M4 is a conjunction, not a count: the node certifies only if at least passAtLeast of items are correct AND P(known) is still >= bkt.masteryThreshold after all four have been scored. Both halves matter. The count alone would let a learner who slipped on the fourth item certify off a posterior that had already fallen through the threshold; the posterior alone would let 2-of-4 through on a favourable prior. review/p03/mastery-sim.mjs enforces the conjunction, and the per-node guessing bounds in design/learning-architecture.md section 5.0 were measured against it.",
+      "review": { "items": 2, "sampling": "uniform-over-variant-pool", "forms": ["construct", "repair", "generate"], "hinted": false },
+      "formsNote": "consolidation, retentionCheck and review all draw forms from model.bkt.formsEligibleForMastery. Stated three times on purpose: these are the three surfaces where an engineer following a checklist is most likely to reach for a quick yes/no confirmation, and that is exactly the surface a guesser would farm.",
+      "relearnLearnRateMultiplier": 1.6,
+      "relearnLearnRateCap": 0.32,
+      "relearnRequiresPriorMastery": true,
+      "relearnNote": "Savings — relearning being faster than learning — is a property of re-acquiring something you ONCE HELD. A failed first retention check is not a lapse of knowledge; it is a failed first certification, and it earns the ordinary learn rate. Handing the boost to a learner who has never been certified is not generosity, it is a hole: the learn rate sets a FLOOR under the all-wrong BKT fixed point, so a higher learn rate means a responder who is never right still drifts upward. At the round-1 cap of 0.45 the band-1 relearn floor was 0.489, and from there a SINGLE lucky answer reached 0.9704 and cleared M1 on its own. The cap is now 0.32, chosen as the largest round value at which no band, in either state, lets one lucky answer clear the threshold — review/p03/kg-validate.mjs asserts that invariant on every run."
+    },
+    "antiGuessing": {
+      "latencyFloorMs": 900,
+      "latencyPerTokenMs": 120,
+      "fastCorrectPolicy": "not-scored-upward",
+      "fastWrongPolicy": "scored-normally",
+      "noRepeatWithinItems": 40
+    }
+  },
+  "strands": [
+    { "id": "expressions", "title": "Reading and running an expression" },
+    { "id": "translation", "title": "Words into algebra" },
+    { "id": "structure", "title": "Rewriting without changing meaning" },
+    { "id": "equations", "title": "Claims you can solve" },
+    { "id": "inequalities", "title": "Claims with room in them" }
+  ],
+  "nodes": [
+    {
+      "id": "var-meaning",
+      "strand": "expressions",
+      "title": "A letter can hold a number",
+      "shortTitle": "Variables",
+      "description": "A variable is a name for a quantity that is unknown or that varies. The same letter means the same value everywhere in one expression; two different letters may still hold the same value.",
+      "prerequisites": [],
+      "difficulty": 1,
+      "estMinutes": 6,
+      "misconceptions": [
+        {
+          "id": "var-as-label",
+          "description": "Reads the letter as an abbreviation for an object rather than a number, and so reverses a comparison (the classic students-and-professors reversal).",
+          "diagnosticSignature": "item: 'there are k times as many A as B, relate a and b' -> response == 'k·a = b' instead of 'a = k·b'"
+        },
+        {
+          "id": "var-must-differ",
+          "description": "Believes different letters must stand for different numbers, so never produces a pair in which they coincide.",
+          "diagnosticSignature": "item: charge two cores x and y so that x + y == 2·v and x − y == 0 (unique solution x = y = v) -> response supplies x ≠ y, or leaves the second core empty"
+        },
+        {
+          "id": "var-alphabet-value",
+          "description": "Believes a letter carries a fixed value from its position in the alphabet (a = 1, b = 2), so ignores the value supplied.",
+          "diagnosticSignature": "item: evaluate letter L at value v -> response == alphabetIndex(L)"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.2", "CCSS.6.EE.B.6", "FL.MA.6.AR.1.1", "VA.A.EO.1"],
+      "worldHook": "Grip an empty resonance core and it stays dark until you shove a numeric charge into it — the core is the letter, the charge is whatever you decide it holds."
+    },
+    {
+      "id": "oo-numeric",
+      "strand": "expressions",
+      "title": "Order of operations with numbers",
+      "shortTitle": "Order of operations",
+      "description": "Grouping first, then exponents, then multiplication and division left to right, then addition and subtraction left to right. Multiplication is not privileged over division, nor addition over subtraction.",
+      "prerequisites": [],
+      "difficulty": 1,
+      "estMinutes": 8,
+      "misconceptions": [
+        {
+          "id": "oo-strict-left-to-right",
+          "description": "Evaluates strictly left to right, ignoring precedence entirely.",
+          "diagnosticSignature": "item: a + b·c -> response == (a + b)·c"
+        },
+        {
+          "id": "oo-mult-before-div",
+          "description": "Treats multiplication as always preceding division rather than sharing a rank left to right.",
+          "diagnosticSignature": "item: a ÷ b · c -> response == a ÷ (b·c)"
+        },
+        {
+          "id": "oo-add-before-sub",
+          "description": "Treats addition as always preceding subtraction rather than sharing a rank left to right.",
+          "diagnosticSignature": "item: a − b + c -> response == a − (b + c)"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.1", "CCSS.6.EE.A.2c", "TEKS.6.7A", "FL.MA.6.AR.1.3", "VA.7.PFA.2"],
+      "worldHook": "Feed a chain of charges into a smelter whose intake ports fire in a fixed sequence; open the wrong port first and what pours out is slag you have to carry."
+    },
+    {
+      "id": "expr-anatomy",
+      "strand": "expressions",
+      "title": "Terms, coefficients, constants, factors",
+      "shortTitle": "Anatomy of an expression",
+      "description": "Cut an expression at its plus and minus signs and the pieces that come away are its terms. Inside a term the number multiplying the variable is the coefficient; a term with no variable is a constant; the sign in front belongs to the term that follows it.",
+      "prerequisites": ["var-meaning"],
+      "difficulty": 1,
+      "estMinutes": 8,
+      "misconceptions": [
+        {
+          "id": "term-split-at-product",
+          "description": "Splits a term at a multiplication sign, counting the coefficient and the variable as separate terms.",
+          "diagnosticSignature": "item: 'how many terms in a·x + b' -> response == 3"
+        },
+        {
+          "id": "bare-x-has-no-coefficient",
+          "description": "Says x has no coefficient rather than coefficient 1, and −x no coefficient rather than −1.",
+          "diagnosticSignature": "item: 'coefficient of x in x + b' -> response ∈ {0, 'none'}"
+        },
+        {
+          "id": "sign-detached-from-term",
+          "description": "Detaches the minus sign from the term it belongs to, so a − b·x is read as terms a and b·x.",
+          "diagnosticSignature": "item: 'second term of a − b·x' -> response == 'b·x' (sign dropped)"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.2b", "CCSS.HSA-SSE.A.1a", "FL.MA.912.AR.1.1"],
+      "worldHook": "Snap a glowing expression rail apart at its plus and minus joints; whatever comes away in one piece is a term, and the number stamped on its collar is the coefficient."
+    },
+    {
+      "id": "oo-structure",
+      "strand": "expressions",
+      "title": "What binds to what once a letter is in the way",
+      "shortTitle": "Structure with variables",
+      "description": "Precedence inside an algebraic expression: 2x² means 2·(x·x), −x² is not (−x)², juxtaposition means multiply, and a bracket groups before it multiplies.",
+      "prerequisites": ["expr-anatomy", "oo-numeric"],
+      "difficulty": 2,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "coefficient-under-exponent",
+          "description": "Reads a·x² as (a·x)², letting the exponent capture the coefficient.",
+          "diagnosticSignature": "item: evaluate a·x² at x = v -> response == (a·v)²"
+        },
+        {
+          "id": "negative-square-sign-lost",
+          "description": "Reads −x² as (−x)², so the result comes out positive.",
+          "diagnosticSignature": "item: evaluate −x² at x = v -> response == +v²"
+        },
+        {
+          "id": "juxtaposition-means-add",
+          "description": "Reads a·x written as ax as though it meant a + x.",
+          "diagnosticSignature": "item: evaluate a·x at x = v -> response == a + v"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.2c", "CCSS.HSA-SSE.A.1b", "TEKS.6.7A", "VA.7.PFA.2"],
+      "worldHook": "Hold a reader lens over a live expression and its groupings light up in the order the machine will actually consume them, one bracket at a time."
+    },
+    {
+      "id": "eval-substitute",
+      "strand": "expressions",
+      "title": "Put the number in and see what comes out",
+      "shortTitle": "Evaluate by substitution",
+      "description": "Replace every occurrence of the variable with its value, then evaluate the resulting numerical expression in order.",
+      "prerequisites": ["oo-structure"],
+      "difficulty": 2,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "substitute-first-occurrence-only",
+          "description": "Replaces only the leftmost occurrence of a variable that appears more than once.",
+          "diagnosticSignature": "item: evaluate x² + x at x = v -> response == v² + x-left-unreplaced, i.e. the value obtained when only the leftmost occurrence is substituted"
+        },
+        {
+          "id": "substitute-by-concatenation",
+          "description": "Writes the value beside the rest of the expression instead of substituting into it.",
+          "diagnosticSignature": "item: evaluate a + n at n = v -> response == concat(a, v)"
+        },
+        {
+          "id": "coefficient-dropped-on-substitution",
+          "description": "Substitutes correctly but loses the coefficient's multiplication.",
+          "diagnosticSignature": "item: evaluate a·x at x = v -> response == v"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.2c", "FL.MA.6.AR.1.3", "VA.7.PFA.2", "VA.A.EO.1"],
+      "worldHook": "Slam a numeric charge into every socket a letter left open, then let the machine run and read the output dial with your own eyes."
+    },
+    {
+      "id": "eval-signed",
+      "strand": "expressions",
+      "title": "Substituting negatives without losing the sign",
+      "shortTitle": "Negative values",
+      "description": "A substituted negative arrives inside its own parentheses: (−3)² is 9 but −3² is −9, and subtracting a negative adds.",
+      "prerequisites": ["eval-substitute"],
+      "difficulty": 3,
+      "estMinutes": 12,
+      "misconceptions": [
+        {
+          "id": "negative-substituted-bare",
+          "description": "Substitutes −v without parentheses, so x² becomes −v².",
+          "diagnosticSignature": "item: evaluate x² at x = −v -> response == −(v²)"
+        },
+        {
+          "id": "double-negative-collapsed-wrong",
+          "description": "Reads a − (−b) as a − b, dropping one negative instead of cancelling both.",
+          "diagnosticSignature": "item: evaluate a − x at x = −b -> response == a − b"
+        },
+        {
+          "id": "two-negatives-make-positive-on-sum",
+          "description": "Applies the product rule for signs to a sum, so (−a) + (−b) comes out positive.",
+          "diagnosticSignature": "item: evaluate x + y at x = −a, y = −b -> response == a + b"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.2c", "CCSS.7.EE.B.3", "FL.MA.6.AR.1.3", "VA.7.PFA.2"],
+      "worldHook": "Charge a core with an inverted, cold charge and watch the machine bracket it for you before it lets it into the pipeline — then try to do it yourself without the bracket."
+    },
+    {
+      "id": "eval-formula",
+      "strand": "expressions",
+      "title": "Running a formula with more than one letter",
+      "shortTitle": "Multi-variable evaluation",
+      "description": "Evaluate expressions and real formulas in two or more variables by sending each value to its own letter, not to whichever socket is nearest.",
+      "prerequisites": ["eval-substitute"],
+      "difficulty": 3,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "values-assigned-by-order",
+          "description": "Assigns values in the order they were given rather than by the letters they are named for.",
+          "diagnosticSignature": "item: evaluate a − b at a = p, b = q -> response == q − p"
+        },
+        {
+          "id": "one-value-for-all-letters",
+          "description": "Uses a single value in every socket, treating all letters as the same unknown.",
+          "diagnosticSignature": "item: evaluate a + b at a = p, b = q -> response ∈ {2p, 2q}"
+        },
+        {
+          "id": "second-variable-ignored",
+          "description": "Evaluates only the part containing the first variable and reports that.",
+          "diagnosticSignature": "item: evaluate c·a + d·b -> response == c·p"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.2c", "CCSS.6.EE.B.6", "FL.MA.6.AR.1.3", "VA.A.EO.1"],
+      "worldHook": "A machine with two intake ports demands two different charges; feed the same one into both and it jams loudly enough that the whole ridge hears it."
+    },
+    {
+      "id": "translate-phrase",
+      "strand": "translation",
+      "title": "Turning words into an expression",
+      "shortTitle": "Phrase to expression",
+      "description": "Map sum, difference, product, quotient, increased by, twice and per onto the operations, and name the unknown with a letter you choose on purpose.",
+      "prerequisites": ["expr-anatomy"],
+      "difficulty": 2,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "keyword-without-structure",
+          "description": "Applies a keyword rule without reading the sentence's structure, so grouping is lost.",
+          "diagnosticSignature": "item: 'a groups of n, and b more' -> response == a + n + b"
+        },
+        {
+          "id": "no-variable-introduced",
+          "description": "Produces a purely numeric expression, leaving the unknown out entirely.",
+          "diagnosticSignature": "item: any phrase containing an unnamed quantity -> response contains no variable symbol"
+        },
+        {
+          "id": "twice-read-as-plus-two",
+          "description": "Reads 'twice a number' as adding two rather than multiplying by two.",
+          "diagnosticSignature": "item: 'twice n' -> response == n + 2"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.2a", "CCSS.6.EE.B.6", "FL.MA.6.AR.1.1", "VA.A.EO.1"],
+      "worldHook": "A voice over the comms names a quantity out loud and you have to have the matching rail welded before the transmission finishes."
+    },
+    {
+      "id": "translate-order",
+      "strand": "translation",
+      "title": "Phrases that refuse to commute",
+      "shortTitle": "Order-sensitive phrases",
+      "description": "'Five less than n' is n − 5 and 'n divided into 20' is 20 ÷ n. When the operation does not commute, the words and the symbols run in opposite directions.",
+      "prerequisites": ["translate-phrase"],
+      "difficulty": 3,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "less-than-reversed",
+          "description": "Writes 'a less than n' in the order the words arrive.",
+          "diagnosticSignature": "item: 'a less than n' -> response == a − n"
+        },
+        {
+          "id": "divided-into-reversed",
+          "description": "Writes 'n divided into a' with the dividend and divisor swapped.",
+          "diagnosticSignature": "item: 'n divided into a' -> response == n ÷ a"
+        },
+        {
+          "id": "subtract-from-reversed",
+          "description": "Writes 'subtract n from a' in the order the words arrive.",
+          "diagnosticSignature": "item: 'subtract n from a' -> response == n − a"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.2a", "CCSS.HSA-SSE.A.1a", "FL.MA.6.AR.1.1", "VA.A.EO.1"],
+      "worldHook": "Two rails that look identical seat in opposite directions; put one in backwards and the current runs the wrong way down the span and you feel it in the deck."
+    },
+    {
+      "id": "props-operations",
+      "strand": "structure",
+      "title": "Licences to rearrange",
+      "shortTitle": "Properties of operations",
+      "description": "Addition and multiplication may be reordered and regrouped; subtraction and division may not. Adding zero and multiplying by one change nothing, and that is what makes them useful.",
+      "prerequisites": ["expr-anatomy"],
+      "difficulty": 2,
+      "estMinutes": 8,
+      "misconceptions": [
+        {
+          "id": "subtraction-commutes",
+          "description": "Reorders a subtraction as though it commuted.",
+          "diagnosticSignature": "item: rewrite a − b as an equivalent expression whose first term is b -> response == b − a (correct: −b + a)"
+        },
+        {
+          "id": "regroup-across-subtraction",
+          "description": "Regroups across a subtraction sign, so a − (b + c) becomes (a − b) + c.",
+          "diagnosticSignature": "item: a − (b + c) -> response == (a − b) + c"
+        },
+        {
+          "id": "identity-swapped",
+          "description": "Uses zero as the multiplicative identity or one as the additive identity.",
+          "diagnosticSignature": "item: simplify x·0 or x + 1 -> response == x"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.3", "CCSS.7.EE.A.1", "TEKS.6.7D", "FL.MA.6.AR.1.4", "VA.8.PFA.1"],
+      "worldHook": "Some couplings on a rail spin freely and some are keyed to one orientation; the only way to learn which is to put your hands on them and try to turn them."
+    },
+    {
+      "id": "like-terms-id",
+      "strand": "structure",
+      "title": "Which pieces are the same kind of thing",
+      "shortTitle": "Identify like terms",
+      "description": "Terms are like when they carry the same variable raised to the same power. 3x and 5x are like; 3x and 5x², and 3x and 5y, and 3x and 5, are not.",
+      "prerequisites": ["oo-structure"],
+      "difficulty": 2,
+      "estMinutes": 8,
+      "misconceptions": [
+        {
+          "id": "all-variable-terms-alike",
+          "description": "Treats every term containing a letter as like every other, so 3x and 2y are sorted into one group.",
+          "diagnosticSignature": "item: sort the 5 terms of a·x + b·y + c + d·x + e·y into weld groups (correct partition {a·x, d·x}{b·y, e·y}{c}) -> response places all four variable terms in one group"
+        },
+        {
+          "id": "constant-like-variable",
+          "description": "Treats a constant as like a variable term and welds it onto the variable group.",
+          "diagnosticSignature": "item: sort the 5 terms of a·x + b + c·x + d·y + e into weld groups (correct partition {a·x, c·x}{d·y}{b, e}) -> response places b or e in a group containing a variable term"
+        },
+        {
+          "id": "exponent-ignored-in-matching",
+          "description": "Matches on the letter alone and ignores the exponent.",
+          "diagnosticSignature": "item: sort the 5 terms of a·x + b·x² + c·x + d·x² + e into weld groups (correct partition {a·x, c·x}{b·x², d·x²}{e}) -> response places an x² term in the same group as an x term"
+        }
+      ],
+      "standards": ["CCSS.HSA-SSE.A.1a", "CCSS.7.EE.A.1", "TEKS.6.7C", "FL.MA.7.AR.1.2", "VA.8.PFA.1"],
+      "worldHook": "A cut span leaves five beams scattered on the deck. Drag them into weld stacks by profile and pull the lever: stacks of one profile fuse, a stack with a stranger in it throws sparks and drops the lot."
+    },
+    {
+      "id": "like-terms-combine",
+      "strand": "structure",
+      "title": "Adding the same kind of thing",
+      "shortTitle": "Combine like terms",
+      "description": "Add or subtract the coefficients of like terms and leave the variable part exactly as it was, carrying each term's sign with it.",
+      "prerequisites": ["like-terms-id", "props-operations"],
+      "difficulty": 3,
+      "estMinutes": 12,
+      "misconceptions": [
+        {
+          "id": "combine-unlike-terms",
+          "description": "Combines unlike terms by fusing their variable parts.",
+          "diagnosticSignature": "item: a·x + b·y -> response == (a + b)·x·y"
+        },
+        {
+          "id": "variable-parts-added-too",
+          "description": "Adds the variable parts as well as the coefficients, raising the power.",
+          "diagnosticSignature": "item: a·x + b·x -> response == (a + b)·x²"
+        },
+        {
+          "id": "sign-left-behind-on-move",
+          "description": "Moves a term to sit beside its partner but leaves its minus sign where it was.",
+          "diagnosticSignature": "item: a·x − c − b·x -> response == (a − b)·x + c"
+        }
+      ],
+      "standards": ["CCSS.7.EE.A.1", "CCSS.HSA-SSE.A.2", "TEKS.6.7D", "FL.MA.7.AR.1.1", "VA.8.PFA.1"],
+      "worldHook": "Weld matching beams end to end. The weld shortens the stack you are carrying but it never changes the profile of what you carry."
+    },
+    {
+      "id": "distribute-numeric",
+      "strand": "structure",
+      "title": "One factor across a whole group",
+      "shortTitle": "Distributive property (numbers)",
+      "description": "a(b + c) = ab + ac, seen as one rectangle split into two pieces. The factor outside touches every term inside, not just the first.",
+      "prerequisites": ["oo-numeric", "props-operations"],
+      "difficulty": 2,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "distribute-to-first-term-only",
+          "description": "Multiplies only the first term inside the bracket and copies the rest.",
+          "diagnosticSignature": "item: a(b + c) -> response == a·b + c"
+        },
+        {
+          "id": "distribute-over-a-product",
+          "description": "Distributes across multiplication as though it were addition.",
+          "diagnosticSignature": "item: a(b·c) -> response == (a·b)·(a·c)"
+        },
+        {
+          "id": "distribute-by-adding",
+          "description": "Adds the outside factor to each term instead of multiplying.",
+          "diagnosticSignature": "item: a(b + c) -> response == (a + b) + (a + c)"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.3", "CCSS.7.EE.A.1", "TEKS.6.7D", "FL.MA.6.AR.1.4", "VA.7.PFA.2"],
+      "worldHook": "Pour one charge into a splitter and it has to reach every branch. Cap a branch to save charge and the whole manifold ruptures in your face."
+    },
+    {
+      "id": "distribute-variable",
+      "strand": "structure",
+      "title": "Distributing over a group with a letter in it",
+      "shortTitle": "Distributive property (variables)",
+      "description": "a(bx + c) = abx + ac. The coefficient multiplies the coefficient; the variable rides along untouched.",
+      "prerequisites": ["distribute-numeric", "oo-structure"],
+      "difficulty": 3,
+      "estMinutes": 12,
+      "misconceptions": [
+        {
+          "id": "variable-multiplied-as-well",
+          "description": "Multiplies the variable along with its coefficient, raising the power.",
+          "diagnosticSignature": "item: a(b·x + c) -> response == (a·b)·x² + a·c"
+        },
+        {
+          "id": "distribute-reaches-variable-only",
+          "description": "Reaches the variable term and leaves the constant inside untouched.",
+          "diagnosticSignature": "item: a(b·x + c) -> response == (a·b)·x + c"
+        },
+        {
+          "id": "coefficients-added-not-multiplied",
+          "description": "Adds the outside factor to each coefficient instead of multiplying.",
+          "diagnosticSignature": "item: a(b·x + c) -> response == (a + b)·x + (a + c)"
+        }
+      ],
+      "standards": ["CCSS.7.EE.A.1", "CCSS.HSA-SSE.A.2", "TEKS.6.7D", "FL.MA.7.AR.1.1", "VA.7.PFA.2"],
+      "worldHook": "The splitter now feeds a live rail. The charge scales the rail's rating without changing what the rail is made of, and you can watch the rating climb."
+    },
+    {
+      "id": "distribute-negative",
+      "strand": "structure",
+      "title": "Distributing a minus sign",
+      "shortTitle": "Negative distribution",
+      "description": "−(x − 5) = −x + 5, and a − b(x + c) subtracts the whole product. When the factor outside is negative every term inside flips — all of them.",
+      "prerequisites": ["distribute-variable", "eval-signed"],
+      "difficulty": 4,
+      "estMinutes": 14,
+      "misconceptions": [
+        {
+          "id": "flip-first-term-only",
+          "description": "Flips the sign of the first term inside and leaves the rest alone.",
+          "diagnosticSignature": "item: −(b·x + c) -> response == −b·x + c"
+        },
+        {
+          "id": "leading-minus-dropped",
+          "description": "Drops the leading minus entirely when opening the bracket.",
+          "diagnosticSignature": "item: −(b·x + c) -> response == b·x + c"
+        },
+        {
+          "id": "subtract-before-distributing",
+          "description": "Subtracts the outside numbers first and then distributes the result.",
+          "diagnosticSignature": "item: a − b(x + c) -> response == (a − b)·x + (a − b)·c"
+        }
+      ],
+      "standards": ["CCSS.7.EE.A.1", "CCSS.8.EE.C.7b", "TEKS.6.7D", "FL.MA.7.AR.1.1", "VA.8.PFA.1"],
+      "worldHook": "An inverted charge run through the splitter flips the polarity of every branch at once. Miss one branch and the manifold shorts across the whole span."
+    },
+    {
+      "id": "simplify-expression",
+      "strand": "structure",
+      "title": "Open every group, then gather",
+      "shortTitle": "Simplify fully",
+      "description": "The standard pipeline: clear grouping symbols by distributing, then combine like terms, then check by substituting one value into both the original and the result.",
+      "prerequisites": ["distribute-negative", "like-terms-combine"],
+      "difficulty": 4,
+      "estMinutes": 14,
+      "misconceptions": [
+        {
+          "id": "combine-before-distributing",
+          "description": "Combines a term outside a bracket with the factor in front of it before distributing.",
+          "diagnosticSignature": "item: a + b(x + c) -> response == (a + b)·x + (a + b)·c"
+        },
+        {
+          "id": "stops-before-fully-simplified",
+          "description": "Distributes correctly but leaves two like terms uncombined.",
+          "diagnosticSignature": "item: any -> response is equivalent to the item but still contains two like terms"
+        },
+        {
+          "id": "over-combines-to-one-term",
+          "description": "Fuses the surviving variable term and constant into a single term.",
+          "diagnosticSignature": "item: any whose simplest form is m·x + n -> response == (m + n)·x"
+        }
+      ],
+      "standards": ["CCSS.7.EE.A.1", "CCSS.8.EE.C.7b", "CCSS.HSA-SSE.A.2", "TEKS.6.7D", "FL.MA.7.AR.1.1", "VA.8.PFA.1"],
+      "worldHook": "Run a tangled span through the press: it opens every bracket, welds every match, and spits out the shortest rail that still crosses the gap."
+    },
+    {
+      "id": "equivalent-expressions",
+      "strand": "structure",
+      "title": "Two builds, one machine",
+      "shortTitle": "Equivalence",
+      "description": "Two expressions are equivalent when they agree for every substitution. One disagreeing value disproves it; a chain of legal rewrites proves it.",
+      "prerequisites": ["simplify-expression", "eval-formula"],
+      "difficulty": 4,
+      "estMinutes": 12,
+      "misconceptions": [
+        {
+          "id": "one-value-proves-equivalence",
+          "description": "Concludes equivalence from a single agreeing substitution, usually 0 or 1, and stops looking.",
+          "diagnosticSignature": "item: supply a value of x at which E₁ and E₂ differ, for a pair that agrees at x ∈ {0, 1} and differs at every |x| ≥ 2 -> response ∈ {0, 1}, or the learner welds the pair identical without ever entering a value with |x| ≥ 2"
+        },
+        {
+          "id": "different-form-means-different",
+          "description": "Concludes non-equivalence from surface form alone without rewriting, so hunts for a separating value that does not exist.",
+          "diagnosticSignature": "item: complete the partly-built E₂ so it agrees with E₁ at every value, where the stem of E₂ is already an equivalent rewrite of E₁ in a different surface form -> response rebuilds the stem into E₁'s surface form and thereby breaks it, or submits a candidate x* with E₁(x*) == E₂(x*) as a separator"
+        },
+        {
+          "id": "counterexample-ignored",
+          "description": "Has already produced a disagreeing substitution and still welds the pair identical.",
+          "diagnosticSignature": "item: any pair -> response welds the pair identical while the learner's own substitution record on this item already contains an x* with E₁(x*) ≠ E₂(x*)"
+        }
+      ],
+      "standards": ["CCSS.6.EE.A.4", "CCSS.7.EE.A.2", "TEKS.6.7C", "FL.MA.7.AR.1.2", "VA.8.PFA.1"],
+      "worldHook": "Two spans of different shape sit on the same test rig. Dial in a load yourself and watch for the one that snaps first — or, if you are sure nothing separates them, weld them into a single stamped part and stake your rig on it."
+    },
+    {
+      "id": "eq-meaning",
+      "strand": "equations",
+      "title": "An equation is a claim you can test",
+      "shortTitle": "What an equation says",
+      "description": "An equation claims two expressions have the same value. A solution is a number that makes the claim true, and substituting is how you find out.",
+      "prerequisites": ["eval-substitute"],
+      "difficulty": 2,
+      "estMinutes": 8,
+      "misconceptions": [
+        {
+          "id": "equals-means-compute-now",
+          "description": "Reads = as an instruction to compute rather than an assertion of sameness, and chains a running total across it.",
+          "diagnosticSignature": "item: any -> response contains a chained equality such as a + b = c = d where c ≠ d"
+        },
+        {
+          "id": "solution-never-checked",
+          "description": "Reports a value without substituting it back, and reports one that fails.",
+          "diagnosticSignature": "item: any -> substituting the response into the item's equation yields a false statement"
+        },
+        {
+          "id": "equation-true-for-everything",
+          "description": "Believes an equation containing a letter is true for every number, so any charge to hand will do.",
+          "diagnosticSignature": "item: from a magazine of six distinct charges, exactly one of which satisfies x + a = b, load every charge that locks the bridge (the response is a subset, 64 possible) -> response == all six charges"
+        }
+      ],
+      "standards": ["CCSS.6.EE.B.5", "CCSS.HSA-REI.A.1", "TEKS.6.7B", "TEKS.6.10B", "FL.MA.6.AR.2.1", "VA.A.EI.1"],
+      "worldHook": "Two spans reach out over a chasm and meet, or do not. Drop a charge in and the bridge either locks solid or lets it fall into the dark."
+    },
+    {
+      "id": "props-equality",
+      "strand": "equations",
+      "title": "Whatever you do to one side",
+      "shortTitle": "Properties of equality",
+      "description": "Adding, subtracting, multiplying or dividing both sides by the same value keeps the claim true — never dividing by zero. That is the only licence behind every step you will ever take.",
+      "prerequisites": ["eq-meaning"],
+      "difficulty": 2,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "operate-on-one-side",
+          "description": "Applies an operation to one side and leaves the other untouched.",
+          "diagnosticSignature": "item: any equation -> response equation differs from the item by an operation applied to exactly one side"
+        },
+        {
+          "id": "inverse-operations-on-each-side",
+          "description": "Adds on one side and subtracts on the other, mistaking 'balance' for 'opposite'.",
+          "diagnosticSignature": "item: any equation -> response equation applies mutually inverse operations to the two sides"
+        },
+        {
+          "id": "divide-by-possible-zero",
+          "description": "Divides both sides by an expression that can be zero, typically one containing the unknown.",
+          "diagnosticSignature": "item: any equation -> response step divides both sides by an expression containing the unknown"
+        }
+      ],
+      "standards": ["CCSS.HSA-REI.A.1", "CCSS.6.EE.B.5", "TEKS.A.5A", "FL.MA.912.AR.2.1", "VA.A.EI.1"],
+      "worldHook": "The bridge is a real balance. Lift a mass off your span and the far span rises until you lift exactly the same mass off it too."
+    },
+    {
+      "id": "eq-one-add",
+      "strand": "equations",
+      "title": "Undoing a plus or a minus",
+      "shortTitle": "One-step: add and subtract",
+      "description": "Solve x + p = q and x − p = q by applying the inverse operation to both sides, then check the number against the original claim.",
+      "prerequisites": ["props-equality"],
+      "difficulty": 2,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "same-operation-not-inverse",
+          "description": "Repeats the operation shown instead of inverting it.",
+          "diagnosticSignature": "item: x + p = q -> response == q + p"
+        },
+        {
+          "id": "subtraction-order-reversed",
+          "description": "Computes p − q instead of q − p.",
+          "diagnosticSignature": "item: x + p = q -> response == p − q"
+        },
+        {
+          "id": "minus-inverted-wrongly",
+          "description": "Treats x − p = q as though the inverse were subtraction.",
+          "diagnosticSignature": "item: x − p = q -> response == q − p"
+        }
+      ],
+      "standards": ["CCSS.6.EE.B.7", "CCSS.HSA-REI.B.3", "TEKS.6.10A", "FL.MA.6.AR.2.2", "VA.6.PFA.3"],
+      "worldHook": "Pull the surplus ballast off your span. The deck only stays level if you pull exactly the same ballast off the far span in the same motion."
+    },
+    {
+      "id": "eq-one-mult",
+      "strand": "equations",
+      "title": "Undoing a times or a divide",
+      "shortTitle": "One-step: multiply and divide",
+      "description": "Solve ax = b and x ÷ a = b by dividing or multiplying both sides by a, reading a coefficient as the multiplication it is.",
+      "prerequisites": ["props-equality"],
+      "difficulty": 2,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "subtract-the-coefficient",
+          "description": "Subtracts the coefficient instead of dividing by it.",
+          "diagnosticSignature": "item: a·x = b -> response == b − a"
+        },
+        {
+          "id": "division-order-reversed",
+          "description": "Computes a ÷ b instead of b ÷ a.",
+          "diagnosticSignature": "item: a·x = b -> response == a / b"
+        },
+        {
+          "id": "fraction-form-inverted",
+          "description": "Divides where the equation calls for multiplying.",
+          "diagnosticSignature": "item: x / a = b -> response == b / a"
+        }
+      ],
+      "standards": ["CCSS.6.EE.B.7", "CCSS.HSA-REI.B.3", "TEKS.6.10A", "FL.MA.6.AR.2.3", "VA.6.PFA.3"],
+      "worldHook": "A span built from five identical segments has to be cut into five before you can weigh one. Cut the wrong span and the bridge drops."
+    },
+    {
+      "id": "eq-two-step",
+      "strand": "equations",
+      "title": "Two moves, in the right order",
+      "shortTitle": "Two-step equations",
+      "description": "For ax + b = c, undo the addition first and the multiplication second — the reverse of the order that built the expression. c − b is routinely negative even when the solution is a clean integer, so signed arithmetic is load-bearing here rather than incidental.",
+      "prerequisites": ["eq-one-add", "eq-one-mult", "eval-signed"],
+      "difficulty": 3,
+      "estMinutes": 14,
+      "misconceptions": [
+        {
+          "id": "divide-before-clearing-constant",
+          "description": "Divides by the coefficient while the constant is still attached, and divides only part of the side.",
+          "diagnosticSignature": "item: a·x + b = c -> response == (c / a) − b"
+        },
+        {
+          "id": "inverse-order-inverted",
+          "description": "Undoes the addition and then multiplies instead of dividing.",
+          "diagnosticSignature": "item: a·x + b = c -> response == (c − b)·a"
+        },
+        {
+          "id": "constant-sign-flipped",
+          "description": "Adds the constant to the other side instead of subtracting it.",
+          "diagnosticSignature": "item: a·x + b = c -> response == (c + b) / a"
+        }
+      ],
+      "standards": ["CCSS.7.EE.B.4a", "CCSS.HSA-REI.B.3", "TEKS.7.11A", "FL.MA.7.AR.2.2", "VA.7.PFA.3"],
+      "worldHook": "The span is bolted and then ballasted. You have to unballast before you can unbolt, and the bridge tells you instantly if you reach for the bolts first."
+    },
+    {
+      "id": "eq-combine-side",
+      "strand": "equations",
+      "title": "Tidy one side before you move anything",
+      "shortTitle": "Combine, then solve",
+      "description": "When one side carries several like terms, combine them first so what remains is a two-step equation you already own.",
+      "prerequisites": ["eq-two-step", "like-terms-combine"],
+      "difficulty": 4,
+      "estMinutes": 12,
+      "misconceptions": [
+        {
+          "id": "combine-across-the-equals",
+          "description": "Combines the constant on the left with the number on the right as though the equals sign were a plus, so nothing gets inverted on the way across.",
+          "diagnosticSignature": "item: a·x + b·x + c = d -> response == (d + c) / (a + b)"
+        },
+        {
+          "id": "one-like-term-dropped",
+          "description": "Starts inverse operations before combining and loses one of the like terms.",
+          "diagnosticSignature": "item: a·x + b·x + c = d -> response == (d − c) / a"
+        },
+        {
+          "id": "constant-absorbed-into-coefficient",
+          "description": "Combines the constant into the coefficient of the variable term.",
+          "diagnosticSignature": "item: a·x + b·x + c = d -> response == d / (a + b + c)"
+        }
+      ],
+      "standards": ["CCSS.8.EE.C.7b", "CCSS.HSA-REI.B.3", "TEKS.8.8C", "FL.MA.8.AR.2.1", "VA.8.PFA.4"],
+      "worldHook": "Weld the duplicate beams on your side before you start unloading. The crane physically will not lift two separate stacks at once."
+    },
+    {
+      "id": "eq-distribute",
+      "strand": "equations",
+      "title": "Open the bracket, or divide it away",
+      "shortTitle": "Equations with grouping",
+      "description": "p(x + q) = r yields to distributing first or to dividing both sides by p first. Both are legal; one is usually far less work, and choosing is part of the skill.",
+      "prerequisites": ["eq-two-step", "distribute-variable"],
+      "difficulty": 4,
+      "estMinutes": 14,
+      "misconceptions": [
+        {
+          "id": "distribute-partially-in-equation",
+          "description": "Distributes to the variable only and leaves the constant inside untouched.",
+          "diagnosticSignature": "item: p(x + q) = r -> response == (r − q) / p"
+        },
+        {
+          "id": "divide-bracket-only",
+          "description": "Divides the bracketed side by p and leaves the other side as it was.",
+          "diagnosticSignature": "item: p(x + q) = r -> response == r − q"
+        },
+        {
+          "id": "distribute-onto-both-sides",
+          "description": "Multiplies the right-hand side by p as well while opening the bracket.",
+          "diagnosticSignature": "item: p(x + q) = r -> response == (p·r − p·q) / p"
+        }
+      ],
+      "standards": ["CCSS.7.EE.B.4a", "CCSS.8.EE.C.7b", "TEKS.A.5A", "FL.MA.8.AR.2.1", "VA.A.EI.1"],
+      "worldHook": "A sealed module spans the gap. You can crack it open into its parts or shrink the entire bridge by its factor — both land you on the same footing, and one takes half as long."
+    },
+    {
+      "id": "eq-both-sides",
+      "strand": "equations",
+      "title": "Getting the unknown onto one side",
+      "shortTitle": "Variables on both sides",
+      "description": "Subtract the smaller variable term from both sides so the unknown appears once, then finish it as the two-step equation it has become.",
+      "prerequisites": ["eq-combine-side"],
+      "difficulty": 4,
+      "estMinutes": 16,
+      "misconceptions": [
+        {
+          "id": "moved-without-inverting",
+          "description": "Moves a variable term across the equals sign without changing its sign.",
+          "diagnosticSignature": "item: a·x + b = c·x + d -> response == (d − b) / (a + c)"
+        },
+        {
+          "id": "removed-from-one-side-only",
+          "description": "Removes the variable term from one side without removing it from the other.",
+          "diagnosticSignature": "item: a·x + b = c·x + d -> response == (d − b) / a"
+        },
+        {
+          "id": "constants-collected-wrong-side",
+          "description": "Collects the constants onto the side that still carries the unknown.",
+          "diagnosticSignature": "item: a·x + b = c·x + d -> response == (d + b) / (a − c)"
+        }
+      ],
+      "standards": ["CCSS.8.EE.C.7b", "CCSS.HSA-REI.B.3", "TEKS.8.8C", "FL.MA.8.AR.2.1", "VA.8.PFA.4"],
+      "worldHook": "Both spans carry unknown cores. Strip the same number off each until only one side still holds any, and the bridge finally reads out a number."
+    },
+    {
+      "id": "eq-special-cases",
+      "strand": "equations",
+      "title": "When there is no answer, and when every number is",
+      "shortTitle": "No solution and all solutions",
+      "description": "Keep transforming until you reach x = a (one solution), a = a (every number works) or a = b with a ≠ b (nothing works), and say what that means out loud.",
+      "prerequisites": ["eq-both-sides", "eq-distribute"],
+      "difficulty": 5,
+      "estMinutes": 12,
+      "misconceptions": [
+        {
+          "id": "vanishing-variable-means-zero",
+          "description": "Reports x = 0 whenever the variable terms cancel.",
+          "diagnosticSignature": "item: an identity or contradiction -> response == 0"
+        },
+        {
+          "id": "identity-called-no-solution",
+          "description": "Calls an identity 'no solution' because the variable disappeared.",
+          "diagnosticSignature": "item: reduces to a = a -> response == 'no solution'"
+        },
+        {
+          "id": "contradiction-given-a-solution",
+          "description": "Produces a number for an equation that reduces to a false statement.",
+          "diagnosticSignature": "item: reduces to a = b with a ≠ b -> response is a number"
+        }
+      ],
+      "standards": ["CCSS.8.EE.C.7a", "CCSS.HSA-REI.A.1", "TEKS.A.5A", "FL.MA.8.AR.2.1", "VA.A.EI.1"],
+      "worldHook": "Some gaps take exactly one footing, some accept any footing you bring, and some cannot be bridged at all. The chasm tells you which by what it does to your test charge."
+    },
+    {
+      "id": "translate-sentence",
+      "strand": "translation",
+      "title": "Turning a sentence into an equation",
+      "shortTitle": "Sentence to equation",
+      "description": "A sentence with 'is', 'equals', 'the same as' or 'gives' becomes an equation: name the unknown, build each side, join them with =.",
+      "prerequisites": ["translate-order", "eq-meaning"],
+      "difficulty": 3,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "produces-expression-not-equation",
+          "description": "Builds one side only and never asserts the equality.",
+          "diagnosticSignature": "item: a sentence asserting equality -> response contains no '='"
+        },
+        {
+          "id": "sides-merged",
+          "description": "Puts the whole sentence on one side and something else on the other, ignoring where the claim splits.",
+          "diagnosticSignature": "item: 'b more than a times n is c' -> response == b + a·n + c"
+        },
+        {
+          "id": "unknown-defined-as-wrong-quantity",
+          "description": "Writes a correctly shaped equation whose letter names a different quantity from the one the question asks about.",
+          "diagnosticSignature": "item: any -> response equation is well formed but its declared meaning for the letter contradicts the question asked"
+        }
+      ],
+      "standards": ["CCSS.6.EE.B.6", "CCSS.HSA-CED.A.1", "TEKS.6.9A", "FL.MA.6.AR.1.1", "VA.A.EI.1"],
+      "worldHook": "Speak a claim into a balance gate and it materialises as two unfinished spans that you now have to build until they meet."
+    },
+    {
+      "id": "eq-model-context",
+      "strand": "equations",
+      "title": "Build the equation the situation is already making",
+      "shortTitle": "Model with an equation",
+      "description": "Name the unknown, write each side from the story, solve, then check the number against the story and not merely against the equation.",
+      "prerequisites": ["translate-sentence", "eq-both-sides"],
+      "difficulty": 5,
+      "estMinutes": 18,
+      "misconceptions": [
+        {
+          "id": "arithmetic-shortcut-only",
+          "description": "Reaches a number by informal arithmetic and has nothing to fall back on when the situation puts the unknown on both sides.",
+          "diagnosticSignature": "item: a comparison context -> response contains no equation and is wrong on the both-sides variant while right on the one-step variant"
+        },
+        {
+          "id": "answers-the-wrong-question",
+          "description": "Solves correctly but reports x when the story asked for a quantity derived from x.",
+          "diagnosticSignature": "item: any whose question asks for f(x) -> response == x"
+        },
+        {
+          "id": "non-viable-solution-accepted",
+          "description": "Accepts a solution the context forbids, such as a negative count or a fractional person.",
+          "diagnosticSignature": "item: any with a declared domain constraint -> response violates that constraint"
+        }
+      ],
+      "standards": ["CCSS.7.EE.B.4a", "CCSS.HSA-CED.A.1", "CCSS.HSA-CED.A.3", "TEKS.8.8A", "FL.MA.912.AR.2.1", "VA.A.EI.1"],
+      "worldHook": "The chasm has no printed span length. You read it off the terrain, build both sides from what the world tells you, and walk across your own answer."
+    },
+    {
+      "id": "ineq-meaning",
+      "strand": "inequalities",
+      "title": "A claim with room in it",
+      "shortTitle": "What an inequality says",
+      "description": "The symbols <, >, ≤ and ≥ assert an order rather than an equality. The solution is a set of numbers, drawn as a ray with an open or a filled end.",
+      "prerequisites": ["eq-meaning"],
+      "difficulty": 2,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "single-value-for-a-set",
+          "description": "Reports one number as the solution of an inequality.",
+          "diagnosticSignature": "item: any inequality -> response is a single value where a set is required"
+        },
+        {
+          "id": "endpoint-style-swapped",
+          "description": "Uses a filled endpoint for a strict symbol or an open endpoint for an inclusive one.",
+          "diagnosticSignature": "item: any -> response graph endpoint style contradicts the strictness of the symbol"
+        },
+        {
+          "id": "reads-symbol-left-to-right-always",
+          "description": "Reads c < x as 'x is less than c' because the smaller-looking end is on the left.",
+          "diagnosticSignature": "item: c < x -> response shades the ray below c"
+        }
+      ],
+      "standards": ["CCSS.6.EE.B.8", "CCSS.6.EE.B.5", "TEKS.6.9B", "FL.MA.6.AR.1.2", "VA.6.PFA.4"],
+      "worldHook": "A gate that admits everything past a threshold: you set the mark with your hands and the world lights up the entire stretch of charges that will get through."
+    },
+    {
+      "id": "ineq-one-step",
+      "strand": "inequalities",
+      "title": "Solving with the order still intact",
+      "shortTitle": "One-step inequalities",
+      "description": "Adding or subtracting the same amount, or multiplying or dividing by a positive number, leaves the direction of the inequality exactly where it was.",
+      "prerequisites": ["ineq-meaning", "eq-one-add", "eq-one-mult", "eval-signed"],
+      "difficulty": 3,
+      "estMinutes": 10,
+      "misconceptions": [
+        {
+          "id": "flip-after-adding",
+          "description": "Reverses the symbol after an addition or subtraction step.",
+          "diagnosticSignature": "item: x + p < q -> response == x > q − p"
+        },
+        {
+          "id": "solved-as-equation",
+          "description": "Finds the boundary value and stops, giving no direction at all.",
+          "diagnosticSignature": "item: any inequality -> response == boundary value with no relational symbol"
+        },
+        {
+          "id": "flip-because-a-negative-appeared",
+          "description": "Reverses because a negative number is present anywhere, not because of the sign of a multiplier.",
+          "diagnosticSignature": "item: x + (−p) < q -> response reverses the symbol"
+        }
+      ],
+      "standards": ["CCSS.7.EE.B.4b", "CCSS.HSA-REI.B.3", "TEKS.6.10A", "FL.MA.7.AR.2.1", "VA.6.PFA.4"],
+      "worldHook": "Raise both gates by the same amount and the admitted stretch slides along the rail but never turns around."
+    },
+    {
+      "id": "ineq-negative-flip",
+      "strand": "inequalities",
+      "title": "The one move that turns the gate around",
+      "shortTitle": "Multiplying by a negative",
+      "description": "Multiplying or dividing both sides by a negative number reverses the inequality symbol. Nothing else does, and this is the whole reason inequalities are not equations.",
+      "prerequisites": ["ineq-one-step"],
+      "difficulty": 4,
+      "estMinutes": 12,
+      "misconceptions": [
+        {
+          "id": "no-flip-on-negative-divide",
+          "description": "Divides by a negative coefficient and keeps the direction.",
+          "diagnosticSignature": "item: (−a)·x < b -> response == x < b / (−a)"
+        },
+        {
+          "id": "flip-but-sign-lost",
+          "description": "Reverses the symbol correctly but reports a positive quotient.",
+          "diagnosticSignature": "item: (−a)·x < b -> response == x > b / a"
+        },
+        {
+          "id": "flip-on-subtracting-a-negative",
+          "description": "Reverses after subtracting a negative, treating any sign change as a flip trigger.",
+          "diagnosticSignature": "item: x − (−p) > q -> response reverses the symbol"
+        }
+      ],
+      "standards": ["CCSS.HSA-REI.B.3", "CCSS.7.EE.B.4b", "TEKS.A.5B", "FL.MA.8.AR.2.2", "VA.7.PFA.4"],
+      "worldHook": "Invert the gate's charge and the whole admitted stretch snaps to the other side of the mark. You feel it flip through the handle before you see it."
+    },
+    {
+      "id": "ineq-two-step",
+      "strand": "inequalities",
+      "title": "Two moves and a direction to protect",
+      "shortTitle": "Two-step inequalities",
+      "description": "Solve px + q > r the way you solve px + q = r, watching for the single step that can reverse the symbol, and then read the answer back into the situation that produced it.",
+      "prerequisites": ["ineq-negative-flip", "eq-two-step"],
+      "difficulty": 5,
+      "estMinutes": 14,
+      "misconceptions": [
+        {
+          "id": "flipped-twice",
+          "description": "Reverses the symbol at both steps, ending up where it started.",
+          "diagnosticSignature": "item: (−a)·x + b > c -> response keeps the original direction after two reversals"
+        },
+        {
+          "id": "coefficient-applied-to-constant-only",
+          "description": "Divides only the constant on the far side by the coefficient.",
+          "diagnosticSignature": "item: a·x + b > c -> response == x > c − b"
+        },
+        {
+          "id": "strictness-contradicts-context",
+          "description": "Reports a strict inequality where the situation requires an inclusive one, or the reverse.",
+          "diagnosticSignature": "item: any with a declared inclusivity constraint -> response strictness contradicts that constraint"
+        }
+      ],
+      "standards": ["CCSS.7.EE.B.4b", "CCSS.HSA-CED.A.1", "CCSS.HSA-REI.B.3", "TEKS.7.11A", "FL.MA.8.AR.2.2", "VA.7.PFA.4"],
+      "worldHook": "A gate with both a ratchet and a threshold: unratchet, unthreshold, and if you inverted anything on the way, the admitted stretch is on the other side of the mark when you look up."
+    }
+  ]
+}

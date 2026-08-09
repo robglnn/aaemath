@@ -1,0 +1,151 @@
+PASS  world: >=12 proper nouns with one-line definitions
+      82 lexicon entries with definitions
+PASS  world: world name (the Margin)
+      present
+PASS  world: title candidates block
+      present
+PASS  world: algebra is literal power
+      present
+PASS  world: claim grammar table (§2.1)
+      present
+PASS  world: premise / retell
+      present
+PASS  world: the picture (Valerian thesis)
+      present
+PASS  world: the place
+      present
+PASS  world: traffic manifest
+      present
+PASS  world: horizon leaves table
+      present
+PASS  world: player role
+      present
+PASS  world: companion / bond
+      present
+PASS  world: antagonist
+      present
+PASS  world: stakes
+      present
+PASS  world: level 1 arc
+      present
+PASS  world: horizon questions checklist
+      present
+PASS  world: all five Level 1 beats present, in order
+      ARRIVAL > FIRST POWER > FIRST LOSS > FIRST MASTERY > THRESHOLD
+PASS  world: 'not a metaphor' claim is explicit
+PASS  world: antagonist framed as sincere, not evil
+PASS  world: game titles include Variable Star + >=4 alternates
+PASS  valerian: traffic manifest canonises >=6 non-player presences
+      12: The barge *Nine Tenths of Nothing* · Rell of the Tare · The weir on the middle carry · A Kindness · Sixth Vey, Solvary line-walker · A Verse-runner of the Nine Hundred · Ondu, sagsmith · A hush · Cutters of the Kiln Leaves · The Edgewake · A carrywren migration · Sill-crabs
+PASS  valerian: every beat lists >=2 background presences, count matches list
+      5 beats, min 3 presences/beat
+PASS  valerian: >=8 lexicon entries are peoples or trades of other leaves
+      14 entries in §4.4
+PASS  valerian: >=5 lexicon entries are flora or fauna
+      6 entries in §4.5
+PASS  valerian/botw: >=12 horizon questions enumerated
+      14 questions
+PASS  valerian: sign+lore+ambient+walk-on >= 25 lines
+      106 lines
+PASS  valerian: the world register out-numbers the largest single speaker
+      world 106 vs largest speaker 24
+PASS  valerian: >=6 walk-on cultures, each with >=3 lines
+      7 cultures {"tare":5,"nearly":5,"verse":5,"sag":5,"edge":5,"cut":5,"solv":3}
+PASS  voice: 3 named speaking characters with diction rules
+      IX, SENNAR, ADJUSTER CAMBER
+PASS  voice: do / don't list
+PASS  voice: explicit never-a-classroom rules
+PASS  voice: >=20 shippable sample lines
+      198 keyed lines
+PASS  voice: failure doctrine
+PASS  voice: mastery reads as rank
+PASS  voice: walk-on register section
+PASS  voice: localization notes for EN/ES/PL
+PASS  voice: every speaker has >=6 lines
+      {"ix":24,"sennar":18,"camber":17,"walk":33,"sys":14,"amb":41,"sign":18,"lore":14,"fail":13,"mastery":6}
+PASS  voice: 0 banned-vocabulary violations in shippable lines
+      clean across 198 lines
+PASS  voice: 0 lines over their declared word/char cap
+      all 198 lines within cap
+PASS  voice: §7 declares the caps this audit enforces
+      bark 9/56, sys 7/44, amb 7/48, walk-on 14
+PASS  voice: system + ambient voice never addresses 'you'
+      clean
+PASS  voice: exactly 3 exclamation marks in the product, all Ix's
+      3 marks on ix.first.solve.01, ix.bark.walker.01, ix.mastery.digit.01
+PASS  voice: §2 names the three exclamation keys it spends
+      ix.first.solve.01, ix.bark.walker.01, ix.mastery.digit.01
+PASS  voice: Sennar uses zero adjectives that describe a person
+      clean across 18 lines
+PASS  voice: Sennar's claim-words appear in <=3 lines (§2 budget)
+      3: sennar.house.01, sennar.praise.low, sennar.praise.high
+PASS  voice: 'ready' appears only in the documented exception line
+      sennar.threshold.01
+PASS  voice: §2 states the Sennar rule as 'about a person', not 'none'
+PASS  voice: every Nearlies line is unfinished (ends in an em dash)
+      5 lines, all cut
+PASS  voice: every Verse line is mid-line (opens and closes with an em dash)
+      5 lines
+PASS  voice: no cutter line contains the word 'I'
+      5 lines, clean
+PASS  voice: every Tare line carries a number
+      5 lines, all numbered
+PASS  voice: no walk-on exclaims
+      clean
+PASS  voice: ambient lines report, never evaluate
+      41 ambient lines, all descriptive
+PASS  cross: every load-bearing noun used in voice.md is defined in world.md
+      26 nouns defined
+PASS  cross: Quorum drops by one during Level 1 (16 004 -> 16 003)
+      world=true voice=true
+PASS  cross: canon guard's Ix arc equals the arc the beat sheet actually stages
+      beats B3:4→3 B4:3→4 B5:4 (start 4, end 4) vs guard start 4, end 4
+PASS  cross: voice.md's Ix light-change budget matches the number of changes the beats stage
+      beats stage 2; voice §5 and §7 must both say two
+PASS  cross: Beat 5 grants no Rung (canon guard agrees)
+PASS  cross: the word 'mathematics' never appears in a shippable line
+PASS  cross: every line the beat sheet quotes is a keyed line in voice.md
+      7 quoted lines, all keyed
+PASS  world: retell block is retellable (<= 260 words incl. trailer card)
+      201 words
+PASS  cross: the governing line appears in both bibles
+PASS  audit: every predicate fires on a known-bad input
+      15 tripwires all fired
+
+{
+  "worldWords": 10707,
+  "voiceWords": 6609,
+  "worldReadMin": 49,
+  "voiceReadMin": 30,
+  "lexiconEntries": 82,
+  "shippableLines": 198,
+  "perPrefix": {
+    "ix": 24,
+    "sennar": 18,
+    "camber": 17,
+    "walk": 33,
+    "sys": 14,
+    "amb": 41,
+    "sign": 18,
+    "lore": 14,
+    "fail": 13,
+    "mastery": 6
+  },
+  "valerianLines": 106,
+  "largestSingleSpeaker": 24,
+  "trafficManifest": 12,
+  "horizonQuestions": 14,
+  "walkOnCultures": {
+    "tare": 5,
+    "nearly": 5,
+    "verse": 5,
+    "sag": 5,
+    "edge": 5,
+    "cut": 5,
+    "solv": 3
+  },
+  "ixDigitArc": "B3:4→3 B4:3→4 B5:4",
+  "exclamationMarks": 3
+}
+
+63/63 checks passed

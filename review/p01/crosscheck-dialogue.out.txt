@@ -1,0 +1,14 @@
+voice.md string bank: 254 shippable strings
+world.md quoted dialogue: 9 lines
+  ok   camber.reassure.01  "Nothing is being taken from you. Things are merely
+being made easier to carry."
+  ok   camber.name.01  "We are prepared to widen the name."
+  ok   walk.solv.01  "Provisional."
+  ok   sennar.rank.first  "First Rung. Carry one term. Don't carry two."
+  ok   walk.sag.01  "I can hold it up. I can't make it true."
+  ok   sennar.rank.second  "Second Rung. You may gather."
+  ok   sennar.praise.high  "That was not adequate. That was true."
+  ok   sennar.rank.third  "Third Rung. Now go and look at the Long Division."
+  ok   sennar.farside.01  "Tell me you're ready. You'll be lying. I'll allow it."
+
+9/9 quoted lines trace to a shipped string

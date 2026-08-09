@@ -1,0 +1,515 @@
+{
+  "schemaVersion": 1,
+  "title": "Variable Star — standards register for Algebra I, Level 1",
+  "owner": "P03",
+  "compiled": "2026-08-09",
+  "notes": [
+    "Every code cited by content/knowledge-graph.json must appear here.",
+    "`text` is the standard as published by its issuing authority. Where a published example sentence follows the requirement, it is kept only when it changes the meaning of the requirement.",
+    "`verification` records how the wording here was established. Nothing is guessed: anything that could not be checked is marked NEEDS_VERIFICATION and must not be shipped in a learner-facing surface until checked."
+  ],
+  "verificationLegend": {
+    "verbatim-checked": "Full text retrieved from a primary or authoritative secondary source during compilation and reproduced.",
+    "stem-checked": "The opening clause was retrieved from an authoritative source; the remaining clause is reproduced from the published standard and is consistent with every source consulted.",
+    "NEEDS_VERIFICATION": "Wording not confirmed. Do not surface to a learner or an auditor as authoritative."
+  },
+  "frameworks": [
+    {
+      "id": "CCSS",
+      "name": "Common Core State Standards for Mathematics",
+      "jurisdiction": "US (multi-state)",
+      "version": "2010",
+      "codeShape": "<grade>.<domain>.<cluster>.<n><sub> for K-8; HS<conceptCategory>-<domain>.<cluster>.<n> for high school",
+      "source": "Common Core State Standards Initiative, thecorestandards.org; cross-checked against Illustrative Mathematics content-standards index"
+    },
+    {
+      "id": "TEKS",
+      "name": "Texas Essential Knowledge and Skills for Mathematics",
+      "jurisdiction": "Texas",
+      "version": "19 TAC Chapter 111, adopted 2012",
+      "notCcss": true,
+      "codeShape": "<grade>.<knowledge statement><student expectation letter>",
+      "source": "19 Tex. Admin. Code §§111.26 (Grade 6), 111.27 (Grade 7), 111.28 (Grade 8), 111.39 (Algebra I)"
+    },
+    {
+      "id": "FL",
+      "name": "Florida's B.E.S.T. Standards for Mathematics",
+      "jurisdiction": "Florida",
+      "version": "Adopted 2020, in effect from 2022-23",
+      "notCcss": true,
+      "codeShape": "MA.<grade>.<strand>.<standard>.<benchmark>",
+      "source": "Florida Department of Education / CPALMS benchmark pages"
+    },
+    {
+      "id": "VA",
+      "name": "Virginia Mathematics Standards of Learning",
+      "jurisdiction": "Virginia",
+      "version": "2023 revision (approved August 2023)",
+      "notCcss": true,
+      "codeShape": "<grade>.<strand>.<n> for K-8; <course>.<strand>.<n> for high school (EO = Expressions and Operations, EI = Equations and Inequalities)",
+      "source": "Virginia Department of Education, 2023 Mathematics Standards of Learning"
+    }
+  ],
+  "codes": {
+    "CCSS.6.EE.A.1": {
+      "framework": "CCSS",
+      "grade": "6",
+      "cluster": "Apply and extend previous understandings of arithmetic to algebraic expressions.",
+      "text": "Write and evaluate numerical expressions involving whole-number exponents.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.6.EE.A.2": {
+      "framework": "CCSS",
+      "grade": "6",
+      "cluster": "Apply and extend previous understandings of arithmetic to algebraic expressions.",
+      "text": "Write, read, and evaluate expressions in which letters stand for numbers.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.6.EE.A.2a": {
+      "framework": "CCSS",
+      "grade": "6",
+      "parent": "CCSS.6.EE.A.2",
+      "text": "Write expressions that record operations with numbers and with letters standing for numbers.",
+      "verification": "stem-checked"
+    },
+    "CCSS.6.EE.A.2b": {
+      "framework": "CCSS",
+      "grade": "6",
+      "parent": "CCSS.6.EE.A.2",
+      "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity.",
+      "verification": "stem-checked"
+    },
+    "CCSS.6.EE.A.2c": {
+      "framework": "CCSS",
+      "grade": "6",
+      "parent": "CCSS.6.EE.A.2",
+      "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations).",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.6.EE.A.3": {
+      "framework": "CCSS",
+      "grade": "6",
+      "text": "Apply the properties of operations to generate equivalent expressions.",
+      "publishedExample": "Apply the distributive property to the expression 3 (2 + x) to produce the equivalent expression 6 + 3x; apply the distributive property to the expression 24x + 18y to produce the equivalent expression 6 (4x + 3y); apply properties of operations to y + y + y to produce the equivalent expression 3y.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.6.EE.A.4": {
+      "framework": "CCSS",
+      "grade": "6",
+      "text": "Identify when two expressions are equivalent (i.e., when the two expressions name the same number regardless of which value is substituted into them).",
+      "verification": "stem-checked"
+    },
+    "CCSS.6.EE.B.5": {
+      "framework": "CCSS",
+      "grade": "6",
+      "cluster": "Reason about and solve one-variable equations and inequalities.",
+      "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+      "verification": "stem-checked"
+    },
+    "CCSS.6.EE.B.6": {
+      "framework": "CCSS",
+      "grade": "6",
+      "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem; understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+      "verification": "stem-checked"
+    },
+    "CCSS.6.EE.B.7": {
+      "framework": "CCSS",
+      "grade": "6",
+      "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q and px = q for cases in which p, q and x are all nonnegative rational numbers.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.6.EE.B.8": {
+      "framework": "CCSS",
+      "grade": "6",
+      "text": "Write an inequality of the form x > c or x < c to represent a constraint or condition in a real-world or mathematical problem. Recognize that inequalities of the form x > c or x < c have infinitely many solutions; represent solutions of such inequalities on number line diagrams.",
+      "verification": "stem-checked"
+    },
+    "CCSS.7.EE.A.1": {
+      "framework": "CCSS",
+      "grade": "7",
+      "cluster": "Use properties of operations to generate equivalent expressions.",
+      "text": "Apply properties of operations as strategies to add, subtract, factor, and expand linear expressions with rational coefficients.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.7.EE.A.2": {
+      "framework": "CCSS",
+      "grade": "7",
+      "text": "Understand that rewriting an expression in different forms in a problem context can shed light on the problem and how the quantities in it are related.",
+      "verification": "stem-checked"
+    },
+    "CCSS.7.EE.B.3": {
+      "framework": "CCSS",
+      "grade": "7",
+      "text": "Solve multi-step real-life and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate; and assess the reasonableness of answers using mental computation and estimation strategies.",
+      "verification": "stem-checked"
+    },
+    "CCSS.7.EE.B.4": {
+      "framework": "CCSS",
+      "grade": "7",
+      "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities.",
+      "verification": "stem-checked"
+    },
+    "CCSS.7.EE.B.4a": {
+      "framework": "CCSS",
+      "grade": "7",
+      "parent": "CCSS.7.EE.B.4",
+      "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.7.EE.B.4b": {
+      "framework": "CCSS",
+      "grade": "7",
+      "parent": "CCSS.7.EE.B.4",
+      "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem.",
+      "verification": "stem-checked"
+    },
+    "CCSS.8.EE.C.7": {
+      "framework": "CCSS",
+      "grade": "8",
+      "cluster": "Analyze and solve linear equations and pairs of simultaneous linear equations.",
+      "text": "Solve linear equations in one variable.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.8.EE.C.7a": {
+      "framework": "CCSS",
+      "grade": "8",
+      "parent": "CCSS.8.EE.C.7",
+      "text": "Give examples of linear equations in one variable with one solution, infinitely many solutions, or no solutions. Show which of these possibilities is the case by successively transforming the given equation into simpler forms, until an equivalent equation of the form x = a, a = a, or a = b results (where a and b are different numbers).",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.8.EE.C.7b": {
+      "framework": "CCSS",
+      "grade": "8",
+      "parent": "CCSS.8.EE.C.7",
+      "text": "Solve linear equations with rational number coefficients, including equations whose solutions require expanding expressions using the distributive property and collecting like terms.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.HSA-SSE.A.1": {
+      "framework": "CCSS",
+      "grade": "HS",
+      "conceptCategory": "Algebra — Seeing Structure in Expressions",
+      "text": "Interpret expressions that represent a quantity in terms of its context.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.HSA-SSE.A.1a": {
+      "framework": "CCSS",
+      "grade": "HS",
+      "parent": "CCSS.HSA-SSE.A.1",
+      "text": "Interpret parts of an expression, such as terms, factors, and coefficients.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.HSA-SSE.A.1b": {
+      "framework": "CCSS",
+      "grade": "HS",
+      "parent": "CCSS.HSA-SSE.A.1",
+      "text": "Interpret complicated expressions by viewing one or more of their parts as a single entity.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.HSA-SSE.A.2": {
+      "framework": "CCSS",
+      "grade": "HS",
+      "text": "Use the structure of an expression to identify ways to rewrite it.",
+      "verification": "stem-checked"
+    },
+    "CCSS.HSA-CED.A.1": {
+      "framework": "CCSS",
+      "grade": "HS",
+      "conceptCategory": "Algebra — Creating Equations",
+      "text": "Create equations and inequalities in one variable and use them to solve problems. Include equations arising from linear and quadratic functions, and simple rational and exponential functions.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.HSA-CED.A.3": {
+      "framework": "CCSS",
+      "grade": "HS",
+      "text": "Represent constraints by equations or inequalities, and by systems of equations and/or inequalities, and interpret solutions as viable or nonviable options in a modeling context.",
+      "verification": "stem-checked"
+    },
+    "CCSS.HSA-REI.A.1": {
+      "framework": "CCSS",
+      "grade": "HS",
+      "conceptCategory": "Algebra — Reasoning with Equations and Inequalities",
+      "text": "Explain each step in solving a simple equation as following from the equality of numbers asserted at the previous step, starting from the assumption that the original equation has a solution. Construct a viable argument to justify a solution method.",
+      "verification": "verbatim-checked"
+    },
+    "CCSS.HSA-REI.B.3": {
+      "framework": "CCSS",
+      "grade": "HS",
+      "text": "Solve linear equations and inequalities in one variable, including equations with coefficients represented by letters.",
+      "verification": "verbatim-checked"
+    },
+
+    "TEKS.6.7A": {
+      "framework": "TEKS",
+      "grade": "6",
+      "knowledgeStatement": "6.7 Expressions, equations, and relationships.",
+      "text": "generate equivalent numerical expressions using order of operations, including whole number exponents and prime factorization",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.6.7B": {
+      "framework": "TEKS",
+      "grade": "6",
+      "text": "distinguish between expressions and equations verbally, numerically, and algebraically",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.6.7C": {
+      "framework": "TEKS",
+      "grade": "6",
+      "text": "determine if two expressions are equivalent using concrete models, pictorial models, and algebraic representations",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.6.7D": {
+      "framework": "TEKS",
+      "grade": "6",
+      "text": "generate equivalent expressions using the properties of operations: inverse, identity, commutative, associative, and distributive properties",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.6.9A": {
+      "framework": "TEKS",
+      "grade": "6",
+      "text": "write one-variable, one-step equations and inequalities to represent constraints or conditions within problems",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.6.9B": {
+      "framework": "TEKS",
+      "grade": "6",
+      "text": "represent solutions for one-variable, one-step equations and inequalities on number lines",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.6.9C": {
+      "framework": "TEKS",
+      "grade": "6",
+      "text": "write corresponding real-world problems given one-variable, one-step equations or inequalities",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.6.10A": {
+      "framework": "TEKS",
+      "grade": "6",
+      "text": "model and solve one-variable, one-step equations and inequalities that represent problems, including geometric concepts",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.6.10B": {
+      "framework": "TEKS",
+      "grade": "6",
+      "text": "determine if the given value(s) make(s) one-variable, one-step equations or inequalities true",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.7.10A": {
+      "framework": "TEKS",
+      "grade": "7",
+      "text": "write one-variable, two-step equations and inequalities to represent constraints or conditions within problems",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.7.10B": {
+      "framework": "TEKS",
+      "grade": "7",
+      "text": "represent solutions for one-variable, two-step equations and inequalities on number lines",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.7.10C": {
+      "framework": "TEKS",
+      "grade": "7",
+      "text": "write a corresponding real-world problem given a one-variable, two-step equation or inequality",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.7.11A": {
+      "framework": "TEKS",
+      "grade": "7",
+      "text": "model and solve one-variable, two-step equations and inequalities",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.7.11B": {
+      "framework": "TEKS",
+      "grade": "7",
+      "text": "determine if the given value(s) make(s) one-variable, two-step equations and inequalities true",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.8.8A": {
+      "framework": "TEKS",
+      "grade": "8",
+      "text": "write one-variable equations or inequalities with variables on both sides that represent problems using rational number coefficients and constants",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.8.8B": {
+      "framework": "TEKS",
+      "grade": "8",
+      "text": "write a corresponding real-world problem when given a one-variable equation or inequality with variables on both sides of the equal sign using rational number coefficients and constants",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.8.8C": {
+      "framework": "TEKS",
+      "grade": "8",
+      "text": "model and solve one-variable equations with variables on both sides of the equal sign that represent mathematical and real-world problems using rational number coefficients and constants",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.A.5A": {
+      "framework": "TEKS",
+      "grade": "Algebra I",
+      "text": "solve linear equations in one variable, including those for which the application of the distributive property is necessary and for which variables are included on both sides",
+      "verification": "verbatim-checked"
+    },
+    "TEKS.A.5B": {
+      "framework": "TEKS",
+      "grade": "Algebra I",
+      "text": "solve linear inequalities in one variable, including those for which the application of the distributive property is necessary and for which variables are included on both sides",
+      "verification": "verbatim-checked"
+    },
+
+    "FL.MA.6.AR.1.1": {
+      "framework": "FL",
+      "grade": "6",
+      "text": "Given a mathematical or real-world context, translate written descriptions into algebraic expressions and translate algebraic expressions into written descriptions.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.6.AR.1.2": {
+      "framework": "FL",
+      "grade": "6",
+      "text": "Translate a real-world written description into an algebraic inequality in the form of x > a, x < a, x ≥ a or x ≤ a. Represent the inequality on a number line.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.6.AR.1.3": {
+      "framework": "FL",
+      "grade": "6",
+      "text": "Evaluate algebraic expressions using substitution and order of operations.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.6.AR.1.4": {
+      "framework": "FL",
+      "grade": "6",
+      "text": "Apply the properties of operations to generate equivalent algebraic expressions with integer coefficients.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.6.AR.2.1": {
+      "framework": "FL",
+      "grade": "6",
+      "text": "Given an equation or inequality and a specified set of integer values, determine which values make the equation or inequality true or false.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.6.AR.2.2": {
+      "framework": "FL",
+      "grade": "6",
+      "text": "Write and solve one-step equations in one variable within a mathematical or real-world context using addition and subtraction, where all terms and solutions are integers.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.6.AR.2.3": {
+      "framework": "FL",
+      "grade": "6",
+      "text": "Write and solve one-step equations in one variable within a mathematical or real-world context using multiplication and division, where all terms and solutions are integers.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.7.AR.1.1": {
+      "framework": "FL",
+      "grade": "7",
+      "text": "Apply properties of operations to add and subtract linear expressions with rational coefficients.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.7.AR.1.2": {
+      "framework": "FL",
+      "grade": "7",
+      "text": "Determine whether two linear expressions are equivalent.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.7.AR.2.1": {
+      "framework": "FL",
+      "grade": "7",
+      "text": "Write and solve one-step inequalities in one variable within a mathematical context and represent solutions algebraically or graphically.",
+      "verification": "stem-checked"
+    },
+    "FL.MA.7.AR.2.2": {
+      "framework": "FL",
+      "grade": "7",
+      "text": "Write and solve two-step equations in one variable within a mathematical or real-world context, where all terms are rational numbers.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.8.AR.2.1": {
+      "framework": "FL",
+      "grade": "8",
+      "text": "Solve multi-step linear equations in one variable, with rational number coefficients. Include equations with variables on both sides.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.8.AR.2.2": {
+      "framework": "FL",
+      "grade": "8",
+      "text": "Solve two-step linear inequalities in one variable and represent solutions algebraically and graphically.",
+      "verification": "stem-checked"
+    },
+    "FL.MA.912.AR.1.1": {
+      "framework": "FL",
+      "grade": "912",
+      "text": "Identify and interpret parts of an equation or expression that represent a quantity in terms of a mathematical or real-world context, including viewing one or more of its parts as a single entity.",
+      "verification": "stem-checked"
+    },
+    "FL.MA.912.AR.2.1": {
+      "framework": "FL",
+      "grade": "912",
+      "text": "Given a real-world context, write and solve one-variable multi-step linear equations.",
+      "verification": "verbatim-checked"
+    },
+    "FL.MA.912.AR.2.6": {
+      "framework": "FL",
+      "grade": "912",
+      "text": "Given a mathematical or real-world context, write and solve one-variable linear inequalities, including compound inequalities. Represent solutions algebraically or graphically.",
+      "verification": "verbatim-checked"
+    },
+
+    "VA.6.PFA.3": {
+      "framework": "VA",
+      "grade": "6",
+      "text": "The student will write and solve one-step linear equations in one variable, including contextual problems that require the solution of a one-step linear equation in one variable.",
+      "verification": "verbatim-checked"
+    },
+    "VA.6.PFA.4": {
+      "framework": "VA",
+      "grade": "6",
+      "text": "The student will represent a contextual situation using a linear inequality in one variable with symbols and graphs on a number line.",
+      "verification": "verbatim-checked"
+    },
+    "VA.7.PFA.2": {
+      "framework": "VA",
+      "grade": "7",
+      "text": "The student will simplify numerical expressions, simplify and generate equivalent algebraic expressions in one variable, and evaluate algebraic expressions for given replacement values of the variables.",
+      "verification": "verbatim-checked"
+    },
+    "VA.7.PFA.3": {
+      "framework": "VA",
+      "grade": "7",
+      "text": "The student will write and solve two-step linear equations in one variable, including problems in context, that require the solution of a two-step linear equation in one variable.",
+      "verification": "verbatim-checked"
+    },
+    "VA.7.PFA.4": {
+      "framework": "VA",
+      "grade": "7",
+      "text": "The student will write and solve one- and two-step linear inequalities in one variable, including problems in context, that require the solution of a one- and two-step linear inequality in one variable.",
+      "verification": "verbatim-checked"
+    },
+    "VA.8.PFA.1": {
+      "framework": "VA",
+      "grade": "8",
+      "text": "The student will represent, simplify, and generate equivalent algebraic expressions in one variable.",
+      "verification": "verbatim-checked"
+    },
+    "VA.8.PFA.4": {
+      "framework": "VA",
+      "grade": "8",
+      "text": "The student will write and solve multistep linear equations in one variable, including problems in context that require the solution of a multistep linear equation in one variable.",
+      "verification": "verbatim-checked"
+    },
+    "VA.8.PFA.5": {
+      "framework": "VA",
+      "grade": "8",
+      "text": "The student will write and solve multistep linear inequalities in one variable, including problems in context that require the solution of a multistep linear inequality in one variable.",
+      "verification": "verbatim-checked"
+    },
+    "VA.A.EO.1": {
+      "framework": "VA",
+      "grade": "Algebra 1",
+      "text": "The student will represent verbal quantitative situations algebraically and evaluate these expressions for given replacement values of the variables.",
+      "verification": "verbatim-checked"
+    },
+    "VA.A.EI.1": {
+      "framework": "VA",
+      "grade": "Algebra 1",
+      "text": "The student will represent, solve, explain, and interpret the solution to multistep linear equations and inequalities in one variable and literal equations for a specified variable.",
+      "verification": "verbatim-checked"
+    }
+  }
+}

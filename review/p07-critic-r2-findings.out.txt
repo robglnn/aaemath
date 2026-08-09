@@ -1,0 +1,48 @@
+P07 critic, round 2 — independently regenerated measurements (runs b, c, d).
+Every line below is console output from review/p07-critic-r2b|c|d.mjs, written by the critic.
+
+--- run B (p07-critic-r2b.mjs) --------------------------------------------------
+A_TAPS_CLEAN {"ctx0":"play","jumps":10,"total":20}   10 pad taps -> 10 jump down edges
+B_FIVE_IN_ONE_STEP {"downsSeenFromFiveInstantTaps":4}   MAX_QUEUE=8 drops the 5th pair
+C_START_DEVICE pad
+C_AFTER_PAD {"device":"pad","glyph":"X-cross","log":[{"kind":"pad","style":"playstation","t":1.717}]}
+C_AFTER_REAL_KEY {"device":"kbm","glyph":"Space","log":[...,{"kind":"kbm","style":"kbm","t":2.017}],
+                  "switches":2,"switchedAt":2.0167}
+C_AFTER_MOUSE {"device":"kbm"}
+C_PAD_TAKES_BACK {"device":"kbm","glyph":"Space"}   <-- pad pressed B and did NOT reclaim
+D_SWAP_VS_INVERT {"setInvert":true,"mid":{"axis":3,"invert":true},
+                  "afterSouthpaw":{"x":{"axis":0,"invert":false},"y":{"axis":1,"invert":false}},
+                  "afterSouthpawOff":{"x":{"axis":2,"invert":false},"y":{"axis":3,"invert":false}}}
+                  <-- swapSticks() silently discards a custom per-stick invert, both ways
+E_DELIBERATE_HOLD zeroAtCentre [0,0,0,0]; hold at lx=0.45 kept mag 0.222 for 3.3 s (safe,
+                  0.45 > padRest.maxOffset 0.35). Run A showed a dead-still hold at lx=0.32
+                  IS captured as the new zero after ~2 s and the player's walk dies.
+F_CONTEXT_CONFLICTS {"playOnlyOntoBuildOnly":{"ok":true,"conflicts":[]},
+                     "sameContext":{"ok":false,"reason":"conflict","conflicts":["buildToggle"]}}
+G_KBM {"move":{"x":0,"y":1,"mag":1,"source":"kbm"},"loco":3.0119}
+CONSOLE_ERRORS []
+
+--- run C (p07-critic-r2c.mjs) — instrumented _wake trace ----------------------
+1_PAD         {"device":"pad","simTime":0.5,"deviceAt":0.1833}
+2_KEY         {"device":"pad","simTime":0.8167,"deviceAt":0.1833}   real trusted W keydown
+3_PAD_AGAIN   {"device":"pad","simTime":1.1}
+4_PAD_STICK   {"device":"pad","simTime":1.3667}
+TRACE [
+  {"kind":"pad","device":"kbm","simTime":0.1833,"gap":1e9,"dwell":0.35},     -> accepted
+  {"kind":"kbm","device":"pad","simTime":0.5,"deviceAt":0.1833,"gap":0.3167} -> REFUSED, dropped
+  {"kind":"pad","device":"pad","simTime":0.8333,"gap":0.65},
+  {"kind":"pad","device":"pad","simTime":1.1,"gap":0.9167},
+  {"kind":"pad","device":"pad","simTime":1.2333,"gap":1.05}
+]
+The keyboard asks exactly once per keydown. Refused inside the dwell = refused forever.
+The pad asks from every _ingest (250 Hz), so it always retries. Asymmetric by construction.
+
+--- run D (p07-critic-r2d.mjs) — REAL navigator.getGamepads(), no synthetic bypass ---
+HW_SEEN   {"connected":true,"samples":33,"edges":0,"zero":[0,0,0,0],"zeroCount":1}
+HW_MOVE   {"move":{"x":0,"y":1,"mag":1,"source":"pad"},"padVirtual":false,
+           "padId":"Xbox 360 Controller (XINPUT STANDARD GAMEPAD)","style":"xbox","speed":5.6}
+HW_BUTTON_DOWN {"held":true,"buffered":true,"value":1,"chords":["Pad:A"]}
+HW_BUTTON_AFTER_RELEASE {"jump":null,"edges":4}
+HW_SUBFRAME_TAP edges 4 -> 6 : an 8 ms tap produced both edges, so the 250 Hz timer really
+           does catch a press shorter than one rendered frame on the hardware path.
+CONSOLE_ERRORS []

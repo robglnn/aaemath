@@ -1,0 +1,47 @@
+
+[1] raw scan found 187 keyed lines
+  ✓ line count
+
+[2] parsed 10 cap rules straight out of voice.md §7
+      *.bark.* -> 9w / 56ch
+      sys.* mastery.* -> 7w / 44ch
+      amb.* -> 7w / 48ch
+      fail.* -> 12w / —ch
+      ix.* -> 16w / —ch
+      sennar.* -> 12w / —ch
+      camber.* -> 24w / —ch
+      walk.* -> 14w / —ch
+      sign.* -> 7w / —ch
+      lore.* -> exempt
+  ✓ 173 capped lines all inside the caps the document publishes
+
+[3] banned vocabulary across 187 lines (EN + ES/PL equivalents)
+  ✓ clean
+
+[4] orphan proper nouns used in shippable lines but never in world.md
+      (a proper noun = a capitalised word that does not open its sentence)
+  ✓ every proper noun spoken in the product is defined in the world bible
+
+[5] register ledger
+      {"ix":24,"sennar":18,"camber":17,"walk":33,"sys":14,"amb":41,"sign":18,"lore":14,"fail":2,"mastery":6}
+      Valerian (amb+sign+lore+walk) = 106; largest single speaker = 24
+  ✓ Valerian register = 106 lines
+  ✓ Valerian register out-numbers every single speaker
+
+[6] cross-file number agreement
+  ✓ Quorum start 16 004
+  ✓ Quorum after the Bell 16 003
+  ✓ Tolerance ±1 during the level
+  ✓ Tolerance ±2 in the closing notice
+  ✓ Ix ends Level 1 at four
+  ✓ voice.md agrees: two light-changes
+  ✓ no 'ends at five' left anywhere
+  ✓ no 'about to be five' left in the beats
+  ✓ no 'twice in Level 1' digit-return budget left
+
+[7] round-1 rejected lines are gone
+  ✓ ix.reassure.01 (meta-commentary on learning)
+  ✓ ix.bark.idle.07 old text ('Careful. That carry's fast today.')
+  ✓ sys.claim.drift.01 second sentence ('Close it again.')
+
+CROSS-CHECK CLEAN

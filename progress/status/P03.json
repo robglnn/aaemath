@@ -1,0 +1,9 @@
+{
+  "id": "P03",
+  "state": "building",
+  "round": 3,
+  "gap": "like-terms-id (band 2) is unlocked by expr-anatomy alone; its ancestor closure never teaches what x^2 means, yet its own description and its exponent-ignored-in-matching misconception serve an item sorting a*x, b*x^2, c*x, d*x^2, e. distribute-variable correctly requires oo-structure for identical reasoning, so the graph contradicts itself.",
+  "note": "Round 3: fixing like-terms-id prerequisite to oo-structure, adding exponent-closure lint, gate fields, cycle-index rule, TEKS count correction",
+  "evidence": [],
+  "updated": "2026-08-09T21:14:43.791Z"
+}

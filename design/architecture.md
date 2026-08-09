@@ -67,7 +67,13 @@ Add new names here when you introduce them; never invent a second name for an ex
 `player:jump {charged}` · `player:land {impact}` · `player:traverse {verb, phase}`
 
 **Camera** — `camera:shake {amount, seconds}` · `camera:fov {target, seconds}` ·
-`camera:focus {target, seconds}` · `camera:mode {id}`
+`camera:focus {target, seconds}` · `camera:mode {id, opacity}`
+
+`camera:mode` is two-way. Inbound (`{id:"follow"|"locked"}`) puts the rig in a control mode.
+Outbound the rig emits `{id:"follow"|"tight", opacity, source:"camera"}` when the boom collapses
+against geometry: `opacity` is how visible the avatar should be so the camera never has to stand
+inside a wall to keep it in shot. Listeners that only care about the inbound direction should
+ignore payloads carrying `source:"camera"`.
 
 **World** — `world:ready` · `world:region {id, entered}` · `world:interact {id, kind}`
 

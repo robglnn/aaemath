@@ -1,0 +1,9 @@
+{
+  "id": "P02",
+  "state": "building",
+  "round": 3,
+  "gap": "Art bible is a still-life bible: every rule and all 37 checks are computed on one static PNG, so nothing constrains how the look behaves in motion or from any camera but the reference's",
+  "note": "Round 3: adding motion/temporal law, pipeline-stage declarations, fixing auditor B1a null check, reconciling constants",
+  "evidence": [],
+  "updated": "2026-08-09T21:13:21.807Z"
+}

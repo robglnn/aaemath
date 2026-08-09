@@ -1,0 +1,50 @@
+
+art-audit  review\p02-crops\negative-control.png  1600x900
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+CENSUS — frame-wide statistics
+ ok   L1   median luminance (p50)                0.3381  [0.3 .. 0.4]       exposure
+FAIL  L2   shadow shoulder (p25)                 0.3136  [0.11 .. 0.19]     toe must not crush
+FAIL  L3   highlight shoulder (p90)              0.5802  [0.6 .. 0.72]      
+ ok   L4   mean luminance                        0.3756  [0.304 .. 0.40399999999999997] 
+FAIL  L5   mean saturation                       0.4038  [0.263 .. 0.363]   
+ ok   L6   clipped highlights (Y>=0.99)           0.008  <= 0.02            only emitters, sun, glyphs
+FAIL  L7   crushed blacks (Y<=0.01)              0.0549  <= 0.04            
+FAIL  C1   muted share                           0.4145  [0.46 .. 0.62]     S<0.30
+ ok   C2   warm share                            0.3393  [0.26 .. 0.36]     hue 0-60/320-360, S>=0.30
+ ok   C3   resonance share                       0.1611  [0.1 .. 0.18]      hue 150-215, S>=0.30
+FAIL  C4   hot share                             0.4125  [0.08 .. 0.16]     S>=0.55
+FAIL  C5   HOT RESONANCE share                   0.0747  [0.02 .. 0.05]     the cyan budget
+ ok   C6   warm : resonance ratio                 2.106  [1.8 .. 2.6]       warm rock must dominate
+FAIL  C7   sky third muted share                    0.5  [0.85 .. 1]        the sky carries hue, not saturation
+FAIL  C8   bottom third resonance share          0.1379  [0.18 .. 0.36]     
+ ok   C9   danger share                               0  <= 0.005           transient only
+ ok   C10  success share                              0  <= 0.005           transient only
+FAIL  C11  off-language hue share                0.0844  <= 0.02            hue 60-90 / 215-320 must stay empty
+FAIL  X1   shadow cool share                      0.002  [0.38 .. 0.8]      hue 185-320 among 0.02<=Y<=0.12, S>=0.10 (n=36679); warm 0.9913
+FAIL  D1   acutance foreground/distance          19.931  [1.8 .. 6]         depth of field must exist
+ ok   D2   acutance foreground/midground          1.549  [1.5 .. 5]         focus plane is near
+ ok   D3   saturation rises with depth           0.2455  >= 0.15            top 0.3087 -> bottom 0.5542
+FAIL  D4   acutance hero/midground                2.492  [2.5 .. 8]         hero is the focus plane
+ ok   F1   dark framing mass in border            0.185  >= 0.06            the frame is anchored by geometry, not a vignette
+FAIL  S1   sky gradient distinct codes                4  >= 8               codes 4/4/4 over span ΔY 0.0629
+FAIL  S2   longest flat run in sky column            38  <= 8               banding detector — dither the ramp
+ ok   H1   hero/surround luminance separation    0.1041  >= 0.1             hero 0.4542 vs surround 0.5583
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+SOLVED CONSTANTS — the numbers a builder types
+FAIL  U1a  scrim plateau transmission                 0  [0.06 .. 0.2]      band y 0.8367–0.9467, 288 columns; alpha 0.8593
+FAIL  U1b  scrim ends ramp out (frame widths)    0.0325  >= 0.05            plate x 0.2525–0.7325, ramps [0.0475,0.0325]; a hard vertical edge scores ~0
+FAIL  V1a  veil compression slope                0.0114  [0.3 .. 0.72]      n=75 pairs over 4 edges, background spread 1.1469, r² 0.0047
+FAIL  V1b  veil fixed point                      0.9381  [0.4 .. 0.5]       Y_in = 0.0114·Y_bg + 0.9274; additive ⇒ slope≈1, flat plate ⇒ slope≈0
+ ok   V1c  veil fit is identifiable              1.1469  >= 0.2             needs ≥10 pairs over ≥2 edges spanning ≥0.2 of luminance
+ ok   B1a  emitter peak in emissive mask         0.9692  >= 0.9             mask hue 150–215, S≥0.06, 275908 px
+FAIL  B1b  blown emitter cores in frame         0.03042  [0.0002 .. 0.006]  an emissive with no white-hot core reads as a painted decal
+FAIL  K1   key : fill on marked rock              2.064  6.2 ± 1.6          lit 0.5721 / shadow 0.2772 on boxes [0.87,0.481,0.91,0.489] , [0.872,0.598,0.902,0.612]
+FAIL  I1a  ink median width (px @2752)             6.88  [2 .. 6]           Y ≤ 0.012, n=335; p25 6.88, p75 6.88
+FAIL  I1b  ink tapers (p90 > p50)                     0  > 0                p90 6.88 vs p50 6.88; a uniform outline scores 0
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+12/27 census · 2/10 solved
+
+percentiles  {"p01":0,"p05":0,"p10":0.0353,"p25":0.3136,"p50":0.3381,"p75":0.4879,"p90":0.5802,"p95":0.95,"p99":0.9815}
+share        {"muted":0.4145,"warm":0.3393,"resonance":0.1611,"bridge":0.0007,"other":0.0844,"hot":0.4125,"hotResonance":0.0747,"danger":0,"success":0}
+acutance     {"foreground":0.07255,"midground":0.04685,"distance":0.00364,"hero":0.11673,"heroCoreBox":[0.465,0.386,0.535,0.614]}  satByThird [0.3087,0.3493,0.5542]
+scrim        [[0.005,1],[0.025,1],[0.045,1],[0.065,0.118],[0.085,0.752],[0.105,1],[0.125,1],[0.145,0.56],[0.165,1.001],[0.185,1],[0.205,1],[0.27,0],[0.29,0],[0.3125,0],[0.3325,0],[0.3525,0],[0.3725,0],[0.445,0],[0.465,0],[0.485,0],[0.505,0],[0.525,0],[0.545,0],[0.5675,0],[0.6225,0],[0.6425,0],[0.6625,0],[0.6825,0],[0.7075,0],[0.775,1],[0.8125,0.561],[0.8525,0.494],[0.8725,0.717],[0.8925,0.758],[0.9175,0.259],[0.9825,0.608]]

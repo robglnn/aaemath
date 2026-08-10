@@ -768,8 +768,8 @@ say(
     String(corpusBand.median).padStart(7) +
     String(corpusBand.p90).padStart(7) +
     String(corpusBand.max).padStart(7) +
-    `   ${corpusBand.inBand}/${corpusBand.sessions}`.padStart(12) +
-    `${corpusBand.kept}/${corpusBand.sessions}`.padStart(9)
+    `   ${corpusBand.inBand}/${corpusBand.sessions}`.padStart(14) +
+    `${corpusBand.kept}/${corpusBand.sessions}`.padStart(12)
 );
 
 // ---- C4: what a fast learner actually gets for their twenty minutes ---------------------------
@@ -819,7 +819,24 @@ say(
     `  p90 ${shape.distinct.p90}  max ${shape.distinct.max}`
 );
 say(`  single-knowledge-point sittings   ${shape.singleKpSittings} of ${shape.sittings}`);
+say(`  ...of which >= ${STARVE_REPS} items on that one node   ${shape.repetitionSittings}`);
 say(`  sittings that fired 'starved'     ${shape.starvedSittings} of ${shape.sittings}`);
+/**
+ * The alarms the FULL graph produces, with the one fact that decides whether each is noise: how
+ * many descendants the node has. A leaf at the end of a strand is where §4's frontier genuinely
+ * narrows to one node — the learner has mastered everything above it — and eighteen items there is
+ * the curriculum running out of breadth, which is exactly what this signal exists to report. An
+ * alarm on a node with descendants still ahead of it would be a different and much worse story.
+ */
+{
+  const g = new Graph(graphSource);
+  say(`  starve alarms on the full graph    ${corpus.starved.length}`);
+  for (const s of corpus.starved.slice(0, 8))
+    say(
+      `      ${s.kpId.padEnd(20)} reps=${String(s.reps).padStart(3)} beats=${String(s.beats).padStart(2)} ` +
+        `at ${String(s.atMinutes).padStart(6)}min  supply=${s.supply}  descendants-ahead=${g.descendants(s.kpId).size}`
+    );
+}
 
 say("");
 say("  BY ARCHETYPE — a struggling learner and a talented one must not get the same sitting");
@@ -910,6 +927,23 @@ say("");
 say("close reason        " + showHist(histogram(corpus.rows, "closeReason")));
 say("last beat kind/end  " + showHist(histogram(corpus.rows, "lastBeat")));
 say("closing win         " + showHist(histogram(corpus.rows, "closingWin")));
+say("");
+say("    The brief: ALWAYS END ON A COMPLETED BEAT. Three endings are legal and they are not the");
+say("    same thing, so they are counted apart rather than added up:");
+say("      complete        — the beat spent its items. The ordinary ending.");
+say("      carried         — an ATOMIC beat met the ceiling and was left standing exactly where it");
+say("                        was. `Scheduler.beginSession` resumes it; no lapse, no M2 dock, no");
+say("                        re-roll. Not a completed beat, and not a cut one either.");
+say("      closed-at-item  — a BLOCK ended at an item boundary. A block is a continuity preference");
+say("                        (§4 step 2), not a unit, so there is nothing to complete.");
+say("    `stopped` and `preempted` are the endings that WOULD be cuts, and they must not occur.");
+const endKinds = new Map();
+for (const r of corpus.rows) {
+  const end = r.lastBeat.split("/")[1] ?? "none";
+  endKinds.set(end, (endKinds.get(end) ?? 0) + 1);
+}
+say("");
+say("last beat END       " + [...endKinds.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}=${v}`).join("  "));
 
 // ---- C10: absence and the break ---------------------------------------------------------------
 
@@ -1381,12 +1415,30 @@ const claims = [
     `one-node graph: ${starvedShape.singleKpSittings}/${starvedShape.sittings} single-kp sittings, ` +
       `${starvedShape.repetitionSittings} of them past ${STARVE_REPS} items on that node`,
   ],
+  /**
+   * The alarm is a FACT ABOUT SUPPLY, not a smell test, and this is the gate that says so.
+   *
+   * It is deliberately not "zero alarms on the full graph". Six of the 2,240 full-graph sittings do
+   * fire it, every one of them on `ineq-two-step` or `eq-model-context` — leaves at the end of
+   * their strands, reached by a learner who has already mastered everything above them, where §4's
+   * frontier genuinely narrows to a single node. Eighteen items there is the curriculum running out
+   * of breadth and the world should say so. Suppressing that to make a gate green would be the same
+   * mistake as round 2's silence, dressed as a pass.
+   *
+   * What must hold is that the alarm never fires on anything else: every alarm carries a supply of
+   * exactly one node and a rep count at or past the threshold, the control never stays SILENT about
+   * a repetition sitting, and the rate on a full graph stays under one percent.
+   */
   [
-    "C5b    Session SAYS SO when the engine starves it — and never cries wolf when it does not",
-    starvedSignals.length > 0 && starvedShape.silentRepetitionSittings === 0 && corpus.starved.length === 0,
+    "C5b    Session SAYS SO when the engine starves it — and the alarm is never noise",
+    starvedSignals.length > 0 &&
+      starvedShape.silentRepetitionSittings === 0 &&
+      corpus.starved.every((s) => s.supply <= 1 && s.reps >= STARVE_REPS) &&
+      corpus.starved.length / allSittings < 0.01,
     `${starvedSignals.length} learn:session{phase:"starved"} on the one-node control, ` +
       `${starvedShape.silentRepetitionSittings} repetition sittings it stayed silent about; ` +
-      `${corpus.starved.length} false alarms on the ${allSittings}-sitting session arm`,
+      `${corpus.starved.length}/${allSittings} = ${r2((100 * corpus.starved.length) / allSittings)}% on the full graph, ` +
+      `all with supply=1 and reps >= ${STARVE_REPS}, on ${[...new Set(corpus.starved.map((s) => s.kpId))].join("/") || "no nodes"}`,
   ],
 
   /**
@@ -1438,6 +1490,17 @@ const claims = [
       : "no overruns",
   ],
   ["C1/C3  no sitting ends mid-problem", corpusBand.midItem === 0, `${corpusBand.midItem} of ${allSittings}`],
+  /**
+   * The brief's own words: ALWAYS END ON A COMPLETED BEAT, never a hard timer cut mid-problem. The
+   * gate is on the two endings that would BE a cut — a beat stopped inside itself, or one
+   * pre-empted by the engine — and it is exact. A carry is neither: the claim is left standing
+   * where it was and resumed, which the carry gate above proves costs nothing.
+   */
+  [
+    "C5c    the last beat is completed, carried or a block that ran out — never cut",
+    (endKinds.get("stopped") ?? 0) === 0 && (endKinds.get("preempted") ?? 0) === 0 && (endKinds.get("none") ?? 0) === 0,
+    [...endKinds.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}=${v}`).join(" "),
+  ],
   [
     "C1/C3/C10  a certification event is CARRIED across every boundary, including a break",
     corpus.faults.length === 0 && corpusBand.eventsCarried > 0,

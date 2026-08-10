@@ -1051,6 +1051,12 @@ export class Mastery {
 
     this.theta = this.M.ability.theta0;
     this.responses = 0;
+    /**
+     * Responses THIS engine instance has priced. Distinct from `stats.items`, which `restore()`
+     * copies from the snapshot: the delivery declaration is guarded on this one so a resumed
+     * session can still be told which picker it has. See `declareFamilyReporting`.
+     */
+    this._pricedHere = 0;
     this.session = 0;
     this.sessionStartedAt = null;
     /** Consecutive failed test-outs, learner-wide. See `TEST_OUT.stopAfterConsecutiveFailures`. */
@@ -1162,10 +1168,21 @@ export class Mastery {
       this.familyReportingSource = source;
       return this.familyReporting;
     }
-    if (this.stats.items > 0) {
+    /**
+     * `_pricedHere`, NOT `stats.items` — and the difference is a resumed session.
+     *
+     * `restore()` copies the persisted `stats` wholesale, so a returning learner arrives with
+     * `stats.items` in the hundreds before this engine has priced anything. Guarding on that would
+     * refuse the declaration `Scheduler.attachBank()` makes one boot module later and leave the
+     * shipped game permanently in the restrictive delivery — a resume-only regression, which is
+     * exactly the kind that reaches a player and never a test. The thing that must not be re-priced
+     * is evidence THIS instance scored.
+     */
+    if (this._pricedHere > 0) {
       this._pushIssue(
-        `DELIVERY: refused to change familyReporting to ${next} from "${source}" after ${this.stats.items} ` +
-          `response(s) had already been priced. Declare the delivery before the first item, not during the run.`
+        `DELIVERY: refused to change familyReporting to ${next} from "${source}" after ${this._pricedHere} ` +
+          `response(s) had already been priced by this engine. Declare the delivery before the first item, ` +
+          `not during the run.`
       );
       return this.familyReporting;
     }
@@ -1904,6 +1921,7 @@ export class Mastery {
 
     s.attempts += 1;
     this.stats.items += 1;
+    this._pricedHere += 1;
 
     // What the world actually did, per response, never inferred from the phase name alone —
     // P18 may surface help inside `solo` for an accessibility reason and the gate has to see it.

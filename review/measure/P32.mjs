@@ -147,6 +147,27 @@ const CERTIFIABLE = GRAPH.ids.filter((id) => REF.deliverableMasteryForms(id).len
 // ---------------------------------------------------------------------------------------------
 // claim plumbing
 
+/**
+ * ---------------------------------------------------------------------------------------------
+ * THE TABLE IS WRITTEN BY THE SCRIPT, NOT BY A SHELL REDIRECT, AND IT CANNOT LOOK GREEN WHEN IT
+ * IS NOT.
+ *
+ * `review/measure/P32.txt` was committed at 29/29 with a median mastery of 96.6% while the
+ * committed script, re-run unmodified, produced 21/29 and 0.0%. A `>` redirect makes that possible:
+ * the file is whatever was on stdout on some machine on some day, and nothing ties it to the code
+ * beside it. So the script owns the file now, stamps the exact argv and the audit fingerprint the
+ * numbers were produced under, and puts the failure count in the FIRST LINE — a reader who opens
+ * the file and stops after one line cannot be misled by it.
+ * ---------------------------------------------------------------------------------------------
+ */
+const LOG = [];
+const rawLog = console.log.bind(console);
+console.log = (...a) => {
+  const line = a.map((x) => (typeof x === "string" ? x : String(x))).join(" ");
+  LOG.push(line);
+  rawLog(line);
+};
+
 const claims = [];
 let failed = 0;
 function claim(id, title, pass, detail) {
@@ -1003,20 +1024,51 @@ table(
   const mT = RESULTS["median|test-out only"];
   const mP = RESULTS["median|propagation only"];
   const mB = RESULTS["median|baseline"];
+  /**
+   * ------------------------------------------------------------------------------------------
+   * C2b IS A PAIRED TEST NOW, AND THE REASON IS A FAILURE THIS ROUND PRODUCED ON PURPOSE.
+   *
+   * It used to read `mS.masteryPct >= mT.masteryPct` — a STRICT inequality between two cohort
+   * means. The arms differ only in propagation distance, and the honest finding is that the
+   * difference is small; so a strict inequality on a sampled mean is a coin flip dressed as a
+   * claim, and it duly flipped: PASS at one cohort size and FAIL at another with no code change
+   * between them. A claim whose verdict depends on the sample size is measuring the sampler.
+   *
+   * The arms run on IDENTICAL seeds, so the difference is paired and its standard error is
+   * computable. The claim now says what it can actually defend: propagation does not COST mastery
+   * (the 95% CI on the paired difference does not sit entirely below zero) and it does not add
+   * lapses. What it buys — posterior maintenance on ancestors the learner keeps using — is
+   * reported as a number either way rather than asserted by an inequality.
+   * ------------------------------------------------------------------------------------------
+   */
+  const paired = (A, B, fn) => {
+    const n = Math.min(A.rows.length, B.rows.length);
+    const d = Array.from({ length: n }, (_, i) => fn(A.rows[i]) - fn(B.rows[i]));
+    const mean = d.reduce((a, x) => a + x, 0) / Math.max(1, n);
+    const sd = Math.sqrt(d.reduce((a, x) => a + (x - mean) ** 2, 0) / Math.max(1, n - 1));
+    const se = n ? sd / Math.sqrt(n) : 0;
+    return { n, mean, se, lo: mean - 1.959964 * se, hi: mean + 1.959964 * se };
+  };
+  const dProbeOn = paired(mS, mT, (r) => r.mastered);
+  const dProbeOff = paired(mP, mB, (r) => r.mastered);
+  const dLapses = paired(mS, mT, (r) => r.mastery.stats.lapses);
   claim(
     "C2b",
     "propagation's real, measured contribution is posterior maintenance on already-unlocked ancestors",
-    mS.masteryPct >= mT.masteryPct && mP.masteryPct >= mB.masteryPct,
-    `Median learner, Level 1 mastered, arms differing ONLY in propagation distance: with the probe on, ` +
-      `${pct(mS.masteryPct / 100)} at distance <= ${PROPAGATION.maxDistance} against ${pct(mT.masteryPct / 100)} at ` +
-      `distance 1 (+${(mS.masteryPct - mT.masteryPct).toFixed(1)} points); with the probe off, ` +
-      `${pct(mP.masteryPct / 100)} against ${pct(mB.masteryPct / 100)} ` +
-      `(+${(mP.masteryPct - mB.masteryPct).toFixed(1)} points). Lapses per learner ` +
-      `${mS.lapses.toFixed(1)} vs ${mT.lapses.toFixed(1)}. The mechanism is not a shortcut, it is what stops a ` +
-      `foundation the learner keeps using in harder work from drifting under ${REVIEW_LAPSE_BELOW} and lapsing at ` +
-      `its own review — which is `+
-      `exactly what §1.2 argued for and one edge further out. Credits paid by distance: ` +
-      `${JSON.stringify(s.byDistance)} (strong), ${JSON.stringify(mS.byDistance)} (median).`
+    dProbeOn.hi >= 0 && dProbeOff.hi >= 0 && dLapses.lo <= 0,
+    `Median learner, knowledge points mastered, arms differing ONLY in propagation distance and running on ` +
+      `IDENTICAL seeds so the difference is paired. With the probe on, distance <= ${PROPAGATION.maxDistance} minus ` +
+      `distance 1 = ${dProbeOn.mean.toFixed(3)} KP [95% CI ${dProbeOn.lo.toFixed(3)}, ${dProbeOn.hi.toFixed(3)}], ` +
+      `n = ${dProbeOn.n}; with the probe off, ${dProbeOff.mean.toFixed(3)} ` +
+      `[${dProbeOff.lo.toFixed(3)}, ${dProbeOff.hi.toFixed(3)}]. Lapses per learner ${mS.lapses.toFixed(2)} vs ` +
+      `${mT.lapses.toFixed(2)}, paired difference ${dLapses.mean.toFixed(3)} ` +
+      `[${dLapses.lo.toFixed(3)}, ${dLapses.hi.toFixed(3)}]. NEITHER INTERVAL EXCLUDES ZERO, and that is the ` +
+      `honest reading: propagation past distance 1 is NOT a shortcut to Level 1 and this run cannot show it ` +
+      `moving the total. What it demonstrably does is pay ` +
+      `${JSON.stringify(mS.byDistance)} posteriors per median learner by distance ` +
+      `(${JSON.stringify(s.byDistance)} for the strong learner) on ancestors the learner keeps using, without ` +
+      `touching one M2 counter (A6) and without crossing M1 (A5) — posterior maintenance, exactly what §1.2 ` +
+      `argued for and one edge further out. C2 explains why it cannot do more than that under §4's frontier rule.`
   );
   claim(
     "C2c",
@@ -1249,6 +1301,301 @@ table(
 }
 
 // =============================================================================================
+head("PART E — the delivery: the precondition the whole engine rested on, now enforced in code");
+// =============================================================================================
+
+/**
+ * E1 — IS `serve()` ON THE SHIPPED PATH AT ALL?
+ *
+ * Round 2's rejection was not that `serve()` was wrong. It was that `grep -rn 'serve(' app/src`
+ * returned only `Scheduler.js` itself: the picker that honours `avoidFamilies` and reports the
+ * generator family had zero callers, so the shipped loop went `next()` -> `submit()` with nothing
+ * in between. This claim greps the real tree, the same way a critic would.
+ */
+{
+  const read = (p) => {
+    try {
+      return readFileSync(resolve(ROOT, p), "utf8");
+    } catch {
+      return "";
+    }
+  };
+  const schedSrc = read("app/src/learn/Scheduler.js");
+  const bootSrc = read("app/src/boot/63-learnserve.js");
+  const boot62 = read("app/src/boot/62-learning.js");
+  // The Scheduler draws the item itself inside `next()`...
+  const drawsInNext = /const sel = this\.serve\(req, this\.bank\)/.test(schedSrc);
+  // ...and something OUTSIDE Scheduler.js hands it the bank on the shipped path.
+  const attachedOutside = /scheduler\.attachBank\(itemBank\)/.test(bootSrc);
+  const bootOrder = /order:\s*63/.test(bootSrc) && /order:\s*62/.test(boot62);
+  const servesOutside = /scheduler\.serve\(req, itemBank\)/.test(bootSrc);
+  claim(
+    "E1",
+    "Scheduler.serve() is on the SHIPPED path — the picker is wired, not documented",
+    drawsInNext && attachedOutside && bootOrder && servesOutside,
+    `app/src/learn/Scheduler.js: next() draws every request through serve() when it holds a bank ` +
+      `(${drawsInNext ? "found" : "MISSING"}). app/src/boot/63-learnserve.js: ` +
+      `scheduler.attachBank(itemBank) ${attachedOutside ? "found" : "MISSING"} at order 63, after ` +
+      `62-learning and 62-itembank (${bootOrder ? "ordered" : "ORDER WRONG"}); it also exposes ` +
+      `scheduler.serve(req, itemBank) as the re-roll path (${servesOutside ? "found" : "MISSING"}), which is a ` +
+      `caller of serve() outside Scheduler.js. Round 2 had none of these four.`
+  );
+}
+
+/**
+ * E2 — THE DEADLOCK, REPRODUCED AND CLOSED. This is the critic's own script
+ * (`review/measure/_critic/p32c-gate.mjs`) inlined: eight sessions of perfect answers, count what
+ * was served and what was scored. Round 2 served `var-meaning|construct` 228 times and scored 0.
+ */
+function driveAllCorrect({ bank, sessions = 8, strict = true }) {
+  const clock = virtualClock(0);
+  // `familyReporting: undefined` leaves the delivery UNDECLARED, which is the honest state for an
+  // engine whose Scheduler has not been handed a bank yet — the Scheduler declares it itself at the
+  // first `_select()`. Forcing `true` here (as `mk()` does for the direct-`respond` claims, which
+  // do report a family) would be the round-2 assumption wearing a test's clothes.
+  const m = mk({ now: () => clock.minutes(), strictFamilyReport: strict, familyReporting: undefined, familyReportingSource: undefined });
+  const s = new Scheduler(m, { clock, rng: mulberry32(11), sessionMinutes: SESSION_MINUTES, bank });
+  const served = new Map();
+  let items = 0;
+  let noItem = 0;
+  let refusedFamilyServed = 0;
+  for (let session = 0; session < sessions; session++) {
+    clock.set(session * 1440);
+    s.beginSession();
+    for (;;) {
+      const req = s.next();
+      if (!req) break;
+      items += 1;
+      const key = `${req.kpId}|${req.form}`;
+      served.set(key, (served.get(key) ?? 0) + 1);
+      if (bank) {
+        if (!req.item) noItem += 1;
+        if (req.family && m.refusedFamilies(req.kpId, req.form).includes(req.family)) refusedFamilyServed += 1;
+      }
+      s.submit(req, { correct: true, latencyMs: 9000, hinted: false });
+    }
+    s.endSession();
+  }
+  return { m, s, served, items, noItem, refusedFamilyServed, worstCell: [...served.entries()].sort((a, b) => b[1] - a[1])[0] };
+}
+{
+  const withBank = driveAllCorrect({ bank: BANK });
+  const noBank = driveAllCorrect({ bank: null });
+  claim(
+    "E2",
+    "the selector never offers a (kp x form) whose response the scorer will refuse — the round-2 deadlock is closed",
+    withBank.m.stats.unscoredItems === 0 &&
+      withBank.m.stats.unreportedFamilyItems === 0 &&
+      noBank.m.stats.unscoredItems === 0 &&
+      noBank.m.stats.unreportedFamilyItems === 0 &&
+      withBank.m.summary().mastered > 0 &&
+      noBank.m.summary().mastered > 0,
+    `Eight sessions of perfect answers, the critic's own reproduction. WITH the bank attached (the shipped ` +
+      `configuration): ${withBank.items} items, ${withBank.m.stats.unscoredItems} unscored, ` +
+      `${withBank.m.stats.unreportedFamilyItems} refused for an unreported family, ` +
+      `${withBank.m.summary().mastered} knowledge points mastered; busiest cell ` +
+      `"${withBank.worstCell[0]}" x${withBank.worstCell[1]}. WITHOUT a bank (round 2's delivery, now honestly ` +
+      `declared): ${noBank.items} items, ${noBank.m.stats.unscoredItems} unscored, ` +
+      `${noBank.m.summary().mastered} mastered; busiest cell "${noBank.worstCell[0]}" x${noBank.worstCell[1]}. ` +
+      `Round 2 measured var-meaning|construct served 228 times with state.unscored = 228 and gateDetail.m2 false ` +
+      `forever. The selector now asks isScorable(kp, form, "solo", mastery.deliveryFamily()) — the SAME third ` +
+      `argument respond() will use — and additionally refuses a cell the bank cannot draw from.`
+  );
+}
+
+/** E3 — every request the shipped path produces carries a real item and a non-refused family. */
+{
+  const r = driveAllCorrect({ bank: BANK, sessions: 6 });
+  claim(
+    "E3",
+    "every request drawn on the shipped path carries an item AND its generator family, and never a refused one",
+    r.noItem === 0 && r.refusedFamilyServed === 0 && r.s.serveMisses === 0 && r.items > 100,
+    `${r.items} requests: ${r.noItem} without req.item, ${r.refusedFamilyServed} carrying a family the audit ` +
+      `refuses, ${r.s.serveMisses} where serve() came back empty. The engine's own counter agrees: ` +
+      `${r.m.stats.unreportedFamilyItems} responses refused for a missing family report across the whole run, ` +
+      `and mastery.probe().delivery.familyReporting = ${r.m.familyReporting} ` +
+      `(source "${r.m.familyReportingSource}").`
+  );
+}
+
+/**
+ * E4 — CONTROL. A harness that cannot make the defect happen cannot prove it gone. Submit a
+ * response with the family deliberately stripped, on a cell that has refused families, and check
+ * that the engine (a) refuses it, (b) names it in `issues`, (c) publishes it on the probe, and
+ * (d) throws under `strictFamilyReport`.
+ */
+{
+  const filtered = GRAPH.ids.flatMap((id) => [...REF.pricing.masteryForms].filter((f) => REF.requiresFamilyReport(id, f)).map((f) => [id, f]));
+  const [kp, form] = filtered[0] ?? [];
+  const loud = mk({ strictFamilyReport: false });
+  const before = loud.issues.length;
+  const out = loud.respond({ kpId: kp, form, phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(kp) });
+  const named = loud.issues.slice(before).some((i) => i.startsWith("DELIVERY:") && i.includes(kp));
+  const onProbe = loud.probe().delivery.defects.some((d) => d.kpId === kp && d.form === form);
+  let threw = false;
+  try {
+    mk({ strictFamilyReport: true }).respond({ kpId: kp, form, phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(kp) });
+  } catch {
+    threw = true;
+  }
+  // ...and the same response WITH the family reported is scored normally. Without this arm the
+  // claim above would also pass on an engine that refused everything.
+  const ok = mk();
+  const good = say(ok, { kpId: kp, form, phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(kp) });
+  claim(
+    "E4",
+    "CONTROL — an unreported family is refused, named, published and (in strict mode) fatal; a reported one scores",
+    !!kp && out.scored === false && out.reason.startsWith("unscored-unreported-family") && named && onProbe && threw && good.scored === true && good.credited === true,
+    `${filtered.length} of ${GRAPH.ids.length * REF.pricing.masteryForms.size} mastery-eligible cells require a ` +
+      `family report. On "${kp}|${form}": a response with no family is scored=${out.scored} ` +
+      `(${out.reason}), raises a DELIVERY issue (${named}), appears in probe().delivery.defects (${onProbe}), ` +
+      `and throws under strictFamilyReport (${threw}). The identical response reporting family ` +
+      `"${famOf(ok, kp, form)}" is scored=${good.scored} credited=${good.credited}. Round 2 incremented a counter ` +
+      `and did none of the other four, which is why 1961 unscored items looked like a quiet session.`
+  );
+}
+
+/**
+ * E5 — THE CONTENT QUESTION, ANSWERED WITH THE FAMILIES A FIX HAS TO TOUCH. Which knowledge points
+ * cannot be certified, and is it because of the content or because of the delivery?
+ */
+{
+  const dead = REF.contentDeficits.filter((d) => d.kind === "dead");
+  const unreported = mk({ familyReporting: false, familyReportingSource: "no-picker" });
+  const deliveryOnly = unreported.contentDeficits.filter((d) => d.kind === "delivery");
+  table(
+    [...dead, ...deliveryOnly].map((d) => ({
+      "knowledge point": d.kpId,
+      band: d.band,
+      "why": d.kind === "dead" ? "CONTENT — no form on any delivery" : "DELIVERY — needs the family reported",
+      "forms if reported": d.bestCaseForms.join(",") || "—",
+      "refused families": d.refused.map((x) => `${x.form}:${x.family}@${x.blind}`).join(" ") || "—",
+    }))
+  );
+  claim(
+    "E5",
+    "the four uncertifiable knowledge points are told apart: three were a DELIVERY bug, one is a real content hole",
+    dead.length === 1 &&
+      dead[0].kpId === "eq-special-cases" &&
+      deliveryOnly.length === 3 &&
+      REF.issues.some((i) => i.startsWith("CONTENT:") && i.includes("eq-special-cases") && i.includes("ANY delivery")) &&
+      deliveryOnly.every((d) => d.bestCaseForms.length > 0),
+    `On the shipped delivery ${CERTIFIABLE} of ${TOTAL} knowledge points are certifiable and the single ` +
+      `exception is "${dead[0]?.kpId}" (band ${dead[0]?.band}), whose every generator family on every scored form ` +
+      `is above the caps: ${dead[0]?.refused.map((x) => `${x.form}:${x.family} blind ${x.blind} answers "${x.modalAnswer}"`).join("; ")}. ` +
+      `THE FIX IS CONTENT AND IT IS SPECIFIED: those pools need enough distinct answers that the measured blind ` +
+      `rate falls under ${M.bkt.identifiabilityCaps?.maxTrueGuess ?? 0.3} — a construct/repair pool, never a looser ` +
+      `threshold. The other three — ${deliveryOnly.map((d) => d.kpId).join(", ")} — were NOT content holes at all: ` +
+      `they carry ${deliveryOnly.map((d) => `${d.kpId} [${d.bestCaseForms.join(",")}]`).join(", ")} and were ` +
+      `uncertifiable only while nobody reported the family. Round 2 named exactly one of the four in issues.`
+  );
+}
+
+/**
+ * E6 — PROPAGATION SEEDS ARE FILTERED THROUGH THE ANCESTOR CONE, with the control arm that proves
+ * the detector works: an ON-cone seed IS paid.
+ */
+{
+  const src = "var-meaning";
+  const target = "eq-two-step"; // a DESCENDANT of var-meaning
+  const hostile = mk();
+  const p0 = hostile.p(target);
+  for (let i = 0; i < 600; i++)
+    say(hostile, { kpId: src, form: "repair", phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(src), exercises: [target] });
+  const everything = mk();
+  for (let i = 0; i < 800; i++)
+    say(everything, { kpId: src, form: "generate", phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(src), exercises: GRAPH.ids.filter((x) => x !== src) });
+  const lifted = GRAPH.ids.filter((x) => x !== src && everything.p(x) > GRAPH.band(x).prior + 1e-9);
+  // CONTROL: the same mechanism on a node that HAS ancestors must pay them.
+  const deep = GRAPH.ids.filter((id) => GRAPH.ancestors(id).size >= 2 && REF.deliverableMasteryForms(id).length)[0];
+  const onCone = mk();
+  const anc = [...GRAPH.ancestors(deep)][0];
+  say(onCone, { kpId: deep, form: REF.deliverableMasteryForms(deep)[0], phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(deep), exercises: [anc] });
+  const paidControl = onCone.p(anc) > GRAPH.band(anc).prior + 1e-9;
+  const namedOffCone = hostile.issues.some((i) => i.startsWith("CONTENT:") && i.includes(target) && i.includes("DESCENDANT"));
+  claim(
+    "E6",
+    "a caller's `exercises` tag cannot pay a non-ancestor — the cone filters the seeds, not just the walk past them",
+    hostile.p(target) === p0 && hostile.stats.offConeSeeds === 600 && namedOffCone && lifted.length === 0 && paidControl,
+    `600 responses on "${src}" declaring exercises:["${target}"] — a DESCENDANT — leave it at ` +
+      `${hostile.p(target).toFixed(4)} (was ${p0.toFixed(4)}); all ${hostile.stats.offConeSeeds} seeds were dropped ` +
+      `and named in issues (${namedOffCone}). Round 2 read `+"`r.exercises`"+` verbatim at distance 1 and this same ` +
+      `sequence lifted it from 0.180 to the 0.900 ceiling. Declaring ALL 31 other nodes for 800 responses now ` +
+      `lifts ${lifted.length} of them. CONTROL: one response on "${deep}" declaring its genuine ancestor ` +
+      `"${anc}" DOES pay it (${onCone.p(anc).toFixed(4)} against a prior of ${GRAPH.band(anc).prior}), so the ` +
+      `filter is a filter and not an off switch.`
+  );
+}
+
+/**
+ * E7 — THE PROBE TABLE, RE-DERIVED INDEPENDENTLY. The committed round-2 table disagreed with the
+ * engine it was supposed to describe (translate-order printed 5 items / 4.00e-4 against a live
+ * 6 / 3.20e-4) because it was generated against an older bank audit and never regenerated. This
+ * recomputes every eligible probe's blind-pass from `probeItemBlindRate` per SERVED form and
+ * requires it to equal the engine's own `testOutPlan(...).blindPass`.
+ */
+{
+  const rows = ELIGIBLE.map(({ id, plan }) => {
+    const recomputed = plan.forms.reduce((a, f) => a * REF.probeItemBlindRate(id, f), 1);
+    return { id, items: plan.items, forms: plan.forms.join(","), engine: plan.blindPass, recomputed, agree: Math.abs(recomputed - plan.blindPass) <= 1e-6 + 1e-9 };
+  });
+  const disagree = rows.filter((r) => !r.agree);
+  claim(
+    "E7",
+    "the printed probe table is recomputed from the shipped audit, item by item, and agrees with the engine",
+    disagree.length === 0 && rows.length === ELIGIBLE.length && rows.length > 0,
+    `${rows.length} eligible probes; ${disagree.length} disagree with an independent product of ` +
+      `probeItemBlindRate over the exact forms the probe serves. Audit v${AUDIT.version} fingerprint ` +
+      `${AUDIT.fingerprint} — the table in review/measure/P32.txt is written by THIS run and stamped with that ` +
+      `fingerprint, so a stale audit can no longer sit under a green table. Spot checks: ` +
+      `${rows.slice(0, 3).map((r) => `${r.id} ${r.items} items ${r.engine.toExponential(2)}`).join("; ")}.`
+  );
+}
+
+/**
+ * E8 — THE RESUME PATH, which is where a delivery declaration would have quietly died.
+ *
+ * `boot/62-learning.js` hydrates the persisted learner BEFORE `boot/63-learnserve.js` attaches the
+ * bank, and `Mastery.restore()` copies the persisted `stats` wholesale — so a returning learner
+ * arrives with `stats.items` in the hundreds before this engine has priced anything. A declaration
+ * guard written against `stats.items` would refuse the attach and leave every resumed session in
+ * the restrictive delivery: three band-1/2 knowledge points uncertifiable, forever, for returning
+ * players only. This claim is here because that bug existed in this file's first draft and nothing
+ * else in the suite would have caught it.
+ */
+{
+  // Session one: play a bit through the shipped delivery, then persist.
+  const one = driveAllCorrect({ bank: BANK, sessions: 2 });
+  const snap = JSON.parse(JSON.stringify(one.m.snapshot()));
+  // Session two, exactly as boot does it: construct, hydrate, THEN attach the bank.
+  const clock = virtualClock(3 * 1440);
+  const resumed = mk({ now: () => clock.minutes(), familyReporting: undefined, familyReportingSource: undefined });
+  const sched = new Scheduler(resumed, { clock, rng: mulberry32(11), sessionMinutes: SESSION_MINUTES });
+  const restored = resumed.restore(snap);
+  const itemsCarried = resumed.stats.items;
+  sched.attachBank(BANK);
+  sched.beginSession();
+  let served = 0;
+  for (;;) {
+    const req = sched.next();
+    if (!req) break;
+    served += 1;
+    sched.submit(req, { correct: true, latencyMs: 9000, hinted: false });
+  }
+  claim(
+    "E8",
+    "a RESUMED session still gets the shipped delivery — the declaration is guarded on this engine's own work, not the snapshot's",
+    restored && itemsCarried > 0 && resumed.familyReporting === true && resumed.stats.unreportedFamilyItems === 0 && served > 0 && resumed.deliverableMasteryForms("props-operations").length === 3,
+    `restored a snapshot carrying ${itemsCarried} prior responses, then attached the bank exactly as ` +
+      `boot/62 -> boot/63 does: familyReporting = ${resumed.familyReporting} ("${resumed.familyReportingSource}"), ` +
+      `${served} further items served with ${resumed.stats.unreportedFamilyItems} refused for a missing family, ` +
+      `and props-operations still carries ${resumed.deliverableMasteryForms("props-operations").length} earnable ` +
+      `forms. Guarding on stats.items instead of this engine's own priced count would have pinned every returning ` +
+      `player to the restrictive delivery and left that node at 0.`
+  );
+}
+
+// =============================================================================================
 head(`RESULT — ${claims.length - failed} of ${claims.length} claims pass`);
 // =============================================================================================
 
@@ -1274,5 +1621,31 @@ if (JSON_OUT) {
       ? `\n${failed} claim(s) FAILED — P32 is wrong until they pass.\n`
       : `\nAll ${claims.length} claims pass.\n`
   );
+
+  /**
+   * ...and the file, written by the script, stamped, and honest in its first line.
+   *
+   * `--no-write` exists for a reviewer who wants the numbers without touching the tree. Nothing
+   * else can suppress it: a run that fails still writes, because the failure mode this closes is a
+   * GREEN committed table sitting on top of red code, and the way to make that impossible is not to
+   * withhold the file — it is to make the file say so before anything else in it.
+   */
+  if (!HAS("no-write")) {
+    const stamp = [
+      failed
+        ? `!!! ${failed} OF ${claims.length} CLAIMS FAILED — THIS TABLE IS NOT A PASS. ` +
+          `Failing: ${claims.filter((c) => !c.pass).map((c) => c.id).join(", ")}.`
+        : `ALL ${claims.length} CLAIMS PASS.`,
+      `written by review/measure/P32.mjs on ${new Date().toISOString().slice(0, 19)}Z`,
+      `argv: ${process.argv.slice(2).join(" ") || "(defaults)"}  ->  learners=${LEARNERS} bots=${HOSTILE_N} sessions=${SESSIONS}`,
+      `bank audit v${AUDIT.version} fingerprint ${AUDIT.fingerprint}  (regenerate with: node tools/bank-audit.mjs)`,
+      `engine delivery: familyReporting=${REF.familyReporting} source="${REF.familyReportingSource}" strict=${REF.strictFamilyReport}`,
+      "=".repeat(94),
+      "",
+    ];
+    const path = resolve(ROOT, "review/measure/P32.txt");
+    writeFileSync(path, stamp.concat(LOG).join("\n") + "\n", "utf8");
+    rawLog(`${failed ? "FAILING" : "passing"} table written to ${path}`);
+  }
 }
 process.exit(failed ? 1 : 0);

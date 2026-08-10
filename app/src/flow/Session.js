@@ -44,8 +44,8 @@
  * `Scheduler.beginSession` is explicit that a half-answered check is NOT dropped at a session
  * boundary, since the retention gate is about elapsed time and intervening sessions rather than
  * about finishing inside one sitting. `Mastery.snapshot()` persists it and the Scheduler serves its
- * remaining items first next time. Measured over 2 400 simulated sittings: 16 carries, 0 lapses
- * caused by one, 0 items lost.
+ * remaining items first next time. Measured over 2,240 simulated sittings on the shipped delivery:
+ * 36 carries, 0 events lost or moved across a boundary, 0 lapses caused by one.
  *
  * So the last beat is a completed beat in all but a handful of sittings, `closeReason` says which
  * kind of ending it was, and `closingWin` says what the learner was left holding. If time is
@@ -193,11 +193,19 @@ const REFERENCE_ITEM_SECONDS = 46;
  * How many items one knowledge point may take inside a sitting, while it is the engine's ONLY
  * legal supply, before the layer says so out loud. See the BREADTH note in the header.
  *
- * It is not a taste threshold. Measured over 420 sittings of the fixed harness across seven
- * abilities, the longest unbroken run of items on one knowledge point has median 8 and p90 13 —
- * §4's two-open cap plus the block length put it there. 18 is p99-and-above for a healthy corpus,
- * and it is a third of the shortest sitting anybody gets, so a node that passes it while nothing
- * else is legal has genuinely become the whole sitting. The critic's failing corpus sat at 46.
+ * It is not a taste threshold. Measured over 420 sittings across seven abilities on the shipped
+ * delivery, the longest unbroken run of items on one knowledge point has median 8 and p90 12 —
+ * §4's two-open cap plus the block length put it there. 18 sits between that p90 and the p99 of
+ * 26, and it is a fifth of the items a fifteen-minute sitting serves, so a node that passes it has
+ * genuinely become the sitting. The critic's failing corpus sat at 46.
+ *
+ * The count alone is NOT the alarm, and that is the load-bearing half. Runs of 26 and 35 occur in
+ * a perfectly healthy corpus — a learner staying on one node while a second is still legal is §4's
+ * continuity preference working. The alarm additionally requires the engine's whole legal SUPPLY to
+ * be that one node, which is a fact about the graph rather than a preference about the learner.
+ * Measured: 6 alarms in 2,240 full-graph sittings, every one of them on `ineq-two-step` or
+ * `eq-model-context` — leaves, with zero descendants ahead of them — and 151 alarms in 210 sittings
+ * of a graph pruned to one node, with none of that control's repetition sittings passing silently.
  */
 export const STARVE_REPS = 18;
 
@@ -270,6 +278,8 @@ export class Session {
     this.awayMs = 0;
     this._awayPending = 0;
     this._awayThisItem = 0;
+    /** Away time between one answer and the next item — excluded from the GAP estimate. */
+    this._awayInGap = 0;
     this._breakPending = false;
 
     // --- pace calibration -------------------------------------------------------------------
@@ -392,7 +402,12 @@ export class Session {
     if (!away) return;
     this.awayMs += away;
     this._awayPending += away;
+    // Which of the two intervals the absence landed in. Both are excluded from their estimator and
+    // the second one used not to be: away time between one answer and the next item standing up
+    // was folded into the GAP sample, so a two-minute absence read as `gapSeconds` clamped at its
+    // 120-second ceiling and the world looked slow for the rest of the sitting.
     if (this._servedAt != null) this._awayThisItem += away;
+    else this._awayInGap += away;
     if (away >= this.arc.breakMinutes * 60000) this._breakPending = true;
   }
 
@@ -769,6 +784,9 @@ export class Session {
       this._focusPending = null;
       return;
     }
+    // Emitted on CHANGE, not at every boundary. A request that has not moved is not news, and a
+    // signal fired forty times a sitting to say the same thing trains a listener to ignore it.
+    const changed = top.kpId !== this.focus.kpId;
     this.focus.kpId = top.kpId;
     this.focus.score = top.score;
     this.focus.requested += 1;
@@ -784,6 +802,7 @@ export class Session {
       }
       return;
     }
+    if (!changed) return;
     this.emit("learn:session", {
       phase: "focus",
       summary: {
@@ -950,6 +969,7 @@ export class Session {
     this.attendedMs = 0;
     this.awayMs = 0;
     this._awayPending = 0;
+    this._awayInGap = 0;
     this._breakPending = false;
     this.startedAt = null;
     this.closeReason = null;
@@ -1070,6 +1090,23 @@ export class Session {
     this._settle(nowMs);
 
     /**
+     * Calibrate the inter-item gap HERE, before anything reads the pace — the round-3 ordering fix.
+     *
+     * This used to happen inside the serve block, four statements after the ceiling guard and the
+     * admission decision had already read `itemSecondsCeiling()`. `_calibrateGap` moves
+     * `pace.gapSeconds`, `gapSeconds` is a term of the ceiling, so the guard evaluated one number
+     * and the record kept another: measured across 2,240 sittings, one item was admitted at
+     * `elapsed + ceiling = 1497 s` and recorded at 1503 s, and `startsOutsideCeiling` — a counter
+     * whose whole job is to be exactly zero — read 1 because of a six-second disagreement between
+     * two evaluations of the same expression. One evaluation per `next()`, before any of them.
+     */
+    if (this._lastSubmitAt != null) {
+      this._calibrateGap(nowMs - this._lastSubmitAt - this._awayInGap);
+      this._lastSubmitAt = null;
+      this._awayInGap = 0;
+    }
+
+    /**
      * The ceiling, enforced between claims and never inside one.
      *
      * A block is a continuity preference (§4 step 2), so stopping it at an item boundary simply
@@ -1172,7 +1209,6 @@ export class Session {
       this.attendedMs = 0;
       this.phase = "work";
     }
-    if (this._lastSubmitAt != null) this._calibrateGap(nowMs - this._lastSubmitAt - this._awayThisItem);
     this._servedAt = nowMs;
     this._awayThisItem = 0;
     this._req = req;
@@ -1311,10 +1347,12 @@ export class Session {
    * published state (`dueNow`, `frontier`, `status`, `testOutOffered`), not a re-implementation of
    * §4's selection.
    *
-   * The ORDER of the tests below is load-bearing and round 1 got it wrong. The floor comes before
-   * the break, and the aim comes after both. Reading it top to bottom: the hard ceiling, the
-   * fifteen-minute promise, the break, the "will the next beat finish" reservation, the closing
-   * win, and the aim.
+   * The ORDER of the tests below is load-bearing and round 1 got it wrong. Reading it top to
+   * bottom: the ceiling **past the floor**, the fifteen-minute promise, the break, the "will the
+   * next beat finish" reservation, the closing win, and the aim. Two of those placements are
+   * repairs of measured defects and neither is a preference — the break sits after the floor
+   * because round 1 let a bathroom trip end a sitting at minute four, and the ceiling is qualified
+   * by the floor because round 2 let a heavy-tailed learner's sitting end at 14.09 minutes.
    */
   _admit() {
     const elapsed = this.elapsedSeconds;

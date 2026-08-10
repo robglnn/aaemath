@@ -35,6 +35,7 @@ import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { distKey } from "./_p31-distkey.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
@@ -264,24 +265,85 @@ const lessonChunkBytes = (kpIds) =>
  * boot module's own warm promise, snapshots again, waits two idle turns for the prefetch and
  * snapshots a third time. It renders nothing and captures no pixels.
  */
-const live = load("review/measure/evidence/P31-live-probe.json");
+/**
+ * ROUND 4 — THE PROBE IS RE-RUN, NOT READ.
+ *
+ * Round 3 read this file from disk and printed 22/22 PASS while **all eighteen JS chunk names
+ * inside it were absent from `dist/assets`**: `dist` is rebuilt by whichever piece is building in
+ * parallel, so the cache went stale within the hour and every live claim was describing a build
+ * that no longer existed. So the probe now records the identity of the tree it measured (the sorted
+ * set of content-hashed asset names — any module change changes at least one name), this file
+ * recomputes it, and on a mismatch it RE-RUNS `_p31-live.mjs` rather than reporting on a ghost.
+ *
+ * `--no-live` skips the re-run; every claim that depends on the browser then FAILS rather than
+ * passing on stale evidence.
+ */
+const LIVE_PATH = "review/measure/evidence/P31-live-probe.json";
+const NO_LIVE = process.argv.includes("--no-live");
+const distNow = distKey(AFTER_DIR);
+const readLive = () => (fs.existsSync(path.join(ROOT, LIVE_PATH)) ? load(LIVE_PATH) : null);
+const isFresh = (p) => !!(p?.dist?.key && distNow?.key && p.dist.key === distNow.key && p.dist.files === distNow.files);
+
+let live = readLive();
+let liveRerun = null;
+if (!isFresh(live) && !NO_LIVE) {
+  const proc = await import("node:child_process");
+  liveRerun = { was: live?.dist ?? null, want: distNow };
+  if (!JSON_ONLY) console.log(`P31: the live probe does not match ${AFTER_DIR} — re-running _p31-live.mjs…`);
+  proc.execFileSync(process.execPath, [path.join(HERE, "_p31-live.mjs")], {
+    stdio: JSON_ONLY ? "ignore" : "inherit",
+    cwd: ROOT,
+  });
+  live = readLive();
+}
+const liveFresh = isFresh(live);
+/**
+ * A live claim may only be evaluated against a probe of THIS build. `L(x)` is the gate: every
+ * browser-derived claim below is `and`-ed with it, so a stale or missing probe fails them instead
+ * of silently passing.
+ */
+const L = (x) => liveFresh && !!x;
+/** A safe stand-in so a missing probe produces FAILs and not a crash on the first property access. */
+const EMPTY_CLASS = { requests: 0, groupChunks: [], itemLocaleChunks: [], spineChunks: [], encodedBytes: 0 };
+const cls = (name) => live?.classified?.[name] ?? EMPTY_CLASS;
+
 detail.live = {
-  ready: live.ready,
-  errors: live.errors,
-  warm: live.warm,
-  frontier: live.frontier,
-  classified: live.classified,
-  bankAudit: live.bankAudit,
-  probeAfterWarm: live.probeAfterWarm?.groups ?? null,
-  probe: live.probe,
+  fresh: liveFresh,
+  distMeasured: live?.dist ?? null,
+  distNow,
+  rerun: liveRerun,
+  generated: live?.generated ?? null,
+  ready: live?.ready ?? null,
+  errors: live?.errors ?? [],
+  warm: live?.warm ?? null,
+  frontier: live?.frontier ?? null,
+  classified: live?.classified ?? null,
+  bankAudit: live?.bankAudit ?? null,
+  crossings: live?.crossings ?? null,
+  play: live?.play ? { items: live.play.items, sources: live.play.sources, kps: live.play.kps } : null,
+  coldWindow: live?.coldWindow ?? null,
+  learnserve: live?.learnserve ?? null,
+  probe: live?.probe ?? null,
 };
 
+claim(
+  "A0",
+  "every live claim below was measured in a browser against THE BUILD THAT IS IN dist RIGHT NOW",
+  liveFresh,
+  liveFresh
+    ? `probe generated ${live.generated} against ${live.dist.files} built assets, key ${live.dist.key}; ${AFTER_DIR} is now ${distNow?.files} assets, key ${distNow?.key} — identical` +
+      (liveRerun ? ` (the cached probe described ${JSON.stringify(liveRerun.was)}, so it was re-run)` : "")
+    : `STALE: the probe describes ${JSON.stringify(live?.dist ?? null)} and ${AFTER_DIR} is ${JSON.stringify(distNow)}` +
+      (NO_LIVE ? " — --no-live was passed, so it was not re-run" : ""),
+  "the probe's dist identity equals the current dist's"
+);
+
 {
-  const cp = live.classified.criticalPath;
+  const cp = cls("criticalPath");
   claim(
     "A5",
     "the REAL built game reaches `ready` having requested ZERO item groups, ZERO spine and ONE locale — and still knows the whole course",
-    live.ready === true &&
+    L(live?.ready === true) &&
       live.errors.length === 0 &&
       cp.groupChunks.length === 0 &&
       cp.spineChunks.length === 0 &&
@@ -327,6 +389,20 @@ async function runSession({ fault = null } = {}) {
   const sched = new Scheduler(mastery, { clock, rng: mulberry32(31), sessionMinutes: 25 });
   const rng = mulberry32(1031);
 
+  /**
+   * ROUND 4 CHANGE. Round 3's session did `sched.next()` and then called `bank.select()` itself —
+   * a Scheduler-to-bank loop that existed only in this file, which is exactly what the critic
+   * caught. `Scheduler.attachBank(bank)` is the line `app/src/boot/63-learnserve.js` runs in the
+   * shipped game: from here `next()` draws every item through `Scheduler.serve(req, bank)` into
+   * `ItemBank.select()` and publishes it as `req.item` / `req.itemSource` / `req.itemRelaxation`.
+   * So this loop now touches the bank in exactly one place — the same place the game does — and
+   * B1/B2/C1 measure the shipped path rather than a private one.
+   *
+   * It is also load-bearing for the session to run at all: without a bank the engine cannot know
+   * which generator family it handed out, refuses to score the 24 filtered (kp x form) cells, and
+   * the curriculum deadlocks after twenty items.
+   */
+  sched.attachBank(bank);
   sched.beginSession();
 
   // The session opener, through the boot module's entry point. `62-learning.js` mounts
@@ -344,13 +420,9 @@ async function runSession({ fault = null } = {}) {
     if (steps > 5000) break; // a bound, so "it hung" is a FAILED claim rather than a hung script
     const req = sched.next();
     if (!req) break;
-    const sel = bank.select({
-      kpId: req.kpId,
-      form: req.form,
-      difficulty: req.difficulty,
-      misconception: req.misconception ?? req.targetMisconception ?? null,
-      exclude: req.avoidItemIds,
-    });
+    // What the SHIPPED Scheduler drew, through `serve()` -> `select()`. Nothing here reaches into
+    // the bank; `req.unserved` is the Scheduler's own word for "the bank came back empty".
+    const sel = req.item ? { item: req.item, source: req.itemSource, relaxation: req.itemRelaxation } : null;
     if (!sel || !sel.item) {
       blanks += 1;
       sched.submit(req, { correct: false, latencyMs: 20000, itemId: `blank#${steps}` });
@@ -368,10 +440,18 @@ async function runSession({ fault = null } = {}) {
       latencyMs: 20000,
       itemId: sel.item.id,
       misconception: verdict.misconception,
+      family: req.family,
     });
     await settle(); // let any background group load land, as it would while the learner reads
   }
   sched.endSession();
+  /**
+   * A faulted group gives up only after three attempts spaced 250 ms and 750 ms apart. This loop
+   * compresses twenty-five minutes into about forty milliseconds, so without waiting for that the
+   * probe would be read before the bank had finished deciding — and "the failure is announced"
+   * would be measuring the script's impatience. In play the second item is twenty seconds later.
+   */
+  if (fault) await new Promise((r) => setTimeout(r, 1600));
   bankIssues.onIssue = null;
 
   const res = bank.residency();
@@ -454,7 +534,7 @@ claim(
   await settle();
   await settle();
   const warmed = bank.residency().resident.filter((id) => !target.kpIds.includes(id));
-  const livePrefetch = live.classified.idlePrefetched;
+  const livePrefetch = cls("idlePrefetched");
   detail.prefetch = {
     lesson: target.id,
     lessonKps: target.kpIds,
@@ -464,11 +544,50 @@ claim(
   claim(
     "B4",
     "the NEXT likely group is prefetched during idle — offline AND in the real built game",
-    warmed.length > 0 && livePrefetch.groupChunks.length > 0,
+    warmed.length > 0 && L(livePrefetch.groupChunks.length > 0),
     `offline: warming ${target.id} loaded ${straightAfter} groups, then idle prefetch warmed ${warmed.length} more (${warmed.join(", ") || "none"}). ` +
       `live built game: after the warm resolved, two idle turns pulled ${livePrefetch.groupChunks.length} further group chunk(s) ` +
       `(${livePrefetch.groupChunks.join(", ") || "none"}, ${livePrefetch.encodedBytes} B encoded)`,
     "at least one group ahead, in both"
+  );
+}
+
+{
+  /**
+   * THE LESSON BOUNDARY. `prefetchAround` walks forward inside the current lesson and takes only
+   * the HEAD of the next one, so the second knowledge point after a boundary was still cold — and
+   * the boundary is exactly where the product goal puts the learner who tests out in two minutes.
+   * Once the learner is at or past halfway, the WHOLE next lesson is queued.
+   */
+  __evictAllGroups();
+  const bank = new ItemBank();
+  const lessons = bank.lessons();
+  const here = lessons[0];
+  const next = lessons[1];
+  // A learner one knowledge point from the end of lesson 1: two of three behind them.
+  const late = { frontier: () => [here.kpIds[here.kpIds.length - 1]] };
+  const early = { frontier: () => [here.kpIds[0]] };
+  await bank.ensureLesson(here.id);
+  const atStart = bank.lookaheadFrom(here.id, early);
+  const atHalf = bank.lookaheadFrom(here.id, late);
+  await settle();
+  await settle();
+  await settle();
+  const residentNext = next.kpIds.filter((id) => bank.residency().resident.includes(id));
+  const cost = lessonChunkBytes(next.kpIds);
+  detail.lookahead = { lesson: here.id, next: next.id, atStart, atHalf, residentNext, cost };
+  claim(
+    "B5",
+    "at the halfway mark of a lesson the WHOLE next lesson is queued, so the boundary is never cold — and not before",
+    atStart.queued.length === 0 &&
+      atHalf.nextLesson === next.id &&
+      atHalf.queued.length === next.kpIds.length &&
+      residentNext.length === next.kpIds.length,
+    `frontier on "${here.kpIds[0]}" (${(atStart.progress * 100).toFixed(0)}% through "${here.id}") queues ${atStart.queued.length}; ` +
+      `frontier on "${here.kpIds[here.kpIds.length - 1]}" (${(atHalf.progress * 100).toFixed(0)}%) queues all ${atHalf.queued.length} of "${next.id}" ` +
+      `(${atHalf.queued.join(", ")}) and they are resident after idle: ${residentNext.length}/${next.kpIds.length}. ` +
+      `Cost of the lookahead: ${cost.gzip} B gz, against ${kB(sum(after ?? {}, isGroupChunk).gzip)} gz for the course`,
+    "nothing at 0%, the whole next lesson at >=50%"
   );
 }
 
@@ -575,20 +694,53 @@ claim(
   const bank = new ItemBank();
   const cold = bank.select({ kpId: "ineq-negative-flip", form: "construct", difficulty: 4, seed: 7 });
   const marked = cold ? bank.check(cold.item, bank.accepts(cold.item)[0]) : null;
+  // Two turns: the speculative fetch is queued for idle (`idle` is `setTimeout(fn, 0)` in Node)
+  // and the dynamic import then resolves on the turn after that. See the SWEEP GUARD note.
+  await settle();
   await settle();
   const warm = bank.select({ kpId: "ineq-negative-flip", form: "construct", difficulty: 4, seed: 7 });
+
+  /**
+   * AND THE SAME THING IN A REAL BROWSER, because the offline half of this claim is an artefact.
+   * Node loads every group at module init, so after `__evictAllGroups()` a `loadGroup` is one
+   * already-resolved microtask and "one tick later it is catalogue" measures the module cache. The
+   * live probe runs `coldSelectWindow` on a knowledge point in the LAST lesson of the course over a
+   * real dynamic import — back to back, and at a 400 ms gap. A real session is 20-40 SECONDS
+   * between items, so the back-to-back figure is a hard upper bound on what a learner could see.
+   */
+  const cw = live?.coldWindow ?? null;
   detail.coldPath = {
     cold: cold && { id: cold.item.id, source: cold.source, relaxation: cold.relaxation, standards: cold.item.standards },
     correctAnswerMarked: marked?.correct ?? null,
     warm: warm && { id: warm.item.id, source: warm.source, relaxation: warm.relaxation },
+    live: cw,
   };
   claim(
     "C2",
     "a cold `select()` answers synchronously with a real, checkable, correctly-tagged item and starts the load",
     !!cold && cold.relaxation === "generated-group-absent" && marked?.correct === true && warm?.source === "catalogue",
     `cold -> ${cold?.source}/${cold?.relaxation} (${cold?.item.id}), its own correct answer marks ${marked?.correct}; ` +
-      `after one tick the same request -> ${warm?.source}/${warm?.relaxation}`,
+      `after the idle turn the same request -> ${warm?.source}/${warm?.relaxation}`,
     "generated-group-absent, checkable, then catalogue"
+  );
+  claim(
+    "C4",
+    "in a REAL BROWSER, over a real dynamic import, the cold window costs a learner ONE generated item — and never a blank or an unmarkable one",
+    L(cw) &&
+      cw.immediate.blanks === 0 &&
+      cw.immediate.uncheckable === 0 &&
+      cw.spaced.blanks === 0 &&
+      cw.spaced.uncheckable === 0 &&
+      cw.spaced.degraded <= 1 &&
+      cw.immediate.degraded <= 3 &&
+      cw.immediate.msToCatalogue != null,
+    cw
+      ? `"${cw.immediateKp}" (last lesson of the course, never warmed): back to back, ${cw.immediate.degraded} of ${cw.immediate.tries} items came from the generator ` +
+        `and the catalogue answered from ${cw.immediate.msToCatalogue} ms. At a 400 ms gap on "${cw.spacedKp}": ${cw.spaced.degraded} of ${cw.spaced.tries}, ` +
+        `catalogue from ${cw.spaced.msToCatalogue} ms. Blanks ${cw.immediate.blanks + cw.spaced.blanks}, unmarkable ${cw.immediate.uncheckable + cw.spaced.uncheckable}. ` +
+        `An item in play is 20-40 s, so a learner sees the first one degraded and nothing after it.`
+      : "no live probe",
+    "<=1 degraded at a realistic gap, <=3 back to back, 0 blanks, 0 unmarkable"
   );
 }
 
@@ -746,7 +898,7 @@ claim(
     chunkKeys: Object.fromEntries(Object.entries(perLocale).map(([l, t]) => [l, Object.keys(t).length])),
     mismatched,
     englishLeaks,
-    liveLocaleChunks: live.classified.criticalPath.itemLocaleChunks,
+    liveLocaleChunks: cls("criticalPath").itemLocaleChunks,
   };
   claim(
     "D7",
@@ -754,9 +906,9 @@ claim(
     JSON.stringify(STRINGS) === JSON.stringify(strings) &&
       mismatched === 0 &&
       englishLeaks === 0 &&
-      live.classified.criticalPath.itemLocaleChunks.length === 1,
+      L(cls("criticalPath").itemLocaleChunks.length === 1),
     `${keys.length} keys x 3 locales; ${mismatched} strings differ from strings.json, ${englishLeaks} English leaks through text() in es/pl; ` +
-      `the reassembled table is byte-identical to strings.json; the live built game pulled ${JSON.stringify(live.classified.criticalPath.itemLocaleChunks)}`,
+      `the reassembled table is byte-identical to strings.json; the live built game pulled ${JSON.stringify(cls("criticalPath").itemLocaleChunks)}`,
     "0 differences, 0 leaks, exactly 1 locale chunk fetched"
   );
 }
@@ -798,8 +950,13 @@ function sourceFiles(dir) {
   const where = (re) => files.filter((f) => f !== DEFINITION && re.test(code.get(f)));
 
   const warmCallers = where(/\.\s*warmFrontier(WhenIdle)?\s*\(/);
-  const ensureCallers = where(/\.\s*ensure(Lesson)?\s*\(/);
   const subscribers = where(/bankIssues\s*\.\s*onIssue\s*=/);
+  /**
+   * The signal subscriptions that make the warm FOLLOW the learner, and the bounded idle re-check
+   * that does not depend on anyone else's emit. Round 3 had neither: one `warm()` inside `setup()`.
+   */
+  const signalFollowers = where(/signals\s*\.\s*on\s*\(\s*["'](learn:mastery|learn:session)["']/);
+  const lookaheadCallers = where(/\.\s*lookaheadFrom\s*\(/);
 
   /**
    * The static half cannot see through `warmFrontier` into `ensureLesson` and `prefetchAround`,
@@ -826,29 +983,40 @@ function sourceFiles(dir) {
   const spyWarm = await spyBank.warmFrontier({ frontier: () => spyMastery.frontier() });
   for (const name of Object.keys(spy)) proto[name] = original[name];
 
-  detail.callers = { warmCallers, ensureCallers, subscribers, chain: spy, spyWarm };
+  detail.callers = { warmCallers, signalFollowers, lookaheadCallers, subscribers, chain: spy, spyWarm };
   const bootWarms = warmCallers.some((f) => f.startsWith("app/src/boot/"));
+  const bootFollows = signalFollowers.some((f) => f.startsWith("app/src/boot/"));
   const chained = spy.ensureLesson >= 1 && spy.ensure >= 1 && spy.prefetchAround >= 1;
+  /**
+   * ROUND 3 FAILED ON THIS CLAIM'S WORDING. It printed "`ensure`/`ensureLesson` in [NOTHING]" and
+   * still reported PASS, because the grep was decoration next to a pass condition that did not use
+   * it. It is gone. `ensure` and `ensureLesson` are NOT called from outside `ItemBank.js` and never
+   * were meant to be: they are reached THROUGH `warmFrontier`, which is the one entry point the
+   * boot module holds, and the spy counters below execute that chain rather than asserting it.
+   * Every list printed here is now part of the pass condition.
+   */
   claim(
     "E1",
-    "the per-lesson loader is CALLED from the shipped game — executable code, not a doc comment — and the degradation channel has a subscriber",
-    bootWarms && subscribers.length > 0 && chained,
-    `with comments stripped, \`warmFrontier\`/\`warmFrontierWhenIdle\` is CALLED in [${warmCallers.join(", ") || "NOTHING"}], ` +
-      `\`ensure\`/\`ensureLesson\` in [${ensureCallers.join(", ") || "NOTHING"}], ` +
-      `and \`bankIssues.onIssue\` is assigned in [${subscribers.join(", ") || "NOTHING"}]. ` +
-      `Driving that entry point once reached ensureLesson x${spy.ensureLesson}, ensure x${spy.ensure}, prefetchAround x${spy.prefetchAround} ` +
-      `and opened "${spyWarm.lesson}"`,
-    "a boot module calls warmFrontier; the call reaches ensureLesson and prefetchAround; onIssue has a subscriber"
+    "the per-lesson loader is CALLED from the shipped game — executable code, not a doc comment — it FOLLOWS the learner, and the degradation channel has a subscriber",
+    bootWarms && bootFollows && lookaheadCallers.length > 0 && subscribers.length > 0 && chained,
+    `with comments stripped: \`warmFrontier\`/\`warmFrontierWhenIdle\` is CALLED in [${warmCallers.join(", ") || "NOTHING"}]; ` +
+      `the frontier is FOLLOWED by \`signals.on("learn:mastery"/"learn:session")\` in [${signalFollowers.join(", ") || "NOTHING"}]; ` +
+      `\`lookaheadFrom\` is called in [${lookaheadCallers.join(", ") || "NOTHING"}]; ` +
+      `\`bankIssues.onIssue\` is assigned in [${subscribers.join(", ") || "NOTHING"}]. ` +
+      `\`ensure\`/\`ensureLesson\`/\`prefetchAround\` are deliberately NOT called from outside ItemBank.js — they are reached through ` +
+      `\`warmFrontier\`, and driving that one entry point executed ensureLesson x${spy.ensureLesson}, ensure x${spy.ensure}, ` +
+      `prefetchAround x${spy.prefetchAround}, opening "${spyWarm.lesson}"`,
+    "a boot module calls warmFrontier AND subscribes to the frontier's signals AND calls lookaheadFrom; the chain reaches ensureLesson and prefetchAround; onIssue has a subscriber"
   );
 }
 
 {
-  const w = live.warm;
-  const pulled = live.classified.warmPulled;
+  const w = live?.warm ?? null;
+  const pulled = cls("warmPulled");
   claim(
     "E2",
     "in the REAL built game the warm ran, off the critical path, on the lesson the ENGINE named — and pulled that lesson's chunks",
-    !!w &&
+    L(w) &&
       w.reason === "ok" &&
       !!w.lesson &&
       w.kpId === (live.frontier?.[0] ?? null) &&
@@ -880,7 +1048,7 @@ function sourceFiles(dir) {
     caps: graph.model?.bkt?.identifiabilityCaps ?? {},
   });
   const recomputed = bankAuditFingerprint({ bankFiles: BANK, model: graph.model });
-  const liveAudit = live.bankAudit ?? {};
+  const liveAudit = live?.bankAudit ?? {};
   detail.fingerprint = {
     scalar: BANK_FINGERPRINT,
     recomputedFromSpine: recomputed,
@@ -896,14 +1064,195 @@ function sourceFiles(dir) {
       BANK_FINGERPRINT === recomputed &&
       BANK_FINGERPRINT === bankAudit.fingerprint &&
       liveBasis === BANK_FINGERPRINT_BASIS &&
-      liveAudit.fingerprintSource === "build-time" &&
-      live.classified.criticalPath.spineChunks.length === 0 &&
-      live.classified.warmPulled.spineChunks.length === 0,
+      L(liveAudit.fingerprintSource === "build-time") &&
+      cls("criticalPath").spineChunks.length === 0 &&
+      cls("warmPulled").spineChunks.length === 0,
     `BANK_FINGERPRINT ${BANK_FINGERPRINT} == recomputed over all 1152 items ${recomputed} == committed ${bankAudit.fingerprint}; ` +
       `basis key ${BANK_FINGERPRINT_BASIS} recomputed from the live Mastery constants gives ${liveBasis}; ` +
       `the live game reports fingerprintSource "${liveAudit.fingerprintSource}" and resolved the price in ${liveAudit.setupMs} ms, ` +
       `having requested 0 spine chunks`,
     "identical, basis agrees, spine never fetched"
+  );
+}
+
+/* ============================================== E4-E6 — does it FOLLOW the learner, and who calls it */
+
+/**
+ * ROUND 3 DIED HERE.
+ *
+ * The byte win was real and the boot warm did fire — once, inside `setup()`, and never again. The
+ * critic drove the shipped engine through 600 scored items over 19 sessions and it pulled ZERO
+ * further group chunks, so the learner the whole product goal is about — the one who tests out of
+ * `expressions-1` in two minutes — walked into a lesson nothing had warmed.
+ *
+ * E4/E5 are that finding, executed: the frontier is moved across a lesson boundary IN THE BUILT
+ * GAME, twice, by two different mechanisms, and the browser's own resource timings say what was
+ * fetched. E6 answers the other half — whether the ON-DEMAND path (a cold `select()` during play)
+ * has a caller in the shipped game at all.
+ *
+ * `learning.drive()` is deliberately NOT the instrument. Measured offline, the shipped self-drive
+ * parks on `expr-anatomy` and stays there at 600, 1,200, 2,000, 3,000 and 4,500 items, so the
+ * frontier NEVER leaves `expressions-1` and no harness built on it can observe a crossing however
+ * the loader behaves. The crossings below use `Mastery.certify()` — the engine's own entry point,
+ * the one a passed retention check calls — and `Mastery.snapshot()`/`restore()`, the shipped save
+ * path, which moves the frontier while emitting nothing at all.
+ */
+{
+  const x = live?.crossings ?? null;
+  const log = x?.warmLog ?? [];
+  const c1 = cls("crossing1Pulled");
+  const c2 = cls("crossing2Pulled");
+  const bySeq = (n) => log.find((r) => r.seq === n) ?? null;
+  detail.crossings = { crossings: x, crossing1Pulled: c1, crossing2Pulled: c2 };
+
+  claim(
+    "E4",
+    "the warm FOLLOWS THE LEARNER: crossing a lesson boundary in the built game re-warms on the ENGINE's signal and pulls the new lesson's chunks",
+    L(x) &&
+      x.one.lessonBefore !== x.one.lessonAfter &&
+      x.warms >= 2 &&
+      bySeq(2)?.trigger === "mastery-signal" &&
+      bySeq(2)?.lesson === x.one.lessonAfter &&
+      bySeq(2)?.reason === "ok" &&
+      c1.groupChunks.length >= bySeq(2).groups &&
+      c1.groupChunks.length > 0,
+    x
+      ? `the learner certified "${x.one.lessonBefore}" through Mastery.certify(); the frontier moved "${x.one.before}" -> "${x.one.after}", ` +
+        `i.e. "${x.one.lessonBefore}" -> "${x.one.lessonAfter}". probe().warms went 1 -> ${x.warms}; warm #2 records trigger ` +
+        `"${bySeq(2)?.trigger}", lesson "${bySeq(2)?.lesson}", ${bySeq(2)?.groups} groups, reason "${bySeq(2)?.reason}". ` +
+        `The browser fetched ${c1.groupChunks.length} new group chunks (${c1.groupChunks.join(", ")}, ${c1.encodedBytes} B encoded) ` +
+        `— round 3 fetched 0 here.`
+      : "no live probe",
+    "lesson changed, warms >= 2, trigger mastery-signal, >0 chunks pulled"
+  );
+
+  claim(
+    "E5",
+    "and it follows the learner even when NOTHING emits: a silent frontier move is caught by the bounded idle re-check",
+    L(x) &&
+      x.two.restored === true &&
+      x.two.lessonBefore !== x.two.lessonAfter &&
+      x.warms >= 3 &&
+      bySeq(3)?.trigger === "idle-recheck" &&
+      bySeq(3)?.lesson === x.two.lessonAfter &&
+      c2.groupChunks.length > 0,
+    x
+      ? `Mastery.snapshot() -> mark "${x.two.lessonBefore}" mastered -> Mastery.restore() (restored: ${x.two.restored}, carried a scheduler block: ${x.two.carriedScheduler}) ` +
+        `emits no signal at all — this is the shape of learning.drive()'s swap and of a save being loaded. The frontier moved ` +
+        `"${x.two.lessonBefore}" -> "${x.two.lessonAfter}" silently, and ${(live.crossings.warmState?.recheckMs ?? 0) / 1000}s later warm #3 recorded ` +
+        `trigger "${bySeq(3)?.trigger}" on lesson "${bySeq(3)?.lesson}" and the browser fetched ${c2.groupChunks.length} chunks ` +
+        `(${c2.groupChunks.join(", ")}, ${c2.encodedBytes} B encoded). A delivery mechanism that depended on another piece's emit would have missed this.`
+      : "no live probe",
+    "silent move caught, warms >= 3, trigger idle-recheck, >0 chunks pulled"
+  );
+
+  const la = live?.lookahead ?? null;
+  const lap = cls("lookaheadPulled");
+  const residentAfter = new Set(la?.probe?.residentGroups ?? []);
+  detail.liveLookahead = { lookahead: la && { ...la, probe: undefined }, pulled: lap };
+  claim(
+    "E6",
+    "halfway through a lesson the built game pulls the WHOLE next lesson, so the boundary itself is never cold",
+    L(la) &&
+      la.warmState?.lookedAheadFrom === la.lesson &&
+      !!la.nextLesson &&
+      la.nextLessonKps.length > 0 &&
+      la.nextLessonKps.every((id) => residentAfter.has(id)),
+    la
+      ? `certifying ${JSON.stringify(la.certified)} put the learner halfway through "${la.lesson}"; the boot module saw the lesson had NOT changed ` +
+        `and evaluated the lookahead instead, recording lookedAheadFrom "${la.warmState?.lookedAheadFrom}" and queueing "${la.nextLesson}" ` +
+        `(${la.nextLessonKps.join(", ")}). The browser fetched ${lap.groupChunks.length} further group chunk(s) (${lap.groupChunks.join(", ") || "none — already resident"}, ` +
+        `${lap.encodedBytes} B) and all ${la.nextLessonKps.length} of the next lesson's groups are resident BEFORE the learner reaches it.`
+      : "no live probe",
+    "lookahead fired mid-lesson, whole next lesson resident"
+  );
+}
+
+{
+  /**
+   * THE ON-DEMAND HALF'S CALLER.
+   *
+   * Round 3's critic: *"`Scheduler.serve()` — the one API that pairs a scheduler request with a
+   * bank item — has ZERO callers under `app/`"*. P32 has since closed that: `Scheduler.next()`
+   * draws every item through `serve(req, this.bank)`, and `app/src/boot/63-learnserve.js` attaches
+   * the bank. This measures the consequence for P31 rather than restating it — driving the SHIPPED
+   * `learning.next()` / `learning.submit()` loop in the built page, with nothing in the loop
+   * touching the bank, and asking the browser what got fetched.
+   */
+  const p = live?.play ?? null;
+  const pulled = cls("gameplayPulled");
+  const ls = live?.learnserve ?? null;
+  detail.gameplay = { play: p && { items: p.items, sources: p.sources, kps: p.kps, unserved: p.unserved }, pulled, learnserve: ls };
+  claim(
+    "E7",
+    "the ON-DEMAND half has a caller in the shipped game: playing the built app pulls group chunks that no script asked for",
+    L(p) &&
+      !p.error &&
+      ls?.attached === true &&
+      p.items >= 100 &&
+      p.unserved === 0 &&
+      (p.sources?.catalogue ?? 0) > 0 &&
+      pulled.groupChunks.length > 0,
+    p
+      ? `boot/63-learnserve.js reports attached=${ls?.attached} (familyReporting via "${ls?.familyReportingSource}", serveMisses ${ls?.serveMisses}); ` +
+        `driving learning.next()/submit() for ${p.items} items over ${p.kps?.length} knowledge points served ` +
+        `${p.sources?.catalogue ?? 0} from the catalogue and ${p.sources?.generated ?? 0} generated, ${p.unserved} unserved. ` +
+        `Scheduler.serve() -> ItemBank.select() pulled ${pulled.groupChunks.length} group chunks (${kB(pulled.encodedBytes)} encoded) with nothing in the ` +
+        `driving loop touching the bank. Round 3 measured 0 here.`
+      : "no live probe",
+    "learnserve attached, >=100 items, 0 unserved, >0 catalogue items, >0 chunks pulled by gameplay"
+  );
+}
+
+/* ============================================ F — the cliff nobody had bounded: a stale bank audit */
+
+{
+  /**
+   * `app/src/boot/62-learning.js` recomputes the blind-guess audit live whenever `bank-audit.json`
+   * is stale, by driving `collectBankSample` through `itemBank.select()` across every knowledge
+   * point and every form. Splitting the catalogue put a cliff under that fallback and nobody had
+   * measured it. Both halves are measured here, on the real code, with the real sweep.
+   *
+   * The reduced `perCell`/`tailDraws` below shrink the DRAW COUNT, not the shape: the sweep still
+   * visits all 32 knowledge points x 3 forms, which is the only thing chunk counting depends on.
+   * At the shipped constants the same sweep takes 282 s of blocking arithmetic and asks for the
+   * same groups.
+   */
+  const proc = await import("node:child_process");
+  const raw = proc.execFileSync(process.execPath, [path.join(HERE, "_p31-audit-sweep.mjs"), ROOT], {
+    encoding: "utf8",
+    maxBuffer: 1 << 24,
+  });
+  const sweep = JSON.parse(raw);
+  const groupGz = sum(after ?? {}, isGroupChunk).gzip;
+  const wouldCost = Math.round((groupGz * sweep.guarded.requested) / Math.max(1, KP_IDS.length));
+  detail.staleAudit = { ...sweep, courseGzip: groupGz, boundGzip: wouldCost };
+  claim(
+    "F1",
+    "a STALE bank audit cannot pull the whole catalogue onto the critical path — the sweep is bounded, and bounding it costs the audit nothing",
+    sweep.guarded.requested < KP_IDS.length &&
+      sweep.guarded.requested <= 12 &&
+      sweep.guarded.residentDuringSweep === 0 &&
+      sweep.unguarded.residentDuringSweep === 0 &&
+      sweep.sameSample === true,
+    `the live-recompute sweep drew ${sweep.guarded.sampled} items across all ${KP_IDS.length} knowledge points. ` +
+      `Unguarded it requests ${sweep.unguarded.requested}/${KP_IDS.length} group chunks (${kB(groupGz)} gz, the whole course) on the critical path; ` +
+      `guarded it requests ${sweep.guarded.requested} (~${kB(wouldCost)} gz). ` +
+      `Bounding it is free because the sweep is ONE synchronous block: with and without the guard it ends with ` +
+      `${sweep.guarded.residentDuringSweep} groups resident, so not one requested chunk could have reached the sample — ` +
+      `the source mix is ${JSON.stringify(sweep.guarded.mix)} either way (identical: ${sweep.sameSample}).`,
+    "< 32 chunks requested, 0 could have arrived in time, and the sample is unchanged"
+  );
+
+  claim(
+    "F2",
+    "the same guard is invisible to a session: nothing a learner does is ever suppressed",
+    sweep.session.suppressed === 0 && sweep.session.demandLoads > 0 && sweep.session.items >= 25,
+    `a full scheduler-driven session (${sweep.session.items} items over ${sweep.session.kps} knowledge points, compressed into ` +
+      `${sweep.session.ms} ms of wall clock — a learner takes 20-40 s per item) started ${sweep.session.demandLoads} speculative loads and had ` +
+      `${sweep.session.suppressed} suppressed. The guard is relevance, not rate: a knowledge point stays eligible while it is one of the ` +
+      `last ${sweep.session.recentWindow} a cold select asked for, and a session works on ${sweep.session.kps}.`,
+    "0 suppressed in a session, >0 speculative loads still made"
   );
 }
 

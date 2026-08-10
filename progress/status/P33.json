@@ -1,9 +1,9 @@
 {
   "id": "P33",
-  "state": "building",
+  "state": "critique",
   "round": 2,
-  "gap": "A P33 sitting is ~20 min of ONE knowledge point and contains zero mastery events: 0 of 4,698 beats across 350 critic sittings were certification events, so 'budget in mastery events' and 'ends on a win' are both unfalsified — closingWin is 'stood' (the last of 46 reps of var-meaning was correct) 350/350 times.",
-  "note": "Round 2: fix zero-mastery-event corpus (beat-kind histogram + distinct-KP gates that FAIL), breadth invariant with starved signal, leverage selection re-opened via scheduler:focus request, pace carry across unclean exit, interrupted re-entry line, heavy-tailed archetype",
+  "gap": "Leverage is a signal with no listener: 44% of acquisition blocks go to a node the layer's own table ranks lower (median score gap 0.33, p90 1.8); Scheduler.focus() does not exist, honoured=0, and the 54.7% match rate is 8.4 points over blind chance",
+  "note": "Root cause of the zero-mastery-event corpus found and fixed: P33.mjs never drew items through the picker, so 91% of responses came back unscored-unreported-family and nothing ever certified. Harness now assembles the engine as boot/62-learning + boot/63-learnserve do (Scheduler.attachBank). Corpus: 2240 sittings, 28744 beats (acquire 17519 / consolidate 3947 / review 3919 / retention 3359), 2762 certifications, distinct KPs/sitting median 6. 23/23 claims pass; verify --langs=en PASSED.",
   "evidence": [],
-  "updated": "2026-08-10T18:39:57.889Z"
+  "updated": "2026-08-10T19:23:49.085Z"
 }

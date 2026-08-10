@@ -52,6 +52,15 @@ export default {
         `flow: the previous sitting (#${load.interrupted.number ?? "?"}) was never closed and has been ` +
           `recorded as interrupted. The learner model is stored separately and was not affected.`
       );
+    // The sitting did not survive; the CALIBRATION did. Announced because a ρ that arrived from a
+    // dead sitting is a different provenance from one a clean close wrote, and a reviewer reading
+    // `probe().pace` should not have to infer which happened. See `Save._adoptInterruptedPace`.
+    if (load.paceSource === "recovered")
+      warn(
+        `flow: the pace calibration was recovered from the interrupted sitting ` +
+          `(rho ${Math.round((load.pace?.ratio ?? 1) * 100) / 100} over ${load.pace?.samples ?? 0} items) rather than ` +
+          `re-measured from the design's seconds.`
+      );
 
     const session = new Session({ learning, save, emit: (name, value) => signals.emit(name, value) });
     try {
@@ -63,6 +72,23 @@ export default {
       // boot module that throws and takes the probe down with it.
       warn(`flow: could not plan a sitting — ${String(err?.message || err)}`);
     }
+
+    /**
+     * BREADTH, ANNOUNCED. `Session` emits `learn:session {phase:"starved"}` when the engine's whole
+     * legal supply is one knowledge point and that node has already taken `STARVE_REPS` items of
+     * this sitting. It is surfaced through `Introspect.warn` so it lands in `__vs.report().warnings`
+     * where `tools/review.mjs` and a critic both read it — the round-2 defect was a corpus of
+     * forty-six repetitions of one node that nothing anywhere said a word about, and a signal with
+     * no listener would have been the same silence with an extra step.
+     */
+    signals.on("learn:session", (e) => {
+      if (e?.phase !== "starved") return;
+      const s = e.summary ?? {};
+      warn(
+        `flow: the sitting has served "${s.kpId}" ${s.reps} times and the engine has no other legal ` +
+          `knowledge point to offer (supply ${s.supply}). That is a curriculum-supply limit, not a session-arc one.`
+      );
+    });
 
     // ---------------------------------------------------------------- attention
 

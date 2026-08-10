@@ -1130,7 +1130,7 @@ export class Scheduler {
        */
       bank: !!this.bank,
       serveMisses: this.serveMisses,
-      servableCells: Object.fromEntries([...this._servableCells].map(([k, v]) => [k, v])),
+      cellsProbedForServability: this._servableCells.size,
       unservableCells: [...this._servableCells].filter(([, v]) => !v).map(([k]) => k),
     };
   }

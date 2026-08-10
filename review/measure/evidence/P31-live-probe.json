@@ -1,23 +1,37 @@
 {
- "generated": "2026-08-10T17:26:49.467Z",
+ "generated": "2026-08-10T19:27:41.924Z",
+ "dist": {
+  "files": 60,
+  "key": "11c20465"
+ },
  "ready": true,
  "fatal": null,
  "errors": [],
  "warnings": [
   "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
   "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+  "learning: CONTENT: \"eq-special-cases\" (band 5) has NO mastery-eligible form on ANY delivery — every generator family of every scored form is above the caps [construct:eq-special-cases.always@1 answers \"always\", construct:eq-special-cases.refusal@1 answers \"none\", repair:eq-special-cases.always@1 answers \"3: 0 = 0\", generate:eq-special-cases.always@1 answers \"5\\left(x + 2\\right) = 5x + 10\", generate:eq-special-cases.refusal@1 answers \"4x - 3 = 4x - 1\"]. It can never be certified and it has no test-out. The fix is a new low-guess construct/repair pool with more distinct answers, never a looser threshold.",
+  "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
+  "learning: CONTENT: \"eq-special-cases\" (band 5) has NO mastery-eligible form on ANY delivery — every generator family of every scored form is above the caps [construct:eq-special-cases.always@1 answers \"always\", construct:eq-special-cases.refusal@1 answers \"none\", repair:eq-special-cases.always@1 answers \"3: 0 = 0\", generate:eq-special-cases.always@1 answers \"5\\left(x + 2\\right) = 5x + 10\", generate:eq-special-cases.refusal@1 answers \"4x - 3 = 4x - 1\"]. It can never be certified and it has no test-out. The fix is a new low-guess construct/repair pool with more distinct answers, never a looser threshold.",
   "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
   "math: claim \"leaf9-span\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer",
-  "math: claim \"leaf9-share\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer"
+  "math: claim \"leaf9-share\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer",
+  "math: claim \"leaf9-mark\" reads 4.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 0.19 px, so the mark stands until the player is closer",
+  "itembank: speculation-dropped on \"like-terms-combine\" — a cold select() asked for \"like-terms-combine\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched"
  ],
  "warm": {
-  "at": 1786382809285,
+  "at": 1786390034005,
+  "seq": 1,
+  "trigger": "boot",
   "kpId": "var-meaning",
   "lesson": "expressions-1",
   "groups": 3,
   "failed": [],
-  "ms": 7.7,
-  "reason": "ok"
+  "ms": 18.9,
+  "reason": "ok",
+  "lessonProgress": 0,
+  "nextLesson": null,
+  "nextLessonQueued": []
  },
  "probeAfterWarm": {
   "knowledgePoints": 32,
@@ -27,7 +41,7 @@
   "locale": "en",
   "minItemsPerKp": 36,
   "minItemsPerMisconception": 3,
-  "groups": "3/32 resident, 0 loading",
+  "groups": "3/32 resident, 1 loading",
   "lessons": 22,
   "residentGroups": [
    "var-meaning",
@@ -38,13 +52,35 @@
   "issues": 0,
   "lastIssue": null,
   "warm": {
-   "at": 1786382809285,
+   "at": 1786390034005,
+   "seq": 1,
+   "trigger": "boot",
    "kpId": "var-meaning",
    "lesson": "expressions-1",
    "groups": 3,
    "failed": [],
-   "ms": 7.7,
-   "reason": "ok"
+   "ms": 18.9,
+   "reason": "ok",
+   "lessonProgress": 0,
+   "nextLesson": null,
+   "nextLessonQueued": []
+  },
+  "warms": 1,
+  "warmLog": [
+   {
+    "seq": 1,
+    "trigger": "boot",
+    "lesson": "expressions-1",
+    "groups": 3,
+    "reason": "ok",
+    "nextLesson": null
+   }
+  ],
+  "loads": {
+   "demand": 0,
+   "prefetch": 1,
+   "explicit": 3,
+   "suppressed": 0
   },
   "itemLocale": "en",
   "localesResident": [
@@ -105,13 +141,35 @@
   "issues": 0,
   "lastIssue": null,
   "warm": {
-   "at": 1786382809285,
+   "at": 1786390034005,
+   "seq": 1,
+   "trigger": "boot",
    "kpId": "var-meaning",
    "lesson": "expressions-1",
    "groups": 3,
    "failed": [],
-   "ms": 7.7,
-   "reason": "ok"
+   "ms": 18.9,
+   "reason": "ok",
+   "lessonProgress": 0,
+   "nextLesson": null,
+   "nextLessonQueued": []
+  },
+  "warms": 1,
+  "warmLog": [
+   {
+    "seq": 1,
+    "trigger": "boot",
+    "lesson": "expressions-1",
+    "groups": 3,
+    "reason": "ok",
+    "nextLesson": null
+   }
+  ],
+  "loads": {
+   "demand": 0,
+   "prefetch": 1,
+   "explicit": 3,
+   "suppressed": 0
   },
   "itemLocale": "en",
   "localesResident": [
@@ -152,528 +210,2375 @@
    "ineq-two-step": "15/14/7"
   }
  },
+ "learnserve": {
+  "attached": true,
+  "familyReporting": true,
+  "familyReportingSource": "scheduler-serve",
+  "uncertifiable": [
+   "eq-special-cases"
+  ],
+  "testOutEligible": 31,
+  "unreportedFamilyItems": 0,
+  "serveMisses": 0
+ },
  "bankAudit": {
   "source": "committed",
   "fingerprintSource": "build-time",
   "setupMs": 0.1,
-  "fingerprint": "d6e2537d",
-  "version": 2,
-  "sampled": 29754,
-  "catalogueShare": 0.6396
+  "fingerprint": "c01e9128",
+  "version": 3,
+  "sampled": 54796,
+  "catalogueShare": 0.3473
  },
  "frontier": [
   "var-meaning",
   "oo-numeric"
  ],
+ "coldWindow": {
+  "immediateKp": "ineq-two-step",
+  "spacedKp": "ineq-negative-flip",
+  "immediate": {
+   "kpId": "ineq-two-step",
+   "gapMs": 0,
+   "tries": 10,
+   "degraded": 2,
+   "blanks": 0,
+   "uncheckable": 0,
+   "msToCatalogue": 390.2,
+   "rows": [
+    {
+     "i": 0,
+     "atMs": 2,
+     "source": "generated",
+     "relaxation": "generated-group-absent",
+     "checkable": true
+    },
+    {
+     "i": 1,
+     "atMs": 352.9,
+     "source": "generated",
+     "relaxation": "generated-group-absent",
+     "checkable": true
+    },
+    {
+     "i": 2,
+     "atMs": 390.2,
+     "source": "catalogue",
+     "relaxation": "nearest-band",
+     "checkable": true
+    },
+    {
+     "i": 3,
+     "atMs": 425,
+     "source": "catalogue",
+     "relaxation": "nearest-band",
+     "checkable": true
+    },
+    {
+     "i": 4,
+     "atMs": 442.1,
+     "source": "catalogue",
+     "relaxation": "nearest-band",
+     "checkable": true
+    },
+    {
+     "i": 5,
+     "atMs": 577.9,
+     "source": "catalogue",
+     "relaxation": "nearest-band",
+     "checkable": true
+    },
+    {
+     "i": 6,
+     "atMs": 821.6,
+     "source": "catalogue",
+     "relaxation": "nearest-band",
+     "checkable": true
+    },
+    {
+     "i": 7,
+     "atMs": 861,
+     "source": "catalogue",
+     "relaxation": "nearest-band",
+     "checkable": true
+    },
+    {
+     "i": 8,
+     "atMs": 1150.6,
+     "source": "catalogue",
+     "relaxation": "nearest-band",
+     "checkable": true
+    },
+    {
+     "i": 9,
+     "atMs": 1188.9,
+     "source": "catalogue",
+     "relaxation": "nearest-band",
+     "checkable": true
+    }
+   ]
+  },
+  "spaced": {
+   "kpId": "ineq-negative-flip",
+   "gapMs": 400,
+   "tries": 5,
+   "degraded": 1,
+   "blanks": 0,
+   "uncheckable": 0,
+   "msToCatalogue": 402.2,
+   "rows": [
+    {
+     "i": 0,
+     "atMs": 0.5,
+     "source": "generated",
+     "relaxation": "generated-group-absent",
+     "checkable": true
+    },
+    {
+     "i": 1,
+     "atMs": 402.2,
+     "source": "catalogue",
+     "relaxation": "exact",
+     "checkable": true
+    },
+    {
+     "i": 2,
+     "atMs": 805.3,
+     "source": "catalogue",
+     "relaxation": "exact",
+     "checkable": true
+    },
+    {
+     "i": 3,
+     "atMs": 1206.4,
+     "source": "catalogue",
+     "relaxation": "exact",
+     "checkable": true
+    },
+    {
+     "i": 4,
+     "atMs": 1612.2,
+     "source": "catalogue",
+     "relaxation": "exact",
+     "checkable": true
+    }
+   ]
+  }
+ },
+ "crossings": {
+  "one": {
+   "before": "var-meaning",
+   "lessonBefore": "expressions-1",
+   "after": "oo-structure",
+   "lessonAfter": "expressions-2",
+   "probe": {
+    "knowledgePoints": 32,
+    "items": 291,
+    "catalogueItems": 1152,
+    "generatedThisSession": 3,
+    "locale": "en",
+    "minItemsPerKp": 36,
+    "minItemsPerMisconception": 3,
+    "groups": "8/32 resident, 0 loading",
+    "lessons": 22,
+    "residentGroups": [
+     "var-meaning",
+     "expr-anatomy",
+     "oo-numeric",
+     "oo-structure",
+     "ineq-two-step",
+     "ineq-negative-flip",
+     "eval-substitute",
+     "eval-signed"
+    ],
+    "degraded": [],
+    "issues": 0,
+    "lastIssue": null,
+    "warm": {
+     "at": 1786390039365,
+     "seq": 2,
+     "trigger": "mastery-signal",
+     "kpId": "oo-structure",
+     "lesson": "expressions-2",
+     "groups": 2,
+     "failed": [],
+     "ms": 8.7,
+     "reason": "ok",
+     "lessonProgress": 0,
+     "nextLesson": null,
+     "nextLessonQueued": []
+    },
+    "warms": 2,
+    "warmLog": [
+     {
+      "seq": 1,
+      "trigger": "boot",
+      "lesson": "expressions-1",
+      "groups": 3,
+      "reason": "ok",
+      "nextLesson": null
+     },
+     {
+      "seq": 2,
+      "trigger": "mastery-signal",
+      "lesson": "expressions-2",
+      "groups": 2,
+      "reason": "ok",
+      "nextLesson": null
+     }
+    ],
+    "loads": {
+     "demand": 2,
+     "prefetch": 3,
+     "explicit": 3,
+     "suppressed": 0
+    },
+    "itemLocale": "en",
+    "localesResident": [
+     "en"
+    ],
+    "formsPerKp": {
+     "var-meaning": "14/17/5",
+     "oo-numeric": "15/16/5",
+     "expr-anatomy": "16/15/5",
+     "oo-structure": "14/10/12",
+     "eval-substitute": "13/12/11",
+     "eval-signed": "12/13/11",
+     "eval-formula": "13/13/10",
+     "translate-phrase": "13/16/7",
+     "translate-order": "17/14/5",
+     "props-operations": "12/12/12",
+     "like-terms-id": "12/12/12",
+     "like-terms-combine": "12/12/12",
+     "distribute-numeric": "15/14/7",
+     "distribute-variable": "12/12/12",
+     "distribute-negative": "16/13/7",
+     "simplify-expression": "12/13/11",
+     "equivalent-expressions": "11/13/12",
+     "eq-meaning": "12/12/12",
+     "props-equality": "15/14/7",
+     "eq-one-add": "13/16/7",
+     "eq-one-mult": "15/14/7",
+     "eq-two-step": "11/13/12",
+     "eq-combine-side": "10/12/14",
+     "eq-distribute": "12/12/12",
+     "eq-both-sides": "10/14/12",
+     "eq-special-cases": "16/7/13",
+     "translate-sentence": "12/11/13",
+     "eq-model-context": "15/14/7",
+     "ineq-meaning": "14/12/10",
+     "ineq-one-step": "16/13/7",
+     "ineq-negative-flip": "15/14/7",
+     "ineq-two-step": "15/14/7"
+    }
+   }
+  },
+  "two": {
+   "before": "oo-structure",
+   "lessonBefore": "expressions-2",
+   "after": "eval-signed",
+   "lessonAfter": "expressions-3",
+   "restored": true,
+   "carriedScheduler": true,
+   "probe": {
+    "knowledgePoints": 32,
+    "items": 363,
+    "catalogueItems": 1152,
+    "generatedThisSession": 3,
+    "locale": "en",
+    "minItemsPerKp": 36,
+    "minItemsPerMisconception": 3,
+    "groups": "10/32 resident, 0 loading",
+    "lessons": 22,
+    "residentGroups": [
+     "var-meaning",
+     "expr-anatomy",
+     "oo-numeric",
+     "oo-structure",
+     "ineq-two-step",
+     "ineq-negative-flip",
+     "eval-substitute",
+     "eval-signed",
+     "eval-formula",
+     "translate-phrase"
+    ],
+    "degraded": [],
+    "issues": 0,
+    "lastIssue": null,
+    "warm": {
+     "at": 1786390044474,
+     "seq": 3,
+     "trigger": "idle-recheck",
+     "kpId": "eval-signed",
+     "lesson": "expressions-3",
+     "groups": 2,
+     "failed": [],
+     "ms": 27.9,
+     "reason": "ok",
+     "lessonProgress": 0,
+     "nextLesson": null,
+     "nextLessonQueued": []
+    },
+    "warms": 3,
+    "warmLog": [
+     {
+      "seq": 1,
+      "trigger": "boot",
+      "lesson": "expressions-1",
+      "groups": 3,
+      "reason": "ok",
+      "nextLesson": null
+     },
+     {
+      "seq": 2,
+      "trigger": "mastery-signal",
+      "lesson": "expressions-2",
+      "groups": 2,
+      "reason": "ok",
+      "nextLesson": null
+     },
+     {
+      "seq": 3,
+      "trigger": "idle-recheck",
+      "lesson": "expressions-3",
+      "groups": 2,
+      "reason": "ok",
+      "nextLesson": null
+     }
+    ],
+    "loads": {
+     "demand": 2,
+     "prefetch": 4,
+     "explicit": 4,
+     "suppressed": 0
+    },
+    "itemLocale": "en",
+    "localesResident": [
+     "en"
+    ],
+    "formsPerKp": {
+     "var-meaning": "14/17/5",
+     "oo-numeric": "15/16/5",
+     "expr-anatomy": "16/15/5",
+     "oo-structure": "14/10/12",
+     "eval-substitute": "13/12/11",
+     "eval-signed": "12/13/11",
+     "eval-formula": "13/13/10",
+     "translate-phrase": "13/16/7",
+     "translate-order": "17/14/5",
+     "props-operations": "12/12/12",
+     "like-terms-id": "12/12/12",
+     "like-terms-combine": "12/12/12",
+     "distribute-numeric": "15/14/7",
+     "distribute-variable": "12/12/12",
+     "distribute-negative": "16/13/7",
+     "simplify-expression": "12/13/11",
+     "equivalent-expressions": "11/13/12",
+     "eq-meaning": "12/12/12",
+     "props-equality": "15/14/7",
+     "eq-one-add": "13/16/7",
+     "eq-one-mult": "15/14/7",
+     "eq-two-step": "11/13/12",
+     "eq-combine-side": "10/12/14",
+     "eq-distribute": "12/12/12",
+     "eq-both-sides": "10/14/12",
+     "eq-special-cases": "16/7/13",
+     "translate-sentence": "12/11/13",
+     "eq-model-context": "15/14/7",
+     "ineq-meaning": "14/12/10",
+     "ineq-one-step": "16/13/7",
+     "ineq-negative-flip": "15/14/7",
+     "ineq-two-step": "15/14/7"
+    }
+   }
+  },
+  "warmState": {
+   "lastWarmedLesson": "expressions-3",
+   "lookedAheadFrom": "expressions-1",
+   "inFlight": false,
+   "recheckMs": 5000
+  },
+  "warms": 3,
+  "warmLog": [
+   {
+    "seq": 1,
+    "trigger": "boot",
+    "lesson": "expressions-1",
+    "groups": 3,
+    "reason": "ok",
+    "nextLesson": null
+   },
+   {
+    "seq": 2,
+    "trigger": "mastery-signal",
+    "lesson": "expressions-2",
+    "groups": 2,
+    "reason": "ok",
+    "nextLesson": null
+   },
+   {
+    "seq": 3,
+    "trigger": "idle-recheck",
+    "lesson": "expressions-3",
+    "groups": 2,
+    "reason": "ok",
+    "nextLesson": null
+   }
+  ]
+ },
+ "lookahead": {
+  "lesson": "expressions-3",
+  "certified": [
+   "eval-signed"
+  ],
+  "nextLesson": "translation-1",
+  "nextLessonKps": [
+   "translate-phrase",
+   "translate-order"
+  ],
+  "frontier": [
+   "eval-formula",
+   "translate-phrase",
+   "props-operations"
+  ],
+  "warmState": {
+   "lastWarmedLesson": "expressions-3",
+   "lookedAheadFrom": "expressions-3",
+   "inFlight": false,
+   "recheckMs": 5000
+  },
+  "probe": {
+   "knowledgePoints": 32,
+   "items": 399,
+   "catalogueItems": 1152,
+   "generatedThisSession": 3,
+   "locale": "en",
+   "minItemsPerKp": 36,
+   "minItemsPerMisconception": 3,
+   "groups": "11/32 resident, 0 loading",
+   "lessons": 22,
+   "residentGroups": [
+    "var-meaning",
+    "expr-anatomy",
+    "oo-numeric",
+    "oo-structure",
+    "ineq-two-step",
+    "ineq-negative-flip",
+    "eval-substitute",
+    "eval-signed",
+    "eval-formula",
+    "translate-phrase",
+    "translate-order"
+   ],
+   "degraded": [],
+   "issues": 0,
+   "lastIssue": null,
+   "warm": {
+    "at": 1786390044474,
+    "seq": 3,
+    "trigger": "idle-recheck",
+    "kpId": "eval-signed",
+    "lesson": "expressions-3",
+    "groups": 2,
+    "failed": [],
+    "ms": 27.9,
+    "reason": "ok",
+    "lessonProgress": 0,
+    "nextLesson": null,
+    "nextLessonQueued": []
+   },
+   "warms": 3,
+   "warmLog": [
+    {
+     "seq": 1,
+     "trigger": "boot",
+     "lesson": "expressions-1",
+     "groups": 3,
+     "reason": "ok",
+     "nextLesson": null
+    },
+    {
+     "seq": 2,
+     "trigger": "mastery-signal",
+     "lesson": "expressions-2",
+     "groups": 2,
+     "reason": "ok",
+     "nextLesson": null
+    },
+    {
+     "seq": 3,
+     "trigger": "idle-recheck",
+     "lesson": "expressions-3",
+     "groups": 2,
+     "reason": "ok",
+     "nextLesson": null
+    }
+   ],
+   "loads": {
+    "demand": 2,
+    "prefetch": 5,
+    "explicit": 4,
+    "suppressed": 0
+   },
+   "itemLocale": "en",
+   "localesResident": [
+    "en"
+   ],
+   "formsPerKp": {
+    "var-meaning": "14/17/5",
+    "oo-numeric": "15/16/5",
+    "expr-anatomy": "16/15/5",
+    "oo-structure": "14/10/12",
+    "eval-substitute": "13/12/11",
+    "eval-signed": "12/13/11",
+    "eval-formula": "13/13/10",
+    "translate-phrase": "13/16/7",
+    "translate-order": "17/14/5",
+    "props-operations": "12/12/12",
+    "like-terms-id": "12/12/12",
+    "like-terms-combine": "12/12/12",
+    "distribute-numeric": "15/14/7",
+    "distribute-variable": "12/12/12",
+    "distribute-negative": "16/13/7",
+    "simplify-expression": "12/13/11",
+    "equivalent-expressions": "11/13/12",
+    "eq-meaning": "12/12/12",
+    "props-equality": "15/14/7",
+    "eq-one-add": "13/16/7",
+    "eq-one-mult": "15/14/7",
+    "eq-two-step": "11/13/12",
+    "eq-combine-side": "10/12/14",
+    "eq-distribute": "12/12/12",
+    "eq-both-sides": "10/14/12",
+    "eq-special-cases": "16/7/13",
+    "translate-sentence": "12/11/13",
+    "eq-model-context": "15/14/7",
+    "ineq-meaning": "14/12/10",
+    "ineq-one-step": "16/13/7",
+    "ineq-negative-flip": "15/14/7",
+    "ineq-two-step": "15/14/7"
+   }
+  }
+ },
+ "play": {
+  "items": 180,
+  "unserved": 0,
+  "sources": {
+   "generated": 70,
+   "catalogue": 110
+  },
+  "kps": [
+   "eq-meaning",
+   "eval-formula",
+   "props-operations",
+   "props-equality",
+   "eq-one-add",
+   "eq-one-mult",
+   "like-terms-id",
+   "like-terms-combine",
+   "eq-two-step",
+   "eq-combine-side",
+   "distribute-numeric",
+   "distribute-variable",
+   "translate-phrase",
+   "ineq-meaning",
+   "distribute-negative",
+   "eq-both-sides",
+   "translate-order",
+   "ineq-one-step",
+   "simplify-expression",
+   "eq-distribute",
+   "ineq-negative-flip",
+   "ineq-two-step",
+   "translate-sentence",
+   "eq-model-context",
+   "equivalent-expressions",
+   "eval-signed"
+  ],
+  "frontier": [
+   "eval-formula",
+   "translate-phrase",
+   "translate-order",
+   "props-operations"
+  ],
+  "lessonAtStart": "expressions-1",
+  "probeAfterPlay": {
+   "knowledgePoints": 32,
+   "items": 1285,
+   "catalogueItems": 1152,
+   "generatedThisSession": 170,
+   "locale": "en",
+   "minItemsPerKp": 36,
+   "minItemsPerMisconception": 3,
+   "groups": "31/32 resident, 0 loading",
+   "lessons": 22,
+   "residentGroups": [
+    "var-meaning",
+    "expr-anatomy",
+    "oo-numeric",
+    "oo-structure",
+    "ineq-two-step",
+    "ineq-negative-flip",
+    "eval-substitute",
+    "eval-signed",
+    "eval-formula",
+    "translate-phrase",
+    "translate-order",
+    "eq-meaning",
+    "props-equality",
+    "ineq-meaning",
+    "props-operations",
+    "distribute-numeric",
+    "like-terms-id",
+    "eq-one-add",
+    "eq-one-mult",
+    "distribute-negative",
+    "eq-distribute",
+    "eq-both-sides",
+    "eq-combine-side",
+    "eq-two-step",
+    "distribute-variable",
+    "simplify-expression",
+    "equivalent-expressions",
+    "ineq-one-step",
+    "translate-sentence",
+    "eq-model-context",
+    "like-terms-combine"
+   ],
+   "degraded": [],
+   "issues": 1,
+   "lastIssue": {
+    "kind": "speculation-dropped",
+    "kpId": "like-terms-combine",
+    "recent": 10,
+    "error": "a cold select() asked for \"like-terms-combine\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched"
+   },
+   "warm": {
+    "at": 1786390044474,
+    "seq": 3,
+    "trigger": "idle-recheck",
+    "kpId": "eval-signed",
+    "lesson": "expressions-3",
+    "groups": 2,
+    "failed": [],
+    "ms": 27.9,
+    "reason": "ok",
+    "lessonProgress": 0,
+    "nextLesson": null,
+    "nextLessonQueued": []
+   },
+   "warms": 3,
+   "warmLog": [
+    {
+     "seq": 1,
+     "trigger": "boot",
+     "lesson": "expressions-1",
+     "groups": 3,
+     "reason": "ok",
+     "nextLesson": null
+    },
+    {
+     "seq": 2,
+     "trigger": "mastery-signal",
+     "lesson": "expressions-2",
+     "groups": 2,
+     "reason": "ok",
+     "nextLesson": null
+    },
+    {
+     "seq": 3,
+     "trigger": "idle-recheck",
+     "lesson": "expressions-3",
+     "groups": 2,
+     "reason": "ok",
+     "nextLesson": null
+    }
+   ],
+   "loads": {
+    "demand": 22,
+    "prefetch": 5,
+    "explicit": 4,
+    "suppressed": 1
+   },
+   "itemLocale": "en",
+   "localesResident": [
+    "en"
+   ],
+   "formsPerKp": {
+    "var-meaning": "14/17/5",
+    "oo-numeric": "15/16/5",
+    "expr-anatomy": "16/15/5",
+    "oo-structure": "14/10/12",
+    "eval-substitute": "13/12/11",
+    "eval-signed": "12/13/11",
+    "eval-formula": "13/13/10",
+    "translate-phrase": "13/16/7",
+    "translate-order": "17/14/5",
+    "props-operations": "12/12/12",
+    "like-terms-id": "12/12/12",
+    "like-terms-combine": "12/12/12",
+    "distribute-numeric": "15/14/7",
+    "distribute-variable": "12/12/12",
+    "distribute-negative": "16/13/7",
+    "simplify-expression": "12/13/11",
+    "equivalent-expressions": "11/13/12",
+    "eq-meaning": "12/12/12",
+    "props-equality": "15/14/7",
+    "eq-one-add": "13/16/7",
+    "eq-one-mult": "15/14/7",
+    "eq-two-step": "11/13/12",
+    "eq-combine-side": "10/12/14",
+    "eq-distribute": "12/12/12",
+    "eq-both-sides": "10/14/12",
+    "eq-special-cases": "16/7/13",
+    "translate-sentence": "12/11/13",
+    "eq-model-context": "15/14/7",
+    "ineq-meaning": "14/12/10",
+    "ineq-one-step": "16/13/7",
+    "ineq-negative-flip": "15/14/7",
+    "ineq-two-step": "15/14/7"
+   }
+  }
+ },
  "resources": {
   "atReady": [
    {
-    "name": "http://127.0.0.1:49153/assets/index-XRRBCBzJ.js",
-    "startTime": 10,
-    "encoded": 130648
+    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
+    "startTime": 15,
+    "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:49153/assets/index-BuMqkyig.css",
-    "startTime": 11,
+    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
+    "startTime": 15,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:49153/assets/02-autotier-BDgdNHd-.js",
-    "startTime": 49,
-    "encoded": 5220
+    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
+    "startTime": 117,
+    "encoded": 6330
    },
    {
-    "name": "http://127.0.0.1:49153/assets/05-i18n-C5fupllz.js",
-    "startTime": 55,
-    "encoded": 4068
+    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
+    "startTime": 129,
+    "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:49153/assets/10-world-Cl2CqU1N.js",
-    "startTime": 62,
-    "encoded": 17608
+    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
+    "startTime": 138,
+    "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:49153/assets/Materials-E923nh_m.js",
-    "startTime": 62,
-    "encoded": 14565
+    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
+    "startTime": 138,
+    "encoded": 14564
    },
    {
-    "name": "http://127.0.0.1:49153/assets/12-sky-Df0gsLV-.js",
-    "startTime": 68,
+    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
+    "startTime": 150,
     "encoded": 11273
    },
    {
-    "name": "http://127.0.0.1:49153/assets/14-lighting-C-e2ejEP.js",
-    "startTime": 72,
+    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
+    "startTime": 163,
     "encoded": 6758
    },
    {
-    "name": "http://127.0.0.1:49153/assets/16-scatter-Bq56u3-D.js",
-    "startTime": 75,
+    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
+    "startTime": 172,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:49153/assets/20-input-CegPAsJa.js",
-    "startTime": 78,
-    "encoded": 12823
+    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
+    "startTime": 185,
+    "encoded": 12822
    },
    {
-    "name": "http://127.0.0.1:49153/assets/30-locomotion-DDoLa1fB.js",
-    "startTime": 82,
+    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
+    "startTime": 190,
     "encoded": 13486
    },
    {
-    "name": "http://127.0.0.1:49153/assets/32-avatar-YDyyevT6.js",
-    "startTime": 85,
-    "encoded": 5001
+    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
+    "startTime": 195,
+    "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:49153/assets/40-camera-qoXL3eYf.js",
-    "startTime": 88,
-    "encoded": 5689
+    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
+    "startTime": 201,
+    "encoded": 5688
    },
    {
-    "name": "http://127.0.0.1:49153/assets/52-post-Dxmv96vf.js",
-    "startTime": 90,
-    "encoded": 9621
+    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
+    "startTime": 220,
+    "encoded": 9619
    },
    {
-    "name": "http://127.0.0.1:49153/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 93,
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
+    "startTime": 226,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 226,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:49153/assets/60-mathtex-OZIbcsrA.js",
-    "startTime": 93,
-    "encoded": 92135
+    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
+    "startTime": 254,
+    "encoded": 1167
    },
    {
-    "name": "http://127.0.0.1:49153/assets/62-itembank-DJvEGcZA.js",
-    "startTime": 107,
-    "encoded": 645
+    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
+    "startTime": 254,
+    "encoded": 29972
    },
    {
-    "name": "http://127.0.0.1:49153/assets/ItemBank-Bkv3MSq0.js",
-    "startTime": 107,
-    "encoded": 29238
+    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
+    "startTime": 267,
+    "encoded": 53143
    },
    {
-    "name": "http://127.0.0.1:49153/assets/62-learning-hIc_9Lz7.js",
-    "startTime": 114,
-    "encoded": 50342
+    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
+    "startTime": 290,
+    "encoded": 620
    },
    {
-    "name": "http://127.0.0.1:49153/assets/90-flow-DxbVchMP.js",
-    "startTime": 122,
-    "encoded": 8064
+    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
+    "startTime": 298,
+    "encoded": 9834
    },
    {
-    "name": "http://127.0.0.1:49153/assets/en-DiJtJ4AS.js",
-    "startTime": 126,
+    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
+    "startTime": 309,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 472,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 472,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 209,
-    "encoded": 5208
-   },
-   {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 209,
-    "encoded": 16440
-   },
-   {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 472,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 472,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 472,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 472,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 472,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 472,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:49153/assets/items-en-BvtiMYOY.js",
-    "startTime": 239,
+    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
+    "startTime": 527,
     "encoded": 7879
    }
   ],
   "afterWarm": [
    {
-    "name": "http://127.0.0.1:49153/assets/index-XRRBCBzJ.js",
-    "startTime": 10,
-    "encoded": 130648
+    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
+    "startTime": 15,
+    "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:49153/assets/index-BuMqkyig.css",
-    "startTime": 11,
+    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
+    "startTime": 15,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:49153/assets/02-autotier-BDgdNHd-.js",
-    "startTime": 49,
-    "encoded": 5220
+    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
+    "startTime": 117,
+    "encoded": 6330
    },
    {
-    "name": "http://127.0.0.1:49153/assets/05-i18n-C5fupllz.js",
-    "startTime": 55,
-    "encoded": 4068
+    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
+    "startTime": 129,
+    "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:49153/assets/10-world-Cl2CqU1N.js",
-    "startTime": 62,
-    "encoded": 17608
+    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
+    "startTime": 138,
+    "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:49153/assets/Materials-E923nh_m.js",
-    "startTime": 62,
-    "encoded": 14565
+    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
+    "startTime": 138,
+    "encoded": 14564
    },
    {
-    "name": "http://127.0.0.1:49153/assets/12-sky-Df0gsLV-.js",
-    "startTime": 68,
+    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
+    "startTime": 150,
     "encoded": 11273
    },
    {
-    "name": "http://127.0.0.1:49153/assets/14-lighting-C-e2ejEP.js",
-    "startTime": 72,
+    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
+    "startTime": 163,
     "encoded": 6758
    },
    {
-    "name": "http://127.0.0.1:49153/assets/16-scatter-Bq56u3-D.js",
-    "startTime": 75,
+    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
+    "startTime": 172,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:49153/assets/20-input-CegPAsJa.js",
-    "startTime": 78,
-    "encoded": 12823
+    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
+    "startTime": 185,
+    "encoded": 12822
    },
    {
-    "name": "http://127.0.0.1:49153/assets/30-locomotion-DDoLa1fB.js",
-    "startTime": 82,
+    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
+    "startTime": 190,
     "encoded": 13486
    },
    {
-    "name": "http://127.0.0.1:49153/assets/32-avatar-YDyyevT6.js",
-    "startTime": 85,
-    "encoded": 5001
+    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
+    "startTime": 195,
+    "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:49153/assets/40-camera-qoXL3eYf.js",
-    "startTime": 88,
-    "encoded": 5689
+    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
+    "startTime": 201,
+    "encoded": 5688
    },
    {
-    "name": "http://127.0.0.1:49153/assets/52-post-Dxmv96vf.js",
-    "startTime": 90,
-    "encoded": 9621
+    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
+    "startTime": 220,
+    "encoded": 9619
    },
    {
-    "name": "http://127.0.0.1:49153/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 93,
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
+    "startTime": 226,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 226,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:49153/assets/60-mathtex-OZIbcsrA.js",
-    "startTime": 93,
-    "encoded": 92135
+    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
+    "startTime": 254,
+    "encoded": 1167
    },
    {
-    "name": "http://127.0.0.1:49153/assets/62-itembank-DJvEGcZA.js",
-    "startTime": 107,
-    "encoded": 645
+    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
+    "startTime": 254,
+    "encoded": 29972
    },
    {
-    "name": "http://127.0.0.1:49153/assets/ItemBank-Bkv3MSq0.js",
-    "startTime": 107,
-    "encoded": 29238
+    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
+    "startTime": 267,
+    "encoded": 53143
    },
    {
-    "name": "http://127.0.0.1:49153/assets/62-learning-hIc_9Lz7.js",
-    "startTime": 114,
-    "encoded": 50342
+    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
+    "startTime": 290,
+    "encoded": 620
    },
    {
-    "name": "http://127.0.0.1:49153/assets/90-flow-DxbVchMP.js",
-    "startTime": 122,
-    "encoded": 8064
+    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
+    "startTime": 298,
+    "encoded": 9834
    },
    {
-    "name": "http://127.0.0.1:49153/assets/en-DiJtJ4AS.js",
-    "startTime": 126,
+    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
+    "startTime": 309,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 472,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 472,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 209,
-    "encoded": 5208
-   },
-   {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 209,
-    "encoded": 16440
-   },
-   {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 472,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 472,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 472,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 472,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 472,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 472,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:49153/assets/items-en-BvtiMYOY.js",
-    "startTime": 239,
+    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
+    "startTime": 527,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:49153/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 962,
+    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1755,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:49153/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 962,
-    "encoded": 2239
+    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1756,
+    "encoded": 2822
    },
    {
-    "name": "http://127.0.0.1:49153/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 962,
-    "encoded": 2822
+    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1756,
+    "encoded": 2239
    }
   ],
   "afterPrefetch": [
    {
-    "name": "http://127.0.0.1:49153/assets/index-XRRBCBzJ.js",
-    "startTime": 10,
-    "encoded": 130648
+    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
+    "startTime": 15,
+    "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:49153/assets/index-BuMqkyig.css",
-    "startTime": 11,
+    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
+    "startTime": 15,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:49153/assets/02-autotier-BDgdNHd-.js",
-    "startTime": 49,
-    "encoded": 5220
+    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
+    "startTime": 117,
+    "encoded": 6330
    },
    {
-    "name": "http://127.0.0.1:49153/assets/05-i18n-C5fupllz.js",
-    "startTime": 55,
-    "encoded": 4068
+    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
+    "startTime": 129,
+    "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:49153/assets/10-world-Cl2CqU1N.js",
-    "startTime": 62,
-    "encoded": 17608
+    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
+    "startTime": 138,
+    "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:49153/assets/Materials-E923nh_m.js",
-    "startTime": 62,
-    "encoded": 14565
+    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
+    "startTime": 138,
+    "encoded": 14564
    },
    {
-    "name": "http://127.0.0.1:49153/assets/12-sky-Df0gsLV-.js",
-    "startTime": 68,
+    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
+    "startTime": 150,
     "encoded": 11273
    },
    {
-    "name": "http://127.0.0.1:49153/assets/14-lighting-C-e2ejEP.js",
-    "startTime": 72,
+    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
+    "startTime": 163,
     "encoded": 6758
    },
    {
-    "name": "http://127.0.0.1:49153/assets/16-scatter-Bq56u3-D.js",
-    "startTime": 75,
+    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
+    "startTime": 172,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:49153/assets/20-input-CegPAsJa.js",
-    "startTime": 78,
-    "encoded": 12823
+    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
+    "startTime": 185,
+    "encoded": 12822
    },
    {
-    "name": "http://127.0.0.1:49153/assets/30-locomotion-DDoLa1fB.js",
-    "startTime": 82,
+    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
+    "startTime": 190,
     "encoded": 13486
    },
    {
-    "name": "http://127.0.0.1:49153/assets/32-avatar-YDyyevT6.js",
-    "startTime": 85,
-    "encoded": 5001
+    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
+    "startTime": 195,
+    "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:49153/assets/40-camera-qoXL3eYf.js",
-    "startTime": 88,
-    "encoded": 5689
+    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
+    "startTime": 201,
+    "encoded": 5688
    },
    {
-    "name": "http://127.0.0.1:49153/assets/52-post-Dxmv96vf.js",
-    "startTime": 90,
-    "encoded": 9621
+    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
+    "startTime": 220,
+    "encoded": 9619
    },
    {
-    "name": "http://127.0.0.1:49153/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 93,
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
+    "startTime": 226,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 226,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:49153/assets/60-mathtex-OZIbcsrA.js",
-    "startTime": 93,
-    "encoded": 92135
+    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
+    "startTime": 254,
+    "encoded": 1167
    },
    {
-    "name": "http://127.0.0.1:49153/assets/62-itembank-DJvEGcZA.js",
-    "startTime": 107,
-    "encoded": 645
+    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
+    "startTime": 254,
+    "encoded": 29972
    },
    {
-    "name": "http://127.0.0.1:49153/assets/ItemBank-Bkv3MSq0.js",
-    "startTime": 107,
-    "encoded": 29238
+    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
+    "startTime": 267,
+    "encoded": 53143
    },
    {
-    "name": "http://127.0.0.1:49153/assets/62-learning-hIc_9Lz7.js",
-    "startTime": 114,
-    "encoded": 50342
+    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
+    "startTime": 290,
+    "encoded": 620
    },
    {
-    "name": "http://127.0.0.1:49153/assets/90-flow-DxbVchMP.js",
-    "startTime": 122,
-    "encoded": 8064
+    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
+    "startTime": 298,
+    "encoded": 9834
    },
    {
-    "name": "http://127.0.0.1:49153/assets/en-DiJtJ4AS.js",
-    "startTime": 126,
+    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
+    "startTime": 309,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 472,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 472,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 209,
-    "encoded": 5208
-   },
-   {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 209,
-    "encoded": 16440
-   },
-   {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 472,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 472,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 472,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 472,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 472,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:49153/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 209,
+    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 472,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:49153/assets/items-en-BvtiMYOY.js",
-    "startTime": 239,
+    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
+    "startTime": 527,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:49153/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 962,
+    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1755,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:49153/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 962,
-    "encoded": 2239
-   },
-   {
-    "name": "http://127.0.0.1:49153/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 962,
+    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1756,
     "encoded": 2822
    },
    {
-    "name": "http://127.0.0.1:49153/assets/oo-structure-Bges-2rk.js",
-    "startTime": 985,
+    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1756,
+    "encoded": 2239
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1788,
     "encoded": 2619
+   }
+  ],
+  "afterCold": [
+   {
+    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
+    "startTime": 15,
+    "encoded": 130693
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
+    "startTime": 15,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
+    "startTime": 117,
+    "encoded": 6330
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
+    "startTime": 129,
+    "encoded": 4067
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
+    "startTime": 138,
+    "encoded": 17607
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
+    "startTime": 138,
+    "encoded": 14564
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
+    "startTime": 150,
+    "encoded": 11273
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
+    "startTime": 163,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
+    "startTime": 172,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
+    "startTime": 185,
+    "encoded": 12822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
+    "startTime": 190,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
+    "startTime": 195,
+    "encoded": 4999
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
+    "startTime": 201,
+    "encoded": 5688
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
+    "startTime": 220,
+    "encoded": 9619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
+    "startTime": 226,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 226,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
+    "startTime": 254,
+    "encoded": 1167
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
+    "startTime": 254,
+    "encoded": 29972
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
+    "startTime": 267,
+    "encoded": 53143
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
+    "startTime": 290,
+    "encoded": 620
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
+    "startTime": 298,
+    "encoded": 9834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
+    "startTime": 309,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 472,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 472,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 472,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 472,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 472,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 472,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 472,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 472,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
+    "startTime": 527,
+    "encoded": 7879
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1755,
+    "encoded": 2834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1756,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1756,
+    "encoded": 2239
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1788,
+    "encoded": 2619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2372,
+    "encoded": 3168
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 4173,
+    "encoded": 2840
+   }
+  ],
+  "afterCross1": [
+   {
+    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
+    "startTime": 15,
+    "encoded": 130693
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
+    "startTime": 15,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
+    "startTime": 117,
+    "encoded": 6330
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
+    "startTime": 129,
+    "encoded": 4067
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
+    "startTime": 138,
+    "encoded": 17607
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
+    "startTime": 138,
+    "encoded": 14564
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
+    "startTime": 150,
+    "encoded": 11273
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
+    "startTime": 163,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
+    "startTime": 172,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
+    "startTime": 185,
+    "encoded": 12822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
+    "startTime": 190,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
+    "startTime": 195,
+    "encoded": 4999
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
+    "startTime": 201,
+    "encoded": 5688
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
+    "startTime": 220,
+    "encoded": 9619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
+    "startTime": 226,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 226,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
+    "startTime": 254,
+    "encoded": 1167
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
+    "startTime": 254,
+    "encoded": 29972
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
+    "startTime": 267,
+    "encoded": 53143
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
+    "startTime": 290,
+    "encoded": 620
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
+    "startTime": 298,
+    "encoded": 9834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
+    "startTime": 309,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 472,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 472,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 472,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 472,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 472,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 472,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 472,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 472,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
+    "startTime": 527,
+    "encoded": 7879
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1755,
+    "encoded": 2834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1756,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1756,
+    "encoded": 2239
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1788,
+    "encoded": 2619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2372,
+    "encoded": 3168
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 4173,
+    "encoded": 2840
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-substitute-CIy76Axk.js",
+    "startTime": 7114,
+    "encoded": 2591
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-signed-C2UgWZdX.js",
+    "startTime": 7309,
+    "encoded": 2595
+   }
+  ],
+  "afterCross2": [
+   {
+    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
+    "startTime": 15,
+    "encoded": 130693
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
+    "startTime": 15,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
+    "startTime": 117,
+    "encoded": 6330
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
+    "startTime": 129,
+    "encoded": 4067
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
+    "startTime": 138,
+    "encoded": 17607
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
+    "startTime": 138,
+    "encoded": 14564
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
+    "startTime": 150,
+    "encoded": 11273
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
+    "startTime": 163,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
+    "startTime": 172,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
+    "startTime": 185,
+    "encoded": 12822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
+    "startTime": 190,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
+    "startTime": 195,
+    "encoded": 4999
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
+    "startTime": 201,
+    "encoded": 5688
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
+    "startTime": 220,
+    "encoded": 9619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
+    "startTime": 226,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 226,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
+    "startTime": 254,
+    "encoded": 1167
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
+    "startTime": 254,
+    "encoded": 29972
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
+    "startTime": 267,
+    "encoded": 53143
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
+    "startTime": 290,
+    "encoded": 620
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
+    "startTime": 298,
+    "encoded": 9834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
+    "startTime": 309,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 472,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 472,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 472,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 472,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 472,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 472,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 472,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 472,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
+    "startTime": 527,
+    "encoded": 7879
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1755,
+    "encoded": 2834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1756,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1756,
+    "encoded": 2239
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1788,
+    "encoded": 2619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2372,
+    "encoded": 3168
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 4173,
+    "encoded": 2840
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-substitute-CIy76Axk.js",
+    "startTime": 7114,
+    "encoded": 2591
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-signed-C2UgWZdX.js",
+    "startTime": 7309,
+    "encoded": 2595
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-formula-D5seGdi4.js",
+    "startTime": 12224,
+    "encoded": 3317
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/translate-phrase-C_kymGnj.js",
+    "startTime": 13106,
+    "encoded": 2489
+   }
+  ],
+  "afterLookahead": [
+   {
+    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
+    "startTime": 15,
+    "encoded": 130693
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
+    "startTime": 15,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
+    "startTime": 117,
+    "encoded": 6330
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
+    "startTime": 129,
+    "encoded": 4067
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
+    "startTime": 138,
+    "encoded": 17607
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
+    "startTime": 138,
+    "encoded": 14564
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
+    "startTime": 150,
+    "encoded": 11273
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
+    "startTime": 163,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
+    "startTime": 172,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
+    "startTime": 185,
+    "encoded": 12822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
+    "startTime": 190,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
+    "startTime": 195,
+    "encoded": 4999
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
+    "startTime": 201,
+    "encoded": 5688
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
+    "startTime": 220,
+    "encoded": 9619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
+    "startTime": 226,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 226,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
+    "startTime": 254,
+    "encoded": 1167
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
+    "startTime": 254,
+    "encoded": 29972
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
+    "startTime": 267,
+    "encoded": 53143
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
+    "startTime": 290,
+    "encoded": 620
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
+    "startTime": 298,
+    "encoded": 9834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
+    "startTime": 309,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 472,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 472,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 472,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 472,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 472,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 472,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 472,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 472,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
+    "startTime": 527,
+    "encoded": 7879
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1755,
+    "encoded": 2834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1756,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1756,
+    "encoded": 2239
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1788,
+    "encoded": 2619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2372,
+    "encoded": 3168
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 4173,
+    "encoded": 2840
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-substitute-CIy76Axk.js",
+    "startTime": 7114,
+    "encoded": 2591
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-signed-C2UgWZdX.js",
+    "startTime": 7309,
+    "encoded": 2595
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-formula-D5seGdi4.js",
+    "startTime": 12224,
+    "encoded": 3317
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/translate-phrase-C_kymGnj.js",
+    "startTime": 13106,
+    "encoded": 2489
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/translate-order-cbKs08Hn.js",
+    "startTime": 18973,
+    "encoded": 2258
+   }
+  ],
+  "afterPlay": [
+   {
+    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
+    "startTime": 15,
+    "encoded": 130693
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
+    "startTime": 15,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
+    "startTime": 117,
+    "encoded": 6330
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
+    "startTime": 129,
+    "encoded": 4067
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
+    "startTime": 138,
+    "encoded": 17607
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
+    "startTime": 138,
+    "encoded": 14564
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
+    "startTime": 150,
+    "encoded": 11273
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
+    "startTime": 163,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
+    "startTime": 172,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
+    "startTime": 185,
+    "encoded": 12822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
+    "startTime": 190,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
+    "startTime": 195,
+    "encoded": 4999
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
+    "startTime": 201,
+    "encoded": 5688
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
+    "startTime": 220,
+    "encoded": 9619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
+    "startTime": 226,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 226,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
+    "startTime": 254,
+    "encoded": 1167
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
+    "startTime": 254,
+    "encoded": 29972
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
+    "startTime": 267,
+    "encoded": 53143
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
+    "startTime": 290,
+    "encoded": 620
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
+    "startTime": 298,
+    "encoded": 9834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
+    "startTime": 309,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 472,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 472,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 472,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 472,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 472,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 472,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 472,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 472,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
+    "startTime": 527,
+    "encoded": 7879
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1755,
+    "encoded": 2834
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1756,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1756,
+    "encoded": 2239
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1788,
+    "encoded": 2619
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2372,
+    "encoded": 3168
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 4173,
+    "encoded": 2840
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-substitute-CIy76Axk.js",
+    "startTime": 7114,
+    "encoded": 2591
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-signed-C2UgWZdX.js",
+    "startTime": 7309,
+    "encoded": 2595
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eval-formula-D5seGdi4.js",
+    "startTime": 12224,
+    "encoded": 3317
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/translate-phrase-C_kymGnj.js",
+    "startTime": 13106,
+    "encoded": 2489
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/translate-order-cbKs08Hn.js",
+    "startTime": 18973,
+    "encoded": 2258
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/props-operations-zMhkLzfH.js",
+    "startTime": 26421,
+    "encoded": 2713
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eq-meaning-I5IIrO-h.js",
+    "startTime": 26421,
+    "encoded": 3319
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/like-terms-id-BHdbC_9A.js",
+    "startTime": 26421,
+    "encoded": 3648
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/props-equality-CiAqyYgV.js",
+    "startTime": 26421,
+    "encoded": 2529
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-meaning-BkiJseeA.js",
+    "startTime": 26421,
+    "encoded": 2568
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/distribute-numeric-BfFi235F.js",
+    "startTime": 26421,
+    "encoded": 3011
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eq-one-add-GtXbdVX6.js",
+    "startTime": 26421,
+    "encoded": 2488
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eq-one-mult-DsdtIT6w.js",
+    "startTime": 26421,
+    "encoded": 2437
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eq-two-step-BBTjS6hB.js",
+    "startTime": 27273,
+    "encoded": 3102
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eq-combine-side-tfN3JzCn.js",
+    "startTime": 27276,
+    "encoded": 3438
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eq-both-sides-BmtJEjeP.js",
+    "startTime": 27276,
+    "encoded": 3329
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/distribute-variable-CN1WQn52.js",
+    "startTime": 27276,
+    "encoded": 3337
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/distribute-negative-mHpEM-Mt.js",
+    "startTime": 27276,
+    "encoded": 3170
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eq-distribute-BGj4tO7e.js",
+    "startTime": 27276,
+    "encoded": 3070
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/ineq-one-step-BGcbJMVx.js",
+    "startTime": 27276,
+    "encoded": 2663
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/simplify-expression-Do4HaW44.js",
+    "startTime": 27276,
+    "encoded": 3231
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/equivalent-expressions-CHes5QSi.js",
+    "startTime": 27277,
+    "encoded": 2816
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/translate-sentence-3qiID9mL.js",
+    "startTime": 27277,
+    "encoded": 3169
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/eq-model-context-C4t2oRlF.js",
+    "startTime": 27709,
+    "encoded": 3462
+   },
+   {
+    "name": "http://127.0.0.1:53936/assets/like-terms-combine-DZGXbjGx.js",
+    "startTime": 27924,
+    "encoded": 3434
    }
   ]
  },
  "classified": {
   "criticalPath": {
-   "requests": 30,
+   "requests": 31,
    "groupChunks": [],
    "itemLocaleChunks": [
     "items-en-BvtiMYOY.js"
    ],
    "spineChunks": [],
-   "encodedBytes": 583143
+   "encodedBytes": 590734
   },
   "warmPulled": {
    "requests": 3,
    "groupChunks": [
     "var-meaning-Ct12kn0-.js",
-    "expr-anatomy-WYJhDm_0.js",
-    "oo-numeric-BjsVHueV.js"
+    "oo-numeric-BjsVHueV.js",
+    "expr-anatomy-WYJhDm_0.js"
    ],
    "itemLocaleChunks": [],
    "spineChunks": [],
@@ -687,6 +2592,73 @@
    "itemLocaleChunks": [],
    "spineChunks": [],
    "encodedBytes": 2619
+  },
+  "coldSelectPulled": {
+   "requests": 2,
+   "groupChunks": [
+    "ineq-two-step-CsZRI3FG.js",
+    "ineq-negative-flip-6F2CCJox.js"
+   ],
+   "itemLocaleChunks": [],
+   "spineChunks": [],
+   "encodedBytes": 6008
+  },
+  "crossing1Pulled": {
+   "requests": 2,
+   "groupChunks": [
+    "eval-substitute-CIy76Axk.js",
+    "eval-signed-C2UgWZdX.js"
+   ],
+   "itemLocaleChunks": [],
+   "spineChunks": [],
+   "encodedBytes": 5186
+  },
+  "crossing2Pulled": {
+   "requests": 2,
+   "groupChunks": [
+    "eval-formula-D5seGdi4.js",
+    "translate-phrase-C_kymGnj.js"
+   ],
+   "itemLocaleChunks": [],
+   "spineChunks": [],
+   "encodedBytes": 5806
+  },
+  "lookaheadPulled": {
+   "requests": 1,
+   "groupChunks": [
+    "translate-order-cbKs08Hn.js"
+   ],
+   "itemLocaleChunks": [],
+   "spineChunks": [],
+   "encodedBytes": 2258
+  },
+  "gameplayPulled": {
+   "requests": 20,
+   "groupChunks": [
+    "props-operations-zMhkLzfH.js",
+    "eq-meaning-I5IIrO-h.js",
+    "like-terms-id-BHdbC_9A.js",
+    "props-equality-CiAqyYgV.js",
+    "ineq-meaning-BkiJseeA.js",
+    "distribute-numeric-BfFi235F.js",
+    "eq-one-add-GtXbdVX6.js",
+    "eq-one-mult-DsdtIT6w.js",
+    "eq-two-step-BBTjS6hB.js",
+    "eq-combine-side-tfN3JzCn.js",
+    "eq-both-sides-BmtJEjeP.js",
+    "distribute-variable-CN1WQn52.js",
+    "distribute-negative-mHpEM-Mt.js",
+    "eq-distribute-BGj4tO7e.js",
+    "ineq-one-step-BGcbJMVx.js",
+    "simplify-expression-Do4HaW44.js",
+    "equivalent-expressions-CHes5QSi.js",
+    "translate-sentence-3qiID9mL.js",
+    "eq-model-context-C4t2oRlF.js",
+    "like-terms-combine-DZGXbjGx.js"
+   ],
+   "itemLocaleChunks": [],
+   "spineChunks": [],
+   "encodedBytes": 60934
   }
  }
 }

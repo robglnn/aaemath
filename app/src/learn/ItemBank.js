@@ -204,6 +204,51 @@ const FAILED = new Map();
  * one extra request per item) and short enough that a blip costs a learner one item, not a lesson.
  */
 const RETRY_AFTER_MS = 30_000;
+
+/**
+ * ------------------------------------------------------------------------------------------
+ * THE SWEEP GUARD. Why a cold `select()` does not fetch a chunk immediately, or always.
+ * ------------------------------------------------------------------------------------------
+ *
+ * `select()` starts a background load when its knowledge point is cold, because the learner is
+ * about to see more items on that node and the next one should come from the catalogue. That
+ * speculation is right for a LEARNER, who comes back to the same handful of knowledge points for
+ * twenty-five minutes. It is wrong for a SWEEP, which visits all thirty-two once and never returns.
+ *
+ * There is a sweep in the shipped game. `app/src/boot/62-learning.js` recomputes the blind-guess
+ * audit live whenever `bank-audit.json` is stale, by driving `collectBankSample` through
+ * `itemBank.select()` across every knowledge point and every form. Measured here: **54,788 draws,
+ * 32 group chunks requested, and — the fact that decides this design — `residency()` reports 0
+ * resident and 32 still in flight when the sweep ends.** The sweep is one synchronous block, so not
+ * one of those chunks can resolve while it runs. All thirty-two arrive too late to put a single
+ * catalogue item into the sample, and land 93.0 kB gzipped on the critical path for nothing.
+ *
+ * So the rule is not a rate limit — the sweep is SLOW, not fast, and a rate limit measured nothing
+ * (it fired zero times across 282 s of sweeping). The rule is relevance, and it is rate-independent:
+ *
+ *   1. A cold `select()` never fetches synchronously. It queues the fetch for idle time. A caller
+ *      that never yields therefore gets nothing until it has finished, which costs the audit
+ *      exactly what it was already getting: nothing.
+ *   2. When the idle callback runs, the fetch happens only if that knowledge point is still one of
+ *      the last `SPECULATION_RECENT` distinct ones a cold `select()` asked for. A session works on
+ *      a handful and every one of them stays current; a sweep leaves thirty-two behind and only its
+ *      tail is still current — which is correct, because the sweep is not coming back to any of them.
+ *
+ * Nothing about correctness depends on this. A suppressed load means `select()` answers from the
+ * generator and tags it `generated-group-absent`, which is the documented cold path, and the group
+ * is pulled the next time a learner actually asks for it. `ensure`, `ensureLesson`, `warmFrontier`
+ * and `prefetchLesson` are EXPLICIT requests from code that knows where the learner is; they fetch
+ * at once and are never suppressed.
+ */
+const SPECULATION_RECENT_DEFAULT = 10;
+let SPECULATION_RECENT = SPECULATION_RECENT_DEFAULT;
+/** The last distinct knowledge points a cold `select()` asked for, most recent last. */
+let RECENT_COLD = [];
+/** Knowledge points with a queued-but-not-yet-decided speculative fetch, so it is queued once. */
+const SPECULATING = new Set();
+/** Everything `loadGroup` ever started on this page, by origin. `probe().loads` reports it. */
+const LOADS = { demand: 0, prefetch: 0, explicit: 0, suppressed: 0 };
+
 /** Review-harness only: groups whose chunk is made to refuse to load. See `__faultGroup`. */
 const FAULT = new Set();
 /** Anything the outside world should be told about, in the order it happened. */
@@ -279,11 +324,12 @@ const BACKOFF_MS = 250;
  * Then it gives up, loudly, and the group is degraded until `RETRY_AFTER_MS` has passed or someone
  * calls `ensure` — so the degraded path cannot turn into a retry storm and cannot become permanent.
  */
-function loadGroup(kpId) {
+function loadGroup(kpId, origin = "explicit") {
   const resident = RESIDENT.get(kpId);
   if (resident) return Promise.resolve(resident);
   const pending = INFLIGHT.get(kpId);
   if (pending) return pending;
+  LOADS[origin] = (LOADS[origin] ?? 0) + 1;
   const loader = GROUP_LOADERS[kpId];
   if (!loader) {
     const err = new Error(`no item group for knowledge point "${kpId}"`);
@@ -345,13 +391,45 @@ function retryIn(kpId) {
  * `RETRY_AFTER_MS` has elapsed, so that a knowledge point downgraded by one dropped chunk gets
  * another chance instead of serving generated items for the life of the page.
  */
-function touch(kpId) {
+function touch(kpId, origin = "demand") {
   if (RESIDENT.has(kpId) || INFLIGHT.has(kpId)) return;
   if (FAILED.has(kpId)) {
     if (retryIn(kpId) > 0) return;
     raise({ kind: "group-retry", kpId, afterMs: RETRY_AFTER_MS, attempts: FAILED.get(kpId).attempts });
   }
-  loadGroup(kpId).catch(() => {});
+  if (origin !== "demand") {
+    loadGroup(kpId, origin).catch(() => {});
+    return;
+  }
+  // Speculative. Noted now, decided later — see the SWEEP GUARD note above.
+  noteCold(kpId);
+  if (SPECULATING.has(kpId)) return;
+  SPECULATING.add(kpId);
+  idle(() => {
+    SPECULATING.delete(kpId);
+    if (RESIDENT.has(kpId) || INFLIGHT.has(kpId)) return;
+    if (!RECENT_COLD.includes(kpId)) {
+      LOADS.suppressed += 1;
+      raise({
+        kind: "speculation-dropped",
+        kpId,
+        recent: SPECULATION_RECENT,
+        error:
+          `a cold select() asked for "${kpId}", then ${SPECULATION_RECENT} other knowledge points were asked for ` +
+          `before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched`,
+      });
+      return;
+    }
+    loadGroup(kpId, origin).catch(() => {});
+  });
+}
+
+/** Remember that a cold `select()` wanted this knowledge point, most recent last. */
+function noteCold(kpId) {
+  const at = RECENT_COLD.indexOf(kpId);
+  if (at >= 0) RECENT_COLD.splice(at, 1);
+  RECENT_COLD.push(kpId);
+  while (RECENT_COLD.length > SPECULATION_RECENT) RECENT_COLD.shift();
 }
 
 const idle =
@@ -385,6 +463,15 @@ if (IS_NODE) {
  * called the loader rather than that the loader exists.
  */
 let WARM = null;
+/** How many warms this page has run, and what each of them did. Re-warming is the round-4 claim. */
+let WARM_SEQ = 0;
+const WARM_LOG = [];
+/**
+ * How far through a lesson the learner must be before the WHOLE next lesson is pulled during idle.
+ * Half: at the median 3,438 B gzipped per lesson the lookahead costs less than one KaTeX font, and
+ * a learner who is halfway through a 20-minute lesson will reach the boundary inside this sitting.
+ */
+const LOOKAHEAD_AT = 0.5;
 
 /* ------------------------------------------------------------------ the bank */
 
@@ -413,6 +500,26 @@ export class ItemBank {
     const failed = ids.filter((id) => !isResident(id));
     if (ids.length) this.prefetchAround(ids[ids.length - 1]);
     return { requested: ids.length, loaded: ids.length - failed.length, alreadyResident, failed };
+  }
+
+  /**
+   * The WHOLE catalogue, awaited. The one call a catalogue-wide consumer must make.
+   *
+   * There is exactly one such consumer in the shipped game and it does not make this call yet:
+   * `app/src/boot/62-learning.js` recomputes the blind-guess audit live when `bank-audit.json` is
+   * stale, by driving `collectBankSample` through `select()` across every knowledge point. That
+   * sweep is synchronous, so no chunk it triggers can resolve while it runs — measured here, the
+   * sweep ends with **0 groups resident and 32 in flight**, and the sample it produced is therefore
+   * 100% generator-sourced. Splitting the catalogue is what made that true, so P31 owns the fix and
+   * this is it: `await itemBank.ensureAll()` before the sweep makes the audit price the population
+   * a learner is actually served, and makes the 93.0 kB cost explicit and awaited instead of a
+   * thirty-two-request stampede whose answers arrive too late to be used.
+   *
+   * `62-learning.js` belongs to P16, so the one-line call site is named in P31's handoff rather
+   * than edited here. `review/measure/P31.mjs` F1 measures both halves of the defect.
+   */
+  async ensureAll() {
+    return this.ensure(KP_IDS);
   }
 
   /** Every knowledge point in a lesson, in prerequisite order. The session-opener call. */
@@ -446,10 +553,37 @@ export class ItemBank {
    *
    * It never throws. A warm that fails leaves the game exactly where round 2 left it — degrading
    * to the generator on first touch — and says so in `probe().warm.reason`.
+   *
+   * ROUND 4 — IT HAS TO FOLLOW THE LEARNER, NOT THE PAGE LOAD.
+   *
+   * Round 3 called this exactly once, inside `setup()`. The product goal is a student who tests out
+   * of `expressions-1` in two minutes and walks into `expressions-2`; under round 3 they walked
+   * into a lesson nothing had warmed, and every first item on it came from the generator. So
+   * `app/src/boot/62-itembank.js` now calls this again whenever the frontier crosses a lesson
+   * boundary, and `trigger` records which of the two paths asked. Cost per re-warm is one idle call
+   * and one lesson — 3.4 kB gzipped at the median.
+   *
+   * And the boundary itself is pre-empted: once the learner is at or past the halfway point of the
+   * lesson they are on, the WHOLE next lesson is queued during idle (`prefetchLesson`), so crossing
+   * costs nothing at all. `prefetchAround` only ever took the head of the next lesson, which meant
+   * the second knowledge point after a boundary was still cold.
    */
-  async warmFrontier(learningOrGetter) {
+  async warmFrontier(learningOrGetter, { trigger = "boot" } = {}) {
     const t0 = typeof performance !== "undefined" ? performance.now() : Date.now();
-    const record = { at: Date.now(), kpId: null, lesson: null, groups: 0, failed: [], ms: 0, reason: null };
+    const record = {
+      at: Date.now(),
+      seq: WARM_SEQ + 1,
+      trigger,
+      kpId: null,
+      lesson: null,
+      groups: 0,
+      failed: [],
+      ms: 0,
+      reason: null,
+      lessonProgress: null,
+      nextLesson: null,
+      nextLessonQueued: [],
+    };
     try {
       // A THUNK is allowed, and is what the boot module passes: `62-learning.js` mounts at the
       // same order as `62-itembank.js`, so the registry lookup has to happen when the idle
@@ -469,6 +603,11 @@ export class ItemBank {
           record.groups = out.loaded;
           record.failed = out.failed;
           record.reason = out.failed.length ? "partial" : "ok";
+
+          const ahead = this.lookaheadFrom(lesson.id, learning);
+          record.lessonProgress = ahead.progress;
+          record.nextLesson = ahead.nextLesson;
+          record.nextLessonQueued = ahead.queued;
         }
       }
     } catch (err) {
@@ -476,13 +615,66 @@ export class ItemBank {
       raise({ kind: "warm-failed", error: record.reason });
     }
     record.ms = Math.round(((typeof performance !== "undefined" ? performance.now() : Date.now()) - t0) * 10) / 10;
+    WARM_SEQ += 1;
     WARM = record;
+    WARM_LOG.push({ seq: record.seq, trigger, lesson: record.lesson, groups: record.groups, reason: record.reason, nextLesson: record.nextLesson });
+    if (WARM_LOG.length > 16) WARM_LOG.shift();
     return record;
   }
 
+  /**
+   * THE LOOKAHEAD. Queue the WHOLE next lesson once this one is at least half behind the learner.
+   *
+   * Idempotent and cheap — `prefetchLesson` filters out anything resident, loading or failed — so
+   * `app/src/boot/62-itembank.js` can call it on the same idle re-check that watches for a lesson
+   * change, which is what makes it reachable in the MIDDLE of a lesson. Evaluating it only inside
+   * `warmFrontier` would have made it dead code: a warm happens at the moment the frontier crosses
+   * into a lesson, and progress into a lesson you have just entered is zero.
+   */
+  lookaheadFrom(lessonId, learning) {
+    const lesson = LESSONS.find((l) => l.id === lessonId);
+    if (!lesson) return { progress: null, nextLesson: null, queued: [] };
+    const progress = this.lessonProgress(lesson, learning);
+    if (progress < LOOKAHEAD_AT) return { progress, nextLesson: null, queued: [] };
+    const next = LESSONS[LESSONS.indexOf(lesson) + 1];
+    if (!next) return { progress, nextLesson: null, queued: [] };
+    return { progress, nextLesson: next.id, queued: this.prefetchLesson(next.id) };
+  }
+
+  /**
+   * How far through a lesson this learner is, in [0,1].
+   *
+   * Two readings, and the larger wins. `mastery.status` is the accurate one and is present on the
+   * shipped `learning` system; the frontier's own position inside the lesson is the fallback, and
+   * it is what the offline harnesses (which mount only `frontier()`) can supply. Both answer the
+   * same question — how much of this lesson is behind the learner — and neither can be gamed by
+   * the other being absent.
+   */
+  lessonProgress(lesson, learning) {
+    const ids = lesson.kpIds;
+    if (!ids.length) return 1;
+    let byStatus = 0;
+    const statusOf = learning?.mastery?.status;
+    if (typeof statusOf === "function") {
+      const mastered = ids.filter((id) => {
+        try {
+          return learning.mastery.status(id) === "mastered";
+        } catch {
+          return false;
+        }
+      }).length;
+      byStatus = mastered / ids.length;
+    }
+    const frontier = typeof learning?.frontier === "function" ? learning.frontier() : null;
+    const head = Array.isArray(frontier) ? frontier[0] : null;
+    const idx = head ? ids.indexOf(head) : -1;
+    const byPosition = idx < 0 ? 0 : idx / ids.length;
+    return Math.round(Math.max(byStatus, byPosition) * 1000) / 1000;
+  }
+
   /** The same, deferred to idle time so it cannot compete with the first frames. */
-  warmFrontierWhenIdle(learningOrGetter) {
-    return new Promise((resolve) => idle(() => resolve(this.warmFrontier(learningOrGetter))));
+  warmFrontierWhenIdle(learningOrGetter, opts = {}) {
+    return new Promise((resolve) => idle(() => resolve(this.warmFrontier(learningOrGetter, opts))));
   }
 
   /**
@@ -516,7 +708,25 @@ export class ItemBank {
     const queue = [...rest, ...(nextLesson ? nextLesson.kpIds.slice(0, 1) : [])]
       .filter((id) => !RESIDENT.has(id) && !INFLIGHT.has(id) && !FAILED.has(id))
       .slice(0, ahead);
-    for (const id of queue) idle(() => touch(id));
+    for (const id of queue) idle(() => touch(id, "prefetch"));
+    return queue;
+  }
+
+  /**
+   * Pull a WHOLE lesson during idle time. This is the lookahead `warmFrontier` fires once the
+   * learner is halfway through the lesson they are on.
+   *
+   * `prefetchAround` walks forward INSIDE the current lesson and takes only the head of the next
+   * one, which leaves the lesson boundary itself cold — and the lesson boundary is exactly where
+   * the stated product goal puts the learner who tests out in two minutes. A lesson is 2.3-9.6 kB
+   * gzipped, median 3.4 kB: less than one KaTeX font, and cheaper than the first item of the next
+   * lesson arriving from the generator instead of from the thirty-six a human reviewed.
+   */
+  prefetchLesson(lessonId) {
+    const lesson = LESSONS.find((l) => l.id === lessonId);
+    if (!lesson) return [];
+    const queue = lesson.kpIds.filter((id) => !RESIDENT.has(id) && !INFLIGHT.has(id) && !FAILED.has(id));
+    for (const id of queue) idle(() => touch(id, "prefetch"));
     return queue;
   }
 
@@ -1183,6 +1393,20 @@ export class ItemBank {
       // Did the SHIPPED game call the loader on this page load, and what did it get? Null here
       // means the per-lesson path exists and nothing ran it — which is the state round 2 shipped.
       warm: WARM,
+      /**
+       * Round 4. ONE warm is the state round 3 shipped: per-lesson loading that fired at boot and
+       * then never followed the learner. `warms` > 1 with distinct `lesson` values is the evidence
+       * that it does now, and `trigger` says which path asked for each.
+       */
+      warms: WARM_SEQ,
+      warmLog: WARM_LOG.slice(),
+      /**
+       * Where every group load on this page came from. `demand` is a cold `select()`; `prefetch` is
+       * idle lookahead; `explicit` is `ensure`/`ensureLesson`/`warmFrontier`. `suppressed` counts
+       * cold selects the sweep guard refused — non-zero means something drove the bank at a rate no
+       * learner can produce (the live bank-audit fallback is the one that does).
+       */
+      loads: { ...LOADS },
       itemLocale: this.locale,
       localesResident: [...TEXT.keys()],
       formsPerKp: Object.fromEntries(
@@ -1443,6 +1667,27 @@ export function __evictAllGroups() {
   for (const id of KP_IDS) __evictGroup(id);
   ISSUES.length = 0;
   WARM = null;
+  WARM_SEQ = 0;
+  WARM_LOG.length = 0;
+  __resetLoadStats();
+}
+/** Where every load on this page came from, and how many cold selects the sweep guard dropped. */
+export function __loadStats() {
+  return { ...LOADS, recentWindow: SPECULATION_RECENT, recentCold: RECENT_COLD.slice() };
+}
+export function __resetLoadStats() {
+  for (const k of Object.keys(LOADS)) LOADS[k] = 0;
+  RECENT_COLD = [];
+  SPECULATING.clear();
+}
+/**
+ * Widen or restore the sweep guard's relevance window, so `review/measure/_p31-audit-sweep.mjs`
+ * can run the SAME sweep with the guard effectively off and prove that bounding it changes no
+ * price. `null` restores the shipped value. Nothing in `app/` calls this.
+ */
+export function __setSpeculationRecent(n) {
+  SPECULATION_RECENT = n == null ? SPECULATION_RECENT_DEFAULT : n;
+  return SPECULATION_RECENT;
 }
 /** Make a group's chunk refuse to load, the way a dropped connection would. */
 export function __faultGroup(kpId, on = true) {

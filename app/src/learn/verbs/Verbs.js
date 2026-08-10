@@ -136,7 +136,7 @@ export class VerbRuntime {
     this.simTime = 0;
     this.act = null;
     this.ctx = null;
-    this.frame = null;
+    this.anchor = null;
     this.standing = new Map();
     this.hand = { move: { x: 0, y: 0 }, held: new Set() };
     this.stepCharge = 0;
@@ -315,7 +315,7 @@ export class VerbRuntime {
     }
 
     this.act = act;
-    this.frame = this.basis();
+    this.anchor = this.basis();
     this.phase = "performing";
     this.startedAt = this.simTime;
     this.stats.posed += 1;
@@ -332,7 +332,7 @@ export class VerbRuntime {
     } catch {
       /* a verb that cannot perform an act simply does not perform it */
     }
-    this._render();
+    this._render(true);
   }
 
   /**
@@ -446,10 +446,11 @@ export class VerbRuntime {
     if (correct) {
       // "Let objects say it. A bridge existing is a better sentence than any sentence." The deck
       // stands, whole, and nothing is written beside it.
-      this._render();
+      this._render(true);
       return;
     }
     if (this.act && typeof this.act.shear === "boolean") this.act.shear = true;
+    this._render(true);
 
     let marked = null;
     const item = this.getTeaching()?.item ?? null;
@@ -468,7 +469,7 @@ export class VerbRuntime {
     }
     if (this.lastResponse && marked) this.lastResponse.misconception = marked.misconception ?? this.lastResponse.misconception;
     if (this.lastResponse) this.lastResponse.read = read?.key ?? null;
-    this._render();
+    this._render(true);
     if (!read?.key || !this.bank?.text) return;
 
     let line = "";
@@ -495,14 +496,14 @@ export class VerbRuntime {
    * head around, which is a HUD wearing world space. The claim stands still and the player walks.
    */
   _place(socket) {
-    const b = this.frame;
+    const b = this.anchor;
     if (!b) return null;
     const f = HAND.forward;
     const r = (socket.right ?? 0) + HAND.right;
     return [b.o[0] + b.f[0] * f + b.r[0] * r, b.o[1] + (socket.up ?? 0), b.o[2] + b.f[1] * f + b.r[1] * r];
   }
 
-  _show(key, tex, socket) {
+  _show(key, tex, socket, force = false) {
     const id = `${PREFIX}${key}`;
     const at = this._place(socket);
     const em = socket.em ?? HAND.em;
@@ -517,6 +518,15 @@ export class VerbRuntime {
       (!at || !was.at || (Math.abs(was.at[0] - at[0]) < 0.02 && Math.abs(was.at[1] - at[1]) < 0.02 && Math.abs(was.at[2] - at[2]) < 0.02))
     )
       return;
+    /**
+     * A deck running at fourteen spans a second changes fourteen times a second, and re-typesetting
+     * every one of them costs a raster the player never sees a frame of. `learn/Teaching.js` learned
+     * the same lesson from its typed entry — "eight rasters per item to display one answer, all but
+     * the last of them thrown away before a frame was ever drawn with it". Continuous rows are
+     * therefore gated to ~11 Hz of sim time; a discrete act passes `force` and lands immediately,
+     * and so does the last render of a claim, so the state a capture reads is never a stale one.
+     */
+    if (!force && was && this.simTime - (was.shownAt ?? -9) < 0.09) return;
     this.emit("math:show", {
       id,
       tex,
@@ -527,11 +537,11 @@ export class VerbRuntime {
       billboard: "yaw",
       display: true,
     });
-    this.standing.set(id, { tex, em, at });
+    this.standing.set(id, { tex, em, at, shownAt: this.simTime });
     this.stats.shows += 1;
   }
 
-  _render() {
+  _render(force = false) {
     if (!this.act) return;
     let rows = [];
     try {
@@ -540,7 +550,7 @@ export class VerbRuntime {
       rows = [];
     }
     const live = new Set(rows.map((r) => `${PREFIX}${r.key}`));
-    for (const row of rows) this._show(row.key, row.tex, { up: row.up ?? 0, right: row.right ?? 0, em: row.em });
+    for (const row of rows) this._show(row.key, row.tex, { up: row.up ?? 0, right: row.right ?? 0, em: row.em }, force);
     // A row a verb stopped drawing — a term that was carried away, a bundle that folded — comes down.
     for (const id of [...this.standing.keys()]) {
       if (live.has(id) || id === `${PREFIX}read`) continue;
@@ -558,7 +568,7 @@ export class VerbRuntime {
     this.standing.clear();
     this.act = null;
     this.ctx = null;
-    this.frame = null;
+    this.anchor = null;
     this.phase = "idle";
   }
 

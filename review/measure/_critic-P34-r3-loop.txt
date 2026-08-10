@@ -1,0 +1,269 @@
+(node:63312) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+================================================================================================
+CRITIC P34 r3 — independent driver, shipped build
+================================================================================================
+kernel steps that THREW out of Kernel._step: 537
+frames RENDERED for the whole run: 5   simTime 60.817
+console errors: 1
+  ERR TypeError: a.frame is not a function
+
+---- FULL ORDERED SIGNAL TRACE ----
+  t=   1.27  #  1  learn:teach    var-meaning        {"phase":"solo"}
+  t=   1.27  #  2  math:show      var-meaning        
+  t=   1.27  #  3  math:show      var-meaning        
+  t=   1.27  #  4  learn:present  var-meaning        
+  t=   1.27  #  5  math:show      var-meaning        
+  t=   1.27  #  6  math:show      var-meaning        
+  t=   1.27  #  7  math:show      var-meaning        
+  t=   1.27  #  8  math:show      var-meaning        
+  t=   1.27  #  9  math:show      var-meaning        
+  t=   2.03  # 10  math:show      var-meaning        
+  t=   3.62  # 11  learn:respond  var-meaning        {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2350,"hinted":false}
+  t=   3.62  # 12  learn:mastery  var-meaning        {"p":0.79292,"delta":0.44292,"status":"learning"}
+  t=   5.13  # 13  math:hide                         
+  t=   5.13  # 14  math:hide                         
+  t=   5.23  # 15  math:hide                         
+  t=   5.23  # 16  math:hide                         
+  t=   5.23  # 17  math:hide                         
+  t=   5.23  # 18  math:hide                         
+  t=   5.23  # 19  math:hide                         
+  t=   5.75  # 20  learn:teach    var-meaning        {"phase":"solo"}
+  t=   5.75  # 21  learn:present  var-meaning        
+  t=   5.75  # 22  math:show      var-meaning        
+  t=   5.75  # 23  math:show      var-meaning        
+  t=   5.75  # 24  math:show      var-meaning        
+  t=   5.75  # 25  math:show      var-meaning        
+  t=   5.75  # 26  math:show      var-meaning        
+  t=   5.75  # 27  math:show      var-meaning        
+  t=   5.75  # 28  math:show      var-meaning        
+  t=   6.23  # 29  math:show      var-meaning        
+  t=   7.82  # 30  learn:respond  var-meaning        {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2067,"hinted":false}
+  t=   7.82  # 31  learn:mastery  var-meaning        {"p":0.967474,"delta":0.174554,"status":"learning"}
+  t=   9.42  # 32  math:hide                         
+  t=   9.42  # 33  math:hide                         
+  t=   9.42  # 34  math:hide                         
+  t=   9.42  # 35  math:hide                         
+  t=   9.42  # 36  math:hide                         
+  t=   9.42  # 37  math:hide                         
+  t=   9.42  # 38  math:hide                         
+  t=   9.92  # 39  learn:teach    var-meaning        {"phase":"solo"}
+  t=   9.92  # 40  math:show      var-meaning        
+  t=   9.92  # 41  math:show      var-meaning        
+  t=   9.92  # 42  learn:present  var-meaning        
+  t=   9.92  # 43  math:show      var-meaning        
+  t=   9.92  # 44  math:show      var-meaning        
+  t=   9.92  # 45  math:show      var-meaning        
+  t=  10.43  # 46  math:show      var-meaning        
+  t=  12.02  # 47  learn:respond  var-meaning        {"correct":true,"scored":true,"credited":true,"family":"var-meaning.twin","latencyMs":2100,"hinted":false}
+  t=  12.02  # 48  learn:mastery  var-meaning        {"p":0.994776,"delta":0.027302,"status":"learning"}
+  t=  13.52  # 49  math:hide                         
+  t=  13.52  # 50  math:hide                         
+  t=  13.62  # 51  math:hide                         
+  t=  13.62  # 52  math:hide                         
+  t=  13.62  # 53  math:hide                         
+  t=  14.12  # 54  learn:teach    var-meaning        {"phase":"solo"}
+  t=  14.12  # 55  math:show      var-meaning        
+  t=  14.12  # 56  math:show      var-meaning        
+  t=  14.12  # 57  learn:present  var-meaning        
+  t=  14.12  # 58  math:show      var-meaning        
+  t=  14.12  # 59  math:show      var-meaning        
+  t=  14.12  # 60  math:show      var-meaning        
+  t=  14.12  # 61  math:show      var-meaning        
+  t=  14.12  # 62  math:show      var-meaning        
+  t=  14.63  # 63  math:show      var-meaning        
+  t=  16.22  # 64  learn:respond  var-meaning        {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2100,"hinted":false}
+  t=  16.22  # 65  learn:mastery  var-meaning        {"p":0.999179,"delta":0.004403,"status":"learning"}
+  t=  17.73  # 66  math:hide                         
+  t=  17.73  # 67  math:hide                         
+  t=  17.83  # 68  math:hide                         
+  t=  17.83  # 69  math:hide                         
+  t=  17.83  # 70  math:hide                         
+  t=  17.83  # 71  math:hide                         
+  t=  17.83  # 72  math:hide                         
+  t=  18.35  # 73  learn:teach    var-meaning        {"phase":"solo"}
+  t=  18.35  # 74  learn:present  var-meaning        
+  t=  18.35  # 75  math:show      var-meaning        
+  t=  18.35  # 76  math:show      var-meaning        
+  t=  18.35  # 77  math:show      var-meaning        
+  t=  18.35  # 78  math:show      var-meaning        
+  t=  18.35  # 79  math:show      var-meaning        
+  t=  18.35  # 80  math:show      var-meaning        
+  t=  18.35  # 81  math:show      var-meaning        
+  t=  18.83  # 82  math:show      var-meaning        
+  t=  20.42  # 83  learn:respond  var-meaning        {"correct":true,"scored":true,"credited":true,"family":"var-meaning.twin","latencyMs":2067,"hinted":false}
+  t=  20.42  # 84  learn:mastery  var-meaning        {"p":0.999893,"delta":0.000714,"status":"learning"}
+  t=  20.42  # 85  learn:unlock   var-meaning        
+  t=  20.42  # 86  learn:mastery  var-meaning        {"p":0.999893,"delta":0,"status":"provisional"}
+  t=  20.42  # 87  learn:session                     {"phase":"focus"}
+  t=  20.42  # 88  learn:session                     {"phase":"beat"}
+  t=  22.03  # 89  math:hide                         
+  t=  22.03  # 90  math:hide                         
+  t=  22.03  # 91  math:hide                         
+  t=  22.03  # 92  math:hide                         
+  t=  22.03  # 93  math:hide                         
+  t=  22.03  # 94  math:hide                         
+  t=  22.03  # 95  math:hide                         
+  t=  22.55  # 96  learn:teach    expr-anatomy       {"phase":"solo"}
+  t=  22.55  # 97  learn:present  expr-anatomy       
+  t=  22.55  # 98  math:show      expr-anatomy       
+  t=  22.55  # 99  math:show      expr-anatomy       
+  t=  22.55  #100  math:show      expr-anatomy       
+  t=  23.03  #101  math:show      expr-anatomy       
+  t=  24.62  #102  learn:respond  expr-anatomy       {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2067,"hinted":false}
+  t=  24.62  #103  learn:mastery  expr-anatomy       {"p":0.79131,"delta":0.44131,"status":"learning"}
+  t=  26.23  #104  math:hide                         
+  t=  26.23  #105  math:hide                         
+  t=  26.23  #106  math:hide                         
+  t=  26.75  #107  learn:teach    expr-anatomy       {"phase":"solo"}
+  t=  26.75  #108  learn:present  expr-anatomy       
+  t=  26.75  #109  math:show      expr-anatomy       
+  t=  26.75  #110  math:show      expr-anatomy       
+  t=  26.75  #111  math:show      expr-anatomy       
+  t=  27.23  #112  math:show      expr-anatomy       
+  t=  28.82  #113  learn:respond  expr-anatomy       {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2067,"hinted":false}
+  t=  28.82  #114  learn:mastery  expr-anatomy       {"p":0.960555,"delta":0.169245,"status":"learning"}
+  t=  30.43  #115  math:hide                         
+  t=  30.43  #116  math:hide                         
+  t=  30.43  #117  math:hide                         
+  t=  30.95  #118  learn:teach    expr-anatomy       {"phase":"solo"}
+  t=  30.95  #119  learn:present  expr-anatomy       
+  t=  30.95  #120  math:show      expr-anatomy       
+  t=  30.95  #121  math:show      expr-anatomy       
+  t=  30.95  #122  math:show      expr-anatomy       
+  t=  31.43  #123  math:show      expr-anatomy       
+  t=  33.02  #124  learn:respond  expr-anatomy       {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2067,"hinted":false}
+  t=  33.02  #125  learn:mastery  expr-anatomy       {"p":0.99356,"delta":0.033005,"status":"learning"}
+  t=  34.63  #126  math:hide                         
+  t=  34.63  #127  math:hide                         
+  t=  34.63  #128  math:hide                         
+  t=  35.15  #129  learn:teach    expr-anatomy       {"phase":"solo"}
+  t=  35.15  #130  learn:present  expr-anatomy       
+  t=  35.15  #131  math:show      expr-anatomy       
+  t=  35.15  #132  math:show      expr-anatomy       
+  t=  35.15  #133  math:show      expr-anatomy       
+  t=  35.63  #134  math:show      expr-anatomy       
+  t=  37.22  #135  learn:respond  expr-anatomy       {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2067,"hinted":false}
+  t=  37.22  #136  learn:mastery  expr-anatomy       {"p":0.998976,"delta":0.005416,"status":"learning"}
+  t=  38.83  #137  math:hide                         
+  t=  38.83  #138  math:hide                         
+  t=  38.83  #139  math:hide                         
+  t=  39.35  #140  learn:teach    expr-anatomy       {"phase":"solo"}
+  t=  39.35  #141  learn:present  expr-anatomy       
+  t=  39.35  #142  math:show      expr-anatomy       
+  t=  39.35  #143  math:show      expr-anatomy       
+  t=  39.35  #144  math:show      expr-anatomy       
+  t=  39.83  #145  math:show      expr-anatomy       
+  t=  41.42  #146  learn:respond  expr-anatomy       {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2067,"hinted":false}
+  t=  41.42  #147  learn:mastery  expr-anatomy       {"p":0.999838,"delta":0.000862,"status":"learning"}
+  t=  41.42  #148  learn:unlock   expr-anatomy       
+  t=  41.42  #149  learn:mastery  expr-anatomy       {"p":0.999838,"delta":0,"status":"provisional"}
+  t=  41.42  #150  learn:session                     {"phase":"focus"}
+  t=  41.42  #151  learn:session                     {"phase":"beat"}
+  t=  43.03  #152  math:hide                         
+  t=  43.03  #153  math:hide                         
+  t=  43.03  #154  math:hide                         
+  t=  43.55  #155  learn:teach    oo-numeric         {"phase":"solo"}
+  t=  43.55  #156  math:show      oo-numeric         
+  t=  43.55  #157  math:show      oo-numeric         
+  t=  43.55  #158  learn:present  oo-numeric         
+  t=  43.55  #159  math:show      oo-numeric         
+  t=  43.55  #160  math:show      oo-numeric         
+  t=  43.55  #161  math:show      oo-numeric         
+  t=  44.03  #162  math:show      oo-numeric         
+  t=  45.62  #163  learn:respond  oo-numeric         {"correct":true,"scored":true,"credited":true,"family":"oo-numeric.addsub","latencyMs":2067,"hinted":false}
+  t=  45.62  #164  learn:mastery  oo-numeric         {"p":0.818745,"delta":0.468745,"status":"learning"}
+  t=  47.13  #165  math:hide                         
+  t=  47.13  #166  math:hide                         
+  t=  47.23  #167  math:hide                         
+  t=  47.23  #168  math:hide                         
+  t=  47.23  #169  math:hide                         
+  t=  47.75  #170  learn:teach    oo-numeric         {"phase":"solo"}
+  t=  47.75  #171  learn:present  oo-numeric         
+  t=  47.75  #172  math:show      oo-numeric         
+  t=  47.75  #173  math:show      oo-numeric         
+  t=  47.75  #174  math:show      oo-numeric         
+  t=  47.75  #175  math:show      oo-numeric         
+  t=  47.75  #176  math:show      oo-numeric         
+  t=  47.75  #177  math:show      oo-numeric         
+  t=  47.75  #178  math:show      oo-numeric         
+  t=  48.23  #179  math:show      oo-numeric         
+  t=  49.82  #180  learn:respond  oo-numeric         {"correct":true,"scored":true,"credited":true,"family":"oo-numeric.addmul","latencyMs":2067,"hinted":false}
+  t=  49.82  #181  learn:mastery  oo-numeric         {"p":0.972237,"delta":0.153493,"status":"learning"}
+  t=  51.43  #182  math:hide                         
+  t=  51.43  #183  math:hide                         
+  t=  51.43  #184  math:hide                         
+  t=  51.43  #185  math:hide                         
+  t=  51.43  #186  math:hide                         
+  t=  51.43  #187  math:hide                         
+  t=  51.43  #188  math:hide                         
+  t=  51.95  #189  learn:teach    oo-numeric         {"phase":"solo"}
+  t=  51.95  #190  learn:present  oo-numeric         
+  t=  51.95  #191  math:show      oo-numeric         
+  t=  51.95  #192  math:show      oo-numeric         
+  t=  51.95  #193  math:show      oo-numeric         
+  t=  51.95  #194  math:show      oo-numeric         
+  t=  52.43  #195  math:show      oo-numeric         
+  t=  54.02  #196  learn:respond  oo-numeric         {"correct":true,"scored":true,"credited":true,"family":"oo-numeric.addmul","latencyMs":2067,"hinted":false}
+  t=  54.02  #197  learn:mastery  oo-numeric         {"p":0.995558,"delta":0.023321,"status":"learning"}
+  t=  55.63  #198  math:hide                         
+  t=  55.63  #199  math:hide                         
+  t=  55.63  #200  math:hide                         
+  t=  55.63  #201  math:hide                         
+  t=  56.15  #202  learn:teach    oo-numeric         {"phase":"solo"}
+  t=  56.15  #203  math:show      oo-numeric         
+  t=  56.15  #204  math:show      oo-numeric         
+  t=  56.15  #205  learn:present  oo-numeric         
+  t=  56.15  #206  math:show      oo-numeric         
+  t=  56.15  #207  math:show      oo-numeric         
+  t=  56.15  #208  math:show      oo-numeric         
+  t=  56.63  #209  math:show      oo-numeric         
+  t=  58.22  #210  learn:respond  oo-numeric         {"correct":true,"scored":true,"credited":true,"family":"oo-numeric.addsub","latencyMs":2067,"hinted":false}
+  t=  58.22  #211  learn:mastery  oo-numeric         {"p":0.999418,"delta":0.00386,"status":"learning"}
+  t=  59.73  #212  math:hide                         
+  t=  59.73  #213  math:hide                         
+  t=  59.83  #214  math:hide                         
+  t=  59.83  #215  math:hide                         
+  t=  59.83  #216  math:hide                         
+  t=  60.35  #217  learn:teach    oo-numeric         {"phase":"solo"}
+  t=  60.35  #218  learn:present  oo-numeric         
+  t=  60.35  #219  math:show      oo-numeric         
+  t=  60.35  #220  math:show      oo-numeric         
+  t=  60.35  #221  math:show      oo-numeric         
+  t=  60.35  #222  math:show      oo-numeric         
+  t=  60.35  #223  math:show      oo-numeric         
+  t=  60.35  #224  math:show      oo-numeric         
+  t=  60.35  #225  math:show      oo-numeric         
+
+counts: {"learn:present":15,"math:show":90,"math:hide":69,"learn:teach":15,"learn:respond":14,"learn:mastery":16,"learn:unlock":2,"learn:session":4}
+
+---- cycles ----
+  {"i":0,"kpId":"var-meaning","itemId":"var-meaning.seat/generate/1spsl3y","family":"var-meaning.seat","source":"generated","relaxation":"generated-group-absent","strategy":"author-two-names","typed":"a = 5; b = 5","correct":true,"scored":true}
+  {"i":1,"kpId":"var-meaning","itemId":"var-meaning.seat/repair/9gqe4t","family":"var-meaning.seat","source":"catalogue","relaxation":"exact","strategy":"repair-claim","typed":"2: m = 9","correct":true,"scored":true}
+  {"i":2,"kpId":"var-meaning","itemId":"var-meaning.twin/construct/p1bbch","family":"var-meaning.twin","source":"catalogue","relaxation":"exact","strategy":"solve-system","typed":"x=8, y=8","correct":true,"scored":true}
+  {"i":3,"kpId":"var-meaning","itemId":"var-meaning.seat/generate/1gcua5p","family":"var-meaning.seat","source":"catalogue","relaxation":"exact","strategy":"author-two-names","typed":"a = 12; b = 12","correct":true,"scored":true}
+  {"i":4,"kpId":"var-meaning","itemId":"var-meaning.twin/repair/xpy43h","family":"var-meaning.twin","source":"catalogue","relaxation":"exact","strategy":"repair-claim","typed":"2: x = 11","correct":true,"scored":true}
+  {"i":5,"kpId":"expr-anatomy","itemId":"expr-anatomy.term/construct/1sj2bvn","family":"expr-anatomy.term","source":"catalogue","relaxation":"exact","strategy":"second-term","typed":"-7*x","correct":true,"scored":true}
+  {"i":6,"kpId":"expr-anatomy","itemId":"expr-anatomy.term/construct/117rvci","family":"expr-anatomy.term","source":"catalogue","relaxation":"exact","strategy":"second-term","typed":"-9*x","correct":true,"scored":true}
+  {"i":7,"kpId":"expr-anatomy","itemId":"expr-anatomy.term/construct/dk4g92","family":"expr-anatomy.term","source":"catalogue","relaxation":"exact","strategy":"second-term","typed":"-5*x","correct":true,"scored":true}
+  {"i":8,"kpId":"expr-anatomy","itemId":"expr-anatomy.term/construct/kkkigi","family":"expr-anatomy.term","source":"catalogue","relaxation":"exact","strategy":"second-term","typed":"-6*x","correct":true,"scored":true}
+  {"i":9,"kpId":"expr-anatomy","itemId":"expr-anatomy.term/construct/1ejpdzv","family":"expr-anatomy.term","source":"catalogue","relaxation":"nearest-band","strategy":"second-term","typed":"-8*x","correct":true,"scored":true}
+  {"i":10,"kpId":"oo-numeric","itemId":"oo-numeric.addsub/construct/12kesd0","family":"oo-numeric.addsub","source":"catalogue","relaxation":"exact","strategy":"evaluate","typed":"12","correct":true,"scored":true}
+  {"i":11,"kpId":"oo-numeric","itemId":"oo-numeric.addmul/repair/140d72w","family":"oo-numeric.addmul","source":"catalogue","relaxation":"exact","strategy":"repair-value","typed":"2: 32","correct":true,"scored":true}
+  {"i":12,"kpId":"oo-numeric","itemId":"oo-numeric.addmul/generate/1rv5ikw","family":"oo-numeric.addmul","source":"catalogue","relaxation":"exact","strategy":"author-settles-to","typed":"2 * 3 + 28","correct":true,"scored":true}
+  {"i":13,"kpId":"oo-numeric","itemId":"oo-numeric.addsub/construct/oz1jkz","family":"oo-numeric.addsub","source":"catalogue","relaxation":"exact","strategy":"evaluate","typed":"10","correct":true,"scored":true}
+
+scheduler:  {"sessionMinutes":12.266666666666667,"secondsSpent":644,"itemsThisSession":14,"reviewItemsThisSession":0,"inFlight":["oo-numeric"],"blockCount":4,"recentItemIds":15,"noRepeatWindow":40,"recentCells":7,"widestCellWindow":5,"event":null,"probe":{"kpId":"oo-numeric","index":4,"items":5,"right":4,"blindPass":0.000222},"reviewCapLift":true,"pullForward":true,"bank":true,"served":15,"servedBySource":{"generated":1,"catalogue":14},"servedByRelaxation":{"generated-group-absent":1,"exact":13,"nearest-band":1},"serveMisses":0,"cellsProbedForServability":13,"unservableCells":[]}
+learnserve: {"attached":true,"familyReporting":true,"familyReportingSource":"scheduler-serve","uncertifiable":["eq-special-cases"],"testOutEligible":31,"unreportedFamilyItems":0,"serveMisses":0}
+session.delivery: {"requests":15,"withItem":15,"withFamily":15,"unserved":0,"bySource":{"generated":1,"catalogue":14},"byRelaxation":{"generated-group-absent":1,"exact":13,"nearest-band":1}}
+itembank loads: {"demand":2,"prefetch":1,"explicit":3,"suppressed":0}  warms 1
+itembank warmLog: [{"seq":1,"trigger":"boot","lesson":"expressions-1","groups":3,"reason":"ok","nextLesson":null}]
+NEW network resources DURING play (6): ["var-meaning-Ct12kn0-.js","expr-anatomy-WYJhDm_0.js","oo-numeric-BjsVHueV.js","oo-structure-Bges-2rk.js","translate-phrase-C_kymGnj.js","props-operations-zMhkLzfH.js"]
+
+mastery BEFORE: {"theta":-0.8,"unlocked":0,"learning":32,"provisional":0,"mastered":0,"total":32,"level1Percent":0,"session":1,"responses":0,"dueNow":0,"due":[],"inFlight":[],"openEvents":[],"unscoredItems":0,"refusedUpward":0,"stats":{"items":0,"scoredItems":0,"unscoredItems":0,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":0,"creditsByDistance":{},"ceilingHits":0,"gateOpens":0,"gateOpensByTestOut":0,"testOutsOffered":0,"testOutsByTrigger":{},"testOutsPassed":0,"testOutsPassedByTrigger":{},"testOutsFailed":0,"testOutItems":0,"certifications":0,"lapses":0},"scorablePairs":{"scorable":"construct,generate,repair x guided-1,solo","scorableCells":6,"masteryEligible":"construct,generate,repair x solo","masteryEligibleCells":3,"rejectedForms":["judge2","select4"],"rejectedPhases":["guided-2","guided-3","model"]},"bankPricing":{"audited":true,"cellsPriced":96,"sampled":54796,"mixture":{"catalogue":19032,"generated":35764},"catalogueShare":0.347325,"rejectedCells":[{"cell":"expr-anatomy|construct","family":"expr-anatomy.count","blind":1,"n":120,"modalAnswer":"3","reason":"blind 1.000 > maxTrueGuess 0.3"},{"cell":"expr-anatomy|construct","family"
+
+mastery AFTER : {"theta":0.872426,"unlocked":2,"learning":30,"provisional":2,"mastered":0,"total":32,"level1Percent":0,"session":1,"responses":14,"dueNow":0,"due":[],"inFlight":["oo-numeric"],"openEvents":[],"unscoredItems":0,"refusedUpward":0,"stats":{"items":14,"scoredItems":14,"unscoredItems":0,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":0,"creditsByDistance":{},"ceilingHits":0,"gateOpens":2,"gateOpensByTestOut":2,"testOutsOffered":3,"testOutsByTrigger":{"ability":3},"testOutsPassed":2,"testOutsPassedByTrigger":{"ability":2},"testOutsFailed":0,"testOutItems":14,"certifications":0,"lapses":0},"scorablePairs":{"scorable":"construct,generate,repair x guided-1,solo","scorableCells":6,"masteryEligible":"construct,generate,repair x solo","masteryEligibleCells":3,"rejectedForms":["judge2","select4"],"rejectedPhases":["guided-2","guided-3","model"]},"bankPricing":{"audited":true,"cellsPriced":96,"sampled":54796,"mixture":{"catalogue":19032,"generated":35764},"catalogueShare":0.347325,"rejectedCells":[{"cell":"expr-anatomy|construct","family":"expr-anatomy.count","blind":1,"n":120,"modalAnswer":"3","reason":"blind 1.000 > maxTrueGuess 0.3"},{"cell":"expr-anatomy|construct","family":"expr-anatomy.coefficient","blind":1,"n":5,"modalAnswer":"1","reason":"blind 1.000 > maxTrueGuess 0.3"},{"cell":"expr-anatomy|repair","family":"expr-anatomy.count","blind":1,"n":120,"modalAnswer":"2: 3","reason":"blind 1.000 > maxTrueGuess 0.3"},{"cell":"expr-anatomy|repair","family":"expr-anatomy.coefficient","blind":1,"n":5,"modalAnswer":"2: 1","reason"
+
+mathtex panels at end: ["teach-ask-0","teach-ask-1","teach-claim","teach-working-0","teach-working-1","teach-working-2","teach-entry"]
+verbs stats: {"presented":15,"posed":5,"unposed":10,"byVerb":{"span":5},"unposedByType":{"Emitter/repair/repair":2,"Bearer/construct/expression":5,"Bearer/repair/repair":2,"Bearer/generate/construction":1},"committed":0,"correct":5,"familyOnWire":5,"refusedChars":0,"reads":0,"readsRefused":0,"shows":10,"hides":10,"respondHeard":5,"masteryHeard":16}
+json: review/measure/_critic-P34-r3-loop.json

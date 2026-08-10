@@ -2,8 +2,8 @@
   "id": "P36",
   "state": "critique",
   "round": 3,
-  "gap": "world:resonance, the round's one claimed player-visible closure, is invisible: on the gameplay path after E it registers and lights 5 accents at peak 0.58 and changes 0 of 518,400 px (reproduced independently, control 0), and at the pre-input spawn framing it is worth 366 px at max channel delta 14 with zero pixels at delta>=16, confined to an 88x48 patch at the bottom-right corner that is indistinguishable from the control arm at 6x magnification - while the new seam-effects gate built to catch exactly this accepts treatment=1 px (mutation-tested: exit 0)",
+  "gap": "world:resonance lights 5 accents that change 0 of 518,400 pixels; the gate meant to catch this accepts a 1-pixel difference",
   "note": "world:resonance now emits the claim's SOCKET (collision.groundAt under the ink + 1 m) instead of the ink: zero-time A/B control 0 px, treatment 412 px (max delta 22), and the critic's own 26-direction reach cast goes 0/26 to 9-12/26 with world at 0.73-0.95 m from every accent. camera:probe logged as hygiene (freeDistance 3.272 identical either way). kernel:frame/resize now carry a marker the tool understands. New effect gate: review/measure/seam-effects.json, negative-tested three ways. Audit unchanged at 10 emit-no-listener / 3 listen-no-emitter; verify en,es,pl PASSED.",
   "evidence": [],
-  "updated": "2026-08-10T21:58:28.612Z"
+  "updated": "2026-08-10T22:36:21.908Z"
 }

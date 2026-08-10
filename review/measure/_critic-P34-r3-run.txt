@@ -1,0 +1,22 @@
+(node:66500) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.evaluate: TypeError: a.frame is not a function
+    at um._step (http://127.0.0.1:60494/assets/index-sdZ2XJAY.js:3840:93157)
+    at um.advance (http://127.0.0.1:60494/assets/index-sdZ2XJAY.js:3840:92738)
+    at Object.advance (http://127.0.0.1:60494/assets/index-sdZ2XJAY.js:3840:94322)
+    at eval (eval at evaluate (:311:30), <anonymous>:4:48)
+    at UtilityScript.evaluate (<anonymous>:313:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+    at Object.run [90m(C:\dev\math\aaemath\[39mtools\lib\session.mjs:235:30[90m)[39m
+    at sim [90m(C:\dev\math\aaemath\[39mreview\measure\P34.mjs:118:5[90m)[39m
+    at [90mC:\dev\math\aaemath\[39mreview\measure\P34.mjs:150:9
+    at async openGame [90m(C:\dev\math\aaemath\[39mtools\lib\session.mjs:250:12[90m)[39m
+    at async [90mfile:///C:/dev/math/aaemath/[39mreview/measure/P34.mjs:125:13 {
+  log: []
+}
+
+Node.js v24.11.0

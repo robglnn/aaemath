@@ -67,7 +67,21 @@ Any of these failing is an automatic fail, no argument:
 | G6 | Keyboard+mouse *and* gamepad both play the whole game | input probe reports both paths bound |
 | G7 | Readable at 1280×720 and at 3840×2160 | shots at both sizes |
 | G8 | No placeholder art, lorem text or debug labels in a player-visible frame | visual review |
-| G9 | The character faces the direction it is travelling | `verify` compares `headingDeg` against `yawDeg` after moving forward; >30° apart fails |
+| G9 | The character faces the direction it is travelling | `verify` compares the body's world +Z axis against its velocity; >30° apart fails |
+| G10 | Player-facing text is legible against what is actually behind it | sample the pixels behind the ink in a real capture; <3:1 contrast on any row fails |
+| G11 | A "wired" seam changes what a player sees | delete the effect and re-render; a change of <0.5% of pixels means it is not connected in any way that matters |
+
+G10 exists because the learning content — the one thing a student must read precisely — measured
+**1.85:1 to 2.10:1** against the bright dusk sky, five of seven rows below the 3:1 large-text floor,
+with a Polish line landing on a cloud slab and nearly vanishing. The piece's own gate declared every
+row "legible" because it compared glyph size in pixels against a size floor and **never sampled what
+was behind the ink**. A legibility test that does not look at the background is not a legibility test.
+
+G11 exists because `world:resonance` was emitted, heard, and lit five real PointLights that changed
+**0 of 518,400 pixels**. Worse, the gate written to catch that accepted a one-pixel difference as
+proof of effect (mutation-tested to exit 0). Both are the same error as G10: **measuring a proxy for
+the outcome instead of the outcome.** When you write a gate, ask what a defect would look like to a
+player, and measure that.
 
 G9 exists because this shipped broken and a *player* found it, not the tooling. The avatar sat at yaw
 180 while travelling at heading 0. Every automated check passed, because they all measured the input

@@ -1,9 +1,9 @@
 {
   "id": "P34",
-  "state": "critique",
+  "state": "passed",
   "round": 2,
-  "gap": "The round trip executes but is unplayable: Teaching._display() stands only item.stem, so ItemBank.present()'s localised ask, given, framing and three hints are computed every cycle and reach nothing on screen (Teaching.js:639 parks them in the probe, 'P21's HUD is what will draw them'). A player sees a floating 't' and must produce 'a = 5; b = 5'. Both proof drivers close the loop only by reading accepts() out of the bank.",
-  "note": "Round 3 rebuild: given/ask/spoken/entry/hints stand in world; accepts()[0] typeable for all 1152 items; answer-key hook deleted and both drivers re-run reading only the screen",
+  "gap": null,
+  "note": "Learning round trip connected and on screen (86/100). Open: world-space text contrast 1.85-2.10:1, below the 3:1 floor",
   "evidence": [],
-  "updated": "2026-08-10T22:23:06.459Z"
+  "updated": "2026-08-10T22:36:21.023Z"
 }

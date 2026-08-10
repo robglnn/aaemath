@@ -1,0 +1,168 @@
+(node:64912) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "counts": {
+    "learn:teach": 3,
+    "math:show": 52,
+    "learn:present": 3,
+    "learn:respond": 3,
+    "learn:mastery": 2,
+    "learn:session": 1,
+    "math:hide": 16
+  },
+  "firstEvents": [
+    {
+      "n": "learn:teach",
+      "t": 2.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "learn:present",
+      "t": 2.57,
+      "d": "var-meaning.seat/generate/1spsl3y"
+    },
+    {
+      "n": "math:show",
+      "t": 2.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.58,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.82,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.82,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.98,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.98,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.12,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.12,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.23,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.23,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.33,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.33,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.43,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.43,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.53,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.53,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.62,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.62,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.68,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.68,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.77,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.77,
+      "d": "var-meaning"
+    }
+  ]
+}
+
+learn:present 3 · math:show 52 · learn:respond 3 · learn:mastery 2
+A learning cycle FIRED.

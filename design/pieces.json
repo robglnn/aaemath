@@ -7,7 +7,8 @@
     { "id": "W2", "name": "World", "note": "Terrain, sky, light, materials, post, scatter, VFX." },
     { "id": "W3", "name": "Learning", "note": "KaTeX, knowledge graph, mastery, items, teaching, verbs, i18n." },
     { "id": "W4", "name": "Interface", "note": "HUD, menus, onboarding, progress, audio, building." },
-    { "id": "W5", "name": "Whole", "note": "Session, coherence, performance, delivery." }
+    { "id": "W5", "name": "Whole", "note": "Session, coherence, performance, delivery." },
+    { "id": "W6", "name": "Fit & seams", "note": "Pieces added after the first manifest: classroom hardware, session shape, and connecting what was built but unreachable." }
   ],
   "pieces": [
     {
@@ -212,6 +213,55 @@
       "title": "Build & delivery",
       "owns": ["docs", ".github"],
       "judge": "Production build boots from a static host with zero errors in all three locales."
+    },
+    {
+      "id": "P30",
+      "wave": "W6",
+      "title": "Chromebook auto-tiering",
+      "owns": ["app/src/core/AutoTier.js", "app/src/boot/02-autotier.js"],
+      "judge": "Superseded by P35 after the corroboration model was found inverted."
+    },
+    {
+      "id": "P31",
+      "wave": "W6",
+      "title": "Per-lesson item loading",
+      "owns": ["app/src/learn/ItemBank.js", "content/items"],
+      "judge": "First load drops measurably and groups arrive DURING play, not only at boot."
+    },
+    {
+      "id": "P32",
+      "wave": "W6",
+      "title": "Test-out & prerequisite credit propagation",
+      "owns": ["app/src/learn/Mastery.js", "app/src/learn/Graph.js"],
+      "judge": "A strong learner clears Level 1 far faster; a guesser and a hint-abuser never do."
+    },
+    {
+      "id": "P33",
+      "wave": "W6",
+      "title": "Pomodoro session layer",
+      "owns": ["app/src/flow/Session.js", "app/src/flow/Save.js"],
+      "judge": "15-25 minutes AND a non-zero mastery-events distribution. Length alone is not a pass."
+    },
+    {
+      "id": "P34",
+      "wave": "W6",
+      "title": "Learning round trip, end to end",
+      "owns": ["app/src/learn/Teaching.js", "app/src/boot/92-teaching.js"],
+      "judge": "present -> display -> respond -> mastery repeats in a signal trace from the shipped app."
+    },
+    {
+      "id": "P35",
+      "wave": "W6",
+      "title": "Auto-tier: measurement over guess",
+      "owns": ["app/src/core/AutoTier.js", "app/src/boot/02-autotier.js"],
+      "judge": "Corroboration compares measurement to prediction; no one-second cliff; recovery reachable."
+    },
+    {
+      "id": "P36",
+      "wave": "W6",
+      "title": "Orphaned signal sweep",
+      "owns": ["design/architecture.md", "tools/seams.mjs"],
+      "judge": "Every one-ended signal wired, removed, or marked pending — and a wired one changes pixels."
     }
   ]
 }

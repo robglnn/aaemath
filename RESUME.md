@@ -229,6 +229,27 @@ in isolation:
    but `ItemBank.js` has 0 occurrences"* of the restriction. The guarantee depended on an
    unenforced precondition.
 
+### `node tools/seams.mjs --signals` — run this before building anything new
+
+Static seam audit. It counts exports nobody imports and signals with no counterpart, which is the
+cheapest possible detector for this whole defect class. First run, on the state of 2026-08-10:
+
+```
+1 file imported by nothing · 29 files with never-imported exports
+18 signals emitted with NO listener · 4 listeners with NO emitter
+```
+
+**The learning loop is severed at both ends.** `learn:present` is listened for and never emitted.
+`learn:respond`, `learn:teach`, `learn:unlock` are emitted and never heard. `math:show` / `math:hide`
+are listened for and never sent — which is why the only mathematics on screen is what the world
+places at spawn, and why no learning interaction can currently complete a round trip.
+
+Also orphaned: `camera:shake`, `input:device`, `audio:cue`, `quality:tier` (P30's auto-tier decision
+goes nowhere), `player:traverse`, `input:look`.
+
+Not every entry is a defect — a boot module is reached by the glob, some exports are genuine leaves —
+but every entry is a seam somebody has to justify out loud. `--check` exits non-zero for use as a gate.
+
 **Standing gate, applies to every piece from now on.** Before any claim is accepted:
 - Grep for callers of the thing you built. Zero callers outside your own test = automatic fail.
 - Drive the SHIPPED app and observe the code path executing — not a unit test, not a test scene.

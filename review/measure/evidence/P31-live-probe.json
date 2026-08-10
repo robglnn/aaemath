@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-10T19:27:41.924Z",
+ "generated": "2026-08-10T19:34:16.311Z",
  "dist": {
   "files": 60,
-  "key": "11c20465"
+  "key": "846c7c3c"
  },
  "ready": true,
  "fatal": null,
@@ -17,17 +17,21 @@
   "math: claim \"leaf9-span\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer",
   "math: claim \"leaf9-share\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer",
   "math: claim \"leaf9-mark\" reads 4.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 0.19 px, so the mark stands until the player is closer",
-  "itembank: speculation-dropped on \"like-terms-combine\" — a cold select() asked for \"like-terms-combine\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched"
+  "itembank: speculation-dropped on \"props-operations\" — a cold select() asked for \"props-operations\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched",
+  "itembank: speculation-dropped on \"eq-meaning\" — a cold select() asked for \"eq-meaning\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched",
+  "itembank: speculation-dropped on \"props-equality\" — a cold select() asked for \"props-equality\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched",
+  "itembank: speculation-dropped on \"ineq-meaning\" — a cold select() asked for \"ineq-meaning\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched",
+  "itembank: speculation-dropped on \"eq-one-add\" — a cold select() asked for \"eq-one-add\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched"
  ],
  "warm": {
-  "at": 1786390034005,
+  "at": 1786390433541,
   "seq": 1,
   "trigger": "boot",
   "kpId": "var-meaning",
   "lesson": "expressions-1",
   "groups": 3,
   "failed": [],
-  "ms": 18.9,
+  "ms": 25.7,
   "reason": "ok",
   "lessonProgress": 0,
   "nextLesson": null,
@@ -44,22 +48,22 @@
   "groups": "3/32 resident, 1 loading",
   "lessons": 22,
   "residentGroups": [
-   "var-meaning",
    "expr-anatomy",
+   "var-meaning",
    "oo-numeric"
   ],
   "degraded": [],
   "issues": 0,
   "lastIssue": null,
   "warm": {
-   "at": 1786390034005,
+   "at": 1786390433541,
    "seq": 1,
    "trigger": "boot",
    "kpId": "var-meaning",
    "lesson": "expressions-1",
    "groups": 3,
    "failed": [],
-   "ms": 18.9,
+   "ms": 25.7,
    "reason": "ok",
    "lessonProgress": 0,
    "nextLesson": null,
@@ -132,8 +136,8 @@
   "groups": "4/32 resident, 0 loading",
   "lessons": 22,
   "residentGroups": [
-   "var-meaning",
    "expr-anatomy",
+   "var-meaning",
    "oo-numeric",
    "oo-structure"
   ],
@@ -141,14 +145,14 @@
   "issues": 0,
   "lastIssue": null,
   "warm": {
-   "at": 1786390034005,
+   "at": 1786390433541,
    "seq": 1,
    "trigger": "boot",
    "kpId": "var-meaning",
    "lesson": "expressions-1",
    "groups": 3,
    "failed": [],
-   "ms": 18.9,
+   "ms": 25.7,
    "reason": "ok",
    "lessonProgress": 0,
    "nextLesson": null,
@@ -224,7 +228,7 @@
  "bankAudit": {
   "source": "committed",
   "fingerprintSource": "build-time",
-  "setupMs": 0.1,
+  "setupMs": 0.3,
   "fingerprint": "c01e9128",
   "version": 3,
   "sampled": 54796,
@@ -241,77 +245,77 @@
    "kpId": "ineq-two-step",
    "gapMs": 0,
    "tries": 10,
-   "degraded": 2,
+   "degraded": 4,
    "blanks": 0,
    "uncheckable": 0,
-   "msToCatalogue": 390.2,
+   "msToCatalogue": 435.1,
    "rows": [
     {
      "i": 0,
-     "atMs": 2,
+     "atMs": 2.4,
      "source": "generated",
      "relaxation": "generated-group-absent",
      "checkable": true
     },
     {
      "i": 1,
-     "atMs": 352.9,
+     "atMs": 353.5,
      "source": "generated",
      "relaxation": "generated-group-absent",
      "checkable": true
     },
     {
      "i": 2,
-     "atMs": 390.2,
-     "source": "catalogue",
-     "relaxation": "nearest-band",
+     "atMs": 371,
+     "source": "generated",
+     "relaxation": "generated-group-absent",
      "checkable": true
     },
     {
      "i": 3,
-     "atMs": 425,
-     "source": "catalogue",
-     "relaxation": "nearest-band",
+     "atMs": 386.6,
+     "source": "generated",
+     "relaxation": "generated-group-absent",
      "checkable": true
     },
     {
      "i": 4,
-     "atMs": 442.1,
+     "atMs": 435.1,
      "source": "catalogue",
      "relaxation": "nearest-band",
      "checkable": true
     },
     {
      "i": 5,
-     "atMs": 577.9,
+     "atMs": 441,
      "source": "catalogue",
      "relaxation": "nearest-band",
      "checkable": true
     },
     {
      "i": 6,
-     "atMs": 821.6,
+     "atMs": 530.6,
      "source": "catalogue",
      "relaxation": "nearest-band",
      "checkable": true
     },
     {
      "i": 7,
-     "atMs": 861,
+     "atMs": 575.4,
      "source": "catalogue",
      "relaxation": "nearest-band",
      "checkable": true
     },
     {
      "i": 8,
-     "atMs": 1150.6,
+     "atMs": 743.1,
      "source": "catalogue",
      "relaxation": "nearest-band",
      "checkable": true
     },
     {
      "i": 9,
-     "atMs": 1188.9,
+     "atMs": 879,
      "source": "catalogue",
      "relaxation": "nearest-band",
      "checkable": true
@@ -325,39 +329,39 @@
    "degraded": 1,
    "blanks": 0,
    "uncheckable": 0,
-   "msToCatalogue": 402.2,
+   "msToCatalogue": 400.9,
    "rows": [
     {
      "i": 0,
-     "atMs": 0.5,
+     "atMs": 0.4,
      "source": "generated",
      "relaxation": "generated-group-absent",
      "checkable": true
     },
     {
      "i": 1,
-     "atMs": 402.2,
+     "atMs": 400.9,
      "source": "catalogue",
      "relaxation": "exact",
      "checkable": true
     },
     {
      "i": 2,
-     "atMs": 805.3,
+     "atMs": 805.4,
      "source": "catalogue",
      "relaxation": "exact",
      "checkable": true
     },
     {
      "i": 3,
-     "atMs": 1206.4,
+     "atMs": 1209.2,
      "source": "catalogue",
      "relaxation": "exact",
      "checkable": true
     },
     {
      "i": 4,
-     "atMs": 1612.2,
+     "atMs": 1613.4,
      "source": "catalogue",
      "relaxation": "exact",
      "checkable": true
@@ -373,17 +377,17 @@
    "lessonAfter": "expressions-2",
    "probe": {
     "knowledgePoints": 32,
-    "items": 291,
+    "items": 293,
     "catalogueItems": 1152,
-    "generatedThisSession": 3,
+    "generatedThisSession": 5,
     "locale": "en",
     "minItemsPerKp": 36,
     "minItemsPerMisconception": 3,
     "groups": "8/32 resident, 0 loading",
     "lessons": 22,
     "residentGroups": [
-     "var-meaning",
      "expr-anatomy",
+     "var-meaning",
      "oo-numeric",
      "oo-structure",
      "ineq-two-step",
@@ -395,14 +399,14 @@
     "issues": 0,
     "lastIssue": null,
     "warm": {
-     "at": 1786390039365,
+     "at": 1786390438173,
      "seq": 2,
      "trigger": "mastery-signal",
      "kpId": "oo-structure",
      "lesson": "expressions-2",
      "groups": 2,
      "failed": [],
-     "ms": 8.7,
+     "ms": 17,
      "reason": "ok",
      "lessonProgress": 0,
      "nextLesson": null,
@@ -482,17 +486,17 @@
    "carriedScheduler": true,
    "probe": {
     "knowledgePoints": 32,
-    "items": 363,
+    "items": 365,
     "catalogueItems": 1152,
-    "generatedThisSession": 3,
+    "generatedThisSession": 5,
     "locale": "en",
     "minItemsPerKp": 36,
     "minItemsPerMisconception": 3,
     "groups": "10/32 resident, 0 loading",
     "lessons": 22,
     "residentGroups": [
-     "var-meaning",
      "expr-anatomy",
+     "var-meaning",
      "oo-numeric",
      "oo-structure",
      "ineq-two-step",
@@ -506,14 +510,14 @@
     "issues": 0,
     "lastIssue": null,
     "warm": {
-     "at": 1786390044474,
+     "at": 1786390443424,
      "seq": 3,
      "trigger": "idle-recheck",
      "kpId": "eval-signed",
      "lesson": "expressions-3",
      "groups": 2,
      "failed": [],
-     "ms": 27.9,
+     "ms": 9.8,
      "reason": "ok",
      "lessonProgress": 0,
      "nextLesson": null,
@@ -649,17 +653,17 @@
   },
   "probe": {
    "knowledgePoints": 32,
-   "items": 399,
+   "items": 401,
    "catalogueItems": 1152,
-   "generatedThisSession": 3,
+   "generatedThisSession": 5,
    "locale": "en",
    "minItemsPerKp": 36,
    "minItemsPerMisconception": 3,
    "groups": "11/32 resident, 0 loading",
    "lessons": 22,
    "residentGroups": [
-    "var-meaning",
     "expr-anatomy",
+    "var-meaning",
     "oo-numeric",
     "oo-structure",
     "ineq-two-step",
@@ -674,14 +678,14 @@
    "issues": 0,
    "lastIssue": null,
    "warm": {
-    "at": 1786390044474,
+    "at": 1786390443424,
     "seq": 3,
     "trigger": "idle-recheck",
     "kpId": "eval-signed",
     "lesson": "expressions-3",
     "groups": 2,
     "failed": [],
-    "ms": 27.9,
+    "ms": 9.8,
     "reason": "ok",
     "lessonProgress": 0,
     "nextLesson": null,
@@ -764,8 +768,8 @@
   "items": 180,
   "unserved": 0,
   "sources": {
-   "generated": 70,
-   "catalogue": 110
+   "generated": 88,
+   "catalogue": 92
   },
   "kps": [
    "eq-meaning",
@@ -804,17 +808,17 @@
   "lessonAtStart": "expressions-1",
   "probeAfterPlay": {
    "knowledgePoints": 32,
-   "items": 1285,
+   "items": 1324,
    "catalogueItems": 1152,
-   "generatedThisSession": 170,
+   "generatedThisSession": 210,
    "locale": "en",
    "minItemsPerKp": 36,
    "minItemsPerMisconception": 3,
    "groups": "31/32 resident, 0 loading",
    "lessons": 22,
    "residentGroups": [
-    "var-meaning",
     "expr-anatomy",
+    "var-meaning",
     "oo-numeric",
     "oo-structure",
     "ineq-two-step",
@@ -824,44 +828,44 @@
     "eval-formula",
     "translate-phrase",
     "translate-order",
-    "eq-meaning",
-    "props-equality",
-    "ineq-meaning",
-    "props-operations",
-    "distribute-numeric",
     "like-terms-id",
-    "eq-one-add",
     "eq-one-mult",
-    "distribute-negative",
+    "eq-two-step",
+    "like-terms-combine",
+    "eq-combine-side",
+    "distribute-numeric",
     "eq-distribute",
     "eq-both-sides",
-    "eq-combine-side",
-    "eq-two-step",
     "distribute-variable",
-    "simplify-expression",
-    "equivalent-expressions",
+    "distribute-negative",
+    "ineq-meaning",
     "ineq-one-step",
+    "simplify-expression",
     "translate-sentence",
+    "equivalent-expressions",
     "eq-model-context",
-    "like-terms-combine"
+    "eq-meaning",
+    "props-operations",
+    "props-equality",
+    "eq-one-add"
    ],
    "degraded": [],
-   "issues": 1,
+   "issues": 5,
    "lastIssue": {
     "kind": "speculation-dropped",
-    "kpId": "like-terms-combine",
+    "kpId": "eq-one-add",
     "recent": 10,
-    "error": "a cold select() asked for \"like-terms-combine\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched"
+    "error": "a cold select() asked for \"eq-one-add\", then 10 other knowledge points were asked for before idle time came round — that is a catalogue sweep, not a learner, so the chunk was not fetched"
    },
    "warm": {
-    "at": 1786390044474,
+    "at": 1786390443424,
     "seq": 3,
     "trigger": "idle-recheck",
     "kpId": "eval-signed",
     "lesson": "expressions-3",
     "groups": 2,
     "failed": [],
-    "ms": 27.9,
+    "ms": 9.8,
     "reason": "ok",
     "lessonProgress": 0,
     "nextLesson": null,
@@ -898,7 +902,7 @@
     "demand": 22,
     "prefetch": 5,
     "explicit": 4,
-    "suppressed": 1
+    "suppressed": 5
    },
    "itemLocale": "en",
    "localesResident": [
@@ -943,1623 +947,1623 @@
  "resources": {
   "atReady": [
    {
-    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-C1x05TSb.js",
+    "startTime": 26,
     "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-BuMqkyig.css",
+    "startTime": 26,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
-    "startTime": 117,
-    "encoded": 6330
+    "name": "http://127.0.0.1:55605/assets/02-autotier-WGQB6Yvs.js",
+    "startTime": 89,
+    "encoded": 6329
    },
    {
-    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
-    "startTime": 129,
+    "name": "http://127.0.0.1:55605/assets/05-i18n-lunvvsCc.js",
+    "startTime": 95,
     "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
-    "startTime": 138,
+    "name": "http://127.0.0.1:55605/assets/10-world-miQsbIu4.js",
+    "startTime": 105,
     "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
-    "startTime": 138,
-    "encoded": 14564
+    "name": "http://127.0.0.1:55605/assets/Materials-BDoGulK9.js",
+    "startTime": 105,
+    "encoded": 14563
    },
    {
-    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
-    "startTime": 150,
-    "encoded": 11273
+    "name": "http://127.0.0.1:55605/assets/12-sky-Bf0_5tIE.js",
+    "startTime": 124,
+    "encoded": 11271
    },
    {
-    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
-    "startTime": 163,
-    "encoded": 6758
+    "name": "http://127.0.0.1:55605/assets/14-lighting-DLQyIJuR.js",
+    "startTime": 135,
+    "encoded": 6759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
-    "startTime": 172,
+    "name": "http://127.0.0.1:55605/assets/16-scatter-BP3JiEif.js",
+    "startTime": 145,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
-    "startTime": 185,
-    "encoded": 12822
+    "name": "http://127.0.0.1:55605/assets/20-input-C2F5yE2w.js",
+    "startTime": 149,
+    "encoded": 12821
    },
    {
-    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
-    "startTime": 190,
-    "encoded": 13486
+    "name": "http://127.0.0.1:55605/assets/30-locomotion-EQl9YosR.js",
+    "startTime": 154,
+    "encoded": 13485
    },
    {
-    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
-    "startTime": 195,
+    "name": "http://127.0.0.1:55605/assets/32-avatar-CmazhMp-.js",
+    "startTime": 162,
     "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
-    "startTime": 201,
-    "encoded": 5688
+    "name": "http://127.0.0.1:55605/assets/40-camera-CZ32Z7LS.js",
+    "startTime": 177,
+    "encoded": 5687
    },
    {
-    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
-    "startTime": 220,
-    "encoded": 9619
+    "name": "http://127.0.0.1:55605/assets/52-post-C9e4-uKv.js",
+    "startTime": 182,
+    "encoded": 9618
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
-    "startTime": 226,
-    "encoded": 92133
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DFKeVvgi.js",
+    "startTime": 188,
+    "encoded": 92132
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 226,
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 188,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
-    "startTime": 254,
-    "encoded": 1167
+    "name": "http://127.0.0.1:55605/assets/62-itembank-DhqbcTP3.js",
+    "startTime": 213,
+    "encoded": 1165
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
-    "startTime": 254,
-    "encoded": 29972
+    "name": "http://127.0.0.1:55605/assets/ItemBank-CSHI1qWE.js",
+    "startTime": 213,
+    "encoded": 29978
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
-    "startTime": 267,
-    "encoded": 53143
+    "name": "http://127.0.0.1:55605/assets/62-learning-BzfC6XY_.js",
+    "startTime": 238,
+    "encoded": 53166
    },
    {
-    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
-    "startTime": 290,
-    "encoded": 620
+    "name": "http://127.0.0.1:55605/assets/63-learnserve-P2tGO_EB.js",
+    "startTime": 253,
+    "encoded": 621
    },
    {
-    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
-    "startTime": 298,
-    "encoded": 9834
+    "name": "http://127.0.0.1:55605/assets/90-flow-DFbXlppW.js",
+    "startTime": 261,
+    "encoded": 9833
    },
    {
-    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
-    "startTime": 309,
+    "name": "http://127.0.0.1:55605/assets/en-DiJtJ4AS.js",
+    "startTime": 266,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 400,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 401,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 401,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 401,
     "encoded": 16440
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 401,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 401,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 401,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 401,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
-    "startTime": 527,
+    "name": "http://127.0.0.1:55605/assets/items-en-BvtiMYOY.js",
+    "startTime": 467,
     "encoded": 7879
    }
   ],
   "afterWarm": [
    {
-    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-C1x05TSb.js",
+    "startTime": 26,
     "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-BuMqkyig.css",
+    "startTime": 26,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
-    "startTime": 117,
-    "encoded": 6330
+    "name": "http://127.0.0.1:55605/assets/02-autotier-WGQB6Yvs.js",
+    "startTime": 89,
+    "encoded": 6329
    },
    {
-    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
-    "startTime": 129,
+    "name": "http://127.0.0.1:55605/assets/05-i18n-lunvvsCc.js",
+    "startTime": 95,
     "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
-    "startTime": 138,
+    "name": "http://127.0.0.1:55605/assets/10-world-miQsbIu4.js",
+    "startTime": 105,
     "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
-    "startTime": 138,
-    "encoded": 14564
+    "name": "http://127.0.0.1:55605/assets/Materials-BDoGulK9.js",
+    "startTime": 105,
+    "encoded": 14563
    },
    {
-    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
-    "startTime": 150,
-    "encoded": 11273
+    "name": "http://127.0.0.1:55605/assets/12-sky-Bf0_5tIE.js",
+    "startTime": 124,
+    "encoded": 11271
    },
    {
-    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
-    "startTime": 163,
-    "encoded": 6758
+    "name": "http://127.0.0.1:55605/assets/14-lighting-DLQyIJuR.js",
+    "startTime": 135,
+    "encoded": 6759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
-    "startTime": 172,
+    "name": "http://127.0.0.1:55605/assets/16-scatter-BP3JiEif.js",
+    "startTime": 145,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
-    "startTime": 185,
-    "encoded": 12822
+    "name": "http://127.0.0.1:55605/assets/20-input-C2F5yE2w.js",
+    "startTime": 149,
+    "encoded": 12821
    },
    {
-    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
-    "startTime": 190,
-    "encoded": 13486
+    "name": "http://127.0.0.1:55605/assets/30-locomotion-EQl9YosR.js",
+    "startTime": 154,
+    "encoded": 13485
    },
    {
-    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
-    "startTime": 195,
+    "name": "http://127.0.0.1:55605/assets/32-avatar-CmazhMp-.js",
+    "startTime": 162,
     "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
-    "startTime": 201,
-    "encoded": 5688
+    "name": "http://127.0.0.1:55605/assets/40-camera-CZ32Z7LS.js",
+    "startTime": 177,
+    "encoded": 5687
    },
    {
-    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
-    "startTime": 220,
-    "encoded": 9619
+    "name": "http://127.0.0.1:55605/assets/52-post-C9e4-uKv.js",
+    "startTime": 182,
+    "encoded": 9618
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
-    "startTime": 226,
-    "encoded": 92133
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DFKeVvgi.js",
+    "startTime": 188,
+    "encoded": 92132
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 226,
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 188,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
-    "startTime": 254,
-    "encoded": 1167
+    "name": "http://127.0.0.1:55605/assets/62-itembank-DhqbcTP3.js",
+    "startTime": 213,
+    "encoded": 1165
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
-    "startTime": 254,
-    "encoded": 29972
+    "name": "http://127.0.0.1:55605/assets/ItemBank-CSHI1qWE.js",
+    "startTime": 213,
+    "encoded": 29978
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
-    "startTime": 267,
-    "encoded": 53143
+    "name": "http://127.0.0.1:55605/assets/62-learning-BzfC6XY_.js",
+    "startTime": 238,
+    "encoded": 53166
    },
    {
-    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
-    "startTime": 290,
-    "encoded": 620
+    "name": "http://127.0.0.1:55605/assets/63-learnserve-P2tGO_EB.js",
+    "startTime": 253,
+    "encoded": 621
    },
    {
-    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
-    "startTime": 298,
-    "encoded": 9834
+    "name": "http://127.0.0.1:55605/assets/90-flow-DFbXlppW.js",
+    "startTime": 261,
+    "encoded": 9833
    },
    {
-    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
-    "startTime": 309,
+    "name": "http://127.0.0.1:55605/assets/en-DiJtJ4AS.js",
+    "startTime": 266,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 400,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 401,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 401,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 401,
     "encoded": 16440
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 401,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 401,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 401,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 401,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
-    "startTime": 527,
+    "name": "http://127.0.0.1:55605/assets/items-en-BvtiMYOY.js",
+    "startTime": 467,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 1755,
+    "name": "http://127.0.0.1:55605/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1683,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 1756,
-    "encoded": 2822
+    "name": "http://127.0.0.1:55605/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1684,
+    "encoded": 2239
    },
    {
-    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 1756,
-    "encoded": 2239
+    "name": "http://127.0.0.1:55605/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1684,
+    "encoded": 2822
    }
   ],
   "afterPrefetch": [
    {
-    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-C1x05TSb.js",
+    "startTime": 26,
     "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-BuMqkyig.css",
+    "startTime": 26,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
-    "startTime": 117,
-    "encoded": 6330
+    "name": "http://127.0.0.1:55605/assets/02-autotier-WGQB6Yvs.js",
+    "startTime": 89,
+    "encoded": 6329
    },
    {
-    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
-    "startTime": 129,
+    "name": "http://127.0.0.1:55605/assets/05-i18n-lunvvsCc.js",
+    "startTime": 95,
     "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
-    "startTime": 138,
+    "name": "http://127.0.0.1:55605/assets/10-world-miQsbIu4.js",
+    "startTime": 105,
     "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
-    "startTime": 138,
-    "encoded": 14564
+    "name": "http://127.0.0.1:55605/assets/Materials-BDoGulK9.js",
+    "startTime": 105,
+    "encoded": 14563
    },
    {
-    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
-    "startTime": 150,
-    "encoded": 11273
+    "name": "http://127.0.0.1:55605/assets/12-sky-Bf0_5tIE.js",
+    "startTime": 124,
+    "encoded": 11271
    },
    {
-    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
-    "startTime": 163,
-    "encoded": 6758
+    "name": "http://127.0.0.1:55605/assets/14-lighting-DLQyIJuR.js",
+    "startTime": 135,
+    "encoded": 6759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
-    "startTime": 172,
+    "name": "http://127.0.0.1:55605/assets/16-scatter-BP3JiEif.js",
+    "startTime": 145,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
-    "startTime": 185,
-    "encoded": 12822
+    "name": "http://127.0.0.1:55605/assets/20-input-C2F5yE2w.js",
+    "startTime": 149,
+    "encoded": 12821
    },
    {
-    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
-    "startTime": 190,
-    "encoded": 13486
+    "name": "http://127.0.0.1:55605/assets/30-locomotion-EQl9YosR.js",
+    "startTime": 154,
+    "encoded": 13485
    },
    {
-    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
-    "startTime": 195,
+    "name": "http://127.0.0.1:55605/assets/32-avatar-CmazhMp-.js",
+    "startTime": 162,
     "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
-    "startTime": 201,
-    "encoded": 5688
+    "name": "http://127.0.0.1:55605/assets/40-camera-CZ32Z7LS.js",
+    "startTime": 177,
+    "encoded": 5687
    },
    {
-    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
-    "startTime": 220,
-    "encoded": 9619
+    "name": "http://127.0.0.1:55605/assets/52-post-C9e4-uKv.js",
+    "startTime": 182,
+    "encoded": 9618
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
-    "startTime": 226,
-    "encoded": 92133
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DFKeVvgi.js",
+    "startTime": 188,
+    "encoded": 92132
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 226,
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 188,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
-    "startTime": 254,
-    "encoded": 1167
+    "name": "http://127.0.0.1:55605/assets/62-itembank-DhqbcTP3.js",
+    "startTime": 213,
+    "encoded": 1165
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
-    "startTime": 254,
-    "encoded": 29972
+    "name": "http://127.0.0.1:55605/assets/ItemBank-CSHI1qWE.js",
+    "startTime": 213,
+    "encoded": 29978
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
-    "startTime": 267,
-    "encoded": 53143
+    "name": "http://127.0.0.1:55605/assets/62-learning-BzfC6XY_.js",
+    "startTime": 238,
+    "encoded": 53166
    },
    {
-    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
-    "startTime": 290,
-    "encoded": 620
+    "name": "http://127.0.0.1:55605/assets/63-learnserve-P2tGO_EB.js",
+    "startTime": 253,
+    "encoded": 621
    },
    {
-    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
-    "startTime": 298,
-    "encoded": 9834
+    "name": "http://127.0.0.1:55605/assets/90-flow-DFbXlppW.js",
+    "startTime": 261,
+    "encoded": 9833
    },
    {
-    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
-    "startTime": 309,
+    "name": "http://127.0.0.1:55605/assets/en-DiJtJ4AS.js",
+    "startTime": 266,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 400,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 401,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 401,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 401,
     "encoded": 16440
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 401,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 401,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 401,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 401,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
-    "startTime": 527,
+    "name": "http://127.0.0.1:55605/assets/items-en-BvtiMYOY.js",
+    "startTime": 467,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 1755,
+    "name": "http://127.0.0.1:55605/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1683,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 1756,
-    "encoded": 2822
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 1756,
+    "name": "http://127.0.0.1:55605/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1684,
     "encoded": 2239
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
-    "startTime": 1788,
+    "name": "http://127.0.0.1:55605/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1684,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1712,
     "encoded": 2619
    }
   ],
   "afterCold": [
    {
-    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-C1x05TSb.js",
+    "startTime": 26,
     "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-BuMqkyig.css",
+    "startTime": 26,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
-    "startTime": 117,
-    "encoded": 6330
+    "name": "http://127.0.0.1:55605/assets/02-autotier-WGQB6Yvs.js",
+    "startTime": 89,
+    "encoded": 6329
    },
    {
-    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
-    "startTime": 129,
+    "name": "http://127.0.0.1:55605/assets/05-i18n-lunvvsCc.js",
+    "startTime": 95,
     "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
-    "startTime": 138,
+    "name": "http://127.0.0.1:55605/assets/10-world-miQsbIu4.js",
+    "startTime": 105,
     "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
-    "startTime": 138,
-    "encoded": 14564
+    "name": "http://127.0.0.1:55605/assets/Materials-BDoGulK9.js",
+    "startTime": 105,
+    "encoded": 14563
    },
    {
-    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
-    "startTime": 150,
-    "encoded": 11273
+    "name": "http://127.0.0.1:55605/assets/12-sky-Bf0_5tIE.js",
+    "startTime": 124,
+    "encoded": 11271
    },
    {
-    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
-    "startTime": 163,
-    "encoded": 6758
+    "name": "http://127.0.0.1:55605/assets/14-lighting-DLQyIJuR.js",
+    "startTime": 135,
+    "encoded": 6759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
-    "startTime": 172,
+    "name": "http://127.0.0.1:55605/assets/16-scatter-BP3JiEif.js",
+    "startTime": 145,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
-    "startTime": 185,
-    "encoded": 12822
+    "name": "http://127.0.0.1:55605/assets/20-input-C2F5yE2w.js",
+    "startTime": 149,
+    "encoded": 12821
    },
    {
-    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
-    "startTime": 190,
-    "encoded": 13486
+    "name": "http://127.0.0.1:55605/assets/30-locomotion-EQl9YosR.js",
+    "startTime": 154,
+    "encoded": 13485
    },
    {
-    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
-    "startTime": 195,
+    "name": "http://127.0.0.1:55605/assets/32-avatar-CmazhMp-.js",
+    "startTime": 162,
     "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
-    "startTime": 201,
-    "encoded": 5688
+    "name": "http://127.0.0.1:55605/assets/40-camera-CZ32Z7LS.js",
+    "startTime": 177,
+    "encoded": 5687
    },
    {
-    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
-    "startTime": 220,
-    "encoded": 9619
+    "name": "http://127.0.0.1:55605/assets/52-post-C9e4-uKv.js",
+    "startTime": 182,
+    "encoded": 9618
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
-    "startTime": 226,
-    "encoded": 92133
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DFKeVvgi.js",
+    "startTime": 188,
+    "encoded": 92132
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 226,
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 188,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
-    "startTime": 254,
-    "encoded": 1167
+    "name": "http://127.0.0.1:55605/assets/62-itembank-DhqbcTP3.js",
+    "startTime": 213,
+    "encoded": 1165
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
-    "startTime": 254,
-    "encoded": 29972
+    "name": "http://127.0.0.1:55605/assets/ItemBank-CSHI1qWE.js",
+    "startTime": 213,
+    "encoded": 29978
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
-    "startTime": 267,
-    "encoded": 53143
+    "name": "http://127.0.0.1:55605/assets/62-learning-BzfC6XY_.js",
+    "startTime": 238,
+    "encoded": 53166
    },
    {
-    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
-    "startTime": 290,
-    "encoded": 620
+    "name": "http://127.0.0.1:55605/assets/63-learnserve-P2tGO_EB.js",
+    "startTime": 253,
+    "encoded": 621
    },
    {
-    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
-    "startTime": 298,
-    "encoded": 9834
+    "name": "http://127.0.0.1:55605/assets/90-flow-DFbXlppW.js",
+    "startTime": 261,
+    "encoded": 9833
    },
    {
-    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
-    "startTime": 309,
+    "name": "http://127.0.0.1:55605/assets/en-DiJtJ4AS.js",
+    "startTime": 266,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 400,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 401,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 401,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 401,
     "encoded": 16440
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 401,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 401,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 401,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 401,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
-    "startTime": 527,
+    "name": "http://127.0.0.1:55605/assets/items-en-BvtiMYOY.js",
+    "startTime": 467,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 1755,
+    "name": "http://127.0.0.1:55605/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1683,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 1756,
-    "encoded": 2822
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 1756,
+    "name": "http://127.0.0.1:55605/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1684,
     "encoded": 2239
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
-    "startTime": 1788,
+    "name": "http://127.0.0.1:55605/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1684,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1712,
     "encoded": 2619
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
-    "startTime": 2372,
+    "name": "http://127.0.0.1:55605/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2374,
     "encoded": 3168
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
-    "startTime": 4173,
+    "name": "http://127.0.0.1:55605/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 3282,
     "encoded": 2840
    }
   ],
   "afterCross1": [
    {
-    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-C1x05TSb.js",
+    "startTime": 26,
     "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-BuMqkyig.css",
+    "startTime": 26,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
-    "startTime": 117,
-    "encoded": 6330
+    "name": "http://127.0.0.1:55605/assets/02-autotier-WGQB6Yvs.js",
+    "startTime": 89,
+    "encoded": 6329
    },
    {
-    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
-    "startTime": 129,
+    "name": "http://127.0.0.1:55605/assets/05-i18n-lunvvsCc.js",
+    "startTime": 95,
     "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
-    "startTime": 138,
+    "name": "http://127.0.0.1:55605/assets/10-world-miQsbIu4.js",
+    "startTime": 105,
     "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
-    "startTime": 138,
-    "encoded": 14564
+    "name": "http://127.0.0.1:55605/assets/Materials-BDoGulK9.js",
+    "startTime": 105,
+    "encoded": 14563
    },
    {
-    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
-    "startTime": 150,
-    "encoded": 11273
+    "name": "http://127.0.0.1:55605/assets/12-sky-Bf0_5tIE.js",
+    "startTime": 124,
+    "encoded": 11271
    },
    {
-    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
-    "startTime": 163,
-    "encoded": 6758
+    "name": "http://127.0.0.1:55605/assets/14-lighting-DLQyIJuR.js",
+    "startTime": 135,
+    "encoded": 6759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
-    "startTime": 172,
+    "name": "http://127.0.0.1:55605/assets/16-scatter-BP3JiEif.js",
+    "startTime": 145,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
-    "startTime": 185,
-    "encoded": 12822
+    "name": "http://127.0.0.1:55605/assets/20-input-C2F5yE2w.js",
+    "startTime": 149,
+    "encoded": 12821
    },
    {
-    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
-    "startTime": 190,
-    "encoded": 13486
+    "name": "http://127.0.0.1:55605/assets/30-locomotion-EQl9YosR.js",
+    "startTime": 154,
+    "encoded": 13485
    },
    {
-    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
-    "startTime": 195,
+    "name": "http://127.0.0.1:55605/assets/32-avatar-CmazhMp-.js",
+    "startTime": 162,
     "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
-    "startTime": 201,
-    "encoded": 5688
+    "name": "http://127.0.0.1:55605/assets/40-camera-CZ32Z7LS.js",
+    "startTime": 177,
+    "encoded": 5687
    },
    {
-    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
-    "startTime": 220,
-    "encoded": 9619
+    "name": "http://127.0.0.1:55605/assets/52-post-C9e4-uKv.js",
+    "startTime": 182,
+    "encoded": 9618
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
-    "startTime": 226,
-    "encoded": 92133
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DFKeVvgi.js",
+    "startTime": 188,
+    "encoded": 92132
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 226,
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 188,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
-    "startTime": 254,
-    "encoded": 1167
+    "name": "http://127.0.0.1:55605/assets/62-itembank-DhqbcTP3.js",
+    "startTime": 213,
+    "encoded": 1165
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
-    "startTime": 254,
-    "encoded": 29972
+    "name": "http://127.0.0.1:55605/assets/ItemBank-CSHI1qWE.js",
+    "startTime": 213,
+    "encoded": 29978
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
-    "startTime": 267,
-    "encoded": 53143
+    "name": "http://127.0.0.1:55605/assets/62-learning-BzfC6XY_.js",
+    "startTime": 238,
+    "encoded": 53166
    },
    {
-    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
-    "startTime": 290,
-    "encoded": 620
+    "name": "http://127.0.0.1:55605/assets/63-learnserve-P2tGO_EB.js",
+    "startTime": 253,
+    "encoded": 621
    },
    {
-    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
-    "startTime": 298,
-    "encoded": 9834
+    "name": "http://127.0.0.1:55605/assets/90-flow-DFbXlppW.js",
+    "startTime": 261,
+    "encoded": 9833
    },
    {
-    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
-    "startTime": 309,
+    "name": "http://127.0.0.1:55605/assets/en-DiJtJ4AS.js",
+    "startTime": 266,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 400,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 401,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 401,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 401,
     "encoded": 16440
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 401,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 401,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 401,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 401,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
-    "startTime": 527,
+    "name": "http://127.0.0.1:55605/assets/items-en-BvtiMYOY.js",
+    "startTime": 467,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 1755,
+    "name": "http://127.0.0.1:55605/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1683,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 1756,
-    "encoded": 2822
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 1756,
+    "name": "http://127.0.0.1:55605/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1684,
     "encoded": 2239
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
-    "startTime": 1788,
+    "name": "http://127.0.0.1:55605/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1684,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1712,
     "encoded": 2619
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
-    "startTime": 2372,
+    "name": "http://127.0.0.1:55605/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2374,
     "encoded": 3168
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
-    "startTime": 4173,
+    "name": "http://127.0.0.1:55605/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 3282,
     "encoded": 2840
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-substitute-CIy76Axk.js",
-    "startTime": 7114,
+    "name": "http://127.0.0.1:55605/assets/eval-substitute-CIy76Axk.js",
+    "startTime": 6315,
     "encoded": 2591
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-signed-C2UgWZdX.js",
-    "startTime": 7309,
+    "name": "http://127.0.0.1:55605/assets/eval-signed-C2UgWZdX.js",
+    "startTime": 6553,
     "encoded": 2595
    }
   ],
   "afterCross2": [
    {
-    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-C1x05TSb.js",
+    "startTime": 26,
     "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-BuMqkyig.css",
+    "startTime": 26,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
-    "startTime": 117,
-    "encoded": 6330
+    "name": "http://127.0.0.1:55605/assets/02-autotier-WGQB6Yvs.js",
+    "startTime": 89,
+    "encoded": 6329
    },
    {
-    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
-    "startTime": 129,
+    "name": "http://127.0.0.1:55605/assets/05-i18n-lunvvsCc.js",
+    "startTime": 95,
     "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
-    "startTime": 138,
+    "name": "http://127.0.0.1:55605/assets/10-world-miQsbIu4.js",
+    "startTime": 105,
     "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
-    "startTime": 138,
-    "encoded": 14564
+    "name": "http://127.0.0.1:55605/assets/Materials-BDoGulK9.js",
+    "startTime": 105,
+    "encoded": 14563
    },
    {
-    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
-    "startTime": 150,
-    "encoded": 11273
+    "name": "http://127.0.0.1:55605/assets/12-sky-Bf0_5tIE.js",
+    "startTime": 124,
+    "encoded": 11271
    },
    {
-    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
-    "startTime": 163,
-    "encoded": 6758
+    "name": "http://127.0.0.1:55605/assets/14-lighting-DLQyIJuR.js",
+    "startTime": 135,
+    "encoded": 6759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
-    "startTime": 172,
+    "name": "http://127.0.0.1:55605/assets/16-scatter-BP3JiEif.js",
+    "startTime": 145,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
-    "startTime": 185,
-    "encoded": 12822
+    "name": "http://127.0.0.1:55605/assets/20-input-C2F5yE2w.js",
+    "startTime": 149,
+    "encoded": 12821
    },
    {
-    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
-    "startTime": 190,
-    "encoded": 13486
+    "name": "http://127.0.0.1:55605/assets/30-locomotion-EQl9YosR.js",
+    "startTime": 154,
+    "encoded": 13485
    },
    {
-    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
-    "startTime": 195,
+    "name": "http://127.0.0.1:55605/assets/32-avatar-CmazhMp-.js",
+    "startTime": 162,
     "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
-    "startTime": 201,
-    "encoded": 5688
+    "name": "http://127.0.0.1:55605/assets/40-camera-CZ32Z7LS.js",
+    "startTime": 177,
+    "encoded": 5687
    },
    {
-    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
-    "startTime": 220,
-    "encoded": 9619
+    "name": "http://127.0.0.1:55605/assets/52-post-C9e4-uKv.js",
+    "startTime": 182,
+    "encoded": 9618
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
-    "startTime": 226,
-    "encoded": 92133
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DFKeVvgi.js",
+    "startTime": 188,
+    "encoded": 92132
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 226,
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 188,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
-    "startTime": 254,
-    "encoded": 1167
+    "name": "http://127.0.0.1:55605/assets/62-itembank-DhqbcTP3.js",
+    "startTime": 213,
+    "encoded": 1165
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
-    "startTime": 254,
-    "encoded": 29972
+    "name": "http://127.0.0.1:55605/assets/ItemBank-CSHI1qWE.js",
+    "startTime": 213,
+    "encoded": 29978
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
-    "startTime": 267,
-    "encoded": 53143
+    "name": "http://127.0.0.1:55605/assets/62-learning-BzfC6XY_.js",
+    "startTime": 238,
+    "encoded": 53166
    },
    {
-    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
-    "startTime": 290,
-    "encoded": 620
+    "name": "http://127.0.0.1:55605/assets/63-learnserve-P2tGO_EB.js",
+    "startTime": 253,
+    "encoded": 621
    },
    {
-    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
-    "startTime": 298,
-    "encoded": 9834
+    "name": "http://127.0.0.1:55605/assets/90-flow-DFbXlppW.js",
+    "startTime": 261,
+    "encoded": 9833
    },
    {
-    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
-    "startTime": 309,
+    "name": "http://127.0.0.1:55605/assets/en-DiJtJ4AS.js",
+    "startTime": 266,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 400,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 401,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 401,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 401,
     "encoded": 16440
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 401,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 401,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 401,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 401,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
-    "startTime": 527,
+    "name": "http://127.0.0.1:55605/assets/items-en-BvtiMYOY.js",
+    "startTime": 467,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 1755,
+    "name": "http://127.0.0.1:55605/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1683,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 1756,
-    "encoded": 2822
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 1756,
+    "name": "http://127.0.0.1:55605/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1684,
     "encoded": 2239
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
-    "startTime": 1788,
+    "name": "http://127.0.0.1:55605/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1684,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1712,
     "encoded": 2619
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
-    "startTime": 2372,
+    "name": "http://127.0.0.1:55605/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2374,
     "encoded": 3168
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
-    "startTime": 4173,
+    "name": "http://127.0.0.1:55605/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 3282,
     "encoded": 2840
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-substitute-CIy76Axk.js",
-    "startTime": 7114,
+    "name": "http://127.0.0.1:55605/assets/eval-substitute-CIy76Axk.js",
+    "startTime": 6315,
     "encoded": 2591
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-signed-C2UgWZdX.js",
-    "startTime": 7309,
+    "name": "http://127.0.0.1:55605/assets/eval-signed-C2UgWZdX.js",
+    "startTime": 6553,
     "encoded": 2595
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-formula-D5seGdi4.js",
-    "startTime": 12224,
+    "name": "http://127.0.0.1:55605/assets/eval-formula-D5seGdi4.js",
+    "startTime": 11567,
     "encoded": 3317
    },
    {
-    "name": "http://127.0.0.1:53936/assets/translate-phrase-C_kymGnj.js",
-    "startTime": 13106,
+    "name": "http://127.0.0.1:55605/assets/translate-phrase-C_kymGnj.js",
+    "startTime": 11785,
     "encoded": 2489
    }
   ],
   "afterLookahead": [
    {
-    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-C1x05TSb.js",
+    "startTime": 26,
     "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-BuMqkyig.css",
+    "startTime": 26,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
-    "startTime": 117,
-    "encoded": 6330
+    "name": "http://127.0.0.1:55605/assets/02-autotier-WGQB6Yvs.js",
+    "startTime": 89,
+    "encoded": 6329
    },
    {
-    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
-    "startTime": 129,
+    "name": "http://127.0.0.1:55605/assets/05-i18n-lunvvsCc.js",
+    "startTime": 95,
     "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
-    "startTime": 138,
+    "name": "http://127.0.0.1:55605/assets/10-world-miQsbIu4.js",
+    "startTime": 105,
     "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
-    "startTime": 138,
-    "encoded": 14564
+    "name": "http://127.0.0.1:55605/assets/Materials-BDoGulK9.js",
+    "startTime": 105,
+    "encoded": 14563
    },
    {
-    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
-    "startTime": 150,
-    "encoded": 11273
+    "name": "http://127.0.0.1:55605/assets/12-sky-Bf0_5tIE.js",
+    "startTime": 124,
+    "encoded": 11271
    },
    {
-    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
-    "startTime": 163,
-    "encoded": 6758
+    "name": "http://127.0.0.1:55605/assets/14-lighting-DLQyIJuR.js",
+    "startTime": 135,
+    "encoded": 6759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
-    "startTime": 172,
+    "name": "http://127.0.0.1:55605/assets/16-scatter-BP3JiEif.js",
+    "startTime": 145,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
-    "startTime": 185,
-    "encoded": 12822
+    "name": "http://127.0.0.1:55605/assets/20-input-C2F5yE2w.js",
+    "startTime": 149,
+    "encoded": 12821
    },
    {
-    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
-    "startTime": 190,
-    "encoded": 13486
+    "name": "http://127.0.0.1:55605/assets/30-locomotion-EQl9YosR.js",
+    "startTime": 154,
+    "encoded": 13485
    },
    {
-    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
-    "startTime": 195,
+    "name": "http://127.0.0.1:55605/assets/32-avatar-CmazhMp-.js",
+    "startTime": 162,
     "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
-    "startTime": 201,
-    "encoded": 5688
+    "name": "http://127.0.0.1:55605/assets/40-camera-CZ32Z7LS.js",
+    "startTime": 177,
+    "encoded": 5687
    },
    {
-    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
-    "startTime": 220,
-    "encoded": 9619
+    "name": "http://127.0.0.1:55605/assets/52-post-C9e4-uKv.js",
+    "startTime": 182,
+    "encoded": 9618
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
-    "startTime": 226,
-    "encoded": 92133
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DFKeVvgi.js",
+    "startTime": 188,
+    "encoded": 92132
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 226,
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 188,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
-    "startTime": 254,
-    "encoded": 1167
+    "name": "http://127.0.0.1:55605/assets/62-itembank-DhqbcTP3.js",
+    "startTime": 213,
+    "encoded": 1165
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
-    "startTime": 254,
-    "encoded": 29972
+    "name": "http://127.0.0.1:55605/assets/ItemBank-CSHI1qWE.js",
+    "startTime": 213,
+    "encoded": 29978
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
-    "startTime": 267,
-    "encoded": 53143
+    "name": "http://127.0.0.1:55605/assets/62-learning-BzfC6XY_.js",
+    "startTime": 238,
+    "encoded": 53166
    },
    {
-    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
-    "startTime": 290,
-    "encoded": 620
+    "name": "http://127.0.0.1:55605/assets/63-learnserve-P2tGO_EB.js",
+    "startTime": 253,
+    "encoded": 621
    },
    {
-    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
-    "startTime": 298,
-    "encoded": 9834
+    "name": "http://127.0.0.1:55605/assets/90-flow-DFbXlppW.js",
+    "startTime": 261,
+    "encoded": 9833
    },
    {
-    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
-    "startTime": 309,
+    "name": "http://127.0.0.1:55605/assets/en-DiJtJ4AS.js",
+    "startTime": 266,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 400,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 401,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 401,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 401,
     "encoded": 16440
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 401,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 401,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 401,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 401,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
-    "startTime": 527,
+    "name": "http://127.0.0.1:55605/assets/items-en-BvtiMYOY.js",
+    "startTime": 467,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 1755,
+    "name": "http://127.0.0.1:55605/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1683,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 1756,
-    "encoded": 2822
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 1756,
+    "name": "http://127.0.0.1:55605/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1684,
     "encoded": 2239
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
-    "startTime": 1788,
+    "name": "http://127.0.0.1:55605/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1684,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1712,
     "encoded": 2619
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
-    "startTime": 2372,
+    "name": "http://127.0.0.1:55605/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2374,
     "encoded": 3168
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
-    "startTime": 4173,
+    "name": "http://127.0.0.1:55605/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 3282,
     "encoded": 2840
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-substitute-CIy76Axk.js",
-    "startTime": 7114,
+    "name": "http://127.0.0.1:55605/assets/eval-substitute-CIy76Axk.js",
+    "startTime": 6315,
     "encoded": 2591
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-signed-C2UgWZdX.js",
-    "startTime": 7309,
+    "name": "http://127.0.0.1:55605/assets/eval-signed-C2UgWZdX.js",
+    "startTime": 6553,
     "encoded": 2595
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-formula-D5seGdi4.js",
-    "startTime": 12224,
+    "name": "http://127.0.0.1:55605/assets/eval-formula-D5seGdi4.js",
+    "startTime": 11567,
     "encoded": 3317
    },
    {
-    "name": "http://127.0.0.1:53936/assets/translate-phrase-C_kymGnj.js",
-    "startTime": 13106,
+    "name": "http://127.0.0.1:55605/assets/translate-phrase-C_kymGnj.js",
+    "startTime": 11785,
     "encoded": 2489
    },
    {
-    "name": "http://127.0.0.1:53936/assets/translate-order-cbKs08Hn.js",
-    "startTime": 18973,
+    "name": "http://127.0.0.1:55605/assets/translate-order-cbKs08Hn.js",
+    "startTime": 14919,
     "encoded": 2258
    }
   ],
   "afterPlay": [
    {
-    "name": "http://127.0.0.1:53936/assets/index-C8TCLUpw.js",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-C1x05TSb.js",
+    "startTime": 26,
     "encoded": 130693
    },
    {
-    "name": "http://127.0.0.1:53936/assets/index-BuMqkyig.css",
-    "startTime": 15,
+    "name": "http://127.0.0.1:55605/assets/index-BuMqkyig.css",
+    "startTime": 26,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/02-autotier-D8BEv_gB.js",
-    "startTime": 117,
-    "encoded": 6330
+    "name": "http://127.0.0.1:55605/assets/02-autotier-WGQB6Yvs.js",
+    "startTime": 89,
+    "encoded": 6329
    },
    {
-    "name": "http://127.0.0.1:53936/assets/05-i18n-B06G9lJR.js",
-    "startTime": 129,
+    "name": "http://127.0.0.1:55605/assets/05-i18n-lunvvsCc.js",
+    "startTime": 95,
     "encoded": 4067
    },
    {
-    "name": "http://127.0.0.1:53936/assets/10-world-Bt3GsLeK.js",
-    "startTime": 138,
+    "name": "http://127.0.0.1:55605/assets/10-world-miQsbIu4.js",
+    "startTime": 105,
     "encoded": 17607
    },
    {
-    "name": "http://127.0.0.1:53936/assets/Materials-BAymaT2B.js",
-    "startTime": 138,
-    "encoded": 14564
+    "name": "http://127.0.0.1:55605/assets/Materials-BDoGulK9.js",
+    "startTime": 105,
+    "encoded": 14563
    },
    {
-    "name": "http://127.0.0.1:53936/assets/12-sky-BMEw2YKH.js",
-    "startTime": 150,
-    "encoded": 11273
+    "name": "http://127.0.0.1:55605/assets/12-sky-Bf0_5tIE.js",
+    "startTime": 124,
+    "encoded": 11271
    },
    {
-    "name": "http://127.0.0.1:53936/assets/14-lighting-NWIYapeV.js",
-    "startTime": 163,
-    "encoded": 6758
+    "name": "http://127.0.0.1:55605/assets/14-lighting-DLQyIJuR.js",
+    "startTime": 135,
+    "encoded": 6759
    },
    {
-    "name": "http://127.0.0.1:53936/assets/16-scatter-JclCmoPF.js",
-    "startTime": 172,
+    "name": "http://127.0.0.1:55605/assets/16-scatter-BP3JiEif.js",
+    "startTime": 145,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:53936/assets/20-input-CXNfCV_T.js",
-    "startTime": 185,
-    "encoded": 12822
+    "name": "http://127.0.0.1:55605/assets/20-input-C2F5yE2w.js",
+    "startTime": 149,
+    "encoded": 12821
    },
    {
-    "name": "http://127.0.0.1:53936/assets/30-locomotion-C3i6FGIl.js",
-    "startTime": 190,
-    "encoded": 13486
+    "name": "http://127.0.0.1:55605/assets/30-locomotion-EQl9YosR.js",
+    "startTime": 154,
+    "encoded": 13485
    },
    {
-    "name": "http://127.0.0.1:53936/assets/32-avatar-yADve0qt.js",
-    "startTime": 195,
+    "name": "http://127.0.0.1:55605/assets/32-avatar-CmazhMp-.js",
+    "startTime": 162,
     "encoded": 4999
    },
    {
-    "name": "http://127.0.0.1:53936/assets/40-camera-CeKz2pWQ.js",
-    "startTime": 201,
-    "encoded": 5688
+    "name": "http://127.0.0.1:55605/assets/40-camera-CZ32Z7LS.js",
+    "startTime": 177,
+    "encoded": 5687
    },
    {
-    "name": "http://127.0.0.1:53936/assets/52-post-B7EPlOCF.js",
-    "startTime": 220,
-    "encoded": 9619
+    "name": "http://127.0.0.1:55605/assets/52-post-C9e4-uKv.js",
+    "startTime": 182,
+    "encoded": 9618
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DQe8F7mw.js",
-    "startTime": 226,
-    "encoded": 92133
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DFKeVvgi.js",
+    "startTime": 188,
+    "encoded": 92132
    },
    {
-    "name": "http://127.0.0.1:53936/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 226,
+    "name": "http://127.0.0.1:55605/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 188,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-itembank-rR-gBztL.js",
-    "startTime": 254,
-    "encoded": 1167
+    "name": "http://127.0.0.1:55605/assets/62-itembank-DhqbcTP3.js",
+    "startTime": 213,
+    "encoded": 1165
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ItemBank-DSkGak49.js",
-    "startTime": 254,
-    "encoded": 29972
+    "name": "http://127.0.0.1:55605/assets/ItemBank-CSHI1qWE.js",
+    "startTime": 213,
+    "encoded": 29978
    },
    {
-    "name": "http://127.0.0.1:53936/assets/62-learning-4mBXi-gB.js",
-    "startTime": 267,
-    "encoded": 53143
+    "name": "http://127.0.0.1:55605/assets/62-learning-BzfC6XY_.js",
+    "startTime": 238,
+    "encoded": 53166
    },
    {
-    "name": "http://127.0.0.1:53936/assets/63-learnserve-D5VDaFo6.js",
-    "startTime": 290,
-    "encoded": 620
+    "name": "http://127.0.0.1:55605/assets/63-learnserve-P2tGO_EB.js",
+    "startTime": 253,
+    "encoded": 621
    },
    {
-    "name": "http://127.0.0.1:53936/assets/90-flow-MSKg7G6N.js",
-    "startTime": 298,
-    "encoded": 9834
+    "name": "http://127.0.0.1:55605/assets/90-flow-DFbXlppW.js",
+    "startTime": 261,
+    "encoded": 9833
    },
    {
-    "name": "http://127.0.0.1:53936/assets/en-DiJtJ4AS.js",
-    "startTime": 309,
+    "name": "http://127.0.0.1:55605/assets/en-DiJtJ4AS.js",
+    "startTime": 266,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 400,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 401,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 401,
     "encoded": 25324
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 401,
     "encoded": 16440
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 401,
     "encoded": 5468
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 401,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 401,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:53936/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 472,
+    "name": "http://127.0.0.1:55605/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 401,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:53936/assets/items-en-BvtiMYOY.js",
-    "startTime": 527,
+    "name": "http://127.0.0.1:55605/assets/items-en-BvtiMYOY.js",
+    "startTime": 467,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:53936/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 1755,
+    "name": "http://127.0.0.1:55605/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 1683,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 1756,
-    "encoded": 2822
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 1756,
+    "name": "http://127.0.0.1:55605/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 1684,
     "encoded": 2239
    },
    {
-    "name": "http://127.0.0.1:53936/assets/oo-structure-Bges-2rk.js",
-    "startTime": 1788,
+    "name": "http://127.0.0.1:55605/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 1684,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/oo-structure-Bges-2rk.js",
+    "startTime": 1712,
     "encoded": 2619
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-two-step-CsZRI3FG.js",
-    "startTime": 2372,
+    "name": "http://127.0.0.1:55605/assets/ineq-two-step-CsZRI3FG.js",
+    "startTime": 2374,
     "encoded": 3168
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-negative-flip-6F2CCJox.js",
-    "startTime": 4173,
+    "name": "http://127.0.0.1:55605/assets/ineq-negative-flip-6F2CCJox.js",
+    "startTime": 3282,
     "encoded": 2840
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-substitute-CIy76Axk.js",
-    "startTime": 7114,
+    "name": "http://127.0.0.1:55605/assets/eval-substitute-CIy76Axk.js",
+    "startTime": 6315,
     "encoded": 2591
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-signed-C2UgWZdX.js",
-    "startTime": 7309,
+    "name": "http://127.0.0.1:55605/assets/eval-signed-C2UgWZdX.js",
+    "startTime": 6553,
     "encoded": 2595
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eval-formula-D5seGdi4.js",
-    "startTime": 12224,
+    "name": "http://127.0.0.1:55605/assets/eval-formula-D5seGdi4.js",
+    "startTime": 11567,
     "encoded": 3317
    },
    {
-    "name": "http://127.0.0.1:53936/assets/translate-phrase-C_kymGnj.js",
-    "startTime": 13106,
+    "name": "http://127.0.0.1:55605/assets/translate-phrase-C_kymGnj.js",
+    "startTime": 11785,
     "encoded": 2489
    },
    {
-    "name": "http://127.0.0.1:53936/assets/translate-order-cbKs08Hn.js",
-    "startTime": 18973,
+    "name": "http://127.0.0.1:55605/assets/translate-order-cbKs08Hn.js",
+    "startTime": 14919,
     "encoded": 2258
    },
    {
-    "name": "http://127.0.0.1:53936/assets/props-operations-zMhkLzfH.js",
-    "startTime": 26421,
-    "encoded": 2713
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/eq-meaning-I5IIrO-h.js",
-    "startTime": 26421,
-    "encoded": 3319
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/like-terms-id-BHdbC_9A.js",
-    "startTime": 26421,
+    "name": "http://127.0.0.1:55605/assets/like-terms-id-BHdbC_9A.js",
+    "startTime": 22063,
     "encoded": 3648
    },
    {
-    "name": "http://127.0.0.1:53936/assets/props-equality-CiAqyYgV.js",
-    "startTime": 26421,
-    "encoded": 2529
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/ineq-meaning-BkiJseeA.js",
-    "startTime": 26421,
-    "encoded": 2568
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/distribute-numeric-BfFi235F.js",
-    "startTime": 26421,
+    "name": "http://127.0.0.1:55605/assets/distribute-numeric-BfFi235F.js",
+    "startTime": 22065,
     "encoded": 3011
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eq-one-add-GtXbdVX6.js",
-    "startTime": 26421,
-    "encoded": 2488
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/eq-one-mult-DsdtIT6w.js",
-    "startTime": 26421,
+    "name": "http://127.0.0.1:55605/assets/eq-one-mult-DsdtIT6w.js",
+    "startTime": 22065,
     "encoded": 2437
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eq-two-step-BBTjS6hB.js",
-    "startTime": 27273,
+    "name": "http://127.0.0.1:55605/assets/eq-two-step-BBTjS6hB.js",
+    "startTime": 22065,
     "encoded": 3102
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eq-combine-side-tfN3JzCn.js",
-    "startTime": 27276,
+    "name": "http://127.0.0.1:55605/assets/like-terms-combine-DZGXbjGx.js",
+    "startTime": 22065,
+    "encoded": 3434
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/eq-combine-side-tfN3JzCn.js",
+    "startTime": 22065,
     "encoded": 3438
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eq-both-sides-BmtJEjeP.js",
-    "startTime": 27276,
+    "name": "http://127.0.0.1:55605/assets/eq-both-sides-BmtJEjeP.js",
+    "startTime": 22065,
     "encoded": 3329
    },
    {
-    "name": "http://127.0.0.1:53936/assets/distribute-variable-CN1WQn52.js",
-    "startTime": 27276,
+    "name": "http://127.0.0.1:55605/assets/distribute-variable-CN1WQn52.js",
+    "startTime": 22065,
     "encoded": 3337
    },
    {
-    "name": "http://127.0.0.1:53936/assets/distribute-negative-mHpEM-Mt.js",
-    "startTime": 27276,
-    "encoded": 3170
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/eq-distribute-BGj4tO7e.js",
-    "startTime": 27276,
+    "name": "http://127.0.0.1:55605/assets/eq-distribute-BGj4tO7e.js",
+    "startTime": 22066,
     "encoded": 3070
    },
    {
-    "name": "http://127.0.0.1:53936/assets/ineq-one-step-BGcbJMVx.js",
-    "startTime": 27276,
+    "name": "http://127.0.0.1:55605/assets/distribute-negative-mHpEM-Mt.js",
+    "startTime": 22066,
+    "encoded": 3170
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/ineq-meaning-BkiJseeA.js",
+    "startTime": 22565,
+    "encoded": 2568
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/ineq-one-step-BGcbJMVx.js",
+    "startTime": 22567,
     "encoded": 2663
    },
    {
-    "name": "http://127.0.0.1:53936/assets/simplify-expression-Do4HaW44.js",
-    "startTime": 27276,
+    "name": "http://127.0.0.1:55605/assets/simplify-expression-Do4HaW44.js",
+    "startTime": 22569,
     "encoded": 3231
    },
    {
-    "name": "http://127.0.0.1:53936/assets/equivalent-expressions-CHes5QSi.js",
-    "startTime": 27277,
-    "encoded": 2816
-   },
-   {
-    "name": "http://127.0.0.1:53936/assets/translate-sentence-3qiID9mL.js",
-    "startTime": 27277,
+    "name": "http://127.0.0.1:55605/assets/translate-sentence-3qiID9mL.js",
+    "startTime": 22571,
     "encoded": 3169
    },
    {
-    "name": "http://127.0.0.1:53936/assets/eq-model-context-C4t2oRlF.js",
-    "startTime": 27709,
+    "name": "http://127.0.0.1:55605/assets/equivalent-expressions-CHes5QSi.js",
+    "startTime": 22571,
+    "encoded": 2816
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/eq-model-context-C4t2oRlF.js",
+    "startTime": 22571,
     "encoded": 3462
    },
    {
-    "name": "http://127.0.0.1:53936/assets/like-terms-combine-DZGXbjGx.js",
-    "startTime": 27924,
-    "encoded": 3434
+    "name": "http://127.0.0.1:55605/assets/eq-meaning-I5IIrO-h.js",
+    "startTime": 22796,
+    "encoded": 3319
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/props-operations-zMhkLzfH.js",
+    "startTime": 23018,
+    "encoded": 2713
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/props-equality-CiAqyYgV.js",
+    "startTime": 23018,
+    "encoded": 2529
+   },
+   {
+    "name": "http://127.0.0.1:55605/assets/eq-one-add-GtXbdVX6.js",
+    "startTime": 23018,
+    "encoded": 2488
    }
   ]
  },
@@ -2571,14 +2575,14 @@
     "items-en-BvtiMYOY.js"
    ],
    "spineChunks": [],
-   "encodedBytes": 590734
+   "encodedBytes": 590753
   },
   "warmPulled": {
    "requests": 3,
    "groupChunks": [
     "var-meaning-Ct12kn0-.js",
-    "oo-numeric-BjsVHueV.js",
-    "expr-anatomy-WYJhDm_0.js"
+    "expr-anatomy-WYJhDm_0.js",
+    "oo-numeric-BjsVHueV.js"
    ],
    "itemLocaleChunks": [],
    "spineChunks": [],
@@ -2635,26 +2639,26 @@
   "gameplayPulled": {
    "requests": 20,
    "groupChunks": [
-    "props-operations-zMhkLzfH.js",
-    "eq-meaning-I5IIrO-h.js",
     "like-terms-id-BHdbC_9A.js",
-    "props-equality-CiAqyYgV.js",
-    "ineq-meaning-BkiJseeA.js",
     "distribute-numeric-BfFi235F.js",
-    "eq-one-add-GtXbdVX6.js",
     "eq-one-mult-DsdtIT6w.js",
     "eq-two-step-BBTjS6hB.js",
+    "like-terms-combine-DZGXbjGx.js",
     "eq-combine-side-tfN3JzCn.js",
     "eq-both-sides-BmtJEjeP.js",
     "distribute-variable-CN1WQn52.js",
-    "distribute-negative-mHpEM-Mt.js",
     "eq-distribute-BGj4tO7e.js",
+    "distribute-negative-mHpEM-Mt.js",
+    "ineq-meaning-BkiJseeA.js",
     "ineq-one-step-BGcbJMVx.js",
     "simplify-expression-Do4HaW44.js",
-    "equivalent-expressions-CHes5QSi.js",
     "translate-sentence-3qiID9mL.js",
+    "equivalent-expressions-CHes5QSi.js",
     "eq-model-context-C4t2oRlF.js",
-    "like-terms-combine-DZGXbjGx.js"
+    "eq-meaning-I5IIrO-h.js",
+    "props-operations-zMhkLzfH.js",
+    "props-equality-CiAqyYgV.js",
+    "eq-one-add-GtXbdVX6.js"
    ],
    "itemLocaleChunks": [],
    "spineChunks": [],

@@ -1,25 +1,25 @@
 {
  "piece": "P31",
- "pass": true,
- "passed": 31,
+ "pass": false,
+ "passed": 30,
  "of": 31,
  "results": [
   {
    "id": "A1",
    "claim": "the eager item-bank chunk shrank on the real build (npm run build, gzipped at vite's own level)",
    "pass": true,
-   "measured": "ItemBank-B5q9etEn.js 1616.3 kB / 147.0 kB gz  ->  ItemBank-DSkGak49.js 123.5 kB / 30.0 kB gz  (-117.1 kB gz)",
+   "measured": "ItemBank-B5q9etEn.js 1616.3 kB / 147.0 kB gz  ->  ItemBank-CSHI1qWE.js 123.5 kB / 30.0 kB gz  (-117.1 kB gz)",
    "threshold": "> 60 kB gzipped removed from the eager chunk"
   },
   {
    "id": "A2",
    "claim": "FIRST LOAD — every chunk the page pulls before the first item, one locale, gzipped",
    "pass": true,
-   "measured": "548.0 kB gz -> 462.4 kB gz  (-85.7 kB gz, -15.6%). Raw 2974.7 kB -> 1582.7 kB.",
+   "measured": "548.0 kB gz -> 462.4 kB gz  (-85.7 kB gz, -15.6%). Raw 2974.7 kB -> 1582.8 kB.",
    "threshold": "> 55 kB gzipped off first load",
    "notes": [
     "The after-tree carries 3 chunks that did not exist at the baseline commit (02-autotier, 63-learnserve, 90-flow), costing 16.8 kB gz — other pieces building in parallel. They ADD to the after number; the reduction is measured against that handicap.",
-    "Like for like — first load minus those new chunks — is 445.6 kB gz, a reduction of 102.5 kB gz."
+    "Like for like — first load minus those new chunks — is 445.6 kB gz, a reduction of 102.4 kB gz."
    ]
   },
   {
@@ -40,14 +40,14 @@
    "id": "A0",
    "claim": "every live claim below was measured in a browser against THE BUILD THAT IS IN dist RIGHT NOW",
    "pass": true,
-   "measured": "probe generated 2026-08-10T19:27:41.924Z against 60 built assets, key 11c20465; C:\\dev\\math\\aaemath\\dist is now 60 assets, key 11c20465 — identical",
+   "measured": "probe generated 2026-08-10T19:34:16.311Z against 60 built assets, key 846c7c3c; C:\\dev\\math\\aaemath\\dist is now 60 assets, key 846c7c3c — identical (the cached probe described {\"files\":60,\"key\":\"11c20465\"}, so it was re-run)",
    "threshold": "the probe's dist identity equals the current dist's"
   },
   {
    "id": "A5",
    "claim": "the REAL built game reaches `ready` having requested ZERO item groups, ZERO spine and ONE locale — and still knows the whole course",
    "pass": true,
-   "measured": "at ready the page had made 31 requests (590.7 kB encoded): 0 group chunks, 0 spine chunks, item locale [\"items-en-BvtiMYOY.js\"]; the bank still reports 32 knowledge points, 1152 catalogue items, min 36/kp, 22 lessons",
+   "measured": "at ready the page had made 31 requests (590.8 kB encoded): 0 group chunks, 0 spine chunks, item locale [\"items-en-BvtiMYOY.js\"]; the bank still reports 32 knowledge points, 1152 catalogue items, min 36/kp, 22 lessons",
    "threshold": "0 group chunks, 0 spine chunks, exactly 1 item locale chunk on the critical path"
   },
   {
@@ -109,8 +109,8 @@
   {
    "id": "C4",
    "claim": "in a REAL BROWSER, over a real dynamic import, the cold window costs a learner ONE generated item — and never a blank or an unmarkable one",
-   "pass": true,
-   "measured": "\"ineq-two-step\" (last lesson of the course, never warmed): back to back, 2 of 10 items came from the generator and the catalogue answered from 390.2 ms. At a 400 ms gap on \"ineq-negative-flip\": 1 of 5, catalogue from 402.2 ms. Blanks 0, unmarkable 0. An item in play is 20-40 s, so a learner sees the first one degraded and nothing after it.",
+   "pass": false,
+   "measured": "\"ineq-two-step\" (last lesson of the course, never warmed): back to back, 4 of 10 items came from the generator and the catalogue answered from 435.1 ms. At a 400 ms gap on \"ineq-negative-flip\": 1 of 5, catalogue from 400.9 ms. Blanks 0, unmarkable 0. An item in play is 20-40 s, so a learner sees the first one degraded and nothing after it.",
    "threshold": "<=1 degraded at a realistic gap, <=3 back to back, 0 blanks, 0 unmarkable"
   },
   {
@@ -173,14 +173,14 @@
    "id": "E2",
    "claim": "in the REAL built game the warm ran, off the critical path, on the lesson the ENGINE named — and pulled that lesson's chunks",
    "pass": true,
-   "measured": "learning.frontier() = [\"var-meaning\",\"oo-numeric\"]; the warm resolved lesson \"expressions-1\" from \"var-meaning\" in 18.9 ms and loaded 3 groups. The browser's resource timings show those exact 3 chunks (var-meaning-Ct12kn0-.js, oo-numeric-BjsVHueV.js, expr-anatomy-WYJhDm_0.js, 7895 B encoded) requested AFTER ready, none before it.",
+   "measured": "learning.frontier() = [\"var-meaning\",\"oo-numeric\"]; the warm resolved lesson \"expressions-1\" from \"var-meaning\" in 25.7 ms and loaded 3 groups. The browser's resource timings show those exact 3 chunks (var-meaning-Ct12kn0-.js, expr-anatomy-WYJhDm_0.js, oo-numeric-BjsVHueV.js, 7895 B encoded) requested AFTER ready, none before it.",
    "threshold": "warm ok, frontier-derived lesson, >0 group chunks, all after ready"
   },
   {
    "id": "E3",
    "claim": "the audit fingerprint ships as a SCALAR, matches a full recomputation, and the identity spine is never requested by the page",
    "pass": true,
-   "measured": "BANK_FINGERPRINT c01e9128 == recomputed over all 1152 items c01e9128 == committed c01e9128; basis key d8ef1c36 recomputed from the live Mastery constants gives d8ef1c36; the live game reports fingerprintSource \"build-time\" and resolved the price in 0.1 ms, having requested 0 spine chunks",
+   "measured": "BANK_FINGERPRINT c01e9128 == recomputed over all 1152 items c01e9128 == committed c01e9128; basis key d8ef1c36 recomputed from the live Mastery constants gives d8ef1c36; the live game reports fingerprintSource \"build-time\" and resolved the price in 0.3 ms, having requested 0 spine chunks",
    "threshold": "identical, basis agrees, spine never fetched"
   },
   {
@@ -208,7 +208,7 @@
    "id": "E7",
    "claim": "the ON-DEMAND half has a caller in the shipped game: playing the built app pulls group chunks that no script asked for",
    "pass": true,
-   "measured": "boot/63-learnserve.js reports attached=true (familyReporting via \"scheduler-serve\", serveMisses 0); driving learning.next()/submit() for 180 items over 26 knowledge points served 110 from the catalogue and 70 generated, 0 unserved. Scheduler.serve() -> ItemBank.select() pulled 20 group chunks (60.9 kB encoded) with nothing in the driving loop touching the bank. Round 3 measured 0 here.",
+   "measured": "boot/63-learnserve.js reports attached=true (familyReporting via \"scheduler-serve\", serveMisses 0); driving learning.next()/submit() for 180 items over 26 knowledge points served 92 from the catalogue and 88 generated, 0 unserved. Scheduler.serve() -> ItemBank.select() pulled 20 group chunks (60.9 kB encoded) with nothing in the driving loop touching the bank. Round 3 measured 0 here.",
    "threshold": "learnserve attached, >=100 items, 0 unserved, >0 catalogue items, >0 chunks pulled by gameplay"
   },
   {
@@ -222,7 +222,7 @@
    "id": "F2",
    "claim": "the same guard is invisible to a session: nothing a learner does is ever suppressed",
    "pass": true,
-   "measured": "a full scheduler-driven session (36 items over 5 knowledge points, compressed into 557 ms of wall clock — a learner takes 20-40 s per item) started 5 speculative loads and had 0 suppressed. The guard is relevance, not rate: a knowledge point stays eligible while it is one of the last 10 a cold select asked for, and a session works on 5.",
+   "measured": "a full scheduler-driven session (36 items over 5 knowledge points, compressed into 547 ms of wall clock — a learner takes 20-40 s per item) started 5 speculative loads and had 0 suppressed. The guard is relevance, not rate: a knowledge point stays eligible while it is one of the last 10 a cold select asked for, and a session works on 5.",
    "threshold": "0 suppressed in a session, >0 speculative loads still made"
   }
  ],
@@ -234,9 +234,9 @@
     "gzip": 147035
    },
    "after": {
-    "file": "ItemBank-DSkGak49.js",
-    "raw": 123469,
-    "gzip": 29972
+    "file": "ItemBank-CSHI1qWE.js",
+    "raw": 123475,
+    "gzip": 29978
    }
   },
   "firstLoad": {
@@ -245,23 +245,23 @@
     "gzip": 548050
    },
    "after": {
-    "raw": 1582723,
-    "gzip": 462374
+    "raw": 1582755,
+    "gzip": 462394
    },
    "afterWholeBuild": {
-    "raw": 2644095,
-    "gzip": 603824
+    "raw": 2644127,
+    "gzip": 603844
    },
    "chunksNotInBaseline": {
     "files": [
-     "02-autotier-D8BEv_gB.js",
-     "63-learnserve-D5VDaFo6.js",
-     "90-flow-MSKg7G6N.js"
+     "02-autotier-WGQB6Yvs.js",
+     "63-learnserve-P2tGO_EB.js",
+     "90-flow-DFbXlppW.js"
     ],
     "raw": 51330,
-    "gzip": 16784
+    "gzip": 16783
    },
-   "likeForLikeAfterGzip": 445590
+   "likeForLikeAfterGzip": 445611
   },
   "groupChunks": {
    "count": 32,
@@ -504,25 +504,34 @@
    "fresh": true,
    "distMeasured": {
     "files": 60,
-    "key": "11c20465"
+    "key": "846c7c3c"
    },
    "distNow": {
     "files": 60,
-    "key": "11c20465"
+    "key": "846c7c3c"
    },
-   "rerun": null,
-   "generated": "2026-08-10T19:27:41.924Z",
+   "rerun": {
+    "was": {
+     "files": 60,
+     "key": "11c20465"
+    },
+    "want": {
+     "files": 60,
+     "key": "846c7c3c"
+    }
+   },
+   "generated": "2026-08-10T19:34:16.311Z",
    "ready": true,
    "errors": [],
    "warm": {
-    "at": 1786390034005,
+    "at": 1786390433541,
     "seq": 1,
     "trigger": "boot",
     "kpId": "var-meaning",
     "lesson": "expressions-1",
     "groups": 3,
     "failed": [],
-    "ms": 18.9,
+    "ms": 25.7,
     "reason": "ok",
     "lessonProgress": 0,
     "nextLesson": null,
@@ -540,14 +549,14 @@
       "items-en-BvtiMYOY.js"
      ],
      "spineChunks": [],
-     "encodedBytes": 590734
+     "encodedBytes": 590753
     },
     "warmPulled": {
      "requests": 3,
      "groupChunks": [
       "var-meaning-Ct12kn0-.js",
-      "oo-numeric-BjsVHueV.js",
-      "expr-anatomy-WYJhDm_0.js"
+      "expr-anatomy-WYJhDm_0.js",
+      "oo-numeric-BjsVHueV.js"
      ],
      "itemLocaleChunks": [],
      "spineChunks": [],
@@ -604,26 +613,26 @@
     "gameplayPulled": {
      "requests": 20,
      "groupChunks": [
-      "props-operations-zMhkLzfH.js",
-      "eq-meaning-I5IIrO-h.js",
       "like-terms-id-BHdbC_9A.js",
-      "props-equality-CiAqyYgV.js",
-      "ineq-meaning-BkiJseeA.js",
       "distribute-numeric-BfFi235F.js",
-      "eq-one-add-GtXbdVX6.js",
       "eq-one-mult-DsdtIT6w.js",
       "eq-two-step-BBTjS6hB.js",
+      "like-terms-combine-DZGXbjGx.js",
       "eq-combine-side-tfN3JzCn.js",
       "eq-both-sides-BmtJEjeP.js",
       "distribute-variable-CN1WQn52.js",
-      "distribute-negative-mHpEM-Mt.js",
       "eq-distribute-BGj4tO7e.js",
+      "distribute-negative-mHpEM-Mt.js",
+      "ineq-meaning-BkiJseeA.js",
       "ineq-one-step-BGcbJMVx.js",
       "simplify-expression-Do4HaW44.js",
-      "equivalent-expressions-CHes5QSi.js",
       "translate-sentence-3qiID9mL.js",
+      "equivalent-expressions-CHes5QSi.js",
       "eq-model-context-C4t2oRlF.js",
-      "like-terms-combine-DZGXbjGx.js"
+      "eq-meaning-I5IIrO-h.js",
+      "props-operations-zMhkLzfH.js",
+      "props-equality-CiAqyYgV.js",
+      "eq-one-add-GtXbdVX6.js"
      ],
      "itemLocaleChunks": [],
      "spineChunks": [],
@@ -633,7 +642,7 @@
    "bankAudit": {
     "source": "committed",
     "fingerprintSource": "build-time",
-    "setupMs": 0.1,
+    "setupMs": 0.3,
     "fingerprint": "c01e9128",
     "version": 3,
     "sampled": 54796,
@@ -647,17 +656,17 @@
      "lessonAfter": "expressions-2",
      "probe": {
       "knowledgePoints": 32,
-      "items": 291,
+      "items": 293,
       "catalogueItems": 1152,
-      "generatedThisSession": 3,
+      "generatedThisSession": 5,
       "locale": "en",
       "minItemsPerKp": 36,
       "minItemsPerMisconception": 3,
       "groups": "8/32 resident, 0 loading",
       "lessons": 22,
       "residentGroups": [
-       "var-meaning",
        "expr-anatomy",
+       "var-meaning",
        "oo-numeric",
        "oo-structure",
        "ineq-two-step",
@@ -669,14 +678,14 @@
       "issues": 0,
       "lastIssue": null,
       "warm": {
-       "at": 1786390039365,
+       "at": 1786390438173,
        "seq": 2,
        "trigger": "mastery-signal",
        "kpId": "oo-structure",
        "lesson": "expressions-2",
        "groups": 2,
        "failed": [],
-       "ms": 8.7,
+       "ms": 17,
        "reason": "ok",
        "lessonProgress": 0,
        "nextLesson": null,
@@ -756,17 +765,17 @@
      "carriedScheduler": true,
      "probe": {
       "knowledgePoints": 32,
-      "items": 363,
+      "items": 365,
       "catalogueItems": 1152,
-      "generatedThisSession": 3,
+      "generatedThisSession": 5,
       "locale": "en",
       "minItemsPerKp": 36,
       "minItemsPerMisconception": 3,
       "groups": "10/32 resident, 0 loading",
       "lessons": 22,
       "residentGroups": [
-       "var-meaning",
        "expr-anatomy",
+       "var-meaning",
        "oo-numeric",
        "oo-structure",
        "ineq-two-step",
@@ -780,14 +789,14 @@
       "issues": 0,
       "lastIssue": null,
       "warm": {
-       "at": 1786390044474,
+       "at": 1786390443424,
        "seq": 3,
        "trigger": "idle-recheck",
        "kpId": "eval-signed",
        "lesson": "expressions-3",
        "groups": 2,
        "failed": [],
-       "ms": 27.9,
+       "ms": 9.8,
        "reason": "ok",
        "lessonProgress": 0,
        "nextLesson": null,
@@ -903,8 +912,8 @@
    "play": {
     "items": 180,
     "sources": {
-     "generated": 70,
-     "catalogue": 110
+     "generated": 88,
+     "catalogue": 92
     },
     "kps": [
      "eq-meaning",
@@ -942,77 +951,77 @@
      "kpId": "ineq-two-step",
      "gapMs": 0,
      "tries": 10,
-     "degraded": 2,
+     "degraded": 4,
      "blanks": 0,
      "uncheckable": 0,
-     "msToCatalogue": 390.2,
+     "msToCatalogue": 435.1,
      "rows": [
       {
        "i": 0,
-       "atMs": 2,
+       "atMs": 2.4,
        "source": "generated",
        "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 1,
-       "atMs": 352.9,
+       "atMs": 353.5,
        "source": "generated",
        "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 2,
-       "atMs": 390.2,
-       "source": "catalogue",
-       "relaxation": "nearest-band",
+       "atMs": 371,
+       "source": "generated",
+       "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 3,
-       "atMs": 425,
-       "source": "catalogue",
-       "relaxation": "nearest-band",
+       "atMs": 386.6,
+       "source": "generated",
+       "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 4,
-       "atMs": 442.1,
+       "atMs": 435.1,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 5,
-       "atMs": 577.9,
+       "atMs": 441,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 6,
-       "atMs": 821.6,
+       "atMs": 530.6,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 7,
-       "atMs": 861,
+       "atMs": 575.4,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 8,
-       "atMs": 1150.6,
+       "atMs": 743.1,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 9,
-       "atMs": 1188.9,
+       "atMs": 879,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
@@ -1026,39 +1035,39 @@
      "degraded": 1,
      "blanks": 0,
      "uncheckable": 0,
-     "msToCatalogue": 402.2,
+     "msToCatalogue": 400.9,
      "rows": [
       {
        "i": 0,
-       "atMs": 0.5,
+       "atMs": 0.4,
        "source": "generated",
        "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 1,
-       "atMs": 402.2,
+       "atMs": 400.9,
        "source": "catalogue",
        "relaxation": "exact",
        "checkable": true
       },
       {
        "i": 2,
-       "atMs": 805.3,
+       "atMs": 805.4,
        "source": "catalogue",
        "relaxation": "exact",
        "checkable": true
       },
       {
        "i": 3,
-       "atMs": 1206.4,
+       "atMs": 1209.2,
        "source": "catalogue",
        "relaxation": "exact",
        "checkable": true
       },
       {
        "i": 4,
-       "atMs": 1612.2,
+       "atMs": 1613.4,
        "source": "catalogue",
        "relaxation": "exact",
        "checkable": true
@@ -1088,8 +1097,8 @@
     "groups": "4/32 resident, 0 loading",
     "lessons": 22,
     "residentGroups": [
-     "var-meaning",
      "expr-anatomy",
+     "var-meaning",
      "oo-numeric",
      "oo-structure"
     ],
@@ -1097,14 +1106,14 @@
     "issues": 0,
     "lastIssue": null,
     "warm": {
-     "at": 1786390034005,
+     "at": 1786390433541,
      "seq": 1,
      "trigger": "boot",
      "kpId": "var-meaning",
      "lesson": "expressions-1",
      "groups": 3,
      "failed": [],
-     "ms": 18.9,
+     "ms": 25.7,
      "reason": "ok",
      "lessonProgress": 0,
      "nextLesson": null,
@@ -1308,77 +1317,77 @@
      "kpId": "ineq-two-step",
      "gapMs": 0,
      "tries": 10,
-     "degraded": 2,
+     "degraded": 4,
      "blanks": 0,
      "uncheckable": 0,
-     "msToCatalogue": 390.2,
+     "msToCatalogue": 435.1,
      "rows": [
       {
        "i": 0,
-       "atMs": 2,
+       "atMs": 2.4,
        "source": "generated",
        "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 1,
-       "atMs": 352.9,
+       "atMs": 353.5,
        "source": "generated",
        "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 2,
-       "atMs": 390.2,
-       "source": "catalogue",
-       "relaxation": "nearest-band",
+       "atMs": 371,
+       "source": "generated",
+       "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 3,
-       "atMs": 425,
-       "source": "catalogue",
-       "relaxation": "nearest-band",
+       "atMs": 386.6,
+       "source": "generated",
+       "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 4,
-       "atMs": 442.1,
+       "atMs": 435.1,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 5,
-       "atMs": 577.9,
+       "atMs": 441,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 6,
-       "atMs": 821.6,
+       "atMs": 530.6,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 7,
-       "atMs": 861,
+       "atMs": 575.4,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 8,
-       "atMs": 1150.6,
+       "atMs": 743.1,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
       },
       {
        "i": 9,
-       "atMs": 1188.9,
+       "atMs": 879,
        "source": "catalogue",
        "relaxation": "nearest-band",
        "checkable": true
@@ -1392,39 +1401,39 @@
      "degraded": 1,
      "blanks": 0,
      "uncheckable": 0,
-     "msToCatalogue": 402.2,
+     "msToCatalogue": 400.9,
      "rows": [
       {
        "i": 0,
-       "atMs": 0.5,
+       "atMs": 0.4,
        "source": "generated",
        "relaxation": "generated-group-absent",
        "checkable": true
       },
       {
        "i": 1,
-       "atMs": 402.2,
+       "atMs": 400.9,
        "source": "catalogue",
        "relaxation": "exact",
        "checkable": true
       },
       {
        "i": 2,
-       "atMs": 805.3,
+       "atMs": 805.4,
        "source": "catalogue",
        "relaxation": "exact",
        "checkable": true
       },
       {
        "i": 3,
-       "atMs": 1206.4,
+       "atMs": 1209.2,
        "source": "catalogue",
        "relaxation": "exact",
        "checkable": true
       },
       {
        "i": 4,
-       "atMs": 1612.2,
+       "atMs": 1613.4,
        "source": "catalogue",
        "relaxation": "exact",
        "checkable": true
@@ -1657,14 +1666,14 @@
     "prefetchAround": 1
    },
    "spyWarm": {
-    "at": 1786390226923,
+    "at": 1786390467602,
     "seq": 1,
     "trigger": "boot",
     "kpId": "var-meaning",
     "lesson": "expressions-1",
     "groups": 3,
     "failed": [],
-    "ms": 0.5,
+    "ms": 0.4,
     "reason": "ok",
     "lessonProgress": 0,
     "nextLesson": null,
@@ -1680,7 +1689,7 @@
    "liveAudit": {
     "source": "committed",
     "fingerprintSource": "build-time",
-    "setupMs": 0.1,
+    "setupMs": 0.3,
     "fingerprint": "c01e9128",
     "version": 3,
     "sampled": 54796,
@@ -1696,17 +1705,17 @@
      "lessonAfter": "expressions-2",
      "probe": {
       "knowledgePoints": 32,
-      "items": 291,
+      "items": 293,
       "catalogueItems": 1152,
-      "generatedThisSession": 3,
+      "generatedThisSession": 5,
       "locale": "en",
       "minItemsPerKp": 36,
       "minItemsPerMisconception": 3,
       "groups": "8/32 resident, 0 loading",
       "lessons": 22,
       "residentGroups": [
-       "var-meaning",
        "expr-anatomy",
+       "var-meaning",
        "oo-numeric",
        "oo-structure",
        "ineq-two-step",
@@ -1718,14 +1727,14 @@
       "issues": 0,
       "lastIssue": null,
       "warm": {
-       "at": 1786390039365,
+       "at": 1786390438173,
        "seq": 2,
        "trigger": "mastery-signal",
        "kpId": "oo-structure",
        "lesson": "expressions-2",
        "groups": 2,
        "failed": [],
-       "ms": 8.7,
+       "ms": 17,
        "reason": "ok",
        "lessonProgress": 0,
        "nextLesson": null,
@@ -1805,17 +1814,17 @@
      "carriedScheduler": true,
      "probe": {
       "knowledgePoints": 32,
-      "items": 363,
+      "items": 365,
       "catalogueItems": 1152,
-      "generatedThisSession": 3,
+      "generatedThisSession": 5,
       "locale": "en",
       "minItemsPerKp": 36,
       "minItemsPerMisconception": 3,
       "groups": "10/32 resident, 0 loading",
       "lessons": 22,
       "residentGroups": [
-       "var-meaning",
        "expr-anatomy",
+       "var-meaning",
        "oo-numeric",
        "oo-structure",
        "ineq-two-step",
@@ -1829,14 +1838,14 @@
       "issues": 0,
       "lastIssue": null,
       "warm": {
-       "at": 1786390044474,
+       "at": 1786390443424,
        "seq": 3,
        "trigger": "idle-recheck",
        "kpId": "eval-signed",
        "lesson": "expressions-3",
        "groups": 2,
        "failed": [],
-       "ms": 27.9,
+       "ms": 9.8,
        "reason": "ok",
        "lessonProgress": 0,
        "nextLesson": null,
@@ -2007,8 +2016,8 @@
    "play": {
     "items": 180,
     "sources": {
-     "generated": 70,
-     "catalogue": 110
+     "generated": 88,
+     "catalogue": 92
     },
     "kps": [
      "eq-meaning",
@@ -2043,26 +2052,26 @@
    "pulled": {
     "requests": 20,
     "groupChunks": [
-     "props-operations-zMhkLzfH.js",
-     "eq-meaning-I5IIrO-h.js",
      "like-terms-id-BHdbC_9A.js",
-     "props-equality-CiAqyYgV.js",
-     "ineq-meaning-BkiJseeA.js",
      "distribute-numeric-BfFi235F.js",
-     "eq-one-add-GtXbdVX6.js",
      "eq-one-mult-DsdtIT6w.js",
      "eq-two-step-BBTjS6hB.js",
+     "like-terms-combine-DZGXbjGx.js",
      "eq-combine-side-tfN3JzCn.js",
      "eq-both-sides-BmtJEjeP.js",
      "distribute-variable-CN1WQn52.js",
-     "distribute-negative-mHpEM-Mt.js",
      "eq-distribute-BGj4tO7e.js",
+     "distribute-negative-mHpEM-Mt.js",
+     "ineq-meaning-BkiJseeA.js",
      "ineq-one-step-BGcbJMVx.js",
      "simplify-expression-Do4HaW44.js",
-     "equivalent-expressions-CHes5QSi.js",
      "translate-sentence-3qiID9mL.js",
+     "equivalent-expressions-CHes5QSi.js",
      "eq-model-context-C4t2oRlF.js",
-     "like-terms-combine-DZGXbjGx.js"
+     "eq-meaning-I5IIrO-h.js",
+     "props-operations-zMhkLzfH.js",
+     "props-equality-CiAqyYgV.js",
+     "eq-one-add-GtXbdVX6.js"
     ],
     "itemLocaleChunks": [],
     "spineChunks": [],
@@ -2082,7 +2091,7 @@
   },
   "staleAudit": {
    "guarded": {
-    "ms": 98,
+    "ms": 107,
     "sampled": 960,
     "mix": {
      "generated": 960
@@ -2093,7 +2102,7 @@
     "residentAfterIdle": 10
    },
    "unguarded": {
-    "ms": 53,
+    "ms": 45,
     "sampled": 960,
     "mix": {
      "generated": 960
@@ -2107,7 +2116,7 @@
    "session": {
     "items": 36,
     "kps": 5,
-    "ms": 557,
+    "ms": 547,
     "demandLoads": 5,
     "suppressed": 0,
     "recentWindow": 10,

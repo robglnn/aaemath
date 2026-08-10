@@ -1,0 +1,52 @@
+P(pure guesser passes the probe), measured by replaying the real probe against real items
+trials=2000 per node, study=80 draws per cell, bound TEST_OUT.maxBlindPass=0.001
+
+kp                     bd it  priced      MEASURED    passes/N   x over its own price
+distribute-variable    3  3  5.79e-4     1.950e-2    39/2000    33.68
+ineq-negative-flip     4  4  8.33e-4     1.050e-2    21/2000    12.61
+simplify-expression    4  3  5.83e-4     7.500e-3    15/2000    12.86
+var-meaning            1  5  5.88e-4     0.000e+0    0/2000     0.000
+oo-numeric             1  5  2.22e-4     0.000e+0    0/2000     0.000
+expr-anatomy           1  5  3.38e-4     0.000e+0    0/2000     0.000
+oo-structure           2  5  9.77e-4     0.000e+0    0/2000     0.000
+eval-substitute        2  6  2.59e-4     0.000e+0    0/2000     0.000
+eval-signed            3  5  9.77e-4     0.000e+0    0/2000     0.000
+eval-formula           3  4  2.10e-4     0.000e+0    0/2000     0.000
+translate-phrase       2  4  8.96e-4     0.000e+0    0/2000     0.000
+translate-order        3  6  3.20e-4     0.000e+0    0/2000     0.000
+props-operations       2  5  9.77e-4     0.000e+0    0/2000     0.000
+like-terms-id          2  4  7.86e-4     0.000e+0    0/2000     0.000
+like-terms-combine     3  4  9.60e-5     0.000e+0    0/2000     0.000
+distribute-numeric     2  5  4.96e-4     0.000e+0    0/2000     0.000
+distribute-negative    4  4  8.50e-4     0.000e+0    0/2000     0.000
+equivalent-expressions 4  4  1.02e-4     0.000e+0    0/2000     0.000
+eq-meaning             2  5  4.34e-4     0.000e+0    0/2000     0.000
+props-equality         2  5  3.19e-4     0.000e+0    0/2000     0.000
+eq-one-add             2  6  4.16e-4     0.000e+0    0/2000     0.000
+eq-one-mult            2  6  5.44e-4     0.000e+0    0/2000     0.000
+eq-two-step            3  5  5.31e-4     0.000e+0    0/2000     0.000
+eq-combine-side        4  5  8.21e-4     0.000e+0    0/2000     0.000
+eq-distribute          4  5  9.77e-4     0.000e+0    0/2000     0.000
+eq-both-sides          4  6  3.46e-4     0.000e+0    0/2000     0.000
+translate-sentence     3  5  1.96e-4     0.000e+0    0/2000     0.000
+eq-model-context       5  6  4.16e-4     0.000e+0    0/2000     0.000
+ineq-meaning           2  4  1.57e-4     0.000e+0    0/2000     0.000
+ineq-one-step          3  5  3.64e-4     0.000e+0    0/2000     0.000
+ineq-two-step          5  5  4.76e-4     0.000e+0    0/2000     0.000
+
+WORST CASE: distribute-variable — a pure guesser passes its 3-item probe 1.95% of the time (priced 5.79e-4).
+nodes whose MEASURED blind-pass exceeds the 1e-3 bound: 3 of 31
+nodes a coin flip would pass (measured >= 0.5^items): 0
+pooled: 75 passes in 62000 offered probes = 1.210e-3 against a bound of 0.001 (expected 62.0 at the bound)
+
+memorised strings, worst 8 nodes:
+  distribute-variable: construct="15x + 24"@0.250 repair="2: 8x + 32"@0.263 generate="5\\left(4x + 2\\right)"@0.275
+  ineq-negative-flip: construct="x > 1"@0.412 generate="-5x < 8"@0.388 repair="2: x > -2"@0.263
+  simplify-expression: repair="3: 2x + 12"@0.225 construct="3x + 31"@0.250 generate="5 + 2\\left(x + 8\\right)"@0.263
+  var-meaning: generate="a = 12; b = 12"@0.250 repair="2: x = 7"@0.163 construct="a = 17b"@0.175
+  oo-numeric: construct="10"@0.150 repair="2: 14 + 2"@0.175 generate="9 + 7 \\cdot 7"@0.275
+  expr-anatomy: construct="-7x"@0.263
+  oo-structure: construct="-121"@0.237 repair="2: -\\left(8^{2}\\right)"@0.512
+  eval-substitute: repair="2: 2^{2} + 2"@0.287 generate="7x"@0.512 construct="14"@0.313
+
+ineligible: eq-special-cases

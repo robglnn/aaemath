@@ -1,0 +1,76 @@
+stratum re-measurement — 160 draws per probe cell, through Scheduler.serve() at the shipped probe difficulty
+
+kp                    bd it  probeLogit bankTier  priced      SERVED(measured)  x over price
+props-equality        2  5  -0.5       1         3.19e-4     7.021e-2          220.1
+eval-formula          3  4  0.3        1         2.10e-4     5.343e-2          254.4
+eq-distribute         4  5  1.1        1         9.77e-4     2.815e-2          28.81
+distribute-variable   3  3  0.3        1         5.79e-4     2.024e-2          34.96
+translate-phrase      2  4  -0.5       1         8.96e-4     1.730e-2          19.31
+simplify-expression   4  3  1.1        1         5.83e-4     1.543e-2          26.47
+like-terms-combine    3  4  0.3        1         9.60e-5     1.091e-2          113.6
+ineq-meaning          2  4  -0.5       1         1.57e-4     1.090e-2          69.43
+ineq-negative-flip    4  4  1.1        1         8.33e-4     9.387e-3          11.27
+equivalent-expressions4  4  1.1        1         1.02e-4     8.931e-3          87.56
+eq-meaning            2  5  -0.5       1         4.34e-4     8.368e-3          19.28
+eval-substitute       2  6  -0.5       1         2.59e-4     5.751e-3          22.21
+eq-two-step           3  5  0.3        1         5.31e-4     5.329e-3          10.04
+eq-both-sides         4  6  1.1        1         3.46e-4     5.105e-3          14.75
+like-terms-id         2  4  -0.5       1         7.86e-4     4.977e-3          6.332
+props-operations      2  5  -0.5       1         9.77e-4     4.975e-3          5.092
+distribute-negative   4  4  1.1        1         8.50e-4     4.933e-3          5.803
+eval-signed           3  5  0.3        1         9.77e-4     4.620e-3          4.729
+translate-sentence    3  5  0.3        1         1.96e-4     4.543e-3          23.18
+eq-one-add            2  6  -0.5       1         4.16e-4     3.643e-3          8.758
+ineq-two-step         5  5  1.90000000000000012         4.76e-4     3.130e-3          6.575
+eq-combine-side       4  5  1.1        1         8.21e-4     2.522e-3          3.072
+ineq-one-step         3  5  0.3        1         3.64e-4     2.440e-3          6.703
+distribute-numeric    2  5  -0.5       1         4.96e-4     2.326e-3          4.689
+oo-structure          2  5  -0.5       1         9.77e-4     2.050e-3          2.099
+expr-anatomy          1  5  -1.3       1         3.38e-4     1.246e-3          3.687
+eq-model-context      5  6  1.90000000000000012         4.16e-4     1.200e-3          2.885
+eq-one-mult           2  6  -0.5       1         5.44e-4     7.347e-4          1.351
+translate-order       3  6  0.3        1         3.20e-4     7.223e-4          2.257
+oo-numeric            1  5  -1.3       1         2.22e-4     3.205e-4          1.444
+var-meaning           1  5  -1.3       1         5.88e-4     2.221e-4          0.3777
+
+WORST measured blind-pass on the SERVED stratum: props-equality = 7.021e-2 (priced 3.19e-4; 220.1x)
+nodes whose MEASURED probe blind-pass exceeds TEST_OUT.maxBlindPass (1e-3): 27 of 31
+    props-equality 7.021e-2 | generate:0.512(n=160,d=2,tiers=[[1,160]]) construct:0.613(n=160,d=2,tiers=[[1,160]]) repair:0.713(n=160,d=2,tiers=[[1,160]])
+    eval-formula 5.343e-2 | repair:0.512(n=160,d=2,tiers=[[2,160]]) construct:0.388(n=160,d=3,tiers=[[2,160]]) generate:0.525(n=160,d=2,tiers=[[2,160]])
+    eq-distribute 2.815e-2 | construct:0.475(n=160,d=3,tiers=[[3,160]]) repair:0.512(n=160,d=4,tiers=[[3,160]])
+    distribute-variable 2.024e-2 | construct:0.294(n=160,d=5,tiers=[[2,160]]) repair:0.263(n=160,d=4,tiers=[[2,160]]) generate:0.263(n=160,d=4,tiers=[[2,160]])
+    translate-phrase 1.730e-2 | generate:0.506(n=160,d=2,tiers=[[1,160]]) construct:0.338(n=160,d=3,tiers=[[1,160]]) repair:0.200(n=160,d=6,tiers=[[1,160]])
+    simplify-expression 1.543e-2 | repair:0.219(n=160,d=5,tiers=[[3,160]]) construct:0.269(n=160,d=5,tiers=[[3,160]]) generate:0.263(n=160,d=4,tiers=[[3,160]])
+    like-terms-combine 1.091e-2 | construct:0.338(n=160,d=3,tiers=[[2,160]]) generate:0.356(n=160,d=3,tiers=[[2,160]]) repair:0.269(n=160,d=4,tiers=[[2,160]])
+    ineq-meaning 1.090e-2 | generate:0.394(n=160,d=3,tiers=[[1,160]]) repair:0.281(n=160,d=5,tiers=[[1,160]]) construct:0.250(n=160,d=5,tiers=[[1,160]])
+    ineq-negative-flip 9.387e-3 | construct:0.281(n=160,d=5,tiers=[[3,160]]) generate:0.388(n=160,d=3,tiers=[[3,160]]) repair:0.306(n=160,d=5,tiers=[[3,160]])
+    equivalent-expressions 8.931e-3 | repair:0.263(n=160,d=4,tiers=[[3,160]]) generate:0.263(n=160,d=4,tiers=[[3,160]]) construct:0.494(n=160,d=3,tiers=[[3,160]])
+    eq-meaning 8.368e-3 | repair:0.269(n=160,d=4,tiers=[[1,160]]) construct:0.487(n=160,d=3,tiers=[[1,160]]) generate:0.487(n=160,d=4,tiers=[[1,160]])
+    eval-substitute 5.751e-3 | repair:0.369(n=160,d=6,tiers=[[1,160]]) generate:0.506(n=160,d=2,tiers=[[1,160]]) construct:0.406(n=160,d=5,tiers=[[1,160]])
+    eq-two-step 5.329e-3 | repair:0.237(n=160,d=5,tiers=[[2,160]]) generate:0.494(n=160,d=4,tiers=[[2,160]]) construct:0.388(n=160,d=3,tiers=[[2,160]])
+    eq-both-sides 5.105e-3 | repair:0.237(n=160,d=5,tiers=[[3,160]]) construct:0.725(n=160,d=2,tiers=[[3,160]])
+    like-terms-id 4.977e-3 | repair:0.269(n=160,d=4,tiers=[[1,160]]) construct:0.263(n=160,d=4,tiers=[[1,160]])
+    props-operations 4.975e-3 | construct:0.269(n=160,d=4,tiers=[[1,160]]) repair:0.506(n=160,d=2,tiers=[[1,160]]) generate:0.269(n=160,d=4,tiers=[[1,160]])
+    distribute-negative 4.933e-3 | generate:0.362(n=160,d=3,tiers=[[3,160]]) repair:0.194(n=160,d=6,tiers=[[3,160]]) construct:0.194(n=160,d=6,tiers=[[3,160]])
+    eval-signed 4.620e-3 | construct:0.406(n=160,d=3,tiers=[[2,160]]) repair:0.263(n=160,d=4,tiers=[[2,160]])
+    translate-sentence 4.543e-3 | generate:0.412(n=160,d=5,tiers=[[2,160]]) repair:0.263(n=160,d=4,tiers=[[2,160]]) construct:0.388(n=160,d=3,tiers=[[2,160]])
+    eq-one-add 3.643e-3 | repair:0.281(n=160,d=5,tiers=[[1,160]]) construct:0.512(n=160,d=3,tiers=[[1,160]]) generate:0.419(n=160,d=3,tiers=[[1,160]])
+    ineq-two-step 3.130e-3 | generate:0.362(n=160,d=3,tiers=[[4,160]]) construct:0.362(n=160,d=5,tiers=[[4,160]]) repair:0.181(n=160,d=6,tiers=[[4,160]])
+    eq-combine-side 2.522e-3 | construct:0.263(n=160,d=4,tiers=[[3,160]]) repair:0.263(n=160,d=5,tiers=[[3,160]]) generate:0.531(n=160,d=5,tiers=[[3,160]])
+    ineq-one-step 2.440e-3 | generate:0.400(n=160,d=3,tiers=[[2,160]]) construct:0.200(n=160,d=6,tiers=[[2,160]]) repair:0.381(n=160,d=4,tiers=[[2,160]])
+    distribute-numeric 2.326e-3 | repair:0.394(n=160,d=5,tiers=[[1,160]]) construct:0.200(n=160,d=6,tiers=[[1,160]]) generate:0.375(n=160,d=3,tiers=[[1,160]])
+    oo-structure 2.050e-3 | construct:0.200(n=160,d=6,tiers=[[1,160]]) repair:0.506(n=160,d=2,tiers=[[1,160]])
+    expr-anatomy 1.246e-3 | construct:0.263(n=160,d=4,tiers=[[1,160]])
+    eq-model-context 1.200e-3 | repair:0.231(n=160,d=5,tiers=[[4,160]]) construct:0.369(n=160,d=3,tiers=[[4,160]]) generate:0.406(n=160,d=3,tiers=[[4,160]])
+
+coin-flip check — nodes a 50/50 responder passes: 1
+
+--- per-form detail, worst 8 ---
+  props-equality: generate:0.512(n=160,d=2,tiers=[[1,160]]) construct:0.613(n=160,d=2,tiers=[[1,160]]) repair:0.713(n=160,d=2,tiers=[[1,160]])
+  eval-formula: repair:0.512(n=160,d=2,tiers=[[2,160]]) construct:0.388(n=160,d=3,tiers=[[2,160]]) generate:0.525(n=160,d=2,tiers=[[2,160]])
+  eq-distribute: construct:0.475(n=160,d=3,tiers=[[3,160]]) repair:0.512(n=160,d=4,tiers=[[3,160]])
+  distribute-variable: construct:0.294(n=160,d=5,tiers=[[2,160]]) repair:0.263(n=160,d=4,tiers=[[2,160]]) generate:0.263(n=160,d=4,tiers=[[2,160]])
+  translate-phrase: generate:0.506(n=160,d=2,tiers=[[1,160]]) construct:0.338(n=160,d=3,tiers=[[1,160]]) repair:0.200(n=160,d=6,tiers=[[1,160]])
+  simplify-expression: repair:0.219(n=160,d=5,tiers=[[3,160]]) construct:0.269(n=160,d=5,tiers=[[3,160]]) generate:0.263(n=160,d=4,tiers=[[3,160]])
+  like-terms-combine: construct:0.338(n=160,d=3,tiers=[[2,160]]) generate:0.356(n=160,d=3,tiers=[[2,160]]) repair:0.269(n=160,d=4,tiers=[[2,160]])
+  ineq-meaning: generate:0.394(n=160,d=3,tiers=[[1,160]]) repair:0.281(n=160,d=5,tiers=[[1,160]]) construct:0.250(n=160,d=5,tiers=[[1,160]])

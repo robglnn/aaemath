@@ -5,40 +5,44 @@ import { LUMINANCE } from "./glsl.js";
 /**
  * Progressive-downsample bloom.
  *
- * Not a Gaussian, and not a two-tap blur pretending to be one. A chain of half-resolution
- * steps, each filtered with the 13-tap kernel that keeps a mip from aliasing into the next,
- * then walked back up with a 9-tap tent and accumulated additively. The result is a sum of
- * lobes at every octave — which is precisely what §8 asks for when it specifies "a tight core
- * (sigma ~= 0.6% of frame height) and a wide halo whose half-intensity radius is 6% of frame
- * height", because a single Gaussian cannot be both.
+ * A chain of half-resolution steps, each filtered with the 13-tap kernel that keeps a mip from
+ * aliasing into the next, then walked back up with a 9-tap tent and accumulated additively. The
+ * result is a sum of lobes at every octave: a tight core on the emitter and a short tail, rather
+ * than one wide Gaussian that would put the same energy everywhere and read as haze.
+ *
+ * `design/art-direction.md` §5.4 gives the size budget — *"Radius <= 4% of frame height"* — and
+ * §12.10 gives the failure mode it is guarding against. On this art direction that budget is much
+ * more binding than it sounds: the picture is made of hard facet edges holding one value each
+ * (§3.3, measured within-facet spread 0.0096), so a halo wide enough to cross a silhouette does not
+ * read as "glow", it reads as the renderer having lost the edge.
  *
  * ---------------------------------------------------------------------------------------
- * Why the level count is a fractional function of frame height, and why that is the whole
- * resolution-independence story
+ * Why the level count is a fractional function of frame height
  * ---------------------------------------------------------------------------------------
  *
- * A mip chain with a fixed number of levels has a blur radius that is a fixed number of
- * *pixels*, so the halo shrinks to half its size on screen when the player moves from 1080p to
- * 4K. §8's spec is in per-cent of frame height, and `quality-bar.md` G7 demands the frame read
- * at 1280x720 *and* 3840x2160, so the level count has to grow with resolution.
+ * One texel at mip level `i` covers `2^(i+1)` device pixels, so with a *fixed* level count the halo
+ * is a fixed number of pixels and therefore halves as a fraction of the picture when the player
+ * moves from 1080p to 4K. §5.4's budget is in per cent of frame height and `quality-bar.md` G7
+ * requires the frame to read at 1280x720 *and* 3840x2160, so the level count has to track
+ * `log2(height)`.
  *
- * Doing that with `round(log2(h))` produces a 2x jump in halo radius the moment the viewport
- * crosses a power of two, which is anti-pattern 27 (something snapping on a threshold) with a
- * window-resize as the trigger. Instead:
+ * Doing that with `round(log2(h))` makes the halo double the instant the viewport crosses a power
+ * of two — a visible pop with a window resize as its trigger. Instead:
  *
- *     fl        = log2(height) - ANCHOR        (fractional level count)
- *     levels    = ceil(fl)                     (how many targets we actually allocate)
- *     lastWeight= 1 - (levels - fl)            (how much the newest one contributes)
+ *     fl         = log2(height) - ANCHOR       (fractional level count)
+ *     levels     = ceil(fl)                    (targets actually allocated)
+ *     lastWeight = 1 - (levels - fl)           (how much the newest one contributes)
  *
- * so the extra level fades in from zero exactly as it is allocated and the *effective* radius
- * is a continuous function of viewport height. ANCHOR is set so the coarsest level is ~17
- * device pixels tall at 1080p, which puts a one-texel tent at 5.9% of frame height — §8's wide
- * lobe, measured rather than asserted. `review/measure/P12.mjs` claim R1 captures the halo's
- * half-intensity radius at 720p, 1080p and 2160p and fails if they disagree by more than 20%.
+ * so the extra level fades in from zero exactly as it is allocated and the *effective* radius is a
+ * continuous function of viewport height. `ANCHOR` solves `2^(1 - ANCHOR) = 0.031`, which places
+ * the widest fully-weighted tent at **3.1% of frame height** — inside §5.4's 4% ceiling with room
+ * for the fractional level above it. `review/measure/P12.mjs` claim R1 pushes an identical point
+ * emitter through the real chain at 720p, 1080p and 2160p and fails if the measured half-intensity
+ * radii, expressed as a fraction of frame height, disagree by more than 20%.
  */
-const ANCHOR = 5.09;
-const MIN_LEVELS = 3;
-const MAX_LEVELS = 8;
+const ANCHOR = 6.012;
+const MIN_LEVELS = 2;
+const MAX_LEVELS = 7;
 
 /** Contribution of mip[i] when it is added back into mip[i-1]. Index 0 is unused. */
 const LEVEL_WEIGHTS = [1.0, 1.0, 0.92, 0.8, 0.68, 0.58, 0.5, 0.44, 0.4];
@@ -48,6 +52,14 @@ export function bloomLevels(height) {
   const levels = Math.min(MAX_LEVELS, Math.max(MIN_LEVELS, Math.ceil(fl)));
   const lastWeight = Math.min(1, Math.max(0, 1 - (levels - fl)));
   return { levels, lastWeight: levels >= MAX_LEVELS || levels <= MIN_LEVELS ? 1 : lastWeight };
+}
+
+/** The widest fully-weighted tent, as a fraction of frame height. Published on the probe. */
+export function bloomRadiusFraction(height) {
+  const { levels, lastWeight } = bloomLevels(height);
+  const wide = Math.pow(2, levels + 1) / height;
+  const narrow = Math.pow(2, levels) / height;
+  return narrow + (wide - narrow) * lastWeight;
 }
 
 export class BloomPass {
@@ -68,9 +80,9 @@ export class BloomPass {
         ${LUMINANCE}
         vec3 T(vec2 o) { return texture2D(tSrc, vUv + o * uTexel).rgb; }
         void main() {
-          // 13 taps: a 3x3 grid at +-2 texels plus a 2x2 at +-1. The inner quad carries half
-          // the weight, which is what stops the chain from aliasing a bright single texel into
-          // a flickering blob two levels down.
+          // 13 taps: a 3x3 grid at +-2 texels plus a 2x2 at +-1. The inner quad carries half the
+          // weight, which is what stops the chain from aliasing a bright single texel into a
+          // flickering blob two levels down — §11.4's 3%-per-step emitter budget, upstream.
           vec3 a = T(vec2(-2.0, -2.0)), b = T(vec2(0.0, -2.0)), c = T(vec2(2.0, -2.0));
           vec3 d = T(vec2(-2.0,  0.0)), e = T(vec2(0.0,  0.0)), f = T(vec2(2.0,  0.0));
           vec3 g = T(vec2(-2.0,  2.0)), h = T(vec2(0.0,  2.0)), i = T(vec2(2.0,  2.0));
@@ -127,7 +139,7 @@ export class BloomPass {
     return this.mips[0]?.texture ?? null;
   }
 
-  /** The bright-pass target — also the source the god-ray pass scatters. */
+  /** The bright-pass target — also the source the sun-glow pass scatters. */
   get brightTarget() {
     return this.mips[0] ?? null;
   }

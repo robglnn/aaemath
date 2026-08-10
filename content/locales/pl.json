@@ -1,0 +1,887 @@
+{
+  "$meta": {
+    "locale": "pl",
+    "name": "Polish",
+    "endonym": "Polski",
+    "reference": "en",
+    "strings": 338,
+    "decimalSeparator": ",",
+    "groupSeparator": "U+00A0",
+    "conventions": "app/src/i18n/CONVENTIONS.md",
+    "note": "Localized in voice, not translated. Register rules and the lexicon mapping are in app/src/i18n/CONVENTIONS.md."
+  },
+  "ui": {
+    "title": "GWIAZDA ZMIENNA",
+    "subtitle": "Margines wciąż stoi",
+    "lang": {
+      "en": "English",
+      "es": "Español",
+      "pl": "Polski"
+    },
+    "menu": {
+      "begin": "Wyruszyć",
+      "resume": "Iść dalej",
+      "settings": "Wyposażenie",
+      "tongue": "Język",
+      "leave": "Odstąpić",
+      "back": "Wstecz",
+      "done": "Gotowe",
+      "paused": "Postój."
+    },
+    "hud": {
+      "rung": "Szczebel",
+      "quorum": "Kworum",
+      "can": "Kanister",
+      "digits": "Cyfry",
+      "certainties": "Pewniki",
+      "leaf": "Liść",
+      "provisional": "Tymczasowy",
+      "circuit": "Dziewiąty Obwód"
+    },
+    "action": {
+      "grip": "Chwyć",
+      "carry": "Przenieś",
+      "gather": "Zbierz",
+      "share": "Rozdziel obie szalki",
+      "open": "Rozwiąż wiązkę",
+      "seat": "Osadź wartość",
+      "mark": "Ustaw kreskę",
+      "read": "Odczytaj",
+      "take": "Weź",
+      "decline": "Odmów"
+    },
+    "class": {
+      "span": "Przęsło",
+      "aperture": "Przejście",
+      "emitter": "Promiennik",
+      "bearer": "Dźwigar",
+      "vessel": "Naczynie",
+      "threshold": "Zastawka"
+    },
+    "mark": {
+      "admits": "Przepuszcza {n}.",
+      "refuses": "Odrzuca {n}."
+    },
+    "prompt": {
+      "hold": "Przytrzymaj {key}",
+      "press": "Naciśnij {key}",
+      "socket": "Gniazdo jest otwarte.",
+      "canfull": "Kanister jest pełny."
+    },
+    "progress": {
+      "title": "Co stoi",
+      "set": "Zastygłe",
+      "standing": "Stojące",
+      "drifting": "Dryfuje",
+      "open": "Otwarte",
+      "due": "Znów zdryfuje za {when}."
+    },
+    "setting": {
+      "picture": "Obraz",
+      "sound": "Dźwięk",
+      "control": "Sterowanie",
+      "comfort": "Wygoda",
+      "detail": "Szczegółowość",
+      "allsound": "Cały dźwięk",
+      "verse": "Wers",
+      "world": "Świat",
+      "voices": "Głosy",
+      "captions": "Napisy",
+      "lessmotion": "Mniej ruchu",
+      "hardedges": "Twardsze krawędzie",
+      "plainletters": "Prostsze litery",
+      "biggermarks": "Większe znaki",
+      "moretime": "Więcej czasu",
+      "holdtorun": "Przytrzymaj, by biec",
+      "invertlook": "Odwróć patrzenie",
+      "lookspeed": "Szybkość patrzenia"
+    },
+    "tier": {
+      "potato": "Goły",
+      "low": "Niski",
+      "medium": "Średni",
+      "high": "Wysoki",
+      "ultra": "Najwyższy"
+    },
+    "toggle": {
+      "on": "Włączone",
+      "off": "Wyłączone"
+    },
+    "count": {
+      "leaves": {
+        "one": "{n} liść",
+        "few": "{n} liście",
+        "many": "{n} liści",
+        "other": "{n} liścia"
+      },
+      "certainties": {
+        "one": "{n} pewnik",
+        "few": "{n} pewniki",
+        "many": "{n} pewników",
+        "other": "{n} pewnika"
+      },
+      "digits": {
+        "one": "{n} cyfra",
+        "few": "{n} cyfry",
+        "many": "{n} cyfr",
+        "other": "{n} cyfry"
+      },
+      "spans": {
+        "one": "{n} przęsło",
+        "few": "{n} przęsła",
+        "many": "{n} przęseł",
+        "other": "{n} przęsła"
+      },
+      "terms": {
+        "one": "{n} człon",
+        "few": "{n} człony",
+        "many": "{n} członów",
+        "other": "{n} członu"
+      },
+      "claims": {
+        "one": "{n} otwarte stwierdzenie",
+        "few": "{n} otwarte stwierdzenia",
+        "many": "{n} otwartych stwierdzeń",
+        "other": "{n} otwartego stwierdzenia"
+      },
+      "metres": {
+        "one": "{n} metr",
+        "few": "{n} metry",
+        "many": "{n} metrów",
+        "other": "{n} metra"
+      },
+      "days": {
+        "one": "{n} dzień",
+        "few": "{n} dni",
+        "many": "{n} dni",
+        "other": "{n} dnia"
+      },
+      "hours": {
+        "one": "{n} godzina",
+        "few": "{n} godziny",
+        "many": "{n} godzin",
+        "other": "{n} godziny"
+      },
+      "minutes": {
+        "one": "{n} minuta",
+        "few": "{n} minuty",
+        "many": "{n} minut",
+        "other": "{n} minuty"
+      }
+    }
+  },
+  "sys": {
+    "bell": {
+      "01": "Dzwon. O jeden liść mniej."
+    },
+    "can": {
+      "full": {
+        "01": "Kanister pełny. Wartość mięknie."
+      }
+    },
+    "carry": {
+      "turn": {
+        "01": "Przenosy skręciły pod górę."
+      }
+    },
+    "certainty": {
+      "01": "Pewnik zabrany."
+    },
+    "claim": {
+      "close": {
+        "01": "Zamyka się. Najpierw światło, potem kamień."
+      },
+      "drift": {
+        "01": "To stwierdzenie zdryfowało."
+      },
+      "grey": {
+        "01": "Szare. Trzyma. Nie potrwa."
+      },
+      "open": {
+        "01": "Stoi tu otwarte stwierdzenie."
+      },
+      "set": {
+        "01": "Pewnik powstał. Już nie zdryfuje."
+      }
+    },
+    "detent": {
+      "01": "Zapadka zmieniła stronę."
+    },
+    "load": {
+      "01": "Ładunek się nie osiadł."
+    },
+    "mark": {
+      "set": {
+        "01": "Kreska ustawiona. Przepuszcza."
+      }
+    },
+    "quorum": {
+      "00": "Szesnaście tysięcy cztery liście są prawdziwe.",
+      "01": "Szesnaście tysięcy trzy liście są prawdziwe."
+    },
+    "rung": {
+      "01": "Szczebel."
+    },
+    "span": {
+      "half": {
+        "01": "Dalsze gniazdo jest otwarte."
+      }
+    },
+    "threshold": {
+      "01": "Stoi tu otwarta zastawka."
+    },
+    "tolerance": {
+      "01": "Tolerancja wynosi teraz ±2."
+    },
+    "working": {
+      "01": "Ktoś zostawił swój ślad."
+    }
+  },
+  "mastery": {
+    "certainty": {
+      "01": "Pewnik. Już nie zdryfuje."
+    },
+    "ix": {
+      "01": "Ix niesie cztery."
+    },
+    "rung": {
+      "01": "Szczebel.",
+      "first": "Pierwszy Szczebel: Tragarz.",
+      "second": "Drugi Szczebel: Wiązacz.",
+      "third": "Trzeci Szczebel: Rozdzielca."
+    },
+    "set": {
+      "01": "Zastygło."
+    }
+  },
+  "fail": {
+    "coefficient": "Weszły trzy. Wyszła jedna.",
+    "inverse": "To cofnęło coś innego.",
+    "load": {
+      "unsettled": "Wiązka była jeszcze związana przy odczycie."
+    },
+    "mark": {
+      "edge": "Sama kreska weszła. Nie miała.",
+      "level": "Domknąłeś to do punktu. Było cięte na odcinek.",
+      "over": "Przepuszcza o {n} więcej, niż pozwala kreska.",
+      "under": "Odrzuca {n}, które kreska przepuszcza.",
+      "unturned": "Szyna przeszła. Kreska nie."
+    },
+    "near": "O jeden od prawdy.",
+    "negative": "Przyszło odwrotnie.",
+    "onesided": "Jedna szalka się ruszyła. Druga została.",
+    "partial": {
+      "divide": "Połowa tego jest przepołowiona.",
+      "open": "Nawias otworzył się na jedno, a zamknął na drugim."
+    },
+    "seat": {
+      "partial": "Jedno gniazdo je przyjęło. Dwa wciąż otwarte."
+    },
+    "sill": {
+      "sign": "Przeszło przez Próg i się nie odwróciło."
+    },
+    "slip": "Kształt się utrzymał. Ciężar nie.",
+    "soft": "Zamknęło się. Nie zastygło.",
+    "tilt": {
+      "far": "Dalsza szalka jest cięższa o {n}.",
+      "near": "Bliższa szalka jest cięższa o {n}."
+    },
+    "unlike": "Zebrałeś długość i ciężar. Nie ustoją razem."
+  },
+  "ix": {
+    "after": {
+      "fall": {
+        "01": "Jeszcze raz. Włóż mnie jeszcze raz. Lubiłam być blisko."
+      }
+    },
+    "bark": {
+      "cutter": {
+        "01": "Tamten kiwnął głową. Do mnie. To się stało."
+      },
+      "hush": {
+        "01": "Zjada szarość. Powoli. Bezczelnie."
+      },
+      "idle": {
+        "03": "Te drzwi są bardzo czwórkowe.",
+        "07": "Przenos płynie pod górę. Coś jest prawie prawdą.",
+        "09": "Ten stempel to trójka. Niesie dziewiątkę."
+      },
+      "several": {
+        "01": "Ile ich jest? To nie będzie liczba."
+      },
+      "tilt": {
+        "02": "Przechyla się. Bliższa szalka ciężka.",
+        "05": "Coś tam udaje liczbę."
+      },
+      "verse": {
+        "01": "Nie przestała śpiewać. Ani razu. Nigdy."
+      },
+      "walker": {
+        "01": "Idzie po linii, którą sama narysowała. LINII!"
+      }
+    },
+    "discover": {
+      "socket": {
+        "01": "Otwarte. Jest otwarte. Nikt tego nie zamknął od jedenastu tysięcy lat."
+      }
+    },
+    "farside": {
+      "01": "Coś zapaliło światło. W Vantis. Coś zapaliło światło.",
+      "02": "Prawie miałam pięć. Czułam pięć."
+    },
+    "field": {
+      "pattern": {
+        "01": "Dwa stwierdzenia. Ten sam kształt. Ty się chwalisz czy ja?"
+      }
+    },
+    "first": {
+      "offer": {
+        "01": "Włóż mnie. Będę niewiadomą. Tylko to kiedykolwiek robiłam."
+      },
+      "solve": {
+        "01": "Ooo. Byłam siódemką. Byłam SIÓDEMKĄ i było głośno!"
+      }
+    },
+    "grey": {
+      "cross": {
+        "01": "Trzyma. Nie powinno tak się czuć, ale trzyma."
+      }
+    },
+    "loss": {
+      "01": "Zabrało moją trójkę. Lubiłam swoją trójkę.",
+      "02": "Nic mi nie jest. Zupełnie nic mi nie jest i chciałabym iść dalej, proszę."
+    },
+    "mastery": {
+      "digit": {
+        "01": "Odzyskałam swoją trójkę. Powiedz coś. Powiedz coś o mojej trójce!"
+      },
+      "new": {
+        "01": "Nigdy nie byłam jedenastką. Dużymi liczbami dłużej się bywa."
+      },
+      "set": {
+        "01": "Nie zgadywałeś. Czułam, jak nie zgadujesz."
+      }
+    },
+    "rounder": {
+      "approach": {
+        "01": "Nie pozwól mu mnie zaokrąglić. Byłam tylko czterema rzeczami."
+      }
+    },
+    "working": {
+      "found": {
+        "01": "Ktoś zostawił swój ślad. Ktoś tu BYŁ."
+      }
+    }
+  },
+  "sennar": {
+    "barge": {
+      "01": "Podnoszą się, gdy przestają kłamać o ładunku."
+    },
+    "brief": {
+      "01": "Dostarcz to. Nie podziwiaj."
+    },
+    "dace": {
+      "01": "Kończy swój obwód. Nic, co zamyka, nie zastyga."
+    },
+    "farside": {
+      "01": "Powiedz, że jesteś gotów. Skłamiesz. Pozwolę na to."
+    },
+    "forty": {
+      "01": "Czterdzieści lat. Dziewięć tysięcy zamknięć. Dryfuje."
+    },
+    "house": {
+      "01": "Dom stoi, bo ktoś jest uczciwy wobec liczby.",
+      "02": "Tym właśnie jest dom."
+    },
+    "mark": {
+      "01": "Ktoś ustawił tę kreskę. Ktoś może ją podnieść."
+    },
+    "ondu": {
+      "01": "Ondu trzyma cztery dachy. To jest Szczebel."
+    },
+    "praise": {
+      "high": "To nie było wystarczające. To było prawdziwe.",
+      "low": "Wystarczające."
+    },
+    "rank": {
+      "first": "Pierwszy Szczebel. Nieś jeden człon. Nie dwa.",
+      "provisional": "Tymczasowy znaczy, że Margines jeszcze nie rozstrzygnął.",
+      "second": "Drugi Szczebel. Możesz zbierać.",
+      "third": "Trzeci Szczebel. Idź teraz obejrzeć Długi Rozłam."
+    },
+    "refuse": {
+      "help": {
+        "01": "Nie.",
+        "02": "Ja mam Szczebel. Ty masz gniazdo. Użyj go."
+      }
+    },
+    "thanks": {
+      "01": "Nie dziękuj. Postaw coś."
+    },
+    "traffic": {
+      "01": "Wszyscy przechodzą przez Liść Dziewiąty. Nikt nie zostaje."
+    },
+    "vey": {
+      "01": "To była Szósta. Sama narysowała tę linię."
+    },
+    "warn": {
+      "suff": {
+        "01": "Zaproponuje. Zawsze proponuje. Zauważ, ile to kosztuje."
+      }
+    }
+  },
+  "camber": {
+    "decline": {
+      "01": "Odmówiono asysty jedenaście razy. Odnotowano to jako entuzjazm."
+    },
+    "discomfort": {
+      "01": "Prosi się o unikanie ścisłości w pobliżu. Jest to niewygodne dla obu stron."
+    },
+    "farewell": {
+      "01": "Dziękuje się za dalszą przybliżoną współpracę."
+    },
+    "greet": {
+      "01": "Dzień dobry. Odnotowuje się trudności, co jest dozwolone."
+    },
+    "grey": {
+      "01": "Państwa przęsło jest teraz w przybliżeniu przęsłem. Większość taka jest."
+    },
+    "hush": {
+      "01": "Zwierzę usuwa przybliżoną ścianę. Zwierzę zaklasyfikowano jako zjawisko pogodowe."
+    },
+    "kindness": {
+      "01": "Na czele tego liścia ustanowiono Uprzejmość. Jest zupa. Zupa również jest przybliżona."
+    },
+    "name": {
+      "01": "Spór o nazwę tego liścia da się rozstrzygnąć. Istnieje gotowość do poszerzenia nazwy."
+    },
+    "offer": {
+      "01": "Wartość jest dostępna. Zawsze była dostępna. Była dostępna przed Państwa przybyciem.",
+      "02": "Nie ma obowiązku rozwiązywania tego. Nigdy nie było obowiązku rozwiązywania czegokolwiek."
+    },
+    "philosophy": {
+      "01": "Nie sprzeciwia się rozwiązywaniu. Odnotowuje się jedynie, że nigdy nie było konieczne.",
+      "02": "Ścisłość wykluczyła z tego świata więcej ludzi niż kiedykolwiek ciemność."
+    },
+    "queue": {
+      "01": "Czeka dziewiętnaście osób. Żadnej z nich nic dziś nie wyklucza."
+    },
+    "reassure": {
+      "01": "Nic nie jest Państwu zabierane. Rzeczy są jedynie ułatwiane w noszeniu."
+    },
+    "receipt": {
+      "01": "Pobrano trójkę. Wydano pokwitowanie. Pokwitowanie również jest przybliżone."
+    },
+    "supplied": {
+      "01": "Wartość dostarczono w Państwa imieniu. Żadne działanie nie jest wymagane. Nigdy nie było."
+    },
+    "tolerance": {
+      "01": "Tolerancję poszerzono do ±2 wskutek zwiększonego popytu. Popytem byli Państwo."
+    }
+  },
+  "dace": {
+    "can": {
+      "01": "Pusty od grani. Twój jeszcze chlupie."
+    },
+    "farside": {
+      "01": "Zbudowałeś to. W czasie moich dziewięciu liści. Zbudowałeś to."
+    },
+    "first": {
+      "01": "Dziewiąty Obwód. Jesteś tym drugim. Cztery liście z tyłu."
+    },
+    "grey": {
+      "01": "Moje też się ugina. Moje jest dostarczone."
+    },
+    "pass": {
+      "01": "Dziewięć liści przed zmrokiem. Ty robisz jeden."
+    },
+    "queue": {
+      "01": "Jest za darmo i szybko. Nie będę udawał, że nie."
+    },
+    "stray": {
+      "01": "Miałem jednego. Jedenaście dni. Zaokrąglili go do końca.",
+      "02": "Teraz jest liczbą. Liczbom nic nie przeszkadza."
+    }
+  },
+  "walk": {
+    "cut": {
+      "01": "Jeden trzyma szkło. Nie podnosi się wzroku.",
+      "02": "Ten pewnik zastygł czysto. Ktoś zamknął go dwa razy, w różnych porach roku.",
+      "03": "Ręce precz ze światła, Gońcu.",
+      "04": "Nikt nie mówi krótkiego słowa podczas cięcia.",
+      "05": "Do skrzyni. Wypalić na Szóstym. Kiedyś czyjś dach."
+    },
+    "edge": {
+      "01": "Czterysta jedenaście wież. Liczone dwa razy.",
+      "02": "Czterysta dziewięć. On liczy kikuty.",
+      "03": "Trzysta dziewięćdziesiąt. Mgła wzięła resztę.",
+      "04": "Mój ojciec naliczył czterysta dwanaście. Raz.",
+      "05": "Zmieniło się. Nigdy wcześniej. Zmieniło się."
+    },
+    "nearly": {
+      "01": "Duże wychodzą, kiedy prawie—",
+      "02": "Nie mów całego przy wodzie, bo—",
+      "03": "Czterdzieści lat na tym jazie i ani razu nie—",
+      "04": "Niesiesz pełny kanister, więc pewnie jesteś tym—",
+      "05": "Patrz na to. Patrz na to. Zaraz—"
+    },
+    "rate": {
+      "01": "Mokra z nas mówi, że środkowy przenos się odwraca.",
+      "02": "Daleka z nas cię słyszała. Ta nadrabia.",
+      "03": "Bliska z nas w tym stoi. Obejdź.",
+      "04": "Mokra z nas jest dziś trzema. Na wiosnę była czterema.",
+      "05": "Sucha z nas cię zapamięta. Mokra nie."
+    },
+    "sag": {
+      "01": "Mogę to podeprzeć. Nie sprawię, że będzie prawdziwe.",
+      "02": "Cztery stemple pod tym dachem. Trzy moje.",
+      "03": "Każdy tu chodzi po czymś, co ułożyłem.",
+      "04": "Ustoi, aż przejdzie ktoś ze Szczeblem.",
+      "05": "Okołki znów weszły. Zawsze wracają."
+    },
+    "solv": {
+      "01": "Tymczasowy.",
+      "02": "Uwaga na linię. Moja.",
+      "03": "Dziewiąty Obwód? To niesiesz. Zejdź."
+    },
+    "tare": {
+      "01": "Osiemdziesiąt jeden kilo. Unosiłbyś się, gdybyś był wobec tego uczciwy.",
+      "02": "Czterysta kilo za dużo. Gdzieś. W czymś. To upokarzające.",
+      "03": "Moje buty ważą jeden przecinek dwa. Ważę je co noc.",
+      "04": "Dziewięć ton nas. Liczba musi być prawdziwa.",
+      "05": "Sześć pokoleń na tym kadłubie i nikt nigdy nie zgadł tary."
+    },
+    "verse": {
+      "01": "—i obie szalki przez trzy, i obie szalki przez trzy—",
+      "02": "—niesie szóstkę, szóstka przechodzi, szóstka się odwraca—",
+      "03": "—jedenaście z bliższej szalki, jedenaście z dalszej—",
+      "04": "—nie zatrzymuj mnie, nie zatrzymuj mnie, i obie szalki—",
+      "05": "—zebrane, zebrane, i trzyma, i trzyma, i—"
+    }
+  },
+  "amb": {
+    "abouts": {
+      "01": "Okołki weszły w tamte drzwi."
+    },
+    "always": {
+      "01": "To stało, zanim ktokolwiek przyszedł."
+    },
+    "arch": {
+      "01": "Uprzejmość stoi pod Tolerancją."
+    },
+    "barge": {
+      "aground": {
+        "01": "Barka na mieliźnie waży własne buty."
+      },
+      "name": {
+        "01": "Ta barka nazywa się Dziewięć Dziesiątych."
+      }
+    },
+    "bell": {
+      "hang": {
+        "01": "Dzwon wisi pod Liściem Pierwszym."
+      },
+      "ring": {
+        "01": "Dzwon zabrzmiał. Ubył jeden liść."
+      }
+    },
+    "bollard": {
+      "01": "Tare cumują przy nim. On rośnie."
+    },
+    "carry": {
+      "bait": {
+        "01": "Ich przynętą jest niedokończone zdanie."
+      },
+      "fish": {
+        "01": "Półmówcy łowią w środkowym przenosie."
+      },
+      "uphill": {
+        "01": "Przenos znów płynie pod górę."
+      }
+    },
+    "crab": {
+      "shells": {
+        "01": "Po dwie skorupy. Używają na zmianę."
+      },
+      "sill": {
+        "01": "Kraby progowe przechodzą. Wracają odwrócone."
+      }
+    },
+    "cutters": {
+      "01": "Krajacze na dalekim skraju. Ciemne szkło.",
+      "word": {
+        "01": "Krajacze nie mówią tego słowa."
+      }
+    },
+    "dace": {
+      "01": "Inny Tymczasowy, pół liścia z przodu.",
+      "can": {
+        "01": "Jego kanister jest pusty. Południe."
+      }
+    },
+    "detent": {
+      "01": "Ta zastawka się przechyla. Tak ma być."
+    },
+    "edgewake": {
+      "01": "Pielgrzymi na krawędzi liczą wieże.",
+      "count": {
+        "01": "Żaden rachunek Vantis się nie zgadza."
+      }
+    },
+    "errata": {
+      "01": "Dziura w niebie, w ruchu."
+    },
+    "flatleaf": {
+      "01": "Liść Dwieście Sześć. Idealnie płaski."
+    },
+    "house": {
+      "basement": {
+        "01": "Coś pod domem wciąż jest prawdziwe."
+      }
+    },
+    "hush": {
+      "graze": {
+        "01": "Cisza zjada szarą ścianę."
+      },
+      "hum": {
+        "01": "Cisza brzęczy. Ściana cieńsza."
+      }
+    },
+    "kiln": {
+      "01": "Liście Piecowe świecą od spodu."
+    },
+    "kindness": {
+      "board": {
+        "01": "Tolerancja ±1. Co dzień. Często zmieniana."
+      },
+      "free": {
+        "01": "Zupa za darmo. Wszystko za darmo."
+      },
+      "queue": {
+        "01": "Jedenaście osób stoi w kolejce po zupę.",
+        "02": "Teraz dziewiętnaście. Było jedenaście."
+      }
+    },
+    "leafninealso": {
+      "01": "Liść Dziewiąty Też spiera się o tę nazwę."
+    },
+    "night": {
+      "carries": {
+        "01": "Nocą liście pokazują swoje przenosy."
+      }
+    },
+    "oldtrue": {
+      "01": "Prawdziwek. Sto lat trzymania."
+    },
+    "quorum": {
+      "01": "Szesnaście tysięcy trzy. Były cztery."
+    },
+    "rating": {
+      "01": "Trzy czegoś mierzą przenos."
+    },
+    "refusal": {
+      "01": "Nic tego nie zamyka. Nigdy nie zamknęło."
+    },
+    "sagsmith": {
+      "01": "Stemplarz podpiera to, czego nie zamknie.",
+      "props": {
+        "01": "Ułożone pewniki trzymają dach."
+      }
+    },
+    "secondlip": {
+      "01": "To samo zwierzę wynurza się niżej."
+    },
+    "several": {
+      "01": "Kilkoro piją. Część jest gdzie indziej."
+    },
+    "stray": {
+      "other": {
+        "01": "Inny zbieg. Był już jedenastoma rzeczami."
+      }
+    },
+    "thousandfoot": {
+      "01": "Nikt nie policzył go dwa razy tak samo."
+    },
+    "tolerance": {
+      "mark": {
+        "01": "Tablica to kreska. Rozszerza się."
+      }
+    },
+    "unattributed": {
+      "01": "Dwieście lat zamyka własne stwierdzenie."
+    },
+    "vantis": {
+      "remainder": {
+        "01": "Ćwierć Vantis nie chce upaść."
+      },
+      "stop": {
+        "01": "Te wieże kończą się na upadłym stwierdzeniu."
+      }
+    },
+    "verse": {
+      "runner": {
+        "01": "Biegaczka Wersu mija. Nie zatrzyma się."
+      },
+      "sound": {
+        "01": "Liść Czterdziesty śpiewa. Zawsze śpiewa."
+      }
+    },
+    "walker": {
+      "height": {
+        "01": "Czterdzieści metrów wyżej. Niewzruszona."
+      },
+      "line": {
+        "01": "Solwarka idzie po narysowanej linii."
+      }
+    },
+    "weir": {
+      "mark": {
+        "01": "Jaz przepuszcza powyżej swojej kreski."
+      },
+      "raised": {
+        "01": "Kreska była na czterech. Jest na pięciu."
+      }
+    },
+    "working": {
+      "old": {
+        "01": "Wciąż stoi. Jedenaście tysięcy lat."
+      }
+    },
+    "wren": {
+      "flock": {
+        "01": "Strzyżyki przybywają przed swoim hałasem."
+      },
+      "perch": {
+        "01": "Strzyżyki siadają tylko na prawdziwym."
+      }
+    }
+  },
+  "sign": {
+    "barge": {
+      "01": "DZIEWIĘĆ DZIESIĄTYCH NICZEGO — NA MIELIŹNIE — HANDEL"
+    },
+    "circuit": {
+      "01": "DZIEWIĄTY OBWÓD — KANISTRY ZAPLOMBOWANE — WARTOŚĆ MIĘKNIE",
+      "02": "TYMCZASOWI: JEDENASTU. SKŁADY: BRAK."
+    },
+    "crabs": {
+      "01": "UWAGA NA PRÓG. KRABY SIĘ ODWRACAJĄ."
+    },
+    "division": {
+      "01": "DŁUGI ROZŁAM — 11 km — BRAK PRZĘSŁA"
+    },
+    "edge": {
+      "01": "KRAWĘDŹ. DALEJ ŻADNYCH STWIERDZEŃ."
+    },
+    "field": {
+      "01": "POLE PEWNIKÓW. BIERZ, CO ZASTYGŁO.",
+      "02": "ZOSTAW, CO NIE. TO NIE TWOJE."
+    },
+    "house": {
+      "01": "DOM POSTAWIONY. NIE ODPOSTAWIAĆ.",
+      "02": "PIWNICA. TYLKO OPIEKUNKA. JEST NOŚNA."
+    },
+    "hush": {
+      "01": "CISZA SIĘ PASIE. SZAROŚĆ NA WŁASNE RYZYKO."
+    },
+    "kiln": {
+      "01": "LIŚĆ PIECOWY SZEŚĆ — TYLKO SZKŁO — RĘCE PRECZ"
+    },
+    "kindness": {
+      "01": "UPRZEJMOŚĆ. ZUPA. WARTOŚCI. BEZ OPŁAT.",
+      "02": "TOLERANCJA ±1. WERSJA 4111. WYWIESZANA CODZIENNIE."
+    },
+    "leafnine": {
+      "01": "LIŚĆ DZIEWIĄTY — TRZY PRZENOSY — BRAK SKŁADU"
+    },
+    "leafninealso": {
+      "01": "LIŚĆ DZIEWIĄTY TEŻ — 400 m — SPORNY"
+    },
+    "quorum": {
+      "01": "KWORUM 16 004. DZWON ZABIŁ NA WIOSNĘ."
+    },
+    "verse": {
+      "01": "SZTAFETA WERSU. NIE ZAGADYWAĆ BIEGACZY."
+    },
+    "weir": {
+      "01": "JAZ W UŻYCIU. NIE KOŃCZYĆ ZDAŃ.",
+      "02": "KRESKA USTAWIONA NA CZTERY. NIE PODNOSIĆ."
+    }
+  },
+  "lore": {
+    "always": {
+      "01": "Niektóre stwierdzenia są prawdziwe dla każdej wartości i stoją, zanim ktokolwiek przyjdzie. Margines nazywa takie zawsze, uważa je za lekko żenujące i mimo to na nich buduje."
+    },
+    "bell": {
+      "01": "Dzwon wisi pod Liściem Pierwszym i bije raz za każdy liść, który przestał być prawdziwy. W tym roku zabił trzydzieści siedem razy. Nikomu nigdy nie trzeba było tłumaczyć, co to znaczy."
+    },
+    "bollard": {
+      "01": "Łuk na czele tego liścia i łuk nad polem pewników to dwa końce jednego zwierzęcia. Mierniczy ustalił to cztery pokolenia temu, przy powszechnej zgodzie i braku szczególnego zainteresowania. Nikt nie zmienił nazw, bo nazwy są przydatne, i od tamtej pory nikt nie ustalił o nim niczego więcej. Zostało mu może osiemdziesiąt lat liścia do przejścia."
+    },
+    "carrywren": {
+      "01": "Strzyżyki przenosowe piją z przenosów i wskutek tego lecą nieco szybciej, niż są."
+    },
+    "circuit": {
+      "01": "Dziewiąty Obwód prowadzi jedenastu Tymczasowych przez czterdzieści liści i na żadnym nie trzyma składu. Poznasz dwoje."
+    },
+    "cutters": {
+      "01": "Krajacze nie mówią o sobie w pierwszej osobie podczas cięcia: nikt nie mówi ja, nikt nie odmienia czasownika na siebie, mówi się bezosobowo. Zapytaj któregoś dlaczego, a pokaże ci dłoń."
+    },
+    "edgewake": {
+      "01": "Pielgrzymi przychodzą na krawędź, żeby liczyć wieże Vantis. Żadne dwa rachunki nigdy się nie zgodziły. Czuwający uważają to za wynik, nie za porażkę."
+    },
+    "flatleaf": {
+      "01": "Liść Dwieście Sześć to jedno stwierdzenie wielkości liścia i jest największym prawdziwym zdaniem w Marginesie, i jest podłogą, i nikt nie wie, czego był podłogą."
+    },
+    "hush": {
+      "01": "Cisza je szarość. Tam, gdzie się pasła, przybliżonej ściany po prostu już nie ma, a dziura jest uczciwa. Wystarczalność ma na to formularz i klasyfikuje ją jako pogodę."
+    },
+    "leafninealso": {
+      "01": "Liść Dziewiąty Też oderwał się od Liścia Dziewiątego tysiąc sto lat temu i zatrzymał nazwę. Oba roszczenia są w toku rozpatrywania. Wystarczalność zaproponowała poszerzenie nazwy."
+    },
+    "mark": {
+      "01": "Zastawka ustawiona na kreskę nie stoi równo i nie ma stać. Przechyla się ku temu, co przepuszcza, a zastawka, która przestała się przechylać, przestała kogokolwiek przepuszczać."
+    },
+    "nearlies": {
+      "01": "Przenosy płyną ku temu, co jest prawie prawdziwe, więc Prawiaki nęcą swoje żyłki zdaniami, których celowo nie kończą. Półmówca, który dokończy jedno przy jazie, stawia kolejkę."
+    },
+    "nine": {
+      "hundred": {
+        "01": "Liść Czterdziesty utrzymuje się w powietrzu dzięki dziewięciuset osobom śpiewającym na zmiany. Nie przerwały od sześciu pokoleń. Ich zmiana warty to święto."
+      }
+    },
+    "refusal": {
+      "01": "Stwierdzenie, którego żadna wartość nie zamyka, nazywa się odmową. Nazwa Liścia Dziewiątego jest jedną z nich: trzymają ją dwa liście, żadna wartość jej nie rozstrzyga, a Wystarczalność zaproponowała poszerzenie nazwy."
+    },
+    "remainder": {
+      "01": "Reszta wciąż stoi, bo jej stwierdzenie spisano tak źle, że nikomu nie udało się go także obalić."
+    },
+    "sagsmith": {
+      "01": "Stemplarz nie potrafi zamknąć stwierdzenia i nie udaje, że potrafi. Stempluje. Każdy szary dach w Marginesie stoi na czyichś ułożonych pewnikach i czyjejś cierpliwości."
+    },
+    "several": {
+      "01": "Kilkoro nigdy nie policzono, więc Margines poddał się i zmienił zamiast tego gramatykę: kilkoro piją. To, że część jednego jest po drugiej stronie liścia, nie czyni z niego dwóch, a mierniczy, którzy twierdzili inaczej, są powodem, dla którego to słowo istnieje."
+    },
+    "solvary": {
+      "01": "Solwarii brakuje jakichś dziewięciu tysięcy ludzi. Nigdy nikogo nie odprawiła; po prostu nie ma kogo oddelegować, żeby stał obok ciebie, gdy zamykasz pierwsze."
+    },
+    "stray": {
+      "01": "Zbieg to niewiadoma, która wymknęła się swojemu stwierdzeniu. Nie da się go zaokrąglić, dopóki pozostaje nierozwiązany, co znaczy, że najbezpieczniejsze możliwe życie zbiega to takie, w którym nigdy niczym nie jest.",
+      "rounded": {
+        "01": "Zbieg zaokrąglony do końca nie zostaje zniszczony. Staje się wartością: określoną, trwałą, zarchiwizowaną. Nikt w Marginesie nie nazywa tego śmiercią i to jest ta część, z którą ludziom trudno."
+      }
+    },
+    "tare": {
+      "01": "Tare latają na stwierdzeniu o własnej masie i dlatego znają ciężar wszystkiego, co posiadają, łącznie z butami, łącznie z tobą. Pogrzeb u Tare jest odejmowaniem."
+    },
+    "thousandfoot": {
+      "01": "Żadnego tysiąconoga nie policzono dwa razy z tym samym wynikiem. Trzech mierniczych odeszło przez to na emeryturę."
+    },
+    "tolerance": {
+      "01": "Tolerancja jest kreską, a kreska jest stwierdzeniem jak każde inne, co czyni ją największym stojącym stwierdzeniem w Marginesie. Wywiesza się ją, zamiast ogłaszać, i zmienia, zamiast rozstrzygać."
+    },
+    "warden": {
+      "01": "Strażnik to Piąty Szczebel, a Piąty Szczebel to ten, na którym człowiek może ustawić własną kreskę. Zanim Solwaria stworzyła ten Szczebel, w Marginesie było dokładnie jedno ciało, które mogło, i wciąż to ono to robi."
+    }
+  }
+}

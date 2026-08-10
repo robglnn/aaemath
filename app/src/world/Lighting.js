@@ -2,69 +2,105 @@ import * as THREE from "three";
 import { publish } from "../core/Introspect.js";
 import { config } from "../core/Config.js";
 import { signals } from "../core/Signals.js";
-import { materials, shared, roleColor, roleHex, MAX_RES, MAX_GROUND } from "./Materials.js";
+import {
+  materials,
+  shared,
+  roleColor,
+  roleHex,
+  buildBoard,
+  facetAudit,
+  KEY_HEX,
+  FILL_SKY_HEX,
+  FILL_GROUND_HEX,
+  BOUNCE_HEX,
+} from "./Materials.js";
 import palette from "../../../design/palette.json";
-import { section } from "../core/paletteCompat.js";
 
 /**
- * Lighting — the rig from `design/art-direction.md` §2, and the one job a renderer will not do
- * for you: making things look *lit* rather than *illuminated*.
+ * Lighting — the rig from `design/art-direction.md` §3, which is the section that decides whether
+ * flat shading reads as a shipped stylised game or as a WebGL tutorial.
  *
- * Four lights, and anything past four is a failure to commit:
+ * **This file was rewritten for `reference/target-lowpoly.png`.** Everything the painterly revision
+ * did is now banned by §5's global list and is gone rather than softened: no `PMREMGenerator`, no
+ * `scene.environment`, no env map at any intensity, no ACES shoulder, no exposure control, no
+ * violet shadow family. What is here instead:
  *
- *   key      `sky.sun`      #FFE8A0   1.00   world-fixed bearing, elevation +8°
- *   fill     `sky.zenith`   #8DACBC   0.14   hemisphere, up
- *   bounce   lit rock       #8A5B3E   0.06   from below, −35°
- *   kick     `resonance.core` #2FE3D6 0.08   opposite the key, low, −15° — the rim that
- *                                            separates a silhouette from the background
+ *   key      #FFE3B8   1.00 x K   elevation +9deg, azimuth world-fixed        the low sun
+ *   fill     sky #66B3FF / ground #2A1F16, derived below                      the sky
+ *   bounce   #8A5B3E   0.05 x K   from -40deg, on the key's bearing           lit ground
+ *   accent   crystal.hot          pooled PointLights, capped by §5.4          crystal and carries
  *
- * Three things here are not obvious and are the reason a first draft looks wrong:
+ * plus a **rim**, which is not a fifth light: it is a world-fixed N.L term inside `Materials.js`'s
+ * shadow family that lifts the value of a shadowed face turned toward the anti-sun sky, without
+ * moving its hue or saturation. It is what keeps a faceted silhouette off the sky, and §12.1's ban
+ * is on a *Fresnel* rim — there is no view vector anywhere in it.
  *
- *  * **The sun the sky draws and the sun the shadows come from are not the same sun.** §2: the key
- *    sits at elevation +8°, and cast shadows are authored at 3.0–4.0× object height — which is a
- *    16° sun. "The painting cheats and so should we." So the *shading* key is at +8° and a second,
- *    zero-intensity directional at +16° owns the shadow map. It is the only shadow caster in the
- *    scene, which is also what lets `Materials.js` read its mask out of directional shadow slot 0.
+ * Four things here are not obvious, and each of them is a first draft looking wrong:
  *
- *  * **A contact shadow is a separate mechanism from a cast shadow.** Anti-pattern 4 is the number
- *    one reason a character floats, and anti-pattern 20 is the reflex fix for anti-pattern 4 making
- *    it worse: a big constant `shadow.bias` peter-pans the shadow off the feet. So this rig uses a
- *    tightly fitted, texel-snapped shadow camera with a *normal-offset* bias, and adds an explicit
- *    grounder occlusion field (`palette.json → materials.contactAO`: ≥45% darkening at the contact,
- *    recovering over 0.35 m) that any piece can feed with one signal or one `userData` flag.
+ *  * **The sun the sky draws and the sun the shadows come from are not the same sun.** §3.1 puts
+ *    the key at +9deg but authors cast-shadow length at 3.0-4.0x object height, which is a 16deg
+ *    sun. "The target cheats; so do we." So the shading key stands at +9deg and casts nothing, and
+ *    two zero-intensity directionals at +16deg own the shadow maps. `Materials.js` reads their masks
+ *    out of directional shadow slots 0 and 1 and subtracts exactly what three added for the key.
  *
- *  * **Ambient is an environment probe, not a constant.** Anti-pattern 2 (uniform ambient) kills
- *    §3 outright and anti-pattern 18 (metal with no IBL) turns the hero into a black hole. The sky
- *    gradient is built here from `palette.json`, PMREM'd in-engine at boot, and installed as
- *    `scene.environment`.
+ *  * **A contact shadow is a texel-density problem, not a bias problem.** No contact shadow is the
+ *    number one reason a character looks like it is floating, and the reflex fix — a big constant
+ *    `shadow.bias` — peter-pans the shadow off the feet and makes it worse. So the rig runs two
+ *    cascades: a tight near one fitted around the player (about 1.5 cm per texel) and a far one for
+ *    the world, both texel-snapped in WORLD space so shadows do not swim as the camera translates.
  *
- * Publishes `world:sun` so the sky, the post stack and anything else that needs to agree with the
- * light can read it instead of guessing.
+ *  * **The intensities are calibrated against a measurement, not against a ratio in a table.** §3.2
+ *    is explicit: "Calibrate by capturing and measuring, never by dividing two light intensities."
+ *    See `_deriveRig()` — and see the note there about §3.1's "0.229 x key", which is a *measured
+ *    shadow-to-lit ratio on a ground plane* and gives the wrong answer read as an intensity ratio.
+ *
+ *  * **There is no tonemap.** §3.5: the value ladder in §1.2 is an undistorted cosine, which is only
+ *    possible with a linear path from N.L to the final linear value. A filmic shoulder compresses
+ *    the top of that ladder and the facets stop reading as facets. The palette is the grade.
+ *
+ * Publishes `world:sun` so the sky, the post stack and anything else that must agree with the light
+ * reads it instead of guessing.
  */
 
-const TOD = section(palette, "motion").timeOfDay;
+const TOD = palette.motion.timeOfDay;
 const LETHIS = TOD.lethisVariability;
-const CONTACT = section(palette, "materials").contactAO;
 
-// The Lethis drive: mutually prime periods, none shorter than 40 s (§15.7). A single sine is the
-// one implementation the fiction forbids — a player with a stopwatch would pin the star's period
-// in ninety seconds, and eleven thousand four hundred years of not pinning it is the joke.
+// The Lethis drive: mutually prime periods, none shorter than 40 s. A single sine is the one
+// implementation the fiction forbids — a player with a stopwatch would pin the star's period in
+// ninety seconds, and eleven thousand four hundred years of not pinning it is the joke.
 const LETHIS_PERIODS = [41, 67, 113, 269, 617];
 
-const RELATIVE = {
-  key: 1.0,
-  fill: 0.14,
-  bounce: 0.06,
-  kick: 0.08,
-};
+/**
+ * **K = PI, and that is a derivation rather than a taste.**
+ *
+ * three's Lambert accumulates `dotNL * lightColour * intensity * albedo / PI`. §3.2 derives every
+ * albedo in this project by dividing a facet's *rendered* colour by the key's colour, which is only
+ * correct if a facet whose normal points straight at the key renders at exactly `albedo x keyColour`
+ * — i.e. if `intensity / PI == 1`. So the key's intensity is PI, exactly, and `Materials.albedoFrom`
+ * and this constant are two halves of one equation. Change either and both are wrong.
+ */
+const KEY_INTENSITY = Math.PI;
 
-/** Base scene-referred key intensity. Calibrated by capture — see review/measure/P11.mjs. */
-const KEY_INTENSITY = 3.1;
-/** ACES exposure. `rock.albedo` under full key must land at display Y 0.42 ± 0.05 (§2). */
-const EXPOSURE = 0.92;
+/** §3.2's first witness: one ground plane, lit vs its own cast shadow, Y 0.1310 vs 0.0300. */
+const GROUND_SHADOW_RATIO = 4.36;
 
-const BOUNCE_HEX = 0x8a5b3e; // §2's warm bounce; the only rig colour with no palette role
-const SHADOW_ELEVATION_DEG = 16.0; // cot(16°) = 3.49 x object height — inside §2's 3.0–4.0 band
+const BOUNCE_RELATIVE = 0.05; // §3.1
+const BOUNCE_ELEVATION_DEG = -40; // §3.1: "up, from -40deg"
+
+/**
+ * How far the rim may lift a shadowed face, as a multiple of `rock.shadow`.
+ *
+ * Capped at the spread the target itself carries across its three §3.4 shadow witnesses:
+ * rock Y 0.0227, shelf underside 0.0245, character armour 0.0290 -> 0.0290 / 0.0227 = **1.28**.
+ * Anything above that and the shadow family stops being one family, which §3.3 forbids.
+ */
+const RIM_GAIN = 0.28;
+const RIM_ELEVATION_DEG = 11;
+const RIM_AZIMUTH_OFFSET_DEG = 180;
+
+/** §5.4 — every emitter carries a real PointLight, capped at 6 m so the accent marks and never lights. */
+const ACCENT_RADIUS_MAX = 6;
+const ACCENT_POOL = { potato: 0, low: 2, medium: 4, high: 6, ultra: 8 };
 
 function dirFromAngles(elevationDeg, azimuthDeg, out = new THREE.Vector3()) {
   const e = THREE.MathUtils.degToRad(elevationDeg);
@@ -73,7 +109,9 @@ function dirFromAngles(elevationDeg, azimuthDeg, out = new THREE.Vector3()) {
   return out.set(Math.cos(e) * Math.sin(a), Math.sin(e), Math.cos(e) * Math.cos(a)).normalize();
 }
 
-// ---------------------------------------------------------------------------- sky gradient
+const REC709 = (c) => 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+
+// ---------------------------------------------------------------------------- stand-in sky
 
 const SKY_VERT = /* glsl */ `
 varying vec3 vDir;
@@ -84,47 +122,49 @@ void main() {
 `;
 
 /**
- * The sky as a photometric source, not as wallpaper. It has to pass through `sky.pivot`'s
- * near-neutral crossover (S < 0.14) or it reads as a two-colour lerp — art-direction.md §9 calls
- * that "the single feature that stops the sky reading as a shader default".
+ * §6.1's ramp, evaluated analytically and dithered — never a gradient texture, which bands at 8 bits.
+ * Six stops from `sky.zenith` through the near-neutral `sky.pivot` (S 0.149, the saturation minimum
+ * of the whole column and the single feature that stops a sky reading as a two-colour lerp) down to
+ * `sky.horizon`, plus §6.1's horizontal run: 2.03 : 1 from the sun end of frame to the far end.
  *
- * P10 owns the real sky. This is the lighting piece's probe source, and it doubles as a stand-in
- * backdrop only when no sky system is mounted, so a capture is never a black frame.
+ * **P10 owns the real sky, with its cloud slabs.** This stands in only when no sky system is
+ * mounted, so that a capture of the light is never a black frame, and it steps aside the moment P10
+ * lands. It carries no cloud slabs on purpose — those are P10's and guessing at them here would
+ * fight the piece that owns them.
  */
 const SKY_FRAG = /* glsl */ `
 varying vec3 vDir;
-uniform vec3 uZenith;
-uniform vec3 uUpper;
-uniform vec3 uPivot;
-uniform vec3 uHorizon;
-uniform vec3 uUnder;
-uniform vec3 uSunColor;
-uniform vec3 uAurora;
+uniform vec3 uZenith, uHigh, uPivot, uWarm, uLow, uHorizon, uAntisun, uSun;
 uniform vec3 uSunDir;
 uniform float uLevel;
+
+vec3 ramp( float t ) {
+	// t: 1 at zenith, 0 at the horizon. The stops are §6.1's per-row medians, re-expressed as
+	// fractions of the sky's own height so the ramp does not depend on the camera's framing.
+	if ( t > 0.72 ) return mix( uHigh, uZenith, smoothstep( 0.72, 1.0, t ) );
+	if ( t > 0.55 ) return mix( uPivot, uHigh, smoothstep( 0.55, 0.72, t ) );
+	if ( t > 0.38 ) return mix( uWarm, uPivot, smoothstep( 0.38, 0.55, t ) );
+	if ( t > 0.20 ) return mix( uLow, uWarm, smoothstep( 0.20, 0.38, t ) );
+	return mix( uHorizon, uLow, smoothstep( 0.0, 0.20, t ) );
+}
 
 void main() {
 	vec3 d = normalize( vDir );
 	float h = clamp( d.y, -1.0, 1.0 );
-	vec3 c;
-	if ( h >= 0.0 ) {
-		float t = pow( h, 0.55 );
-		c = t > 0.62 ? mix( uUpper, uZenith, smoothstep( 0.62, 1.0, t ) )
-		  : t > 0.30 ? mix( uPivot, uUpper, smoothstep( 0.30, 0.62, t ) )
-		  :            mix( uHorizon, uPivot, smoothstep( 0.0, 0.30, t ) );
-	} else {
-		// There is no ground under the leaves (world.md §2.3). Below the horizon the sky keeps
-		// going and only warms slightly, which is the light a leaf's underside is lit by.
-		c = mix( uHorizon, uUnder, smoothstep( 0.0, -0.55, h ) );
-	}
-	// Aurora: a TINT, never a colour. S <= 0.22 by construction.
-	float band = exp( -pow( ( h - 0.42 ) / 0.16, 2.0 ) ) * 0.55
-	           + exp( -pow( ( h - 0.24 ) / 0.09, 2.0 ) ) * 0.30;
-	c = mix( c, uAurora, band * 0.16 );
-	// The sun's glow. The disc itself is P10's; this is the halo the probe needs to be warm.
-	float sd = max( dot( d, normalize( uSunDir ) ), 0.0 );
-	c += uSunColor * pow( sd, 220.0 ) * 5.0 + uSunColor * pow( sd, 6.0 ) * 0.32;
-	gl_FragColor = vec4( c * uLevel, 1.0 );
+	vec3 c = ramp( clamp( pow( max( h, 0.0 ), 0.62 ), 0.0 , 1.0 ) );
+
+	// The sky also runs horizontally: a sky authored as a function of altitude alone loses half the
+	// drama and all of the direction (§6.1).
+	float toSun = clamp( dot( normalize( vec3( d.x, 0.0, d.z ) ), normalize( vec3( uSunDir.x, 0.0, uSunDir.z ) ) ) * 0.5 + 0.5, 0.0, 1.0 );
+	c = mix( mix( uAntisun, c, 0.55 ), c, smoothstep( 0.0, 0.85, toSun ) );
+	c += uSun * pow( toSun, 26.0 ) * ( 1.0 - smoothstep( 0.0, 0.36, h ) ) * 0.55;
+
+	// There is no ground under the leaves (world.md §2.3): below the horizon the sky keeps going.
+	c = mix( c, uHorizon * 0.72, smoothstep( 0.0, -0.45, h ) );
+
+	// §3.5 / §12.12 — dither at 8-bit quantisation or a 1536-tall ramp bands visibly.
+	float dither = fract( sin( dot( gl_FragCoord.xy, vec2( 12.9898, 78.233 ) ) ) * 43758.5453 );
+	gl_FragColor = vec4( c * uLevel + ( dither - 0.5 ) * 0.0022, 1.0 );
 }
 `;
 
@@ -139,11 +179,10 @@ export class Lighting {
 
     const q = new URLSearchParams(location.search);
     this.baseAzimuth = Number(q.get("sunAzimuth") ?? opts.azimuthDeg ?? 118);
-    this.timeOfDay = clamp01(Number(q.get("tod") ?? opts.timeOfDay ?? 0.18));
+    this.timeOfDay = clamp01(Number(q.get("tod") ?? opts.timeOfDay ?? 0.25));
     this.autoTime = !(q.has("tod") || opts.timeOfDay !== undefined);
     this.lethisEnabled = q.get("lethis") !== "0";
 
-    this.exposure = Number(q.get("exposure") ?? opts.exposure ?? EXPOSURE);
     this.keyBase = Number(q.get("keyIntensity") ?? opts.keyIntensity ?? KEY_INTENSITY);
     this.keyScale = 1;
     this._keyScaleTarget = 1;
@@ -153,23 +192,22 @@ export class Lighting {
 
     this._keyDir = new THREE.Vector3();
     this._shadowDir = new THREE.Vector3();
-    this._resonance = new Map();
-    this._grounders = new Map();
-    this._scanTimer = 0;
+    this._rimDir = new THREE.Vector3();
+    this._accents = new Map();
     this._sunTimer = 0;
-    this._motion = 0;
-    this._lastCamPos = new THREE.Vector3();
-    this._lastCamQuat = new THREE.Quaternion();
     this._removedPlaceholders = 0;
     this._offs = [];
+    this._board = null;
+    this._shadowTint = roleColor("rock.shadow"); // §3.4's convergence colour, decoded once
+    this._accentColours = new Map();
 
+    this.rig = this._deriveRig();
+
+    this._takeOverRenderer();
     this._buildLights();
     this._takeOverPlaceholders();
-    this._buildSky();
-    this._buildEnvironment();
+    this._buildStandInSky();
     this._bindSignals();
-
-    kernel.renderer.toneMappingExposure = this.exposure;
 
     this._apply(0);
     this._emitSun();
@@ -177,65 +215,148 @@ export class Lighting {
     publish("lighting", () => this.report());
   }
 
+  // -------------------------------------------------------------------------- derivation
+
+  /**
+   * The rig's intensities, derived from §3.2's measured witness rather than typed.
+   *
+   * §3.1's table says the fill is "0.229 x key". **Read as an intensity ratio between a
+   * `DirectionalLight` and a `HemisphereLight` that number is wrong by a factor of 2.6**, and it is
+   * worth knowing why, because it is the kind of number a critic will check: 0.229 is §3.2's
+   * measured *shadow-to-lit ratio on a ground plane* (Y 0.0300 / 0.1310 = 0.229, i.e. the 4.36
+   * witness written the other way up). An up-facing ground plane only receives sin(9deg) = 0.156 of
+   * the key, so an intensity ratio of 0.229 puts that plane at a lit-to-shadow ratio of 2.29 — half
+   * of what the target measures, and a visibly gloomy frame.
+   *
+   * So: solve for the fill that reproduces the witness.
+   *
+   *     lit    = K * sin(elev) * Y(key) / PI  +  F * Y(fillSky) / PI
+   *     shadow =                                F * Y(fillSky) / PI
+   *     shadow / lit = 1 / 4.36
+   *
+   * §3.2 also says to calibrate by capturing and measuring, which is what
+   * `review/measure/P11.mjs` claim K1 does against the real frame.
+   */
+  _deriveRig() {
+    const key = new THREE.Color().setHex(KEY_HEX, THREE.SRGBColorSpace);
+    const fillSky = new THREE.Color().setHex(FILL_SKY_HEX, THREE.SRGBColorSpace);
+    const bounce = new THREE.Color().setHex(BOUNCE_HEX, THREE.SRGBColorSpace);
+    const K = this.keyBase;
+    const sinE = Math.sin(THREE.MathUtils.degToRad(TOD.keyElevationDeg));
+    const shadowShare = 1 / GROUND_SHADOW_RATIO;
+    // F * Y(fillSky) = (shadowShare / (1 - shadowShare)) * K * sin(elev) * Y(key)
+    const fill = ((shadowShare / (1 - shadowShare)) * K * sinE * REC709(key)) / REC709(fillSky);
+    return {
+      keyIntensity: K,
+      fillIntensity: fill,
+      fillRelative: fill / K,
+      bounceIntensity: K * BOUNCE_RELATIVE,
+      colours: { key, fillSky, bounce },
+      groundShadowRatioTarget: GROUND_SHADOW_RATIO,
+    };
+  }
+
   // -------------------------------------------------------------------------- construction
+
+  /**
+   * §3.5 and §4, and they belong to the light rig rather than to the kernel: a filmic shoulder and a
+   * soft shadow kernel are lighting decisions, and the kernel ships neutral defaults for whoever
+   * boots first. Surgical, three properties, no restructuring of a shared file.
+   */
+  _takeOverRenderer() {
+    const r = this.kernel.renderer;
+    r.toneMapping = THREE.NoToneMapping; // §3.5 — the palette is the grade
+    r.toneMappingExposure = 1;
+    r.outputColorSpace = THREE.SRGBColorSpace;
+    // PCFSoft ignores `shadow.radius` and blurs by a fixed kernel; §4 wants a hard edge with 1-2 px
+    // of antialiasing on it, so take the radius back.
+    r.shadowMap.type = THREE.PCFShadowMap;
+    r.shadowMap.enabled = config.tier.shadows;
+  }
 
   _buildLights() {
     const tier = config.tier;
+    const rig = this.rig;
 
-    // 1. The shadow sun. Zero intensity: it exists only to own the shadow map, at the steeper
-    //    elevation §2 authors cast-shadow length from. It is added FIRST and is the only shadow
-    //    caster, so it holds directional shadow slot 0 for Materials.js.
-    this.shadowSun = new THREE.DirectionalLight(0xffffff, 0);
-    this.shadowSun.name = "vs.shadowSun";
-    this.shadowSun.castShadow = tier.shadows;
-    const res = Math.min(4096, tier.shadowResolution);
-    this.shadowSun.shadow.mapSize.set(res, res);
-    this.shadowSun.shadow.bias = -0.00012;
-    this.shadowSun.shadow.normalBias = 0.035; // normal-offset, NOT a big constant bias (§12.20)
-    this.shadowSun.shadow.radius = 2.2;
-    this.shadowSun.shadow.camera.near = 1;
-    this.shadowSun.shadow.camera.far = 420;
-    this.shadowRadius = 30;
-    this.root.add(this.shadowSun, this.shadowSun.target);
+    // 1. The shadow sun, in two cascades. Zero intensity: these exist only to own the shadow maps,
+    //    at the steeper elevation §3.1 authors cast-shadow length from. They are added FIRST and are
+    //    the only shadow casters in the scene, which is what lets Materials.js read their masks out
+    //    of directional shadow slots 0 (near) and 1 (far) — three sorts shadow-casting lights first
+    //    and its sort is stable, so scene order decides the slots.
+    const cascades = Math.max(1, Math.min(2, tier.shadowCascades ?? 1));
+    this.cascades = [];
+    const plan = cascades === 1 ? [{ radius: 34, res: 1 }] : [
+      { radius: 13, res: 1 }, // near: the player's own contact shadow lives here
+      { radius: 58, res: 1 }, // far: the world
+    ];
+    plan.forEach((c, i) => {
+      const light = new THREE.DirectionalLight(0xffffff, 0);
+      light.name = `vs.shadowSun.${i === 0 && cascades > 1 ? "near" : cascades > 1 ? "far" : "single"}`;
+      light.castShadow = tier.shadows;
+      const res = Math.min(2048, Math.max(1024, tier.shadowResolution));
+      light.shadow.mapSize.set(res, res);
+      // Normal-offset bias, not a big constant depth bias: a constant bias peter-pans the shadow off
+      // the feet, which is the exact failure this rig is built to avoid (§12.1 no.5's neighbour).
+      light.shadow.bias = -0.00016;
+      light.shadow.normalBias = (c.radius * 2) / res * 1.1; // ~1.1 texels, in metres
+      light.shadow.radius = 1.1;
+      light.shadow.camera.near = 0.5;
+      light.shadow.camera.far = c.radius * 8 + 60;
+      light.shadow.camera.left = -c.radius;
+      light.shadow.camera.right = c.radius;
+      light.shadow.camera.top = c.radius;
+      light.shadow.camera.bottom = -c.radius;
+      light.shadow.camera.updateProjectionMatrix();
+      this.root.add(light, light.target);
+      this.cascades.push({ light, radius: c.radius });
+    });
+    this.shadowSun = this.cascades[0].light;
+    shared.uVsCascade.value.set(
+      this.cascades.length > 1 ? this.cascades[0].radius * 0.92 : 1e9,
+      this.cascades[this.cascades.length - 1].radius
+    );
 
-    // 2. The key.
-    this.key = new THREE.DirectionalLight(roleColor("sky.sun"), this.keyBase * RELATIVE.key);
+    // 2. The key. It casts nothing; Materials.js applies the shadow mask to it by subtraction.
+    this.key = new THREE.DirectionalLight(rig.colours.key.clone(), rig.keyIntensity);
     this.key.name = "vs.key";
     this.key.castShadow = false;
     this.root.add(this.key, this.key.target);
 
-    // 3. The hemisphere fill: cool sky above, warm bounce below. Anti-pattern 2 is a constant
-    //    ambient, which flattens §3's shadow families into one grey.
+    // 3. The sky, as a photometric source. §3.4: the fill tint #66B3FF is derived from the target by
+    //    dividing a shadowed ground triplet by its lit one, sits nowhere near the Planckian locus,
+    //    and that is exactly why the shadows are a colour instead of a darkness. A grey ambient
+    //    here would kill §3.4 outright (anti-pattern 5).
     this.fill = new THREE.HemisphereLight(
-      roleColor("sky.zenith"),
-      new THREE.Color().setHex(BOUNCE_HEX, THREE.SRGBColorSpace),
-      this.keyBase * RELATIVE.fill
+      rig.colours.fillSky.clone(),
+      new THREE.Color().setHex(FILL_GROUND_HEX, THREE.SRGBColorSpace),
+      rig.fillIntensity
     );
     this.fill.name = "vs.fill";
+    this.fill.position.set(0, 1, 0); // three takes the hemisphere axis from the light's position
     this.root.add(this.fill);
 
-    // 4. The warm bounce off lit rock, from below.
-    this.bounce = new THREE.DirectionalLight(
-      new THREE.Color().setHex(BOUNCE_HEX, THREE.SRGBColorSpace),
-      this.keyBase * RELATIVE.bounce
-    );
+    // 4. The warm bounce off lit ground, from below.
+    this.bounce = new THREE.DirectionalLight(rig.colours.bounce.clone(), rig.bounceIntensity);
     this.bounce.name = "vs.bounce";
     this.root.add(this.bounce, this.bounce.target);
 
-    // 5. The resonance kick — opposite the key, low. This is the rim that keeps a dark silhouette
-    //    off a dark background, and it is why `hero.undersuit` measures teal.
-    this.kick = new THREE.DirectionalLight(
-      roleColor("resonance.core"),
-      this.keyBase * RELATIVE.kick
-    );
-    this.kick.name = "vs.kick";
-    this.root.add(this.kick, this.kick.target);
+    // 5. The accent pool (§5.4). Fixed size, allocated once: NUM_POINT_LIGHTS is baked into every
+    //    compiled program, so a pool that grows at runtime recompiles the entire world mid-play.
+    this.accentPool = [];
+    const poolSize = ACCENT_POOL[tier.id] ?? 4;
+    for (let i = 0; i < poolSize; i++) {
+      const p = new THREE.PointLight(roleColor("crystal.hot"), 0, ACCENT_RADIUS_MAX, 2);
+      p.name = `vs.accent.${i}`;
+      p.castShadow = false;
+      this.root.add(p);
+      this.accentPool.push(p);
+    }
   }
 
   /**
-   * `boot/10-scaffold.js` is explicitly temporary and adds placeholder lights so that early
-   * captures are not black. The lighting piece is what replaces them; two rigs in one scene is
-   * two key lights and no art direction. Its geometry stays — something has to be lit.
+   * `boot/10-scaffold.js` is explicitly temporary and adds placeholder lights so early captures are
+   * not black. This piece is what replaces them; two rigs in one scene is two key lights and no art
+   * direction. Its geometry stays — something has to be lit.
    */
   _takeOverPlaceholders() {
     const strays = [];
@@ -248,154 +369,92 @@ export class Lighting {
     }
   }
 
-  _buildSky() {
-    const uniforms = {
+  _buildStandInSky() {
+    const mounted = this.kernel.byName.has("sky") || this.scene.background?.isTexture;
+    this.standIn = !mounted;
+    if (!this.standIn) return;
+
+    this.skyUniforms = {
       uZenith: { value: roleColor("sky.zenith") },
-      uUpper: { value: roleColor("sky.upper") },
+      uHigh: { value: roleColor("sky.high") },
       uPivot: { value: roleColor("sky.pivot") },
+      uWarm: { value: roleColor("sky.warm") },
+      uLow: { value: roleColor("sky.low") },
       uHorizon: { value: roleColor("sky.horizon") },
-      uUnder: { value: roleColor("rock.warm.low") },
-      uSunColor: { value: roleColor("sky.sun") },
-      uAurora: { value: roleColor("aurora.mint") },
+      uAntisun: { value: roleColor("sky.horizon.antisun") },
+      uSun: { value: roleColor("sky.sun") },
       uSunDir: { value: new THREE.Vector3(0, 1, 0) },
       uLevel: { value: 1 },
     };
-    this.skyUniforms = uniforms;
+    this.dome = new THREE.Mesh(
+      new THREE.SphereGeometry(10, 40, 24),
+      new THREE.ShaderMaterial({
+        vertexShader: SKY_VERT,
+        fragmentShader: SKY_FRAG,
+        uniforms: this.skyUniforms,
+        side: THREE.BackSide,
+        depthWrite: false,
+        depthTest: false,
+        fog: false,
+        toneMapped: true,
+      })
+    );
+    this.dome.name = "vs.skyStandIn";
+    this.dome.renderOrder = -1000;
+    this.dome.frustumCulled = false;
+    this.root.add(this.dome);
+    this.scene.background = null;
 
-    const make = () =>
-      new THREE.Mesh(
-        new THREE.SphereGeometry(10, 32, 20),
-        new THREE.ShaderMaterial({
-          vertexShader: SKY_VERT,
-          fragmentShader: SKY_FRAG,
-          uniforms,
-          side: THREE.BackSide,
-          depthWrite: false,
-          depthTest: false,
-          fog: false,
-          toneMapped: true,
-        })
-      );
-
-    // The probe source always exists; the visible dome only stands in when P10's sky is absent.
-    this.probeScene = new THREE.Scene();
-    this.probeScene.add(make());
-
-    const skyMounted = this.kernel.byName.has("sky") || this.scene.background?.isTexture;
-    this.standIn = !skyMounted;
-    if (this.standIn) {
-      this.dome = make();
-      this.dome.name = "vs.skyStandIn";
-      this.dome.renderOrder = -1000;
-      this.dome.frustumCulled = false;
-      this.root.add(this.dome);
-      this.scene.background = null;
-      // Anti-pattern 10: distance lerps toward `sky.horizon`, never toward grey.
-      this.scene.fog = new THREE.Fog(roleColor("sky.horizon"), 55, config.tier.drawDistance * 0.85);
-    }
-  }
-
-  /** The environment probe, generated in-engine — never a loaded HDR (§12.18). */
-  _buildEnvironment() {
-    try {
-      const pmrem = new THREE.PMREMGenerator(this.kernel.renderer);
-      pmrem.compileEquirectangularShader();
-      this._envTarget = pmrem.fromScene(this.probeScene, 0, 0.1, 100);
-      this.scene.environment = this._envTarget.texture;
-      this.scene.environmentIntensity = 0.55;
-      materials.setEnvironment(this._envTarget.texture);
-      pmrem.dispose();
-      this.envReady = true;
-    } catch (err) {
-      this.envReady = false;
-      this.envError = String(err?.message || err);
-    }
+    // §7.3 — aerial perspective is "a lerp of the lit value toward sky.horizon while the shadow
+    // value rises to meet it", which is exactly a linear fog to #FFB260. Never toward grey
+    // (anti-pattern 20: fog soup) and never as desaturation (§13 row 11).
+    this.scene.fog = new THREE.Fog(roleColor("sky.horizon"), 42, config.tier.drawDistance * 0.7);
   }
 
   _bindSignals() {
     const on = (name, fn) => this._offs.push(signals.on(name, fn));
 
-    // Anything unresolved — an open socket, a live claim, a carry — pulls nearby shadows to teal
-    // (§3 family c) and must go out when the claim closes (§0.2).
+    // Anything unresolved — an open socket, a live claim, a carry — is an emitter, and §5.4 says an
+    // emitter with no spill is a painted decal (anti-pattern 15).
     on("world:resonance", (p) => {
       if (!p || p.id === undefined) return;
-      if (p.active === false) this._resonance.delete(p.id);
-      else
-        this._resonance.set(p.id, {
-          position: toVec3(p.position),
-          radius: Number(p.radius ?? 6),
-          strength: Number(p.strength ?? 1),
-          eased: this._resonance.get(p.id)?.eased ?? 0,
-        });
-    });
-
-    // Contact occlusion. One signal, or one `userData.vsGrounder = true` on a mesh.
-    on("world:grounder", (p) => {
-      if (!p || p.id === undefined) return;
-      if (p.active === false) this._grounders.delete(p.id);
-      else
-        this._grounders.set(p.id, {
-          object: null,
-          position: toVec3(p.position),
-          radius: Number(p.radius ?? 0.45),
-          strength: Number(p.strength ?? 1),
-        });
-    });
-
-    on("player:spawn", (p) => {
-      if (p?.position) this.addGrounder("player:spawn", toVec3(p.position), 0.5, 1);
+      if (p.active === false) this.removeAccent(p.id);
+      else this.addAccent(p.id, p.position, { radius: p.radius, strength: p.strength });
     });
   }
 
   // -------------------------------------------------------------------------- public API
 
-  /** Register a contact-shadow occluder. `target` may be an Object3D (tracked) or a position. */
-  addGrounder(id, target, radius = 0.45, strength = 1) {
+  /**
+   * Register a live emitter so it spills onto the ground. `target` may be an Object3D (tracked) or a
+   * position. §5.4 caps the radius at 6 m and caps intensity so the spill never lifts a neighbouring
+   * rock facet above Y 0.10 — above that the accent starts lighting the world instead of marking it.
+   */
+  addAccent(id, target, { radius = 4, strength = 1, color = "crystal.hot" } = {}) {
     const isObject = !!target?.isObject3D;
-    this._grounders.set(id, {
+    this._accents.set(id, {
       object: isObject ? target : null,
       position: isObject ? new THREE.Vector3() : toVec3(target),
-      radius,
-      strength,
+      radius: Math.min(ACCENT_RADIUS_MAX, Number(radius) || 4),
+      strength: THREE.MathUtils.clamp(Number(strength) || 0, 0, 1),
+      color,
     });
   }
 
-  removeGrounder(id) {
-    this._grounders.delete(id);
-  }
-
-  /** Register a live resonance source; anything within `radius` takes §3's teal shadow family. */
-  addResonance(id, target, radius = 6, strength = 1) {
-    const isObject = !!target?.isObject3D;
-    this._resonance.set(id, {
-      object: isObject ? target : null,
-      position: isObject ? new THREE.Vector3() : toVec3(target),
-      radius,
-      strength,
-      eased: this._resonance.get(id)?.eased ?? 0,
-    });
-  }
-
-  removeResonance(id) {
-    const e = this._resonance.get(id);
-    if (e) e.strength = 0; // let it ease out — a family that switches hard is a colour pop (§15.5)
+  removeAccent(id) {
+    this._accents.delete(id);
   }
 
   /**
-   * Time of day, 0..1 over `palette.json → motion.timeOfDay.periodMinutes`. The world is one long
-   * dusk and stays one: this moves the key inside ±3° of elevation and ±8° of azimuth and moves
-   * nothing else. Night, noon and a colour-temperature ramp are forbidden by §15.7.
+   * Time of day, 0..1 over `palette.motion.timeOfDay.periodMinutes`. The world is one long dusk and
+   * stays one: this moves the key inside +-2deg of elevation and +-8deg of azimuth and moves nothing
+   * else. Night, noon and a colour-temperature ramp are not in this product.
    */
   setTimeOfDay(t, { auto = false } = {}) {
     this.timeOfDay = clamp01(t);
     this.autoTime = auto;
     this._apply(0);
     this._emitSun();
-  }
-
-  setExposure(e) {
-    this.exposure = e;
-    this.kernel.renderer.toneMappingExposure = e;
   }
 
   // -------------------------------------------------------------------------- simulation
@@ -406,8 +465,8 @@ export class Lighting {
       this.timeOfDay = (this.timeOfDay + step / period) % 1;
     }
 
-    // Lethis. Deterministic in simTime, aperiodic in practice, rate limited so it can never
-    // become a flicker: this is a star breathing, not a lamp failing.
+    // Lethis. Deterministic in simTime, aperiodic in practice, rate limited so it can never become a
+    // flicker: this is a star breathing, not a lamp failing.
     if (this.lethisEnabled) {
       let sum = 0;
       for (const p of LETHIS_PERIODS) sum += Math.sin((2 * Math.PI * simTime) / p);
@@ -423,37 +482,13 @@ export class Lighting {
       1 + LETHIS.intensitySwing
     );
 
-    // Family weights blend over >= 0.25 s on distance, never per frame (§15.5).
-    const ease = Math.min(1, step / 0.28);
-    for (const [id, e] of this._resonance) {
-      e.eased += (e.strength - e.eased) * ease;
-      if (e.strength <= 0 && e.eased < 0.002) this._resonance.delete(id);
-    }
-
     this._apply(step);
   }
 
   frame(dt) {
-    const cam = this.kernel.camera;
-    const moved = cam.position.distanceTo(this._lastCamPos);
-    const turned = 1 - Math.abs(this._lastCamQuat.dot(cam.quaternion));
-    this._lastCamPos.copy(cam.position);
-    this._lastCamQuat.copy(cam.quaternion);
-    // Ramp to the motion roughness floor over 0.15 s and back out; never switch it (§5).
-    const target = moved > 0.004 || turned > 2e-5 ? 1 : 0;
-    const rate = Math.min(1, Math.max(dt, 1 / 240) / 0.15);
-    this._motion += (target - this._motion) * rate;
-    shared.uVsMotion.value = this._motion;
-
-    if (this.dome) this.dome.position.copy(cam.position);
-
-    this._scanTimer -= dt;
-    if (this._scanTimer <= 0) {
-      this._scanTimer = 0.5;
-      this._scanForGrounders();
-    }
-
-    this._fitShadowCamera();
+    if (this.dome) this.dome.position.copy(this.kernel.camera.position);
+    this._assignAccents();
+    this._fitShadowCameras();
   }
 
   // -------------------------------------------------------------------------- internals
@@ -465,43 +500,36 @@ export class Lighting {
 
     dirFromAngles(this.elevationDeg, this.azimuthDeg, this._keyDir);
     dirFromAngles(
-      SHADOW_ELEVATION_DEG + drift * TOD.elevationDriftDeg,
+      TOD.shadowElevationDeg + drift * TOD.elevationDriftDeg,
       this.azimuthDeg,
       this._shadowDir
     );
+    dirFromAngles(RIM_ELEVATION_DEG, this.azimuthDeg + RIM_AZIMUTH_OFFSET_DEG, this._rimDir);
 
     const D = 260;
     this.key.position.copy(this._keyDir).multiplyScalar(D);
     this.key.target.position.set(0, 0, 0);
-    this.key.intensity = this.keyBase * RELATIVE.key * this.keyScale;
+    this.key.intensity = this.rig.keyIntensity * this.keyScale;
 
-    // Bounce comes from below, from lit rock: −35° elevation, on the key's bearing.
-    dirFromAngles(-35, this.azimuthDeg, this.bounce.position).multiplyScalar(D);
+    dirFromAngles(BOUNCE_ELEVATION_DEG, this.azimuthDeg, this.bounce.position).multiplyScalar(D);
     this.bounce.target.position.set(0, 0, 0);
-    this.bounce.intensity = this.keyBase * RELATIVE.bounce * this.keyScale;
+    this.bounce.intensity = this.rig.bounceIntensity * this.keyScale;
 
-    // Kick: opposite the key, low.
-    dirFromAngles(-15, this.azimuthDeg + 180, this.kick.position).multiplyScalar(D);
-    this.kick.target.position.set(0, 0, 0);
-    this.kick.intensity = this.keyBase * RELATIVE.kick;
-
-    this.fill.intensity = this.keyBase * RELATIVE.fill;
+    this.fill.intensity = this.rig.fillIntensity;
 
     if (this.skyUniforms) {
       this.skyUniforms.uSunDir.value.copy(this._keyDir);
       this.skyUniforms.uLevel.value = this.keyScale;
     }
 
-    // Feed the material language.
+    // Feed the material language. One write reaches every material in the world.
     shared.uVsKeyDir.value.copy(this._keyDir);
-    shared.uVsKeyTint.value
+    shared.uVsKeyRadiance.value
       .copy(this.key.color)
-      .multiplyScalar((this.keyBase * RELATIVE.key * this.keyScale) / Math.PI);
-    shared.uVsSkyTint.value.copy(this.fill.color).multiplyScalar(1);
-    shared.uVsBounceTint.value.copy(this.bounce.color).multiplyScalar(1);
+      .multiplyScalar(this.key.intensity / Math.PI);
+    shared.uVsRim.value.set(this._rimDir.x, this._rimDir.y, this._rimDir.z, RIM_GAIN);
+    shared.uVsShadowTint.value.copy(this._shadowTint);
     shared.uVsTime.value += step;
-
-    this._packSources();
 
     this._sunTimer -= step;
     if (this._sunTimer <= 0) {
@@ -510,80 +538,74 @@ export class Lighting {
     }
   }
 
-  _packSources() {
-    let i = 0;
-    const power = shared.uVsResPower.value.set(0, 0, 0, 0);
-    for (const e of this._resonance.values()) {
-      if (i >= MAX_RES) break;
-      if (e.object) e.object.getWorldPosition(e.position);
-      const slot = shared.uVsRes.value[i];
-      slot.set(e.position.x, e.position.y, e.position.z, e.radius);
-      power.setComponent(i, e.eased ?? e.strength);
-      i++;
-    }
-    for (let k = i; k < MAX_RES; k++) shared.uVsRes.value[k].set(0, 0, 0, 0);
-
-    let j = 0;
-    const gpower = shared.uVsGroundPower.value.set(0, 0, 0, 0);
-    for (const g of this._grounders.values()) {
-      if (j >= MAX_GROUND) break;
-      if (g.object) {
-        if (!g.object.parent) continue;
-        g.object.getWorldPosition(g.position);
+  /**
+   * The accent pool is assigned by distance to the camera every frame. A fixed pool means the point
+   * light count never changes, so no program in the world is ever recompiled mid-play — the single
+   * most expensive avoidable hitch a renderer can have.
+   */
+  _assignAccents() {
+    if (!this.accentPool.length) return;
+    const cam = this.kernel.camera.position;
+    const live = [];
+    for (const e of this._accents.values()) {
+      if (e.object) {
+        if (!e.object.parent) continue;
+        e.object.getWorldPosition(e.position);
       }
-      const slot = shared.uVsGround.value[j];
-      slot.set(g.position.x, g.position.y, g.position.z, g.radius);
-      gpower.setComponent(j, g.strength);
-      j++;
+      live.push({ e, d: e.position.distanceToSquared(cam) });
     }
-    for (let k = j; k < MAX_GROUND; k++) shared.uVsGround.value[k].set(0, 0, 0, 0);
-    this._activeGrounders = j;
-    this._activeResonance = i;
-  }
-
-  /** Any mesh can opt into contact occlusion with `userData.vsGrounder = true`, no import. */
-  _scanForGrounders() {
-    this.scene.traverse((o) => {
-      if (!o.userData || o.userData.vsGrounder !== true) return;
-      const id = `scan:${o.uuid}`;
-      if (this._grounders.has(id)) return;
-      const radius = Number(o.userData.vsGrounderRadius ?? 0.45);
-      this.addGrounder(id, o, radius, Number(o.userData.vsGrounderStrength ?? 1));
+    live.sort((a, b) => a.d - b.d);
+    this.accentPool.forEach((light, i) => {
+      const hit = live[i];
+      if (!hit) {
+        light.intensity = 0;
+        return;
+      }
+      light.position.copy(hit.e.position);
+      light.distance = hit.e.radius;
+      let col = this._accentColours.get(hit.e.color);
+      if (!col) this._accentColours.set(hit.e.color, (col = roleColor(hit.e.color)));
+      light.color.copy(col);
+      // §5.4's cap, stated as physics: at `radius` the spill is zero, and the peak is set so a rock
+      // facet one metre away cannot pass Y 0.10. rock albedo Y ~ 0.52, so I <= 0.10 * PI / 0.52 / 1.
+      light.intensity = hit.e.strength * 0.58;
     });
+    this._activeAccents = Math.min(live.length, this.accentPool.length);
   }
 
   /**
-   * Fit the shadow camera to what the player can actually see, and snap its centre to whole
-   * shadow texels in WORLD space so the shadow does not swim as the camera moves (§15.6).
+   * Fit each cascade to what the player can actually see, and snap its centre to whole shadow texels
+   * in WORLD space so the shadow does not swim as the camera translates (§11.2).
+   *
+   * The near cascade is what produces the character's contact shadow, so it is deliberately small:
+   * 13 m across 2048 texels is 1.3 cm per texel, and a boot is twenty of them.
    */
-  _fitShadowCamera() {
-    if (!this.shadowSun.castShadow) return;
+  _fitShadowCameras() {
+    if (!this.cascades.length || !this.cascades[0].light.castShadow) return;
     const cam = this.kernel.camera;
     const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion);
-    const centre = forward.multiplyScalar(this.shadowRadius * 0.72).add(cam.position);
-
     const dir = this._shadowDir;
     const up = new THREE.Vector3(0, 1, 0);
     const right = new THREE.Vector3().crossVectors(up, dir).normalize();
     const upL = new THREE.Vector3().crossVectors(dir, right).normalize();
 
-    const texel = (this.shadowRadius * 2) / this.shadowSun.shadow.mapSize.x;
-    const x = Math.round(centre.dot(right) / texel) * texel;
-    const y = Math.round(centre.dot(upL) / texel) * texel;
-    const z = centre.dot(dir);
-    const snapped = right.multiplyScalar(x).add(upL.multiplyScalar(y)).add(dir.clone().multiplyScalar(z));
-
-    this.shadowSun.position.copy(snapped).addScaledVector(dir, 170);
-    this.shadowSun.target.position.copy(snapped);
-    this.shadowSun.target.updateMatrixWorld();
-
-    const c = this.shadowSun.shadow.camera;
-    if (c.right !== this.shadowRadius) {
-      c.left = -this.shadowRadius;
-      c.right = this.shadowRadius;
-      c.top = this.shadowRadius;
-      c.bottom = -this.shadowRadius;
-      c.updateProjectionMatrix();
+    for (const c of this.cascades) {
+      const centre = forward
+        .clone()
+        .multiplyScalar(c.radius * 0.6)
+        .add(cam.position);
+      const texel = (c.radius * 2) / c.light.shadow.mapSize.x;
+      const x = Math.round(centre.dot(right) / texel) * texel;
+      const y = Math.round(centre.dot(upL) / texel) * texel;
+      const z = centre.dot(dir);
+      const snapped = right
+        .clone()
+        .multiplyScalar(x)
+        .add(upL.clone().multiplyScalar(y))
+        .add(dir.clone().multiplyScalar(z));
+      c.light.position.copy(snapped).addScaledVector(dir, c.radius * 4 + 40);
+      c.light.target.position.copy(snapped);
+      c.light.target.updateMatrixWorld();
     }
   }
 
@@ -591,7 +613,7 @@ export class Lighting {
     signals.emit("world:sun", this.sun());
   }
 
-  /** The published contract. Everything that has to agree with the light reads this. */
+  /** The published contract. Everything that must agree with the light reads this. */
   sun() {
     const c = this.key.color;
     return {
@@ -599,61 +621,141 @@ export class Lighting {
       toLight: [r4(this._keyDir.x), r4(this._keyDir.y), r4(this._keyDir.z)],
       direction: [r4(-this._keyDir.x), r4(-this._keyDir.y), r4(-this._keyDir.z)],
       color: [r4(c.r), r4(c.g), r4(c.b)],
-      hex: `#${roleHex("sky.sun").toString(16).toUpperCase().padStart(6, "0")}`,
+      hex: "#FFE3B8",
       intensity: r4(this.key.intensity),
       relativeIntensity: r4(this.keyScale),
       elevationDeg: r3(this.elevationDeg),
       azimuthDeg: r3(this.azimuthDeg),
-      // The visible disc sits where §2 measures it; the shadows come from the steeper cheat.
+      // The visible disc sits where §3.1 measures it; the shadows come from the steeper cheat.
       discElevationDeg: r3(this.elevationDeg),
-      shadowElevationDeg: r3(SHADOW_ELEVATION_DEG),
-      shadowLengthRatio: r3(1 / Math.tan(THREE.MathUtils.degToRad(SHADOW_ELEVATION_DEG))),
+      shadowElevationDeg: r3(TOD.shadowElevationDeg),
+      shadowLengthRatio: r3(1 / Math.tan(THREE.MathUtils.degToRad(TOD.shadowElevationDeg))),
       worldFixedBearing: true,
       timeOfDay: r4(this.timeOfDay),
-      exposure: r3(this.exposure),
-      fill: { hex: palette.roles["sky.zenith"].hex, relative: RELATIVE.fill },
-      bounce: { hex: "#8A5B3E", relative: RELATIVE.bounce },
-      kick: { hex: palette.roles["resonance.core"].hex, relative: RELATIVE.kick },
+      exposure: 1,
+      tonemap: "none",
+      fill: { hex: "#66B3FF", ground: "#2A1F16", relative: r4(this.rig.fillRelative) },
+      bounce: { hex: "#8A5B3E", relative: BOUNCE_RELATIVE },
+      rim: {
+        toRim: [r4(this._rimDir.x), r4(this._rimDir.y), r4(this._rimDir.z)],
+        gain: RIM_GAIN,
+        tint: `#${roleHex("rock.shadow").toString(16).toUpperCase().padStart(6, "0")}`,
+      },
+      // Deprecated alias: the painterly rig called the rim a "kick". Kept so nothing breaks.
+      kick: { hex: palette.roles["rock.shadow"].hex, relative: RIM_GAIN },
     };
   }
 
   report() {
+    const r = this.kernel.renderer;
     return {
       sun: this.sun(),
       lights: {
         key: { hex: hexOfColor(this.key.color), intensity: r4(this.key.intensity) },
-        fill: { sky: hexOfColor(this.fill.color), ground: hexOfColor(this.fill.groundColor), intensity: r4(this.fill.intensity) },
+        fill: {
+          sky: hexOfColor(this.fill.color),
+          ground: hexOfColor(this.fill.groundColor),
+          intensity: r4(this.fill.intensity),
+          relativeToKey: r4(this.rig.fillRelative),
+        },
         bounce: { hex: hexOfColor(this.bounce.color), intensity: r4(this.bounce.intensity) },
-        kick: { hex: hexOfColor(this.kick.color), intensity: r4(this.kick.intensity) },
-        shadowCasters: this.shadowSun.castShadow ? 1 : 0,
-        contributing: 4,
+        rim: { gain: RIM_GAIN, elevationDeg: RIM_ELEVATION_DEG, insideShadowFamily: true },
+        accentPool: this.accentPool.length,
+        accentsActive: this._activeAccents ?? 0,
+        shadowCasters: this.cascades.filter((c) => c.light.castShadow).length,
+        contributingLights: 3 + (this._activeAccents ?? 0), // key, fill, bounce, + accents
+        zeroIntensityShadowOwners: this.cascades.length,
       },
       shadow: {
-        enabled: this.shadowSun.castShadow,
-        mapSize: this.shadowSun.shadow.mapSize.x,
-        radius: this.shadowRadius,
-        texelMetres: r4((this.shadowRadius * 2) / this.shadowSun.shadow.mapSize.x),
-        bias: this.shadowSun.shadow.bias,
-        normalBias: this.shadowSun.shadow.normalBias,
+        enabled: !!this.cascades[0]?.light.castShadow,
+        cascades: this.cascades.map((c) => ({
+          radius: c.radius,
+          mapSize: c.light.shadow.mapSize.x,
+          texelMetres: r4((c.radius * 2) / c.light.shadow.mapSize.x),
+          bias: c.light.shadow.bias,
+          normalBias: r4(c.light.shadow.normalBias),
+        })),
+        splitMetres: r3(shared.uVsCascade.value.x),
+        type: "PCF",
       },
-      contact: {
-        minDarkening: CONTACT.minDarkening,
-        radiusMetres: CONTACT.radiusMetres,
-        active: this._activeGrounders ?? 0,
+      renderer: {
+        toneMapping: r.toneMapping, // must be 0 (NoToneMapping) — §3.5
+        toneMappingExposure: r.toneMappingExposure,
+        outputColorSpace: r.outputColorSpace,
+        shadowMapEnabled: r.shadowMap.enabled,
       },
-      resonance: { active: this._activeResonance ?? 0, tracked: this._resonance.size },
-      environment: { ready: !!this.envReady, error: this.envError ?? null, intensity: this.scene.environmentIntensity },
       standInSky: !!this.standIn,
+      fog: this.scene.fog
+        ? { hex: hexOfColor(this.scene.fog.color), near: this.scene.fog.near, far: this.scene.fog.far }
+        : null,
       removedPlaceholderLights: this._removedPlaceholders,
-      motion: r3(this._motion),
       materials: materials.stats(),
+      facets: this._board ? facetAudit(this.scene) : null,
+      board: this._board ? this._board.userData.marks : null,
     };
+  }
+
+  // -------------------------------------------------------------------------- reviewer only
+
+  /**
+   * **Reviewer-only.** Builds `Materials.buildBoard()` into the live scene and frames a camera on it.
+   * Nothing in the game calls this; `review/measure/P11.mjs` does, because a claim about what rock,
+   * crystal, water and a character look like next to each other is not a claim until somebody has
+   * looked at the pixels.
+   */
+  materialBoard({ view = "wide" } = {}) {
+    if (!this._board) {
+      this._board = buildBoard(materials);
+      this.scene.add(this._board);
+      const marks = this._board.userData.marks;
+      this.addAccent("board:crystal", new THREE.Vector3(...marks.crystal), {
+        radius: 5,
+        strength: 1,
+      });
+      this.addAccent("board:carry", new THREE.Vector3(...marks.water), { radius: 6, strength: 0.8 });
+    }
+    // The camera rig and the locomotion system will fight us for the frame, and `boot/10-scaffold.js`
+    // is a smooth-shaded placeholder island that would sit in the middle of every measurement. All
+    // three are detached for the life of the measurement run only.
+    for (const name of ["camera", "locomotion", "traversal", "scaffold"]) {
+      const sys = this.kernel.byName.get(name);
+      if (!sys) continue;
+      const i = this.kernel.systems.indexOf(sys);
+      if (i >= 0) this.kernel.systems.splice(i, 1);
+      if (sys.root) sys.root.visible = false;
+    }
+
+    const cam = this.kernel.camera;
+    const views = {
+      // Composed the way the target is: spire cutting the left third, the courier on the shelf,
+      // crystal and carry to the right, horizon high.
+      wide: { pos: [-6.4, 3.4, 15.5], look: [1.2, 2.0, 0.6], fov: 55 },
+      // The one thing the piece has to prove: where the courier meets the ground.
+      contact: { pos: [2.4, 1.15, 4.3], look: [0, 0.55, 0], fov: 34 },
+      // Three substances in one frame, at one scale.
+      substances: { pos: [4.6, 2.1, 11.0], look: [3.6, 0.7, 3.2], fov: 42 },
+    };
+    const v = views[view] ?? views.wide;
+    cam.position.set(...v.pos);
+    cam.fov = v.fov;
+    cam.updateProjectionMatrix();
+    cam.lookAt(...v.look);
+    cam.updateMatrixWorld(true);
+    this._fitShadowCameras();
+    return { view, marks: this._board.userData.marks };
+  }
+
+  /** Reviewer-only: project a world point to viewport pixels, so a script can name the feet. */
+  projectPoint(p) {
+    const v = new THREE.Vector3(p[0], p[1], p[2]).project(this.kernel.camera);
+    const w = this.kernel.renderer.domElement.clientWidth;
+    const h = this.kernel.renderer.domElement.clientHeight;
+    return [Math.round(((v.x + 1) / 2) * w), Math.round(((1 - v.y) / 2) * h)];
   }
 
   dispose() {
     for (const off of this._offs) off();
     this._offs.length = 0;
-    this._envTarget?.dispose();
     this.dome?.geometry.dispose();
     this.dome?.material.dispose();
   }

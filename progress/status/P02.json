@@ -1,9 +1,9 @@
 {
   "id": "P02",
-  "state": "building",
-  "round": 1,
-  "gap": "art-direction.md is written against reference/brief-hero.png and never against design/world.md: it inherits none of world.md 11's four P02 canon hooks (Grey as a third material, diegetic stone-vs-teal, certainty-vs-live-claim hierarchy, the non-human-silhouette rule) and 15.7 forbids Lethis, the variable star the game is named after, from varying.",
+  "state": "critique",
+  "round": 2,
+  "gap": "The bible claims camera framing in its own scope line and specifies zero composition: no FOV, no horizon-height law, no subject placement, no sky share, and 0 of section 13's 21 arithmetic rows measures framing - a build can score 21/21 and still be a dead 90-degree FOV snapshot with the horizon at y=0.5",
   "note": "re-aiming art direction at low-poly target",
   "evidence": [],
-  "updated": "2026-08-10T00:54:29.250Z"
+  "updated": "2026-08-10T02:01:28.903Z"
 }

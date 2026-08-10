@@ -1,0 +1,1433 @@
+{
+  "note": "P17's learner-facing text, in the three shipping locales. Item JSON never carries a sentence — it carries { key, params }, and this file is what those keys resolve to. Handed to P20 for content/locales; until P20 lands, ItemBank resolves against this file so ES and PL never fall back to English (G3). Vocabulary is design/world.md §4 and the ES/PL lexicon decisions listed in content/items/README.md.",
+  "placeholders": "{name} is substituted from the item's params. Every placeholder in every locale must exist in the item's params — asserted per item in review/measure/P17.mjs.",
+  "keys": {
+    "hint.look.Span": {
+      "en": "Two pans across the Sill, and a deck that still has to reach.",
+      "es": "Dos platillos sobre el Umbral, y un tablero que aún tiene que llegar.",
+      "pl": "Dwie szalki nad Progiem i pomost, który wciąż musi sięgnąć."
+    },
+    "hint.look.Aperture": {
+      "en": "One lock, several wards. Whatever the outside takes, every ward takes.",
+      "es": "Una cerradura, varios guardas. Lo que toma el exterior, lo toma cada guarda.",
+      "pl": "Jeden zamek, kilka przegród. Co bierze zewnętrze, bierze każda przegroda."
+    },
+    "hint.look.Emitter": {
+      "en": "A socket cut for a name, and a charge waiting outside it.",
+      "es": "Un encaje abierto para un nombre, y una carga esperando fuera.",
+      "pl": "Gniazdo wycięte dla nazwy i ładunek czekający na zewnątrz."
+    },
+    "hint.look.Bearer": {
+      "en": "A load standing on one pan. It settles inward-out.",
+      "es": "Una carga en pie sobre un platillo. Se asienta de dentro hacia fuera.",
+      "pl": "Ładunek stoi na szalce. Osiada od środka na zewnątrz."
+    },
+    "hint.look.Vessel": {
+      "en": "Tare on the near pan, contents on the far. Rell's balance, and it is level.",
+      "es": "Tara en el platillo cercano, contenido en el lejano. La balanza de Rell, y está nivelada.",
+      "pl": "Tara na bliższej szalce, zawartość na dalszej. Waga Rell, i jest w poziomie."
+    },
+    "hint.look.Threshold": {
+      "en": "A rail, a mark on it, and a detent sitting on one side of the mark.",
+      "es": "Un riel, una marca en él, y un trinquete apoyado a un lado de la marca.",
+      "pl": "Szyna, znacznik na niej i zapadka oparta po jednej stronie znacznika."
+    },
+
+    "ask.reading": {
+      "en": "Let it settle and read it.",
+      "es": "Deja que se asiente y léelo.",
+      "pl": "Pozwól mu osiąść i odczytaj."
+    },
+    "ask.value": {
+      "en": "Close it.",
+      "es": "Ciérralo.",
+      "pl": "Zamknij je."
+    },
+    "ask.claim": {
+      "en": "Write the claim that stands.",
+      "es": "Escribe la afirmación que se sostiene.",
+      "pl": "Zapisz twierdzenie, które stoi."
+    },
+    "ask.load": {
+      "en": "Write the load.",
+      "es": "Escribe la carga.",
+      "pl": "Zapisz ładunek."
+    },
+    "ask.mark": {
+      "en": "Write the stretch it admits.",
+      "es": "Escribe el tramo que admite.",
+      "pl": "Zapisz odcinek, który przepuszcza."
+    },
+    "ask.terms": {
+      "en": "Count what comes away whole.",
+      "es": "Cuenta lo que se desprende entero.",
+      "pl": "Policz to, co odchodzi w całości."
+    },
+    "ask.count": {
+      "en": "The count stamped on the collar.",
+      "es": "La cuenta grabada en el collar.",
+      "pl": "Krotność wybita na obręczy."
+    },
+    "ask.term": {
+      "en": "The second term, sign and all.",
+      "es": "El segundo término, con su signo.",
+      "pl": "Drugi człon, razem ze znakiem."
+    },
+    "ask.groups": {
+      "en": "Sort them into weld stacks.",
+      "es": "Sepáralos en pilas de soldadura.",
+      "pl": "Rozłóż je na stosy do zgrzewania."
+    },
+    "ask.pair": {
+      "en": "Charge both cores.",
+      "es": "Carga los dos núcleos.",
+      "pl": "Naładuj oba rdzenie."
+    },
+    "ask.charges": {
+      "en": "Load every charge that locks the span.",
+      "es": "Carga todas las cargas que fijan el vano.",
+      "pl": "Załaduj każdy ładunek, który blokuje przęsło."
+    },
+    "ask.closure": {
+      "en": "Say what the Sill is holding: one footing, an always, or a refusal.",
+      "es": "Di qué sostiene el Umbral: un apoyo, un siempre, o un rechazo.",
+      "pl": "Powiedz, co trzyma Próg: jedno oparcie, zawsze, albo odmowę."
+    },
+    "ask.repair": {
+      "en": "Name the joint that will not hold, and what it should read.",
+      "es": "Nombra la junta que no aguanta, y lo que debería decir.",
+      "pl": "Wskaż złącze, które nie trzyma, i to, co powinno na nim stać."
+    },
+    "ask.gen.namesDiffer": {
+      "en": "Cut two sockets under different names that hold the same value.",
+      "es": "Abre dos encajes con nombres distintos que sostengan el mismo valor.",
+      "pl": "Wytnij dwa gniazda o różnych nazwach, które trzymają tę samą wartość."
+    },
+    "ask.gen.loadTo": {
+      "en": "Stack a load out of a product and a sum that settles to {target}.",
+      "es": "Apila una carga con un producto y una suma que se asiente en {target}.",
+      "pl": "Ułóż ładunek z iloczynu i sumy, który osiądzie na {target}."
+    },
+    "ask.gen.lockOpensAt": {
+      "en": "Cut a lock with two wards that opens at {target}.",
+      "es": "Talla una cerradura de dos guardas que abra en {target}.",
+      "pl": "Wytnij zamek o dwóch przegrodach, który otwiera się na {target}."
+    },
+    "ask.gen.loadShape": {
+      "en": "Stack a load of {terms} terms with one fixed weight among them.",
+      "es": "Apila una carga de {terms} términos con un peso fijo entre ellos.",
+      "pl": "Ułóż ładunek z {terms} członów, z jednym stałym ciężarem wśród nich."
+    },
+    "ask.gen.settleAbove": {
+      "en": "Seat a value that leaves the load reading more than {target}.",
+      "es": "Asienta un valor que deje la carga leyendo más de {target}.",
+      "pl": "Osadź wartość, przy której ładunek wskaże więcej niż {target}."
+    },
+    "ask.gen.settleBelow": {
+      "en": "Seat a value that leaves the load reading less than {target}.",
+      "es": "Asienta un valor que deje la carga leyendo menos de {target}.",
+      "pl": "Osadź wartość, przy której ładunek wskaże mniej niż {target}."
+    },
+    "ask.gen.sealCan": {
+      "en": "Seal a can whose contents come to {target}.",
+      "es": "Sella una lata cuyo contenido dé {target}.",
+      "pl": "Zapieczętuj puszkę, której zawartość daje {target}."
+    },
+    "ask.gen.gathersTo": {
+      "en": "Stack a load that gathers to {target}.",
+      "es": "Apila una carga que se reúna en {target}.",
+      "pl": "Ułóż ładunek, który zbiera się do {target}."
+    },
+    "ask.gen.standsWith": {
+      "en": "Bring one more term that will stand with {target}.",
+      "es": "Trae otro término que se sostenga junto a {target}.",
+      "pl": "Przynieś jeszcze jeden człon, który stanie razem z {target}."
+    },
+    "ask.gen.claimClosesAt": {
+      "en": "Author a claim on this site that closes at {target}.",
+      "es": "Redacta una afirmación en este sitio que cierre en {target}.",
+      "pl": "Ułóż twierdzenie na tym terenie, które zamyka się na {target}."
+    },
+    "ask.gen.saidClaim": {
+      "en": "Say a claim into the open socket that closes at {target}.",
+      "es": "Di una afirmación en el encaje abierto que cierre en {target}.",
+      "pl": "Wypowiedz w otwarte gniazdo twierdzenie, które zamyka się na {target}."
+    },
+    "ask.gen.separator": {
+      "en": "Find one value of {unknown} where the two decks carry different loads.",
+      "es": "Halla un valor de {unknown} donde los dos tableros lleven cargas distintas.",
+      "pl": "Znajdź jedną wartość {unknown}, przy której oba pomosty niosą inny ładunek."
+    },
+    "ask.gen.always": {
+      "en": "Author a claim across this gap that is standing before you arrive.",
+      "es": "Redacta una afirmación sobre este vacío que ya esté en pie cuando llegues.",
+      "pl": "Ułóż nad tą przepaścią twierdzenie, które stoi, zanim dojdziesz."
+    },
+    "ask.gen.refusal": {
+      "en": "Author a claim across this gap that no value closes.",
+      "es": "Redacta una afirmación sobre este vacío que ningún valor cierre.",
+      "pl": "Ułóż nad tą przepaścią twierdzenie, którego żadna wartość nie zamyka."
+    },
+    "ask.gen.markAdmits": {
+      "en": "Set a rail whose admitted stretch is {target}.",
+      "es": "Coloca un riel cuyo tramo admitido sea {target}.",
+      "pl": "Ustaw szynę, której przepuszczany odcinek to {target}."
+    },
+    "ask.gen.markAdmitsTurned": {
+      "en": "Set a rail with an inverted count whose admitted stretch is {target}.",
+      "es": "Coloca un riel de cuenta invertida cuyo tramo admitido sea {target}.",
+      "pl": "Ustaw szynę o odwróconej krotności, której przepuszczany odcinek to {target}."
+    },
+
+    "hint.repair.2": {
+      "en": "Read down the working. One line does not follow from the one above it.",
+      "es": "Baja por el trazado. Una línea no se sigue de la anterior.",
+      "pl": "Zejdź w dół zapisu. Jedna linia nie wynika z poprzedniej."
+    },
+    "hint.repair.3": {
+      "en": "Line {line} is where the load stops matching.",
+      "es": "En la línea {line} la carga deja de coincidir.",
+      "pl": "W linii {line} ładunek przestaje się zgadzać."
+    },
+    "hint.gen.namesDiffer.2": {
+      "en": "Two names may hold one value. Nothing in the Margin forbids it.",
+      "es": "Dos nombres pueden sostener un mismo valor. Nada en el Margen lo prohíbe.",
+      "pl": "Dwie nazwy mogą trzymać jedną wartość. Nic na Marginesie tego nie zabrania."
+    },
+    "hint.gen.namesDiffer.3": {
+      "en": "Both sockets are cut. Both are waiting for {target}.",
+      "es": "Los dos encajes están abiertos. Los dos esperan {target}.",
+      "pl": "Oba gniazda są wycięte. Oba czekają na {target}."
+    },
+    "hint.gen.loadAuthor.2": {
+      "en": "Bundle first, then the join outside it. The floor will show you if you stack it the other way.",
+      "es": "Primero el fardo, después la junta de fuera. El suelo te lo mostrará si lo apilas al revés.",
+      "pl": "Najpierw wiązka, potem złącze na zewnątrz. Podłoga pokaże, jeśli ułożysz odwrotnie."
+    },
+    "hint.gen.loadAuthor.3": {
+      "en": "Whatever you stack, it has to settle to {target} and nothing else.",
+      "es": "Apiles lo que apiles, tiene que asentarse en {target} y en nada más.",
+      "pl": "Cokolwiek ułożysz, musi osiąść na {target} i na niczym innym."
+    },
+    "hint.gen.loadShape.2": {
+      "en": "Terms come away at the plus and minus signs, and nowhere else.",
+      "es": "Los términos se desprenden en los signos más y menos, y en ningún otro sitio.",
+      "pl": "Człony odchodzą przy plusach i minusach, i nigdzie indziej."
+    },
+    "hint.gen.loadShape.3": {
+      "en": "One of the {terms} has to be fixed weight — no socket in it at all.",
+      "es": "Uno de los {terms} tiene que ser peso fijo — sin ningún encaje dentro.",
+      "pl": "Jeden z {terms} musi być stałym ciężarem — bez żadnego gniazda w środku."
+    },
+    "hint.gen.socketValue.2": {
+      "en": "Seat a value, read the light, and try a colder one if it is not enough.",
+      "es": "Asienta un valor, lee la luz, y prueba uno más frío si no basta.",
+      "pl": "Osadź wartość, odczytaj światło, a jeśli nie starczy, spróbuj zimniejszej."
+    },
+    "hint.gen.socketValue.3": {
+      "en": "The mark to beat is {target}. More than one charge gets past it.",
+      "es": "La marca a superar es {target}. Más de una carga la pasa.",
+      "pl": "Znacznik do pobicia to {target}. Przechodzi go więcej niż jeden ładunek."
+    },
+    "hint.gen.loadGathersTo.2": {
+      "en": "Build it long. It only has to gather short.",
+      "es": "Constrúyela larga. Sólo tiene que reunirse corta.",
+      "pl": "Zbuduj go długim. Musi tylko zebrać się w krótki."
+    },
+    "hint.gen.loadGathersTo.3": {
+      "en": "Gathered, it must read {target}. How it gets there is yours.",
+      "es": "Reunida, tiene que decir {target}. Cómo llega es cosa tuya.",
+      "pl": "Po zebraniu musi wskazywać {target}. Jak tam dojdzie, to twoja sprawa."
+    },
+    "hint.gen.partitionWitness.2": {
+      "en": "A length stands with a length. Bring a length.",
+      "es": "Una longitud se sostiene con una longitud. Trae una longitud.",
+      "pl": "Długość stoi z długością. Przynieś długość."
+    },
+    "hint.gen.partitionWitness.3": {
+      "en": "Same socket, same power as {target}. The count is yours to pick.",
+      "es": "Mismo encaje, misma potencia que {target}. La cuenta la eliges tú.",
+      "pl": "To samo gniazdo, ta sama potęga co {target}. Krotność wybierasz sam."
+    },
+    "hint.gen.claimClosesAt.2": {
+      "en": "The far pan is the site. You are authoring the near one.",
+      "es": "El platillo lejano es el sitio. Tú redactas el cercano.",
+      "pl": "Dalsza szalka to teren. Bliższą układasz ty."
+    },
+    "hint.gen.claimClosesAt.3": {
+      "en": "Whatever you write, seating {target} has to leave the Sill level.",
+      "es": "Escribas lo que escribas, asentar {target} debe dejar el Umbral nivelado.",
+      "pl": "Cokolwiek zapiszesz, osadzenie {target} musi zostawić Próg w poziomie."
+    },
+    "hint.gen.markAdmits.2": {
+      "en": "Set the mark, then feel which side the detent is on.",
+      "es": "Coloca la marca, luego palpa de qué lado queda el trinquete.",
+      "pl": "Ustaw znacznik, a potem wyczuj, po której stronie leży zapadka."
+    },
+    "hint.gen.markAdmits.3": {
+      "en": "The arch has to admit {target} and refuse everything else.",
+      "es": "El arco debe admitir {target} y rechazar todo lo demás.",
+      "pl": "Łuk musi przepuścić {target} i odrzucić całą resztę."
+    },
+    "hint.gen.separatorValue.2": {
+      "en": "Two decks that agree at nothing and at one still agree at nothing and at one.",
+      "es": "Dos tableros que coinciden en cero y en uno siguen coincidiendo en cero y en uno.",
+      "pl": "Dwa pomosty zgodne na zerze i na jedynce nadal są zgodne na zerze i na jedynce."
+    },
+    "hint.gen.separatorValue.3": {
+      "en": "Take {unknown} further out than that and load them both.",
+      "es": "Lleva {unknown} más lejos que eso y carga los dos.",
+      "pl": "Wynieś {unknown} dalej niż to i obciąż oba."
+    },
+
+    "closure.always": {
+      "en": "an always",
+      "es": "un siempre",
+      "pl": "zawsze"
+    },
+    "closure.none": {
+      "en": "a refusal",
+      "es": "un rechazo",
+      "pl": "odmowa"
+    },
+
+    "spoken.var-meaning.relate": {
+      "en": "There are {k} crates on my barge for every one on yours.",
+      "es": "Hay {k} cajas en mi barcaza por cada una en la tuya.",
+      "pl": "Na mojej barce jest {k} skrzyń na każdą jedną na twojej."
+    },
+    "spoken.translate-phrase.groups": {
+      "en": "{a} runs of it, and {b} more on top.",
+      "es": "{a} tandas de eso, y {b} más encima.",
+      "pl": "{a} kursy tego i jeszcze {b} na wierzchu."
+    },
+    "spoken.translate-phrase.twice": {
+      "en": "Twice what you brought, and {b} more on top.",
+      "es": "El doble de lo que trajiste, y {b} más encima.",
+      "pl": "Dwa razy tyle, ile przyniosłeś, i jeszcze {b} na wierzchu."
+    },
+    "spoken.translate-order.lessthan": {
+      "en": "{a} less than the count you are holding.",
+      "es": "{a} menos que la cuenta que llevas.",
+      "pl": "O {a} mniej niż liczba, którą trzymasz."
+    },
+    "spoken.translate-order.subtractfrom": {
+      "en": "Take your count off {a}.",
+      "es": "Resta tu cuenta de {a}.",
+      "pl": "Odejmij swoją liczbę od {a}."
+    },
+    "spoken.translate-order.dividedinto": {
+      "en": "How many times does your count go into {a}.",
+      "es": "Cuántas veces cabe tu cuenta en {a}.",
+      "pl": "Ile razy twoja liczba mieści się w {a}."
+    },
+    "spoken.translate-sentence.core": {
+      "en": "{a} runs of it and {b} spare comes to {c}.",
+      "es": "{a} tandas de eso y {b} de sobra dan {c}.",
+      "pl": "{a} kursy tego i {b} zapasu daje {c}."
+    },
+    "story.eq-model-context.span": {
+      "en": "The gap measures {g}. Your approach lip eats {b} of it and the rest is {k} deck segments.",
+      "es": "El vacío mide {g}. Tu reborde de aproximación se come {b} y el resto son {k} tramos de tablero.",
+      "pl": "Przepaść ma {g}. Twoja warga najazdowa zjada {b}, a reszta to {k} przęseł pomostu."
+    },
+    "story.eq-model-context.members": {
+      "en": "{T} of load to shift, and no member of this bearer takes more than {w}.",
+      "es": "{T} de carga que mover, y ningún miembro de este soporte aguanta más de {w}.",
+      "pl": "{T} ładunku do przeniesienia, a żaden człon tego dźwigara nie bierze więcej niż {w}."
+    },
+
+    "fail.sill.sign": {
+      "en": "It came over the Sill and did not turn around.",
+      "es": "Cruzó el Umbral y no se dio la vuelta.",
+      "pl": "Przeszło przez Próg i się nie odwróciło."
+    },
+    "fail.onesided": {
+      "en": "One pan moved. The other is where you left it.",
+      "es": "Un platillo se movió. El otro sigue donde lo dejaste.",
+      "pl": "Jedna szalka drgnęła. Druga jest tam, gdzie ją zostawiłeś."
+    },
+    "fail.unlike": {
+      "en": "You gathered a length and a weight. They will not stand together.",
+      "es": "Reuniste una longitud y un peso. No se sostienen juntos.",
+      "pl": "Zebrałeś długość i ciężar. Nie ustoją razem."
+    },
+    "fail.partial.divide": {
+      "en": "Half of it is halved.",
+      "es": "La mitad de eso está partida.",
+      "pl": "Połowa tego jest przepołowiona."
+    },
+    "fail.partial.open": {
+      "en": "The bundle opened onto one thing and shut on the other.",
+      "es": "El fardo se abrió sobre una cosa y se cerró sobre la otra.",
+      "pl": "Wiązka otworzyła się na jedno, a zamknęła na drugim."
+    },
+    "fail.coefficient": {
+      "en": "Three of them went in. One came out.",
+      "es": "Entraron tres. Salió uno.",
+      "pl": "Weszły trzy. Wyszła jedna."
+    },
+    "fail.inverse": {
+      "en": "That undid something else.",
+      "es": "Eso deshizo otra cosa.",
+      "pl": "To cofnęło coś innego."
+    },
+    "fail.negative": {
+      "en": "It arrived backwards.",
+      "es": "Llegó del revés.",
+      "pl": "Przyszło odwrotnie."
+    },
+    "fail.slip": {
+      "en": "The shape held. The weight did not.",
+      "es": "La forma aguantó. El peso no.",
+      "pl": "Kształt utrzymał się. Ciężar nie."
+    },
+    "fail.load.unsettled": {
+      "en": "The bundle was still shut when you read it.",
+      "es": "El fardo seguía cerrado cuando lo leíste.",
+      "pl": "Wiązka była jeszcze zamknięta, gdy odczytałeś."
+    },
+    "fail.seat.partial": {
+      "en": "One socket took it. The others are still open.",
+      "es": "Un encaje lo tomó. Los demás siguen abiertos.",
+      "pl": "Jedno gniazdo je wzięło. Reszta stoi otwarta."
+    },
+    "fail.mark.unturned": {
+      "en": "The rail went over. The mark did not.",
+      "es": "El riel se dio la vuelta. La marca no.",
+      "pl": "Szyna się odwróciła. Znacznik nie."
+    },
+    "fail.mark.level": {
+      "en": "You closed it to a point. It was cut for a stretch.",
+      "es": "Lo cerraste en un punto. Estaba tallado para un tramo.",
+      "pl": "Zamknąłeś je w punkcie. Było cięte na odcinek."
+    },
+    "fail.mark.edge": {
+      "en": "The mark itself got in. It was not meant to.",
+      "es": "La marca misma entró. No debía.",
+      "pl": "Sam znacznik się przecisnął. Nie miał."
+    },
+    "fail.label": {
+      "en": "The letters swapped places with the things they count.",
+      "es": "Las letras cambiaron de sitio con lo que cuentan.",
+      "pl": "Litery zamieniły się miejscami z tym, co liczą."
+    },
+    "fail.twin": {
+      "en": "Two names. Nobody said two numbers.",
+      "es": "Dos nombres. Nadie dijo dos números.",
+      "pl": "Dwie nazwy. Nikt nie mówił o dwóch liczbach."
+    },
+    "fail.seat.wrongvalue": {
+      "en": "That is not the charge that went in.",
+      "es": "Ésa no es la carga que entró.",
+      "pl": "To nie ten ładunek, który wszedł."
+    },
+    "fail.seat.wrongsocket": {
+      "en": "The charge went into the wrong socket.",
+      "es": "La carga entró en el encaje equivocado.",
+      "pl": "Ładunek trafił w niewłaściwe gniazdo."
+    },
+    "fail.term.count": {
+      "en": "You counted the parts of a term, not the terms.",
+      "es": "Contaste las partes de un término, no los términos.",
+      "pl": "Policzyłeś części członu, a nie człony."
+    },
+    "fail.kind.changed": {
+      "en": "The count changed. So did the kind, and the kind never changes.",
+      "es": "La cuenta cambió. También la clase, y la clase nunca cambia.",
+      "pl": "Krotność się zmieniła. I rodzaj też, a rodzaj nigdy się nie zmienia."
+    },
+    "fail.said.flat": {
+      "en": "Every word landed. None of them held the shape.",
+      "es": "Cada palabra aterrizó. Ninguna sostuvo la forma.",
+      "pl": "Każde słowo wylądowało. Żadne nie utrzymało kształtu."
+    },
+    "fail.said.nosocket": {
+      "en": "Nothing in it is open. There is no socket to close.",
+      "es": "Nada en ello está abierto. No hay encaje que cerrar.",
+      "pl": "Nic w tym nie jest otwarte. Nie ma gniazda do zamknięcia."
+    },
+    "fail.said.order": {
+      "en": "The words ran one way. The load ran the other.",
+      "es": "Las palabras iban en un sentido. La carga en el otro.",
+      "pl": "Słowa szły w jedną stronę. Ładunek w drugą."
+    },
+    "fail.said.wrongquantity": {
+      "en": "It stands, and it is about something else.",
+      "es": "Se sostiene, y trata de otra cosa.",
+      "pl": "Stoi, i mówi o czymś innym."
+    },
+    "fail.deck.onevalue": {
+      "en": "One value agreed. A deck has to carry every load.",
+      "es": "Un valor coincidió. Un tablero tiene que llevar toda carga.",
+      "pl": "Jedna wartość się zgodziła. Pomost musi unieść każdy ładunek."
+    },
+    "fail.deck.shape": {
+      "en": "Different shape, same load. You broke it re-making it.",
+      "es": "Otra forma, la misma carga. Lo rompiste al rehacerlo.",
+      "pl": "Inny kształt, ten sam ładunek. Zepsułeś go, przerabiając."
+    },
+    "fail.sill.chain": {
+      "en": "Two Sills in one claim, holding different things.",
+      "es": "Dos Umbrales en una afirmación, sosteniendo cosas distintas.",
+      "pl": "Dwa Progi w jednym twierdzeniu, trzymające co innego."
+    },
+    "fail.sill.missing": {
+      "en": "No Sill. Nothing is being claimed.",
+      "es": "Sin Umbral. No se afirma nada.",
+      "pl": "Bez Progu. Nic nie jest twierdzone."
+    },
+    "fail.sill.zero": {
+      "en": "You shared both pans by something that may be nothing.",
+      "es": "Repartiste ambos platillos entre algo que puede no ser nada.",
+      "pl": "Podzieliłeś obie szalki przez coś, co może być niczym."
+    },
+    "fail.socket.gone": {
+      "en": "The socket is gone from both pans. That is not a value.",
+      "es": "El encaje desapareció de ambos platillos. Eso no es un valor.",
+      "pl": "Gniazdo zniknęło z obu szalek. To nie jest wartość."
+    },
+    "fail.always": {
+      "en": "It was standing before you arrived.",
+      "es": "Ya estaba en pie antes de que llegaras.",
+      "pl": "Stało, zanim doszedłeś."
+    },
+    "fail.refusal": {
+      "en": "The socket hands back everything you give it.",
+      "es": "El encaje devuelve todo lo que le das.",
+      "pl": "Gniazdo oddaje wszystko, co mu dasz."
+    },
+    "fail.mark.side": {
+      "en": "The detent is on the other side of the mark.",
+      "es": "El trinquete está al otro lado de la marca.",
+      "pl": "Zapadka jest po drugiej stronie znacznika."
+    },
+    "fail.viable": {
+      "en": "The number closes it. The site will not take it.",
+      "es": "El número lo cierra. El sitio no lo acepta.",
+      "pl": "Liczba je zamyka. Teren jej nie przyjmie."
+    },
+
+    "frame.var-meaning.1": {
+      "en": "A cutter opened this socket at dawn and has not said what goes in it.",
+      "es": "Un cortador abrió este encaje al alba y no ha dicho qué va dentro.",
+      "pl": "Cięciarz otworzył to gniazdo o świcie i nie powiedział, co ma tam wejść."
+    },
+    "frame.var-meaning.2": {
+      "en": "Ix has been sitting in the empty one for a while, waiting to be told a number.",
+      "es": "Ix lleva un rato sentado en el vacío, esperando que le digan un número.",
+      "pl": "Ix siedzi w pustym już chwilę i czeka, aż ktoś poda liczbę."
+    },
+    "frame.oo-numeric.1": {
+      "en": "Three stacks and a plank, on a floor that shows you the moment you stack it wrong.",
+      "es": "Tres pilas y un tablón, sobre un suelo que te avisa en cuanto apilas mal.",
+      "pl": "Trzy stosy i deska, na podłodze, która pokaże ci błąd w tej samej chwili."
+    },
+    "frame.oo-numeric.2": {
+      "en": "Rell's mate stacked this one and then walked off to argue about boots.",
+      "es": "El segundo de Rell apiló ésta y se fue a discutir sobre botas.",
+      "pl": "Pomocnik Rell ułożył ten i poszedł kłócić się o buty."
+    },
+    "frame.expr-anatomy.1": {
+      "en": "The load has already come apart at its joins; the pieces are lying where they fell.",
+      "es": "La carga ya se separó por sus juntas; las piezas están donde cayeron.",
+      "pl": "Ładunek już rozpadł się na złączach; części leżą tam, gdzie spadły."
+    },
+    "frame.expr-anatomy.2": {
+      "en": "Ondu props things for a living and knows every one of these by its collar.",
+      "es": "Ondu apuntala cosas para vivir y conoce cada una de éstas por su collar.",
+      "pl": "Ondu podpiera rzeczy zawodowo i zna każdą z nich po obręczy."
+    },
+    "frame.oo-structure.1": {
+      "en": "The ward is bound tighter than the joins around it, and it lifts as one.",
+      "es": "El guarda está atado más fuerte que las juntas de alrededor, y se levanta entero.",
+      "pl": "Przegroda jest związana ciaśniej niż złącza wokół i podnosi się w całości."
+    },
+    "frame.oo-structure.2": {
+      "en": "This hatch was cut by somebody careful about what goes under a power.",
+      "es": "Esta escotilla la talló alguien cuidadoso con lo que va bajo una potencia.",
+      "pl": "Ten właz wyciął ktoś uważny na to, co idzie pod potęgę."
+    },
+    "frame.eval-substitute.1": {
+      "en": "Every socket cut for that name is open. The charge is in your hand.",
+      "es": "Todo encaje abierto para ese nombre está esperando. La carga está en tu mano.",
+      "pl": "Każde gniazdo wycięte dla tej nazwy stoi otworem. Ładunek masz w ręku."
+    },
+    "frame.eval-substitute.2": {
+      "en": "The beacon has been dark for a hundred years for want of one number.",
+      "es": "La baliza lleva cien años apagada por falta de un número.",
+      "pl": "Latarnia jest ciemna od stu lat, bo brakuje jednej liczby."
+    },
+    "frame.eval-signed.1": {
+      "en": "The charge arrives bundled, and the bundle is what keeps its sign.",
+      "es": "La carga llega en fardo, y el fardo es lo que conserva su signo.",
+      "pl": "Ładunek przychodzi w wiązce, a wiązka trzyma jego znak."
+    },
+    "frame.eval-signed.2": {
+      "en": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them.",
+      "es": "Un valor frío de las Hojas del Horno, aún envuelto como lo envuelven los cortadores.",
+      "pl": "Zimna wartość z Piecowych Liści, wciąż owinięta tak, jak owijają cięciarze."
+    },
+    "frame.eval-formula.1": {
+      "en": "Two names, two sockets, one deck: a rise and a run, and neither takes the other's charge.",
+      "es": "Dos nombres, dos encajes, un tablero: una subida y un avance, y ninguno toma la carga del otro.",
+      "pl": "Dwie nazwy, dwa gniazda, jeden pomost: wznios i wysięg, i żaden nie bierze cudzego ładunku."
+    },
+    "frame.eval-formula.2": {
+      "en": "Sixth Vey walks lines like this one and has never seated a value in the wrong socket.",
+      "es": "Sexta Vey camina líneas como ésta y jamás asentó un valor en el encaje equivocado.",
+      "pl": "Szósta Vey chodzi po takich liniach i nigdy nie osadziła wartości w złym gnieździe."
+    },
+    "frame.translate-phrase.1": {
+      "en": "A Tare is naming a quantity out loud and does not intend to say it twice.",
+      "es": "Una Tare nombra una cantidad en voz alta y no piensa repetirla.",
+      "pl": "Ktoś z Tare wymienia ilość na głos i nie zamierza jej powtarzać."
+    },
+    "frame.translate-phrase.2": {
+      "en": "The can has to be sealed before the sentence finishes.",
+      "es": "La lata tiene que quedar sellada antes de que acabe la frase.",
+      "pl": "Puszka musi być zamknięta, zanim zdanie się skończy."
+    },
+    "frame.translate-order.1": {
+      "en": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean.",
+      "es": "El arco toma la frase en el orden dicho, y admite lo que resulte significar.",
+      "pl": "Łuk bierze zdanie w kolejności, w jakiej padło, i przepuszcza to, co z niego wyjdzie."
+    },
+    "frame.translate-order.2": {
+      "en": "Say it the other way round and the arch admits the other half of the world.",
+      "es": "Dilo al revés y el arco admite la otra mitad del mundo.",
+      "pl": "Powiedz to odwrotnie, a łuk przepuści drugą połowę świata."
+    },
+    "frame.translate-sentence.1": {
+      "en": "A said claim, spoken into an open socket: two unfinished spans reaching for each other.",
+      "es": "Una afirmación dicha, hablada en un encaje abierto: dos vanos sin terminar buscándose.",
+      "pl": "Twierdzenie wypowiedziane w otwarte gniazdo: dwa niedokończone przęsła sięgają po siebie."
+    },
+    "frame.translate-sentence.2": {
+      "en": "The Nine Hundred hand these on mid-line and nobody has ever dropped one.",
+      "es": "Los Novecientos se pasan éstas a media línea y nadie ha dejado caer ninguna.",
+      "pl": "Dziewięciuset podają je sobie w połowie wersu i nikt jeszcze żadnego nie upuścił."
+    },
+    "frame.props-operations.1": {
+      "en": "Some joins in this load turn freely. Some are keyed and will not turn at all.",
+      "es": "Algunas juntas de esta carga giran libres. Otras están fijadas y no giran.",
+      "pl": "Niektóre złącza w tym ładunku obracają się swobodnie. Inne są zakodowane i nie drgną."
+    },
+    "frame.props-operations.2": {
+      "en": "You learn which is which with your hands, standing on it.",
+      "es": "Cuáles son cuáles se aprende con las manos, de pie encima.",
+      "pl": "Które są które, poznaje się rękami, stojąc na tym."
+    },
+    "frame.like-terms-id.1": {
+      "en": "Kinds. A length and a weight will not stand together and the socket does not argue about it.",
+      "es": "Clases. Una longitud y un peso no se sostienen juntos y el encaje no discute.",
+      "pl": "Rodzaje. Długość i ciężar nie ustoją razem, a gniazdo się o to nie spiera."
+    },
+    "frame.like-terms-id.2": {
+      "en": "The weld stacks are cut and waiting. Nothing wrong will seat in them.",
+      "es": "Las pilas de soldadura están talladas y esperando. Nada equivocado se asienta en ellas.",
+      "pl": "Stosy do zgrzewania są wycięte i czekają. Nic złego się w nich nie osadzi."
+    },
+    "frame.like-terms-combine.1": {
+      "en": "Gather like into one. The load gets shorter; the kind never changes.",
+      "es": "Reúne lo igual en uno. La carga se acorta; la clase nunca cambia.",
+      "pl": "Zbierz podobne w jedno. Ładunek się skraca; rodzaj nigdy się nie zmienia."
+    },
+    "frame.like-terms-combine.2": {
+      "en": "This is the Second Rung, and the crane will not pretend otherwise.",
+      "es": "Éste es el Segundo Peldaño, y la grúa no fingirá lo contrario.",
+      "pl": "To Drugi Szczebel, a dźwig nie będzie udawał inaczej."
+    },
+    "frame.distribute-numeric.1": {
+      "en": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them.",
+      "es": "Un valor debe alcanzar cada guarda. Tapa uno para ahorrar y la cerradura cizalla en todos.",
+      "pl": "Jedna wartość musi dosięgnąć każdej przegrody. Zaślep jedną dla oszczędności, a zamek ścina się na wszystkich."
+    },
+    "frame.distribute-numeric.2": {
+      "en": "A Sufficiency rounder is watching, politely, to see whether you shortcut it.",
+      "es": "Un redondeador de la Suficiencia observa, cortésmente, por si tomas un atajo.",
+      "pl": "Zaokrąglacz Dostateczności przygląda się uprzejmie, czy pójdziesz na skróty."
+    },
+    "frame.distribute-variable.1": {
+      "en": "The ward has a socket in it now. The value scales what it is rated for, never what it is made of.",
+      "es": "El guarda ya tiene un encaje. El valor escala para cuánto sirve, nunca de qué está hecho.",
+      "pl": "Przegroda ma teraz gniazdo. Wartość skaluje to, na ile jest przewidziana, nigdy to, z czego jest."
+    },
+    "frame.distribute-variable.2": {
+      "en": "You can watch the rating climb on the plate as it goes in.",
+      "es": "Puedes ver subir la clasificación en la placa mientras entra.",
+      "pl": "Widać, jak na tabliczce rośnie nośność, kiedy to wchodzi."
+    },
+    "frame.distribute-negative.1": {
+      "en": "An inverted value through a bundle turns every ward at once. Miss one and the lock opens for the wrong thing, politely.",
+      "es": "Un valor invertido por un fardo gira todos los guardas a la vez. Falla uno y la cerradura abre, cortés, para quien no debe.",
+      "pl": "Odwrócona wartość przez wiązkę obraca wszystkie przegrody naraz. Pomiń jedną, a zamek uprzejmie otworzy się nie temu."
+    },
+    "frame.distribute-negative.2": {
+      "en": "Camber has a form for locks that open for the wrong thing. It is short.",
+      "es": "Camber tiene un formulario para cerraduras que abren a quien no debe. Es breve.",
+      "pl": "Camber ma formularz na zamki otwierające się nie temu. Jest krótki."
+    },
+    "frame.simplify-expression.1": {
+      "en": "Open every bundle, gather every like kind, and what is left is the shortest deck that still reaches.",
+      "es": "Abre cada fardo, reúne cada clase igual, y lo que queda es el tablero más corto que aún llega.",
+      "pl": "Rozwiąż każdą wiązkę, zbierz każdy podobny rodzaj — zostaje najkrótszy pomost, który wciąż sięga."
+    },
+    "frame.simplify-expression.2": {
+      "en": "Sennar will walk this deck without looking down. Make it short.",
+      "es": "Sennar cruzará este tablero sin mirar abajo. Hazlo corto.",
+      "pl": "Sennar przejdzie tym pomostem, nie patrząc w dół. Zrób go krótkim."
+    },
+    "frame.equivalent-expressions.1": {
+      "en": "Two decks of different shape over one gap. Only the ones that carry every load get the same plaque.",
+      "es": "Dos tableros de distinta forma sobre un mismo vacío. Sólo los que llevan toda carga reciben la misma placa.",
+      "pl": "Dwa pomosty o różnym kształcie nad jedną przepaścią. Tę samą tabliczkę dostają tylko te, które niosą każdy ładunek."
+    },
+    "frame.equivalent-expressions.2": {
+      "en": "A surveyor is here to load both until something gives.",
+      "es": "Hay un topógrafo aquí para cargar los dos hasta que algo ceda.",
+      "pl": "Jest tu mierniczy, żeby obciążać oba, aż coś puści."
+    },
+    "frame.eq-meaning.1": {
+      "en": "Two pans reach for each other across the Sill. Seat a value and they meet, or they do not.",
+      "es": "Dos platillos se buscan sobre el Umbral. Asienta un valor y se encuentran, o no.",
+      "pl": "Dwie szalki sięgają po siebie nad Progiem. Osadź wartość i albo się spotkają, albo nie."
+    },
+    "frame.eq-meaning.2": {
+      "en": "You are standing on the result either way.",
+      "es": "En cualquier caso, estás de pie sobre el resultado.",
+      "pl": "Tak czy inaczej, stoisz na wyniku."
+    },
+    "frame.props-equality.1": {
+      "en": "Rell's balance. Lift a mass off the near pan and the far pan rises until you have lifted as much off it.",
+      "es": "La balanza de Rell. Quita masa del platillo cercano y el lejano sube hasta que le quites otro tanto.",
+      "pl": "Waga Rell. Zdejmij masę z bliższej szalki, a dalsza uniesie się, aż zdejmiesz z niej tyle samo."
+    },
+    "frame.props-equality.2": {
+      "en": "Rell weighs everything she owns, including her boots, including you.",
+      "es": "Rell pesa todo lo que tiene, incluidas sus botas, incluido tú.",
+      "pl": "Rell waży wszystko, co ma, łącznie z butami i łącznie z tobą."
+    },
+    "frame.eq-one-add.1": {
+      "en": "Grip the lip, walk it over the Sill, set it down turned around.",
+      "es": "Agarra el reborde, cruza el Umbral con él, y déjalo del revés.",
+      "pl": "Chwyć wargę, przenieś ją przez Próg i postaw odwróconą."
+    },
+    "frame.eq-one-add.2": {
+      "en": "First Rung, and the whole game's signature.",
+      "es": "Primer Peldaño, y la firma de todo esto.",
+      "pl": "Pierwszy Szczebel i podpis tego wszystkiego."
+    },
+    "frame.eq-one-mult.1": {
+      "en": "Identical members, one load. Share both pans and one member tells you what it takes.",
+      "es": "Miembros idénticos, una carga. Reparte ambos platillos y un miembro te dirá cuánto aguanta.",
+      "pl": "Identyczne człony, jeden ładunek. Podziel obie szalki, a jeden człon powie, ile bierze."
+    },
+    "frame.eq-one-mult.2": {
+      "en": "Third Rung. The floor sags first and goes down second; nothing here falls without warning.",
+      "es": "Tercer Peldaño. El suelo se comba primero y cae después; aquí nada cae sin avisar.",
+      "pl": "Trzeci Szczebel. Podłoga najpierw się ugina, potem pada; nic tu nie spada bez ostrzeżenia."
+    },
+    "frame.eq-two-step.1": {
+      "en": "The span is bolted and then ballasted. Unballast before you unbolt.",
+      "es": "El vano se atornilla y luego se lastra. Quita el lastre antes de quitar los pernos.",
+      "pl": "Przęsło najpierw skręcono, potem obciążono. Zdejmij balast, zanim odkręcisz."
+    },
+    "frame.eq-two-step.2": {
+      "en": "Outward-in, top first. The bridge tells you instantly if you reach for the bolts.",
+      "es": "De fuera adentro, primero lo de arriba. El puente te avisa al instante si vas a los pernos.",
+      "pl": "Z zewnątrz do środka, najpierw z góry. Most powie od razu, jeśli sięgniesz po śruby."
+    },
+    "frame.eq-combine-side.1": {
+      "en": "Gather the near pan before you lift anything off it. Nobody carries two stacks at once.",
+      "es": "Reúne el platillo cercano antes de quitarle nada. Nadie lleva dos pilas a la vez.",
+      "pl": "Zbierz bliższą szalkę, zanim cokolwiek z niej zdejmiesz. Nikt nie niesie dwóch stosów naraz."
+    },
+    "frame.eq-combine-side.2": {
+      "en": "The crane will not pretend otherwise, and it is louder than Ondu.",
+      "es": "La grúa no fingirá lo contrario, y hace más ruido que Ondu.",
+      "pl": "Dźwig nie będzie udawał inaczej, a jest głośniejszy niż Ondu."
+    },
+    "frame.eq-distribute.1": {
+      "en": "A lock with identical wards. Open the bundle, or share the whole lock. Both reach the same tooth.",
+      "es": "Una cerradura de guardas idénticos. Abre el fardo, o reparte la cerradura entera. Ambas llegan al mismo diente.",
+      "pl": "Zamek o identycznych przegrodach. Rozwiąż wiązkę albo podziel cały zamek. Oba trafiają w ten sam ząb."
+    },
+    "frame.eq-distribute.2": {
+      "en": "Fourth Rung. One route takes half as long and nobody will tell you which.",
+      "es": "Cuarto Peldaño. Una ruta tarda la mitad y nadie te dirá cuál.",
+      "pl": "Czwarty Szczebel. Jedna droga trwa o połowę krócej i nikt ci nie powie która."
+    },
+    "frame.eq-both-sides.1": {
+      "en": "Contents on both pans — the same contents, because it is the same stray in both sockets.",
+      "es": "Contenido en ambos platillos — el mismo, porque es el mismo errante en los dos encajes.",
+      "pl": "Zawartość na obu szalkach — ta sama, bo to ten sam zbieg w obu gniazdach."
+    },
+    "frame.eq-both-sides.2": {
+      "en": "Take contents off both until only one pan holds any.",
+      "es": "Quita contenido de ambos hasta que sólo un platillo tenga algo.",
+      "pl": "Zdejmuj zawartość z obu, aż zostanie tylko na jednej szalce."
+    },
+    "frame.eq-special-cases.1": {
+      "en": "Some gaps take exactly one footing. Some are spanned before you arrive. Some take none at all.",
+      "es": "Algunos vacíos aceptan un solo apoyo. Otros ya están salvados cuando llegas. Otros no aceptan ninguno.",
+      "pl": "Niektóre przepaście przyjmują dokładnie jedno oparcie. Inne są już przekroczone, zanim dojdziesz. Inne nie przyjmują żadnego."
+    },
+    "frame.eq-special-cases.2": {
+      "en": "The Remainder of Vantis is an always. The name of Leaf Nine is a refusal.",
+      "es": "El Remanente de Vantis es un siempre. El nombre de la Hoja Nueve es un rechazo.",
+      "pl": "Reszta Vantis to zawsze. Nazwa Dziewiątego Liścia to odmowa."
+    },
+    "frame.eq-model-context.1": {
+      "en": "Nothing is printed on a chasm. You measure the far pan off the terrain and author the near one yourself.",
+      "es": "Nada viene impreso en un abismo. Mides el platillo lejano en el terreno y redactas tú el cercano.",
+      "pl": "Na przepaści nic nie jest wypisane. Dalszą szalkę mierzysz z terenu, bliższą układasz sam."
+    },
+    "frame.eq-model-context.2": {
+      "en": "Then you walk across what you said.",
+      "es": "Después cruzas por encima de lo que dijiste.",
+      "pl": "Potem przechodzisz po tym, co powiedziałeś."
+    },
+    "frame.ineq-meaning.1": {
+      "en": "Set the mark with your hands and the arch lights the whole stretch it will admit.",
+      "es": "Coloca la marca con las manos y el arco ilumina todo el tramo que admitirá.",
+      "pl": "Ustaw znacznik rękami, a łuk rozświetli cały odcinek, który przepuści."
+    },
+    "frame.ineq-meaning.2": {
+      "en": "Not a point. A stretch.",
+      "es": "No un punto. Un tramo.",
+      "pl": "Nie punkt. Odcinek."
+    },
+    "frame.ineq-one-step.1": {
+      "en": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over.",
+      "es": "Sube ambos platillos lo mismo y el tramo admitido se desliza por el riel sin volcarse.",
+      "pl": "Podnieś obie szalki tak samo, a przepuszczany odcinek przesunie się po szynie, nie przewracając się."
+    },
+    "frame.ineq-one-step.2": {
+      "en": "The Nearlies raise this one whenever the fishing is bad.",
+      "es": "Los Casi lo suben cada vez que la pesca va mal.",
+      "pl": "Prawiacy podnoszą ten za każdym razem, gdy połów jest kiepski."
+    },
+    "frame.ineq-negative-flip.1": {
+      "en": "Carry the rail over the Sill inverted and the detent changes sides.",
+      "es": "Cruza el Umbral con el riel invertido y el trinquete cambia de lado.",
+      "pl": "Przenieś szynę przez Próg odwróconą, a zapadka zmieni stronę."
+    },
+    "frame.ineq-negative-flip.2": {
+      "en": "You feel it go over through the handle a moment before you see it.",
+      "es": "Lo notas pasar por el mango un instante antes de verlo.",
+      "pl": "Czujesz to w uchwycie chwilę wcześniej, niż widzisz."
+    },
+    "frame.ineq-two-step.1": {
+      "en": "A mark with a lip and a count. Lift, then share.",
+      "es": "Una marca con reborde y cuenta. Levanta, luego reparte.",
+      "pl": "Znacznik z wargą i krotnością. Podnieś, potem podziel."
+    },
+    "frame.ineq-two-step.2": {
+      "en": "If anything turned over on the way, the stretch is on the other side of the mark when you look up.",
+      "es": "Si algo volcó por el camino, al levantar la vista el tramo está al otro lado de la marca.",
+      "pl": "Jeśli coś się po drodze przewróciło, gdy podniesiesz wzrok, odcinek będzie po drugiej stronie znacznika."
+    },
+
+    "hint.move.var-meaning.seat": {
+      "en": "Shove the charge into the socket cut for {letter}. Nothing else goes in it.",
+      "es": "Mete la carga en el encaje abierto para {letter}. Nada más entra ahí.",
+      "pl": "Wepchnij ładunek w gniazdo wycięte dla {letter}. Nic innego tam nie wchodzi."
+    },
+    "hint.state.var-meaning.seat": {
+      "en": "The socket is holding {v} and the emitter is reading whatever it is holding.",
+      "es": "El encaje sostiene {v} y el emisor lee lo que sostiene.",
+      "pl": "Gniazdo trzyma {v}, a emiter pokazuje to, co trzyma."
+    },
+    "hint.move.var-meaning.relate": {
+      "en": "One barge is the big pile. Put the count of {k} on the small one.",
+      "es": "Una barcaza es el montón grande. Pon la cuenta de {k} en la pequeña.",
+      "pl": "Jedna barka to duży stos. Krotność {k} postaw przy małej."
+    },
+    "hint.state.var-meaning.relate": {
+      "en": "Multiplying the smaller count by {k} is what makes the two pans meet.",
+      "es": "Multiplicar la cuenta menor por {k} es lo que hace que los platillos se encuentren.",
+      "pl": "Pomnożenie mniejszej liczby przez {k} sprawia, że szalki się spotykają."
+    },
+    "hint.move.var-meaning.twin": {
+      "en": "The second core has to sit exactly where the first one does.",
+      "es": "El segundo núcleo tiene que quedar exactamente donde el primero.",
+      "pl": "Drugi rdzeń musi usiąść dokładnie tam, gdzie pierwszy."
+    },
+    "hint.state.var-meaning.twin": {
+      "en": "Together they carry {total}, and nothing separates them.",
+      "es": "Juntos llevan {total}, y nada los separa.",
+      "pl": "Razem niosą {total} i nic ich nie dzieli."
+    },
+    "hint.move.oo-numeric.addmul": {
+      "en": "The bundle of {b} and {c} settles before the join outside it.",
+      "es": "El fardo de {b} y {c} se asienta antes que la junta de fuera.",
+      "pl": "Wiązka z {b} i {c} osiada przed złączem na zewnątrz."
+    },
+    "hint.state.oo-numeric.addmul": {
+      "en": "Inside is {inner}. Now {a} joins it from outside.",
+      "es": "Dentro hay {inner}. Ahora {a} se une desde fuera.",
+      "pl": "W środku jest {inner}. Teraz dołącza {a} z zewnątrz."
+    },
+    "hint.move.oo-numeric.divmul": {
+      "en": "Neither join is privileged. Take them in the order they stand.",
+      "es": "Ninguna junta tiene privilegio. Tómalas en el orden en que están.",
+      "pl": "Żadne złącze nie ma pierwszeństwa. Bierz je w kolejności, w jakiej stoją."
+    },
+    "hint.state.oo-numeric.divmul": {
+      "en": "Sharing {a} by {b} leaves {first}, and {c} has not been touched yet.",
+      "es": "Repartir {a} entre {b} deja {first}, y {c} aún no se ha tocado.",
+      "pl": "Podział {a} przez {b} daje {first}, a {c} jeszcze nie ruszono."
+    },
+    "hint.move.oo-numeric.addsub": {
+      "en": "Take the joins in the order they stand, not in the order you like them.",
+      "es": "Toma las juntas en el orden en que están, no en el que te gusta.",
+      "pl": "Bierz złącza w kolejności, w jakiej stoją, nie w tej, którą lubisz."
+    },
+    "hint.state.oo-numeric.addsub": {
+      "en": "{a} less {b} is {first}, and {c} is still standing outside it.",
+      "es": "{a} menos {b} es {first}, y {c} sigue fuera.",
+      "pl": "{a} bez {b} to {first}, a {c} wciąż stoi obok."
+    },
+    "hint.move.expr-anatomy.count": {
+      "en": "Cut it at the plus and the minus. Count what comes away whole.",
+      "es": "Córtalo en el más y en el menos. Cuenta lo que se desprende entero.",
+      "pl": "Tnij na plusie i na minusie. Licz to, co odchodzi w całości."
+    },
+    "hint.state.expr-anatomy.count": {
+      "en": "A collar and its socket travel together; they are one piece, not two.",
+      "es": "Un collar y su encaje viajan juntos; son una pieza, no dos.",
+      "pl": "Obręcz i jej gniazdo jadą razem; to jeden kawałek, nie dwa."
+    },
+    "hint.move.expr-anatomy.coefficient": {
+      "en": "Look at the collar on the bare term, not at the one carrying {b}.",
+      "es": "Mira el collar del término desnudo, no el que lleva {b}.",
+      "pl": "Patrz na obręcz nagiego członu, nie na tę z {b}."
+    },
+    "hint.state.expr-anatomy.coefficient": {
+      "en": "A term with nothing stamped on its collar still rides in a count of one.",
+      "es": "Un término sin nada grabado en el collar viaja igualmente en cuenta de uno.",
+      "pl": "Człon bez nic wybitego na obręczy i tak jedzie w krotności jeden."
+    },
+    "hint.move.expr-anatomy.term": {
+      "en": "The sign in front belongs to the term that follows it.",
+      "es": "El signo de delante pertenece al término que le sigue.",
+      "pl": "Znak z przodu należy do członu, który po nim idzie."
+    },
+    "hint.state.expr-anatomy.term": {
+      "en": "{a} came away first. What comes away second is carrying its own sign.",
+      "es": "{a} se desprendió primero. Lo segundo se desprende con su propio signo.",
+      "pl": "{a} odeszło pierwsze. To, co odchodzi drugie, niesie własny znak."
+    },
+    "hint.move.oo-structure.coefsq": {
+      "en": "The power binds to the socket alone. The collar is outside it.",
+      "es": "La potencia se ata sólo al encaje. El collar queda fuera.",
+      "pl": "Potęga wiąże się tylko z gniazdem. Obręcz zostaje na zewnątrz."
+    },
+    "hint.state.oo-structure.coefsq": {
+      "en": "The socket squared is {sq}. Only then does {a} come in.",
+      "es": "El encaje al cuadrado es {sq}. Sólo entonces entra {a}.",
+      "pl": "Gniazdo do kwadratu to {sq}. Dopiero wtedy wchodzi {a}."
+    },
+    "hint.move.oo-structure.negsq": {
+      "en": "Nothing bundles the inversion in with the socket here. Look at what is inside the power.",
+      "es": "Aquí nada envuelve la inversión junto al encaje. Mira lo que hay dentro de la potencia.",
+      "pl": "Nic tu nie wiąże odwrócenia razem z gniazdem. Patrz, co jest wewnątrz potęgi."
+    },
+    "hint.state.oo-structure.negsq": {
+      "en": "The power reaches {sq}, and the inversion is still standing outside it.",
+      "es": "La potencia llega a {sq}, y la inversión sigue fuera.",
+      "pl": "Potęga sięga {sq}, a odwrócenie wciąż stoi na zewnątrz."
+    },
+    "hint.move.oo-structure.juxt": {
+      "en": "A collar against a socket is a product. There is no join between them.",
+      "es": "Un collar contra un encaje es un producto. No hay junta entre ellos.",
+      "pl": "Obręcz przy gnieździe to iloczyn. Między nimi nie ma złącza."
+    },
+    "hint.state.oo-structure.juxt": {
+      "en": "{a} of them, each one carrying {v}.",
+      "es": "{a} de ellos, cada uno llevando {v}.",
+      "pl": "{a} z nich, każdy niesie {v}."
+    },
+    "hint.move.eval-substitute.twice": {
+      "en": "Seat it in every socket the name opened. All of them, or the load will not settle.",
+      "es": "Asiéntalo en cada encaje que abrió el nombre. En todos, o la carga no se asienta.",
+      "pl": "Osadź to w każdym gnieździe, które otworzyła nazwa. We wszystkich, albo ładunek nie osiądzie."
+    },
+    "hint.state.eval-substitute.twice": {
+      "en": "The squared socket is holding {sq}. The bare one is still holding {v}.",
+      "es": "El encaje al cuadrado sostiene {sq}. El desnudo sigue sosteniendo {v}.",
+      "pl": "Gniazdo w kwadracie trzyma {sq}. Nagie wciąż trzyma {v}."
+    },
+    "hint.move.eval-substitute.concat": {
+      "en": "The charge goes in as a value, not as a digit written next to another.",
+      "es": "La carga entra como valor, no como un dígito escrito junto a otro.",
+      "pl": "Ładunek wchodzi jako wartość, nie jako cyfra dopisana obok innej."
+    },
+    "hint.state.eval-substitute.concat": {
+      "en": "{a} is fixed weight and {v} has just seated. There is a join between them.",
+      "es": "{a} es peso fijo y {v} acaba de asentarse. Hay una junta entre ellos.",
+      "pl": "{a} to stały ciężar, a {v} właśnie się osadziło. Między nimi jest złącze."
+    },
+    "hint.move.eval-substitute.coefficient": {
+      "en": "The collar does not come off when the charge goes in.",
+      "es": "El collar no se cae cuando entra la carga.",
+      "pl": "Obręcz nie spada, kiedy wchodzi ładunek."
+    },
+    "hint.state.eval-substitute.coefficient": {
+      "en": "The socket is holding {v}, and there are {a} of it.",
+      "es": "El encaje sostiene {v}, y hay {a} de ello.",
+      "pl": "Gniazdo trzyma {v}, i jest tego {a}."
+    },
+    "hint.move.eval-signed.square": {
+      "en": "The cold value arrives bundled. Seat it bundled.",
+      "es": "El valor frío llega en fardo. Asiéntalo en fardo.",
+      "pl": "Zimna wartość przychodzi w wiązce. Osadź ją w wiązce."
+    },
+    "hint.state.eval-signed.square": {
+      "en": "Both copies of it inside the power are cold, and cold against cold does not stay cold.",
+      "es": "Las dos copias dentro de la potencia son frías, y frío contra frío no sigue frío.",
+      "pl": "Obie kopie w potędze są zimne, a zimne przy zimnym nie zostaje zimne."
+    },
+    "hint.move.eval-signed.minusneg": {
+      "en": "You are taking away something that was already inverted.",
+      "es": "Estás quitando algo que ya venía invertido.",
+      "pl": "Zabierasz coś, co już było odwrócone."
+    },
+    "hint.state.eval-signed.minusneg": {
+      "en": "{a} is standing, and a cold {b} is coming off it rather than onto it.",
+      "es": "{a} está en pie, y un {b} frío se le quita en vez de añadirse.",
+      "pl": "{a} stoi, a zimne {b} schodzi z niego, a nie na niego."
+    },
+    "hint.move.eval-signed.sumneg": {
+      "en": "Two cold values joined. Nothing here warms either one.",
+      "es": "Dos valores fríos unidos. Aquí nada calienta a ninguno.",
+      "pl": "Dwie zimne wartości złączone. Nic tu żadnej nie ogrzewa."
+    },
+    "hint.state.eval-signed.sumneg": {
+      "en": "{a} cold and {b} cold, and the join between them is a plus.",
+      "es": "{a} frío y {b} frío, y la junta entre ellos es un más.",
+      "pl": "{a} zimne i {b} zimne, a złącze między nimi to plus."
+    },
+    "hint.move.eval-formula.two": {
+      "en": "Each charge goes to its own socket, not to whichever one is nearest.",
+      "es": "Cada carga va a su encaje, no al que quede más cerca.",
+      "pl": "Każdy ładunek idzie do swojego gniazda, nie do tego, które jest bliżej."
+    },
+    "hint.state.eval-formula.two": {
+      "en": "The rise has come out at {rise}. The run has not been seated yet.",
+      "es": "La subida da {rise}. El avance aún no se ha asentado.",
+      "pl": "Wznios wyszedł na {rise}. Wysięg nie został jeszcze osadzony."
+    },
+    "hint.move.translate-phrase.groups": {
+      "en": "{a} runs is a count against a socket. The {b} is fixed weight standing beside it.",
+      "es": "{a} tandas es una cuenta contra un encaje. Los {b} son peso fijo al lado.",
+      "pl": "{a} kursów to krotność przy gnieździe. {b} to stały ciężar obok."
+    },
+    "hint.state.translate-phrase.groups": {
+      "en": "One socket, one collar of {a}, and {b} that never varies.",
+      "es": "Un encaje, un collar de {a}, y {b} que nunca varía.",
+      "pl": "Jedno gniazdo, obręcz {a} i {b}, które nigdy się nie zmienia."
+    },
+    "hint.move.translate-phrase.twice": {
+      "en": "Twice is a count, not a join.",
+      "es": "El doble es una cuenta, no una junta.",
+      "pl": "Dwa razy to krotność, nie złącze."
+    },
+    "hint.state.translate-phrase.twice": {
+      "en": "The socket is riding in a count of two, and {b} is standing beside it.",
+      "es": "El encaje viaja en cuenta de dos, y {b} está al lado.",
+      "pl": "Gniazdo jedzie w krotności dwa, a {b} stoi obok."
+    },
+    "hint.move.translate-order.lessthan": {
+      "en": "Whatever is being reduced is the thing that stands first.",
+      "es": "Lo que se reduce es lo que va primero.",
+      "pl": "To, co jest pomniejszane, stoi na pierwszym miejscu."
+    },
+    "hint.state.translate-order.lessthan": {
+      "en": "The count is standing. {a} is coming off it.",
+      "es": "La cuenta está en pie. {a} se le quita.",
+      "pl": "Liczba stoi. {a} z niej schodzi."
+    },
+    "hint.move.translate-order.subtractfrom": {
+      "en": "The thing you take away from is the thing that stands first.",
+      "es": "Aquello de lo que restas es lo que va primero.",
+      "pl": "To, od czego odejmujesz, stoi na pierwszym miejscu."
+    },
+    "hint.state.translate-order.subtractfrom": {
+      "en": "{a} is standing. The count is coming off it.",
+      "es": "{a} está en pie. La cuenta se le quita.",
+      "pl": "{a} stoi. Liczba z niego schodzi."
+    },
+    "hint.move.translate-order.dividedinto": {
+      "en": "What is being shared out stands over what it is shared among.",
+      "es": "Lo que se reparte va encima de entre cuántos se reparte.",
+      "pl": "To, co jest rozdzielane, stoi nad tym, między ile się dzieli."
+    },
+    "hint.state.translate-order.dividedinto": {
+      "en": "{a} is the pile. The count is how many hands.",
+      "es": "{a} es el montón. La cuenta es cuántas manos.",
+      "pl": "{a} to stos. Liczba to ile rąk."
+    },
+    "hint.move.translate-sentence.core": {
+      "en": "Build each pan from the words, then hang them across the Sill.",
+      "es": "Construye cada platillo con las palabras, luego cuélgalos sobre el Umbral.",
+      "pl": "Zbuduj każdą szalkę ze słów, potem zawieś je nad Progiem."
+    },
+    "hint.state.translate-sentence.core": {
+      "en": "The near pan is {a} runs and {b} spare. The far pan is the one number they said.",
+      "es": "El platillo cercano son {a} tandas y {b} de sobra. El lejano es el único número que dijeron.",
+      "pl": "Bliższa szalka to {a} kursów i {b} zapasu. Dalsza to jedyna liczba, którą podali."
+    },
+    "hint.move.props-operations.commute": {
+      "en": "A take-away does not turn freely. Carry the sign with the term.",
+      "es": "Un quitar no gira libremente. Lleva el signo con el término.",
+      "pl": "Odjęcie nie obraca się swobodnie. Zabierz znak razem z członem."
+    },
+    "hint.state.props-operations.commute": {
+      "en": "The {b} term is going first, and it was never a positive one.",
+      "es": "El término de {b} va primero, y nunca fue positivo.",
+      "pl": "Człon z {b} idzie pierwszy i nigdy nie był dodatni."
+    },
+    "hint.move.props-operations.regroup": {
+      "en": "The whole bundle is coming off, not just the front of it.",
+      "es": "Se quita el fardo entero, no sólo su frente.",
+      "pl": "Schodzi cała wiązka, nie tylko jej przód."
+    },
+    "hint.state.props-operations.regroup": {
+      "en": "The bundle weighs {inner}, and all of it is leaving {a}.",
+      "es": "El fardo pesa {inner}, y todo él sale de {a}.",
+      "pl": "Wiązka waży {inner} i cała schodzi z {a}."
+    },
+    "hint.move.props-operations.identity": {
+      "en": "A count of nothing carries nothing, however big the term looks.",
+      "es": "Una cuenta de nada no lleva nada, por grande que parezca el término.",
+      "pl": "Krotność zero nie niesie nic, choćby człon wyglądał wielko."
+    },
+    "hint.state.props-operations.identity": {
+      "en": "The {a} term is holding zero of itself. One socket is still standing.",
+      "es": "El término de {a} sostiene cero de sí mismo. Queda un encaje en pie.",
+      "pl": "Człon z {a} trzyma zero siebie. Jedno gniazdo wciąż stoi."
+    },
+    "hint.move.like-terms-id.xy": {
+      "en": "Same socket, same power, same stack. Everything else is a different kind.",
+      "es": "Mismo encaje, misma potencia, misma pila. Todo lo demás es otra clase.",
+      "pl": "To samo gniazdo, ta sama potęga, ten sam stos. Reszta to inny rodzaj."
+    },
+    "hint.state.like-terms-id.xy": {
+      "en": "{first} is in the first stack. Three stacks come out of this in the end.",
+      "es": "{first} está en la primera pila. De esto salen tres pilas al final.",
+      "pl": "{first} jest w pierwszym stosie. Na końcu wychodzą z tego trzy stosy."
+    },
+    "hint.move.like-terms-id.pow": {
+      "en": "A socket and the same socket under a power are not the same kind.",
+      "es": "Un encaje y ese mismo encaje bajo una potencia no son la misma clase.",
+      "pl": "Gniazdo i to samo gniazdo pod potęgą to nie ten sam rodzaj."
+    },
+    "hint.state.like-terms-id.pow": {
+      "en": "{first} is in the first stack. Fixed weight stands on its own.",
+      "es": "{first} está en la primera pila. El peso fijo va aparte.",
+      "pl": "{first} jest w pierwszym stosie. Stały ciężar stoi osobno."
+    },
+    "hint.move.like-terms-combine.core": {
+      "en": "Gather the two of one kind and carry each term's sign with it.",
+      "es": "Reúne los dos de una clase y lleva el signo de cada término con él.",
+      "pl": "Zbierz te dwa jednego rodzaju i zabierz znak każdego członu razem z nim."
+    },
+    "hint.state.like-terms-combine.core": {
+      "en": "The two like counts come to {gathered}. The rest of the load has not moved.",
+      "es": "Las dos cuentas iguales dan {gathered}. El resto de la carga no se ha movido.",
+      "pl": "Dwie podobne krotności dają {gathered}. Reszta ładunku się nie ruszyła."
+    },
+    "hint.move.distribute-numeric.sum": {
+      "en": "The value outside has to reach both wards.",
+      "es": "El valor de fuera tiene que llegar a los dos guardas.",
+      "pl": "Wartość z zewnątrz musi dosięgnąć obu przegród."
+    },
+    "hint.state.distribute-numeric.sum": {
+      "en": "The first ward has taken {first}. The second is still waiting.",
+      "es": "El primer guarda tomó {first}. El segundo aún espera.",
+      "pl": "Pierwsza przegroda wzięła {first}. Druga wciąż czeka."
+    },
+    "hint.move.distribute-numeric.product": {
+      "en": "One ward here, not two. The bundle is already a single thing.",
+      "es": "Aquí hay un guarda, no dos. El fardo ya es una sola cosa.",
+      "pl": "Tu jest jedna przegroda, nie dwie. Wiązka jest już jedną rzeczą."
+    },
+    "hint.state.distribute-numeric.product": {
+      "en": "Inside settles to {inner} before {a} touches it at all.",
+      "es": "Dentro se asienta en {inner} antes de que {a} lo toque.",
+      "pl": "Wnętrze osiada na {inner}, zanim {a} w ogóle je dotknie."
+    },
+    "hint.move.distribute-variable.core": {
+      "en": "The collar outside multiplies the collar inside. The socket rides along untouched.",
+      "es": "El collar de fuera multiplica al de dentro. El encaje viaja intacto.",
+      "pl": "Obręcz z zewnątrz mnoży obręcz wewnątrz. Gniazdo jedzie nietknięte."
+    },
+    "hint.state.distribute-variable.core": {
+      "en": "The socket term has climbed to a count of {first}. The fixed weight is still waiting.",
+      "es": "El término con encaje subió a una cuenta de {first}. El peso fijo sigue esperando.",
+      "pl": "Człon z gniazdem podniósł się do krotności {first}. Stały ciężar wciąż czeka."
+    },
+    "hint.move.distribute-negative.bare": {
+      "en": "An inverted value through a bundle turns every ward. All of them.",
+      "es": "Un valor invertido por un fardo gira todos los guardas. Todos.",
+      "pl": "Odwrócona wartość przez wiązkę obraca każdą przegrodę. Każdą."
+    },
+    "hint.state.distribute-negative.bare": {
+      "en": "The {b} term has turned. The {c} has not been reached yet.",
+      "es": "El término de {b} giró. Al {c} aún no se ha llegado.",
+      "pl": "Człon z {b} się obrócił. Do {c} jeszcze nie dotarło."
+    },
+    "hint.move.distribute-negative.subtract": {
+      "en": "The whole product is coming off, not just its front.",
+      "es": "Sale el producto entero, no sólo su frente.",
+      "pl": "Schodzi cały iloczyn, nie tylko jego przód."
+    },
+    "hint.state.distribute-negative.subtract": {
+      "en": "The bundle carries {product} of fixed weight, and all of it is leaving {a}.",
+      "es": "El fardo lleva {product} de peso fijo, y todo sale de {a}.",
+      "pl": "Wiązka niesie {product} stałego ciężaru i całość schodzi z {a}."
+    },
+    "hint.move.simplify-expression.core": {
+      "en": "Open the bundle first. Gather after.",
+      "es": "Abre el fardo primero. Reúne después.",
+      "pl": "Najpierw rozwiąż wiązkę. Zbieraj potem."
+    },
+    "hint.state.simplify-expression.core": {
+      "en": "Opened, the bundle left {opened} of fixed weight standing beside {a}.",
+      "es": "Abierto, el fardo dejó {opened} de peso fijo junto a {a}.",
+      "pl": "Po rozwiązaniu wiązka zostawiła {opened} stałego ciężaru obok {a}."
+    },
+    "hint.move.equivalent-expressions.count": {
+      "en": "Load both decks at the same value and see which one comes up short.",
+      "es": "Carga ambos tableros con el mismo valor y mira cuál se queda corto.",
+      "pl": "Obciąż oba pomosty tą samą wartością i patrz, który nie dociąga."
+    },
+    "hint.state.equivalent-expressions.count": {
+      "en": "The bundle holds {b} of fixed weight, and {a} of it reaches the far end.",
+      "es": "El fardo tiene {b} de peso fijo, y {a} de ello llega al extremo.",
+      "pl": "Wiązka trzyma {b} stałego ciężaru, a {a} tego dochodzi na drugi koniec."
+    },
+    "hint.move.eq-meaning.magazine": {
+      "en": "Seat each charge in turn and watch the Sill. Only a level Sill locks it.",
+      "es": "Asienta cada carga por turno y mira el Umbral. Sólo un Umbral nivelado lo fija.",
+      "pl": "Osadzaj kolejno każdy ładunek i patrz na Próg. Tylko poziomy Próg go blokuje."
+    },
+    "hint.state.eq-meaning.magazine": {
+      "en": "The far pan is holding {b} and the near pan is a charge plus {a}.",
+      "es": "El platillo lejano sostiene {b} y el cercano es una carga más {a}.",
+      "pl": "Dalsza szalka trzyma {b}, a bliższa to ładunek plus {a}."
+    },
+    "hint.move.props-equality.move": {
+      "en": "Whatever you lift off the near pan comes off the far pan too.",
+      "es": "Lo que quites del platillo cercano sale también del lejano.",
+      "pl": "Cokolwiek zdejmiesz z bliższej szalki, schodzi też z dalszej."
+    },
+    "hint.state.props-equality.move": {
+      "en": "The near pan is carrying a lip of {a}, and the far pan is carrying {b}.",
+      "es": "El platillo cercano lleva un reborde de {a}, y el lejano lleva {b}.",
+      "pl": "Bliższa szalka niesie wargę {a}, a dalsza niesie {b}."
+    },
+    "hint.move.props-equality.zero": {
+      "en": "Sharing both pans by a socket is sharing by something that may be nothing.",
+      "es": "Repartir ambos platillos entre un encaje es repartir entre algo que puede no ser nada.",
+      "pl": "Dzielenie obu szalek przez gniazdo to dzielenie przez coś, co może być niczym."
+    },
+    "hint.state.props-equality.zero": {
+      "en": "Take the far pan off the near one and {diff} of the socket is left standing.",
+      "es": "Quita el platillo lejano del cercano y quedan {diff} del encaje en pie.",
+      "pl": "Zdejmij dalszą szalkę z bliższej, a zostanie {diff} gniazda."
+    },
+    "hint.move.eq-one-add.plus": {
+      "en": "Grip the lip and walk it over the Sill. It turns around on the way.",
+      "es": "Agarra el reborde y crúzalo por el Umbral. Se da la vuelta al pasar.",
+      "pl": "Chwyć wargę i przenieś ją przez Próg. Po drodze się odwraca."
+    },
+    "hint.state.eq-one-add.plus": {
+      "en": "The near pan was carrying a lip of {p}. The far pan is holding {q}.",
+      "es": "El platillo cercano llevaba un reborde de {p}. El lejano sostiene {q}.",
+      "pl": "Bliższa szalka niosła wargę {p}. Dalsza trzyma {q}."
+    },
+    "hint.move.eq-one-add.minus": {
+      "en": "A lip that was taken away comes back when it crosses the Sill.",
+      "es": "Un reborde que se había quitado vuelve al cruzar el Umbral.",
+      "pl": "Warga, która została zdjęta, wraca, gdy przechodzi przez Próg."
+    },
+    "hint.state.eq-one-add.minus": {
+      "en": "The near pan is {p} short. The far pan is holding {q}.",
+      "es": "Al platillo cercano le faltan {p}. El lejano sostiene {q}.",
+      "pl": "Bliższej szalce brakuje {p}. Dalsza trzyma {q}."
+    },
+    "hint.move.eq-one-mult.mult": {
+      "en": "Share both pans by the count on the collar.",
+      "es": "Reparte ambos platillos entre la cuenta del collar.",
+      "pl": "Podziel obie szalki przez krotność z obręczy."
+    },
+    "hint.state.eq-one-mult.mult": {
+      "en": "There are {a} identical members and together they carry {b}.",
+      "es": "Hay {a} miembros idénticos y juntos llevan {b}.",
+      "pl": "Jest {a} identycznych członów i razem niosą {b}."
+    },
+    "hint.move.eq-one-mult.fraction": {
+      "en": "The socket has already been shared. Put back what was taken out.",
+      "es": "El encaje ya fue repartido. Devuelve lo que se le quitó.",
+      "pl": "Gniazdo już zostało podzielone. Oddaj to, co z niego zabrano."
+    },
+    "hint.state.eq-one-mult.fraction": {
+      "en": "One share of it is {b}, and there are {a} shares.",
+      "es": "Una parte de ello es {b}, y hay {a} partes.",
+      "pl": "Jedna część tego to {b}, a części jest {a}."
+    },
+    "hint.move.eq-two-step.core": {
+      "en": "Lift the lip before you share the deck. Outward-in, top first.",
+      "es": "Levanta el reborde antes de repartir el tablero. De fuera adentro, primero lo de arriba.",
+      "pl": "Podnieś wargę, zanim podzielisz pomost. Z zewnątrz do środka, najpierw z góry."
+    },
+    "hint.state.eq-two-step.core": {
+      "en": "With the lip gone, {a} deck segments are carrying {lifted}.",
+      "es": "Sin el reborde, {a} tramos de tablero llevan {lifted}.",
+      "pl": "Bez wargi {a} przęseł pomostu niesie {lifted}."
+    },
+    "hint.move.eq-combine-side.core": {
+      "en": "Gather the near pan first. It is carrying two stacks of one kind.",
+      "es": "Reúne primero el platillo cercano. Lleva dos pilas de una misma clase.",
+      "pl": "Najpierw zbierz bliższą szalkę. Niesie dwa stosy jednego rodzaju."
+    },
+    "hint.state.eq-combine-side.core": {
+      "en": "Gathered, the near pan is {gathered} members and a lip of {c}.",
+      "es": "Reunido, el platillo cercano son {gathered} miembros y un reborde de {c}.",
+      "pl": "Po zebraniu bliższa szalka to {gathered} członów i warga {c}."
+    },
+    "hint.move.eq-distribute.core": {
+      "en": "Open the bundle, or share the whole lock by {p}. Both reach the same tooth.",
+      "es": "Abre el fardo, o reparte la cerradura entera entre {p}. Ambas llegan al mismo diente.",
+      "pl": "Rozwiąż wiązkę albo podziel cały zamek przez {p}. Oba trafiają w ten sam ząb."
+    },
+    "hint.state.eq-distribute.core": {
+      "en": "Shared by {p}, the far pan reads {shared} and the ward still carries {q}.",
+      "es": "Repartido entre {p}, el platillo lejano dice {shared} y el guarda aún lleva {q}.",
+      "pl": "Podzielona przez {p}, dalsza szalka wskazuje {shared}, a przegroda wciąż niesie {q}."
+    },
+    "hint.move.eq-both-sides.core": {
+      "en": "Take contents off both pans until the socket stands on one pan only.",
+      "es": "Quita contenido de ambos platillos hasta que el encaje quede en uno solo.",
+      "pl": "Zdejmuj zawartość z obu szalek, aż gniazdo zostanie tylko na jednej."
+    },
+    "hint.state.eq-both-sides.core": {
+      "en": "With the far pan's members taken off both, {left} of them are left standing.",
+      "es": "Quitando de ambos los miembros del platillo lejano, quedan {left} en pie.",
+      "pl": "Po zdjęciu z obu członów z dalszej szalki zostaje ich {left}."
+    },
+    "hint.move.eq-special-cases.always": {
+      "en": "Keep taking off both pans and see what is left standing.",
+      "es": "Sigue quitando de ambos platillos y mira qué queda en pie.",
+      "pl": "Zdejmuj dalej z obu szalek i patrz, co zostaje."
+    },
+    "hint.state.eq-special-cases.always": {
+      "en": "Opened, the near pan is exactly what the far pan already was.",
+      "es": "Abierto, el platillo cercano es exactamente lo que ya era el lejano.",
+      "pl": "Po rozwiązaniu bliższa szalka jest dokładnie tym, czym już była dalsza."
+    },
+    "hint.move.eq-special-cases.refusal": {
+      "en": "Take the sockets off both pans and read what the Sill still holds.",
+      "es": "Quita los encajes de ambos platillos y lee qué sigue sosteniendo el Umbral.",
+      "pl": "Zdejmij gniazda z obu szalek i odczytaj, co Próg wciąż trzyma."
+    },
+    "hint.state.eq-special-cases.refusal": {
+      "en": "The sockets are gone and the Sill is holding {b} against {d}.",
+      "es": "Los encajes desaparecieron y el Umbral sostiene {b} contra {d}.",
+      "pl": "Gniazda zniknęły, a Próg trzyma {b} naprzeciw {d}."
+    },
+    "hint.move.eq-model-context.span": {
+      "en": "Measure the far pan off the terrain, then author the near one.",
+      "es": "Mide el platillo lejano en el terreno, después redacta el cercano.",
+      "pl": "Zmierz dalszą szalkę z terenu, potem ułóż bliższą."
+    },
+    "hint.state.eq-model-context.span": {
+      "en": "The lip has eaten {b}, so {k} segments have {deck} left to cover.",
+      "es": "El reborde se comió {b}, así que {k} tramos tienen {deck} por cubrir.",
+      "pl": "Warga zjadła {b}, więc {k} przęseł ma do pokrycia {deck}."
+    },
+    "hint.move.eq-model-context.members": {
+      "en": "Members come whole. A part of one carries nothing.",
+      "es": "Los miembros vienen enteros. Una parte de uno no lleva nada.",
+      "pl": "Człony przychodzą w całości. Część jednego nie niesie nic."
+    },
+    "hint.state.eq-model-context.members": {
+      "en": "The claim closes at {exact}, and the site takes only whole members.",
+      "es": "La afirmación cierra en {exact}, y el sitio sólo acepta miembros enteros.",
+      "pl": "Twierdzenie zamyka się na {exact}, a teren przyjmuje tylko całe człony."
+    },
+    "hint.move.ineq-meaning.stretch": {
+      "en": "The detent sits on one side of the mark. Read which side is permitted.",
+      "es": "El trinquete se apoya a un lado de la marca. Lee qué lado está permitido.",
+      "pl": "Zapadka leży po jednej stronie znacznika. Odczytaj, która strona jest dozwolona."
+    },
+    "hint.state.ineq-meaning.stretch": {
+      "en": "The mark is at {c}, and the arch is lit on one side of it only.",
+      "es": "La marca está en {c}, y el arco está iluminado sólo a un lado.",
+      "pl": "Znacznik stoi na {c}, a łuk świeci tylko po jednej jego stronie."
+    },
+    "hint.move.ineq-one-step.plus": {
+      "en": "Raise both pans by the same amount. The rail does not turn over.",
+      "es": "Sube ambos platillos lo mismo. El riel no vuelca.",
+      "pl": "Podnieś obie szalki tak samo. Szyna się nie przewraca."
+    },
+    "hint.state.ineq-one-step.plus": {
+      "en": "With {p} lifted off both, the mark is sitting at {mark}.",
+      "es": "Quitados {p} de ambos, la marca queda en {mark}.",
+      "pl": "Po zdjęciu {p} z obu znacznik siedzi na {mark}."
+    },
+    "hint.move.ineq-one-step.negconstant": {
+      "en": "A cold value on the rail is not the same as turning the rail over.",
+      "es": "Un valor frío en el riel no es lo mismo que volcar el riel.",
+      "pl": "Zimna wartość na szynie to nie to samo, co przewrócenie szyny."
+    },
+    "hint.state.ineq-one-step.negconstant": {
+      "en": "Only a count can turn the detent, and the count here is one. The mark lands at {mark}.",
+      "es": "Sólo una cuenta puede girar el trinquete, y aquí la cuenta es uno. La marca cae en {mark}.",
+      "pl": "Tylko krotność może obrócić zapadkę, a tu krotność wynosi jeden. Znacznik ląduje na {mark}."
+    },
+    "hint.move.ineq-negative-flip.divide": {
+      "en": "Sharing by an inverted count carries the rail over the Sill.",
+      "es": "Repartir entre una cuenta invertida cruza el riel por el Umbral.",
+      "pl": "Dzielenie przez odwróconą krotność przenosi szynę przez Próg."
+    },
+    "hint.state.ineq-negative-flip.divide": {
+      "en": "The mark lands at {mark}, and the detent is no longer where it started.",
+      "es": "La marca cae en {mark}, y el trinquete ya no está donde empezó.",
+      "pl": "Znacznik ląduje na {mark}, a zapadka nie jest już tam, gdzie zaczęła."
+    },
+    "hint.move.ineq-negative-flip.subneg": {
+      "en": "Taking away a cold value is not a count. The rail stays as it is.",
+      "es": "Quitar un valor frío no es una cuenta. El riel se queda como está.",
+      "pl": "Zabranie zimnej wartości to nie krotność. Szyna zostaje, jak jest."
+    },
+    "hint.state.ineq-negative-flip.subneg": {
+      "en": "Both pans came down by {p}, and the mark is at {mark}.",
+      "es": "Ambos platillos bajaron {p}, y la marca está en {mark}.",
+      "pl": "Obie szalki opadły o {p}, a znacznik jest na {mark}."
+    },
+    "hint.move.ineq-two-step.turned": {
+      "en": "Lift the lip, then share by the count — and the count is inverted.",
+      "es": "Levanta el reborde, luego reparte entre la cuenta — y la cuenta está invertida.",
+      "pl": "Podnieś wargę, potem podziel przez krotność — a krotność jest odwrócona."
+    },
+    "hint.state.ineq-two-step.turned": {
+      "en": "With the lip gone the rail carries {lifted}, and the mark comes to {mark} once.",
+      "es": "Sin el reborde el riel lleva {lifted}, y la marca llega a {mark} una sola vez.",
+      "pl": "Bez wargi szyna niesie {lifted}, a znacznik dochodzi do {mark} raz."
+    },
+    "hint.move.ineq-two-step.inclusive": {
+      "en": "The mark itself is permitted here. Lift the lip, then share.",
+      "es": "Aquí la marca misma está permitida. Levanta el reborde, luego reparte.",
+      "pl": "Tu sam znacznik jest dozwolony. Podnieś wargę, potem podziel."
+    },
+    "hint.state.ineq-two-step.inclusive": {
+      "en": "With the lip gone, {a} members carry {lifted}, and the detent has not moved.",
+      "es": "Sin el reborde, {a} miembros llevan {lifted}, y el trinquete no se ha movido.",
+      "pl": "Bez wargi {a} członów niesie {lifted}, a zapadka się nie ruszyła."
+    }
+  }
+}

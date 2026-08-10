@@ -1,0 +1,19 @@
+(node:41800) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+    at Object.shoot (C:\dev\math\aaemath\tools\lib\session.mjs:191:20)
+    at C:\dev\math\aaemath\tools\review.mjs:97:13
+    at async openGame (C:\dev\math\aaemath\tools\lib\session.mjs:196:12)
+    at async cmdShot (C:\dev\math\aaemath\tools\review.mjs:94:3) {
+  log: [
+    '  - taking page screenshot',
+    '  - waiting for fonts to load...',
+    '  - fonts loaded'
+  ],
+  name: 'TimeoutError'
+}

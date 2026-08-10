@@ -70,3 +70,21 @@
 {"t":"2026-08-10T00:34:10.115Z","piece":"P10","msg":"building — Reading binding docs, surveying architecture before authoring Sky/Atmosphere"}
 {"t":"2026-08-10T00:54:29.250Z","piece":"P02","msg":"building — re-aiming art direction at low-poly target"}
 {"t":"2026-08-10T01:25:56.294Z","piece":"P00","msg":"passed — hardening: lazy boot glob, early __vs, palette compat seam, non-fatal missing roles"}
+{"t":"2026-08-10T01:40:14.982Z","piece":"P02","msg":"passed — art direction re-aimed at reference/target-lowpoly.png; palette.json machine-generated from 42 sampled roles; section 13 gates executable via --check; fixed the palette-rename boot break"}
+{"t":"2026-08-10T01:45:33.654Z","piece":"P02","msg":"critique — gap: Section 13 row 3 — the acceptance gate the document calls 'the point of the whole document' FAILS on the binding reference itself (median hue of Y<=0.06 is 147, gate wants 190-206), because it forgot the hue window that section 7.1 already publishes; a builder chasing 11/11 will crush ground cast shadow from hue 123 to 198 and destroy section 3.4"}
+{"t":"2026-08-10T01:47:07.643Z","piece":"P02","msg":"building — re-aiming art direction at low-poly target"}
+{"t":"2026-08-10T01:54:31.210Z","piece":"P15","msg":"building — Binding reads: CLAUDE.md, quality-bar, architecture, learning-architecture, world, voice"}
+{"t":"2026-08-10T01:54:31.821Z","piece":"P17","msg":"building — Binding reads: CLAUDE.md, quality-bar, architecture, learning-architecture, knowledge-graph, standards, world, voice"}
+{"t":"2026-08-10T01:54:34.331Z","piece":"P16","msg":"building — Binding reads: learning-architecture, knowledge-graph, standards, voice"}
+{"t":"2026-08-10T01:55:25.734Z","piece":"P20","msg":"building — Building the i18n runtime (t/plural/number formatting), the three locale bundles, and the i18n probe."}
+{"t":"2026-08-10T01:57:12.181Z","piece":"P02","msg":"passed"}
+{"t":"2026-08-10T02:01:28.903Z","piece":"P02","msg":"critique — gap: The bible claims camera framing in its own scope line and specifies zero composition: no FOV, no horizon-height law, no subject placement, no sky share, and 0 of section 13's 21 arithmetic rows measures framing - a build can score 21/21 and still be a dead 90-degree FOV snapshot with the horizon at y=0.5"}
+{"t":"2026-08-10T02:03:05.999Z","piece":"P09","msg":"building — Reading binding docs and art target before writing terrain"}
+{"t":"2026-08-10T02:03:06.096Z","piece":"P10","msg":"building — Reading binding docs + low-poly target before writing any sky code"}
+{"t":"2026-08-10T02:03:06.922Z","piece":"P11","msg":"building — Reading binding docs and target-lowpoly.png before writing lighting/material code"}
+{"t":"2026-08-10T02:04:02.883Z","piece":"P13","msg":"building — Rewriting Scatter for the flat-shaded low-poly target: faceted cyan crystal clusters, angular rock, blocky flora, floating-island archipelago"}
+{"t":"2026-08-10T02:06:47.101Z","piece":"P12","msg":"building — Writing PostStack: bright-pass + progressive bloom, identity grade that is transparent by construction, restrained sun glow, vignette, static grain, ordered dither. Proving edge crispness is unchanged."}
+{"t":"2026-08-10T02:23:30.530Z","piece":"P17","msg":"building — 32 KP generator families building; 8663 TeX strings KaTeX-clean; authoring EN/ES/PL string bank (282 keys)"}
+{"t":"2026-08-10T02:26:44.920Z","piece":"P20","msg":"building — Runtime + 3 locale bundles (338 strings each) built; 12/12 offline claims pass. Measuring layout in the browser."}
+{"t":"2026-08-10T02:30:09.554Z","piece":"P15","msg":"building — Tex.js + TexPanel.js + boot landed; world-space KaTeX renders. Screenshot capture currently blocked by another wave's world/post rewrite (reproduces with my module removed)."}
+{"t":"2026-08-10T02:30:16.586Z","piece":"P16","msg":"building — Engine built (Graph/Mastery/Scheduler/boot). Running final evidence: P16.mjs, browser determinism, verify."}

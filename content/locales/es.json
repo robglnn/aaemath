@@ -1,0 +1,867 @@
+{
+  "$meta": {
+    "locale": "es",
+    "name": "Spanish",
+    "endonym": "Español",
+    "reference": "en",
+    "strings": 338,
+    "decimalSeparator": ",",
+    "groupSeparator": "U+00A0",
+    "conventions": "app/src/i18n/CONVENTIONS.md",
+    "note": "Localized in voice, not translated. Register rules and the lexicon mapping are in app/src/i18n/CONVENTIONS.md."
+  },
+  "ui": {
+    "title": "ESTRELLA VARIABLE",
+    "subtitle": "el Margen sigue en pie",
+    "lang": {
+      "en": "English",
+      "es": "Español",
+      "pl": "Polski"
+    },
+    "menu": {
+      "begin": "Partir",
+      "resume": "Seguir",
+      "settings": "Equipo",
+      "tongue": "Lengua",
+      "leave": "Retirarse",
+      "back": "Atrás",
+      "done": "Listo",
+      "paused": "Todo quieto."
+    },
+    "hud": {
+      "rung": "Peldaño",
+      "quorum": "Quórum",
+      "can": "Bidón",
+      "digits": "Cifras",
+      "certainties": "Certezas",
+      "leaf": "Hoja",
+      "provisional": "Provisional",
+      "circuit": "Noveno Circuito"
+    },
+    "action": {
+      "grip": "Agarrar",
+      "carry": "Llevar al otro lado",
+      "gather": "Juntar",
+      "share": "Repartir los dos platillos",
+      "open": "Abrir el atado",
+      "seat": "Asentar el valor",
+      "mark": "Fijar la marca",
+      "read": "Leer",
+      "take": "Llevarse",
+      "decline": "Rechazar"
+    },
+    "class": {
+      "span": "Vano",
+      "aperture": "Abertura",
+      "emitter": "Emisor",
+      "bearer": "Soporte",
+      "vessel": "Recipiente",
+      "threshold": "Compuerta"
+    },
+    "mark": {
+      "admits": "Admite {n}.",
+      "refuses": "Rechaza {n}."
+    },
+    "prompt": {
+      "hold": "Mantén {key}",
+      "press": "Pulsa {key}",
+      "socket": "La cuna está abierta.",
+      "canfull": "El bidón está lleno."
+    },
+    "progress": {
+      "title": "Lo que está en pie",
+      "set": "Cuajado",
+      "standing": "En pie",
+      "drifting": "Derivando",
+      "open": "Abierto",
+      "due": "Vuelve a derivar en {when}."
+    },
+    "setting": {
+      "picture": "Imagen",
+      "sound": "Sonido",
+      "control": "Control",
+      "comfort": "Comodidad",
+      "detail": "Detalle",
+      "allsound": "Todo el sonido",
+      "verse": "El Verso",
+      "world": "El mundo",
+      "voices": "Voces",
+      "captions": "Palabras escritas",
+      "lessmotion": "Menos movimiento",
+      "hardedges": "Bordes más duros",
+      "plainletters": "Letras más simples",
+      "biggermarks": "Marcas más grandes",
+      "moretime": "Más tiempo",
+      "holdtorun": "Mantener para correr",
+      "invertlook": "Invertir la vista",
+      "lookspeed": "Velocidad de vista"
+    },
+    "tier": {
+      "potato": "Mínimo",
+      "low": "Bajo",
+      "medium": "Medio",
+      "high": "Alto",
+      "ultra": "Máximo"
+    },
+    "toggle": {
+      "on": "Activado",
+      "off": "Desactivado"
+    },
+    "count": {
+      "leaves": {
+        "one": "{n} hoja",
+        "other": "{n} hojas"
+      },
+      "certainties": {
+        "one": "{n} certeza",
+        "other": "{n} certezas"
+      },
+      "digits": {
+        "one": "{n} cifra",
+        "other": "{n} cifras"
+      },
+      "spans": {
+        "one": "{n} vano",
+        "other": "{n} vanos"
+      },
+      "terms": {
+        "one": "{n} bulto",
+        "other": "{n} bultos"
+      },
+      "claims": {
+        "one": "{n} afirmación abierta",
+        "other": "{n} afirmaciones abiertas"
+      },
+      "metres": {
+        "one": "{n} metro",
+        "other": "{n} metros"
+      },
+      "days": {
+        "one": "{n} día",
+        "other": "{n} días"
+      },
+      "hours": {
+        "one": "{n} hora",
+        "other": "{n} horas"
+      },
+      "minutes": {
+        "one": "{n} minuto",
+        "other": "{n} minutos"
+      }
+    }
+  },
+  "sys": {
+    "bell": {
+      "01": "La Campana. Una hoja menos."
+    },
+    "can": {
+      "full": {
+        "01": "El bidón está lleno. El valor se ablanda."
+      }
+    },
+    "carry": {
+      "turn": {
+        "01": "Las llevadas van cuesta arriba."
+      }
+    },
+    "certainty": {
+      "01": "Certeza recogida."
+    },
+    "claim": {
+      "close": {
+        "01": "Se cierra. Luz primero, luego piedra."
+      },
+      "drift": {
+        "01": "Esta afirmación ha derivado."
+      },
+      "grey": {
+        "01": "Gris. Aguanta. No durará."
+      },
+      "open": {
+        "01": "Aquí hay una afirmación abierta."
+      },
+      "set": {
+        "01": "Certeza formada. No volverá a derivar."
+      }
+    },
+    "detent": {
+      "01": "El retén ha cambiado de lado."
+    },
+    "load": {
+      "01": "La carga no se ha asentado."
+    },
+    "mark": {
+      "set": {
+        "01": "La marca está fijada. Admite."
+      }
+    },
+    "quorum": {
+      "00": "Dieciséis mil cuatro hojas son ciertas.",
+      "01": "Dieciséis mil tres hojas son ciertas."
+    },
+    "rung": {
+      "01": "Peldaño."
+    },
+    "span": {
+      "half": {
+        "01": "La cuna lejana está abierta."
+      }
+    },
+    "threshold": {
+      "01": "Aquí hay una compuerta abierta."
+    },
+    "tolerance": {
+      "01": "La Tolerancia es ahora ±2."
+    },
+    "working": {
+      "01": "Alguien dejó su rastro."
+    }
+  },
+  "mastery": {
+    "certainty": {
+      "01": "Certeza. No volverá a derivar."
+    },
+    "ix": {
+      "01": "Ix lleva cuatro."
+    },
+    "rung": {
+      "01": "Peldaño.",
+      "first": "Primer Peldaño: Porteador.",
+      "second": "Segundo Peldaño: Amarrador.",
+      "third": "Tercer Peldaño: Repartidor."
+    },
+    "set": {
+      "01": "Cuajó."
+    }
+  },
+  "fail": {
+    "coefficient": "Entraron tres. Salió uno.",
+    "inverse": "Eso deshizo otra cosa.",
+    "load": {
+      "unsettled": "El atado seguía cerrado al leerlo."
+    },
+    "mark": {
+      "edge": "La marca misma entró. No debía.",
+      "level": "Lo cerraste a un punto. Estaba cortado para un tramo.",
+      "over": "Admite {n} más de lo que permite la marca.",
+      "under": "Rechaza {n} que la marca sí permite.",
+      "unturned": "El riel cruzó. La marca no."
+    },
+    "near": "A uno de ser cierto.",
+    "negative": "Llegó del revés.",
+    "onesided": "Un platillo se movió. El otro sigue donde lo dejaste.",
+    "partial": {
+      "divide": "La mitad de eso está partida.",
+      "open": "El corchete se abrió sobre una cosa y se cerró sobre la otra."
+    },
+    "seat": {
+      "partial": "Una cuna lo aceptó. Las otras dos siguen abiertas."
+    },
+    "sill": {
+      "sign": "Cruzó el Umbral y no se dio la vuelta."
+    },
+    "slip": "La forma aguantó. El peso no.",
+    "soft": "Se cerró. No cuajó.",
+    "tilt": {
+      "far": "El platillo lejano pesa {n} más.",
+      "near": "El platillo cercano pesa {n} más."
+    },
+    "unlike": "Juntaste un largo y un peso. No se sostienen juntos."
+  },
+  "ix": {
+    "after": {
+      "fall": {
+        "01": "Otra vez. Méteme otra vez. Me gustó estar cerca."
+      }
+    },
+    "bark": {
+      "cutter": {
+        "01": "Ese asintió. A mí. Eso ha pasado."
+      },
+      "hush": {
+        "01": "Se come el gris. Despacio. Sin modales."
+      },
+      "idle": {
+        "03": "Esa puerta es de las muy cuatro.",
+        "07": "La llevada sube. Algo está casi cierto.",
+        "09": "Ese puntal es un tres. Carga un nueve."
+      },
+      "several": {
+        "01": "¿Cuántos son? No va a ser un número."
+      },
+      "tilt": {
+        "02": "Se inclina. Pesa el platillo cercano.",
+        "05": "Algo de allí finge ser un número."
+      },
+      "verse": {
+        "01": "No ha dejado de cantar. Ni una vez. Nunca."
+      },
+      "walker": {
+        "01": "Anda sobre una línea que trazó. ¡Una LÍNEA!"
+      }
+    },
+    "discover": {
+      "socket": {
+        "01": "Abierta. Está abierta. Nadie la cerró en once mil años."
+      }
+    },
+    "farside": {
+      "01": "Algo encendió una luz. En Vantis. Algo encendió una luz.",
+      "02": "Casi tuve cinco. Sentía el cinco."
+    },
+    "field": {
+      "pattern": {
+        "01": "Dos afirmaciones. La misma forma. ¿Presumes tú o presumo yo?"
+      }
+    },
+    "first": {
+      "offer": {
+        "01": "Méteme. Yo seré la incógnita. Es lo único que he hecho."
+      },
+      "solve": {
+        "01": "Ohh. Fui un siete. ¡Fui un SIETE y sonaba fuerte!"
+      }
+    },
+    "grey": {
+      "cross": {
+        "01": "Aguanta. No debería sentirse así, pero aguanta."
+      }
+    },
+    "loss": {
+      "01": "Se llevó mi tres. Me gustaba mi tres.",
+      "02": "Estoy bien. Estoy completamente bien y me gustaría seguir, por favor."
+    },
+    "mastery": {
+      "digit": {
+        "01": "Recuperé mi tres. Di algo. ¡Di algo de mi tres!"
+      },
+      "new": {
+        "01": "Nunca he sido un once. Los números grandes tardan más en ser."
+      },
+      "set": {
+        "01": "No adivinaste. Sentí cómo no adivinabas."
+      }
+    },
+    "rounder": {
+      "approach": {
+        "01": "No dejes que me redondee. Solo he sido cuatro cosas."
+      }
+    },
+    "working": {
+      "found": {
+        "01": "Alguien dejó su rastro. Alguien estuvo AQUÍ."
+      }
+    }
+  },
+  "sennar": {
+    "barge": {
+      "01": "Se levantan cuando dejan de mentir sobre la carga."
+    },
+    "brief": {
+      "01": "Entrégalo. No lo admires."
+    },
+    "dace": {
+      "01": "Despacha su circuito. Nada de lo que cierra cuaja."
+    },
+    "farside": {
+      "01": "Dime que estás listo. Mentirás. Lo permito."
+    },
+    "forty": {
+      "01": "Cuarenta años. Nueve mil cierres. Deriva."
+    },
+    "house": {
+      "01": "La casa se sostiene porque alguien es honesto con un número.",
+      "02": "Eso es todo lo que es una casa."
+    },
+    "mark": {
+      "01": "Alguien fijó esa marca. Alguien puede subirla."
+    },
+    "ondu": {
+      "01": "Ondu sostiene cuatro techos. Eso es un Peldaño."
+    },
+    "praise": {
+      "high": "Eso no fue adecuado. Eso fue cierto.",
+      "low": "Adecuado."
+    },
+    "rank": {
+      "first": "Primer Peldaño. Lleva un bulto. No lleves dos.",
+      "provisional": "Provisional significa que el Margen no ha decidido sobre ti.",
+      "second": "Segundo Peldaño. Puedes juntar.",
+      "third": "Tercer Peldaño. Ahora ve a mirar el Tajo Largo."
+    },
+    "refuse": {
+      "help": {
+        "01": "No.",
+        "02": "Yo tengo un Peldaño. Tú tienes una cuna. Úsala."
+      }
+    },
+    "thanks": {
+      "01": "No me des las gracias. Levanta algo."
+    },
+    "traffic": {
+      "01": "Todos cruzan Hoja Nueve. Nadie se queda."
+    },
+    "vey": {
+      "01": "Esa era una Sexta. Trazó la línea ella misma."
+    },
+    "warn": {
+      "suff": {
+        "01": "Ofrecerá. Siempre ofrece. Fíjate en lo que cuesta."
+      }
+    }
+  },
+  "camber": {
+    "decline": {
+      "01": "Se ha rechazado la asistencia once veces. Ha quedado registrado como entusiasmo."
+    },
+    "discomfort": {
+      "01": "Se ruega no ser exacto en las cercanías. Resulta incómodo para ambas partes."
+    },
+    "farewell": {
+      "01": "Se agradece su continuada colaboración aproximada."
+    },
+    "greet": {
+      "01": "Buenos días. Se aprecian dificultades, lo cual está permitido."
+    },
+    "grey": {
+      "01": "Su vano es ahora aproximadamente un vano. La mayoría lo son."
+    },
+    "hush": {
+      "01": "El animal está retirando un muro aproximado. El animal ha sido archivado como meteorología."
+    },
+    "kindness": {
+      "01": "Se ha establecido una Gentileza a la entrada de esta hoja. Hay sopa. La sopa también es aproximada."
+    },
+    "name": {
+      "01": "La disputa sobre el nombre de esta hoja puede resolverse. Se está dispuesto a ensanchar el nombre."
+    },
+    "offer": {
+      "01": "Hay un valor disponible. Siempre ha estado disponible. Lo estaba antes de su llegada.",
+      "02": "No existe obligación de resolver esto. Nunca ha existido obligación de resolver nada."
+    },
+    "philosophy": {
+      "01": "No se objeta el resolver. Solo se hace constar que nunca ha sido necesario.",
+      "02": "La exactitud ha dejado fuera de este mundo a más gente que la oscuridad."
+    },
+    "queue": {
+      "01": "Diecinueve personas esperan. A ninguna se le excluye hoy de nada."
+    },
+    "reassure": {
+      "01": "No se le está quitando nada. Solo se están haciendo las cosas más fáciles de llevar."
+    },
+    "receipt": {
+      "01": "Se ha recogido un tres. Se ha emitido un recibo. El recibo también es aproximado."
+    },
+    "supplied": {
+      "01": "Se ha suministrado un valor en su nombre. No se requiere acción alguna. Nunca se requirió."
+    },
+    "tolerance": {
+      "01": "La Tolerancia se ha ensanchado a ±2 ante el aumento de la demanda. La demanda era usted."
+    }
+  },
+  "dace": {
+    "can": {
+      "01": "Vacío desde la loma. El tuyo aún chapotea."
+    },
+    "farside": {
+      "01": "Eso lo levantaste tú. En lo que yo hice nueve hojas. Lo levantaste tú."
+    },
+    "first": {
+      "01": "Noveno Circuito. Eres el otro. Vas cuatro hojas por detrás."
+    },
+    "grey": {
+      "01": "El mío también cede. El mío está entregado."
+    },
+    "pass": {
+      "01": "Nueve hojas antes del anochecer. Tú haces una."
+    },
+    "queue": {
+      "01": "Es gratis y es rápido. No voy a fingir que no."
+    },
+    "stray": {
+      "01": "Tuve uno. Once días. Lo redondearon hasta el final.",
+      "02": "Ahora es un número. A los números no les importa nada."
+    }
+  },
+  "walk": {
+    "cut": {
+      "01": "Uno sujeta el vidrio. Uno no levanta la vista.",
+      "02": "Esa certeza cuajó limpia. Alguien la cerró dos veces, con estaciones de por medio.",
+      "03": "Manos fuera de la luz, Corredor.",
+      "04": "Nadie dice la palabra corta durante un corte.",
+      "05": "A la caja. Al horno en la Seis. Un techo, con el tiempo."
+    },
+    "edge": {
+      "01": "Cuatrocientas once torres. Contadas dos veces.",
+      "02": "Cuatrocientas nueve. Él cuenta los muñones.",
+      "03": "Trescientas noventa. La niebla se llevó el resto.",
+      "04": "Mi padre contó cuatrocientas doce. Una vez.",
+      "05": "Cambió. Nunca había cambiado. Cambió."
+    },
+    "nearly": {
+      "01": "Los grandes salen cuando casi—",
+      "02": "No lo digas entero cerca del agua, que—",
+      "03": "Cuarenta años en este azud y ni una sola vez he—",
+      "04": "Llevas el bidón lleno, así que tú debes de ser el—",
+      "05": "Míralo. Míralo. Está a punto de—"
+    },
+    "rate": {
+      "01": "La parte mojada de nosotros dice que la llevada central está girando.",
+      "02": "La parte lejana de nosotros te oyó. Esta va detrás.",
+      "03": "La parte cercana de nosotros está dentro. Rodea.",
+      "04": "La parte mojada de nosotros hoy es tres. En primavera era cuatro.",
+      "05": "La parte seca de nosotros te recordará. La mojada no."
+    },
+    "sag": {
+      "01": "Puedo sostenerlo. No puedo hacerlo cierto.",
+      "02": "Cuatro puntales bajo ese techo. Tres son míos.",
+      "03": "Todos aquí pisan algo que apilé yo.",
+      "04": "Aguantará hasta que pase alguien con Peldaño.",
+      "05": "Los aproximos han vuelto a entrar. Siempre vuelven."
+    },
+    "solv": {
+      "01": "Provisional.",
+      "02": "Cuidado con la línea. Es mía.",
+      "03": "¿Noveno Circuito? Entonces llevas carga. Aparta."
+    },
+    "tare": {
+      "01": "Ochenta y un kilos. Flotarías, si fueras honesto con eso.",
+      "02": "Cuatrocientos kilos de más. En algún sitio. En algo. Es humillante.",
+      "03": "Mis botas son uno coma dos. Las peso cada noche.",
+      "04": "Nueve toneladas de nosotros. El número tiene que ser cierto.",
+      "05": "Seis generaciones en este casco y nadie ha adivinado nunca la tara."
+    },
+    "verse": {
+      "01": "—y los dos platillos por tres, y los dos platillos por tres—",
+      "02": "—lleva el seis, el seis cruza, el seis gira—",
+      "03": "—once menos del platillo cercano, once del lejano—",
+      "04": "—no me pares, no me pares, y los dos platillos—",
+      "05": "—juntado, juntado, y aguanta, y aguanta, y—"
+    }
+  },
+  "amb": {
+    "abouts": {
+      "01": "Los aproximos han entrado en esa puerta."
+    },
+    "always": {
+      "01": "Este ya estaba en pie antes que nadie."
+    },
+    "arch": {
+      "01": "Una Gentileza se alza bajo la Tolerancia."
+    },
+    "barge": {
+      "aground": {
+        "01": "Una barcaza varada pesa sus propias botas."
+      },
+      "name": {
+        "01": "Esa barcaza se llama Nueve Décimos."
+      }
+    },
+    "bell": {
+      "hang": {
+        "01": "La Campana cuelga bajo la Hoja Uno."
+      },
+      "ring": {
+        "01": "Sonó la Campana. Falta una hoja."
+      }
+    },
+    "bollard": {
+      "01": "Los Tare amarran ahí. Y sigue creciendo."
+    },
+    "carry": {
+      "bait": {
+        "01": "Su cebo es una frase sin terminar."
+      },
+      "fish": {
+        "01": "Los mediadichos pescan la llevada central."
+      },
+      "uphill": {
+        "01": "La llevada vuelve a correr cuesta arriba."
+      }
+    },
+    "crab": {
+      "shells": {
+        "01": "Dos conchas cada uno. Las alternan."
+      },
+      "sill": {
+        "01": "Cangrejos de umbral cruzan. Vuelven invertidos."
+      }
+    },
+    "cutters": {
+      "01": "Cortadores en el borde lejano. Vidrio oscuro.",
+      "word": {
+        "01": "Los cortadores no dicen esa palabra."
+      }
+    },
+    "dace": {
+      "01": "Otro Provisional, media hoja por delante.",
+      "can": {
+        "01": "Su bidón está vacío. Es mediodía."
+      }
+    },
+    "detent": {
+      "01": "Esa compuerta se inclina. Debe hacerlo."
+    },
+    "edgewake": {
+      "01": "Peregrinos en el borde, contando torres.",
+      "count": {
+        "01": "Ningún recuento de Vantis coincide."
+      }
+    },
+    "errata": {
+      "01": "Un agujero en el cielo, moviéndose."
+    },
+    "flatleaf": {
+      "01": "Hoja Doscientos Seis. Perfectamente plana."
+    },
+    "house": {
+      "basement": {
+        "01": "Algo bajo la casa sigue siendo cierto."
+      }
+    },
+    "hush": {
+      "graze": {
+        "01": "Un silencio come un muro gris."
+      },
+      "hum": {
+        "01": "El silencio zumba. El muro adelgaza."
+      }
+    },
+    "kiln": {
+      "01": "Las Hojas Horno brillan por debajo."
+    },
+    "kindness": {
+      "board": {
+        "01": "Tolerancia ±1. Fijada a diario. Revisada."
+      },
+      "free": {
+        "01": "La sopa es gratis. Todo lo es."
+      },
+      "queue": {
+        "01": "Once personas hacen cola por sopa.",
+        "02": "Ahora diecinueve. Eran once."
+      }
+    },
+    "leafninealso": {
+      "01": "Hoja Nueve También disputa este nombre."
+    },
+    "night": {
+      "carries": {
+        "01": "De noche las hojas muestran sus llevadas."
+      }
+    },
+    "oldtrue": {
+      "01": "Viejocierto. Cien años aguantando."
+    },
+    "quorum": {
+      "01": "Dieciséis mil tres. Eran cuatro."
+    },
+    "rating": {
+      "01": "Tres de algo miden la llevada."
+    },
+    "refusal": {
+      "01": "Nada cierra eso. Nada lo ha hecho."
+    },
+    "sagsmith": {
+      "01": "Un apuntalador apuntala lo que no cierra.",
+      "props": {
+        "01": "Certezas apiladas sosteniendo un techo."
+      }
+    },
+    "secondlip": {
+      "01": "El mismo animal aflora otra vez abajo."
+    },
+    "several": {
+      "01": "Un varios beben. Parte está en otro sitio."
+    },
+    "stray": {
+      "other": {
+        "01": "Otro suelto. Ha sido once cosas."
+      }
+    },
+    "thousandfoot": {
+      "01": "Nadie ha contado uno dos veces igual."
+    },
+    "tolerance": {
+      "mark": {
+        "01": "El tablón es una marca. Se ensancha."
+      }
+    },
+    "unattributed": {
+      "01": "Doscientos años cerrando su propia afirmación."
+    },
+    "vantis": {
+      "remainder": {
+        "01": "Un cuarto de Vantis se niega a caer."
+      },
+      "stop": {
+        "01": "Esas torres paran donde falló la afirmación."
+      }
+    },
+    "verse": {
+      "runner": {
+        "01": "Pasa una corredora del Verso. No parará."
+      },
+      "sound": {
+        "01": "La Hoja Cuarenta canta. Siempre canta."
+      }
+    },
+    "walker": {
+      "height": {
+        "01": "Cuarenta metros arriba. Sin inmutarse."
+      },
+      "line": {
+        "01": "Una solvaria anda sobre una línea trazada."
+      }
+    },
+    "weir": {
+      "mark": {
+        "01": "El azud admite por encima de su marca."
+      },
+      "raised": {
+        "01": "La marca era cuatro. Ahora es cinco."
+      }
+    },
+    "working": {
+      "old": {
+        "01": "Sigue en pie. Once mil años."
+      }
+    },
+    "wren": {
+      "flock": {
+        "01": "Los chochines llegan antes que su ruido."
+      },
+      "perch": {
+        "01": "Los chochines posan solo en lo cierto."
+      }
+    }
+  },
+  "sign": {
+    "barge": {
+      "01": "NUEVE DÉCIMOS DE NADA — VARADA — COMERCIA"
+    },
+    "circuit": {
+      "01": "NOVENO CIRCUITO — BIDONES SELLADOS — EL VALOR SE ABLANDA",
+      "02": "PROVISIONALES: ONCE. DEPÓSITOS: NINGUNO."
+    },
+    "crabs": {
+      "01": "CUIDADO CON EL UMBRAL. LOS CANGREJOS SE INVIERTEN."
+    },
+    "division": {
+      "01": "EL TAJO LARGO — 11 km — SIN VANO"
+    },
+    "edge": {
+      "01": "EL BORDE. NINGUNA AFIRMACIÓN MÁS ALLÁ."
+    },
+    "field": {
+      "01": "CAMPO DE CERTEZAS. LLÉVATE LO QUE CUAJÓ.",
+      "02": "DEJA LO QUE NO. NO ES TUYO."
+    },
+    "house": {
+      "01": "CASA LEVANTADA. NO DESLEVANTAR.",
+      "02": "SÓTANO. SOLO LA GUARDIANA. ES PORTANTE."
+    },
+    "hush": {
+      "01": "SILENCIO PASTANDO. GRIS BAJO SU RIESGO."
+    },
+    "kiln": {
+      "01": "HOJA HORNO SEIS — SOLO VIDRIO — MANOS FUERA"
+    },
+    "kindness": {
+      "01": "UNA GENTILEZA. SOPA. VALORES. SIN CARGO.",
+      "02": "TOLERANCIA ±1. REVISIÓN 4111. FIJADA A DIARIO."
+    },
+    "leafnine": {
+      "01": "HOJA NUEVE — TRES LLEVADAS — SIN DEPÓSITO"
+    },
+    "leafninealso": {
+      "01": "HOJA NUEVE TAMBIÉN — 400 m — EN DISPUTA"
+    },
+    "quorum": {
+      "01": "QUÓRUM 16 004. LA CAMPANA SONÓ EN PRIMAVERA."
+    },
+    "verse": {
+      "01": "RELEVO DEL VERSO. NO HABLAR CON LOS CORREDORES."
+    },
+    "weir": {
+      "01": "AZUD EN USO. NO TERMINAR LAS FRASES.",
+      "02": "MARCA FIJADA EN CUATRO. NO SUBIRLA."
+    }
+  },
+  "lore": {
+    "always": {
+      "01": "Algunas afirmaciones son ciertas para todo valor y ya están en pie antes de que llegue nadie. El Margen llama a una de ellas un siempre, le parecen levemente bochornosas, y construye sobre ellas igualmente."
+    },
+    "bell": {
+      "01": "La Campana cuelga bajo la Hoja Uno y suena una vez por cada hoja que deja de ser cierta. Este año ha sonado treinta y siete veces. A nadie ha hecho falta explicarle nunca qué significa."
+    },
+    "bollard": {
+      "01": "El arco a la entrada de esta hoja y el arco sobre el campo de certezas son los dos extremos de un mismo animal. Un topógrafo lo estableció hace cuatro generaciones, con acuerdo general y ningún interés particular. Nadie cambió los nombres, porque los nombres son útiles, y desde entonces nadie ha establecido nada más sobre él. Le quedan quizá ochenta años de hoja por cruzar."
+    },
+    "carrywren": {
+      "01": "Los chochines de llevada beben de las llevadas y en consecuencia vuelan algo más rápido de lo que son."
+    },
+    "circuit": {
+      "01": "El Noveno Circuito hace correr a once Provisionales por cuarenta hojas y no tiene depósito en ninguna. Conocerás a dos."
+    },
+    "cutters": {
+      "01": "Los cortadores no hablan en primera persona durante un corte: nadie dice yo, nadie dice hice, todo se dice en impersonal. Pregúntale a uno por qué y te enseñará una mano."
+    },
+    "edgewake": {
+      "01": "Los peregrinos vienen al borde a contar las torres de Vantis. Ningún recuento ha coincidido jamás con otro. La Vigilia del Borde considera que ese es el hallazgo, no el fracaso."
+    },
+    "flatleaf": {
+      "01": "La Hoja Doscientos Seis es una sola afirmación del tamaño de una hoja, y es el mayor enunciado cierto del Margen, y es un suelo, y nadie sabe de qué era el suelo."
+    },
+    "hush": {
+      "01": "Un silencio come gris. Donde ha pastado, un muro aproximado sencillamente ya no está, y el agujero es honesto. La Suficiencia tiene un formulario para esto y lo archiva como meteorología."
+    },
+    "leafninealso": {
+      "01": "Hoja Nueve También se desgajó de Hoja Nueve hace mil cien años y se quedó con el nombre. Ambas reclamaciones están en revisión. La Suficiencia se ha ofrecido a ensanchar el nombre."
+    },
+    "mark": {
+      "01": "Una compuerta puesta a una marca no queda nivelada y no debe quedarlo. Se inclina hacia lo que deja pasar, y una compuerta que ha dejado de inclinarse ha dejado de admitir a nadie."
+    },
+    "nearlies": {
+      "01": "Las llevadas fluyen hacia lo que está casi cierto, así que los Casi ceban sus sedales con frases que a propósito no terminan. El mediadicho que complete una en el azud paga la ronda."
+    },
+    "nine": {
+      "hundred": {
+        "01": "La Hoja Cuarenta se mantiene en el aire gracias a novecientas personas que cantan por turnos. No han parado en seis generaciones. Su cambio de turno es fiesta pública."
+      }
+    },
+    "refusal": {
+      "01": "Una afirmación que ningún valor cierra se llama una negativa. El nombre de Hoja Nueve es una: dos hojas lo sostienen, ningún valor lo resuelve, y la Suficiencia se ha ofrecido a ensanchar el nombre."
+    },
+    "remainder": {
+      "01": "El Resto sigue en pie porque su afirmación se redactó tan mal que nadie ha conseguido hacerla falsa tampoco."
+    },
+    "sagsmith": {
+      "01": "Un apuntalador no puede cerrar una afirmación y no finge poder. Apuntala. Todo techo gris del Margen se sostiene sobre las certezas apiladas de alguien y sobre la paciencia de alguien."
+    },
+    "several": {
+      "01": "A un varios nunca se le ha contado, así que el Margen se rindió y cambió la gramática en su lugar: un varios beben. Que parte de uno esté al otro lado de una hoja no lo convierte en dos, y los topógrafos que sostuvieron lo contrario son la razón de que exista la palabra."
+    },
+    "solvary": {
+      "01": "A la Solvaría le faltan unas nueve mil personas. Nunca ha rechazado a nadie; sencillamente no tiene a quién enviar para que esté a tu lado mientras cierras la primera."
+    },
+    "stray": {
+      "01": "Un suelto es una incógnita que se ha soltado de su afirmación. No se le puede redondear mientras siga sin resolver, lo que significa que la vida más segura posible para un suelto es aquella en la que nunca es nada en absoluto.",
+      "rounded": {
+        "01": "Un suelto redondeado hasta el final no queda destruido. Se convierte en un valor: definido, permanente, archivado. Nadie en el Margen llama a eso una muerte, y esa es la parte que a la gente le cuesta."
+      }
+    },
+    "tare": {
+      "01": "Los Tare vuelan sobre una afirmación acerca de su propia masa, y por eso saben el peso de todo lo que poseen, incluidas sus botas, incluido tú. Un funeral Tare es una resta."
+    },
+    "thousandfoot": {
+      "01": "Ningún milpiés ha sido contado dos veces con el mismo resultado. Tres topógrafos se han jubilado por esto."
+    },
+    "tolerance": {
+      "01": "La Tolerancia es una marca, y una marca es una afirmación como cualquier otra, lo que la convierte en la mayor afirmación en pie del Margen. Se fija en un tablón en vez de anunciarse, y se revisa en vez de decidirse."
+    },
+    "warden": {
+      "01": "Un Guardián es el Quinto Peldaño, y el Quinto Peldaño es aquel en el que una persona puede fijar una marca propia. Hasta que la Solvaría creó el Peldaño había exactamente un cuerpo en el Margen que podía, y sigue siendo el que lo hace."
+    }
+  }
+}

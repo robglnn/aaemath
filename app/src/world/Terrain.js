@@ -1,52 +1,56 @@
 import * as THREE from "three";
 import { signals } from "../core/Signals.js";
 import { publish } from "../core/Introspect.js";
-import { config } from "../core/Config.js";
 
 /**
- * Terrain — the heightfield engine Leaf Nine is cut out of.
+ * Terrain — the faceted low-poly heightfield Leaf Nine is cut out of, and the flat-shading
+ * material language everything in the level is built with.
  *
- * There is no noise library in here and no imported mesh. Everything below is authored:
- * a hashed value-noise basis, fBm and ridged-multifractal stacks built on it, a domain warp,
- * two erosion models, a chunked level-of-detail mesh, and a heightfield query fast enough to
- * be called from a fixed step.
+ * The render target is `reference/target-lowpoly.png`: PS1-era geometry under modern light.
+ * Five decisions carry the whole look, and each one exists because of a specific failure:
  *
- * Four decisions carry most of the quality, and each of them exists because of a specific
- * failure it prevents:
+ *  1. **Non-indexed geometry, one normal per triangle, one colour per triangle.** Shared vertices
+ *     average their neighbours' normals, and an averaged normal is a *smooth* surface however few
+ *     triangles you give it — which is the single most common way a "low-poly" scene ends up
+ *     looking like a deflated football. Every triangle here owns its three vertices outright, so
+ *     every facet holds exactly one value and the silhouette between two facets is a hard edge.
+ *     The shading normal is recovered in the fragment shader from `dFdx/dFdy` of the world
+ *     position, so the facet is flat by *construction* and cannot be softened by anything
+ *     downstream.
  *
- *  1. **One grid is the truth.** The visual mesh, the collision mesh, `groundAt()` and every
- *     other system's height query all read the same `Float32Array`. A terrain whose renderer
- *     and whose physics evaluate the same noise function *separately* drifts apart by a few
- *     centimetres of floating-point and the player floats or sinks — visibly, and only on some
- *     machines. Sampling one baked grid makes that class of bug impossible.
+ *  2. **Facet size is a level-design parameter, not a performance one.** At `cell = 6 m` a
+ *     twenty-metre cliff resolves into three or four planes at gameplay distance, which is what
+ *     the reference does. Halving the cell would cost nothing on this budget and would quietly
+ *     destroy the look, so the number is authored and asserted, never tuned for frame rate.
  *
- *  2. **Erosion is what makes rock read as rock.** Layered noise alone produces blobs: smooth
- *     hills with rounded tops, because every octave is symmetric. Real ridges are asymmetric —
- *     a sharp crest, a talus slope that stands at the material's angle of repose, and debris
- *     fanning out at the bottom. `_thermal()` moves material downhill wherever the local slope
- *     exceeds a talus angle, which produces exactly that; `_hydraulic()` runs droplets that
- *     carry sediment and cut the gullies that tell you which way is down. Neither is decoration:
- *     without them the leaf reads as sand dunes.
+ *  3. **Shadow is an authored colour, not a multiplication.** The reference's lit rock measures
+ *     `#B8834D` (hue 30) and the *same rock* in shadow measures `#1B2B32` (hue 198) — five times
+ *     darker and on the other side of the wheel. No amount of ambient fill produces that from a
+ *     warm albedo. So the shaded side of every facet is blended toward an authored blue-grey and
+ *     the terminator is nearly hard. Form comes from geometry and from that value gap.
  *
- *  3. **Authored ground is protected from both.** A level is not a noise field. Every pad,
- *     terrace, court and route the composition needs carries `protect = 1`, which zeroes the
- *     noise amplitude, zeroes the erosion weight and blends the final height back to exactly
- *     what the design asked for. Erosion is allowed to attack the *wild* parts and only those.
+ *  4. **Distance is carried by haze, never by detail.** Every material fades toward the horizon
+ *     colour on its own curve, independent of `scene.fog`, so the piece owns its own aerial
+ *     perspective and a distant leaf is a flat value shape rather than more triangles.
  *
- *  4. **High-frequency detail is slope-gated.** Small bumps on walkable ground are a movement
- *     bug wearing a texture: they make the collision mesh disagree with the render mesh at any
- *     collider resolution you can afford, and they make a run across a flat plain feel like
- *     driving over cobbles. Detail amplitude scales with slope, so cliffs get crunchy and decks
- *     stay honest — which is what lets the collider run at 2 m and still be truthful.
+ *  5. **Colours are authored in display space and inverted through the tonemap.** ACES eats
+ *     roughly a stop of saturation and rolls off the top; typing the reference's measured hex
+ *     into a material and hoping is how a warm ochre world comes out beige. `sceneColor()` runs
+ *     the exact inverse of three's ACES fit, so `#B8834D` in this file is `#B8834D` on screen.
+ *     Exposure divides out exactly (it is a pre-multiply inside the fit), so the rig may change
+ *     exposure at any time and the authored colour still lands.
  *
- * The level supplies a `design(x, z, out)` callback: base height, whether the leaf exists at
- * all here, how protected the ground is, how rough, how thick the leaf is underneath, and a
- * material class. Terrain owns everything after that.
+ * The level supplies a `design(x, z, out)` callback — base height, whether the leaf exists here,
+ * how protected the ground is, how rough, how thick underneath, and a surface class. Terrain owns
+ * everything after that: noise, meshing, colouring, queries and the collider.
  */
 
 // ---------------------------------------------------------------------------- noise basis
+//
+// Written here, not imported. Three primitives are enough for a whole world: a hash, a value
+// noise built on it, and two fractal stacks over that.
 
-/** 32-bit integer hash → [0,1). Deterministic on every platform; no Math.random anywhere. */
+/** 32-bit integer hash → [0,1). Deterministic on every platform; no `Math.random` anywhere. */
 export function hash2i(ix, iz, seed) {
   let h = Math.imul(ix | 0, 0x27d4eb2d) ^ Math.imul(iz | 0, 0x165667b1) ^ Math.imul(seed | 0, 0x9e3779b1);
   h ^= h >>> 15;
@@ -57,7 +61,7 @@ export function hash2i(ix, iz, seed) {
   return (h >>> 0) / 4294967296;
 }
 
-/** Value noise with a quintic fade — C² continuous, so the derived normals never crease. */
+/** Value noise, quintic fade. C² continuous, so a derived slope never creases where it should not. */
 export function valueNoise(x, z, seed) {
   const ix = Math.floor(x);
   const iz = Math.floor(z);
@@ -74,8 +78,8 @@ export function valueNoise(x, z, seed) {
   return t + (u - t) * uz;
 }
 
-/** Signed fractal Brownian motion in [-1, 1]. */
-export function fbm(x, z, seed, octaves = 5, lacunarity = 2.017, gain = 0.5) {
+/** Signed fractal Brownian motion in [-1, 1]. Broad shape. */
+export function fbm(x, z, seed, octaves = 4, lacunarity = 2.017, gain = 0.5) {
   let amp = 1;
   let freq = 1;
   let sum = 0;
@@ -90,12 +94,11 @@ export function fbm(x, z, seed, octaves = 5, lacunarity = 2.017, gain = 0.5) {
 }
 
 /**
- * Ridged multifractal in [0, 1]. The absolute-value fold turns every zero crossing into a
- * crest, and weighting each octave by the previous one keeps the crests *connected* into
- * ridge lines instead of scattering them — that connectedness is the difference between a
- * mountain and a heap of gravel.
+ * Ridged multifractal in [0, 1]. The absolute-value fold turns every zero crossing into a crest;
+ * weighting each octave by the previous one keeps those crests *connected* into ridge lines
+ * instead of scattering them, which is the difference between a mountain and a heap of gravel.
  */
-export function ridged(x, z, seed, octaves = 5, lacunarity = 2.031, gain = 0.52, sharpness = 2.0) {
+export function ridged(x, z, seed, octaves = 4, lacunarity = 2.031, gain = 0.52, sharpness = 2.0) {
   let amp = 1;
   let freq = 1;
   let sum = 0;
@@ -114,962 +117,871 @@ export function ridged(x, z, seed, octaves = 5, lacunarity = 2.031, gain = 0.52,
   return sum / (norm || 1);
 }
 
-const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-const smoothstep = (a, b, t) => {
+export const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+export const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+export const smoothstep = (a, b, t) => {
   const x = clamp((t - a) / (b - a || 1e-6), 0, 1);
   return x * x * (3 - 2 * x);
 };
-const mix = (a, b, t) => a + (b - a) * t;
+export const lerp = (a, b, t) => a + (b - a) * t;
 
-// ---------------------------------------------------------------------------- mesh builder
+/** Shortest distance from (x,z) to a polyline, plus the parameter along it. Level shaping needs both. */
+export function distToPolyline(x, z, pts) {
+  let best = Infinity;
+  let bestT = 0;
+  let acc = 0;
+  let total = 0;
+  for (let i = 1; i < pts.length; i++) total += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+  for (let i = 1; i < pts.length; i++) {
+    const ax = pts[i - 1][0];
+    const az = pts[i - 1][1];
+    const bx = pts[i][0];
+    const bz = pts[i][1];
+    const dx = bx - ax;
+    const dz = bz - az;
+    const len2 = dx * dx + dz * dz || 1e-6;
+    const t = clamp(((x - ax) * dx + (z - az) * dz) / len2, 0, 1);
+    const px = ax + dx * t;
+    const pz = az + dz * t;
+    const d = Math.hypot(x - px, z - pz);
+    if (d < best) {
+      best = d;
+      bestT = (acc + Math.sqrt(len2) * t) / (total || 1);
+    }
+    acc += Math.sqrt(len2);
+  }
+  return { d: best, t: bestT };
+}
+
+// ---------------------------------------------------------------------------- colour authoring
+//
+// three's ACES fit, and its exact numerical inverse. Authoring happens in display sRGB — the
+// colours in this file are the hexes measured off `reference/target-lowpoly.png` — and the
+// inverse produces the scene-linear value the renderer needs so that what comes out the other
+// end of the tonemap is the colour that was asked for.
+
+const ACES_IN = [
+  [0.59719, 0.35458, 0.04823],
+  [0.076, 0.90834, 0.01566],
+  [0.0284, 0.13383, 0.83777],
+];
+const ACES_OUT = [
+  [1.60475, -0.53108, -0.07367],
+  [-0.10208, 1.10813, -0.00605],
+  [-0.00327, -0.07276, 1.07602],
+];
+const mat3mul = (M, v) => [
+  M[0][0] * v[0] + M[0][1] * v[1] + M[0][2] * v[2],
+  M[1][0] * v[0] + M[1][1] * v[1] + M[1][2] * v[2],
+  M[2][0] * v[0] + M[2][1] * v[1] + M[2][2] * v[2],
+];
+const rrtOdt = (v) =>
+  v.map((x) => {
+    const a = x * (x + 0.0245786) - 0.000090537;
+    const b = x * (0.98372901 * x + 0.432951) + 0.238081;
+    return a / b;
+  });
+
+/** three's `ACESFilmicToneMapping`, exactly, at exposure 1. */
+export function acesToneMap(rgbLinear) {
+  let v = rgbLinear.map((x) => x / 0.6);
+  v = mat3mul(ACES_IN, v);
+  v = rrtOdt(v);
+  v = mat3mul(ACES_OUT, v);
+  return v.map((x) => clamp01(x));
+}
+
+const srgbToLin = (u) => (u <= 0.04045 ? u / 12.92 : Math.pow((u + 0.055) / 1.055, 2.4));
 
 /**
- * A tiny non-indexed geometry accumulator. Written here rather than pulled from three's
- * examples because merging is three lines of arithmetic and an extra dependency in a build
- * that reviewers run headless is a real cost.
+ * Scene-linear colour that ACES (at exposure 1) maps to the given display hex.
+ *
+ * Fixed-point iteration with a damped exponent — the map is monotone per channel once the
+ * matrices are applied, and 120 iterations lands inside 1/255 for everything inside the
+ * reachable gamut. Very bright saturated colours are *outside* it (ACES cannot make a
+ * V=1.0 S=0.44 cyan), and those clamp rather than diverge; `sceneColorError()` reports how far
+ * off a requested colour was so a wish that cannot be granted is visible instead of silent.
  */
-export class MeshBuilder {
-  constructor() {
-    this.pos = [];
-    this.nrm = [];
-    this.col = [];
+const _sceneCache = new Map();
+export function sceneRGB(hexDisplay) {
+  const hit = _sceneCache.get(hexDisplay);
+  if (hit) return hit;
+  const target = [(hexDisplay >> 16) & 255, (hexDisplay >> 8) & 255, hexDisplay & 255].map((v) =>
+    srgbToLin(v / 255)
+  );
+  const c = target.slice();
+  for (let i = 0; i < 120; i++) {
+    const got = acesToneMap(c);
+    for (let k = 0; k < 3; k++) {
+      const g = Math.max(got[k], 1e-5);
+      c[k] = clamp(c[k] * Math.pow(target[k] / g, 0.65), 0, 40);
+    }
   }
+  const got = acesToneMap(c);
+  const out = { r: c[0], g: c[1], b: c[2], err: Math.max(...got.map((v, k) => Math.abs(v - target[k]))) };
+  _sceneCache.set(hexDisplay, out);
+  return out;
+}
 
-  get triangles() {
-    return this.pos.length / 9;
-  }
+/** A THREE.Color in the renderer's linear working space that survives the tonemap unchanged. */
+export function sceneColor(hexDisplay) {
+  const c = sceneRGB(hexDisplay);
+  return new THREE.Color(c.r, c.g, c.b);
+}
 
-  tri(a, b, c, ca, cb, cc) {
-    const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
-    const vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
-    let nx = uy * vz - uz * vy;
-    let ny = uz * vx - ux * vz;
-    let nz = ux * vy - uy * vx;
+/** Worst per-channel display error of the last request for this colour — 0 means exactly reachable. */
+export function sceneColorError(hexDisplay) {
+  return sceneRGB(hexDisplay).err;
+}
+
+// ---------------------------------------------------------------------------- the palette
+//
+// Every colour in Leaf Nine, as a display hex measured off the reference. `review/p09-ref-measure.mjs`
+// prints the patches these came from; `review/measure/P09.mjs` measures a real capture back
+// against them.
+
+export const PAL = {
+  rockSun: 0xc89055, // a facet square-on to Lethis          ref #B8834D / #C88A4F
+  rockLit: 0xa87a48, // general lit rock                     ref #785C3E … #B8834D
+  rockWarm: 0x936a3f, // lit rock, turned away
+  deck: 0x8a6e36, // flat walkable stone                   ref #7A642B
+  deckPale: 0xb08a4c, // sun-bleached top of the leaf
+  bank: 0x6f6335, // damp stone beside a carry
+  bone: 0xac8659, // built stone: the house, the arches    palette stone.bone
+  boneDark: 0x6d5844,
+  glass: 0x2c3a44, // the dark glass of the Bollard
+  shadow: 0x1b2c33, // the authored shadow family           ref #1B2B32, hue 198
+  underLit: 0x4a4238, // leaf underside, catching bounce
+  underDeep: 0x23272c, // leaf underside, deep
+  carry: 0x8fe0d2, // a carry: raw value, unresolved       ref #8EFDE2 (gamut-clamped)
+  carryCore: 0xd8fdf2, // the lit core of a carry              ref #D5FDF6
+  crystal: 0x9ee6d8, // a certainty
+  crystalHot: 0xdefdf4,
+  hazeBase: 0xffb260, // palette sky.horizon
+  hazeSun: 0xffd79a,
+  hazeCool: 0x9bb69a,
+  farStone: 0xb28d5f, // a leaf on the horizon, already mostly haze
+  vantis: 0xa5865f, // Vantis across the Long Division
+  greyProp: 0x6a6a63, // a greyed, propped structure
+};
+
+// ---------------------------------------------------------------------------- material language
+
+const MAX_SUN = new THREE.Vector3(0.874, 0.139, -0.464);
+
+/**
+ * One uniform block, shared *by reference* across every material this module makes, so one write
+ * per frame reaches the whole world. Per-material values live in `local` blocks instead.
+ */
+export const flatShared = {
+  uVsSun: { value: MAX_SUN.clone() },
+  uVsLevel: { value: 1 }, // Lethis relative output / exposure — see the class comment
+  uVsHaze: { value: sceneColor(PAL.hazeBase) },
+  uVsHazeSun: { value: sceneColor(PAL.hazeSun) },
+  uVsHazeP: { value: new THREE.Vector2(1 / 430, 0.9) }, // 1/falloff metres, ceiling
+  uVsShade: { value: sceneColor(PAL.shadow) },
+};
+
+const GLSL_PARS = /* glsl */ `
+varying vec3 vVsWorld;
+uniform vec3  uVsSun;
+uniform float uVsLevel;
+uniform vec3  uVsHaze;
+uniform vec3  uVsHazeSun;
+uniform vec2  uVsHazeP;
+uniform vec3  uVsShade;
+uniform vec4  uVsGrade;   // x lit floor, y shadow authoring, z terminator half width, w unlit
+uniform vec2  uVsDist;    // x virtual-distance multiplier, y extra haze bias
+`;
+
+const GLSL_SHADOW = /* glsl */ `
+// Slot 0 is the rig's only shadow caster (world/Lighting.js adds it first, on purpose).
+float vsFlatShadow() {
+	float s = 1.0;
+	#if defined( USE_SHADOWMAP ) && NUM_DIR_LIGHT_SHADOWS > 0
+		DirectionalLightShadow vsDLS = directionalLightShadows[ 0 ];
+		s = receiveShadow ? getShadow( directionalShadowMap[ 0 ], vsDLS.shadowMapSize, vsDLS.shadowIntensity, vsDLS.shadowBias, vsDLS.shadowRadius, vDirectionalShadowCoord[ 0 ] ) : 1.0;
+	#endif
+	return s;
+}
+`;
+
+const GLSL_GRADE = /* glsl */ `
+	{
+		// The facet normal, taken from the geometry itself. Whatever the vertex normals say, a
+		// triangle is a plane, and this is that plane — flat shading that nothing can round off.
+		vec3 vsN = normalize( cross( dFdx( vVsWorld ), dFdy( vVsWorld ) ) );
+		vec3 vsToCam = cameraPosition - vVsWorld;
+		if ( dot( vsN, vsToCam ) < 0.0 ) vsN = -vsN;
+
+		float vsNdL = dot( vsN, uVsSun );
+		float vsLit = smoothstep( -uVsGrade.z, uVsGrade.z, vsNdL ) * vsFlatShadow();
+		float vsKey = clamp( vsNdL, 0.0, 1.0 );
+
+		vec3 vsAlb = diffuseColor.rgb;
+		// Lit faces keep a real spread of value, so a spire reads as several planes and not as one
+		// silhouette: square-on to Lethis is full albedo, grazing is the floor.
+		vec3 vsLitCol = vsAlb * mix( uVsGrade.x, 1.0, pow( vsKey, 0.6 ) );
+		// Shaded faces travel to the authored blue-grey; an up-facing shadow keeps a little more of
+		// the sky in it than a down-facing one.
+		float vsUp = clamp( vsN.y * 0.5 + 0.5, 0.0, 1.0 );
+		vec3 vsShadeCol = mix( vsAlb * 0.085, uVsShade * ( 0.70 + 0.55 * vsUp ), uVsGrade.y );
+
+		vec3 vsCol = mix( vsShadeCol, vsLitCol, vsLit );
+		vsCol = mix( vsCol, vsAlb, uVsGrade.w ) * uVsLevel;
+
+		// Aerial perspective, owned here rather than by scene.fog, so this piece's distance
+		// structure survives whatever the sky and post stack do later.
+		float vsD = length( vsToCam ) * uVsDist.x;
+		float vsSunAmt = pow( max( dot( normalize( -vsToCam ), uVsSun ), 0.0 ), 3.0 );
+		vec3 vsHz = mix( uVsHaze, uVsHazeSun, vsSunAmt ) * uVsLevel;
+		float vsH = clamp( uVsHazeP.y * ( 1.0 - exp( -vsD * uVsHazeP.x ) ) + uVsDist.y, 0.0, 0.985 );
+		vsCol = mix( vsCol, vsHz, vsH );
+
+		outgoingLight = vsCol;
+	}
+`;
+
+const _matCache = new Map();
+
+/**
+ * A flat-shaded material. Identical keys return the same instance — a material per mesh is the
+ * fastest way to blow the program budget, and every variant here shares one compiled program
+ * because they differ only by uniform values.
+ *
+ * @param {string} key    cache key; also the material name
+ * @param {object} opts
+ *   litFloor    how dark a grazing lit facet gets (0..1, default 0.42)
+ *   shade       how far a shaded facet travels to the authored shadow colour (0..1, default 0.86)
+ *   terminator  half-width of the light/shadow edge in N·L (default 0.035 — nearly hard)
+ *   unlit       1 for things that are their own light source: carries, certainties
+ *   distance    virtual-distance multiplier for the compressed backdrop group
+ *   hazeBias    extra haze added flat (used to sit a far object further back in the air)
+ *   side        THREE side constant
+ */
+export function flatMaterial(key, opts = {}) {
+  const hit = _matCache.get(key);
+  if (hit) return hit;
+
+  const local = {
+    uVsGrade: {
+      value: new THREE.Vector4(
+        opts.litFloor ?? 0.42,
+        opts.shade ?? 0.86,
+        opts.terminator ?? 0.035,
+        opts.unlit ?? 0
+      ),
+    },
+    uVsDist: { value: new THREE.Vector2(opts.distance ?? 1, opts.hazeBias ?? 0) },
+  };
+
+  const mat = new THREE.MeshLambertMaterial({
+    color: 0xffffff,
+    vertexColors: opts.vertexColors ?? true,
+    flatShading: true,
+    side: opts.side ?? THREE.FrontSide,
+    fog: false, // this piece owns its own aerial perspective
+    dithering: true,
+    transparent: !!opts.transparent,
+    opacity: opts.opacity ?? 1,
+    depthWrite: opts.depthWrite ?? true,
+  });
+  mat.name = `vs.flat.${key}`;
+  mat.reflectivity = 0; // scene.environment must not multiply into a hand-authored value
+  mat.userData.vsUniforms = local;
+  mat.userData.vsEmissive = (opts.unlit ?? 0) > 0.5; // P12's bloom mask reads this flag
+
+  mat.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, flatShared, local);
+    sh.vertexShader = sh.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vVsWorld;")
+      .replace(
+        "#include <project_vertex>",
+        "#include <project_vertex>\n\tvVsWorld = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;"
+      );
+    sh.fragmentShader = sh.fragmentShader
+      .replace("#include <common>", "#include <common>\n" + GLSL_PARS)
+      .replace("void main() {", GLSL_SHADOW + "\nvoid main() {")
+      .replace("#include <opaque_fragment>", GLSL_GRADE + "\n#include <opaque_fragment>");
+  };
+  // Two of these share a program iff they share a define set; they all do.
+  mat.customProgramCacheKey = () => "vs.flat";
+
+  _matCache.set(key, mat);
+  return mat;
+}
+
+export function flatMaterialCount() {
+  return _matCache.size;
+}
+
+/** Called once per frame by Terrain. Nothing else may write the shared block. */
+export function updateFlatShared({ sun, level, exposure }) {
+  if (sun) flatShared.uVsSun.value.set(sun[0], sun[1], sun[2]).normalize();
+  // Exposure divides out exactly: ACES applies it as a pre-multiply, so dividing the scene value
+  // by it restores the display colour that `sceneColor()` solved for at exposure 1.
+  const e = exposure && exposure > 1e-3 ? exposure : 1;
+  flatShared.uVsLevel.value = (level ?? 1) / e;
+}
+
+// ---------------------------------------------------------------------------- geometry helpers
+
+/**
+ * Build a non-indexed BufferGeometry from a triangle soup, with genuine per-face normals and one
+ * colour per face. `faces` is a flat array of 9 numbers per triangle; `colorFn(cx, cy, cz, nx, ny,
+ * nz, i)` returns `[r, g, b]` in scene-linear.
+ */
+export function facetGeometry(positions, colorFn) {
+  const triCount = positions.length / 9;
+  const pos = positions instanceof Float32Array ? positions : new Float32Array(positions);
+  const nrm = new Float32Array(triCount * 9);
+  const col = new Float32Array(triCount * 9);
+  for (let t = 0; t < triCount; t++) {
+    const o = t * 9;
+    const ax = pos[o], ay = pos[o + 1], az = pos[o + 2];
+    const bx = pos[o + 3], by = pos[o + 4], bz = pos[o + 5];
+    const cx = pos[o + 6], cy = pos[o + 7], cz = pos[o + 8];
+    let nx = (by - ay) * (cz - az) - (bz - az) * (cy - ay);
+    let ny = (bz - az) * (cx - ax) - (bx - ax) * (cz - az);
+    let nz = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
     const len = Math.hypot(nx, ny, nz) || 1;
     nx /= len; ny /= len; nz /= len;
-    this.pos.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
-    this.nrm.push(nx, ny, nz, nx, ny, nz, nx, ny, nz);
-    const c1 = cb ?? ca, c2 = cc ?? ca;
-    this.col.push(ca[0], ca[1], ca[2], c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]);
+    const r = colorFn((ax + bx + cx) / 3, (ay + by + cy) / 3, (az + bz + cz) / 3, nx, ny, nz, t);
+    for (let k = 0; k < 3; k++) {
+      nrm[o + k * 3] = nx; nrm[o + k * 3 + 1] = ny; nrm[o + k * 3 + 2] = nz;
+      col[o + k * 3] = r[0]; col[o + k * 3 + 1] = r[1]; col[o + k * 3 + 2] = r[2];
+    }
   }
-
-  quad(a, b, c, d, ca, cb, cc, cd) {
-    this.tri(a, b, c, ca, cb ?? ca, cc ?? ca);
-    this.tri(a, c, d, ca, cc ?? ca, cd ?? ca);
-  }
-
-  /** Axis-aligned box. `top` colours the +Y face, `side` everything else. */
-  box(x0, y0, z0, x1, y1, z1, top, side) {
-    const s = side ?? top;
-    this.quad([x0, y1, z0], [x0, y1, z1], [x1, y1, z1], [x1, y1, z0], top);
-    this.quad([x0, y0, z1], [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], s);
-    this.quad([x0, y0, z0], [x0, y1, z0], [x1, y1, z0], [x1, y0, z0], s);
-    this.quad([x1, y0, z1], [x1, y1, z1], [x0, y1, z1], [x0, y0, z1], s);
-    this.quad([x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [x0, y0, z0], s);
-    this.quad([x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1], s);
-  }
-
-  /** A box rotated about Y — the one transform level architecture actually needs. */
-  boxY(cx, cy, cz, hx, hy, hz, yaw, top, side) {
-    const s = Math.sin(yaw), c = Math.cos(yaw);
-    const p = (dx, dy, dz) => [cx + dx * c - dz * s, cy + dy, cz + dx * s + dz * c];
-    const a = p(-hx, +hy, -hz), b = p(-hx, +hy, +hz), d = p(+hx, +hy, +hz), e = p(+hx, +hy, -hz);
-    const A = p(-hx, -hy, -hz), B = p(-hx, -hy, +hz), D = p(+hx, -hy, +hz), E = p(+hx, -hy, -hz);
-    const sd = side ?? top;
-    this.quad(a, b, d, e, top);
-    this.quad(B, A, E, D, sd);
-    this.quad(A, a, e, E, sd);
-    this.quad(D, d, b, B, sd);
-    this.quad(B, b, a, A, sd);
-    this.quad(E, e, d, D, sd);
-  }
-
-  geometry() {
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.Float32BufferAttribute(this.pos, 3));
-    g.setAttribute("normal", new THREE.Float32BufferAttribute(this.nrm, 3));
-    g.setAttribute("color", new THREE.Float32BufferAttribute(this.col, 3));
-    g.computeBoundingSphere();
-    g.computeBoundingBox();
-    return g;
-  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  g.setAttribute("normal", new THREE.BufferAttribute(nrm, 3));
+  g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+  g.computeBoundingSphere();
+  g.computeBoundingBox();
+  return g;
 }
 
-// ---------------------------------------------------------------------------- palette
+/** Merge non-indexed position/normal/colour geometries into one draw call. */
+export function mergeFacets(list) {
+  let n = 0;
+  for (const g of list) n += g.getAttribute("position").count;
+  const pos = new Float32Array(n * 3);
+  const nrm = new Float32Array(n * 3);
+  const col = new Float32Array(n * 3);
+  let o = 0;
+  for (const g of list) {
+    const p = g.getAttribute("position");
+    pos.set(p.array, o * 3);
+    nrm.set(g.getAttribute("normal").array, o * 3);
+    col.set(g.getAttribute("color").array, o * 3);
+    o += p.count;
+  }
+  const out = new THREE.BufferGeometry();
+  out.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  out.setAttribute("normal", new THREE.BufferAttribute(nrm, 3));
+  out.setAttribute("color", new THREE.BufferAttribute(col, 3));
+  out.computeBoundingSphere();
+  out.computeBoundingBox();
+  for (const g of list) g.dispose();
+  return out;
+}
+
+/** Push one triangle's nine floats. */
+export function pushTri(out, a, b, c) {
+  out.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
+}
 
 /**
- * Terrain albedo, straight out of `design/palette.json`, converted to linear once. These are
- * *albedos* fed to a lit material, never final pixels — the shading ramps in
- * `design/art-direction.md` §4 are what has to come out of the frame, and they come out of the
- * light rig acting on these.
+ * A convex-ish angular solid: a closed polyhedron from a ring of base points and an apex, with
+ * optional shoulder rings. This is the whole vocabulary the reference's rock is drawn in — big
+ * planes meeting at hard edges — and every spire, boulder and shard in the level is one of these.
  */
-function srgbToLinear(hex) {
-  const r = ((hex >> 16) & 255) / 255;
-  const g = ((hex >> 8) & 255) / 255;
-  const b = (hex & 255) / 255;
-  const f = (c) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
-  return [f(r), f(g), f(b)];
+export function shard({ x = 0, y = 0, z = 0, radius = 4, height = 10, sides = 5, taper = 0.18, lean = [0, 0], rings = [], seed = 1, jag = 0.3 }) {
+  const out = [];
+  const ringPts = (r, h, tw) => {
+    const pts = [];
+    for (let i = 0; i < sides; i++) {
+      const a = ((i + tw) / sides) * Math.PI * 2;
+      const jr = r * (1 + (hash2i(i, Math.round(h * 7), seed) - 0.5) * jag);
+      pts.push([
+        x + Math.cos(a) * jr + lean[0] * (h / height),
+        y + h,
+        z + Math.sin(a) * jr + lean[1] * (h / height),
+      ]);
+    }
+    return pts;
+  };
+  const levels = [{ h: 0, r: radius }, ...rings.map((r) => ({ h: r[0] * height, r: r[1] * radius }))];
+  levels.push({ h: height, r: radius * taper });
+  const bands = levels.map((L, i) => ringPts(L.r, L.h, i * 0.13));
+
+  // base cap
+  for (let i = 1; i < sides - 1; i++) pushTri(out, bands[0][0], bands[0][i + 1], bands[0][i]);
+  // walls
+  for (let b = 0; b < bands.length - 1; b++) {
+    const lo = bands[b];
+    const hi = bands[b + 1];
+    for (let i = 0; i < sides; i++) {
+      const j = (i + 1) % sides;
+      pushTri(out, lo[i], lo[j], hi[i]);
+      pushTri(out, lo[j], hi[j], hi[i]);
+    }
+  }
+  // top cap
+  const top = bands[bands.length - 1];
+  for (let i = 1; i < sides - 1; i++) pushTri(out, top[0], top[i], top[i + 1]);
+  return out;
 }
 
-export const ALBEDO = {
-  rockLit: srgbToLinear(0xc9834f),      // rock.warm.lit, pulled back — a lit facet, not a light
-  rockMid: srgbToLinear(0xb4744c),      // rock.albedo — the colour a player would name
-  rockLow: srgbToLinear(0x8c5a3e),      // rock.warm.low
-  rockShadow: srgbToLinear(0x55505e),   // rock.shadow
-  rockDeep: srgbToLinear(0x2b2431),     // rock.shadow.deep
-  bone: srgbToLinear(0xaa9087),         // rock.bone — cut stone, ruins, pads
-  foliage: srgbToLinear(0x7e9a80),      // world.foliage held under S 0.30
-  grey: srgbToLinear(0x7c7a72),         // world.grey — a supplied closure
-  greyDeep: srgbToLinear(0x4a4945),
-  flow: srgbToLinear(0x3fcfa0),         // resonance.flow — a carry
-  flowDeep: srgbToLinear(0x0e5f63),     // resonance.deep — a carry bed
-  certFacet: srgbToLinear(0x5aa5a0),
-  certDeep: srgbToLinear(0x26514f),
-  glass: srgbToLinear(0x241f2c),        // dark glass — the arches
-};
+/** An axis-aligned faceted box — built stone, crates, decks, tower blocks. */
+export function boxTris(cx, cy, cz, sx, sy, sz, out = []) {
+  const x0 = cx - sx / 2, x1 = cx + sx / 2;
+  const y0 = cy, y1 = cy + sy;
+  const z0 = cz - sz / 2, z1 = cz + sz / 2;
+  const V = [
+    [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1],
+    [x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1],
+  ];
+  const quad = (a, b, c, d) => { pushTri(out, V[a], V[b], V[c]); pushTri(out, V[a], V[c], V[d]); };
+  quad(4, 5, 6, 7); // top
+  quad(0, 3, 2, 1); // bottom
+  quad(0, 1, 5, 4);
+  quad(1, 2, 6, 5);
+  quad(2, 3, 7, 6);
+  quad(3, 0, 4, 7);
+  return out;
+}
 
-/** Material classes the level's `design()` can ask for. */
-export const MAT = {
-  ROCK: 0,
-  PAD: 1,      // cut stone: courts, terraces, the market flat
-  FIELD: 2,    // the certainty field's crystal-seamed ground
-  CARRY: 3,    // a carry bed
-  GREY: 4,     // approximate ground under a grey object
-  RIDGE: 5,    // the wild ridge — more ridged noise, more erosion
-};
+// ---------------------------------------------------------------------------- the heightfield
 
-// ---------------------------------------------------------------------------- the system
+const _v3 = new THREE.Vector3();
 
 export class Terrain {
-  constructor(kernel, opts = {}) {
+  /**
+   * @param {Kernel} kernel
+   * @param {object} spec  the level's design: bounds, cell size, seed and a `design(x,z,out)`
+   */
+  constructor(kernel, spec) {
     this.kernel = kernel;
+    this.spec = spec;
     this.root = new THREE.Group();
-    this.root.name = "leaf-terrain";
+    this.root.name = "vs.terrain";
 
-    this.seed = opts.seed ?? 90210;
-    this.x0 = opts.x0 ?? -200;
-    this.z0 = opts.z0 ?? -620;
-    this.x1 = opts.x1 ?? 200;
-    this.z1 = opts.z1 ?? 100;
-    this.spacing = opts.spacing ?? 1;
-    this.chunkCells = opts.chunkCells ?? 100;
-    this.lodSteps = opts.lodSteps ?? [1, 2, 5, 10];
-    this.lodDistances = opts.lodDistances ?? [95, 210, 430];
-    this.colliderStep = opts.colliderStep ?? 2;
-    this.design = opts.design ?? ((x, z, out) => { out.h = 0; out.solid = 1; });
+    const { x0, x1, z0, z1 } = spec.bounds;
+    this.cell = spec.cell ?? 6;
+    this.x0 = x0;
+    this.z0 = z0;
+    this.nx = Math.round((x1 - x0) / this.cell) + 1;
+    this.nz = Math.round((z1 - z0) / this.cell) + 1;
+    this.seed = spec.seed ?? 9;
 
-    this.nx = Math.round((this.x1 - this.x0) / this.spacing) + 1;
-    this.nz = Math.round((this.z1 - this.z0) / this.spacing) + 1;
     const n = this.nx * this.nz;
-
-    this.h = new Float32Array(n);        // top surface height
-    this.b = new Float32Array(n);        // underside height
-    this.solid = new Uint8Array(n);      // 1 where the leaf exists
-    this.protect = new Float32Array(n);  // 1 = authored, untouchable
-    this.rough = new Float32Array(n);
+    this.h = new Float32Array(n); // surface height at the (jittered) vertex
+    this.jx = new Float32Array(n); // vertex XZ jitter — facets must not look like graph paper
+    this.jz = new Float32Array(n);
+    this.inside = new Uint8Array(n);
     this.mat = new Uint8Array(n);
-    this.designH = new Float32Array(n);
+    this.dist = new Float32Array(n); // metres to the nearest lip, for the underside
+    this.under = new Float32Array(n);
 
-    this.chunks = [];
-    this._geomCache = new Map();
-    this.stats = { generateMs: 0, meshMs: 0, colliderTris: 0, meshTris: 0, chunks: 0, droplets: 0 };
-
-    this._camXZ = new THREE.Vector3();
-    this._lodChanges = 0;
+    this._build();
+    this._mesh();
+    this._emitCollider();
 
     publish("terrain", () => this.snapshot());
   }
 
-  // ------------------------------------------------------------------ indexing
+  // -------------------------------------------------------------------------- sampling grid
 
-  idx(ix, iz) {
-    return iz * this.nx + ix;
+  idx(i, j) {
+    return j * this.nx + i;
   }
 
-  /** Grid coordinates of a world position, unclamped. */
-  gx(x) {
-    return (x - this.x0) / this.spacing;
+  /** World XZ of grid node (i,j), including its authored jitter. */
+  nodeX(i, j) {
+    return this.x0 + i * this.cell + this.jx[this.idx(i, j)];
   }
-  gz(z) {
-    return (z - this.z0) / this.spacing;
-  }
-
-  // ------------------------------------------------------------------ generation
-
-  build() {
-    const t0 = performance.now();
-    this._compose();
-    this._detail();
-    this._thermal(this._thermalPasses ?? 26);
-    this._hydraulic();
-    this._settle();
-    this._underside();
-    this.stats.generateMs = Number((performance.now() - t0).toFixed(1));
-
-    const t1 = performance.now();
-    this._buildChunks();
-    this._buildShell();
-    this.stats.meshMs = Number((performance.now() - t1).toFixed(1));
-    return this;
+  nodeZ(i, j) {
+    return this.z0 + j * this.cell + this.jz[this.idx(i, j)];
   }
 
-  /** Pass 1 — ask the level what it wants, before any noise touches it. */
-  _compose() {
-    const out = { h: 0, solid: 1, protect: 0, rough: 1, mat: MAT.ROCK, thickness: 26 };
-    this._thickness = new Float32Array(this.nx * this.nz);
-    for (let iz = 0; iz < this.nz; iz++) {
-      const z = this.z0 + iz * this.spacing;
-      for (let ix = 0; ix < this.nx; ix++) {
-        const x = this.x0 + ix * this.spacing;
-        out.h = 0; out.solid = 1; out.protect = 0; out.rough = 1;
-        out.mat = MAT.ROCK; out.thickness = 26;
-        this.design(x, z, out);
-        const i = iz * this.nx + ix;
-        this.h[i] = out.h;
-        this.designH[i] = out.h;
-        this.solid[i] = out.solid ? 1 : 0;
-        this.protect[i] = clamp(out.protect, 0, 1);
-        this.rough[i] = Math.max(0, out.rough);
-        this.mat[i] = out.mat;
-        this._thickness[i] = out.thickness;
+  _build() {
+    const { cell, nx, nz, seed } = this;
+    const out = {};
+    const jitter = cell * 0.3;
+
+    for (let j = 0; j < nz; j++) {
+      for (let i = 0; i < nx; i++) {
+        const k = this.idx(i, j);
+        // Interior nodes jitter; the outer ring does not, so the domain stays rectangular.
+        const edge = i === 0 || j === 0 || i === nx - 1 || j === nz - 1;
+        this.jx[k] = edge ? 0 : (hash2i(i, j, seed) - 0.5) * 2 * jitter;
+        this.jz[k] = edge ? 0 : (hash2i(i, j, seed + 977) - 0.5) * 2 * jitter;
+        const x = this.x0 + i * cell + this.jx[k];
+        const z = this.z0 + j * cell + this.jz[k];
+
+        out.h = 0; out.mask = 0; out.rough = 1; out.protect = 0; out.mat = 1; out.thick = 1;
+        this.spec.design(x, z, out);
+
+        // Layered noise, written above, added only where the level has not protected the ground.
+        const wobbleX = x + fbm(x * 0.0031, z * 0.0031, seed + 31, 3) * 44;
+        const wobbleZ = z + fbm(x * 0.0031, z * 0.0031, seed + 57, 3) * 44;
+        const broad = fbm(wobbleX * 0.0062, wobbleZ * 0.0062, seed, 3) * 9.5;
+        const ridge = (ridged(wobbleX * 0.0135, wobbleZ * 0.0135, seed + 5, 3) - 0.42) * 11.0;
+        const grain = fbm(x * 0.052, z * 0.052, seed + 11, 2) * 1.15;
+        const amp = (1 - clamp01(out.protect)) * (out.rough ?? 1);
+
+        this.h[k] = out.h + (broad + ridge + grain) * amp;
+        this.inside[k] = out.mask >= 0.5 ? 1 : 0;
+        this.mat[k] = out.mat | 0;
+        this.under[k] = out.thick ?? 1;
       }
     }
+
+    this._distanceToLip();
+
+    // Turn the "thickness scale" into an actual underside height.
+    for (let k = 0; k < nx * nz; k++) {
+      if (!this.inside[k]) continue;
+      const d = this.dist[k];
+      const dn = clamp01(d / 130);
+      const i = k % nx;
+      const j = (k / nx) | 0;
+      const x = this.x0 + i * cell;
+      const z = this.z0 + j * cell;
+      // Thin at the lip, deep and ragged toward the middle: a fracture, not a moulding.
+      const keel = 4.5 + Math.pow(dn, 0.55) * 86 * (this.under[k] || 1);
+      const rag = (ridged(x * 0.017, z * 0.017, seed + 303, 3) - 0.4) * 26 * clamp01(d / 26);
+      this.under[k] = this.h[k] - Math.max(3.2, keel + rag);
+    }
   }
+
+  /** Two-pass chamfer distance (in metres) from every inside node to the nearest lip. */
+  _distanceToLip() {
+    const { nx, nz, cell } = this;
+    const D = this.dist;
+    const BIG = 1e9;
+    const d1 = cell;
+    const d2 = cell * Math.SQRT2;
+    for (let k = 0; k < nx * nz; k++) D[k] = this.inside[k] ? BIG : 0;
+    for (let j = 0; j < nz; j++)
+      for (let i = 0; i < nx; i++) {
+        const k = this.idx(i, j);
+        if (!this.inside[k]) continue;
+        let m = D[k];
+        if (i > 0) m = Math.min(m, D[k - 1] + d1);
+        if (j > 0) m = Math.min(m, D[k - nx] + d1);
+        if (i > 0 && j > 0) m = Math.min(m, D[k - nx - 1] + d2);
+        if (i < nx - 1 && j > 0) m = Math.min(m, D[k - nx + 1] + d2);
+        D[k] = m;
+      }
+    for (let j = nz - 1; j >= 0; j--)
+      for (let i = nx - 1; i >= 0; i--) {
+        const k = this.idx(i, j);
+        if (!this.inside[k]) continue;
+        let m = D[k];
+        if (i < nx - 1) m = Math.min(m, D[k + 1] + d1);
+        if (j < nz - 1) m = Math.min(m, D[k + nx] + d1);
+        if (i < nx - 1 && j < nz - 1) m = Math.min(m, D[k + nx + 1] + d2);
+        if (i > 0 && j < nz - 1) m = Math.min(m, D[k + nx - 1] + d2);
+        D[k] = m;
+      }
+  }
+
+  // -------------------------------------------------------------------------- meshing
 
   /**
-   * Pass 2 — the noise. Three stacks doing three different jobs:
-   *
-   *   * a **warp** field, so nothing that follows lies on a grid;
-   *   * a **ridged** stack for the structural rock — this is what makes crests;
-   *   * an **fBm** stack for the broad undulation the ridges sit in.
-   *
-   * All three are scaled by `rough` and by `1 - protect`, and the fine octaves are additionally
-   * scaled by local slope so that walkable ground stays walkable. See the class comment.
+   * Triangulate. Every cell contributes two triangles with a hashed diagonal, so the facet
+   * pattern never reads as graph paper; a triangle exists only if all three of its nodes are
+   * inside the leaf, which is what cuts the lip and the ravine.
    */
-  _detail() {
-    const S = this.seed;
-    const nx = this.nx, nz = this.nz, sp = this.spacing;
-    // Slope of the composed design, used to gate fine detail. Computed before detail is added
-    // so a cliff authored by the level gets crunch and a deck authored flat does not.
-    const slope = new Float32Array(nx * nz);
-    for (let iz = 1; iz < nz - 1; iz++) {
-      for (let ix = 1; ix < nx - 1; ix++) {
-        const i = iz * nx + ix;
-        const dx = (this.h[i + 1] - this.h[i - 1]) / (2 * sp);
-        const dz = (this.h[i + nx] - this.h[i - nx]) / (2 * sp);
-        slope[i] = Math.hypot(dx, dz);
-      }
-    }
-
-    for (let iz = 0; iz < nz; iz++) {
-      const z = this.z0 + iz * sp;
-      for (let ix = 0; ix < nx; ix++) {
-        const i = iz * nx + ix;
-        if (!this.solid[i]) continue;
-        const k = this.rough[i] * (1 - this.protect[i]);
-        if (k <= 0.0005) continue;
-        const x = this.x0 + ix * sp;
-
-        // Domain warp: two low-frequency fBm channels displace the sample point. Without it
-        // every ridge line in the level runs parallel to the noise grid and the eye finds it.
-        const wx = fbm(x * 0.0042, z * 0.0042, S + 11, 3) * 34;
-        const wz = fbm(x * 0.0042 + 5.7, z * 0.0042 - 3.1, S + 29, 3) * 34;
-        const px = x + wx, pz = z + wz;
-
-        const rock = this.mat[i] === MAT.RIDGE ? 1.0 : 0.55;
-        // Structural ridges — the thing the level's silhouette is actually made of.
-        const r1 = ridged(px * 0.0062, pz * 0.0062, S + 101, 4, 2.03, 0.5, 1.9) - 0.42;
-        // Broad undulation.
-        const f1 = fbm(px * 0.0075, pz * 0.0075, S + 211, 4);
-        // Medium break-up: what stops a slope reading as one plane.
-        const f2 = fbm(px * 0.031, pz * 0.031, S + 307, 3);
-        // Fine crunch, slope-gated.
-        const gate = smoothstep(0.12, 0.55, slope[i]);
-        const f3 = fbm(px * 0.135, pz * 0.135, S + 401, 2);
-
-        this.h[i] +=
-          k * (r1 * 15.5 * rock + f1 * 5.2 + f2 * 1.35 + f3 * (0.12 + 1.55 * gate));
-      }
-    }
-  }
-
-  /**
-   * Thermal erosion. Material standing steeper than the talus angle slides to its downhill
-   * neighbours. Run enough passes and every unprotected slope in the world settles at the same
-   * angle of repose, which is precisely why a real hillside reads as *rock*: the crest stays
-   * sharp because it has no material above it to shed, and the flanks go straight.
-   */
-  _thermal(passes) {
-    const nx = this.nx, nz = this.nz, sp = this.spacing;
-    const talus = Math.tan((37 * Math.PI) / 180) * sp; // max height difference per cell
-    const talusDiag = talus * Math.SQRT2;
-    const h = this.h;
-    const delta = new Float32Array(nx * nz);
-    const NB = [
-      [1, 0, talus], [-1, 0, talus], [0, 1, talus], [0, -1, talus],
-      [1, 1, talusDiag], [-1, 1, talusDiag], [1, -1, talusDiag], [-1, -1, talusDiag],
-    ];
-
-    for (let p = 0; p < passes; p++) {
-      delta.fill(0);
-      for (let iz = 1; iz < nz - 1; iz++) {
-        for (let ix = 1; ix < nx - 1; ix++) {
-          const i = iz * nx + ix;
-          if (!this.solid[i]) continue;
-          const w = 1 - this.protect[i];
-          if (w <= 0.02) continue;
-          let total = 0;
-          let maxExcess = 0;
-          for (let k = 0; k < 8; k++) {
-            const j = i + NB[k][0] + NB[k][1] * nx;
-            if (!this.solid[j]) continue;
-            const d = h[i] - h[j] - NB[k][2];
-            if (d > 0) { total += d; if (d > maxExcess) maxExcess = d; }
-          }
-          if (total <= 0) continue;
-          // Move half the largest excess, shared out in proportion. Half rather than all so
-          // the field converges instead of ringing between two cells forever.
-          const move = maxExcess * 0.5 * w;
-          delta[i] -= move;
-          for (let k = 0; k < 8; k++) {
-            const j = i + NB[k][0] + NB[k][1] * nx;
-            if (!this.solid[j]) continue;
-            const d = h[i] - h[j] - NB[k][2];
-            if (d > 0) delta[j] += (move * d) / total;
-          }
-        }
-      }
-      for (let i = 0; i < delta.length; i++) h[i] += delta[i];
-    }
-  }
-
-  /**
-   * Hydraulic erosion, droplet model. Each droplet follows the gradient, accumulates speed,
-   * carries sediment up to a capacity set by how fast it is going and how steep the ground is,
-   * and swaps between cutting and dropping as that capacity changes. What it buys is *legibility*:
-   * gullies converge, so a player who cannot see the bottom of a slope can still read which way
-   * water went, and therefore which way is down. Noise alone never gives you that.
-   */
-  _hydraulic() {
-    const nx = this.nx, nz = this.nz;
-    const h = this.h;
-    const count = this._dropletCount ?? 26000;
-    const LIFETIME = 34;
-    const INERTIA = 0.06;
-    const CAPACITY = 3.6;
-    const MIN_SLOPE = 0.02;
-    const ERODE = 0.28;
-    const DEPOSIT = 0.22;
-    const EVAPORATE = 0.022;
-    const GRAVITY = 6;
-    const RADIUS = 2;
-
-    // Precompute the brush the droplet cuts with, so an eroded pit is a dish rather than a spike.
-    const brush = [];
-    let brushSum = 0;
-    for (let dz = -RADIUS; dz <= RADIUS; dz++) {
-      for (let dx = -RADIUS; dx <= RADIUS; dx++) {
-        const d = Math.hypot(dx, dz);
-        if (d > RADIUS) continue;
-        const w = 1 - d / (RADIUS + 1);
-        brush.push([dx, dz, w]);
-        brushSum += w;
-      }
-    }
-    for (const bq of brush) bq[2] /= brushSum;
-
-    let s = (this.seed ^ 0x5bf03635) >>> 0;
-    const rnd = () => {
-      s ^= s << 13; s >>>= 0;
-      s ^= s >>> 17;
-      s ^= s << 5; s >>>= 0;
-      return s / 4294967296;
-    };
-
-    let launched = 0;
-    for (let d = 0; d < count; d++) {
-      let px = 2 + rnd() * (nx - 5);
-      let pz = 2 + rnd() * (nz - 5);
-      let i0 = (pz | 0) * nx + (px | 0);
-      if (!this.solid[i0] || this.protect[i0] > 0.5) continue;
-      launched++;
-
-      let dirX = 0, dirZ = 0, speed = 1, water = 1, sediment = 0;
-      for (let life = 0; life < LIFETIME; life++) {
-        const cx = px | 0, cz = pz | 0;
-        if (cx < 2 || cz < 2 || cx >= nx - 3 || cz >= nz - 3) break;
-        const i = cz * nx + cx;
-        if (!this.solid[i]) break;
-        const fx = px - cx, fz = pz - cz;
-
-        const h00 = h[i], h10 = h[i + 1], h01 = h[i + nx], h11 = h[i + nx + 1];
-        const gx = (h10 - h00) * (1 - fz) + (h11 - h01) * fz;
-        const gz = (h01 - h00) * (1 - fx) + (h11 - h10) * fx;
-        const hOld = h00 * (1 - fx) * (1 - fz) + h10 * fx * (1 - fz) + h01 * (1 - fx) * fz + h11 * fx * fz;
-
-        dirX = dirX * INERTIA - gx * (1 - INERTIA);
-        dirZ = dirZ * INERTIA - gz * (1 - INERTIA);
-        const dl = Math.hypot(dirX, dirZ);
-        if (dl < 1e-5) break;
-        dirX /= dl; dirZ /= dl;
-        px += dirX;
-        pz += dirZ;
-
-        const ncx = px | 0, ncz = pz | 0;
-        if (ncx < 2 || ncz < 2 || ncx >= nx - 3 || ncz >= nz - 3) break;
-        const ni = ncz * nx + ncx;
-        if (!this.solid[ni]) break;
-        const nfx = px - ncx, nfz = pz - ncz;
-        const n00 = h[ni], n10 = h[ni + 1], n01 = h[ni + nx], n11 = h[ni + nx + 1];
-        const hNew =
-          n00 * (1 - nfx) * (1 - nfz) + n10 * nfx * (1 - nfz) + n01 * (1 - nfx) * nfz + n11 * nfx * nfz;
-        const dh = hNew - hOld;
-
-        const capacity = Math.max(-dh, MIN_SLOPE) * speed * water * CAPACITY;
-        if (sediment > capacity || dh > 0) {
-          // Uphill or over-loaded: drop. Filling a pit exactly to its brim (never past it) is
-          // what keeps a deposit from becoming a new bump the next droplet has to climb.
-          const drop = dh > 0 ? Math.min(dh, sediment) : (sediment - capacity) * DEPOSIT;
-          sediment -= drop;
-          const w = 1 - this.protect[i];
-          h[i] += drop * (1 - fx) * (1 - fz) * w;
-          h[i + 1] += drop * fx * (1 - fz) * w;
-          h[i + nx] += drop * (1 - fx) * fz * w;
-          h[i + nx + 1] += drop * fx * fz * w;
+  _triangleList() {
+    const { nx, nz } = this;
+    const tris = [];
+    for (let j = 0; j < nz - 1; j++) {
+      for (let i = 0; i < nx - 1; i++) {
+        const a = this.idx(i, j);
+        const b = this.idx(i + 1, j);
+        const c = this.idx(i + 1, j + 1);
+        const d = this.idx(i, j + 1);
+        if (hash2i(i, j, this.seed + 4441) < 0.5) {
+          if (this.inside[a] && this.inside[b] && this.inside[c]) tris.push(a, b, c);
+          if (this.inside[a] && this.inside[c] && this.inside[d]) tris.push(a, c, d);
         } else {
-          const cut = Math.min((capacity - sediment) * ERODE, -dh);
-          for (let k = 0; k < brush.length; k++) {
-            const bx = cx + brush[k][0], bz = cz + brush[k][1];
-            const bi = bz * nx + bx;
-            if (!this.solid[bi]) continue;
-            const take = cut * brush[k][2] * (1 - this.protect[bi]);
-            h[bi] -= take;
-            sediment += take;
-          }
+          if (this.inside[a] && this.inside[b] && this.inside[d]) tris.push(a, b, d);
+          if (this.inside[b] && this.inside[c] && this.inside[d]) tris.push(b, c, d);
         }
-
-        speed = Math.sqrt(Math.max(0, speed * speed + -dh * GRAVITY));
-        water *= 1 - EVAPORATE;
-        if (water < 0.02) break;
       }
     }
-    this.stats.droplets = launched;
+    return tris;
   }
+
+  _nodePos(k, top) {
+    const i = k % this.nx;
+    const j = (k / this.nx) | 0;
+    return [this.x0 + i * this.cell + this.jx[k], top ? this.h[k] : this.under[k], this.z0 + j * this.cell + this.jz[k]];
+  }
+
+  _mesh() {
+    const tris = this._triangleList();
+    this.tris = tris;
+    this.triCount = tris.length / 3;
+
+    // --- top surface ------------------------------------------------------------------
+    const top = new Float32Array(tris.length * 3);
+    for (let t = 0; t < tris.length; t += 3) {
+      const o = t * 3;
+      for (let v = 0; v < 3; v++) {
+        const p = this._nodePos(tris[t + v], true);
+        top[o + v * 3] = p[0];
+        top[o + v * 3 + 1] = p[1];
+        top[o + v * 3 + 2] = p[2];
+      }
+    }
+    const topGeo = facetGeometry(top, (cx, cy, cz, nx2, ny, nz2, ti) => this._surfaceColor(cx, cy, cz, ny, ti));
+    this.topGeometry = topGeo;
+
+    const surface = new THREE.Mesh(topGeo, flatMaterial("terrain.surface", { litFloor: 0.4 }));
+    surface.name = "vs.terrain.surface";
+    surface.receiveShadow = true;
+    surface.castShadow = false; // the shadow camera is 30 m wide; a 660 m caster buys nothing
+    this.root.add(surface);
+    this.surface = surface;
+
+    // --- underside and lip wall --------------------------------------------------------
+    // There is no ground under a leaf. What holds it up is the claims inside it, and what you
+    // see from below is the fracture where the false part stopped being there.
+    const under = [];
+    for (let t = 0; t < tris.length; t += 3) {
+      const a = this._nodePos(tris[t], false);
+      const b = this._nodePos(tris[t + 1], false);
+      const c = this._nodePos(tris[t + 2], false);
+      pushTri(under, a, c, b); // reversed: the underside faces down
+    }
+    // Boundary edges (used by exactly one triangle) become the lip wall.
+    const edges = new Map();
+    const key = (p, q) => (p < q ? p * 1e7 + q : q * 1e7 + p);
+    for (let t = 0; t < tris.length; t += 3) {
+      for (let e = 0; e < 3; e++) {
+        const p = tris[t + e];
+        const q = tris[t + ((e + 1) % 3)];
+        const kk = key(p, q);
+        const hit = edges.get(kk);
+        if (hit) hit.n++;
+        else edges.set(kk, { p, q, n: 1 });
+      }
+    }
+    let lipEdges = 0;
+    for (const e of edges.values()) {
+      if (e.n !== 1) continue;
+      lipEdges++;
+      const pt = this._nodePos(e.p, true);
+      const qt = this._nodePos(e.q, true);
+      const pu = this._nodePos(e.p, false);
+      const qu = this._nodePos(e.q, false);
+      pushTri(under, pt, pu, qt);
+      pushTri(under, qt, pu, qu);
+    }
+    this.lipEdges = lipEdges;
+
+    const underGeo = facetGeometry(new Float32Array(under), (cx, cy, cz, nx2, ny, nz2, ti) =>
+      this._undersideColor(cx, cy, cz, ny, ti)
+    );
+    this.underGeometry = underGeo;
+    const keel = new THREE.Mesh(underGeo, flatMaterial("terrain.keel", { litFloor: 0.3, shade: 0.92 }));
+    keel.name = "vs.terrain.keel";
+    keel.receiveShadow = false;
+    keel.castShadow = false;
+    this.root.add(keel);
+    this.keel = keel;
+  }
+
+  // -------------------------------------------------------------------------- colour
 
   /**
-   * Pass 5 — put the level back. Erosion is allowed to shape the wild; it is not allowed to
-   * move a pad the composition depends on, and a partially protected cell gets the design
-   * height back in proportion. A final 3×3 smoothing on protected ground removes the one-cell
-   * step that the boundary between protected and free cells otherwise leaves behind.
+   * One colour per facet, chosen by what the facet *is*: slope decides rock or deck, the level's
+   * material class decides bank or field, and a hashed ±5% keeps neighbouring facets from
+   * flattening into a single field of colour.
    */
-  _settle() {
-    const nx = this.nx, nz = this.nz;
-    const h = this.h;
-    for (let i = 0; i < h.length; i++) {
-      const p = this.protect[i];
-      if (p > 0) h[i] = mix(h[i], this.designH[i], p);
-    }
-    const tmp = new Float32Array(h);
-    for (let iz = 1; iz < nz - 1; iz++) {
-      for (let ix = 1; ix < nx - 1; ix++) {
-        const i = iz * nx + ix;
-        if (!this.solid[i]) continue;
-        const w = clamp(this.protect[i] * 1.4, 0, 1);
-        if (w <= 0.02) continue;
-        let sum = 0, n = 0;
-        for (let dz = -1; dz <= 1; dz++) {
-          for (let dx = -1; dx <= 1; dx++) {
-            const j = i + dx + dz * nx;
-            if (!this.solid[j]) continue;
-            sum += tmp[j]; n++;
-          }
-        }
-        if (n) h[i] = mix(h[i], sum / n, w * 0.55);
-      }
-    }
+  _surfaceColor(x, y, z, ny, ti) {
+    const cls = this.classAt(x, z);
+    const slope = 1 - clamp01(ny);
+    let hex;
+    if (slope > 0.62) hex = PAL.rockSun;
+    else if (slope > 0.36) hex = PAL.rockLit;
+    else if (cls === 3) hex = PAL.deckPale; // the certainty field
+    else if (cls === 2) hex = PAL.bank; // a carry bank
+    else if (cls === 4) hex = PAL.deckPale; // an authored pad
+    else hex = PAL.deck;
+    const c = sceneRGB(hex);
+    const j = 1 + (hash2i(ti, 7, this.seed + 12) - 0.5) * 0.11;
+    return [c.r * j, c.g * j, c.b * j];
   }
+
+  _undersideColor(x, y, z, ny, ti) {
+    // Down-facing keel goes deep; the near-vertical lip catches the light the top does.
+    const down = clamp01(-ny);
+    const a = sceneRGB(PAL.underLit);
+    const b = sceneRGB(PAL.underDeep);
+    const t = Math.pow(down, 0.6);
+    const j = 1 + (hash2i(ti, 19, this.seed + 40) - 0.5) * 0.13;
+    return [lerp(a.r, b.r, t) * j, lerp(a.g, b.g, t) * j, lerp(a.b, b.b, t) * j];
+  }
+
+  /** The level's material class at a point, sampled from the grid (0 deck, 2 bank, 3 field, 4 pad). */
+  classAt(x, z) {
+    const i = clamp(Math.round((x - this.x0) / this.cell), 0, this.nx - 1);
+    const j = clamp(Math.round((z - this.z0) / this.cell), 0, this.nz - 1);
+    return this.mat[this.idx(i, j)];
+  }
+
+  // -------------------------------------------------------------------------- queries
+  //
+  // These evaluate the *exact plane of the rendered triangle*. A heightfield that interpolates
+  // its own grid instead would put the collision surface a few centimetres away from the one on
+  // screen, which is how a character ends up shin-deep in a facet on some machines and floating
+  // on others.
 
   /**
-   * The underside. `design/art-direction.md` §0.1: a leaf is "flat on top because that was the
-   * surface, ragged underneath because that is a fracture where the false part stopped". So the
-   * bottom is not a mirrored top — it is a separate, sharper field: ridged noise at high
-   * sharpness, biting *upward* into the leaf, thinning to nothing at the rim.
+   * Ground height at (x,z), or NaN off the leaf.
+   * @returns {number}
    */
-  _underside() {
-    const nx = this.nx, nz = this.nz;
-    for (let iz = 0; iz < nz; iz++) {
-      const z = this.z0 + iz * this.spacing;
-      for (let ix = 0; ix < nx; ix++) {
-        const i = iz * nx + ix;
-        if (!this.solid[i]) { this.b[i] = this.h[i]; continue; }
-        const x = this.x0 + ix * this.spacing;
-        const edge = this._edgeFalloff(ix, iz);
-        const frac = ridged(x * 0.011, z * 0.011, this.seed + 907, 4, 2.05, 0.55, 2.6);
-        const lump = fbm(x * 0.0055, z * 0.0055, this.seed + 1201, 3);
-        const t = this._thickness[i] * edge * (0.42 + 0.58 * frac) * (1 + lump * 0.35);
-        this.b[i] = this.h[i] - Math.max(2.2, t);
-      }
-    }
-  }
-
-  /** Distance-to-rim falloff in [0,1]; 0 at the boundary, 1 well inside. Cheap chamfer search. */
-  _edgeFalloff(ix, iz) {
-    const nx = this.nx, nz = this.nz;
-    const R = 22;
-    for (let r = 2; r <= R; r += 4) {
-      const a = ix - r, b = ix + r, c = iz - r, d = iz + r;
-      if (a < 0 || c < 0 || b >= nx || d >= nz) return smoothstep(0, R, r);
-      if (!this.solid[iz * nx + a] || !this.solid[iz * nx + b] ||
-          !this.solid[c * nx + ix] || !this.solid[d * nx + ix]) {
-        return smoothstep(0, R, r);
-      }
-    }
-    return 1;
-  }
-
-  // ------------------------------------------------------------------ queries
-
-  /**
-   * Bilinear height at a world position. This is the query every other system uses — scatter
-   * placement, prop seating, anchor resolution — and it must stay allocation-free.
-   * Returns NaN outside the leaf so callers cannot mistake "nothing here" for "sea level".
-   */
-  heightAt(x, z) {
-    const fx = this.gx(x), fz = this.gz(z);
-    const ix = Math.floor(fx), iz = Math.floor(fz);
-    if (ix < 0 || iz < 0 || ix >= this.nx - 1 || iz >= this.nz - 1) return NaN;
-    const i = iz * this.nx + ix;
-    if (!this.solid[i] || !this.solid[i + 1] || !this.solid[i + this.nx] || !this.solid[i + this.nx + 1]) {
-      return NaN;
-    }
-    const tx = fx - ix, tz = fz - iz;
-    const a = this.h[i], b = this.h[i + 1], c = this.h[i + this.nx], d = this.h[i + this.nx + 1];
-    return (a * (1 - tx) + b * tx) * (1 - tz) + (c * (1 - tx) + d * tx) * tz;
-  }
-
-  /** `{ hit, y, slopeDeg }` — the shape a caller that has to decide something wants. */
   groundAt(x, z) {
-    const y = this.heightAt(x, z);
-    if (Number.isNaN(y)) return { hit: false, y: 0, slopeDeg: 90 };
-    const n = this.normalAt(x, z, _n);
-    return { hit: true, y, slopeDeg: (Math.acos(clamp(n.y, -1, 1)) * 180) / Math.PI };
+    const hit = this._locate(x, z);
+    return hit ? hit.y : NaN;
   }
 
-  /** Surface normal by central difference on the same grid the mesh was built from. */
-  normalAt(x, z, out = { x: 0, y: 1, z: 0 }) {
-    const s = this.spacing;
-    const hl = this.heightAt(x - s, z), hr = this.heightAt(x + s, z);
-    const hd = this.heightAt(x, z - s), hu = this.heightAt(x, z + s);
-    const dx = Number.isNaN(hl) || Number.isNaN(hr) ? 0 : (hr - hl) / (2 * s);
-    const dz = Number.isNaN(hd) || Number.isNaN(hu) ? 0 : (hu - hd) / (2 * s);
-    const len = Math.hypot(dx, 1, dz) || 1;
-    out.x = -dx / len;
-    out.y = 1 / len;
-    out.z = -dz / len;
-    return out;
+  /** Alias — `world/Scatter.js` probes for this name. */
+  heightAt(x, z) {
+    return this.groundAt(x, z);
   }
 
-  /** True where the leaf exists at all — used by scatter and by the level's own placement. */
+  /** Unit surface normal at (x,z) — the rendered facet's own normal, or null off the leaf. */
+  normalAt(x, z) {
+    const hit = this._locate(x, z);
+    return hit ? new THREE.Vector3(hit.nx, hit.ny, hit.nz) : null;
+  }
+
+  /** True if (x,z) is over solid leaf. */
   isSolid(x, z) {
-    const ix = Math.round(this.gx(x)), iz = Math.round(this.gz(z));
-    if (ix < 0 || iz < 0 || ix >= this.nx || iz >= this.nz) return false;
-    return this.solid[iz * this.nx + ix] === 1;
+    return !!this._locate(x, z);
   }
 
-  // ------------------------------------------------------------------ colouring
-
-  /**
-   * Albedo by slope and height. Four blends, in the order they matter:
-   *   * slope decides rock family — flat ground keeps `rock.warm.mid`, faces go to `rock.warm.low`
-   *     and then to `rock.shadow` in the near-vertical band, which is what stops a cliff reading
-   *     as the same paint as the deck;
-   *   * height adds a slow warm-to-cool drift down the leaf, so the low end reads colder;
-   *   * the level's material class overrides for pads, carry beds, grey and the field;
-   *   * a low-amplitude noise breaks up the banding that any two-stop ramp produces.
-   */
-  colorAt(x, z, i, out) {
-    const s = this.spacing;
-    const nx = this.nx;
-    const dx = (this.h[i + 1] - this.h[i - 1]) / (2 * s);
-    const dz = (this.h[i + nx] - this.h[i - nx]) / (2 * s);
-    const slope = Math.hypot(dx, dz);
-    const steep = smoothstep(0.35, 1.35, slope);
-    const cliff = smoothstep(1.15, 2.6, slope);
-
-    const grain = fbm(x * 0.052, z * 0.052, this.seed + 555, 2) * 0.5 + 0.5;
-    const band = fbm(x * 0.011, z * 0.011, this.seed + 666, 3) * 0.5 + 0.5;
-
-    let r = mix(ALBEDO.rockMid[0], ALBEDO.rockLit[0], band * 0.55);
-    let g = mix(ALBEDO.rockMid[1], ALBEDO.rockLit[1], band * 0.55);
-    let bl = mix(ALBEDO.rockMid[2], ALBEDO.rockLit[2], band * 0.55);
-
-    r = mix(r, ALBEDO.rockLow[0], steep);
-    g = mix(g, ALBEDO.rockLow[1], steep);
-    bl = mix(bl, ALBEDO.rockLow[2], steep);
-    r = mix(r, ALBEDO.rockShadow[0], cliff * 0.62);
-    g = mix(g, ALBEDO.rockShadow[1], cliff * 0.62);
-    bl = mix(bl, ALBEDO.rockShadow[2], cliff * 0.62);
-
-    const m = this.mat[i];
-    if (m === MAT.PAD) {
-      const k = 0.72 * (1 - steep);
-      r = mix(r, ALBEDO.bone[0], k); g = mix(g, ALBEDO.bone[1], k); bl = mix(bl, ALBEDO.bone[2], k);
-    } else if (m === MAT.FIELD) {
-      const k = 0.5 * (1 - steep) * (0.35 + 0.65 * grain);
-      r = mix(r, ALBEDO.certDeep[0], k); g = mix(g, ALBEDO.certDeep[1], k); bl = mix(bl, ALBEDO.certDeep[2], k);
-    } else if (m === MAT.CARRY) {
-      const k = 0.8;
-      r = mix(r, ALBEDO.flowDeep[0], k); g = mix(g, ALBEDO.flowDeep[1], k); bl = mix(bl, ALBEDO.flowDeep[2], k);
-    } else if (m === MAT.GREY) {
-      const k = 0.8 * (1 - steep * 0.5);
-      r = mix(r, ALBEDO.grey[0], k); g = mix(g, ALBEDO.grey[1], k); bl = mix(bl, ALBEDO.grey[2], k);
-    }
-
-    // Oldtrue: the pale lichen that only grows where a claim has held. Flat, sheltered, old
-    // ground only — so it reads as information rather than as a texture.
-    if (m !== MAT.CARRY && m !== MAT.GREY) {
-      const old = (1 - steep) * smoothstep(0.55, 0.85, grain) * 0.3;
-      r = mix(r, ALBEDO.foliage[0], old);
-      g = mix(g, ALBEDO.foliage[1], old);
-      bl = mix(bl, ALBEDO.foliage[2], old);
-    }
-
-    const v = 0.88 + grain * 0.24;
-    out[0] = r * v;
-    out[1] = g * v;
-    out[2] = bl * v;
-    return out;
-  }
-
-  // ------------------------------------------------------------------ meshing
-
-  material() {
-    if (!this._mat) {
-      this._mat = new THREE.MeshStandardMaterial({
-        vertexColors: true,
-        roughness: 0.88,
-        metalness: 0.0,
-        dithering: true,
-      });
-      this._mat.name = "terrain";
-    }
-    return this._mat;
-  }
-
-  _buildChunks() {
-    const cc = this.chunkCells;
-    const cx = Math.ceil((this.nx - 1) / cc);
-    const cz = Math.ceil((this.nz - 1) / cc);
-    let tris = 0;
-    for (let j = 0; j < cz; j++) {
-      for (let i = 0; i < cx; i++) {
-        const ix0 = i * cc, iz0 = j * cc;
-        const ix1 = Math.min(ix0 + cc, this.nx - 1);
-        const iz1 = Math.min(iz0 + cc, this.nz - 1);
-        let any = false;
-        for (let z = iz0; z <= iz1 && !any; z++) {
-          for (let x = ix0; x <= ix1; x++) {
-            if (this.solid[z * this.nx + x]) { any = true; break; }
-          }
+  _locate(x, z) {
+    const ci = Math.floor((x - this.x0) / this.cell);
+    const cj = Math.floor((z - this.z0) / this.cell);
+    // Vertices jitter by up to 0.3 cells, so the containing triangle is inside the 3×3 block.
+    for (let dj = -1; dj <= 1; dj++) {
+      for (let di = -1; di <= 1; di++) {
+        const i = ci + di;
+        const j = cj + dj;
+        if (i < 0 || j < 0 || i >= this.nx - 1 || j >= this.nz - 1) continue;
+        const a = this.idx(i, j);
+        const b = this.idx(i + 1, j);
+        const c = this.idx(i + 1, j + 1);
+        const d = this.idx(i, j + 1);
+        let t1, t2;
+        if (hash2i(i, j, this.seed + 4441) < 0.5) {
+          t1 = [a, b, c];
+          t2 = [a, c, d];
+        } else {
+          t1 = [a, b, d];
+          t2 = [b, c, d];
         }
-        if (!any) continue;
-        const geo = this._chunkGeometry(ix0, iz0, ix1, iz1, this.lodSteps.at(-1));
-        if (!geo) continue;
-        const mesh = new THREE.Mesh(geo, this.material());
-        mesh.name = `leaf-chunk-${i}-${j}`;
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        mesh.matrixAutoUpdate = false;
-        mesh.updateMatrix();
-        this.root.add(mesh);
-        const centre = new THREE.Vector3(
-          this.x0 + ((ix0 + ix1) / 2) * this.spacing,
-          0,
-          this.z0 + ((iz0 + iz1) / 2) * this.spacing
-        );
-        centre.y = geo.boundingSphere ? geo.boundingSphere.center.y : 0;
-        this.chunks.push({ ix0, iz0, ix1, iz1, mesh, centre, lod: this.lodSteps.length - 1 });
-        tris += geo.getAttribute("position").count / 3;
-      }
-    }
-    this.stats.chunks = this.chunks.length;
-    this.stats.meshTris = tris;
-  }
-
-  /**
-   * One chunk at one detail step, with a skirt on any border that has leaf on the far side.
-   * The skirt is what makes level-of-detail invisible: two neighbouring chunks at different
-   * steps disagree along their shared edge by up to half the coarser step's curvature, and a
-   * 2.5 m curtain hanging off each border hides that without any stitching bookkeeping.
-   */
-  _chunkGeometry(ix0, iz0, ix1, iz1, step) {
-    const key = `${ix0},${iz0},${step}`;
-    const cached = this._geomCache.get(key);
-    if (cached) return cached;
-
-    const mb = new MeshBuilder();
-    const sp = this.spacing;
-    const cA = [0, 0, 0], cB = [0, 0, 0], cC = [0, 0, 0], cD = [0, 0, 0];
-    const P = (ix, iz) => [this.x0 + ix * sp, this.h[iz * this.nx + ix], this.z0 + iz * sp];
-    const solidQuad = (a, b, c, d) => this.solid[a] && this.solid[b] && this.solid[c] && this.solid[d];
-
-    for (let iz = iz0; iz < iz1; iz += step) {
-      const iz2 = Math.min(iz + step, iz1);
-      for (let ix = ix0; ix < ix1; ix += step) {
-        const ix2 = Math.min(ix + step, ix1);
-        const iA = iz * this.nx + ix, iB = iz * this.nx + ix2;
-        const iC = iz2 * this.nx + ix2, iD = iz2 * this.nx + ix;
-        if (!solidQuad(iA, iB, iC, iD)) continue;
-        const x = this.x0 + ix * sp, z = this.z0 + iz * sp;
-        this.colorAt(this.x0 + ix * sp, this.z0 + iz * sp, this._safe(iA), cA);
-        this.colorAt(this.x0 + ix2 * sp, this.z0 + iz * sp, this._safe(iB), cB);
-        this.colorAt(this.x0 + ix2 * sp, this.z0 + iz2 * sp, this._safe(iC), cC);
-        this.colorAt(this.x0 + ix * sp, this.z0 + iz2 * sp, this._safe(iD), cD);
-        void x; void z;
-        mb.quad(P(ix, iz), P(ix2, iz), P(ix2, iz2), P(ix, iz2), cA, cB, cC, cD);
-      }
-    }
-
-    // --- skirts on internal borders only. The leaf's own rim gets a real cliff from the shell.
-    const SKIRT = 2.6;
-    const skirtRun = (fixed, from, to, axis, outward) => {
-      for (let t = from; t < to; t += step) {
-        const t2 = Math.min(t + step, to);
-        const iA = axis === 0 ? fixed * this.nx + t : t * this.nx + fixed;
-        const iB = axis === 0 ? fixed * this.nx + t2 : t2 * this.nx + fixed;
-        const nA = axis === 0 ? iA + outward * this.nx : iA + outward;
-        const nB = axis === 0 ? iB + outward * this.nx : iB + outward;
-        if (!this.solid[iA] || !this.solid[iB]) continue;
-        if (nA < 0 || nB < 0 || nA >= this.solid.length || nB >= this.solid.length) continue;
-        if (!this.solid[nA] || !this.solid[nB]) continue;
-        const a = axis === 0 ? P(t, fixed) : P(fixed, t);
-        const b = axis === 0 ? P(t2, fixed) : P(fixed, t2);
-        const a2 = [a[0], a[1] - SKIRT, a[2]];
-        const b2 = [b[0], b[1] - SKIRT, b[2]];
-        this.colorAt(a[0], a[2], this._safe(iA), cA);
-        this.colorAt(b[0], b[2], this._safe(iB), cB);
-        const dim = [cA[0] * 0.68, cA[1] * 0.68, cA[2] * 0.68];
-        mb.quad(a, b, b2, a2, cA, cB, dim, dim);
-        mb.quad(a2, b2, b, a, dim, dim, cB, cA);
-      }
-    };
-    if (iz0 > 0) skirtRun(iz0, ix0, ix1, 0, -1);
-    if (iz1 < this.nz - 1) skirtRun(iz1, ix0, ix1, 0, 1);
-    if (ix0 > 0) skirtRun(ix0, iz0, iz1, 1, -1);
-    if (ix1 < this.nx - 1) skirtRun(ix1, iz0, iz1, 1, 1);
-
-    if (!mb.triangles) return null;
-    const geo = mb.geometry();
-    this._geomCache.set(key, geo);
-    return geo;
-  }
-
-  /** Clamp an index away from the grid border so `colorAt`'s central difference is in range. */
-  _safe(i) {
-    const nx = this.nx;
-    const ix = i % nx;
-    const iz = (i / nx) | 0;
-    return clamp(iz, 1, this.nz - 2) * nx + clamp(ix, 1, nx - 2);
-  }
-
-  /**
-   * The shell: the rim cliff and the underside, merged into one mesh because they are one
-   * object — the fracture the leaf broke along. The rim runs at full grid resolution so its top
-   * edge matches the deck exactly; the underside runs coarse and is deliberately allowed to
-   * overlap the rim's foot, because a seam you can hide with 3 m of overlap is not worth 40 000
-   * triangles of stitching.
-   */
-  _buildShell() {
-    const mb = new MeshBuilder();
-    const nx = this.nx, nz = this.nz, sp = this.spacing;
-    const warm = [ALBEDO.rockLow[0], ALBEDO.rockLow[1], ALBEDO.rockLow[2]];
-    const dark = [ALBEDO.rockShadow[0] * 0.85, ALBEDO.rockShadow[1] * 0.85, ALBEDO.rockShadow[2] * 0.9];
-    const deep = [ALBEDO.rockDeep[0], ALBEDO.rockDeep[1], ALBEDO.rockDeep[2]];
-
-    // --- rim cliff
-    for (let iz = 1; iz < nz - 1; iz++) {
-      for (let ix = 1; ix < nx - 1; ix++) {
-        const i = iz * nx + ix;
-        if (!this.solid[i]) continue;
-        const x = this.x0 + ix * sp, z = this.z0 + iz * sp;
-        for (let k = 0; k < 4; k++) {
-          const dx = k === 0 ? 1 : k === 1 ? -1 : 0;
-          const dz = k === 2 ? 1 : k === 3 ? -1 : 0;
-          const j = i + dx + dz * nx;
-          if (this.solid[j]) continue;
-          // The wall runs along the cell edge perpendicular to (dx,dz).
-          const ex = dz !== 0 ? sp * 0.5 : 0;
-          const ez = dx !== 0 ? sp * 0.5 : 0;
-          const ox = (dx * sp) / 2, oz = (dz * sp) / 2;
-          const top = this.h[i];
-          const bot = this.b[i] - 3.2;
-          const a = [x + ox - ex, top, z + oz - ez];
-          const b = [x + ox + ex, top, z + oz + ez];
-          const c = [x + ox + ex, bot, z + oz + ez];
-          const d = [x + ox - ex, bot, z + oz - ez];
-          const streak = fbm(x * 0.09, z * 0.09, this.seed + 88, 2) * 0.5 + 0.5;
-          const topC = [
-            mix(warm[0], ALBEDO.rockMid[0], streak),
-            mix(warm[1], ALBEDO.rockMid[1], streak),
-            mix(warm[2], ALBEDO.rockMid[2], streak),
-          ];
-          mb.quad(a, b, c, d, topC, topC, dark, dark);
-          mb.quad(d, c, b, a, dark, dark, topC, topC);
+        for (const tri of [t1, t2]) {
+          if (!this.inside[tri[0]] || !this.inside[tri[1]] || !this.inside[tri[2]]) continue;
+          const hit = this._triHit(x, z, tri);
+          if (hit) return hit;
         }
       }
     }
-
-    // --- underside, coarse, dilated outward so it hides behind the rim's foot
-    const step = 4;
-    const solidD = (ix, iz) => {
-      for (let dz = -3; dz <= 3; dz++) {
-        for (let dx = -3; dx <= 3; dx++) {
-          const jx = ix + dx, jz = iz + dz;
-          if (jx < 0 || jz < 0 || jx >= nx || jz >= nz) continue;
-          if (this.solid[jz * nx + jx]) return true;
-        }
-      }
-      return false;
-    };
-    const bAt = (ix, iz) => {
-      const i = clamp(iz, 0, nz - 1) * nx + clamp(ix, 0, nx - 1);
-      if (this.solid[i]) return this.b[i];
-      // Outside the leaf: fall away fast, so the dilated skin reads as a fracture lip.
-      let best = -Infinity;
-      for (let r = 1; r <= 4; r++) {
-        for (let k = 0; k < 4; k++) {
-          const jx = ix + (k === 0 ? r : k === 1 ? -r : 0);
-          const jz = iz + (k === 2 ? r : k === 3 ? -r : 0);
-          const j = clamp(jz, 0, nz - 1) * nx + clamp(jx, 0, nx - 1);
-          if (this.solid[j]) best = Math.max(best, this.b[j] - r * 1.4);
-        }
-        if (best > -Infinity) break;
-      }
-      return best > -Infinity ? best : 0;
-    };
-    const PB = (ix, iz) => [this.x0 + ix * sp, bAt(ix, iz), this.z0 + iz * sp];
-    for (let iz = 0; iz < nz - step; iz += step) {
-      for (let ix = 0; ix < nx - step; ix += step) {
-        if (!solidD(ix, iz) && !solidD(ix + step, iz + step)) continue;
-        if (!solidD(ix, iz) || !solidD(ix + step, iz) || !solidD(ix, iz + step) || !solidD(ix + step, iz + step)) {
-          continue;
-        }
-        const a = PB(ix, iz), b = PB(ix + step, iz), c = PB(ix + step, iz + step), d = PB(ix, iz + step);
-        const x = this.x0 + ix * sp, z = this.z0 + iz * sp;
-        const v = fbm(x * 0.02, z * 0.02, this.seed + 133, 3) * 0.5 + 0.5;
-        const col = [mix(deep[0], dark[0], v), mix(deep[1], dark[1], v), mix(deep[2], dark[2], v)];
-        // Wound the other way: the underside is seen from below.
-        mb.quad(d, c, b, a, col, col, col, col);
-      }
-    }
-
-    const geo = mb.geometry();
-    const mesh = new THREE.Mesh(geo, this.material());
-    mesh.name = "leaf-shell";
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    mesh.matrixAutoUpdate = false;
-    mesh.updateMatrix();
-    this.root.add(mesh);
-    this.shell = mesh;
-    this.stats.meshTris += geo.getAttribute("position").count / 3;
+    return null;
   }
 
-  // ------------------------------------------------------------------ collider
+  _triHit(x, z, tri) {
+    const p0 = this._nodePos(tri[0], true);
+    const p1 = this._nodePos(tri[1], true);
+    const p2 = this._nodePos(tri[2], true);
+    const v0x = p1[0] - p0[0], v0z = p1[2] - p0[2];
+    const v1x = p2[0] - p0[0], v1z = p2[2] - p0[2];
+    const den = v0x * v1z - v1x * v0z;
+    if (Math.abs(den) < 1e-9) return null;
+    const px = x - p0[0];
+    const pz = z - p0[2];
+    const u = (px * v1z - v1x * pz) / den;
+    const v = (v0x * pz - px * v0z) / den;
+    if (u < -1e-4 || v < -1e-4 || u + v > 1 + 1e-4) return null;
+
+    const ex = p1[0] - p0[0], ey = p1[1] - p0[1], ez = p1[2] - p0[2];
+    const fx = p2[0] - p0[0], fy = p2[1] - p0[1], fz = p2[2] - p0[2];
+    let nx = ey * fz - ez * fy;
+    let ny = ez * fx - ex * fz;
+    let nz = ex * fy - ey * fx;
+    if (ny < 0) { nx = -nx; ny = -ny; nz = -nz; } // surface normals point up, always
+    const len = Math.hypot(nx, ny, nz) || 1;
+    const y = p0[1] + u * ey + v * fy;
+    return { y, nx: nx / len, ny: ny / len, nz: nz / len };
+  }
 
   /**
-   * The collision surface. Decimated to `colliderStep` metres, which is affordable because
-   * §4 of this file's header keeps walkable ground smooth: the largest disagreement between
-   * this mesh and the rendered one on any ground a player can stand on is a couple of
-   * centimetres, and it is measured rather than asserted (`review/measure/P09.mjs`).
-   *
-   * Architecture — ledges, stairs, terraces, the causeway — is *not* in here. A 0.55 m ledge
-   * sampled every 2 m is a 15° ramp, which is a mantle the player never gets to make. Sharp
-   * features are separate collider geometry, registered by the level.
+   * March the surface from `from` toward `to` and report whether the leaf blocks the sightline.
+   * Used by `review/measure/P09.mjs` to prove the Bollard and the Second Lip can never share a
+   * frame, which world.md §12 makes a canon requirement rather than a preference.
    */
-  colliderGeometry() {
-    const st = this.colliderStep;
-    const mb = new MeshBuilder();
-    const sp = this.spacing;
-    const flat = [0.5, 0.5, 0.5];
-    const P = (ix, iz) => [this.x0 + ix * sp, this.h[iz * this.nx + ix], this.z0 + iz * sp];
-    for (let iz = 0; iz + st < this.nz; iz += st) {
-      for (let ix = 0; ix + st < this.nx; ix += st) {
-        const iA = iz * this.nx + ix;
-        const iB = iz * this.nx + ix + st;
-        const iC = (iz + st) * this.nx + ix + st;
-        const iD = (iz + st) * this.nx + ix;
-        if (!this.solid[iA] || !this.solid[iB] || !this.solid[iC] || !this.solid[iD]) continue;
-        mb.quad(P(ix, iz), P(ix + st, iz), P(ix + st, iz + st), P(ix, iz + st), flat);
-      }
+  occluded(from, to, step = 3) {
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    const dz = to[2] - from[2];
+    const len = Math.hypot(dx, dy, dz);
+    const n = Math.max(2, Math.ceil(len / step));
+    for (let i = 1; i < n; i++) {
+      const t = i / n;
+      const y = this.groundAt(from[0] + dx * t, from[2] + dz * t);
+      if (Number.isFinite(y) && from[1] + dy * t < y) return true;
     }
-    this.stats.colliderTris = mb.triangles;
-    return mb.geometry();
+    return false;
   }
 
-  /** Register with the character controller. Terrain is static, so this happens exactly once. */
-  publishCollider(id = "p09:leaf-nine") {
-    const geo = this.colliderGeometry();
-    signals.emit("world:collider", { id, geometry: geo });
-    this._colliderGeo = geo;
-    return geo;
+  // -------------------------------------------------------------------------- collision
+
+  _emitCollider() {
+    // The collider IS the render geometry — same triangles, same planes, no second evaluation of
+    // anything. That makes a render/physics disagreement structurally impossible.
+    signals.emit("world:collider", { id: "p09:leaf-nine", geometry: this.topGeometry });
   }
 
-  // ------------------------------------------------------------------ lifecycle
-
-  /**
-   * Level of detail. Chunk selection runs on the rendered frame rather than the fixed step
-   * because it is not gameplay: a chunk that swaps a frame late is invisible, and a chunk that
-   * swaps 60 times a second on a still camera is a stutter. Hysteresis on the distance bands
-   * keeps a chunk from oscillating when the player stands exactly on a boundary.
-   */
-  frame() {
-    const cam = this.kernel.camera;
-    this._camXZ.set(cam.position.x, cam.position.y, cam.position.z);
-    const scale = config.tier.id === "potato" ? 0.55 : config.tier.id === "low" ? 0.72 : 1;
-    for (const c of this.chunks) {
-      const dx = this._camXZ.x - c.centre.x;
-      const dz = this._camXZ.z - c.centre.z;
-      const dy = this._camXZ.y - c.centre.y;
-      const d = Math.sqrt(dx * dx + dz * dz + dy * dy * 0.35);
-      let lod = this.lodSteps.length - 1;
-      for (let k = 0; k < this.lodDistances.length; k++) {
-        const bound = this.lodDistances[k] * scale * (c.lod <= k ? 1.12 : 1);
-        if (d < bound) { lod = k; break; }
-      }
-      if (lod === c.lod) continue;
-      const geo = this._chunkGeometry(c.ix0, c.iz0, c.ix1, c.iz1, this.lodSteps[lod]);
-      if (!geo) continue;
-      c.mesh.geometry = geo;
-      c.lod = lod;
-      this._lodChanges++;
-    }
-  }
+  // -------------------------------------------------------------------------- kernel hooks
 
   snapshot() {
-    const lods = this.lodSteps.map(() => 0);
-    for (const c of this.chunks) lods[c.lod]++;
+    const p = this.topGeometry.getAttribute("position");
+    // Honest structural facts a critic can check without trusting a word of this file.
+    let flatFaces = 0;
+    const N = this.topGeometry.getAttribute("normal").array;
+    const sample = Math.min(400, Math.floor(p.count / 3));
+    for (let t = 0; t < sample; t++) {
+      const o = t * 9;
+      let same = true;
+      for (let k = 0; k < 3; k++) {
+        if (N[o + k] !== N[o + 3 + k] || N[o + k] !== N[o + 6 + k]) same = false;
+      }
+      if (same) flatFaces++;
+    }
     return {
-      bounds: [this.x0, this.z0, this.x1, this.z1],
-      spacing: this.spacing,
+      id: this.spec.id ?? "leaf",
+      cell: this.cell,
       grid: [this.nx, this.nz],
-      seed: this.seed,
-      chunks: this.chunks.length,
-      lodOccupancy: lods,
-      lodChanges: this._lodChanges,
-      colliderStep: this.colliderStep,
-      ...this.stats,
+      bounds: this.spec.bounds,
+      surfaceTriangles: this.triCount,
+      lipEdges: this.lipEdges,
+      indexed: this.topGeometry.index !== null,
+      flatNormalFraction: Number((flatFaces / sample).toFixed(3)),
+      underTriangles: this.underGeometry.getAttribute("position").count / 3,
     };
   }
 
   dispose() {
-    for (const g of this._geomCache.values()) g.dispose();
-    this._geomCache.clear();
-    this.shell?.geometry.dispose();
-    this._mat?.dispose();
-    this._colliderGeo?.dispose();
     signals.emit("world:collider", { id: "p09:leaf-nine", remove: true });
+    this.topGeometry.dispose();
+    this.underGeometry.dispose();
   }
 }
-
-const _n = { x: 0, y: 1, z: 0 };

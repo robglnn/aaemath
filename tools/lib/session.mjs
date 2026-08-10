@@ -184,9 +184,13 @@ export async function openGame(opts, body) {
       probe: (name) => page.evaluate((n) => window.__vs?.probe?.(n), name),
       run: (fn, arg) => page.evaluate(fn, arg),
 
-      async shoot(outPath, { clip, fullPage = false } = {}) {
+      async shoot(outPath, { clip, fullPage = false, timeout = 180000 } = {}) {
         fs.mkdirSync(path.dirname(path.resolve(ROOT, outPath)), { recursive: true });
-        const shot = { path: path.resolve(ROOT, outPath), fullPage };
+        // Playwright's 30s default is far too short here. One frame of a shadow-cascaded scene
+        // through SwiftShader can legitimately take minutes, and several review agents usually run
+        // at once on the same machine. A timeout in that situation is contention, not a bug — but it
+        // looks exactly like a hang and has already cost a review cycle.
+        const shot = { path: path.resolve(ROOT, outPath), fullPage, timeout };
         if (clip) shot.clip = clip;
         await page.screenshot(shot);
         return outPath;

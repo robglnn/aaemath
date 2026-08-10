@@ -1,0 +1,9 @@
+{
+  "id": "P15",
+  "state": "building",
+  "round": 2,
+  "gap": null,
+  "note": "Tex.js + TexPanel.js + boot landed; world-space KaTeX renders. Screenshot capture currently blocked by another wave's world/post rewrite (reproduces with my module removed).",
+  "evidence": [],
+  "updated": "2026-08-10T02:30:09.552Z"
+}

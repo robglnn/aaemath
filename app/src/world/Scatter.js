@@ -1,62 +1,68 @@
 import * as THREE from "three";
+import palette from "../../../design/palette.json";
 import { config } from "../core/Config.js";
 import { signals } from "../core/Signals.js";
 
 /**
- * Scatter — everything on the ground that is not the ground.
+ * Scatter — everything standing on the leaf that is not the leaf, plus the archipelago in the sky.
  *
- * `design/world.md` §2.3 makes this piece a *survey instrument*, not decoration: "You can read a
- * leaf's health off its plants. **Oldtrue** grows only on a century of held truth; **abouts** grow
- * only on approximation." So the placement masks are the content. A player who never reads a word
- * of the bible can still see that the crystal field is on the low ground, that the pale lichen and
- * the creeping abouts never grow in the same place, and that the talus sits at the foot of the
- * steep faces.
+ * ## The target
  *
- * Seven categories, all GPU-instanced:
+ * `reference/target-lowpoly.png` is binding and it is unambiguous about what this piece has to be:
+ * faceted solids with visible flat facets and hard silhouette edges, low triangle counts, per-face
+ * flat shading, warm ochre stone in light against a chromatic blue-grey in shadow, and **cyan
+ * crystal as one of only two saturated accents in the entire frame**. There are no normal maps
+ * here, no roughness maps, no detail textures, no Fresnel rims and no refraction: every shape in
+ * this file is carried by its geometry and by the value difference between one facet and the next.
+ * A crystal in the reference shows two or three flat values, never a gradient, and that is
+ * authored here as per-face vertex colour bands multiplied by a real per-face cosine.
  *
- *   certainty  set crystal, the signature element. `certainty.*` — faceted, refracting, and by
- *              `design/art-direction.md` §0.3 **never emissive and never bloomed**: it does not
- *              glow because it does not drift.
- *   shard      broad blunt certainty splinters, the second silhouette inside every formation
- *   seam       live resonance crystal — unresolved quantity still standing in a crack. This is
- *              the one category that carries `resonance.core` and a blown `resonance.hot` core
- *              (§5, "every emitter has a blown core"), and it is deliberately rare because §0.2
- *              makes hot resonance a *live-claim budget*, not a decoration budget.
- *   abouts     the creeping plant that grows only on approximate things. Wind in the vertex
- *              shader. `world.foliage`, held under S 0.30 as §9 requires.
- *   oldtrue    pale lichen that grows only on claims that have held a hundred years.
- *   debris     rock chips and shards; a talus mask puts them at the foot of steep ground.
- *   fragment   precursor bone-stone: broken drums and cut blocks, with dormant `resonance.deep`
- *              inlays (never `resonance.core` — the claim in a ruin is *false*, not live).
+ * Five things populate the world, in descending order of how much they matter:
  *
- * ## Four properties this module exists to guarantee
+ *   crystal   Certainty clusters — the signature element. A *bouquet*: one tall habit anchors the
+ *             formation and the satellites lean outward from its root, which is what the reference
+ *             draws and what a ring of parallel prisms never reads as.
+ *   shard     Broad blunt crystal splinters, the second silhouette inside every formation.
+ *   boulder   Angular faceted stone. Jittered icosahedra and octahedra — 20 and 8 triangles.
+ *   spire     Tall chisel-topped rock splinters that break the ground silhouette.
+ *   chip      Talus at the foot of steep ground.
+ *   tuft      Blocky grass slabs. Dark, clumped, and the thing that stops the ground reading as a
+ *             painted plane. `world.foliage` says green in this world is a VALUE, not a colour.
+ *   abouts    The creeping plant that grows only on approximate things (`world.md` §4.5).
+ *   oldtrue   Pale lichen that grows only on a century of held truth. Together with `abouts` this
+ *             makes scatter a *survey instrument*: a player who never reads a word of the bible can
+ *             still see that the two plants never grow in the same place.
+ *   islands   The floating archipelago. Chunky inverted rock cones with flat tops, carrying crystal
+ *             and blocky structures, placed in three distance bands so they recede into haze.
  *
- * **Deterministic.** Every position, rotation, scale, colour and shader seed is a pure function of
+ * ## Five properties this module exists to guarantee
+ *
+ * **Flat-shaded, by construction.** Every geometry is non-indexed with one normal per face, baked
+ * into the buffer, *and* every material sets `flatShading: true`. Either alone would be enough; both
+ * means a critic can check it two ways and the answer is the same. `probe().flatShading` reports
+ * the measured result of walking the buffers, not a flag.
+ *
+ * **Deterministic.** Every position, rotation, scale and colour is a pure function of
  * `(seed, category, tile, lattice index)`. No `Math.random`, no dependence on frame order, arrival
- * order or camera path. Two boots produce byte-identical placement, which is the only reason a
- * round-over-round capture comparison means anything.
+ * order or camera path. Two boots produce identical placement, which is the only reason a
+ * round-over-round capture comparison means anything. `probe().checksum` is order-independent, so
+ * it agrees even when the two boots streamed their tiles in a different order.
  *
- * **Streamed, so it scales to a 600 m leaf.** Candidates are generated per 24 m tile on demand
- * around the viewer and evicted behind them, with a per-frame time budget so a new ring of tiles
- * never costs a hitch. Global pre-generation would have cost ~200k surface queries the moment P09
- * lands a real island.
+ * **Streamed and hard-budgeted.** Candidates are generated per 24 m tile on demand around the
+ * viewer with a per-frame time budget, and each category has an explicit per-LOD instance ceiling
+ * scaled by `config.tier`. Tiles are consumed nearest-first, so when a ceiling binds it is always
+ * the farthest instances that are dropped: the failure mode is "the horizon thins", never "a hole
+ * opens beside the player".
  *
- * **Hard-budgeted.** Each category has an explicit per-LOD instance ceiling scaled by
- * `config.tier`. Tiles are consumed nearest-first, so when the ceiling binds it is always the
- * farthest instances that are dropped. `renderer.info` therefore has a *ceiling*, not a hope.
+ * **Pop-free.** Distance culling is a smooth shrink-to-zero in the vertex shader over a band that
+ * ends inside the streaming radius, so an instance is always already invisible when it enters or
+ * leaves the buffer. LOD switching is a geometry swap between two shapes that share a profile, at a
+ * distance jittered ±12% per instance, so it can never read as a line sweeping across a field.
  *
- * **Pop-free.** Two things could pop and neither is allowed to. Distance culling is a smooth
- * shrink-to-zero in the vertex shader over a band that ends 14 m *inside* the streaming radius, so
- * an instance is always already invisible when it enters or leaves the buffer. LOD switching is a
- * geometry swap between two shapes that share a profile, at a distance jittered ±11% per instance,
- * so it can never read as a line sweeping across a field.
- *
- * ## Boundaries
- *
- * No sibling feature is imported. The surface is read through whatever is mounted — a `terrain`
- * system's height query if P09 has published one, otherwise `collision.groundAt`, otherwise a flat
- * stand-in — and the large solids are handed back to collision through the `world:collider` signal
- * that `CollisionWorld` already documents.
+ * **Boundaryless in the right way.** No sibling feature module is imported. The surface is read
+ * through whatever is mounted — a `terrain` height query if P09 has published one, otherwise
+ * `collision.groundAt`, otherwise a flat stand-in — and large solids are handed back to collision
+ * through the `world:collider` signal that `CollisionWorld` already documents.
  */
 
 // ---------------------------------------------------------------------------- deterministic noise
@@ -86,9 +92,13 @@ function stream(seed) {
   };
 }
 
-function smoothstep01(t) {
-  return t * t * (3 - 2 * t);
-}
+const smoothstep01 = (t) => t * t * (3 - 2 * t);
+const clamp01 = (t) => (t < 0 ? 0 : t > 1 ? 1 : t);
+/** Rising ramp: 0 below `a`, 1 above `b`. */
+const ramp = (t, a, b) => clamp01((t - a) / (b - a || 1e-6));
+/** A soft band centred on `c` with half-width `w`, feathered over `f`. */
+const band = (t, c, w, f = w * 0.6) => 1 - clamp01((Math.abs(t - c) - w) / (f || 1e-6));
+const TAU = Math.PI * 2;
 
 /** Value noise on the XZ plane. Period 1 in the given coordinates; callers scale. */
 function noise2(x, z, s) {
@@ -117,13 +127,508 @@ function fbm2(x, z, s, octaves = 3) {
   return sum / norm;
 }
 
-const clamp01 = (t) => (t < 0 ? 0 : t > 1 ? 1 : t);
-/** Rising ramp: 0 below `a`, 1 above `b`. */
-const ramp = (t, a, b) => clamp01((t - a) / (b - a || 1e-6));
-/** A soft band centred on `c` with half-width `w`, feathered over `f`. */
-function band(t, c, w, f = w * 0.6) {
-  const d = Math.abs(t - c);
-  return 1 - clamp01((d - w) / (f || 1e-6));
+// ---------------------------------------------------------------------------- palette access
+
+/**
+ * sRGB hex for a palette role.
+ *
+ * `design/palette.json` is owned by another piece and re-authored independently, so a renamed role
+ * must not take this one off the air. Degrade to the stated fallback and record it, rather than
+ * throwing during module evaluation and blacking out the frame.
+ */
+const missingRoles = [];
+function roleHex(name, fallback) {
+  const r = palette?.roles?.[name] ?? palette?.constructedRoles?.[name];
+  if (!r?.hex) {
+    if (!missingRoles.includes(name)) missingRoles.push(name);
+    return fallback;
+  }
+  return parseInt(r.hex.slice(1), 16);
+}
+
+function col(hex) {
+  return new THREE.Color().setHex(hex, THREE.SRGBColorSpace);
+}
+
+/**
+ * The eight colours this piece is allowed to use, every one of them a measured palette role.
+ *
+ * `rock` is deliberately not `rock.lit.c`: `palette.laws.lightRig.workedCalibration` publishes the
+ * *albedo* that renders the measured lit facet under the authored key, and an albedo is what a
+ * material takes. Handing a renderer the already-lit colour is how a low-poly world ends up looking
+ * like flat vector art.
+ */
+const PAL = {
+  // The rock *albedo* is published under `laws.lightRig.workedCalibration`, not under `roles`,
+  // because a role is a measured pixel and this is the reflectance that produces it.
+  rock: (() => {
+    const hex = palette?.laws?.lightRig?.workedCalibration?.rockAlbedoHex;
+    return hex ? parseInt(hex.slice(1), 16) : 0xf5b268;
+  })(),
+  crystalHot: roleHex("crystal.hot", 0x96fde1),
+  crystalFace: roleHex("crystal.face", 0x88d1c3),
+  foliage: roleHex("world.foliage", 0x203120),
+  foliageLit: roleHex("world.foliage.lit", 0x585939),
+  bone: roleHex("stone.bone", 0xac8659),
+  ground: roleHex("ground.lit", 0x78632c),
+  shadow: roleHex("rock.shadow", 0x1b2c33),
+  horizon: roleHex("sky.horizon", 0xffb260),
+};
+
+// ---------------------------------------------------------------------------- geometry authoring
+
+/**
+ * A triangle-soup builder with a per-face colour and an optional per-vertex bend weight.
+ *
+ * Per-*face* colour is the point. The reference's rock mass is 43 countable flat planes and its
+ * crystals show two or three values; both need adjacent facets to differ by more than the cosine
+ * alone. Interpolating a colour across a quad would put a gradient inside a facet, which is exactly
+ * the thing the target does not have.
+ */
+class Soup {
+  constructor() {
+    this.p = [];
+    this.c = [];
+    this.b = [];
+  }
+
+  tri(a, b, c, colour, bends) {
+    this.p.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
+    for (let i = 0; i < 3; i++) this.c.push(colour[0], colour[1], colour[2]);
+    if (bends) this.b.push(bends[0], bends[1], bends[2]);
+    else this.b.push(0, 0, 0);
+    return this;
+  }
+
+  /** a→b→c→d, counter-clockwise. */
+  quad(a, b, c, d, colour, bends) {
+    this.tri(a, b, c, colour, bends && [bends[0], bends[1], bends[2]]);
+    this.tri(a, c, d, colour, bends && [bends[0], bends[2], bends[3]]);
+    return this;
+  }
+
+  /** An axis-aligned box, yaw-rotated, with a brighter top face. */
+  box(cx, cy, cz, hx, hy, hz, yaw, top, side) {
+    const s = Math.sin(yaw);
+    const k = Math.cos(yaw);
+    const P = (sx, sy, sz) => [cx + sx * hx * k - sz * hz * s, cy + sy * hy, cz + sx * hx * s + sz * hz * k];
+    const a = P(-1, 1, -1);
+    const b = P(1, 1, -1);
+    const c = P(1, 1, 1);
+    const d = P(-1, 1, 1);
+    const e = P(-1, -1, -1);
+    const f = P(1, -1, -1);
+    const g = P(1, -1, 1);
+    const h = P(-1, -1, 1);
+    this.quad(a, d, c, b, top);
+    this.quad(e, f, g, h, side);
+    this.quad(e, h, d, a, side);
+    this.quad(f, b, c, g, side);
+    this.quad(e, a, b, f, side);
+    this.quad(h, g, c, d, side);
+    return this;
+  }
+
+  geometry(withBend = false) {
+    const g = new THREE.BufferGeometry();
+    const pos = new Float32Array(this.p);
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(this.c, 3));
+    if (withBend) g.setAttribute("aBend", new THREE.Float32BufferAttribute(this.b, 1));
+    g.setAttribute("normal", new THREE.BufferAttribute(faceNormals(pos), 3));
+    g.computeBoundingSphere();
+    return g;
+  }
+}
+
+/**
+ * One normal per face, written to all three of its vertices.
+ *
+ * This is what "per-face flat shading" means in a buffer. The materials also set
+ * `flatShading: true`, which derives the same normal from screen-space derivatives — belt and
+ * braces, because a shadow pass, a depth pass and any future material that ignores the flag all
+ * read the buffer instead.
+ */
+function faceNormals(pos) {
+  const out = new Float32Array(pos.length);
+  for (let i = 0; i < pos.length; i += 9) {
+    const ax = pos[i], ay = pos[i + 1], az = pos[i + 2];
+    const bx = pos[i + 3], by = pos[i + 4], bz = pos[i + 5];
+    const cx = pos[i + 6], cy = pos[i + 7], cz = pos[i + 8];
+    const ux = bx - ax, uy = by - ay, uz = bz - az;
+    const vx = cx - ax, vy = cy - ay, vz = cz - az;
+    let nx = uy * vz - uz * vy;
+    let ny = uz * vx - ux * vz;
+    let nz = ux * vy - uy * vx;
+    const len = Math.hypot(nx, ny, nz);
+    if (len < 1e-9) {
+      nx = 0;
+      ny = 1;
+      nz = 0;
+    } else {
+      nx /= len;
+      ny /= len;
+      nz /= len;
+    }
+    for (let k = 0; k < 3; k++) {
+      out[i + k * 3] = nx;
+      out[i + k * 3 + 1] = ny;
+      out[i + k * 3 + 2] = nz;
+    }
+  }
+  return out;
+}
+
+/** Ring of points at height `y`, radius `r`, with a fixed per-side radial jitter. */
+function ring(sides, y, r, jitter) {
+  const out = [];
+  for (let s = 0; s < sides; s++) {
+    const a = (s / sides) * TAU;
+    const rr = r * jitter[s];
+    out.push([Math.cos(a) * rr, y, Math.sin(a) * rr]);
+  }
+  return out;
+}
+
+function sideJitter(sides, amount, seed) {
+  const out = [];
+  for (let s = 0; s < sides; s++) out.push(1 + (rnd(s, 41, seed) - 0.5) * 2 * amount);
+  return out;
+}
+
+/**
+ * A certainty. Height normalised to 1 so a caller scales it directly into metres.
+ *
+ * Three colour bands up the axis — 0.58 at the root, 0.80 in the body, 1.00 at the termination —
+ * which is `crystal.face` → `crystal.hot` expressed as a *value ladder*, exactly the "two or three
+ * values, never a gradient" the palette measures off the reference.
+ */
+function crystalGeo(detail, seed) {
+  const sides = detail ? 6 : 4;
+  const j = sideJitter(sides, detail ? 0.16 : 0.12, seed);
+  const s = new Soup();
+  const r0 = ring(sides, 0.0, 1.0, j);
+  const r1 = ring(sides, detail ? 0.5 : 0.62, 0.93, j);
+  const r2 = ring(sides, detail ? 0.78 : 0.86, 0.66, j);
+  const tip = [0, 1.0, 0];
+  const bands = [
+    [r0, r1, 0.58],
+    [r1, r2, 0.82],
+  ];
+  for (const [lo, hi, v] of bands) {
+    for (let k = 0; k < sides; k++) {
+      const k2 = (k + 1) % sides;
+      // Facet-level value break: adjacent facets of one band differ slightly so the silhouette
+      // does not collapse into a single tone when the sun is behind the crystal.
+      const f = v * (0.93 + rnd(k, 7, seed) * 0.14);
+      s.quad(lo[k], lo[k2], hi[k2], hi[k], [f, f, f]);
+    }
+  }
+  for (let k = 0; k < sides; k++) {
+    const k2 = (k + 1) % sides;
+    const f = 1.0 * (0.9 + rnd(k, 13, seed) * 0.2);
+    s.tri(r2[k], r2[k2], tip, [f, f, f]);
+  }
+  return s.geometry();
+}
+
+/** The broad blunt habit that sits alongside the tall one so a formation is never one shape. */
+function shardGeo(detail, seed) {
+  const sides = detail ? 5 : 4;
+  const j = sideJitter(sides, 0.26, seed);
+  const s = new Soup();
+  const r0 = ring(sides, 0.0, 1.0, j);
+  const r1 = ring(sides, 0.55, 0.68, j);
+  const tip = [0, 1.0, 0];
+  for (let k = 0; k < sides; k++) {
+    const k2 = (k + 1) % sides;
+    const f = 0.66 * (0.92 + rnd(k, 5, seed) * 0.16);
+    s.quad(r0[k], r0[k2], r1[k2], r1[k], [f, f, f]);
+  }
+  for (let k = 0; k < sides; k++) {
+    const k2 = (k + 1) % sides;
+    const f = 0.98 * (0.9 + rnd(k, 9, seed) * 0.2);
+    s.tri(r1[k], r1[k2], tip, [f, f, f]);
+  }
+  return s.geometry();
+}
+
+/**
+ * An angular boulder. A platonic solid with its *shared* vertices jittered — jittering per triangle
+ * would tear the solid open, so the jitter is keyed on the rounded original position and every face
+ * that touches a corner moves it the same way.
+ */
+function boulderGeo(detail, seed) {
+  const src = detail ? new THREE.IcosahedronGeometry(0.5, 0) : new THREE.OctahedronGeometry(0.55, 0);
+  const g = src.index ? src.toNonIndexed() : src;
+  const pos = g.getAttribute("position");
+  const s = new Soup();
+  const key = (x, y, z) => `${Math.round(x * 1000)},${Math.round(y * 1000)},${Math.round(z * 1000)}`;
+  const moved = new Map();
+  const jitter = (x, y, z) => {
+    const k = key(x, y, z);
+    let v = moved.get(k);
+    if (!v) {
+      const h = hashU32(Math.round(x * 997), Math.round(y * 991), seed ^ Math.round(z * 983));
+      const r = stream(h);
+      v = [
+        x * (1 + (r() - 0.5) * 0.62),
+        y * (0.52 + r() * 0.4) + (r() - 0.5) * 0.1,
+        z * (1 + (r() - 0.5) * 0.62),
+      ];
+      moved.set(k, v);
+    }
+    return v;
+  };
+  for (let i = 0; i < pos.count; i += 3) {
+    const a = jitter(pos.getX(i), pos.getY(i), pos.getZ(i));
+    const b = jitter(pos.getX(i + 1), pos.getY(i + 1), pos.getZ(i + 1));
+    const c = jitter(pos.getX(i + 2), pos.getY(i + 2), pos.getZ(i + 2));
+    const f = 0.86 + rnd(i, 3, seed) * 0.28;
+    s.tri(a, b, c, [f, f, f]);
+  }
+  g.dispose();
+  if (src !== g) src.dispose();
+  return s.geometry();
+}
+
+/** A tall chisel-topped rock splinter. Height normalised to 1. */
+function spireGeo(detail, seed) {
+  const sides = detail ? 5 : 4;
+  const j = sideJitter(sides, 0.3, seed);
+  const s = new Soup();
+  const r0 = ring(sides, 0.0, 1.0, j);
+  const r1 = ring(sides, 0.52, 0.62, j);
+  // Chisel: the top ring is tilted, so the silhouette ends on a slanted plane rather than a plateau.
+  const r2 = ring(sides, 1.0, 0.2, j).map((p, k) => [p[0], p[1] - 0.16 * Math.cos((k / sides) * TAU), p[2]]);
+  const rows = detail ? [[r0, r1, 0.78], [r1, r2, 0.94]] : [[r0, r2, 0.84]];
+  for (const [lo, hi, v] of rows) {
+    for (let k = 0; k < sides; k++) {
+      const k2 = (k + 1) % sides;
+      const f = v * (0.9 + rnd(k, 11, seed) * 0.2);
+      s.quad(lo[k], lo[k2], hi[k2], hi[k], [f, f, f]);
+    }
+  }
+  for (let k = 1; k < sides - 1; k++) s.tri(r2[0], r2[k], r2[k + 1], [1.04, 1.04, 1.04]);
+  return s.geometry();
+}
+
+/** A rock chip. A jittered tetrahedron: four triangles, and no sphere ever reads as broken stone. */
+function chipGeo(seed) {
+  const src = new THREE.TetrahedronGeometry(0.6, 0);
+  const g = src.index ? src.toNonIndexed() : src;
+  const pos = g.getAttribute("position");
+  const s = new Soup();
+  for (let i = 0; i < pos.count; i += 3) {
+    const P = (k) => {
+      const r = stream(hashU32(Math.round(pos.getX(i + k) * 900), Math.round(pos.getZ(i + k) * 900), seed));
+      return [
+        pos.getX(i + k) * (1 + (r() - 0.5) * 0.5),
+        pos.getY(i + k) * (0.45 + r() * 0.35) + 0.28,
+        pos.getZ(i + k) * (1 + (r() - 0.5) * 0.5),
+      ];
+    };
+    const f = 0.84 + rnd(i, 17, seed) * 0.3;
+    s.tri(P(0), P(1), P(2), [f, f, f]);
+  }
+  g.dispose();
+  if (src !== g) src.dispose();
+  return s.geometry();
+}
+
+/**
+ * A grass tuft: narrow vertical slabs, not billboards.
+ *
+ * Blocky on purpose. In the reference the ground cover reads as a clump of small dark rectangles
+ * standing on end, and a slab keeps that silhouette from every angle at a cost of two triangles.
+ * `aBend` is 0 at the root and 1 at the tip, so the wind term pivots the slab about its anchor.
+ */
+function tuftGeo(detail, seed) {
+  const blades = detail ? 5 : 2;
+  const s = new Soup();
+  for (let b = 0; b < blades; b++) {
+    const r = stream(hashU32(b, 23, seed));
+    const a = (b / blades) * TAU + r() * 1.1;
+    const off = r() * 0.26;
+    const h = 0.5 + r() * 0.5;
+    const w = 0.06 + r() * 0.05;
+    const lean = 0.1 + r() * 0.3;
+    const dx = Math.cos(a);
+    const dz = Math.sin(a);
+    const nx = -dz * w;
+    const nz = dx * w;
+    const bx = dx * off;
+    const bz = dz * off;
+    const tx = bx + dx * lean * h;
+    const tz = bz + dz * lean * h;
+    const tw = 0.42;
+    const f = 0.34 + (h - 0.5) * 0.9 + r() * 0.12;
+    s.quad(
+      [bx - nx, 0, bz - nz],
+      [bx + nx, 0, bz + nz],
+      [tx + nx * tw, h, tz + nz * tw],
+      [tx - nx * tw, h, tz - nz * tw],
+      [f, f, f],
+      [0, 0, 1, 1]
+    );
+  }
+  return s.geometry(true);
+}
+
+/** Abouts: a creeper, so the fronds run outward and stay low. Grows only on approximation. */
+function aboutsGeo(detail, seed) {
+  const fronds = detail ? 4 : 2;
+  const s = new Soup();
+  for (let b = 0; b < fronds; b++) {
+    const r = stream(hashU32(b, 29, seed));
+    const a = (b / fronds) * TAU + r() * 1.4;
+    const reach = 0.55 + r() * 0.5;
+    const rise = 0.22 + r() * 0.16;
+    const dx = Math.cos(a);
+    const dz = Math.sin(a);
+    const w = 0.1 + r() * 0.06;
+    const f = 0.3 + r() * 0.22;
+    s.tri(
+      [-dz * w, 0.01, dx * w],
+      [dz * w, 0.01, -dx * w],
+      [dx * reach, rise, dz * reach],
+      [f, f, f],
+      [0, 0, 1]
+    );
+  }
+  return s.geometry(true);
+}
+
+/** Oldtrue: a lichen crust hugging the stone. Never moves — it is a century of held truth. */
+function oldtrueGeo(seed) {
+  const sides = 6;
+  const j = sideJitter(sides, 0.42, seed);
+  const rim = ring(sides, 0.012, 0.5, j).map((p, k) => [p[0], p[1] + rnd(k, 33, seed) * 0.012, p[2]]);
+  const s = new Soup();
+  for (let k = 0; k < sides; k++) {
+    const k2 = (k + 1) % sides;
+    const f = 0.82 + rnd(k, 37, seed) * 0.3;
+    s.tri([0, 0.02, 0], rim[k], rim[k2], [f, f, f]);
+  }
+  return s.geometry();
+}
+
+function triCount(g) {
+  return Math.floor(g.getAttribute("position").count / 3);
+}
+
+/** Walk a buffer and report whether every triangle really carries one constant face normal. */
+function measureFlatness(g) {
+  const pos = g.getAttribute("position");
+  const nrm = g.getAttribute("normal");
+  if (!nrm) return { tris: 0, flat: 0 };
+  const n = Math.floor(pos.count / 3);
+  let flat = 0;
+  for (let t = 0; t < n; t++) {
+    const i = t * 3;
+    const ax = pos.getX(i), ay = pos.getY(i), az = pos.getZ(i);
+    const bx = pos.getX(i + 1), by = pos.getY(i + 1), bz = pos.getZ(i + 1);
+    const cx = pos.getX(i + 2), cy = pos.getY(i + 2), cz = pos.getZ(i + 2);
+    let fx = (by - ay) * (cz - az) - (bz - az) * (cy - ay);
+    let fy = (bz - az) * (cx - ax) - (bx - ax) * (cz - az);
+    let fz = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+    const l = Math.hypot(fx, fy, fz) || 1;
+    fx /= l;
+    fy /= l;
+    fz /= l;
+    let ok = true;
+    for (let k = 0; k < 3; k++) {
+      const dx = nrm.getX(i + k) - fx;
+      const dy = nrm.getY(i + k) - fy;
+      const dz = nrm.getZ(i + k) - fz;
+      if (dx * dx + dy * dy + dz * dz > 1e-6) ok = false;
+    }
+    if (ok) flat++;
+  }
+  return { tris: n, flat };
+}
+
+// ---------------------------------------------------------------------------- shaders
+
+/**
+ * Attach a shader extension.
+ *
+ * `customProgramCacheKey` is not optional. Three's default key for a patched material is the source
+ * text of `onBeforeCompile`, and every material built by this factory shares that text — differing
+ * only in closed-over strings. Without an explicit key the crystal, the stone and the flora would
+ * silently share one compiled program and two of them would render as the third.
+ */
+function extend(material, key, parts) {
+  material.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, parts.uniforms);
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", `#include <common>\n${parts.vertexPars ?? ""}`)
+      .replace("#include <begin_vertex>", `#include <begin_vertex>\n${parts.vertexBody ?? ""}`);
+    shader.fragmentShader = shader.fragmentShader.replace(
+      "#include <common>",
+      `#include <common>\n${parts.fragmentPars ?? ""}`
+    );
+    if (parts.fragmentTail) {
+      // MeshDepthMaterial has no fog chunk; `replace` on a missing needle is a no-op, which is
+      // exactly the behaviour wanted here.
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <fog_fragment>",
+        `#include <fog_fragment>\n${parts.fragmentTail}`
+      );
+    }
+    material.userData.shader = shader;
+  };
+  material.customProgramCacheKey = () => key;
+  return material;
+}
+
+const FADE_PARS = /* glsl */ `
+  attribute vec2 aInst;
+  uniform vec3 uEye;
+  uniform vec2 uFade;
+  uniform float uTime;
+  uniform vec3 uWind;
+  varying float vFade;
+  varying float vEyeDist;
+`;
+
+const FRAG_PARS = /* glsl */ `
+  varying float vFade;
+  varying float vEyeDist;
+  uniform vec3 uHaze;
+  uniform vec3 uHazeColor;
+`;
+
+/**
+ * Aerial perspective, applied after three's own fog and gated to zero whenever the scene already
+ * has fog. There is exactly one authority for haze at any moment: the world's, if the world has
+ * one, and this piece's own only when nothing else is providing depth.
+ */
+const HAZE_TAIL = /* glsl */ `
+  float vsHz = smoothstep(uHaze.x, uHaze.y, vEyeDist) * uHaze.z;
+  gl_FragColor.rgb = mix(gl_FragColor.rgb, uHazeColor, vsHz);
+`;
+
+function fadeBody({ wind = false } = {}) {
+  return /* glsl */ `
+  vec4 vsOrigin = modelMatrix * instanceMatrix[3];
+  vEyeDist = distance(uEye, vsOrigin.xyz);
+  // ±11% per-instance jitter on the fade window: a field must never dissolve along a circle.
+  float vsJit = 1.0 + (aInst.x - 0.5) * 0.22;
+  vFade = 1.0 - smoothstep(uFade.x * vsJit, uFade.y * vsJit, vEyeDist);
+  ${
+    wind
+      ? `
+  // Wind, on simulation time, so an advance() sequence reproduces the frame exactly.
+  float vsW = sin(uTime * 1.15 + vsOrigin.x * 0.35 + vsOrigin.z * 0.21)
+            + 0.40 * sin(uTime * 2.10 + vsOrigin.x * 0.80 - vsOrigin.z * 0.50);
+  float vsA = uWind.z * aBend * aBend * (0.7 + aInst.y * 0.6);
+  transformed.x += uWind.x * vsW * vsA;
+  transformed.z += uWind.y * vsW * vsA;`
+      : ""
+  }
+  transformed *= vFade;
+`;
 }
 
 // ---------------------------------------------------------------------------- surface adapter
@@ -134,8 +639,8 @@ const TERRAIN_NORMAL_FNS = ["normalAt", "sampleNormal", "getNormal"];
 /**
  * The one place that knows how to ask "what is the ground at (x, z)?".
  *
- * P09 has not landed yet and P13 must not block on it, so this duck-types the sensible answers in
- * priority order and re-resolves whenever `world:ready` fires. `collision.groundAt` is the
+ * P09 may not have landed and P13 must not block on it, so this duck-types the sensible answers in
+ * priority order and re-resolves whenever the world changes. `collision.groundAt` is the
  * interesting middle case: it is a real downward raycast against every registered collider, so the
  * moment P09 registers terrain through `world:collider` this adapter is already reading the real
  * island — with real normals — without a line of code changing.
@@ -161,13 +666,6 @@ class Surface {
         this._h = h;
         this._n = TERRAIN_NORMAL_FNS.find((k) => typeof t[k] === "function") ?? null;
         this.mode = "terrain";
-        return this.mode;
-      }
-      if (typeof t.sample === "function") {
-        this._t = t;
-        this._h = "sample";
-        this._n = null;
-        this.mode = "terrain-sample";
         return this.mode;
       }
     }
@@ -196,7 +694,7 @@ class Surface {
       out.hit = true;
       out.y = r.y;
       out.nx = r.normal.x;
-      out.ny = Math.abs(r.normal.y) < 1e-4 ? 1e-4 : Math.abs(r.normal.y);
+      out.ny = Math.max(1e-4, Math.abs(r.normal.y));
       out.nz = r.normal.z;
       if (r.normal.y < 0) {
         out.nx = -out.nx;
@@ -205,31 +703,22 @@ class Surface {
       return out;
     }
 
-    if (this.mode === "terrain" || this.mode === "terrain-sample") {
-      let y;
-      let n = null;
-      if (this.mode === "terrain-sample") {
-        const r = this._t.sample(x, z);
-        if (r == null) return out;
-        y = typeof r === "number" ? r : (r.height ?? r.y);
-        n = r && typeof r === "object" ? r.normal : null;
-      } else {
-        y = this._t[this._h](x, z);
-        if (this._n) n = this._t[this._n](x, z);
-      }
+    if (this.mode === "terrain") {
+      const y = this._t[this._h](x, z);
       if (!Number.isFinite(y)) return out;
       out.hit = true;
       out.y = y;
+      const n = this._n ? this._t[this._n](x, z) : null;
       if (n && Number.isFinite(n.x)) {
         out.nx = n.x;
         out.ny = Math.max(1e-4, Math.abs(n.y));
         out.nz = n.z;
       } else {
-        // Central difference. 0.4 m is small enough to follow a terrace lip and large enough not
-        // to read quantisation noise out of a heightfield as slope.
+        // Central difference. 0.4 m follows a terrace lip without reading heightfield
+        // quantisation as slope.
         const e = 0.4;
-        const hx = this._sampleH(x + e, z) - this._sampleH(x - e, z);
-        const hz = this._sampleH(x, z + e) - this._sampleH(x, z - e);
+        const hx = this._h2(x + e, z) - this._h2(x - e, z);
+        const hz = this._h2(x, z + e) - this._h2(x, z - e);
         const len = Math.hypot(-hx, 2 * e, -hz) || 1;
         out.nx = -hx / len;
         out.ny = (2 * e) / len;
@@ -238,429 +727,177 @@ class Surface {
       return out;
     }
 
-    // Flat stand-in: a disc, so a build before any world exists still has an edge.
+    // Flat stand-in, so a build before any world exists still has something to stand on.
     if (Math.hypot(x, z) > 54) return out;
     out.hit = true;
     out.y = 0.12;
     return out;
   }
 
-  _sampleH(x, z) {
-    if (this.mode === "terrain-sample") {
-      const r = this._t.sample(x, z);
-      return typeof r === "number" ? r : (r?.height ?? r?.y ?? 0);
-    }
+  _h2(x, z) {
     const v = this._t[this._h](x, z);
     return Number.isFinite(v) ? v : 0;
   }
 }
 
-// ---------------------------------------------------------------------------- geometry authoring
+// ---------------------------------------------------------------------------- the archipelago
+
+const ISLAND_BANDS = [
+  // [distance min, max, altitude min, max, radius scale, structure chance]
+  { d: [175, 300], y: [16, 62], r: [9, 17], build: 0.2, crystal: 0.85 },
+  { d: [330, 620], y: [26, 105], r: [14, 30], build: 0.45, crystal: 0.6 },
+  { d: [660, 1080], y: [-18, 150], r: [26, 62], build: 0.75, crystal: 0.35 },
+];
 
 /**
- * Rebuild a geometry as flat-shaded, non-indexed triangles with per-face normals.
+ * The floating archipelago.
  *
- * `art-direction.md` §4: "Rock has no terminator … the light/shadow boundary is a geometric edge."
- * Crystal wants the same thing for a different reason — a facet only reads as a facet if it has one
- * normal. Baking the flat normals into the buffer instead of setting `flatShading: true` keeps
- * `vNormal` a real varying, which is what the specular-AA term in the fragment shader differentiates.
+ * The reference's leaves are the thing that makes its horizon pose a question, and they do it with
+ * almost no geometry: a flat top, a hard rim, and a ragged inverted cone underneath that tapers to
+ * a point. Three distance bands, deterministic bearings on a golden-angle spiral so no camera yaw
+ * finds an empty sky, and everything merged into two draw calls — one for stone, one for crystal.
+ *
+ * `world.md` §2.3 is binding on the *shape*: "Leaves are flat on top because that was the surface,
+ * and ragged underneath because that is a fracture where the false part stopped." Nothing here is a
+ * smooth mushroom.
  */
-function flatten(geo) {
-  const g = geo.index ? geo.toNonIndexed() : geo;
-  g.computeVertexNormals();
-  const pos = g.getAttribute("position");
-  const nrm = g.getAttribute("normal");
-  const a = new THREE.Vector3();
-  const b = new THREE.Vector3();
-  const c = new THREE.Vector3();
-  const n = new THREE.Vector3();
-  for (let i = 0; i < pos.count; i += 3) {
-    a.fromBufferAttribute(pos, i);
-    b.fromBufferAttribute(pos, i + 1);
-    c.fromBufferAttribute(pos, i + 2);
-    n.subVectors(c, b).cross(a.clone().sub(b)).normalize();
-    if (!Number.isFinite(n.x)) n.set(0, 1, 0);
-    for (let k = 0; k < 3; k++) nrm.setXYZ(i + k, n.x, n.y, n.z);
-  }
-  nrm.needsUpdate = true;
-  if (g !== geo) geo.dispose();
-  return g;
-}
+function buildArchipelago(seed, count) {
+  const rock = new Soup();
+  const crystal = new Soup();
+  const stats = { islands: 0, crystals: 0, structures: 0, dMin: Infinity, dMax: 0, yMin: Infinity, yMax: -Infinity };
+  const GOLDEN = 2.399963229728653;
 
-function buildFromRings(rings, sides, radialJitter, seed) {
-  // rings: [{ y, r }] bottom→top, last entry with r === 0 closes to an apex.
-  const rj = [];
-  for (let s = 0; s < sides; s++) rj.push(1 + (rnd(s, 17, seed) - 0.5) * 2 * radialJitter);
+  for (let i = 0; i < count; i++) {
+    const r = stream(hashU32(i, 101, seed));
+    const bandIx = i % ISLAND_BANDS.length;
+    const B = ISLAND_BANDS[bandIx];
+    const t = r();
+    const dist = B.d[0] + (B.d[1] - B.d[0]) * t;
+    const alt = B.y[0] + (B.y[1] - B.y[0]) * r();
+    const rad = B.r[0] + (B.r[1] - B.r[0]) * r();
+    const az = i * GOLDEN + r() * 0.5;
+    const cx = Math.cos(az) * dist;
+    const cz = Math.sin(az) * dist;
+    const yaw = r() * TAU;
 
-  const pts = [];
-  for (let i = 0; i < rings.length; i++) {
-    const ring = [];
-    for (let s = 0; s < sides; s++) {
-      const a = (s / sides) * Math.PI * 2;
-      const r = ring.r === 0 ? 0 : rings[i].r * rj[s];
-      ring.push(new THREE.Vector3(Math.cos(a) * r, rings[i].y, Math.sin(a) * r));
-    }
-    pts.push(ring);
-  }
+    stats.islands++;
+    stats.dMin = Math.min(stats.dMin, dist);
+    stats.dMax = Math.max(stats.dMax, dist);
+    stats.yMin = Math.min(stats.yMin, alt);
+    stats.yMax = Math.max(stats.yMax, alt);
 
-  const verts = [];
-  const push = (v) => verts.push(v.x, v.y, v.z);
+    const sides = 7 + Math.floor(r() * 3);
+    const j = [];
+    for (let s = 0; s < sides; s++) j.push(0.78 + r() * 0.4);
+    const P = (s, rr, y) => {
+      const a = (s / sides) * TAU + yaw;
+      const q = rad * rr * j[s];
+      return [cx + Math.cos(a) * q, alt + y, cz + Math.sin(a) * q];
+    };
 
-  for (let i = 0; i < rings.length - 1; i++) {
-    const lo = pts[i];
-    const hi = pts[i + 1];
-    const apex = rings[i + 1].r === 0;
+    // Top surface — the shelf. Flat, with a hand's width of relief, and dressed in the dark green
+    // of `world.foliage`: in this world green is a value, not a colour.
+    const topJ = [];
+    for (let s = 0; s < sides; s++) topJ.push(rad * 0.012 * (r() - 0.5));
+    const centre = [cx, alt + rad * 0.02, cz];
     for (let s = 0; s < sides; s++) {
       const s2 = (s + 1) % sides;
-      if (apex) {
-        const tip = new THREE.Vector3(0, rings[i + 1].y, 0);
-        push(lo[s]);
-        push(lo[s2]);
-        push(tip);
-      } else {
-        push(lo[s]);
-        push(lo[s2]);
-        push(hi[s2]);
-        push(lo[s]);
-        push(hi[s2]);
-        push(hi[s]);
+      const f = 0.72 + r() * 0.4;
+      rock.tri(centre, P(s, 0.98, topJ[s]), P(s2, 0.98, topJ[s2]), [f * 0.42, f * 0.5, f * 0.3]);
+    }
+    // Rim: a hard overhanging lip. This is the edge that reads as a cut-out against the sky.
+    const lipY = -rad * (0.1 + r() * 0.08);
+    for (let s = 0; s < sides; s++) {
+      const s2 = (s + 1) % sides;
+      const f = 0.9 + r() * 0.35;
+      rock.quad(P(s, 0.98, topJ[s]), P(s, 1.02, lipY), P(s2, 1.02, lipY), P(s2, 0.98, topJ[s2]), [f, f * 0.86, f * 0.66]);
+    }
+    // The fracture: three tapering rings to a point, darkening downward. Ragged, not conical —
+    // each ring gets its own per-side jitter so no two silhouettes agree.
+    let prevR = 1.02;
+    let prevY = lipY;
+    const depth = rad * (1.0 + r() * 1.3);
+    const steps = 3;
+    for (let k = 1; k <= steps; k++) {
+      const kr = 1.02 * Math.pow(1 - k / (steps + 0.55), 1.25);
+      const ky = lipY - depth * (k / steps);
+      const wob = [];
+      for (let s = 0; s < sides; s++) wob.push(0.72 + r() * 0.6);
+      const shade = 0.62 - k * 0.14;
+      for (let s = 0; s < sides; s++) {
+        const s2 = (s + 1) % sides;
+        const a = (s / sides) * TAU + yaw;
+        const a2 = (s2 / sides) * TAU + yaw;
+        const q = rad * kr * j[s] * wob[s];
+        const q2 = rad * kr * j[s2] * wob[s2];
+        const lo = [cx + Math.cos(a) * q, alt + ky, cz + Math.sin(a) * q];
+        const lo2 = [cx + Math.cos(a2) * q2, alt + ky, cz + Math.sin(a2) * q2];
+        const f = shade * (0.85 + r() * 0.34);
+        if (k === steps) {
+          rock.tri(P(s, prevR, prevY), [cx, alt + ky - depth * 0.5, cz], P(s2, prevR, prevY), [f, f * 0.92, f * 0.9]);
+        } else {
+          rock.quad(P(s, prevR, prevY), lo, lo2, P(s2, prevR, prevY), [f, f * 0.94, f * 0.9]);
+        }
+      }
+      prevR = kr;
+      prevY = ky;
+    }
+
+    // Cargo. A certainty field on a leaf is what says it is still true; a stump of towers is what
+    // says somebody used to live on it.
+    if (r() < B.crystal) {
+      const n = 2 + Math.floor(r() * 4);
+      for (let c = 0; c < n; c++) {
+        const a = r() * TAU;
+        const q = rad * 0.55 * Math.sqrt(r());
+        const h = rad * (0.16 + r() * 0.3);
+        const w = h * (0.16 + r() * 0.12);
+        const px = cx + Math.cos(a) * q;
+        const pz = cz + Math.sin(a) * q;
+        const lean = (r() - 0.5) * 0.5;
+        const cs = 5;
+        const top = [px + lean * h * 0.5, alt + rad * 0.02 + h, pz + lean * h * 0.4];
+        for (let s = 0; s < cs; s++) {
+          const t0 = (s / cs) * TAU;
+          const t1 = ((s + 1) / cs) * TAU;
+          const b0 = [px + Math.cos(t0) * w, alt + rad * 0.01, pz + Math.sin(t0) * w];
+          const b1 = [px + Math.cos(t1) * w, alt + rad * 0.01, pz + Math.sin(t1) * w];
+          const f = 0.7 + s * 0.07;
+          crystal.tri(b0, b1, top, [f, f, f]);
+        }
+        stats.crystals++;
+      }
+    }
+    if (r() < B.build) {
+      const n = 2 + Math.floor(r() * 6);
+      for (let b = 0; b < n; b++) {
+        const a = r() * TAU;
+        const q = rad * 0.6 * Math.sqrt(r());
+        const w = rad * (0.05 + r() * 0.07);
+        const h = rad * (0.12 + Math.pow(r(), 1.8) * 0.9);
+        rock.box(
+          cx + Math.cos(a) * q,
+          alt + rad * 0.02 + h,
+          cz + Math.sin(a) * q,
+          w,
+          h,
+          w * (0.7 + r() * 0.7),
+          r() * TAU,
+          [1.02, 0.98, 0.86],
+          [0.66, 0.63, 0.58]
+        );
+        stats.structures++;
       }
     }
   }
-  // Base cap, wound downward.
-  const base = pts[0];
-  for (let s = 1; s < sides - 1; s++) {
-    push(base[0]);
-    push(base[s + 1]);
-    push(base[s]);
-  }
 
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-  return flatten(g);
+  return { rock: rock.geometry(), crystal: crystal.geometry(), stats };
 }
-
-/**
- * A certainty. Authored as a real crystal habit rather than a cone: a prism that swells slightly
- * above the base, holds its width, then takes a shoulder bevel into a blunt pyramidal termination.
- * Height is normalised to 1 so the vertex shader can use `position.y` directly as the shear ramp.
- */
-function makeCertainty(detail, seed) {
-  const sides = detail ? 9 : 6;
-  const rings = detail
-    ? [
-        { y: 0.0, r: 0.94 },
-        { y: 0.08, r: 1.0 },
-        { y: 0.46, r: 0.96 },
-        { y: 0.72, r: 0.86 },
-        { y: 0.87, r: 0.48 },
-        { y: 1.0, r: 0 },
-      ]
-    : [
-        { y: 0.0, r: 0.96 },
-        { y: 0.7, r: 0.9 },
-        { y: 0.87, r: 0.48 },
-        { y: 1.0, r: 0 },
-      ];
-  return buildFromRings(rings, sides, detail ? 0.14 : 0.1, seed);
-}
-
-/** The broad blunt habit that sits alongside the tall one so a formation is never one shape. */
-function makeShard(detail, seed) {
-  const sides = detail ? 7 : 5;
-  const rings = detail
-    ? [
-        { y: 0.0, r: 1.0 },
-        { y: 0.34, r: 0.92 },
-        { y: 0.62, r: 0.7 },
-        { y: 0.8, r: 0.44 },
-        { y: 1.0, r: 0 },
-      ]
-    : [
-        { y: 0.0, r: 1.0 },
-        { y: 0.62, r: 0.72 },
-        { y: 1.0, r: 0 },
-      ];
-  return buildFromRings(rings, sides, detail ? 0.22 : 0.16, seed);
-}
-
-/** An angular rock chip. Jittered octahedron / tetrahedron — no sphere ever reads as broken stone. */
-function makeChip(detail, seed) {
-  const g = detail ? new THREE.OctahedronGeometry(0.5, 0) : new THREE.TetrahedronGeometry(0.55, 0);
-  const pos = g.getAttribute("position");
-  for (let i = 0; i < pos.count; i++) {
-    const j = (k) => (rnd(i, k, seed) - 0.5) * (detail ? 0.34 : 0.4);
-    pos.setXYZ(i, pos.getX(i) * (1 + j(1)), pos.getY(i) * (1 + j(2)) * 0.62 + 0.3, pos.getZ(i) * (1 + j(3)));
-  }
-  pos.needsUpdate = true;
-  return flatten(g);
-}
-
-/**
- * A precursor fragment: a cut drum with one face broken away. `aInlay` marks the band of vertices
- * that carry a dormant `resonance.deep` inlay, so the strip costs no extra draw call.
- */
-function makeFragment(detail, seed) {
-  const sides = detail ? 9 : 6;
-  const verts = [];
-  const inlay = [];
-  const top = [];
-  const bot = [];
-  for (let s = 0; s < sides; s++) {
-    const a = (s / sides) * Math.PI * 2;
-    const r = 0.5 * (1 + (rnd(s, 3, seed) - 0.5) * 0.16);
-    // A break plane: one side of the drum is sheared away.
-    const h = 1.0 - 0.55 * clamp01((Math.cos(a - 1.1) + 0.2) * 0.9) - rnd(s, 9, seed) * 0.12;
-    top.push(new THREE.Vector3(Math.cos(a) * r, h, Math.sin(a) * r));
-    bot.push(new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r));
-  }
-  const bandLo = 0.34;
-  const bandHi = 0.46;
-  const push = (v, isInlay) => {
-    verts.push(v.x, v.y, v.z);
-    inlay.push(isInlay ? 1 : 0);
-  };
-  for (let s = 0; s < sides; s++) {
-    const s2 = (s + 1) % sides;
-    // Split the side wall into three bands so the middle one can carry the inlay.
-    const cuts = [0, bandLo, bandHi, 1];
-    for (let c = 0; c < 3; c++) {
-      const t0 = cuts[c];
-      const t1 = cuts[c + 1];
-      const isInlay = c === 1;
-      const p = (i, t) => new THREE.Vector3().lerpVectors(bot[i], top[i], t);
-      const a0 = p(s, t0);
-      const a1 = p(s2, t0);
-      const b0 = p(s, t1);
-      const b1 = p(s2, t1);
-      push(a0, isInlay);
-      push(a1, isInlay);
-      push(b1, isInlay);
-      push(a0, isInlay);
-      push(b1, isInlay);
-      push(b0, isInlay);
-    }
-  }
-  for (let s = 1; s < sides - 1; s++) {
-    push(top[0], false);
-    push(top[s], false);
-    push(top[s + 1], false);
-    push(bot[0], false);
-    push(bot[s + 1], false);
-    push(bot[s], false);
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-  const out = flatten(g);
-  out.setAttribute("aInlay", new THREE.Float32BufferAttribute(inlay, 1));
-  return out;
-}
-
-/**
- * Abouts: a creeping plant, so the blades arc outward from the root rather than standing up.
- * `aBend` is 0 at the root and 1 at the tip; it is the only thing the wind term multiplies by, so
- * a blade pivots about its anchor and never slides.
- */
-function makeAbouts(detail, seed) {
-  const blades = detail ? 4 : 2;
-  const segs = detail ? 3 : 2;
-  const verts = [];
-  const bends = [];
-  for (let b = 0; b < blades; b++) {
-    const a = (b / blades) * Math.PI * 2 + rnd(b, 5, seed) * 1.4;
-    const reach = 0.55 + rnd(b, 6, seed) * 0.45;
-    const rise = 0.65 + rnd(b, 7, seed) * 0.5;
-    const w0 = 0.085 + rnd(b, 8, seed) * 0.03;
-    const dx = Math.cos(a);
-    const dz = Math.sin(a);
-    const at = (t) => {
-      // Arc: rises, then leans over — a runner, not a grass blade.
-      const y = Math.sin(t * 1.9) * rise;
-      const r = t * t * reach + t * 0.18;
-      return new THREE.Vector3(dx * r, y, dz * r);
-    };
-    for (let s = 0; s < segs; s++) {
-      const t0 = s / segs;
-      const t1 = (s + 1) / segs;
-      const p0 = at(t0);
-      const p1 = at(t1);
-      const w = (t) => w0 * (1 - t * 0.82);
-      const nx = -dz;
-      const nz = dx;
-      const q = [
-        [p0.x - nx * w(t0), p0.y, p0.z - nz * w(t0), t0],
-        [p0.x + nx * w(t0), p0.y, p0.z + nz * w(t0), t0],
-        [p1.x + nx * w(t1), p1.y, p1.z + nz * w(t1), t1],
-        [p1.x - nx * w(t1), p1.y, p1.z - nz * w(t1), t1],
-      ];
-      const tri = [0, 1, 2, 0, 2, 3];
-      for (const i of tri) {
-        verts.push(q[i][0], q[i][1], q[i][2]);
-        bends.push(q[i][3]);
-      }
-    }
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-  g.computeVertexNormals();
-  g.setAttribute("aBend", new THREE.Float32BufferAttribute(bends, 1));
-  return g;
-}
-
-/** Oldtrue: a lichen crust. Flat, scalloped, hugging the stone. `aBend` is zero — it never moves. */
-function makeOldtrue(seed) {
-  const sides = 9;
-  const verts = [];
-  const centre = new THREE.Vector3(0, 0.012, 0);
-  const rim = [];
-  for (let s = 0; s < sides; s++) {
-    const a = (s / sides) * Math.PI * 2;
-    const r = 0.5 * (0.62 + rnd(s, 21, seed) * 0.62);
-    rim.push(new THREE.Vector3(Math.cos(a) * r, 0.002 + rnd(s, 22, seed) * 0.01, Math.sin(a) * r));
-  }
-  for (let s = 0; s < sides; s++) {
-    const s2 = (s + 1) % sides;
-    verts.push(centre.x, centre.y, centre.z, rim[s].x, rim[s].y, rim[s].z, rim[s2].x, rim[s2].y, rim[s2].z);
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-  const out = flatten(g);
-  out.setAttribute("aBend", new THREE.Float32BufferAttribute(new Float32Array(out.getAttribute("position").count), 1));
-  return out;
-}
-
-function triCount(g) {
-  const p = g.getAttribute("position");
-  return Math.floor((g.index ? g.index.count : p.count) / 3);
-}
-
-// ---------------------------------------------------------------------------- shaders
-
-const VERT_PARS = /* glsl */ `
-  attribute vec4 aScatter;
-  uniform vec3 uEye;
-  uniform vec2 uFade;
-  uniform float uTime;
-  uniform vec3 uWind;
-  varying float vFade;
-  varying float vEyeDist;
-`;
-
-const VERT_PARS_FULL = /* glsl */ `
-  varying vec3 vLocalPos;
-  varying vec3 vLocalNrm;
-  varying vec3 vLocalView;
-  varying float vSeed;
-`;
-
-/** Shared head: distance to the viewer, the per-instance fade, and the shrink it drives. */
-function vertBody({ shear = false, wind = false, full = true }) {
-  return /* glsl */ `
-  vec4 vsInstOrigin = modelMatrix * instanceMatrix[3];
-  vEyeDist = distance(uEye, vsInstOrigin.xyz);
-  // ±11% per-instance jitter on the fade window: a field must never dissolve along a circle.
-  float vsFadeJit = 1.0 + (aScatter.w - 0.5) * 0.22;
-  vFade = 1.0 - smoothstep(uFade.x * vsFadeJit, uFade.y * vsFadeJit, vEyeDist);
-  ${
-    shear
-      ? `
-  // Per-instance lean. Two crystals from the same geometry never stand the same way.
-  float vsAng = aScatter.x * 6.2831853;
-  float vsH = max(transformed.y, 0.0);
-  transformed.x += cos(vsAng) * aScatter.y * vsH * vsH;
-  transformed.z += sin(vsAng) * aScatter.y * vsH * vsH;`
-      : ""
-  }
-  ${
-    wind
-      ? `
-  // Wind. Driven by simulation time, so an advance() sequence reproduces the same frame.
-  float vsW = sin(uTime * 1.30 + vsInstOrigin.x * 0.31 + vsInstOrigin.z * 0.19)
-            + 0.45 * sin(uTime * 2.35 + vsInstOrigin.x * 0.77 - vsInstOrigin.z * 0.41);
-  float vsAmp = uWind.z * (0.55 + aScatter.y) * aBend * aBend;
-  transformed.x += uWind.x * vsW * vsAmp;
-  transformed.z += uWind.y * vsW * vsAmp;`
-      : ""
-  }
-  transformed *= vFade;
-  ${
-    full
-      ? `
-  vLocalPos = transformed;
-  vSeed = aScatter.x;
-  mat3 vsM = mat3(modelMatrix) * mat3(instanceMatrix);
-  vec3 vsW3 = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;
-  vLocalView = normalize(transpose(vsM) * normalize(vsW3 - uEye));`
-      : ""
-  }
-`;
-}
-
-/**
- * Attach a shader extension to a material.
- *
- * `customProgramCacheKey` is not optional here. Three's default key is the *source text* of
- * `onBeforeCompile`, and every material built by this factory shares that text — differing only in
- * closed-over strings. Without an explicit key, the crystal, the flora and the rock would silently
- * share one compiled program and two of them would render as the third.
- */
-function extend(material, key, parts) {
-  material.onBeforeCompile = (shader) => {
-    Object.assign(shader.uniforms, parts.uniforms);
-    shader.vertexShader = shader.vertexShader
-      .replace("#include <common>", `#include <common>\n${parts.vertexPars ?? ""}`)
-      .replace("#include <begin_vertex>", `#include <begin_vertex>\n${parts.vertexBody ?? ""}`);
-    if (parts.normalBody) {
-      shader.vertexShader = shader.vertexShader.replace(
-        "#include <beginnormal_vertex>",
-        `#include <beginnormal_vertex>\n${parts.normalBody}`
-      );
-    }
-    shader.fragmentShader = shader.fragmentShader.replace(
-      "#include <common>",
-      `#include <common>\n${parts.fragmentPars ?? ""}`
-    );
-    if (parts.roughnessBody) {
-      shader.fragmentShader = shader.fragmentShader.replace(
-        "#include <roughnessmap_fragment>",
-        `#include <roughnessmap_fragment>\n${parts.roughnessBody}`
-      );
-    }
-    if (parts.lightBody) {
-      shader.fragmentShader = shader.fragmentShader.replace(
-        "#include <lights_fragment_end>",
-        `#include <lights_fragment_end>\n${parts.lightBody}`
-      );
-    }
-    material.userData.shader = shader;
-  };
-  material.customProgramCacheKey = () => key;
-  return material;
-}
-
-// ---------------------------------------------------------------------------- palette
-
-/** `design/palette.json`. Authoring hexes decoded as sRGB, which is what the file mandates. */
-function col(hex) {
-  return new THREE.Color().setHex(hex, THREE.SRGBColorSpace);
-}
-
-const PAL = {
-  certaintyFacet: 0x5aa5a0,
-  certaintyRim: 0x8fe8df,
-  certaintyDeep: 0x26514f,
-  resonanceCore: 0x2fe3d6,
-  resonanceHot: 0xe9fffb,
-  resonanceDeep: 0x0e5f63,
-  foliage: 0xa2d7a6,
-  bone: 0xaa9087,
-  rockAlbedo: 0xb4744c,
-  rockLow: 0x9e6244,
-};
 
 // ---------------------------------------------------------------------------- the system
 
-const TIER_SCALE = { potato: 0, low: 0.3, medium: 0.6, high: 1, ultra: 1.35 };
+const TIER_SCALE = { potato: 0.18, low: 0.36, medium: 0.66, high: 1, ultra: 1.35 };
+const TIER_ISLANDS = { potato: 10, low: 16, medium: 24, high: 34, ultra: 44 };
 
 export const SCATTER_TILE = 24;
 
@@ -682,297 +919,230 @@ export class Scatter {
 
     this._eye = new THREE.Vector3();
     this._lastGatherEye = new THREE.Vector3(1e9, 1e9, 1e9);
-    this._time = 0;
     this._sample = { hit: false, y: 0, nx: 0, ny: 1, nz: 0 };
+    this._sample2 = { hit: false, y: 0, nx: 0, ny: 1, nz: 0 };
     this._clearings = [];
     this._solids = [];
-    this._solidsSent = false;
-    this._budgetMs = opts.budgetMs ?? 6;
+    this._solidsAt = null;
+    this._solidCount = 0;
+    this._colliderSig = -1;
+    this._budgetMs = opts.budgetMs ?? 10;
     this._genCalls = 0;
     this._genMs = 0;
+    this._outstanding = true;
+    this._built = false;
 
     this._m4 = new THREE.Matrix4();
     this._q = new THREE.Quaternion();
     this._q2 = new THREE.Quaternion();
     this._v = new THREE.Vector3();
+    this._v2 = new THREE.Vector3();
     this._up = new THREE.Vector3(0, 1, 0);
     this._colour = new THREE.Color();
+
+    // One shared uniform block. Mutating these values updates every program at once, which is why
+    // there is no per-material bookkeeping in `frame()`.
+    this._shared = {
+      uEye: { value: this._eye },
+      uTime: { value: 0 },
+      uWind: { value: new THREE.Vector3(0.82, 0.55, 0.055) },
+      uHaze: { value: new THREE.Vector3(80, 900, 0) },
+      uHazeColor: { value: col(PAL.horizon) },
+    };
 
     this.categories = this._buildCategories();
     for (const cat of this.categories) for (const l of cat.lods) this.root.add(l.mesh);
 
+    this.islands = this._buildIslands(opts.islands ?? TIER_ISLANDS[this.tier] ?? 34);
+
     this._offReady = signals.on("world:ready", () => this.rebuild());
     this._offSpawn = signals.on("player:spawn", (p) => {
       if (!p?.position) return;
-      this._clearings.push({ x: p.position.x, z: p.position.z, r: 3.2 });
+      // Never plant anything inside the player. A 3.4 m clearing is the difference between a spawn
+      // and a spawn inside a crystal.
+      this._clearings.push({ x: p.position.x, z: p.position.z, r: 3.4 });
       this.rebuild();
     });
   }
 
-  // ------------------------------------------------------------------ categories
+  // ------------------------------------------------------------------ materials
 
-  _mkFadeUniforms(start, end) {
-    return {
-      uEye: { value: this._eye },
-      uFade: { value: new THREE.Vector2(start, end) },
-      uTime: { value: 0 },
-      uWind: { value: new THREE.Vector3(0.82, 0.57, 0) },
-    };
-  }
-
-  _crystalMaterial(key, { facet, rim, deep, inner, core, coreStrength, emissive, roughness, fade }) {
+  /**
+   * Every material in this piece: `MeshStandardMaterial`, metalness 0, roughness 1, no maps of any
+   * kind, `flatShading: true`.
+   *
+   * Standard rather than Lambert for one specific reason: three only feeds `scene.environment` to
+   * standard/physical materials, and P11's rig publishes an in-engine environment probe as the
+   * ambient term. A Lambert scatter would sit visibly darker in shadow than the terrain it stands
+   * on. Roughness 1 with metalness 0 makes the specular lobe negligible, which is what the target
+   * wants — there is not one specular highlight anywhere in the reference.
+   */
+  _flatMaterial(key, { colour, roughness = 1, emissive = 0x000000, emissiveIntensity = 1, side, fade, wind = 0 }) {
     const uniforms = {
-      ...this._mkFadeUniforms(fade[0], fade[1]),
-      uRimColor: { value: col(rim) },
-      uInnerA: { value: col(deep) },
-      uInnerB: { value: col(inner) },
-      uCoreColor: { value: col(core) },
-      // x rim strength · y rim exponent · z internal caustic strength · w core strength
-      uCrystal: { value: new THREE.Vector4(0.42, 4.0, 0.30, coreStrength) },
-      uSpecAA: { value: new THREE.Vector2(0.55, 0.30) },
+      ...this._shared,
+      uFade: { value: new THREE.Vector2(fade[0], fade[1]) },
     };
-    const mat = new THREE.MeshStandardMaterial({
-      color: col(facet),
-      roughness,
-      metalness: 0.0,
-      emissive: col(emissive),
-      emissiveIntensity: 1,
-      dithering: true,
-    });
-    return extend(mat, key, {
-      uniforms,
-      vertexPars: VERT_PARS + VERT_PARS_FULL,
-      vertexBody: vertBody({ shear: true, full: true }),
-      normalBody: "vLocalNrm = objectNormal;",
-      fragmentPars:
-        VERT_PARS_FULL.replace(/varying/g, "varying") +
-        /* glsl */ `
-        varying float vFade;
-        varying float vEyeDist;
-        uniform vec3 uRimColor;
-        uniform vec3 uInnerA;
-        uniform vec3 uInnerB;
-        uniform vec3 uCoreColor;
-        uniform vec4 uCrystal;
-        uniform vec2 uSpecAA;
-      `,
-      roughnessBody: /* glsl */ `
-        // Specular antialiasing (art-direction.md §5, "required"). Two terms: normal variance
-        // inside the pixel, which catches facet edges, and a distance ramp, which catches the
-        // point where a whole facet is smaller than a pixel and the highlight becomes a coin flip.
-        roughnessFactor = clamp(
-          roughnessFactor
-            + uSpecAA.x * min(1.0, length(fwidth(vLocalNrm)) * 3.2)
-            + uSpecAA.y * smoothstep(18.0, 90.0, vEyeDist),
-          0.04, 1.0);
-      `,
-      lightBody: /* glsl */ `
-        vec3 csN = normalize(normal);
-        vec3 csV = normalize(vViewPosition);
-        float csF = pow(clamp(1.0 - dot(csN, csV), 0.0, 1.0), uCrystal.y);
-
-        // Fake refraction. The view ray is bent through the facet normal in the crystal's own
-        // space and marched a little way in; the interference pattern it samples therefore slides
-        // as the camera moves, which is the only cue that says "this is solid and transmissive"
-        // at gameplay distance. A static texture cannot do it and a real transmission pass costs
-        // a second render target this piece has no budget for.
-        vec3 csR = refract(normalize(vLocalView), normalize(vLocalNrm), 0.62);
-        vec3 csP = vLocalPos + csR * 0.85;
-        float csB = sin(csP.y * 11.0 + csP.x * 6.0 + vSeed * 39.0)
-                  * sin(csP.z * 8.5 - csP.x * 4.5 + vSeed * 17.0);
-        float csBand = 0.5 + 0.5 * csB;
-        csBand *= csBand;
-        vec3 csInner = mix(uInnerA, uInnerB, csBand) * uCrystal.z * (0.35 + 0.65 * csBand);
-
-        float csAxial = 1.0 - smoothstep(0.05, 0.40, length(csP.xz));
-        float csCore = csAxial * (1.0 - smoothstep(0.10, 0.90, csP.y));
-        totalEmissiveRadiance +=
-          (csInner + uRimColor * csF * uCrystal.x + uCoreColor * csCore * uCrystal.w) * vFade;
-      `,
-    });
-  }
-
-  _floraMaterial(key, { colour, roughness, fade, wind }) {
-    const uniforms = this._mkFadeUniforms(fade[0], fade[1]);
-    uniforms.uWind.value.set(0.82, 0.57, wind);
     const mat = new THREE.MeshStandardMaterial({
       color: col(colour),
       roughness,
       metalness: 0,
-      side: THREE.DoubleSide,
+      emissive: col(emissive),
+      emissiveIntensity,
+      flatShading: true,
+      vertexColors: true,
       dithering: true,
+      side: side ?? THREE.FrontSide,
     });
+    mat.userData.fadeUniform = uniforms.uFade;
     return extend(mat, key, {
       uniforms,
-      vertexPars: VERT_PARS + "attribute float aBend;",
-      vertexBody: vertBody({ wind: true, full: false }),
+      vertexPars: FADE_PARS + (wind ? "attribute float aBend;" : ""),
+      vertexBody: fadeBody({ wind: Boolean(wind) }),
+      fragmentPars: FRAG_PARS,
+      fragmentTail: HAZE_TAIL,
+    });
+  }
+
+  /**
+   * Shadow casters need the same vertex program as the colour pass or the two desynchronise — a
+   * crystal that has shrunk to nothing keeps a full-size shadow. Note `uEye`, not `cameraPosition`:
+   * during a shadow pass `cameraPosition` is the *light's* position and every distance here would
+   * be wrong.
+   */
+  _depthFor(material, key, wind) {
+    const mat = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking });
+    return extend(mat, key, {
+      uniforms: { ...this._shared, uFade: material.userData.fadeUniform },
+      vertexPars: FADE_PARS + (wind ? "attribute float aBend;" : ""),
+      vertexBody: fadeBody({ wind: Boolean(wind) }),
       fragmentPars: "varying float vFade;\nvarying float vEyeDist;",
     });
   }
 
-  _stoneMaterial(key, { colour, roughness, fade, inlay }) {
-    const uniforms = this._mkFadeUniforms(fade[0], fade[1]);
-    uniforms.uInlay = { value: col(inlay ?? 0x000000) };
-    uniforms.uInlayStrength = { value: inlay ? 1 : 0 };
-    const mat = new THREE.MeshStandardMaterial({
-      color: col(colour),
-      roughness,
-      metalness: 0,
-      dithering: true,
-    });
-    return extend(mat, key, {
-      uniforms,
-      vertexPars: VERT_PARS + "attribute float aInlay;\nvarying float vInlay;",
-      vertexBody: vertBody({ full: false }) + "\nvInlay = aInlay;",
-      fragmentPars:
-        "varying float vFade;\nvarying float vEyeDist;\nvarying float vInlay;\nuniform vec3 uInlay;\nuniform float uInlayStrength;",
-      lightBody: /* glsl */ `
-        // Dormant inlay. resonance.deep only: a ruin's claim is false, not live, and
-        // art-direction.md §0.2 reserves resonance.core for something actually unresolved.
-        totalEmissiveRadiance += uInlay * (vInlay * uInlayStrength * 0.85) * vFade;
-      `,
-    });
-  }
+  // ------------------------------------------------------------------ categories
 
   _buildCategories() {
     const seed = this.seed;
     const d = this.density;
     const cap = (n) => Math.max(0, Math.round(n * d));
 
-    const crystalGeo = [makeCertainty(true, seed ^ 0x11), makeCertainty(false, seed ^ 0x11)];
-    const shardGeo = [makeShard(true, seed ^ 0x22), makeShard(false, seed ^ 0x22)];
-    const chipGeo = [makeChip(true, seed ^ 0x33), makeChip(false, seed ^ 0x33)];
-    const fragGeo = [makeFragment(true, seed ^ 0x44), makeFragment(false, seed ^ 0x44)];
-    const aboutGeo = [makeAbouts(true, seed ^ 0x55), makeAbouts(false, seed ^ 0x55)];
-    const lichenGeo = [makeOldtrue(seed ^ 0x66)];
-
-    const matCertainty = this._crystalMaterial("p13:crystal", {
-      facet: PAL.certaintyFacet,
-      rim: PAL.certaintyRim,
-      deep: PAL.certaintyDeep,
-      inner: PAL.certaintyRim,
-      core: PAL.certaintyRim,
-      coreStrength: 0.34,
-      emissive: 0x000000,
-      roughness: 0.1,
-      fade: [150, 190],
+    const matStone = this._flatMaterial("p13:stone", { colour: PAL.rock, fade: [110, 150] });
+    const matCrystal = this._flatMaterial("p13:crystal", {
+      colour: PAL.crystalHot,
+      roughness: 0.62,
+      // A dim teal floor under the diffuse. The reference's crystals never fall out of hue when
+      // they turn away from the key — they go down in value and stay cyan — and a purely diffuse
+      // cyan under a blue-grey sky fill does not do that on its own.
+      emissive: PAL.crystalFace,
+      emissiveIntensity: 0.17,
+      fade: [170, 215],
     });
-    const matSeam = this._crystalMaterial("p13:crystal", {
-      facet: PAL.resonanceDeep,
-      rim: PAL.resonanceBloom ?? 0x9ef3f0,
-      deep: PAL.resonanceDeep,
-      inner: PAL.resonanceCore,
-      core: PAL.resonanceHot,
-      coreStrength: 5.2,
-      emissive: PAL.resonanceDeep,
-      roughness: 0.14,
-      fade: [230, 275],
-    });
-    // A live claim is an emitter: §5 makes a blown white core mandatory and §0.4 makes it the
-    // brightest thing in frame that is not the sun. A certainty gets neither.
-    matSeam.emissiveIntensity = 1.35;
-    matSeam.userData.live = true;
-
-    const matAbouts = this._floraMaterial("p13:flora", {
-      colour: PAL.foliage,
-      roughness: 0.82,
+    const matFlora = this._flatMaterial("p13:flora", {
+      colour: PAL.foliageLit,
+      side: THREE.DoubleSide,
       fade: [46, 62],
-      wind: 0.085,
+      wind: 1,
     });
-    const matOldtrue = this._floraMaterial("p13:flora", {
-      colour: 0xb9c4ae,
-      roughness: 0.9,
-      fade: [58, 76],
-      wind: 0,
-    });
-    const matDebris = this._stoneMaterial("p13:stone", {
-      colour: PAL.rockLow,
-      roughness: 0.88,
-      fade: [88, 112],
-      inlay: null,
-    });
-    const matFragment = this._stoneMaterial("p13:stone", {
+    const matLichen = this._flatMaterial("p13:lichen", {
       colour: PAL.bone,
-      roughness: 0.78,
-      fade: [200, 250],
-      inlay: PAL.resonanceDeep,
+      side: THREE.DoubleSide,
+      fade: [52, 70],
     });
+
+    this._materials = { stone: matStone, crystal: matCrystal, flora: matFlora, lichen: matLichen };
 
     const specs = [
       {
-        id: "certainty",
-        geo: crystalGeo,
-        material: matCertainty,
-        budget: [cap(190), cap(430)],
-        lodDist: 52,
-        gather: 204,
-        spacing: 7.2,
-        clustered: true,
+        id: "crystal",
+        geo: [crystalGeo(true, seed ^ 0x11), crystalGeo(false, seed ^ 0x11)],
+        material: matCrystal,
+        budget: [cap(430), cap(880)],
+        lodDist: 46,
+        gather: 190,
+        spacing: 9.5,
+        cluster: "crystal",
         shadow: true,
         solid: true,
       },
       {
         id: "shard",
-        geo: shardGeo,
-        material: matCertainty,
-        budget: [cap(320), cap(700)],
-        lodDist: 34,
-        gather: 126,
-        spacing: 7.2,
-        clustered: true,
-        shadow: true,
-      },
-      {
-        id: "seam",
-        geo: crystalGeo,
-        material: matSeam,
-        budget: [cap(18), cap(30)],
-        lodDist: 70,
-        gather: 290,
-        spacing: 27,
-        clustered: true,
-        shadow: false,
-      },
-      {
-        id: "abouts",
-        geo: aboutGeo,
-        material: matAbouts,
-        budget: [cap(1500), cap(2100)],
-        lodDist: 22,
-        gather: 66,
-        spacing: 1.15,
-        shadow: false,
-      },
-      {
-        id: "oldtrue",
-        geo: lichenGeo,
-        material: matOldtrue,
-        budget: [cap(1300), 0],
-        lodDist: 1e9,
-        gather: 80,
-        spacing: 1.7,
-        shadow: false,
-      },
-      {
-        id: "debris",
-        geo: chipGeo,
-        material: matDebris,
+        geo: [shardGeo(true, seed ^ 0x22), shardGeo(false, seed ^ 0x22)],
+        material: matCrystal,
         budget: [cap(420), cap(900)],
-        lodDist: 30,
-        gather: 116,
-        spacing: 1.5,
+        lodDist: 34,
+        gather: 130,
+        spacing: 9.5,
+        cluster: "shard",
         shadow: true,
       },
       {
-        id: "fragment",
-        geo: fragGeo,
-        material: matFragment,
-        budget: [cap(60), cap(120)],
-        lodDist: 66,
-        gather: 254,
+        id: "boulder",
+        geo: [boulderGeo(true, seed ^ 0x33), boulderGeo(false, seed ^ 0x33)],
+        material: matStone,
+        budget: [cap(340), cap(700)],
+        lodDist: 42,
+        gather: 150,
+        spacing: 5.5,
+        cluster: "rock",
+        shadow: true,
+        solid: true,
+      },
+      {
+        id: "spire",
+        geo: [spireGeo(true, seed ^ 0x44), spireGeo(false, seed ^ 0x44)],
+        material: matStone,
+        budget: [cap(140), cap(260)],
+        lodDist: 62,
+        gather: 200,
         spacing: 11,
         shadow: true,
         solid: true,
+      },
+      {
+        id: "chip",
+        geo: [chipGeo(seed ^ 0x55)],
+        material: matStone,
+        budget: [cap(900), 0],
+        lodDist: 1e9,
+        gather: 62,
+        spacing: 3.1,
+        cluster: "flat",
+        shadow: false,
+      },
+      {
+        id: "tuft",
+        geo: [tuftGeo(true, seed ^ 0x66), tuftGeo(false, seed ^ 0x66)],
+        material: matFlora,
+        budget: [cap(2600), cap(3400)],
+        lodDist: 26,
+        gather: 55,
+        spacing: 2.3,
+        cluster: "flat",
+        shadow: false,
+        wind: true,
+      },
+      {
+        id: "abouts",
+        geo: [aboutsGeo(true, seed ^ 0x77), aboutsGeo(false, seed ^ 0x77)],
+        material: matFlora,
+        budget: [cap(900), cap(1200)],
+        lodDist: 24,
+        gather: 52,
+        spacing: 2.8,
+        cluster: "flat",
+        shadow: false,
+        wind: true,
+      },
+      {
+        id: "oldtrue",
+        geo: [oldtrueGeo(seed ^ 0x88)],
+        material: matLichen,
+        budget: [cap(900), 0],
+        lodDist: 1e9,
+        gather: 56,
+        spacing: 2.6,
+        cluster: "flat",
+        shadow: false,
       },
     ];
 
@@ -991,59 +1161,71 @@ export class Scatter {
         const colour = new THREE.InstancedBufferAttribute(new Float32Array(count * 3), 3);
         colour.setUsage(THREE.DynamicDrawUsage);
         mesh.instanceColor = colour;
-        const par = new THREE.InstancedBufferAttribute(new Float32Array(count * 4), 4);
-        par.setUsage(THREE.DynamicDrawUsage);
-        // Instanced attributes live on the geometry, and both LODs of a category own their own
-        // geometry, so this never collides.
-        geo.setAttribute("aScatter", par);
-        if (s.shadow) mesh.customDepthMaterial = this._depthMaterial(s);
-        return { mesh, geo, par, colour, tris: triCount(geo), drawn: 0, capacity: count };
+        // Instanced attributes live on the geometry, and both LODs own their own geometry.
+        const inst = new THREE.InstancedBufferAttribute(new Float32Array(count * 2), 2);
+        inst.setUsage(THREE.DynamicDrawUsage);
+        geo.setAttribute("aInst", inst);
+        if (s.shadow) mesh.customDepthMaterial = this._depthFor(s.material, `p13:depth:${s.id}`, s.wind);
+        const flat = measureFlatness(geo);
+        return { mesh, geo, inst, colour, tris: triCount(geo), flat, drawn: 0, capacity: count };
       });
-      return {
-        ...s,
-        index,
-        lods,
-        tiles: new Map(),
-        pending: [],
-        candidates: 0,
-        rejected: 0,
-        checksum: 0,
-      };
+      return { ...s, index, lods, tiles: new Map(), candidates: 0, rejected: 0, checksum: 0 };
     });
   }
 
-  /**
-   * Shadow casters need the same vertex program as the colour pass or the fade and the wind
-   * desynchronise — a crystal that has shrunk to nothing keeps a full-size shadow, and grass casts
-   * a still shadow while it moves. Note `uEye`, not `cameraPosition`: during a shadow pass
-   * `cameraPosition` is the *light's* position and every distance in this file would be wrong.
-   */
-  _depthMaterial(spec) {
-    const mat = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking });
-    const isFlora = spec.id === "abouts" || spec.id === "oldtrue";
-    const isCrystal = spec.id === "certainty" || spec.id === "shard" || spec.id === "seam";
-    const src = spec.material.userData;
-    return extend(mat, `p13:depth:${spec.id}`, {
-      uniforms: {
-        uEye: { value: this._eye },
-        uFade: { value: new THREE.Vector2(1e6, 1e6 + 1) },
-        uTime: { value: 0 },
-        uWind: { value: new THREE.Vector3(0.82, 0.57, 0) },
-      },
-      vertexPars: VERT_PARS + (isFlora ? "attribute float aBend;" : ""),
-      vertexBody: vertBody({ shear: isCrystal, wind: isFlora, full: false }),
-      fragmentPars: "varying float vFade;\nvarying float vEyeDist;",
-      _src: src,
+  _buildIslands(count) {
+    const { rock, crystal, stats } = buildArchipelago(this.seed ^ 0xa11, count);
+    const mk = (geo, mat, name) => {
+      const m = new THREE.Mesh(geo, mat);
+      m.name = name;
+      m.castShadow = false;
+      m.receiveShadow = false;
+      m.matrixAutoUpdate = false;
+      this.root.add(m);
+      return m;
+    };
+    // Non-instanced siblings of the ground materials. Separate objects because the archipelago has
+    // no distance fade — it is *supposed* to be there at 1 km — and because a second material is
+    // free next to a 90-program budget.
+    const rockMat = new THREE.MeshStandardMaterial({
+      color: col(PAL.rock),
+      roughness: 1,
+      metalness: 0,
+      flatShading: true,
+      vertexColors: true,
+      dithering: true,
     });
+    const crystalMat = new THREE.MeshStandardMaterial({
+      color: col(PAL.crystalHot),
+      roughness: 0.62,
+      metalness: 0,
+      emissive: col(PAL.crystalFace),
+      emissiveIntensity: 0.28,
+      flatShading: true,
+      vertexColors: true,
+      dithering: true,
+    });
+    this._islandMats = [rockMat, crystalMat];
+    return {
+      rock: mk(rock, rockMat, "scatter:islands:rock"),
+      crystal: mk(crystal, crystalMat, "scatter:islands:crystal"),
+      stats: {
+        ...stats,
+        rockTris: triCount(rock),
+        crystalTris: triCount(crystal),
+        rockFlat: measureFlatness(rock),
+        crystalFlat: measureFlatness(crystal),
+      },
+    };
   }
 
   // ------------------------------------------------------------------ placement masks
 
   /**
-   * The survey. Every mask below is a pure function of world position and the sampled surface, so
-   * a critic can re-derive any single instance by hand from (seed, x, z).
+   * The survey. Every mask is a pure function of world position and the sampled surface, so a
+   * critic can re-derive any single instance by hand from (seed, x, z).
    *
-   * `held` is the field the world bible describes: how long the claims under this patch of ground
+   * `held` is the field `world.md` §2.3 describes: how long the claims under this patch of ground
    * have stood. Oldtrue reads high values of it and abouts read low ones, which is why the two
    * plants are mutually exclusive by construction rather than by tuning.
    */
@@ -1051,67 +1233,78 @@ export class Scatter {
     return fbm2(x * 0.0125, z * 0.0125, this.seed ^ 0x7a11, 3);
   }
 
-  /** The certainty field: big soft blobs, biased to low ground (`world.md` §9, "the low end"). */
-  _certaintyField(x, z, hNorm) {
+  /** The certainty field: soft blobs biased to low ground, plus ridged old claim lines. */
+  _field(x, z, hNorm) {
     const blob = fbm2(x * 0.0165 + 11.3, z * 0.0165 - 4.7, this.seed ^ 0x1c1c, 3);
-    // Old claim lines: a ridged band, so crystal also runs in seams across open ground.
     const line = 1 - Math.abs(noise2(x * 0.021 - 3.1, z * 0.021 + 8.4, this.seed ^ 0x2d2d) * 2 - 1);
-    const lines = Math.pow(clamp01(line), 6);
-    return clamp01(ramp(blob, 0.46, 0.78) * (0.55 + 0.45 * (1 - hNorm)) + lines * 0.85);
+    return clamp01(ramp(blob, 0.5, 0.8) * (0.55 + 0.45 * (1 - hNorm)) + Math.pow(clamp01(line), 7) * 0.8);
   }
 
-  _mask(cat, x, z, s, hNorm) {
-    const slope = Math.acos(clamp01(s.ny)) * (180 / Math.PI);
-    switch (cat.id) {
-      case "certainty":
-      case "shard": {
-        if (slope > 34) return 0;
-        return this._certaintyField(x, z, hNorm) * band(slope, 6, 12, 16);
-      }
-      case "seam": {
-        if (slope > 38) return 0;
-        const line = 1 - Math.abs(noise2(x * 0.021 - 3.1, z * 0.021 + 8.4, this.seed ^ 0x2d2d) * 2 - 1);
-        return Math.pow(clamp01(line), 14);
-      }
-      case "abouts": {
-        if (slope > 36) return 0;
-        // Only on approximation. `world.md` §4.5.
-        const approx = 1 - this._held(x, z);
-        return ramp(approx, 0.56, 0.80) * band(slope, 4, 14, 18);
-      }
-      case "oldtrue": {
-        // Only on a century of held truth — and lichen prefers a face to a floor.
-        const held = this._held(x, z);
-        return ramp(held, 0.56, 0.80) * (0.35 + 0.65 * ramp(slope, 6, 34));
-      }
-      case "debris": {
-        if (slope > 32) return 0;
-        // Talus: flat-ish ground that has something steep standing over it.
-        const steep = this._steepNear(x, z);
-        return clamp01(ramp(steep, 26, 46) * 1.15) * band(slope, 10, 14, 14);
-      }
-      case "fragment": {
-        if (slope > 20) return 0;
-        const ruin = fbm2(x * 0.019 - 21.7, z * 0.019 + 5.2, this.seed ^ 0x3f3f, 2);
-        return ramp(ruin, 0.54, 0.76);
-      }
-      default:
-        return 0;
-    }
+  /** Low-frequency region mask: meadow (1) against barren (0). */
+  _region(x, z) {
+    return fbm2(x * 0.0072 - 31.4, z * 0.0072 + 17.9, this.seed ^ 0x5b5b, 2);
   }
 
-  /** Max slope within 3 m — four samples, which is enough to find the foot of a face. */
+  /** Max slope within 3 m, from two probes. Only called once the cheap masks have already passed. */
   _steepNear(x, z) {
     let worst = 0;
-    const tmp = this._sample;
-    for (let i = 0; i < 4; i++) {
-      const a = (i / 4) * Math.PI * 2 + 0.7;
-      const r = this.surface.sample(x + Math.cos(a) * 3, z + Math.sin(a) * 3, { ...tmp });
+    for (let i = 0; i < 2; i++) {
+      const a = i * Math.PI + 0.7;
+      const r = this.surface.sample(x + Math.cos(a) * 3, z + Math.sin(a) * 3, this._sample2);
       if (!r.hit) continue;
       const slope = Math.acos(clamp01(r.ny)) * (180 / Math.PI);
       if (slope > worst) worst = slope;
     }
     return worst;
+  }
+
+  _mask(cat, x, z, s, hNorm) {
+    const slope = Math.acos(clamp01(s.ny)) * (180 / Math.PI);
+    switch (cat.id) {
+      case "crystal":
+      case "shard": {
+        if (slope > 32) return 0;
+        return this._field(x, z, hNorm) * band(slope, 5, 12, 15);
+      }
+      case "boulder": {
+        if (slope > 34) return 0;
+        const rough = fbm2(x * 0.017 - 8.1, z * 0.017 + 3.3, this.seed ^ 0x4d4d, 2);
+        const m = ramp(rough, 0.3, 0.62) * band(slope, 9, 15, 16);
+        if (m <= 0) return 0;
+        // Talus gathers at the foot of a face, but stone does not stop existing on open ground.
+        return clamp01(m * (0.62 + 0.38 * ramp(this._steepNear(x, z), 16, 40)));
+      }
+      case "spire": {
+        if (slope > 28) return 0;
+        // Splinters follow old claim lines, so the mask is a ridge — but a broad one, or the
+        // silhouette-breaking element this category exists for never appears at all.
+        const ridge = 1 - Math.abs(noise2(x * 0.013 + 5.5, z * 0.013 - 2.2, this.seed ^ 0x6e6e) * 2 - 1);
+        return ramp(ridge, 0.4, 0.78) * band(slope, 5, 12, 12);
+      }
+      case "chip": {
+        if (slope > 30) return 0;
+        const near = this._steepNear(x, z);
+        return clamp01(ramp(near, 22, 44) * 1.2) * band(slope, 9, 13, 13);
+      }
+      case "tuft": {
+        if (slope > 34) return 0;
+        // Grass gathers in the meadow region and in the shelter of anything steep.
+        const region = ramp(this._region(x, z), 0.36, 0.66);
+        const patch = fbm2(x * 0.055 + 2.7, z * 0.055 - 9.4, this.seed ^ 0x9c9c, 2);
+        return clamp01(region * 0.75 + 0.25) * ramp(patch, 0.34, 0.68) * band(slope, 4, 15, 18);
+      }
+      case "abouts": {
+        if (slope > 34) return 0;
+        // Only on approximation.
+        return ramp(1 - this._held(x, z), 0.56, 0.8) * band(slope, 4, 14, 18);
+      }
+      case "oldtrue": {
+        // Only on a century of held truth — and lichen prefers a face to a floor.
+        return ramp(this._held(x, z), 0.58, 0.82) * (0.3 + 0.7 * ramp(slope, 6, 32));
+      }
+      default:
+        return 0;
+    }
   }
 
   // ------------------------------------------------------------------ tile generation
@@ -1129,23 +1322,18 @@ export class Scatter {
     const n = Math.max(1, Math.round(SCATTER_TILE / spacing));
     const catSeed = (this.seed ^ (cat.index * 0x9e3779b1)) >>> 0;
 
-    const mats = [];
-    const cols = [];
-    const pars = [];
-    const lodJ = [];
-    const solids = [];
+    const out = { mat: [], col: [], inst: [], lod: [], solid: [] };
     let rejected = 0;
-
     const s = this._sample;
+
     for (let iz = 0; iz < n; iz++) {
       for (let ix = 0; ix < n; ix++) {
-        // Lattice index in absolute world cells so tile borders are invisible.
+        // Lattice index in absolute world cells, so tile borders are invisible.
         const gx = tx * n + ix;
         const gz = tz * n + iz;
-        const h0 = hashU32(gx, gz, catSeed);
-        const rr = stream(h0);
-        const px = x0 + (ix + 0.15 + rr() * 0.7) * spacing;
-        const pz = z0 + (iz + 0.15 + rr() * 0.7) * spacing;
+        const rr = stream(hashU32(gx, gz, catSeed));
+        const px = x0 + (ix + 0.12 + rr() * 0.76) * spacing;
+        const pz = z0 + (iz + 0.12 + rr() * 0.76) * spacing;
 
         this.surface.sample(px, pz, s);
         if (!s.hit) {
@@ -1162,31 +1350,26 @@ export class Scatter {
           rejected++;
           continue;
         }
-
-        if (cat.clustered) {
-          this._emitCluster(cat, px, pz, s, rr, mats, cols, pars, lodJ, solids);
-        } else {
-          this._emitOne(cat, px, s.y, pz, s, rr, mats, cols, pars, lodJ, solids);
-        }
+        this._emitSite(cat, px, pz, s, rr, out);
       }
     }
 
-    const count = lodJ.length;
+    const count = out.lod.length;
     const tile = {
       tx,
       tz,
       count,
-      mat: Float32Array.from(mats),
-      col: Float32Array.from(cols),
-      par: Float32Array.from(pars),
-      lod: Float32Array.from(lodJ),
+      mat: Float32Array.from(out.mat),
+      col: Float32Array.from(out.col),
+      inst: Float32Array.from(out.inst),
+      lod: Float32Array.from(out.lod),
       cx: x0 + SCATTER_TILE * 0.5,
       cz: z0 + SCATTER_TILE * 0.5,
     };
     cat.tiles.set(this._tileKey(tx, tz), tile);
     cat.candidates += count;
     cat.rejected += rejected;
-    // Order-independent checksum: two runs that load tiles in different orders still agree.
+    // Order-independent checksum: two runs that stream tiles in different orders still agree.
     let sum = cat.checksum >>> 0;
     for (let i = 0; i < count; i++) {
       const o = i * 16;
@@ -1195,12 +1378,12 @@ export class Scatter {
           hashU32(
             Math.round(tile.mat[o + 12] * 64),
             Math.round(tile.mat[o + 14] * 64),
-            Math.round(tile.mat[o + 13] * 64) ^ cat.index
+            (Math.round(tile.mat[o + 13] * 64) ^ cat.index) >>> 0
           )) >>>
         0;
     }
     cat.checksum = sum;
-    if (solids.length) this._solids.push(...solids);
+    if (out.solid.length) this._solids.push(...out.solid);
     this._genCalls++;
     this._genMs += performance.now() - t0;
     return tile;
@@ -1216,129 +1399,181 @@ export class Scatter {
   }
 
   /**
-   * A formation, not a sprinkle. One tall habit anchors it, satellites ring it at decreasing
-   * height, and every one of them leans a different way — which is what stops an instanced field
-   * from reading as a stamp.
+   * Turn one accepted lattice site into instances.
+   *
+   * The crystal case is the piece's signature and it is the reason this is not a sprinkle: a
+   * certainty formation is a **bouquet**. One tall habit anchors it, and every satellite leans
+   * *outward from the anchor* by 8–34°, which is the single difference between the reference's
+   * crystal clusters and a bundle of parallel sticks.
    */
-  _emitCluster(cat, cx, cz, s, rr, mats, cols, pars, lodJ, solids) {
-    const isSeam = cat.id === "seam";
-    const kids = isSeam ? 1 + Math.floor(rr() * 2) : cat.id === "shard" ? 4 + Math.floor(rr() * 6) : 3 + Math.floor(rr() * 5);
-    const spread = cat.id === "shard" ? 2.6 : 1.9;
-    const tmp = { hit: false, y: 0, nx: 0, ny: 1, nz: 0 };
-    for (let k = 0; k < kids; k++) {
-      const a = rr() * Math.PI * 2;
-      const r = k === 0 ? 0 : Math.pow(rr(), 0.6) * spread;
-      const px = cx + Math.cos(a) * r;
-      const pz = cz + Math.sin(a) * r;
-      this.surface.sample(px, pz, tmp);
-      if (!tmp.hit) continue;
-      this._emitOne(cat, px, tmp.y, pz, tmp, rr, mats, cols, pars, lodJ, solids, k === 0);
+  _emitSite(cat, cx, cz, s, rr, out) {
+    const kind = cat.cluster;
+    if (!kind) {
+      this._emitOne(cat, cx, s.y, cz, s, rr, out, { hero: true });
+      return;
+    }
+
+    if (kind === "crystal" || kind === "shard") {
+      const isShard = kind === "shard";
+      // One formation in eight is a *great* one. A field of evenly-sized clusters has no subject;
+      // the reference's frame is anchored by a single certainty stand taller than a person.
+      const great = !isShard && rr() < 0.13;
+      const n = isShard ? 3 + Math.floor(rr() * 5) : (great ? 7 : 4) + Math.floor(rr() * 6);
+      const heroH = isShard ? 0.5 + rr() * 0.75 : great ? 4.0 + rr() * 3.0 : 1.4 + rr() * 2.3;
+      const az0 = rr() * TAU;
+      for (let k = 0; k < n; k++) {
+        const hero = k === 0;
+        const a = az0 + (k / n) * TAU + (rr() - 0.5) * 0.7;
+        const spread = isShard ? 0.5 + heroH * 0.9 : 0.24 + heroH * 0.34;
+        const r = hero ? 0 : (0.28 + rr() * 0.72) * spread;
+        const px = cx + Math.cos(a) * r;
+        const pz = cz + Math.sin(a) * r;
+        this.surface.sample(px, pz, this._sample2);
+        if (!this._sample2.hit) continue;
+        const h = hero ? heroH : heroH * (0.26 + rr() * 0.6);
+        this._emitOne(cat, px, this._sample2.y, pz, this._sample2, rr, out, {
+          hero,
+          height: h,
+          leanAz: a,
+          lean: hero ? 0.02 + rr() * 0.09 : 0.14 + rr() * 0.42,
+        });
+      }
+      return;
+    }
+
+    if (kind === "rock") {
+      const n = 1 + Math.floor(rr() * 3);
+      for (let k = 0; k < n; k++) {
+        const a = rr() * TAU;
+        const r = k === 0 ? 0 : 0.7 + rr() * 2.4;
+        const px = cx + Math.cos(a) * r;
+        const pz = cz + Math.sin(a) * r;
+        this.surface.sample(px, pz, this._sample2);
+        if (!this._sample2.hit) continue;
+        this._emitOne(cat, px, this._sample2.y, pz, this._sample2, rr, out, { hero: k === 0 });
+      }
+      return;
+    }
+
+    // "flat": small things in a clump. The site's plane is reused instead of re-raycasting each
+    // member — over a 2 m clump the error is under a centimetre and it is a 5x saving in surface
+    // queries, which is the dominant cost of streaming a grass field.
+    const n = 3 + Math.floor(rr() * 6);
+    for (let k = 0; k < n; k++) {
+      const a = rr() * TAU;
+      const r = Math.pow(rr(), 0.6) * 1.7;
+      const dx = Math.cos(a) * r;
+      const dz = Math.sin(a) * r;
+      // Follow the sampled plane: y = y0 - (n.x*dx + n.z*dz) / n.y
+      const y = s.y - (s.nx * dx + s.nz * dz) / s.ny;
+      this._emitOne(cat, cx + dx, y, cz + dz, s, rr, out, { hero: k === 0 });
     }
   }
 
-  _emitOne(cat, x, y, z, s, rr, mats, cols, pars, lodJ, solids, hero = false) {
-    const m4 = this._m4;
+  _emitOne(cat, x, y, z, s, rr, out, o) {
     const q = this._q;
     const q2 = this._q2;
     const v = this._v;
 
-    // Growth axis: mostly the surface normal, pulled toward world up so nothing lies down a slope.
-    const up = v.set(s.nx, s.ny, s.nz).normalize().lerp(this._up, cat.id === "oldtrue" ? 0 : 0.45).normalize();
+    // Growth axis: the surface normal pulled toward world up, so nothing lies down a slope.
+    const upBlend = cat.id === "oldtrue" ? 0 : cat.id === "chip" ? 0.2 : 0.5;
+    const up = v.set(s.nx, s.ny, s.nz).normalize().lerp(this._up, upBlend).normalize();
     q.setFromUnitVectors(this._up, up);
-    // A free tilt on top, so a formation is never a bundle of parallel sticks.
-    const tiltAmt = cat.id === "oldtrue" ? 0 : (cat.id === "abouts" ? 0.14 : 0.30) * rr();
-    const tiltAz = rr() * Math.PI * 2;
-    q2.setFromAxisAngle(v.set(Math.cos(tiltAz), 0, Math.sin(tiltAz)), tiltAmt);
-    q.multiply(q2);
-    q2.setFromAxisAngle(this._up, rr() * Math.PI * 2);
+
+    if (o.lean) {
+      // Lean outward from the formation's anchor: rotate about the horizontal axis perpendicular
+      // to the direction the satellite sits in.
+      q2.setFromAxisAngle(this._v2.set(Math.sin(o.leanAz), 0, -Math.cos(o.leanAz)).normalize(), o.lean);
+      q.multiply(q2);
+    } else {
+      const tilt = (cat.id === "oldtrue" ? 0 : cat.id === "tuft" || cat.id === "abouts" ? 0.12 : 0.26) * rr();
+      const az = rr() * TAU;
+      q2.setFromAxisAngle(this._v2.set(Math.cos(az), 0, Math.sin(az)), tilt);
+      q.multiply(q2);
+    }
+    q2.setFromAxisAngle(this._up, rr() * TAU);
     q.multiply(q2);
 
     let sx;
     let sy;
     switch (cat.id) {
-      case "certainty":
-        sy = (hero ? 1.5 + rr() * 1.85 : 0.5 + rr() * 1.15) * (0.85 + rr() * 0.3);
-        sx = sy * (0.14 + rr() * 0.1);
+      case "crystal":
+        sy = o.height ?? 1;
+        sx = sy * (0.11 + rr() * 0.08);
         break;
       case "shard":
-        sy = hero ? 0.55 + rr() * 0.7 : 0.16 + rr() * 0.42;
+        sy = o.height ?? 0.6;
         sx = sy * (0.42 + rr() * 0.4);
         break;
-      case "seam":
-        sy = hero ? 1.1 + rr() * 1.1 : 0.45 + rr() * 0.6;
-        sx = sy * (0.15 + rr() * 0.08);
+      case "boulder":
+        sy = (o.hero ? 0.9 + Math.pow(rr(), 1.6) * 2.6 : 0.4 + Math.pow(rr(), 1.7) * 1.3) * 1.0;
+        sx = sy * (1.0 + rr() * 0.8);
+        break;
+      case "spire":
+        sy = 2.0 + Math.pow(rr(), 1.4) * 4.6;
+        sx = sy * (0.16 + rr() * 0.14);
+        break;
+      case "chip":
+        sy = 0.14 + Math.pow(rr(), 2.0) * 0.5;
+        sx = sy * (1.0 + rr() * 1.4);
+        break;
+      case "tuft":
+        sy = 0.3 + Math.pow(rr(), 1.3) * 0.62;
+        sx = sy * (0.75 + rr() * 0.6);
         break;
       case "abouts":
-        sy = 0.20 + rr() * 0.26;
-        sx = sy * (1.5 + rr() * 1.0);
+        sy = 0.32 + rr() * 0.34;
+        sx = sy * (1.1 + rr() * 0.9);
         break;
       case "oldtrue":
         sy = 1;
-        sx = 0.34 + rr() * 0.62;
-        break;
-      case "debris":
-        sy = 0.13 + Math.pow(rr(), 2.1) * 0.52;
-        sx = sy * (0.9 + rr() * 1.5);
-        break;
-      case "fragment":
-        sy = 0.7 + Math.pow(rr(), 1.5) * 1.9;
-        sx = sy * (0.55 + rr() * 0.6);
+        sx = 0.4 + rr() * 0.9;
         break;
       default:
         sy = 1;
         sx = 1;
     }
-    const sz = sx * (0.8 + rr() * 0.45);
-    // Sink the base a little so nothing hovers on a slope the normal did not predict.
-    const sink = cat.id === "oldtrue" ? 0 : sy * 0.06 + 0.015;
-    m4.compose(v.set(x, y - sink, z), q, this._v2 ?? (this._v2 = new THREE.Vector3()).set(sx, sy, sz));
-    // `compose` consumed the scratch vector, so rewrite it explicitly for clarity.
-    m4.compose(new THREE.Vector3(x, y - sink, z), q, new THREE.Vector3(sx, sy, sz));
+    const sz = cat.id === "boulder" ? sx * (0.72 + rr() * 0.5) : sx * (0.85 + rr() * 0.35);
+    // Sink the base so nothing hovers on a slope the normal did not predict.
+    const sink = cat.id === "oldtrue" ? 0 : sy * 0.05 + 0.012;
 
-    const base = mats.length;
-    m4.toArray(mats, base);
+    const base = out.mat.length;
+    this._m4.compose(this._v2.set(x, y - sink, z), q, this._v.set(sx, sy, sz));
+    this._m4.toArray(out.mat, base);
 
-    // Per-instance colour. Hue and value drift only — saturation is budgeted by the art direction
-    // and a scatter field is exactly where an unwatched ±0.2 would eat the frame.
+    // Per-instance tint. A *multiplier* on the role colour, not a new colour: hue and value drift
+    // only, because a scatter field is exactly where an unwatched ±0.2 of saturation eats a frame.
     const c = this._colour;
+    let lum;
+    let warm;
     switch (cat.id) {
-      case "certainty":
+      case "crystal":
       case "shard":
-        c.setHex(PAL.certaintyFacet, THREE.SRGBColorSpace);
+        lum = 0.84 + rr() * 0.3;
+        warm = (rr() - 0.5) * 0.05;
         break;
-      case "seam":
-        c.setHex(PAL.resonanceCore, THREE.SRGBColorSpace);
-        break;
+      case "tuft":
       case "abouts":
-        c.setHex(PAL.foliage, THREE.SRGBColorSpace);
+        lum = 0.62 + Math.pow(rr(), 1.4) * 0.62;
+        warm = (rr() - 0.5) * 0.14;
         break;
       case "oldtrue":
-        c.setHex(0xd6dccb, THREE.SRGBColorSpace);
-        break;
-      case "debris":
-        c.setHex(PAL.rockAlbedo, THREE.SRGBColorSpace);
+        lum = 0.68 + rr() * 0.42;
+        warm = (rr() - 0.5) * 0.08;
         break;
       default:
-        c.setHex(PAL.bone, THREE.SRGBColorSpace);
+        lum = 0.82 + rr() * 0.34;
+        warm = (rr() - 0.5) * 0.1;
     }
-    const hsl = { h: 0, s: 0, l: 0 };
-    c.getHSL(hsl);
-    const spread = cat.id === "abouts" ? 0.018 : 0.012;
-    c.setHSL(
-      (hsl.h + (rr() - 0.5) * spread + 1) % 1,
-      clamp01(hsl.s * (0.86 + rr() * 0.24)),
-      clamp01(hsl.l * (0.74 + rr() * 0.5))
-    );
-    cols.push(c.r, c.g, c.b);
+    c.setRGB(lum * (1 + warm), lum, lum * (1 - warm * 0.8));
+    out.col.push(c.r, c.g, c.b);
 
-    // aScatter: x seed, y shear/stiffness, z spare, w fade jitter.
-    const shear = cat.id === "certainty" ? 0.02 + rr() * 0.10 : cat.id === "seam" ? 0.02 + rr() * 0.07 : rr() * 0.5;
-    pars.push(rr(), shear, rr(), rr());
+    // aInst: x fade jitter, y wind phase.
+    out.inst.push(rr(), rr());
+    out.lod.push(cat.lodDist * (0.88 + rr() * 0.24));
 
-    lodJ.push(cat.lodDist * (0.88 + rr() * 0.24));
-
-    if (cat.solid && sy > (cat.id === "fragment" ? 1.1 : 1.7)) {
-      solids.push({ cat: cat.id, m: mats.slice(base, base + 16) });
+    if (cat.solid && sy > (cat.id === "boulder" ? 1.5 : 2.0)) {
+      out.solid.push({ cat: cat.id, m: out.mat.slice(base, base + 16), x, z });
     }
   }
 
@@ -1353,43 +1588,50 @@ export class Scatter {
       cat.checksum = 0;
     }
     this._solids.length = 0;
-    this._solidsSent = false;
+    this._solidsAt = null;
     this._lastGatherEye.set(1e9, 1e9, 1e9);
     this._built = false;
+    this._outstanding = true;
   }
 
-  frame(dt) {
+  frame() {
     // Wind runs on simulation time so `advance()` reproduces the frame exactly.
-    this._time = this.kernel.simTime;
-    for (const cat of this.categories) {
-      const sh = cat.material.userData.shader;
-      if (sh) sh.uniforms.uTime.value = this._time;
-      for (const l of cat.lods) {
-        const ds = l.mesh.customDepthMaterial?.userData?.shader;
-        if (ds) {
-          ds.uniforms.uTime.value = this._time;
-          ds.uniforms.uFade.value.copy(cat.material.userData.shader?.uniforms.uFade.value ?? ds.uniforms.uFade.value);
-          ds.uniforms.uWind.value.copy(cat.material.userData.shader?.uniforms.uWind.value ?? ds.uniforms.uWind.value);
-        }
-      }
+    this._shared.uTime.value = this.kernel.simTime;
+
+    // Exactly one authority for haze. If the world has fog, this piece adds none.
+    const fog = this.kernel.scene.fog;
+    const haze = this._shared.uHaze.value;
+    if (fog) {
+      haze.z = 0;
+    } else {
+      haze.set(70, Math.max(200, config.tier.drawDistance * 0.85), 1);
     }
   }
 
   after() {
     this.kernel.camera.getWorldPosition(this._eye);
+
+    // Upgrade the surface as the world lands under us: a `terrain` system arriving late, or the
+    // stand-in proving ground being replaced by real geometry, both change every answer.
+    const collision = this.kernel.get?.("collision");
+    const sig = collision?.colliders?.size ?? -1;
     if (this.surface.mode === "flat" || this.surface.mode === "none") {
       const before = this.surface.mode;
       if (this.surface.refresh() !== before) this.rebuild();
+    } else if (sig !== this._colliderSig && this.surface.mode === "collision") {
+      this._colliderSig = sig;
+      this.rebuild();
     }
+    this._colliderSig = sig;
 
     const moved = this._eye.distanceToSquared(this._lastGatherEye);
-    const need = this._streamTiles();
-    if (!need && moved < 9 && this._built) return;
+    this._outstanding = this._streamTiles();
+    if (!this._outstanding && moved < 9 && this._built) return;
 
     this._lastGatherEye.copy(this._eye);
     this._gather();
     this._built = true;
-    if (!this._solidsSent && !need) this._publishSolids();
+    if (!this._outstanding) this._publishSolids();
   }
 
   /** Ensure every tile inside each category's gather radius exists. Time-budgeted. */
@@ -1403,7 +1645,8 @@ export class Scatter {
       if (cat.budget[0] + (cat.budget[1] ?? 0) <= 0) continue;
       const rings = Math.ceil(cat.gather / SCATTER_TILE);
       const keep = (cat.gather + SCATTER_TILE * 2) ** 2;
-      for (let dz = -rings; dz <= rings; dz++) {
+      let done = false;
+      for (let dz = -rings; dz <= rings && !done; dz++) {
         for (let dx = -rings; dx <= rings; dx++) {
           const tx = ex + dx;
           const tz = ez + dz;
@@ -1413,14 +1656,14 @@ export class Scatter {
           if (cat.tiles.has(this._tileKey(tx, tz))) continue;
           if (performance.now() - t0 > this._budgetMs) {
             outstanding = true;
+            done = true;
             break;
           }
           this._generateTile(cat, tx, tz);
         }
-        if (outstanding) break;
       }
       // Evict what is well behind us; regeneration is deterministic so nothing is lost.
-      if (cat.tiles.size > 400) {
+      if (cat.tiles.size > 420) {
         for (const [key, tile] of cat.tiles) {
           const dx2 = tile.cx - this._eye.x;
           const dz2 = tile.cz - this._eye.z;
@@ -1437,9 +1680,9 @@ export class Scatter {
   /**
    * Fill the instance buffers, nearest tile first.
    *
-   * Nearest-first is the whole reason the budget is safe to state as a number: when a ceiling
-   * binds it always bites the farthest instances, so the failure mode is "the horizon thins",
-   * never "a hole opens beside the player".
+   * Nearest-first is the whole reason the budget is safe to state as a number: when a ceiling binds
+   * it always bites the farthest instances, so the failure mode is "the horizon thins", never "a
+   * hole opens beside the player".
    */
   _gather() {
     const eye = this._eye;
@@ -1454,17 +1697,15 @@ export class Scatter {
 
       for (const l of cat.lods) l.drawn = 0;
       const g2 = cat.gather * cat.gather;
+      const edge = (cat.gather + SCATTER_TILE) ** 2;
 
       for (const t of order) {
-        if (t._d > (cat.gather + SCATTER_TILE) ** 2) continue;
+        if (t._d > edge) continue;
         for (let i = 0; i < t.count; i++) {
           const o = i * 16;
-          const px = t.mat[o + 12];
-          const py = t.mat[o + 13];
-          const pz = t.mat[o + 14];
-          const ddx = px - eye.x;
-          const ddy = py - eye.y;
-          const ddz = pz - eye.z;
+          const ddx = t.mat[o + 12] - eye.x;
+          const ddy = t.mat[o + 13] - eye.y;
+          const ddz = t.mat[o + 14] - eye.z;
           const d2 = ddx * ddx + ddy * ddy + ddz * ddz;
           if (d2 > g2) continue;
           const li = cat.lods.length > 1 && d2 > t.lod[i] * t.lod[i] ? 1 : 0;
@@ -1473,7 +1714,7 @@ export class Scatter {
           const w = l.drawn++;
           l.mesh.instanceMatrix.array.set(t.mat.subarray(o, o + 16), w * 16);
           l.colour.array.set(t.col.subarray(i * 3, i * 3 + 3), w * 3);
-          l.par.array.set(t.par.subarray(i * 4, i * 4 + 4), w * 4);
+          l.inst.array.set(t.inst.subarray(i * 2, i * 2 + 2), w * 2);
         }
       }
 
@@ -1482,40 +1723,50 @@ export class Scatter {
         l.mesh.visible = l.drawn > 0;
         l.mesh.instanceMatrix.needsUpdate = true;
         l.colour.needsUpdate = true;
-        l.par.needsUpdate = true;
+        l.inst.needsUpdate = true;
       }
     }
   }
 
   /**
-   * Hand the big solids to collision as one merged, world-space collider. Only the objects a
-   * player could actually walk into are included — a field of 0.2 m chips in the broadphase would
-   * cost far more than it buys.
+   * Hand the big solids to collision as one merged, world-space collider.
+   *
+   * Two guards, both load-bearing. First, only objects a player could walk into are included — a
+   * field of 0.2 m chips in the broadphase would cost far more than it buys. Second, and this one
+   * would otherwise delete the ground: `CollisionWorld` removes its stand-in proving ground the
+   * moment any *other* collider registers. While that stand-in is the only world there is,
+   * registering scatter solids would drop the player through the floor, so this stands down.
    */
   _publishSolids() {
-    this._solidsSent = true;
     const collision = this.kernel.get?.("collision");
     if (!collision || typeof collision.registerCollider !== "function") return;
+    if (collision.fallbackSpawn) return; // the stand-in ground is the only world — do not evict it
     if (!this._solids.length) return;
+    if (this._solidsAt && this._solidsAt.distanceToSquared(this._eye) < 40 * 40) return;
+
+    const eye = this._eye;
+    const near = this._solids
+      .map((s) => ({ s, d: (s.x - eye.x) ** 2 + (s.z - eye.z) ** 2 }))
+      .filter((e) => e.d < 90 * 90)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 240);
+    if (!near.length) return;
+
+    const byCat = new Map();
+    for (const cat of this.categories) byCat.set(cat.id, cat.lods[cat.lods.length - 1].geo);
 
     const positions = [];
     const m = new THREE.Matrix4();
     const v = new THREE.Vector3();
-    const byCat = new Map();
-    for (const cat of this.categories) byCat.set(cat.id, cat.lods[cat.lods.length - 1].geo);
-
-    let used = 0;
-    for (const solid of this._solids) {
-      if (used >= 260) break;
-      const geo = byCat.get(solid.cat);
+    for (const { s } of near) {
+      const geo = byCat.get(s.cat);
       if (!geo) continue;
-      m.fromArray(solid.m);
+      m.fromArray(s.m);
       const pos = geo.getAttribute("position");
       for (let i = 0; i < pos.count; i++) {
         v.fromBufferAttribute(pos, i).applyMatrix4(m);
         positions.push(v.x, v.y, v.z);
       }
-      used++;
     }
     if (!positions.length) return;
 
@@ -1523,33 +1774,86 @@ export class Scatter {
     geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
     this._solidGeo?.dispose();
     this._solidGeo = geo;
+    this._solidsAt = this._eye.clone();
+    this._solidCount = near.length;
     signals.emit("world:collider", { id: "p13:scatter-solids", geometry: geo });
-    if (!collision.colliders?.has?.("p13:scatter-solids")) {
-      collision.registerCollider({ id: "p13:scatter-solids", geometry: geo });
-    }
-    this._solidCount = used;
+    this._colliderSig = collision.colliders?.size ?? this._colliderSig;
   }
 
   // ------------------------------------------------------------------ reviewer contract
 
+  /**
+   * The nearest tall certainty, and a stance three metres from it facing in — so a reviewer can
+   * frame the signature element without hand-flying a camera. Read-only, derived from the same
+   * buffers the renderer draws.
+   */
+  _closeUp() {
+    const cat = this.categories.find((c) => c.id === "crystal");
+    if (!cat) return null;
+    let best = null;
+    for (const t of cat.tiles.values()) {
+      for (let i = 0; i < t.count; i++) {
+        const o = i * 16;
+        // Column 1 length is the instance's Y scale — i.e. the crystal's height in metres.
+        const h = Math.hypot(t.mat[o + 4], t.mat[o + 5], t.mat[o + 6]);
+        const x = t.mat[o + 12];
+        const y = t.mat[o + 13];
+        const z = t.mat[o + 14];
+        const d = Math.hypot(x - this._eye.x, z - this._eye.z);
+        const score = h - d * 0.012;
+        if (!best || score > best.score) best = { x, y, z, h, score };
+      }
+    }
+    if (!best) return null;
+    // Stand back on the +X/+Z diagonal so the key (which the rig puts low and warm) rakes across
+    // the facets rather than flattening them.
+    const back = Math.max(3.2, best.h * 1.5);
+    const dx = 0.78;
+    const dz = 0.63;
+    return {
+      pos: [Number((best.x + dx * back).toFixed(3)), Number((best.y + 1.1).toFixed(3)), Number((best.z + dz * back).toFixed(3))],
+      opts: { heading: [-dx, -dz] },
+      target: [Number(best.x.toFixed(3)), Number(best.y.toFixed(3)), Number(best.z.toFixed(3))],
+      height: Number(best.h.toFixed(2)),
+    };
+  }
+
   probe() {
     let instances = 0;
     let triangles = 0;
-    let draws = 0;
+    let meshes = 0;
+    let tris = 0;
+    let flat = 0;
     const cats = {};
     for (const cat of this.categories) {
-      const per = { budget: cat.budget.slice(), drawn: [], tris: 0, candidates: cat.candidates, tiles: cat.tiles.size };
+      const per = {
+        budget: cat.budget.slice(),
+        drawn: [],
+        geoTris: cat.lods.map((l) => l.tris),
+        tris: 0,
+        candidates: cat.candidates,
+        rejected: cat.rejected,
+        tiles: cat.tiles.size,
+        gather: cat.gather,
+        fade: [cat.material.userData.fadeUniform.value.x, cat.material.userData.fadeUniform.value.y],
+        lodDist: cat.lodDist,
+        checksum: cat.checksum,
+      };
       for (const l of cat.lods) {
         per.drawn.push(l.drawn);
         per.tris += l.drawn * l.tris;
-        if (l.mesh.visible) draws++;
+        if (l.mesh.visible) meshes++;
+        tris += l.flat.tris;
+        flat += l.flat.flat;
       }
-      per.geoTris = cat.lods.map((l) => l.tris);
-      per.checksum = cat.checksum;
       instances += per.drawn.reduce((a, b) => a + b, 0);
       triangles += per.tris;
       cats[cat.id] = per;
     }
+    const is = this.islands.stats;
+    tris += is.rockFlat.tris + is.crystalFlat.tris;
+    flat += is.rockFlat.flat + is.crystalFlat.flat;
+
     return {
       seed: this.seed,
       tier: this.tier,
@@ -1557,19 +1861,32 @@ export class Scatter {
       surface: this.surface.mode,
       surfaceQueries: this.surface.queries,
       built: Boolean(this._built),
-      streaming: this.categories.reduce((a, c) => a + c.tiles.size, 0),
+      outstanding: Boolean(this._outstanding),
       genCalls: this._genCalls,
       genMsTotal: Number(this._genMs.toFixed(2)),
       instances,
-      triangles,
-      meshes: draws,
-      solids: this._solidCount ?? 0,
-      eye: [
-        Number(this._eye.x.toFixed(2)),
-        Number(this._eye.y.toFixed(2)),
-        Number(this._eye.z.toFixed(2)),
-      ],
+      triangles: triangles + is.rockTris + is.crystalTris,
+      groundTriangles: triangles,
+      meshes: meshes + 2,
+      solids: this._solidCount,
+      missingRoles: missingRoles.slice(),
+      // Measured, not asserted: every triangle in every buffer this piece owns, checked for a
+      // constant per-face normal.
+      flatShading: { triangles: tris, perFaceNormals: flat, ratio: tris ? Number((flat / tris).toFixed(4)) : 0 },
+      maxGeoTris: Math.max(...this.categories.flatMap((c) => c.lods.map((l) => l.tris))),
+      islands: {
+        count: is.islands,
+        crystals: is.crystals,
+        structures: is.structures,
+        rockTris: is.rockTris,
+        crystalTris: is.crystalTris,
+        distance: [Number(is.dMin.toFixed(1)), Number(is.dMax.toFixed(1))],
+        altitude: [Number(is.yMin.toFixed(1)), Number(is.yMax.toFixed(1))],
+      },
+      haze: { strength: this._shared.uHaze.value.z, sceneFog: Boolean(this.kernel.scene.fog) },
+      eye: [Number(this._eye.x.toFixed(2)), Number(this._eye.y.toFixed(2)), Number(this._eye.z.toFixed(2))],
       checksum: this.categories.reduce((a, c) => (a + c.checksum) >>> 0, 0) >>> 0,
+      closeUp: this._closeUp(),
       categories: cats,
     };
   }
@@ -1577,17 +1894,16 @@ export class Scatter {
   dispose() {
     this._offReady?.();
     this._offSpawn?.();
-    const seen = new Set();
     for (const cat of this.categories) {
       for (const l of cat.lods) {
         l.geo.dispose();
         l.mesh.customDepthMaterial?.dispose();
       }
-      if (!seen.has(cat.material)) {
-        seen.add(cat.material);
-        cat.material.dispose();
-      }
     }
+    for (const m of Object.values(this._materials ?? {})) m.dispose();
+    for (const m of this._islandMats ?? []) m.dispose();
+    this.islands?.rock?.geometry?.dispose();
+    this.islands?.crystal?.geometry?.dispose();
     this._solidGeo?.dispose();
     this.kernel.get?.("collision")?.removeCollider?.("p13:scatter-solids");
   }

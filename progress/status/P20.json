@@ -1,0 +1,9 @@
+{
+  "id": "P20",
+  "state": "building",
+  "round": 2,
+  "gap": null,
+  "note": "Runtime + 3 locale bundles (338 strings each) built; 12/12 offline claims pass. Measuring layout in the browser.",
+  "evidence": [],
+  "updated": "2026-08-10T02:26:44.919Z"
+}

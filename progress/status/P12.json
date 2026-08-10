@@ -3,7 +3,7 @@
   "state": "building",
   "round": 1,
   "gap": null,
-  "note": "Reading design docs and kernel render path before writing PostStack",
+  "note": "Writing PostStack: bright-pass + progressive bloom, identity grade that is transparent by construction, restrained sun glow, vignette, static grain, ordered dither. Proving edge crispness is unchanged.",
   "evidence": [],
-  "updated": "2026-08-10T00:34:09.619Z"
+  "updated": "2026-08-10T02:06:47.100Z"
 }

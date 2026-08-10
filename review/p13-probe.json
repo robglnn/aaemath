@@ -1,0 +1,265 @@
+{
+  "seed": 0,
+  "tier": "high",
+  "density": 1,
+  "surface": "collision",
+  "surfaceQueries": 21487,
+  "built": true,
+  "outstanding": false,
+  "genCalls": 978,
+  "genMsTotal": 26.8,
+  "instances": 2971,
+  "triangles": 29469,
+  "groundTriangles": 25862,
+  "meshes": 13,
+  "solids": 0,
+  "missingRoles": [],
+  "flatShading": {
+    "triangles": 3775,
+    "perFaceNormals": 3775,
+    "ratio": 1
+  },
+  "maxGeoTris": 30,
+  "islands": {
+    "count": 34,
+    "crystals": 79,
+    "structures": 83,
+    "rockTris": 3212,
+    "crystalTris": 395,
+    "distance": [
+      184.4,
+      1021.2
+    ],
+    "altitude": [
+      -14.7,
+      101.9
+    ]
+  },
+  "haze": {
+    "strength": 0,
+    "sceneFog": true
+  },
+  "eye": [
+    5.15,
+    2.38,
+    18.52
+  ],
+  "checksum": 3612142718,
+  "closeUp": {
+    "pos": [
+      -17.45,
+      1.004,
+      32.384
+    ],
+    "opts": {
+      "heading": [
+        -0.78,
+        -0.63
+      ]
+    },
+    "target": [
+      -22.231,
+      -0.096,
+      28.523
+    ],
+    "height": 4.09
+  },
+  "categories": {
+    "crystal": {
+      "budget": [
+        430,
+        880
+      ],
+      "drawn": [
+        197,
+        87
+      ],
+      "geoTris": [
+        30,
+        20
+      ],
+      "tris": 7650,
+      "candidates": 284,
+      "rejected": 2207,
+      "tiles": 250,
+      "gather": 190,
+      "fade": [
+        170,
+        215
+      ],
+      "lodDist": 46,
+      "checksum": 64270469
+    },
+    "shard": {
+      "budget": [
+        420,
+        900
+      ],
+      "drawn": [
+        95,
+        148
+      ],
+      "geoTris": [
+        15,
+        12
+      ],
+      "tris": 3201,
+      "candidates": 243,
+      "rejected": 1165,
+      "tiles": 135,
+      "gather": 130,
+      "fade": [
+        170,
+        215
+      ],
+      "lodDist": 34,
+      "checksum": 575562097
+    },
+    "boulder": {
+      "budget": [
+        340,
+        700
+      ],
+      "drawn": [
+        18,
+        14
+      ],
+      "geoTris": [
+        20,
+        8
+      ],
+      "tris": 472,
+      "candidates": 32,
+      "rejected": 2704,
+      "tiles": 170,
+      "gather": 150,
+      "fade": [
+        110,
+        150
+      ],
+      "lodDist": 42,
+      "checksum": 2410736803
+    },
+    "spire": {
+      "budget": [
+        140,
+        260
+      ],
+      "drawn": [
+        1,
+        1
+      ],
+      "geoTris": [
+        23,
+        10
+      ],
+      "tris": 33,
+      "candidates": 2,
+      "rejected": 1126,
+      "tiles": 282,
+      "gather": 200,
+      "fade": [
+        110,
+        150
+      ],
+      "lodDist": 62,
+      "checksum": 699248346
+    },
+    "chip": {
+      "budget": [
+        900,
+        0
+      ],
+      "drawn": [
+        129
+      ],
+      "geoTris": [
+        4
+      ],
+      "tris": 516,
+      "candidates": 129,
+      "rejected": 2666,
+      "tiles": 42,
+      "gather": 62,
+      "fade": [
+        110,
+        150
+      ],
+      "lodDist": 1000000000,
+      "checksum": 706493276
+    },
+    "tuft": {
+      "budget": [
+        2600,
+        3400
+      ],
+      "drawn": [
+        811,
+        1470
+      ],
+      "geoTris": [
+        10,
+        4
+      ],
+      "tris": 13990,
+      "candidates": 3525,
+      "rejected": 2761,
+      "tiles": 34,
+      "gather": 55,
+      "fade": [
+        46,
+        62
+      ],
+      "lodDist": 26,
+      "checksum": 2416695523
+    },
+    "abouts": {
+      "budget": [
+        900,
+        1200
+      ],
+      "drawn": [
+        0,
+        0
+      ],
+      "geoTris": [
+        4,
+        2
+      ],
+      "tris": 0,
+      "candidates": 166,
+      "rejected": 2403,
+      "tiles": 30,
+      "gather": 52,
+      "fade": [
+        46,
+        62
+      ],
+      "lodDist": 24,
+      "checksum": 3067089722
+    },
+    "oldtrue": {
+      "budget": [
+        900,
+        0
+      ],
+      "drawn": [
+        0
+      ],
+      "geoTris": [
+        6
+      ],
+      "tris": 0,
+      "candidates": 310,
+      "rejected": 2776,
+      "tiles": 35,
+      "gather": 56,
+      "fade": [
+        52,
+        70
+      ],
+      "lodDist": 1000000000,
+      "checksum": 2261981074
+    }
+  }
+}

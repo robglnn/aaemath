@@ -1,0 +1,867 @@
+{
+  "$meta": {
+    "locale": "en",
+    "name": "English",
+    "endonym": "English",
+    "reference": "en",
+    "strings": 338,
+    "decimalSeparator": ".",
+    "groupSeparator": ",",
+    "conventions": "app/src/i18n/CONVENTIONS.md",
+    "note": "Reference bundle. Every canonical line is byte-identical to design/voice.md; review/measure/P20.mjs asserts it."
+  },
+  "ui": {
+    "title": "VARIABLE STAR",
+    "subtitle": "the Margin still stands",
+    "lang": {
+      "en": "English",
+      "es": "Español",
+      "pl": "Polski"
+    },
+    "menu": {
+      "begin": "Set out",
+      "resume": "Carry on",
+      "settings": "Kit",
+      "tongue": "Tongue",
+      "leave": "Stand down",
+      "back": "Back",
+      "done": "Done",
+      "paused": "Standing still."
+    },
+    "hud": {
+      "rung": "Rung",
+      "quorum": "Quorum",
+      "can": "Can",
+      "digits": "Digits",
+      "certainties": "Certainties",
+      "leaf": "Leaf",
+      "provisional": "Provisional",
+      "circuit": "Ninth Circuit"
+    },
+    "action": {
+      "grip": "Grip",
+      "carry": "Carry across",
+      "gather": "Gather",
+      "share": "Share both pans",
+      "open": "Open the bundle",
+      "seat": "Seat the value",
+      "mark": "Set the mark",
+      "read": "Read",
+      "take": "Take",
+      "decline": "Decline"
+    },
+    "class": {
+      "span": "Span",
+      "aperture": "Aperture",
+      "emitter": "Emitter",
+      "bearer": "Bearer",
+      "vessel": "Vessel",
+      "threshold": "Threshold"
+    },
+    "mark": {
+      "admits": "It admits {n}.",
+      "refuses": "It refuses {n}."
+    },
+    "prompt": {
+      "hold": "Hold {key}",
+      "press": "Press {key}",
+      "socket": "The socket is open.",
+      "canfull": "The can is full."
+    },
+    "progress": {
+      "title": "What stands",
+      "set": "Set",
+      "standing": "Standing",
+      "drifting": "Drifting",
+      "open": "Open",
+      "due": "Drifts again in {when}."
+    },
+    "setting": {
+      "picture": "Picture",
+      "sound": "Sound",
+      "control": "Control",
+      "comfort": "Comfort",
+      "detail": "Detail",
+      "allsound": "All sound",
+      "verse": "The Verse",
+      "world": "The world",
+      "voices": "Voices",
+      "captions": "Written words",
+      "lessmotion": "Less motion",
+      "hardedges": "Harder edges",
+      "plainletters": "Plainer letters",
+      "biggermarks": "Bigger marks",
+      "moretime": "More time",
+      "holdtorun": "Hold to run",
+      "invertlook": "Invert the look",
+      "lookspeed": "Look speed"
+    },
+    "tier": {
+      "potato": "Bare",
+      "low": "Low",
+      "medium": "Middling",
+      "high": "High",
+      "ultra": "Utmost"
+    },
+    "toggle": {
+      "on": "On",
+      "off": "Off"
+    },
+    "count": {
+      "leaves": {
+        "one": "{n} leaf",
+        "other": "{n} leaves"
+      },
+      "certainties": {
+        "one": "{n} certainty",
+        "other": "{n} certainties"
+      },
+      "digits": {
+        "one": "{n} digit",
+        "other": "{n} digits"
+      },
+      "spans": {
+        "one": "{n} span",
+        "other": "{n} spans"
+      },
+      "terms": {
+        "one": "{n} term",
+        "other": "{n} terms"
+      },
+      "claims": {
+        "one": "{n} claim standing open",
+        "other": "{n} claims standing open"
+      },
+      "metres": {
+        "one": "{n} metre",
+        "other": "{n} metres"
+      },
+      "days": {
+        "one": "{n} day",
+        "other": "{n} days"
+      },
+      "hours": {
+        "one": "{n} hour",
+        "other": "{n} hours"
+      },
+      "minutes": {
+        "one": "{n} minute",
+        "other": "{n} minutes"
+      }
+    }
+  },
+  "sys": {
+    "bell": {
+      "01": "The Bell. One leaf less."
+    },
+    "can": {
+      "full": {
+        "01": "The can is full. Value softens."
+      }
+    },
+    "carry": {
+      "turn": {
+        "01": "The carries have turned uphill."
+      }
+    },
+    "certainty": {
+      "01": "Certainty taken."
+    },
+    "claim": {
+      "close": {
+        "01": "It closes. Light first, then stone."
+      },
+      "drift": {
+        "01": "This claim has drifted."
+      },
+      "grey": {
+        "01": "Grey. It holds. It will not last."
+      },
+      "open": {
+        "01": "A claim is standing open here."
+      },
+      "set": {
+        "01": "Certainty formed. It will not drift again."
+      }
+    },
+    "detent": {
+      "01": "The detent has changed sides."
+    },
+    "load": {
+      "01": "The load has not settled."
+    },
+    "mark": {
+      "set": {
+        "01": "The mark is set. It admits."
+      }
+    },
+    "quorum": {
+      "00": "Sixteen thousand and four leaves are true.",
+      "01": "Sixteen thousand and three leaves are true."
+    },
+    "rung": {
+      "01": "Rung."
+    },
+    "span": {
+      "half": {
+        "01": "The far socket is open."
+      }
+    },
+    "threshold": {
+      "01": "A threshold stands open here."
+    },
+    "tolerance": {
+      "01": "The Tolerance is now ±2."
+    },
+    "working": {
+      "01": "Someone left their working."
+    }
+  },
+  "mastery": {
+    "certainty": {
+      "01": "Certainty. It will not drift again."
+    },
+    "ix": {
+      "01": "Ix carries four."
+    },
+    "rung": {
+      "01": "Rung.",
+      "first": "First Rung: Carrier.",
+      "second": "Second Rung: Binder.",
+      "third": "Third Rung: Sharer."
+    },
+    "set": {
+      "01": "It set."
+    }
+  },
+  "fail": {
+    "coefficient": "Three of them went in. One came out.",
+    "inverse": "That undid something else.",
+    "load": {
+      "unsettled": "The bundle was still shut when you read it."
+    },
+    "mark": {
+      "edge": "The mark itself got in. It was not meant to.",
+      "level": "You closed it to a point. It was cut for a stretch.",
+      "over": "It admits {n} more than the mark permits.",
+      "under": "It refuses {n} the mark permits.",
+      "unturned": "The rail went over. The mark did not."
+    },
+    "near": "One from true.",
+    "negative": "It arrived backwards.",
+    "onesided": "One side moved. The other is where you left it.",
+    "partial": {
+      "divide": "Half of it is halved.",
+      "open": "The bracket opened onto one thing and shut on the other."
+    },
+    "seat": {
+      "partial": "One socket took it. The other two are still open."
+    },
+    "sill": {
+      "sign": "It came over the Sill and did not turn around."
+    },
+    "slip": "The shape held. The weight did not.",
+    "soft": "It shut. It didn't set.",
+    "tilt": {
+      "far": "The far pan is heavier by {n}.",
+      "near": "The near pan is heavier by {n}."
+    },
+    "unlike": "You gathered a length and a weight. They won't stand together."
+  },
+  "ix": {
+    "after": {
+      "fall": {
+        "01": "Again. Put me in again. I liked being close."
+      }
+    },
+    "bark": {
+      "cutter": {
+        "01": "That one nodded. At me. That happened."
+      },
+      "hush": {
+        "01": "It's eating the grey. Slowly. Rudely."
+      },
+      "idle": {
+        "03": "That door's a very four sort of door.",
+        "07": "The carry's running uphill. Something's nearly true.",
+        "09": "That prop is a three. It's carrying a nine."
+      },
+      "several": {
+        "01": "How many is that? It won't be a number."
+      },
+      "tilt": {
+        "02": "It's leaning. Near pan's heavy.",
+        "05": "Something over there is pretending to be a number."
+      },
+      "verse": {
+        "01": "She hasn't stopped singing. Not once. Not ever."
+      },
+      "walker": {
+        "01": "She's walking on a line she drew. A LINE!"
+      }
+    },
+    "discover": {
+      "socket": {
+        "01": "Open. It's open. Nobody closed this in eleven thousand years."
+      }
+    },
+    "farside": {
+      "01": "Something turned a light on. In Vantis. Something turned a light on.",
+      "02": "I nearly had five. I could feel five."
+    },
+    "field": {
+      "pattern": {
+        "01": "Two claims. Same shape. Do you want to be smug or shall I?"
+      }
+    },
+    "first": {
+      "offer": {
+        "01": "Put me in. I'll be the unknown. It's all I've ever done."
+      },
+      "solve": {
+        "01": "Ohh. I was a seven. I was a SEVEN and it was loud!"
+      }
+    },
+    "grey": {
+      "cross": {
+        "01": "It holds. It shouldn't feel like that, but it holds."
+      }
+    },
+    "loss": {
+      "01": "It took my three. I liked my three.",
+      "02": "I'm fine. I am entirely fine and I would like to keep going, please."
+    },
+    "mastery": {
+      "digit": {
+        "01": "I've got my three back. Say something. Say something about my three!"
+      },
+      "new": {
+        "01": "I've never been an eleven. Big numbers take longer to be."
+      },
+      "set": {
+        "01": "You didn't guess. I felt you not guess."
+      }
+    },
+    "rounder": {
+      "approach": {
+        "01": "Don't let it round me. I've only been four things."
+      }
+    },
+    "working": {
+      "found": {
+        "01": "Somebody left their working. Somebody was HERE."
+      }
+    }
+  },
+  "sennar": {
+    "barge": {
+      "01": "They lift when they stop lying about the load."
+    },
+    "brief": {
+      "01": "Deliver it. Don't admire it."
+    },
+    "dace": {
+      "01": "He clears his circuit. Nothing he closes sets."
+    },
+    "farside": {
+      "01": "Tell me you're ready. You'll be lying. I'll allow it."
+    },
+    "forty": {
+      "01": "Forty years. Nine thousand closures. It drifts."
+    },
+    "house": {
+      "01": "The house stands because someone is honest about a number.",
+      "02": "That is all a house is."
+    },
+    "mark": {
+      "01": "Somebody set that mark. Somebody can raise it."
+    },
+    "ondu": {
+      "01": "Ondu holds up four roofs. That is a Rung."
+    },
+    "praise": {
+      "high": "That was not adequate. That was true.",
+      "low": "Adequate."
+    },
+    "rank": {
+      "first": "First Rung. Carry one term. Don't carry two.",
+      "provisional": "Provisional means the Margin has not decided about you.",
+      "second": "Second Rung. You may gather.",
+      "third": "Third Rung. Now go and look at the Long Division."
+    },
+    "refuse": {
+      "help": {
+        "01": "No.",
+        "02": "I have a Rung. You have a socket. Use it."
+      }
+    },
+    "thanks": {
+      "01": "Don't thank me. Stand something."
+    },
+    "traffic": {
+      "01": "Everyone crosses Leaf Nine. Nobody stays."
+    },
+    "vey": {
+      "01": "That was a Sixth. She drew the line herself."
+    },
+    "warn": {
+      "suff": {
+        "01": "It will offer. It always offers. Note what it costs."
+      }
+    }
+  },
+  "camber": {
+    "decline": {
+      "01": "You have declined assistance eleven times. This has been logged as enthusiasm."
+    },
+    "discomfort": {
+      "01": "Please try not to be exact near me. It's uncomfortable for both of us."
+    },
+    "farewell": {
+      "01": "Thank you for your continued approximate cooperation."
+    },
+    "greet": {
+      "01": "Good morning. You appear to be struggling, which is permitted."
+    },
+    "grey": {
+      "01": "Your span is now approximately a span. Most spans are."
+    },
+    "hush": {
+      "01": "The animal is removing an approximate wall. The animal has been filed under weather."
+    },
+    "kindness": {
+      "01": "A Kindness has been established at the head of this leaf. There is soup. The soup is also approximate."
+    },
+    "name": {
+      "01": "The dispute over this leaf's name can be settled. We are prepared to widen the name."
+    },
+    "offer": {
+      "01": "A value is available. It has always been available. It was available before you arrived.",
+      "02": "There is no requirement to solve this. There has never been a requirement to solve anything."
+    },
+    "philosophy": {
+      "01": "We do not oppose solving. We simply note that it has never been necessary.",
+      "02": "Exactness has kept more people out of this world than the dark ever did."
+    },
+    "queue": {
+      "01": "Nineteen people are waiting. None of them is being kept out of anything today."
+    },
+    "reassure": {
+      "01": "Nothing is being taken from you. Things are merely being made easier to carry."
+    },
+    "receipt": {
+      "01": "A three has been collected. A receipt has been issued. The receipt is also approximate."
+    },
+    "supplied": {
+      "01": "A value has been supplied on your behalf. No action is required. No action was ever required."
+    },
+    "tolerance": {
+      "01": "The Tolerance has been widened to ±2 in response to increased demand. Demand was you."
+    }
+  },
+  "dace": {
+    "can": {
+      "01": "Empty since the ridge. Yours is still sloshing."
+    },
+    "farside": {
+      "01": "You built that. In the time I did nine leaves. You built that."
+    },
+    "first": {
+      "01": "Ninth Circuit. You're the other one. You're four leaves back."
+    },
+    "grey": {
+      "01": "Mine sags too. Mine's delivered."
+    },
+    "pass": {
+      "01": "Nine leaves before dark. You're doing one."
+    },
+    "queue": {
+      "01": "It's free and it's fast. I'm not going to pretend it isn't."
+    },
+    "stray": {
+      "01": "I had one. Eleven days. It got rounded all the way down.",
+      "02": "It's a number now. Numbers don't mind anything."
+    }
+  },
+  "walk": {
+    "cut": {
+      "01": "One holds the glass. One does not look up.",
+      "02": "That certainty set clean. Somebody closed it twice, seasons apart.",
+      "03": "Hands out of the light, Runner.",
+      "04": "Nobody says the short word during a cut.",
+      "05": "Crate it. Fire it on Six. Somebody's roof, eventually."
+    },
+    "edge": {
+      "01": "Four hundred and eleven towers. I counted twice.",
+      "02": "Four hundred and nine. He counts the stumps.",
+      "03": "Three hundred and ninety. The fog took the rest.",
+      "04": "My father counted four hundred and twelve. Once.",
+      "05": "It changed. It has never changed before. It changed."
+    },
+    "nearly": {
+      "01": "The big ones come up when you almost—",
+      "02": "Don't say the whole thing near the water, it—",
+      "03": "Forty years on this weir and I have never once—",
+      "04": "You're carrying a full can, so you must be the—",
+      "05": "Look at it. Look at it. It's about to—"
+    },
+    "rate": {
+      "01": "The wet of us says the middle carry is turning.",
+      "02": "The far of us heard you. This one is catching up.",
+      "03": "The near of us is standing in it. Go around.",
+      "04": "The wet of us is three today. It was four in spring.",
+      "05": "The dry of us will remember you. The wet will not."
+    },
+    "sag": {
+      "01": "I can hold it up. I can't make it true.",
+      "02": "Four props under that roof. Three of them mine.",
+      "03": "Everyone here walks on something I stacked.",
+      "04": "It'll stand until somebody with a Rung comes past.",
+      "05": "The abouts are in again. They always come back in."
+    },
+    "solv": {
+      "01": "Provisional.",
+      "02": "Mind the line. It's mine.",
+      "03": "Ninth Circuit? Then you're carrying. Move."
+    },
+    "tare": {
+      "01": "Eighty-one kilos. You'd float, if you were honest about it.",
+      "02": "Four hundred kilos over. Somewhere. In something. It is humiliating.",
+      "03": "My boots are one point two. I weigh them nightly.",
+      "04": "Nine tonnes of us. The number has to be true.",
+      "05": "Six generations on this hull and nobody has ever guessed the tare."
+    },
+    "verse": {
+      "01": "—and both sides by three, and both sides by three—",
+      "02": "—carries the six, the six goes over, the six turns—",
+      "03": "—eleven off the near pan, eleven off the far—",
+      "04": "—do not stop me, do not stop me, and both sides—",
+      "05": "—gathered, gathered, and it holds, and it holds, and—"
+    }
+  },
+  "amb": {
+    "abouts": {
+      "01": "The abouts are in on that door."
+    },
+    "always": {
+      "01": "This one stood before anybody arrived."
+    },
+    "arch": {
+      "01": "A Kindness stands under the Tolerance."
+    },
+    "barge": {
+      "aground": {
+        "01": "A barge, aground, weighing its own boots."
+      },
+      "name": {
+        "01": "That barge is named Nine Tenths."
+      }
+    },
+    "bell": {
+      "hang": {
+        "01": "The Bell hangs beneath Leaf One."
+      },
+      "ring": {
+        "01": "The Bell rang. A leaf is gone."
+      }
+    },
+    "bollard": {
+      "01": "The Tare moor to it. It grows."
+    },
+    "carry": {
+      "bait": {
+        "01": "Their bait is an unfinished sentence."
+      },
+      "fish": {
+        "01": "Half-sayers are fishing the middle carry."
+      },
+      "uphill": {
+        "01": "The carry is running uphill again."
+      }
+    },
+    "crab": {
+      "shells": {
+        "01": "Two shells each. Used alternately."
+      },
+      "sill": {
+        "01": "Sill-crabs cross. They come back inverted."
+      }
+    },
+    "cutters": {
+      "01": "Cutters work the far edge. Dark glass.",
+      "word": {
+        "01": "Cutters do not say that word."
+      }
+    },
+    "dace": {
+      "01": "Another Provisional, half a leaf ahead.",
+      "can": {
+        "01": "His can is empty. It is midday."
+      }
+    },
+    "detent": {
+      "01": "That gate leans. It is meant to."
+    },
+    "edgewake": {
+      "01": "Pilgrims at the lip, counting towers.",
+      "count": {
+        "01": "No two counts of Vantis agree."
+      }
+    },
+    "errata": {
+      "01": "A hole in the sky, moving."
+    },
+    "flatleaf": {
+      "01": "Leaf Two Hundred and Six. Perfectly flat."
+    },
+    "house": {
+      "basement": {
+        "01": "Something under the house is still true."
+      }
+    },
+    "hush": {
+      "graze": {
+        "01": "A hush is eating a grey wall."
+      },
+      "hum": {
+        "01": "The hush hums. The wall thins."
+      }
+    },
+    "kiln": {
+      "01": "The Kiln Leaves glow from beneath."
+    },
+    "kindness": {
+      "board": {
+        "01": "Tolerance ±1. Posted daily. Revised often."
+      },
+      "free": {
+        "01": "The soup is free. So is everything."
+      },
+      "queue": {
+        "01": "Eleven people are queueing for soup.",
+        "02": "Nineteen now. It was eleven."
+      }
+    },
+    "leafninealso": {
+      "01": "Leaf Nine Also disputes this leaf's name."
+    },
+    "night": {
+      "carries": {
+        "01": "At night the leaves show their carries."
+      }
+    },
+    "oldtrue": {
+      "01": "Oldtrue. A hundred years of holding."
+    },
+    "quorum": {
+      "01": "Sixteen thousand and three. It was four."
+    },
+    "rating": {
+      "01": "Three of something are rating the carry."
+    },
+    "refusal": {
+      "01": "Nothing closes that. Nothing ever has."
+    },
+    "sagsmith": {
+      "01": "A sagsmith props what he cannot close.",
+      "props": {
+        "01": "Stacked certainties, holding a roof up."
+      }
+    },
+    "secondlip": {
+      "01": "The same animal surfaces again downhill."
+    },
+    "several": {
+      "01": "A several are drinking. Some are elsewhere."
+    },
+    "stray": {
+      "other": {
+        "01": "Another stray. It has been eleven things."
+      }
+    },
+    "thousandfoot": {
+      "01": "Nobody has counted one twice alike."
+    },
+    "tolerance": {
+      "mark": {
+        "01": "The board is a mark. It widens."
+      }
+    },
+    "unattributed": {
+      "01": "Two hundred years, closing its own claim."
+    },
+    "vantis": {
+      "remainder": {
+        "01": "One quarter of Vantis refuses to fall."
+      },
+      "stop": {
+        "01": "Those towers stop where the claim failed."
+      }
+    },
+    "verse": {
+      "runner": {
+        "01": "A Verse-runner passes. She will not stop."
+      },
+      "sound": {
+        "01": "Leaf Forty is singing. It always is."
+      }
+    },
+    "walker": {
+      "height": {
+        "01": "Forty metres up. Unbothered."
+      },
+      "line": {
+        "01": "A Solvary walks on a drawn line."
+      }
+    },
+    "weir": {
+      "mark": {
+        "01": "The weir admits above its mark."
+      },
+      "raised": {
+        "01": "The mark was four. It is five."
+      }
+    },
+    "working": {
+      "old": {
+        "01": "Still standing. Eleven thousand years."
+      }
+    },
+    "wren": {
+      "flock": {
+        "01": "The wrens arrive before their noise."
+      },
+      "perch": {
+        "01": "Carrywrens roost only on things still true."
+      }
+    }
+  },
+  "sign": {
+    "barge": {
+      "01": "NINE TENTHS OF NOTHING — AGROUND — TRADING"
+    },
+    "circuit": {
+      "01": "NINTH CIRCUIT — CANS SEALED — VALUE SOFTENS",
+      "02": "PROVISIONALS: ELEVEN. DEPOTS: NONE."
+    },
+    "crabs": {
+      "01": "MIND THE SILL. THE CRABS INVERT."
+    },
+    "division": {
+      "01": "THE LONG DIVISION — 11 km — NO SPAN"
+    },
+    "edge": {
+      "01": "THE LIP. NO CLAIM BEYOND HERE."
+    },
+    "field": {
+      "01": "CERTAINTY FIELD. TAKE WHAT SET.",
+      "02": "LEAVE WHAT DIDN'T. IT ISN'T YOURS."
+    },
+    "house": {
+      "01": "STANDING HOUSE. DO NOT UNSTAND.",
+      "02": "BASEMENT. KEEPER ONLY. IT IS LOAD-BEARING."
+    },
+    "hush": {
+      "01": "HUSH GRAZING. GREY AT OWN RISK."
+    },
+    "kiln": {
+      "01": "KILN LEAF SIX — GLASS ONLY — HANDS OUT"
+    },
+    "kindness": {
+      "01": "A KINDNESS. SOUP. VALUES. NO CHARGE.",
+      "02": "TOLERANCE ±1. REVISION 4,111. POSTED DAILY."
+    },
+    "leafnine": {
+      "01": "LEAF NINE — THREE CARRIES — NO DEPOT"
+    },
+    "leafninealso": {
+      "01": "LEAF NINE ALSO — 400 m — DISPUTED"
+    },
+    "quorum": {
+      "01": "QUORUM 16 004. BELL RANG IN SPRING."
+    },
+    "verse": {
+      "01": "VERSE RELAY. DO NOT SPEAK TO RUNNERS."
+    },
+    "weir": {
+      "01": "WEIR IN USE. DO NOT FINISH SENTENCES.",
+      "02": "MARK SET AT FOUR. DO NOT RAISE."
+    }
+  },
+  "lore": {
+    "always": {
+      "01": "Some claims are true for every value and stand before anyone arrives. The Margin calls one an always, and finds them faintly embarrassing, and builds on them anyway."
+    },
+    "bell": {
+      "01": "The Bell hangs beneath Leaf One and rings once for every leaf that stops being true. It has rung thirty-seven times this year. Nobody has ever had to be told what it means."
+    },
+    "bollard": {
+      "01": "The arch at the head of this leaf and the arch above the certainty field are the two ends of one animal. A surveyor settled that four generations ago, to general agreement and no particular interest. Nobody changed the names, because the names are useful, and nobody has settled anything else about it since. It has perhaps eighty years of leaf left to cross."
+    },
+    "carrywren": {
+      "01": "Carrywrens drink from the carries and consequently fly slightly faster than they are."
+    },
+    "circuit": {
+      "01": "The Ninth Circuit runs eleven Provisionals over forty leaves and keeps a depot on none of them. You will meet two."
+    },
+    "cutters": {
+      "01": "Cutters do not say the word \"I\" during a cut. Ask one why and they will show you a hand."
+    },
+    "edgewake": {
+      "01": "Pilgrims come to the lip to count the towers of Vantis. No two counts have ever agreed. The Edgewake consider this the finding, not the failure."
+    },
+    "flatleaf": {
+      "01": "Leaf Two Hundred and Six is a single claim the size of a leaf, and it is the largest true statement in the Margin, and it is a floor, and nobody knows what it was the floor of."
+    },
+    "hush": {
+      "01": "A hush eats grey. Where one has grazed, an approximate wall is simply not there any more, and the hole is honest. The Sufficiency has a form for this and files it under weather."
+    },
+    "leafninealso": {
+      "01": "Leaf Nine Also broke off Leaf Nine eleven hundred years ago and kept the name. Both claims are under review. The Sufficiency has offered to widen the name."
+    },
+    "mark": {
+      "01": "A gate set to a mark does not stand level and is not supposed to. It leans toward whatever it lets through, and a gate that has stopped leaning has stopped admitting anybody."
+    },
+    "nearlies": {
+      "01": "Carries flow toward whatever is nearly true, so the Nearlies bait their lines with sentences they deliberately do not finish. A half-sayer who completes one at the weir buys the drinks."
+    },
+    "nine": {
+      "hundred": {
+        "01": "Leaf Forty is held aloft by nine hundred people singing in shifts. They have not stopped in six generations. Their shift change is a public holiday."
+      }
+    },
+    "refusal": {
+      "01": "A claim no value will close is called a refusal. The name of Leaf Nine is one: two leaves hold it, no value settles it, and the Sufficiency has offered to widen the name."
+    },
+    "remainder": {
+      "01": "The Remainder still stands because its claim was written so badly nobody has managed to make it false either."
+    },
+    "sagsmith": {
+      "01": "A sagsmith cannot close a claim and does not pretend to. He props. Every grey roof in the Margin stands on somebody's stacked certainties and somebody's patience."
+    },
+    "several": {
+      "01": "A several has never been counted, so the Margin gave up and changed the grammar instead: a several are. Part of one being on the far side of a leaf does not make it two, and the surveyors who argued otherwise are the reason the word exists."
+    },
+    "solvary": {
+      "01": "The Solvary is understaffed by about nine thousand. It has never turned anyone away; it simply has nobody to spare to stand beside you while you close your first one."
+    },
+    "stray": {
+      "01": "A stray is an unknown that has slipped its claim. It cannot be rounded while it stays unsolved, which means the safest possible life for a stray is one in which it is never anything at all.",
+      "rounded": {
+        "01": "A stray rounded all the way down is not destroyed. It becomes a value: definite, permanent, filed. Nobody in the Margin calls this a death, and that is the part people find difficult."
+      }
+    },
+    "tare": {
+      "01": "The Tare fly on a claim about their own mass, which is why they know the weight of everything they own, including their boots, including you. A Tare funeral is a subtraction."
+    },
+    "thousandfoot": {
+      "01": "No thousandfoot has ever been counted twice with the same result. Three surveyors have retired over this."
+    },
+    "tolerance": {
+      "01": "The Tolerance is a mark, and a mark is a claim like any other, which makes it the largest standing claim in the Margin. It is posted rather than announced, and revised rather than decided."
+    },
+    "warden": {
+      "01": "A Warden is the Fifth Rung, and the Fifth Rung is the one where a person may set a mark of their own. Until the Solvary made the Rung there was exactly one body in the Margin that could, and it is still the one doing it."
+    }
+  }
+}

@@ -5,32 +5,34 @@ import { LUMINANCE, SOFT_KNEE } from "./glsl.js";
 /**
  * Bright pass — the prefilter that decides what is allowed to glow.
  *
+ * `design/art-direction.md` §5.4 names the whole guest list: *"crystal, carry, city strips, the sun
+ * glow, KaTeX"*, and then the exclusion, which is the sentence this pass exists to obey:
+ * *"Bloom must never touch rock, ground, foliage, character or UI. A bloom that leaks onto a lit
+ * rock facet destroys the flatness in a single frame."*
+ *
  * Three jobs, all in one half-resolution draw:
  *
- *  1. **Threshold with a soft knee.** See `SOFT_KNEE` in glsl.js for why a high scene-linear
- *     threshold *is* §8's emissive mask rather than the "global luminance threshold" §8
- *     forbids: after §10's exposure the brightest surface in the world sits near scene-linear
- *     0.63 and the threshold ships at 1.35, so rock and sky cannot reach it and only the three
- *     things §10 reserves pure white for can.
+ *  1. **Threshold with a soft knee**, in scene-linear light. See `SOFT_KNEE` in `glsl.js` for why a
+ *     scene-linear threshold *is* the class mask §5.4 asks for rather than the global luminance
+ *     threshold §12.10 forbids: surfaces are bounded by the light landing on them and top out well
+ *     under 1.0 after §3.2's calibration; emitters carry an `emissive` term on top of that and are
+ *     the only things in the frame that exceed it.
  *
- *  2. **Karis luminance weighting.** Four texels are averaged with weight 1/(1 + L), which is
- *     the standard fix for a single blindingly bright texel throwing a giant halo. It matters
- *     here for a reason specific to this project: §8 drives KaTeX glyphs ≥ 4x above the
- *     curve's Y 0.99 point, so an unweighted average would let a two-pixel glyph stroke inject
- *     ten times a large emitter's energy per pixel and fill in the counters of the equation.
- *     `review/measure/P12.mjs` claim B4 measures exactly that and holds the panel to §8's
- *     2.2 : 1 glyph-to-veil floor.
+ *  2. **Karis luminance weighting.** Four texels averaged with weight 1/(1 + L) — the standard fix
+ *     for one blinding texel throwing a halo the size of the screen. It matters here because a
+ *     crystal core sits at §5.4's measured peak while a two-pixel specular sliver of the same
+ *     material can be far hotter for one frame; unweighted, that sliver would inject more energy
+ *     per pixel than the whole cluster.
  *
- *  3. **Clamp.** After weighting, the result is capped. An emitter is allowed to be very
- *     bright; its *bloom* is not allowed to be unbounded, or the halo's radius becomes a
- *     function of how hot the emitter is and §15.5's `M5` (≤ 3% emissive energy change per
- *     fixed step) turns into a coin flip whenever anything dims.
+ *  3. **Clamp.** After weighting, the result is capped so an emitter's *halo radius* stops being a
+ *     function of how hot the emitter is. §11.4 caps an emitter's screen energy change at 3% per
+ *     fixed step; an unbounded bright buffer turns any dimming into a visible pulse of halo size.
  *
- * The guard band that §8 requires against bloom popping at the frame edge is not a border in
- * this texture — it is `ClampToEdgeWrapping` plus the edge weight applied in `GradePass`,
- * which smoothsteps an emitter's contribution over the outer 6% of frame. A mask built from a
- * larger-than-frame render would cost a second scene pass; the smoothstep costs nothing and
- * §15.5 measures the same thing either way.
+ * At the frame edge the bright buffer is `ClampToEdgeWrapping`, so an emitter sitting against the
+ * border smears its own value outward instead of fading into black — which is what keeps a crystal
+ * cluster at the edge of frame from developing a dark rim as the player pans past it. There is
+ * deliberately no extra edge falloff on top of that: any such weight is a vignette applied to one
+ * class of object only, and it would show as a soft band exactly where §4 wants a hard edge.
  */
 export class BrightPass {
   constructor({ threshold, knee, clamp }) {
@@ -81,7 +83,7 @@ export class BrightPass {
     this.blit = new Blit(this.material);
   }
 
-  /** @param {THREE.Texture} source full-resolution linear scene colour */
+  /** @param {THREE.Texture} source full-resolution scene-linear colour */
   render(renderer, source, sourceWidth, sourceHeight, target) {
     this.material.uniforms.tScene.value = source;
     this.material.uniforms.uTexel.value.set(1 / sourceWidth, 1 / sourceHeight);

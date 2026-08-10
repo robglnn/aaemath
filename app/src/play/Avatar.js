@@ -439,7 +439,14 @@ export class Avatar {
       // `groundAt`. No import crosses the boundary; if it is ever gone, the fallback below still
       // produces a facing from where the body actually went.
       const h = src.heading;
-      if (h && (h.x || h.y)) this._yaw = Math.atan2(h.x, h.y);
+      // `heading.y` is the world **z** component, and world -z is forward. Reading it without the
+      // sign flip put the avatar at yaw 180 while travelling at heading 0 — the body faced exactly
+      // backwards down its own line of travel. That reads as two separate bugs to a player and is
+      // only one: the arms appear swapped (you are looking at the character's front, so its left
+      // hand is on your right) and strafing appears reversed (the body slides toward its own left
+      // while facing you), even though the movement itself is correct against the camera basis.
+      // `Locomotion`'s own `headingDeg` probe already negates it; this is the same convention.
+      if (h && (h.x || h.y)) this._yaw = Math.atan2(h.x, -h.y);
       this._leanSrc = src.lean ?? 0;
       this._pushSrc = src.push ?? 0;
       this._squash = src.squash ?? 0;

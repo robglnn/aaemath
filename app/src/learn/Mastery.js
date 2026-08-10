@@ -178,8 +178,24 @@ export const PROPAGATION = {
  * ---------------------------------------------------------------------------------------------
  * TEST-OUT — the short high-difficulty probe that replaces the teaching march.
  *
- * The product requirement: a student who already knows a knowledge point should spend about two
- * minutes proving it, not an hour being taught it. The design's normal route to `provisional` is
+ * IT IS NOT A "2-MINUTE TEST-OUT" AND THE NAME HAS BEEN WITHDRAWN. Round 1 shipped that phrase from
+ * the brief and never measured it. Measured, on the bank this game ships, at the scheduler's own
+ * `phases.secondsPerItemByPhase.solo` of 46 s: **zero of the eligible probes are 2.0 minutes or
+ * less.** The shortest defensible probe on this bank is `minItems` = 3 items = 2.3 minutes; the
+ * median and the maximum are reported by `testOutMinutesSummary()` and printed by
+ * `review/measure/P32.mjs` B1. Two minutes would need a probe of two items, which needs a
+ * geometric-mean blind rate of 0.032 per item, and the softest surviving family of a `construct`
+ * cell on this bank measures well above that. **The gap is content, and it is specified rather than
+ * wished for**: `review/measure/P32.mjs` B6 prints, per node, the per-item blind rate that a 3-item
+ * and a 2-item probe would need, so P17 has a target instead of an aspiration.
+ *
+ * WHAT THE MECHANISM DOES DELIVER, which is the claim worth making: it replaces a node's whole
+ * teaching sequence — the model/guided/solo fade plus six unaided opportunities, about ten items —
+ * with three to six. The product requirement was stated per TOPIC ("two minutes instead of a
+ * one-hour lecture"), and the number that answers it is minutes-to-clear-Level-1 for a learner who
+ * already knows Level 1, which PART C measures end to end through the real scheduler.
+ *
+ * The design's normal route to `provisional` is
  * M1 + M2 + M3: six unaided mastery-eligible opportunities, three of them at or above the band
  * centre, two distinct forms, posterior at 0.95 — and it is reached through a
  * model -> guided-1 -> guided-2 -> guided-3 -> solo fade that costs four items before the first
@@ -318,8 +334,29 @@ export const BANK_AUDIT_EPISODES = 24;
  * Draws spent past the catalogue, per cell, with an exclusion set that never forgets. This is the
  * population a learner meets once they stay on a node long enough to walk its committed items out,
  * and it is measured SEPARATELY from the catalogue rather than blended with it.
+ *
+ * ------------------------------------------------------------------------------------------
+ * ROUND 3: 128 WAS TOO FEW, AND THE COST WAS PAID IN WILSON WIDTH, NOT IN BIAS.
+ *
+ * 128 tail draws are split across a cell's generator families, so the median family was measured on
+ * 54 generated items and the lower quartile on 32. At n = 32 a measured 0.188 carries a 95% upper
+ * bound of 0.353 — over `maxGuess` (0.30) — so rule (d) in `deriveCellPricing` refuses the family
+ * for being UNMEASURED rather than for being guessable. That is the wrong reason to refuse, and it
+ * is expensive: it is the difference between `expr-anatomy` (band 1, 29 descendants) having one
+ * honest form and having none at all, which `frontier()`'s own note calls bricking the curriculum.
+ *
+ * The honest answer to a wide bound is more draws, never a softer cap. 512 pushes every family's
+ * generated half to `EXECUTED_SAMPLE_CAP` (120) or to the point where the generator genuinely
+ * cannot produce more, so the same 0.188 is bounded at 0.271 and the refusal decision is made on
+ * evidence. Marking cost barely moves — `marked` is capped at `EXECUTED_SAMPLE_CAP` either way —
+ * so this is paid once, at build time, in `tools/bank-audit.mjs`.
+ *
+ * NOTE FOR ANYONE CHANGING THIS NUMBER: it is not folded into `bankAuditFingerprint` individually.
+ * `BANK_AUDIT_VERSION` is, so any change to the sample's SHAPE must bump the version — otherwise a
+ * stale committed table agrees with a live fingerprint and the engine prices on a bank it never saw.
+ * ------------------------------------------------------------------------------------------
  */
-export const BANK_AUDIT_TAIL = 128;
+export const BANK_AUDIT_TAIL = 512;
 export const BANK_AUDIT_ITEMS_PER_EPISODE = 8;
 
 /**
@@ -515,7 +552,17 @@ export function catalogueSelect({ bankFiles, generateOne, tiers, bandOf }) {
  * the cost this exists to avoid. `review/measure/P16.mjs` recomputes the whole table from scratch
  * and fails on any difference, so generator drift is caught by the proof rather than by the hash.
  */
-export const BANK_AUDIT_VERSION = 2;
+export const BANK_AUDIT_VERSION = 3;
+/**
+ * v3 (P32 round 2) changed two things about what the table MEANS, and neither is visible in the
+ * per-item hash, which is why the version had to move:
+ *
+ *   - a family's `upper` is now the MAXIMUM over its sub-populations, not the `upper` belonging to
+ *     whichever sub-population happened to have the higher point estimate. The old rule threw away a
+ *     strictly larger bound on 38 of 161 families, by as much as 0.627;
+ *   - `BANK_AUDIT_TAIL` went from 128 to 512, so a family's generated half is measured rather than
+ *     merely sampled, and rule (d) refuses on guessability instead of on sample width.
+ */
 
 export function bankAuditFingerprint({ bankFiles, model }) {
   let h = 0x811c9dc5;
@@ -781,19 +828,55 @@ export function auditBlindGuessing(
       }
     }
 
+    /**
+     * ------------------------------------------------------------------------------------------
+     * THE TWO NUMBERS A FAMILY CARRIES, AND WHY THEY ARE MAXIMISED SEPARATELY.
+     *
+     * `rate` is the POINT ESTIMATE and it decides REJECTION (cap (a), `blind > maxTrueGuess`).
+     * `upper` is the 95% bound and it decides the MODELLED GUESS and caps (c)/(d). They are two
+     * different questions — "how leaky is this pool" and "how sure are we" — and round 2 answered
+     * both with whichever sub-population won the first one. That discarded a strictly larger
+     * `upper` on 38 of 161 families, by as much as 0.627: `var-meaning.twin` kept the catalogue's
+     * (0.200, 0.200) and threw away the generator's 0.213 bound, so the price the engine used was
+     * one it had already measured to be too low. A bound you have computed and then dropped is not
+     * conservatism, it is a smaller number chosen for a reason unrelated to safety.
+     *
+     * So each is the max over the sub-populations, independently. That can pair a rate from one
+     * source with a bound from the other, which is correct: the learner meets BOTH streams, and the
+     * price has to survive whichever one they are standing in.
+     *
+     * WHY `upper === rate` FOR THE CATALOGUE HALF, said plainly rather than left to be discovered.
+     * A family's committed pool is a CENSUS, not a sample: those 3-14 items (median 7) are every
+     * item that family will ever put in front of anyone, so the modal answer's share among them has
+     * no sampling error and Wilson would be answering a question nobody asked. The honest caveat is
+     * the other end of it: **that number stops describing the served stream the moment the census is
+     * spent.** A learner who stays on a node past its committed items is served the generator
+     * forever after, and that half is a genuine sample, bounded by `wilsonUpper` at
+     * `BANK_AUDIT_TAIL`-deep draws. The max over the two is what covers a learner in either place.
+     * ------------------------------------------------------------------------------------------
+     */
     for (const row of scored) {
       const { g, family, source, marked, hits, modalAnswer } = row;
       const rate = marked ? hits / marked : 0;
       const upper = source === "generated" ? wilsonUpper(hits, marked) : rate;
       const key2 = `${cell}|${family}`;
       const prev = families[key2];
-      const rec = { n: marked, distinct: g.keys.size, rate, upper, modalAnswer, executed, source };
-      // The family's price is the WORSE of its two sub-populations, never their blend.
-      if (!prev || rec.rate > prev.rate || (rec.rate === prev.rate && rec.upper > prev.upper)) {
-        families[key2] = { ...rec, sources: { ...(prev?.sources ?? {}), [source]: { n: marked, rate, upper, modalAnswer } } };
-      } else {
-        prev.sources = { ...(prev.sources ?? {}), [source]: { n: marked, rate, upper, modalAnswer } };
-      }
+      const sources = { ...(prev?.sources ?? {}), [source]: { n: marked, rate, upper, modalAnswer } };
+      const worstRate = Math.max(...Object.values(sources).map((s) => s.rate));
+      const worstUpper = Math.max(...Object.values(sources).map((s) => s.upper));
+      // The source recorded is the one the POINT ESTIMATE came from, because that is the one a
+      // reviewer has to go and look at. `n`, `distinct` and `modalAnswer` travel with it.
+      const worst = Object.entries(sources).reduce((a, b) => (b[1].rate > a[1].rate ? b : a));
+      families[key2] = {
+        n: worst[1].n,
+        distinct: worst[0] === source ? g.keys.size : (prev?.distinct ?? g.keys.size),
+        rate: worstRate,
+        upper: worstUpper,
+        modalAnswer: worst[1].modalAnswer,
+        executed,
+        source: worst[0],
+        sources,
+      };
     }
   }
 
@@ -818,6 +901,42 @@ export function auditBlindGuessing(
 }
 
 // ---------------------------------------------------------------------------------------------
+
+/**
+ * ---------------------------------------------------------------------------------------------
+ * "THE PRESENTER DID NOT SAY WHICH FAMILY IT SERVED" — a value, not an absence.
+ *
+ * THE DEFECT THIS CLOSES, stated first because it is the one a critic measured.
+ *
+ * The whole blind-pass derivation prices a probe item at the worst SURVIVING family of its cell.
+ * That is only the right number if the refused families are never served. The engine publishes the
+ * refusal list on every request (`price.avoidFamilies`, `Scheduler._acquisitionRequest`), and
+ * `app/src/learn/ItemBank.js` — which belongs to P17/P31, not to this piece — has no filter that
+ * reads it: `select()` takes no `avoidFamilies` argument at all. So on the shipped bank the very
+ * first `select({ kpId: "expr-anatomy", form: "construct" })` returns an item of
+ * `expr-anatomy.coefficient`, a family this audit refuses at a measured blind rate of 1.000.
+ *
+ * Round 2 then priced that item at the cell's surviving rate, because the response carried no
+ * `family` and `family == null` was read as "price it at the cell". Measured: if families arrive in
+ * audit proportion, a pure guesser passes `expr-anatomy`'s five-item probe with probability 0.728
+ * against a declared bound of 3.2e-4 — 2275x — on a band-1 node with 29 descendants.
+ *
+ * THE RULE. An unreported family on a cell that HAS refused families is not priced at all: the
+ * response is unscored. It is the same "refuse rather than assume safe" `deriveCellPricing` already
+ * applies to a cell the audit never sampled, moved one level down. The consequence is a refusal
+ * (nobody is credited) instead of a free pass (a guesser is credited), and a refusal is visible:
+ * `stats.unreportedFamilyItems` counts them and `probe().unreportedFamilyItems` reports them.
+ *
+ * WHY A SENTINEL AND NOT JUST `null`. `null` already means something else and is load-bearing:
+ * `Scheduler._scorableForms` asks `isScorable(kp, form, "solo", null)` PROSPECTIVELY — "is this
+ * form worth serving on this node at all" — and the answer there must stay a fact about the cell,
+ * or every node with one refused family would lose the form entirely and the graph would deadlock
+ * behind it. `UNREPORTED_FAMILY` is what `respond()` substitutes for a MISSING report on a real
+ * response, and it is the only value that can turn a scored item into an unscored one. A caller
+ * cannot opt out by passing `null`: `respond` maps `null`, `undefined` and absence alike onto it.
+ * ---------------------------------------------------------------------------------------------
+ */
+export const UNREPORTED_FAMILY = Symbol("unreported-family");
 
 export class Mastery {
   /**
@@ -854,6 +973,13 @@ export class Mastery {
     this.propagationRule = { ...PROPAGATION, ...(opts.propagation ?? {}) };
     /** The test-out rule (see `TEST_OUT`). `enabled: false` is the control arm. */
     this.testOutRule = { enabled: true, ...TEST_OUT, ...(opts.testOut ?? {}) };
+    /**
+     * THE ROUND-2 LEAK, ON A SWITCH, DEFAULT OFF. When true an item whose family the presenter did
+     * not report is priced at the cell's worst SURVIVING family even on cells that have refused
+     * families — which is what let a guesser pass `expr-anatomy`'s probe with probability 0.855.
+     * The only caller is `review/measure/P32.mjs`'s control arm. See `UNREPORTED_FAMILY`.
+     */
+    this.priceUnreportedFamilies = opts.priceUnreportedFamilies === true;
     this._storage = opts.storage === undefined ? safeStorage() : opts.storage;
 
     /** Non-fatal content problems found at load. Surfaced in the probe so they cannot hide. */
@@ -877,6 +1003,13 @@ export class Mastery {
       unscoredItems: 0,
       /** Of `unscoredItems`, the ones refused because the BANK cell was too guessable. */
       unpriceableCellItems: 0,
+      /**
+       * Of those, the ones refused because the presenter did not say which generator family it
+       * served on a cell that has refused families. This is a DELIVERY defect and not a content
+       * one: a non-zero number here means something is serving items without honouring
+       * `price.avoidFamilies` or without reporting `family` on `submit`. See `UNREPORTED_FAMILY`.
+       */
+      unreportedFamilyItems: 0,
       refusedUpward: 0,
       prerequisiteCredits: 0,
       /** Propagated updates by graph distance, so a reviewer can see how far inference reached. */
@@ -928,6 +1061,63 @@ export class Mastery {
           `who already knows it must walk the full teaching sequence. The fix is content: more distinct ` +
           `answers in that node's committed pools, never a looser maxBlindPass.`
       );
+
+    /**
+     * ------------------------------------------------------------------------------------------
+     * THE LOUD CHANNEL FOR THE ONE ASSUMPTION THE BOUND RESTS ON.
+     *
+     * `_deriveTestOutPlan` prices a probe item at the worst SURVIVING family of its cell. On a cell
+     * with nothing refused that is simply the cell's rate and there is nothing to assume. On a cell
+     * WITH refusals it is a conditional: the bound holds only while the refused families are not
+     * served. Whoever picks the item has to honour `price.avoidFamilies` for that to be true, and
+     * `ItemBank.select()` — another piece's file — currently takes no such argument.
+     *
+     * So every eligible probe standing on such a cell says so at construction, with both halves of
+     * the consequence priced. The engine's own half is already closed (`UNREPORTED_FAMILY`): an
+     * unreported family on a filtered cell is refused rather than credited, which converts the free
+     * pass into a REFUSAL. But a refusal is not free either — it fails the probe of a learner who
+     * answered correctly — so this is a delivery bug either way and it is named as one.
+     * ------------------------------------------------------------------------------------------
+     */
+    this.probeFamilyRisk = [];
+    for (const id of this.graph.ids) {
+      const plan = this.testOutPlans.get(id);
+      if (!plan.eligible) continue;
+      const forms = [...new Set(plan.forms)].filter((f) => this.requiresFamilyReport(id, f));
+      if (!forms.length) continue;
+      // Per probe ITEM, in the order the probe serves them, so the product is the real leak.
+      let mixture = 1;
+      let worst = 1;
+      for (const f of plan.forms) {
+        const cell = this.cell(id, f);
+        mixture *= Math.max(this.pricing.trueByForm[f] ?? 0, cell?.blindMixture ?? 1);
+        worst *= Math.max(this.pricing.trueByForm[f] ?? 0, cell?.blindUnfiltered ?? 1);
+      }
+      const refusedCount = forms.reduce((a, f) => a + this.refusedFamilies(id, f).length, 0);
+      const risk = {
+        kpId: id,
+        forms,
+        refusedFamilies: forms.flatMap((f) => this.refusedFamilies(id, f).map((x) => `${f}:${x}`)),
+        declaredBlindPass: plan.blindPass,
+        unfilteredBlindPass: round6(mixture),
+        worstCaseBlindPass: round6(worst),
+        overBoundBy: round6(mixture / this.testOutRule.maxBlindPass),
+      };
+      this.probeFamilyRisk.push(risk);
+      this.issues.push(
+        `TEST-OUT: "${id}" is probe-eligible on ${forms.length} cell(s) that have ${refusedCount} REFUSED ` +
+          `generator famil(ies) [${risk.refusedFamilies.join(", ")}]. Its ${plan.items}-item probe is priced at ` +
+          `${plan.blindPass.toExponential(2)} on the SURVIVING families only. If whoever serves the item does not ` +
+          `honour price.avoidFamilies, a blind responder passes it with probability ` +
+          `${risk.unfilteredBlindPass.toExponential(2)} at audit-proportion mixing ` +
+          `(${risk.overBoundBy >= 1 ? `${risk.overBoundBy.toPrecision(3)}x OVER` : `${risk.overBoundBy.toPrecision(2)}x of`} ` +
+          `the ${this.testOutRule.maxBlindPass} bound; ` +
+          `${risk.worstCaseBlindPass.toExponential(2)} if handed the softest family every time). ` +
+          `The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a ` +
+          `REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe ` +
+          `they should have passed. Use Scheduler.serve(), which honours the list and reports the family.`
+      );
+    }
   }
 
   // ------------------------------------------------------------------- pricing
@@ -964,13 +1154,40 @@ export class Mastery {
   }
 
   /**
-   * Was THIS item's family one the engine will score? `null`/`undefined` means the presenter did
-   * not say, and the cell-level price — the worst surviving family — stands.
+   * Was THIS item's family one the engine will score?
+   *
+   * Three answers, and the middle one is the round-2 fix (see `UNREPORTED_FAMILY`):
+   *
+   *   named        — that family's own `priceable`, because the family is the granularity the
+   *                  refusal is made at;
+   *   UNREPORTED   — the cell's answer ONLY while the cell has nothing to avoid. The moment a cell
+   *                  has a refused family, an item whose family went unreported might BE one, and
+   *                  pricing it at the surviving rate assumes exactly what is in question. Refused.
+   *   null         — a PROSPECTIVE question about the cell ("is this form worth serving here"),
+   *                  answered at the cell. Never reachable from `respond`.
    */
   isFamilyPriceable(kpId, form, family) {
+    if (family === UNREPORTED_FAMILY) {
+      const cell = this.cell(kpId, form);
+      // `priceUnreportedFamilies` is the ROUND-2 BEHAVIOUR and it is a leak. It survives only as
+      // the control arm `review/measure/P32.mjs` B8 needs: a harness that cannot produce the defect
+      // on demand cannot prove it closed it, and this project has shipped exactly that kind of
+      // green zero before. Nothing in `app/` ever sets it.
+      if (!this.priceUnreportedFamilies && cell && (cell.refusedFamilies?.length ?? 0) > 0) return false;
+      return this.isCellPriceable(kpId, form);
+    }
     if (family == null) return this.isCellPriceable(kpId, form);
     const rec = this.cell(kpId, form)?.families?.[family];
     return rec ? rec.priceable : this.isCellPriceable(kpId, form);
+  }
+
+  /**
+   * Must a presenter report `family` on `submit` for this (kp x form) to be scorable at all?
+   * True exactly when the cell has refused families. Published on `price()` so a presenter can see
+   * the requirement rather than discover it from a run of unscored items.
+   */
+  requiresFamilyReport(kpId, form) {
+    return (this.cell(kpId, form)?.refusedFamilies?.length ?? 0) > 0;
   }
 
   /** Is this (form, phase) pair, ON THIS NODE, allowed to produce a BKT update at all? */
@@ -1002,11 +1219,18 @@ export class Mastery {
    * conservative default and the only one available: the engine cannot price what it was not told.
    */
   trueGuess(kpId, form, phase, family = null) {
-    const fam = family == null ? null : this.cell(kpId, form)?.families?.[family];
+    const cell = this.cell(kpId, form);
+    const fam = family == null || family === UNREPORTED_FAMILY ? null : cell?.families?.[family];
+    // An UNREPORTED family is priced at the worst family in the cell INCLUDING the refused ones,
+    // because that is the set the item might have come from. The gate above refuses it outright
+    // whenever that set is non-empty, so this is belt as well as braces — but a `price()` call
+    // that reports a `trueGuess` must not report the optimistic one.
+    const cellRate =
+      family === UNREPORTED_FAMILY ? (cell?.blindUnfiltered ?? this.bankBlindRate(kpId, form)) : this.bankBlindRate(kpId, form);
     return Math.max(
       this.pricing.trueByForm[form] ?? 0,
       this.pricing.trueByPhase[phase] ?? 0,
-      fam && fam.priceable ? fam.blind : this.bankBlindRate(kpId, form)
+      fam && fam.priceable ? fam.blind : cellRate
     );
   }
 
@@ -1021,10 +1245,13 @@ export class Mastery {
    */
   modelledGuess(kpId, band, form, phase, family = null) {
     const base = band.guess * Math.max(this.pricing.multByForm[form] ?? 1, this.pricing.multByPhase[phase] ?? 1);
-    const fam = family == null ? null : this.cell(kpId, form)?.families?.[family];
-    // A named, surviving family is priced at its own bound; anything else at the worst family the
-    // engine is still willing to serve. Both are >= the true blind rate of what was actually asked.
-    return Math.max(base, (fam && fam.priceable ? fam.blindUpper : this.cell(kpId, form)?.blindUpper) ?? 0);
+    const cell = this.cell(kpId, form);
+    const fam = family == null || family === UNREPORTED_FAMILY ? null : cell?.families?.[family];
+    // A named, surviving family is priced at its own bound; an UNREPORTED one at the worst bound in
+    // the cell including refused families; a prospective `null` at the worst SURVIVING bound, which
+    // is what the engine is still willing to serve. All three are >= the true rate of what was asked.
+    const cellUpper = family === UNREPORTED_FAMILY ? (cell?.blindUpperUnfiltered ?? cell?.blindUpper) : cell?.blindUpper;
+    return Math.max(base, (fam && fam.priceable ? fam.blindUpper : cellUpper) ?? 0);
   }
 
   /**
@@ -1067,6 +1294,13 @@ export class Mastery {
       masteryEligible: this.isMasteryEligible(kpId, form, phase, family),
       // Serve none of these. Each one is a generator family with a single memorised answer.
       avoidFamilies: this.refusedFamilies(kpId, form),
+      /**
+       * ...and if you serve one anyway, SAY SO. When this is true the engine will not score an
+       * item whose `family` is missing from `submit`'s outcome, because on a cell with refused
+       * families an unreported family cannot be told apart from a refused one. `Scheduler.serve()`
+       * is the sanctioned picker: it honours `avoidFamilies` and reports `family` for you.
+       */
+      requiresFamilyReport: this.requiresFamilyReport(kpId, form),
       // What the bank measured, and why the cell was refused if it was. A caller that serves an
       // item this engine will not score should be able to read the reason without guessing.
       bankBlindRate: cell ? cell.blind : null,
@@ -1219,6 +1453,35 @@ export class Mastery {
   /** The difficulty every probe item sits at: the standard's own difficulty, never below it. */
   testOutDifficulty(kpId) {
     return this.graph.centre(kpId) + this.testOutRule.difficultyOffset;
+  }
+
+  /**
+   * How long one node's probe takes, in the SCHEDULER'S OWN time box — `secondsPerItemByPhase.solo`,
+   * the same currency `Scheduler.estMinutes` and every "minutes" number in `review/measure/P32.mjs`
+   * are quoted in. Null when the node has no probe.
+   *
+   * This exists because "the 2-minute test-out" was a name, and a name is not a measurement.
+   */
+  testOutMinutes(kpId) {
+    const plan = this.testOutPlan(kpId);
+    if (!plan.eligible) return null;
+    const seconds = this.M.phases.secondsPerItemByPhase?.solo ?? 46;
+    return round6((plan.items * seconds) / 60);
+  }
+
+  /** The same across the whole graph, which is the number the product claim has to be judged on. */
+  testOutMinutesSummary() {
+    const mins = this.graph.ids.map((id) => this.testOutMinutes(id)).filter((x) => x != null).sort((a, b) => a - b);
+    if (!mins.length) return { nodes: 0, min: null, median: null, max: null, atOrUnder2: 0, secondsPerItem: null };
+    return {
+      nodes: mins.length,
+      min: mins[0],
+      median: mins[Math.floor(mins.length / 2)],
+      max: mins[mins.length - 1],
+      /** The claim the piece was named after. Reported, not assumed. */
+      atOrUnder2: mins.filter((m) => m <= 2).length,
+      secondsPerItem: this.M.phases.secondsPerItemByPhase?.solo ?? 46,
+    };
   }
 
   /**
@@ -1392,6 +1655,12 @@ export class Mastery {
     const correct = !!r.correct;
     const b = Number.isFinite(r.difficulty) ? r.difficulty : band.logit;
     const before = s.p;
+    /**
+     * WHICH GENERATOR FAMILY WAS ACTUALLY SERVED — or the sentinel that says nobody told us.
+     * `null`, `undefined` and absence all collapse here, so there is no spelling of "I decline to
+     * say" that gets priced at the surviving-family rate. See `UNREPORTED_FAMILY`.
+     */
+    const family = r.family ?? UNREPORTED_FAMILY;
 
     s.attempts += 1;
     this.stats.items += 1;
@@ -1440,7 +1709,7 @@ export class Mastery {
     // What the DIRECTOR chose is inert in BOTH directions: no posterior up or down, no counters,
     // no prerequisite credit, no theta movement. Punishing a learner for being taught cost an
     // earlier draft 34 percentage points of median Level 1 mastery.
-    if (!this.isScorable(kpId, form, phase, r.family ?? null)) {
+    if (!this.isScorable(kpId, form, phase, family)) {
       this.stats.unscoredItems += 1;
       s.unscored += 1;
       out.reason = !this.pricing.scoredForms.has(form)
@@ -1451,8 +1720,16 @@ export class Mastery {
             // choice: this form is fine in general and this item's family is not.
             !this.isCellPriceable(kpId, form)
             ? `unscored-cell:blind-${this.bankBlindRate(kpId, form).toFixed(3)}`
-            : `unscored-family:${r.family}:blind-${(this.cell(kpId, form)?.families?.[r.family]?.blind ?? 1).toFixed(3)}`;
-      if (out.reason.startsWith("unscored-cell") || out.reason.startsWith("unscored-family"))
+            : family === UNREPORTED_FAMILY
+              ? // ...and this one is a DELIVERY defect: the item may have been fine, but the
+                // presenter did not say which family it served on a cell that has families the
+                // engine refuses, so it cannot be told apart from one of them.
+                `unscored-unreported-family:${(this.cell(kpId, form)?.refusedFamilies ?? []).length}-refused-of-${
+                  Object.keys(this.cell(kpId, form)?.families ?? {}).length
+                }`
+              : `unscored-family:${String(family)}:blind-${(this.cell(kpId, form)?.families?.[family]?.blind ?? 1).toFixed(3)}`;
+      if (out.reason.startsWith("unscored-unreported-family")) this.stats.unreportedFamilyItems += 1;
+      if (out.reason.startsWith("unscored-cell") || out.reason.startsWith("unscored-family") || out.reason.startsWith("unscored-unreported"))
         this.stats.unpriceableCellItems += 1;
       this._bookkeep(s, out);
       this._emitRespond(out);
@@ -1480,7 +1757,7 @@ export class Mastery {
     }
 
     out.scored = true;
-    out.masteryEligible = this.isMasteryEligible(kpId, form, phase, r.family ?? null);
+    out.masteryEligible = this.isMasteryEligible(kpId, form, phase, family);
     // `credited` is the engine's own verdict on this response, and it is the ONLY thing any gate
     // is allowed to count. See `_bookkeep`.
     out.credited = correct && out.masteryEligible;
@@ -1496,7 +1773,7 @@ export class Mastery {
 
     // ---- BKT, §1.2. ONE guess prices both directions: using a smaller guess on the down-update
     // would be a second, quieter version of the clamping the caps forbid.
-    const guess = this.modelledGuess(kpId, band, form, phase, r.family ?? null);
+    const guess = this.modelledGuess(kpId, band, form, phase, family);
     const learn = this.learnRate(kpId);
     s.p = bktUpdate(s.p, correct, band.slip, guess, learn, 1);
     out.p = s.p;
@@ -1552,7 +1829,7 @@ export class Mastery {
     const kpId = node.id;
     const w1 = this.M.bkt.prerequisiteCreditWeight;
     /** Ground truth of the item that is paying: credit is never worth more than its own source. */
-    const sourceTrue = this.trueGuess(kpId, out.form, out.phase, r.family ?? null);
+    const sourceTrue = this.trueGuess(kpId, out.form, out.phase, r.family ?? UNREPORTED_FAMILY);
     const paid = [];
 
     // Distance 1 is the shipped §1.2 rule, unchanged: whatever the item says it exercised, or the
@@ -1973,6 +2250,21 @@ export class Mastery {
         failed: this.stats.testOutsFailed,
         itemsSpent: this.stats.testOutItems,
         gateOpensByTestOut: this.stats.gateOpensByTestOut,
+        /**
+         * HOW LONG THE PROBE ACTUALLY IS, in the scheduler's own time box, because "the 2-minute
+         * test-out" was a name and not a measurement. See `TEST_OUT`.
+         */
+        minutes: this.testOutMinutesSummary(),
+        /**
+         * Eligible probes whose bound is CONDITIONAL on the serving layer honouring
+         * `price.avoidFamilies`, with the leak priced both ways. Empty is the target state.
+         */
+        familyRisk: this.probeFamilyRisk,
+        /**
+         * Items the engine refused because nobody said which family they came from, on a cell that
+         * has refused families. Non-zero means something is serving without honouring the list.
+         */
+        unreportedFamilyItems: this.stats.unreportedFamilyItems,
       },
       issues: this.issues,
       graph: this.graph.stats(),
@@ -2348,7 +2640,20 @@ function deriveCellPricing(graph, M, pricing, audit, issues) {
       const fams = familyIndex[cell];
       if (!fams || !fams.length) {
         issues.push(`bank audit has no sample for "${cell}" — cell refused rather than assumed safe`);
-        cells[cell] = { blind: 1, blindUpper: 1, n: 0, distinct: 0, modalAnswer: null, priceable: false, reason: "not-audited", families: {}, refusedFamilies: [] };
+        cells[cell] = {
+          blind: 1,
+          blindUpper: 1,
+          blindUnfiltered: 1,
+          blindUpperUnfiltered: 1,
+          blindMixture: 1,
+          n: 0,
+          distinct: 0,
+          modalAnswer: null,
+          priceable: false,
+          reason: "not-audited",
+          families: {},
+          refusedFamilies: [],
+        };
         rejected.push({ cell, blind: null, reason: "not-audited" });
         continue;
       }
@@ -2380,10 +2685,31 @@ function deriveCellPricing(graph, M, pricing, audit, issues) {
       const blindUpper = kept.length ? Math.max(...kept.map((x) => x.upper)) : 1;
       const reason = kept.length ? null : `every generator family is above the caps (${fams.length} of ${fams.length})`;
 
+      /**
+       * ...and what a guesser gets if the refusal list is NOT honoured by whoever picks the item.
+       * Two numbers, because they answer two questions and the gap between them is large:
+       *
+       *   blindUnfiltered — the WORST family in the cell, refused or not. The bound: what a guesser
+       *                     gets if they are handed the softest thing the cell contains.
+       *   blindMixture    — the n-weighted mean over every family, i.e. what a guesser gets if
+       *                     families arrive in the proportion the audit drew them in. The estimate.
+       *
+       * These are what the TEST-OUT warning below is priced with. They are recorded on the cell
+       * rather than recomputed at the call site so a reviewer can read the size of the leak off
+       * `mastery.cell(kp, form)` without re-deriving anything.
+       */
+      const nAll = fams.reduce((a, x) => a + x.n, 0);
+      const blindUnfiltered = Math.max(...fams.map((x) => x.rate));
+      const blindUpperUnfiltered = Math.max(...fams.map((x) => x.upper));
+      const blindMixture = nAll ? fams.reduce((a, x) => a + (x.n / nAll) * x.rate, 0) : blindUnfiltered;
+
       cells[cell] = {
         blind,
         blindUpper,
-        n: fams.reduce((a, x) => a + x.n, 0),
+        blindUnfiltered: round6(blindUnfiltered),
+        blindUpperUnfiltered: round6(blindUpperUnfiltered),
+        blindMixture: round6(blindMixture),
+        n: nAll,
         distinct: fams.reduce((a, x) => a + x.distinct, 0),
         modalAnswer: kept.length ? kept.reduce((a, x) => (x.rate > a.rate ? x : a)).modalAnswer : null,
         priceable: reason === null,

@@ -1,9 +1,9 @@
 {
   "id": "P31",
-  "state": "building",
+  "state": "critique",
   "round": 2,
-  "gap": "Per-lesson loading has no caller in the shipped game: driving the real built app's Scheduler for 117 items pulled 0/32 group chunks and made 0 ItemBank.select calls; ensure/ensureLesson/prefetchAround are referenced only by review/measure/P31.mjs, so B1/B2/B4/C1 measure a path the product never executes. Bytes are real and reproduced (eager chunk 147.0->64.3 kB gz, first load 548.0->479.6, like-for-like -80.0), but 28.2 kB gz of the remaining 64.3 is removable dead weight: es+pl item strings -14.7, the 1152-item fingerprint spine -13.5 (measured by variant builds).",
-  "note": "Round 2: wiring ensureLesson into boot/62-itembank.js idle warm, splitting item locale table to en-only, precomputing bank fingerprint, adding FAILED backoff + issue subscriber",
+  "gap": "Section B measures the session in Node, where ItemBank eagerly loads every group at module init (ItemBank.js:377) and a chunk costs one already-resolved microtask -- so it reports 1 generated item in 36; driving the SAME shipped Scheduler + ItemBank singleton inside the real built page gives 4 generated-group-absent in 34 warmed and 10 in 34 cold. No claim measures or bounds the split's own side effect: the first 1-2 items on every knowledge point the boot warm did not cover come from the generator, not from the 36 authored items, and nothing marks that on submit.",
+  "note": "Round 3 build: boot/62-itembank.js now warms the frontier lesson via ensureLesson in requestIdleCallback (live: 3 chunks/7,895 B after ready, 0 before); item locale table split per language; bank fingerprint precomputed so the 1152-item spine is lazy; failed groups retried after 30 s with backoff; bankIssues.onIssue subscribed. First load 548.0 -> 454.6 kB gz. P31 22/22.",
   "evidence": [],
-  "updated": "2026-08-10T17:00:14.441Z"
+  "updated": "2026-08-10T17:33:59.719Z"
 }

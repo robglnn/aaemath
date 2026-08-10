@@ -1,0 +1,126 @@
+(node:44112) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+ "broken": null,
+ "ready": true,
+ "errors": [],
+ "bankWarnings": [
+  "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+  "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+  "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass."
+ ],
+ "failedRequests": [],
+ "groupChunksAtReady": [],
+ "groupChunksAfterSession": [
+  "eval-substitute-CIy76Axk.js",
+  "expr-anatomy-WYJhDm_0.js",
+  "oo-numeric-BjsVHueV.js",
+  "oo-structure-Bges-2rk.js",
+  "props-operations-zMhkLzfH.js",
+  "var-meaning-Ct12kn0-.js"
+ ],
+ "itemsServed": 34,
+ "steps": 35,
+ "blanks": 0,
+ "ms": 177,
+ "kpsTouched": [
+  "var-meaning",
+  "expr-anatomy",
+  "props-operations",
+  "oo-numeric",
+  "oo-structure",
+  "eval-substitute"
+ ],
+ "bySource": {
+  "generated/generated-group-absent": 10,
+  "catalogue/nearest-band": 3,
+  "catalogue/any-band": 21
+ },
+ "residentGroups": [
+  "var-meaning",
+  "expr-anatomy",
+  "oo-numeric",
+  "oo-structure",
+  "props-operations",
+  "eval-substitute"
+ ],
+ "failedGroups": [],
+ "degraded": [],
+ "issues": [],
+ "onBrokenKp": null,
+ "firstFive": [
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.relate/repair/m24vtf",
+   "source": "generated",
+   "relaxation": "generated-group-absent",
+   "correct": true,
+   "tex": {
+    "stem": "a,\\; b",
+    "given": [],
+    "working": [
+     "a,\\; b",
+     "5a = b"
+    ]
+   }
+  },
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.seat/generate/19ywrb4",
+   "source": "generated",
+   "relaxation": "generated-group-absent",
+   "correct": true,
+   "tex": {
+    "stem": "p",
+    "given": [
+     "p = 3"
+    ],
+    "working": null
+   }
+  },
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.relate/construct/n5wzld",
+   "source": "generated",
+   "relaxation": "generated-group-absent",
+   "correct": true,
+   "tex": {
+    "stem": "a,\\; b",
+    "given": [],
+    "working": null
+   }
+  },
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.twin/repair/qhpp93",
+   "source": "generated",
+   "relaxation": "generated-group-absent",
+   "correct": false,
+   "tex": {
+    "stem": "x + y = 4,\\quad x - y = 0",
+    "given": [],
+    "working": [
+     "x + y = 4",
+     "x = 0",
+     "y = 4"
+    ]
+   }
+  },
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.twin/repair/nxj7kj",
+   "source": "generated",
+   "relaxation": "generated-group-absent",
+   "correct": true,
+   "tex": {
+    "stem": "x + y = 16,\\quad x - y = 0",
+    "given": [],
+    "working": [
+     "x + y = 16",
+     "x = 4",
+     "y = 12"
+    ]
+   }
+  }
+ ]
+}

@@ -8,17 +8,17 @@
    "id": "A1",
    "claim": "the eager item-bank chunk shrank on the real build (npm run build, gzipped at vite's own level)",
    "pass": true,
-   "measured": "ItemBank-B5q9etEn.js 1616.3 kB / 147.0 kB gz  ->  ItemBank-AHuPsaEP.js 121.5 kB / 29.2 kB gz  (-117.8 kB gz)",
+   "measured": "ItemBank-B5q9etEn.js 1616.3 kB / 147.0 kB gz  ->  ItemBank-Bkv3MSq0.js 121.5 kB / 29.2 kB gz  (-117.8 kB gz)",
    "threshold": "> 60 kB gzipped removed from the eager chunk"
   },
   {
    "id": "A2",
    "claim": "FIRST LOAD — every chunk the page pulls before the first item, one locale, gzipped",
    "pass": true,
-   "measured": "548.0 kB gz -> 454.3 kB gz  (-93.7 kB gz, -17.1%). Raw 2974.7 kB -> 1555.5 kB.",
+   "measured": "548.0 kB gz -> 454.6 kB gz  (-93.5 kB gz, -17.1%). Raw 2974.7 kB -> 1556.2 kB.",
    "threshold": "> 55 kB gzipped off first load",
    "notes": [
-    "The after-tree carries 2 chunks that did not exist at the baseline commit (02-autotier, 90-flow), costing 13.0 kB gz — other pieces building in parallel. They ADD to the after number; the reduction is measured against that handicap.",
+    "The after-tree carries 2 chunks that did not exist at the baseline commit (02-autotier, 90-flow), costing 13.3 kB gz — other pieces building in parallel. They ADD to the after number; the reduction is measured against that handicap.",
     "Like for like — first load minus those new chunks — is 441.3 kB gz, a reduction of 106.8 kB gz."
    ]
   },
@@ -40,7 +40,7 @@
    "id": "A5",
    "claim": "the REAL built game reaches `ready` having requested ZERO item groups, ZERO spine and ONE locale — and still knows the whole course",
    "pass": true,
-   "measured": "at ready the page had made 30 requests (582.7 kB encoded): 0 group chunks, 0 spine chunks, item locale [\"items-en-BvtiMYOY.js\"]; the bank still reports 32 knowledge points, 1152 catalogue items, min 36/kp, 22 lessons",
+   "measured": "at ready the page had made 30 requests (583.1 kB encoded): 0 group chunks, 0 spine chunks, item locale [\"items-en-BvtiMYOY.js\"]; the bank still reports 32 knowledge points, 1152 catalogue items, min 36/kp, 22 lessons",
    "threshold": "0 group chunks, 0 spine chunks, exactly 1 item locale chunk on the critical path"
   },
   {
@@ -143,16 +143,16 @@
   },
   {
    "id": "E1",
-   "claim": "the per-lesson loader is CALLED from the shipped game, and the degradation channel has a subscriber — not just definitions",
+   "claim": "the per-lesson loader is CALLED from the shipped game — executable code, not a doc comment — and the degradation channel has a subscriber",
    "pass": true,
-   "measured": "outside its own definition, `warmFrontier` is referenced in [app/src/boot/62-itembank.js], `ensureLesson` in [app/src/boot/62-itembank.js], `prefetchAround` in [app/src/boot/62-itembank.js], and `bankIssues.onIssue` is assigned in [app/src/boot/62-itembank.js]",
-   "threshold": "a boot module calls warmFrontier, and something subscribes to bankIssues.onIssue"
+   "measured": "with comments stripped, `warmFrontier`/`warmFrontierWhenIdle` is CALLED in [app/src/boot/62-itembank.js], `ensure`/`ensureLesson` in [NOTHING], and `bankIssues.onIssue` is assigned in [app/src/boot/62-itembank.js]. Driving that entry point once reached ensureLesson x1, ensure x1, prefetchAround x1 and opened \"expressions-1\"",
+   "threshold": "a boot module calls warmFrontier; the call reaches ensureLesson and prefetchAround; onIssue has a subscriber"
   },
   {
    "id": "E2",
    "claim": "in the REAL built game the warm ran, off the critical path, on the lesson the ENGINE named — and pulled that lesson's chunks",
    "pass": true,
-   "measured": "learning.frontier() = [\"var-meaning\",\"oo-numeric\"]; the warm resolved lesson \"expressions-1\" from \"var-meaning\" in 7.9 ms and loaded 3 groups. The browser's resource timings show those exact 3 chunks (var-meaning-Ct12kn0-.js, oo-numeric-BjsVHueV.js, expr-anatomy-WYJhDm_0.js, 7895 B encoded) requested AFTER ready, none before it.",
+   "measured": "learning.frontier() = [\"var-meaning\",\"oo-numeric\"]; the warm resolved lesson \"expressions-1\" from \"var-meaning\" in 7.1 ms and loaded 3 groups. The browser's resource timings show those exact 3 chunks (var-meaning-Ct12kn0-.js, oo-numeric-BjsVHueV.js, expr-anatomy-WYJhDm_0.js, 7895 B encoded) requested AFTER ready, none before it.",
    "threshold": "warm ok, frontier-derived lesson, >0 group chunks, all after ready"
   },
   {
@@ -171,9 +171,9 @@
     "gzip": 147035
    },
    "after": {
-    "file": "ItemBank-AHuPsaEP.js",
+    "file": "ItemBank-Bkv3MSq0.js",
     "raw": 121500,
-    "gzip": 29237
+    "gzip": 29238
    }
   },
   "firstLoad": {
@@ -182,22 +182,22 @@
     "gzip": 548050
    },
    "after": {
-    "raw": 1555498,
-    "gzip": 454301
+    "raw": 1556228,
+    "gzip": 454575
    },
    "afterWholeBuild": {
-    "raw": 2616870,
-    "gzip": 595751
+    "raw": 2617600,
+    "gzip": 596025
    },
    "chunksNotInBaseline": {
     "files": [
-     "02-autotier-BmBJo9Qo.js",
-     "90-flow-DiZ92Djp.js"
+     "02-autotier-BDgdNHd-.js",
+     "90-flow-DxbVchMP.js"
     ],
-    "raw": 39564,
-    "gzip": 13020
+    "raw": 40294,
+    "gzip": 13284
    },
-   "likeForLikeAfterGzip": 441281
+   "likeForLikeAfterGzip": 441291
   },
   "groupChunks": {
    "count": 32,
@@ -440,12 +440,12 @@
    "ready": true,
    "errors": [],
    "warm": {
-    "at": 1786382240326,
+    "at": 1786382619017,
     "kpId": "var-meaning",
     "lesson": "expressions-1",
     "groups": 3,
     "failed": [],
-    "ms": 7.9,
+    "ms": 7.1,
     "reason": "ok"
    },
    "frontier": [
@@ -460,7 +460,7 @@
       "items-en-BvtiMYOY.js"
      ],
      "spineChunks": [],
-     "encodedBytes": 582717
+     "encodedBytes": 583143
     },
     "warmPulled": {
      "requests": 3,
@@ -505,20 +505,20 @@
     "lessons": 22,
     "residentGroups": [
      "oo-numeric",
-     "expr-anatomy",
      "var-meaning",
+     "expr-anatomy",
      "oo-structure"
     ],
     "degraded": [],
     "issues": 0,
     "lastIssue": null,
     "warm": {
-     "at": 1786382240326,
+     "at": 1786382619017,
      "kpId": "var-meaning",
      "lesson": "expressions-1",
      "groups": 3,
      "failed": [],
-     "ms": 7.9,
+     "ms": 7.1,
      "reason": "ok"
     },
     "itemLocale": "en",
@@ -858,18 +858,27 @@
    ]
   },
   "callers": {
-   "ensureLesson": [
+   "warmCallers": [
     "app/src/boot/62-itembank.js"
    ],
-   "prefetchAround": [
+   "ensureCallers": [],
+   "subscribers": [
     "app/src/boot/62-itembank.js"
    ],
-   "warmFrontier": [
-    "app/src/boot/62-itembank.js"
-   ],
-   "bankIssues.onIssue": [
-    "app/src/boot/62-itembank.js"
-   ]
+   "chain": {
+    "ensureLesson": 1,
+    "ensure": 1,
+    "prefetchAround": 1
+   },
+   "spyWarm": {
+    "at": 1786382727279,
+    "kpId": "var-meaning",
+    "lesson": "expressions-1",
+    "groups": 3,
+    "failed": [],
+    "ms": 0.4,
+    "reason": "ok"
+   }
   },
   "fingerprint": {
    "scalar": "d6e2537d",

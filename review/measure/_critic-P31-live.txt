@@ -1,0 +1,46 @@
+(node:8780) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "wrote": "review\\measure\\evidence\\P31-live-probe.json",
+  "ready": true,
+  "warm": {
+    "at": 1786382809285,
+    "kpId": "var-meaning",
+    "lesson": "expressions-1",
+    "groups": 3,
+    "failed": [],
+    "ms": 7.7,
+    "reason": "ok"
+  },
+  "classified": {
+    "criticalPath": {
+      "requests": 30,
+      "groupChunks": [],
+      "itemLocaleChunks": [
+        "items-en-BvtiMYOY.js"
+      ],
+      "spineChunks": [],
+      "encodedBytes": 583143
+    },
+    "warmPulled": {
+      "requests": 3,
+      "groupChunks": [
+        "var-meaning-Ct12kn0-.js",
+        "expr-anatomy-WYJhDm_0.js",
+        "oo-numeric-BjsVHueV.js"
+      ],
+      "itemLocaleChunks": [],
+      "spineChunks": [],
+      "encodedBytes": 7895
+    },
+    "idlePrefetched": {
+      "requests": 1,
+      "groupChunks": [
+        "oo-structure-Bges-2rk.js"
+      ],
+      "itemLocaleChunks": [],
+      "spineChunks": [],
+      "encodedBytes": 2619
+    }
+  }
+}

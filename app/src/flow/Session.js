@@ -125,8 +125,17 @@ export const ARC = {
   breakMinutes: 5,
 };
 
-/** The longest atomic beat in the design: `spacing.retentionCheck.items`. Used for reservations. */
+/** The longest certification event in the design: `spacing.retentionCheck.items`. */
 const MAX_EVENT_ITEMS = 4;
+
+/**
+ * The longest ATOMIC run the engine can hand back at all, used only for the headroom this layer
+ * writes into `Scheduler.sessionMinutes`. A test-out probe (`Mastery.testOutPlan().items`) is
+ * longer than a retention check on several nodes, and a headroom that only covered a check would
+ * let the engine's own time box expire in the middle of a probe — the exact failure this layer
+ * exists to stop. Over-writing headroom costs nothing: this layer, not the box, ends the sitting.
+ */
+const MAX_ATOMIC_ITEMS = 8;
 
 /** The item cost the plan is packed with. A solo item, i.e. the expensive case. */
 const REFERENCE_ITEM_SECONDS = 46;
@@ -206,7 +215,10 @@ export class Session {
     this.sittings = 0;
     /** How many of those were opened by `resume()` rather than by a fresh page. */
     this.resumes = 0;
+    /** What the PREVIOUS sitting closed on, when this one was opened by `resume()`. */
     this._resumedFrom = null;
+    this._pendingResumeFrom = null;
+    this.lastResumeReason = null;
 
     // --- work in flight ----------------------------------------------------------------------
     this.beat = null;
@@ -223,7 +235,7 @@ export class Session {
     /** Counted so the summary is a fact rather than a feeling. */
     this.tally = { items: 0, stood: 0, fell: 0, unscored: 0, certified: [], set: [], lapsed: [] };
     /** Invariants a reviewer can read instead of taking on trust. See `next()`. */
-    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0, nextBeatCalled: 0, nextBeatHit: 0 };
+    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0, nextBeatCalled: 0, nextBeatHit: 0, worstResponseExcessSeconds: 0 };
     /** The head of the live plan, checked against the beat the engine actually opens next. */
     this._nextForecast = null;
     this._statusAtOpen = new Map();
@@ -436,6 +448,19 @@ export class Session {
     return m.session - (s.provisionalSession ?? 0) >= rc.minInterveningSessions;
   }
 
+  /** How many knowledge points have a scheduled event whose clock has come up. */
+  dueCount() {
+    const m = this.mastery;
+    if (!m) return 0;
+    let n = 0;
+    const now = m.now();
+    for (const id of this.graph.ids) {
+      const s = m.stateOf(id);
+      if (Number.isFinite(s.nextEventAt) && s.nextEventAt <= now) n += 1;
+    }
+    return n;
+  }
+
   /**
    * Every beat the engine could legally serve, **in the order §4 will serve them**.
    *
@@ -454,11 +479,24 @@ export class Session {
    *   - `soon`  — the pull-forward queue (§4.1), which the engine reaches for ONLY when there is
    *               nothing to acquire. Disjoint from `due` by construction.
    *
-   * Everything here is a read of published state. Nothing reaches into the Scheduler's privates.
+   * Two things outrank all three, because `Scheduler.next()` answers them before it ever calls
+   * `_choose()`, and they are returned as `first`:
+   *
+   *   - a certification event carried across a sitting boundary (`mastery.inFlight[0]`);
+   *   - an open **test-out probe** (`mastery.inFlight[1]`), which is atomic for a sharper reason
+   *     than a retention check: its whole integrity is one run of consecutive unaided items.
+   *
+   * The probe is also why an acquisition beat is not always `blockLength` items long. A first
+   * encounter that has earned a probe is served as `testOutPlan().items` unaided items — up to six,
+   * more than the longest check — and modelling it as a three-item block did two bad things at
+   * once: the forecast missed every boundary inside a probe, and the BEAT closed halfway through
+   * one, which put "three in a row" at risk of becoming "three, eventually" whenever the ceiling
+   * arrived in the middle. `testOutOffered` and `testOutPlan` are both published; nothing here
+   * reaches into the Scheduler's privates.
    */
   candidates() {
     const m = this.mastery;
-    if (!m) return { due: [], acquire: [], soon: [] };
+    if (!m) return { first: null, due: [], acquire: [], soon: [] };
     const g = this.graph;
     const now = m.now();
     const sp = m.M.spacing;
@@ -505,17 +543,34 @@ export class Session {
         const reach = g.descendants(id).size / g.maxDescendants;
         const fresh = 1 - Math.min(1, s.attempts / 12);
         const cont = id === inFlight ? 1 : 0;
+        const probe = m.testOutOffered(id) ? m.testOutPlan(id) : null;
         return {
           kind: "acquire",
           kpId: id,
-          items: this.blockLength,
-          atomic: false,
+          items: probe ? probe.items : this.blockLength,
+          atomic: !!probe,
+          testOut: !!probe,
           frontierScore: 0.4 * fit + 0.3 * reach + 0.15 * fresh + 0.15 * cont,
         };
       })
       .sort((a, b) => b.frontierScore - a.frontierScore || (a.kpId < b.kpId ? -1 : 1));
 
-    return { due: queue(true), acquire, soon: acquire.length ? [] : queue(false) };
+    // What `Scheduler.next()` answers before it consults §4 at all.
+    let first = null;
+    const openEventKp = m.inFlight?.[0] ?? null;
+    const openProbeKp = m.inFlight?.[1] ?? null;
+    if (openEventKp) {
+      const ev = m.eventOf(openEventKp);
+      if (ev && ev.served < ev.items)
+        first = { kind: ev.mode, kpId: openEventKp, items: Math.max(1, ev.items - ev.served), atomic: true };
+    }
+    if (!first && openProbeKp) {
+      const t = m.testOutOf(openProbeKp);
+      if (t && !t.done)
+        first = { kind: "acquire", kpId: openProbeKp, items: Math.max(1, t.items - t.index), atomic: true, testOut: true };
+    }
+
+    return { first, due: queue(true), acquire, soon: acquire.length ? [] : queue(false) };
   }
 
   /**
@@ -537,13 +592,17 @@ export class Session {
 
     const ahead = [];
     let items = 0;
-    // The cap is a session-wide ratio, so the forecast starts from what has already been served.
-    let eventItems = this.beats.filter((b) => b.kind !== "acquire").reduce((a, b) => a + b.served, 0);
-    let servedItems = this.itemsServed;
+    // The cap is a session-wide ratio and the Scheduler keeps the two counters itself, published
+    // on its probe. Re-deriving them from this layer's beat list was a second copy of somebody
+    // else's bookkeeping, and a second copy of a counter is how a forecast drifts.
+    const sch = this.scheduler;
+    let eventItems = sch?.reviewItemsThisSession ?? 0;
+    let servedItems = sch?.itemsThisSession ?? 0;
     let di = 0;
     let ai = 0;
     let si = 0;
     let guard = 0;
+    let first = work.first;
     // After a block ends, §4 picks the best-scoring frontier node again — and the two-open cap
     // means that is a rotation over at most two nodes, not a walk down the whole frontier.
     const span = Math.min(2, work.acquire.length);
@@ -553,7 +612,10 @@ export class Session {
       // once the frontier is exhausted.
       const underCap = eventItems < (servedItems + 1) / 3;
       let next = null;
-      if ((underCap || !acquisitionRemains) && di < work.due.length) next = work.due[di++];
+      if (first) {
+        next = first;
+        first = null;
+      } else if ((underCap || !acquisitionRemains) && di < work.due.length) next = work.due[di++];
       else if (acquisitionRemains) next = work.acquire[ai++ % span];
       else if (si < work.soon.length) next = work.soon[si++];
       if (!next) break;
@@ -642,7 +704,7 @@ export class Session {
     this._servedAt = null;
     this._lastSubmitAt = null;
     this.tally = { items: 0, stood: 0, fell: 0, unscored: 0, certified: [], set: [], lapsed: [] };
-    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0, nextBeatCalled: 0, nextBeatHit: 0 };
+    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0, nextBeatCalled: 0, nextBeatHit: 0, worstResponseExcessSeconds: 0 };
     this._nextForecast = null;
 
     // `beginSession` is P16's: it increments the session counter and resets the per-node model
@@ -684,7 +746,11 @@ export class Session {
     const last = this.save?.lastSession() ?? null;
     const open = m.inFlight.filter(Boolean);
     const s = m.summary();
-    const due = m.probe().dueNow;
+    // Counted here rather than read off `Mastery.probe()`. One line of a re-entry does not justify
+    // building another piece's entire probe payload — and a whole-probe call means every field P16
+    // ever adds to it becomes a way for this layer to throw during boot. `dueCount()` reads the
+    // same two published fields `_admit` reads.
+    const due = this.dueCount();
 
     if (open.length) out.push({ ...line("sys.session.open.working"), refs: open.map((id) => `kp.${id}.title`) });
     // Back from a break is a different re-entry from back the next day: nothing has changed, and
@@ -767,8 +833,12 @@ export class Session {
     // Fold the request into the beat. The engine may pre-empt an acquisition block with a due
     // event; an item boundary inside a block is a safe place for that, an atomic event is not,
     // and the Scheduler never interleaves one.
+    // A failed probe hands the learner back ordinary teaching on the SAME node in the SAME mode,
+    // so `testOut` is part of the beat's identity: without it, the six-item probe beat swallows the
+    // three-item block that follows it and the block never closes.
+    const testOut = req.testOut === true;
     const sameBeat =
-      this.beat && !this.beat.done && this.beat.kpId === req.kpId && this.beat.kind === req.mode;
+      this.beat && !this.beat.done && this.beat.kpId === req.kpId && this.beat.kind === req.mode && this.beat.testOut === testOut;
     if (!sameBeat) {
       if (this.beat && !this.beat.done) this._closeBeat("preempted");
       // Score the live forecast against what the engine actually opened, once per beat.
@@ -781,8 +851,13 @@ export class Session {
         index: this.beats.length,
         kind: req.mode,
         kpId: req.kpId,
-        atomic: req.mode !== "acquire",
-        items: req.mode === "acquire" ? this.blockLength : (req.itemsInEvent ?? MAX_EVENT_ITEMS),
+        testOut,
+        // A probe is atomic in the strongest sense in the design: `Scheduler._probeRequest` calls
+        // it "ONE run of consecutive unaided items", and stopping it at an item boundary turns
+        // "three in a row" into "three, eventually". So it is carried like a retention check, never
+        // cut like a block.
+        atomic: testOut || req.mode !== "acquire",
+        items: testOut ? (req.itemsInEvent ?? MAX_ATOMIC_ITEMS) : req.mode === "acquire" ? this.blockLength : (req.itemsInEvent ?? MAX_EVENT_ITEMS),
         served: 0,
         stood: 0,
         done: false,
@@ -809,7 +884,11 @@ export class Session {
     // this learner has ever given is the learner still working, and taking the claim away from
     // them mid-thought is the one thing this layer will not do. `review/measure/P33.mjs` reports
     // this counter and the residual overrun separately, so the two are never confused.
-    if (this.elapsedSeconds + this.itemSecondsCeiling() > this.arc.maxMinutes * 60) this.stats.startsOutsideCeiling += 1;
+    // What this item was PROMISED to cost at the moment it was served, kept so the difference
+    // between "the layer mis-planned" and "the learner was still working" is arithmetic rather
+    // than an argument. See `stats.worstResponseExcessSeconds`.
+    this._servedCeiling = this.itemSecondsCeiling();
+    if (this.elapsedSeconds + this._servedCeiling > this.arc.maxMinutes * 60) this.stats.startsOutsideCeiling += 1;
     return req;
   }
 
@@ -826,6 +905,25 @@ export class Session {
     this._settle(nowMs);
 
     const itemMs = this._servedAt == null ? 0 : Math.max(0, nowMs - this._servedAt - this._awayThisItem);
+    /**
+     * How far this ONE response ran past what admission promised it would cost.
+     *
+     * This is the number that decides whether an overrun is the layer's fault or nobody's. The
+     * ceiling is a start guarantee, not an impossibility proof — nothing bounds a single response
+     * from above, because a learner may put the tablet down mid-claim and the one thing this layer
+     * will not do is take the claim off the slab while they are still thinking. So when a sitting
+     * lands past twenty-five minutes there are exactly two possibilities, and they are told apart
+     * by arithmetic: if the overrun is no larger than this, the whole of it is one response; if it
+     * is larger, the layer's own reservation was wrong and that is a defect.
+     * `review/measure/P33.mjs` checks the inequality on every out-of-band sitting rather than
+     * asserting a threshold in minutes.
+     */
+    if (itemMs > 0 && this._servedCeiling != null)
+      this.stats.worstResponseExcessSeconds = Math.max(
+        this.stats.worstResponseExcessSeconds,
+        itemMs / 1000 - this._servedCeiling
+      );
+    this._servedCeiling = null;
     // An item the learner walked away from is not evidence about their pace.
     if (itemMs > 0 && this._awayThisItem === 0) this._calibrate(req, itemMs);
     this._awayThisItem = 0;
@@ -849,10 +947,14 @@ export class Session {
     }
 
     // Beat completion. An atomic event ends when its items are spent; a block ends at its length,
-    // or early if the node left `learning` (the Scheduler drops the block then too).
-    const done = this.beat.atomic
-      ? this.beat.served >= this.beat.items
-      : this.beat.served >= this.beat.items || this.mastery.status(this.beat.kpId) !== "learning";
+    // or early if the node left `learning` (the Scheduler drops the block then too). A probe ends
+    // when the ENGINE says it is over — one wrong answer closes it, which is the "failing costs
+    // almost nothing" half of the design, and the beat must end where the probe does.
+    const done = this.beat.testOut
+      ? (this.mastery.testOutOf(this.beat.kpId)?.done ?? true) || this.beat.served >= this.beat.items
+      : this.beat.atomic
+        ? this.beat.served >= this.beat.items
+        : this.beat.served >= this.beat.items || this.mastery.status(this.beat.kpId) !== "learning";
     if (done) this._closeBeat("complete");
     return result;
   }
@@ -879,9 +981,15 @@ export class Session {
    * Admission — the only place the arc is enforced, and it only ever runs at a beat boundary.
    *
    * The reservation is the worst case the engine could hand back next, priced at this learner's
-   * high quantile: four items if a certification event could come up, otherwise a block. Knowing
-   * WHICH is a read of published state (`dueNow`, `frontier`, `status`), not a re-implementation
-   * of §4's selection.
+   * observed high quantile: four items if a certification event could come up, a block otherwise,
+   * and up to six if a node on the frontier has earned a test-out probe. Knowing WHICH is a read of
+   * published state (`dueNow`, `frontier`, `status`, `testOutOffered`), not a re-implementation of
+   * §4's selection.
+   *
+   * The ORDER of the tests below is load-bearing and round 1 got it wrong. The floor comes before
+   * the break, and the aim comes after both. Reading it top to bottom: the hard ceiling, the
+   * fifteen-minute promise, the break, the "will the next beat finish" reservation, the closing
+   * win, and the aim.
    */
   _admit() {
     const elapsed = this.elapsedSeconds;
@@ -891,16 +999,21 @@ export class Session {
 
     const m = this.mastery;
     const acquirable = m.frontier().filter((id) => m.status(id) === "learning" && m.masteryFormsFor(id).length > 0);
-    const nowMin = m.now();
-    let dueNow = 0;
-    for (const id of this.graph.ids) {
-      const s = m.stateOf(id);
-      if (Number.isFinite(s.nextEventAt) && s.nextEventAt <= nowMin) dueNow += 1;
-    }
+    const dueNow = this.dueCount();
     // An event can only be next if something is due, or if the acquisition pool is empty and the
     // pull-forward rule (§4.1) is about to reach for the soonest scheduled one.
     const couldBeEvent = dueNow > 0 || acquirable.length === 0;
-    const worstItems = couldBeEvent ? MAX_EVENT_ITEMS : this.blockLength;
+    // A test-out probe is up to six unaided items and it is atomic, so on a node that has earned
+    // one it is the LONGEST thing the engine can hand back — longer than a retention check. A
+    // reservation that only priced a four-item check was under-reserving on exactly the beat a
+    // learner is most likely to be handed on a first encounter.
+    let probeItems = 0;
+    for (const id of acquirable) if (m.testOutOffered(id)) probeItems = Math.max(probeItems, m.testOutPlan(id).items);
+    const worstItems = Math.max(
+      couldBeEvent ? MAX_EVENT_ITEMS : 0,
+      acquirable.length ? Math.max(this.blockLength, probeItems) : 0,
+      1
+    );
     const worstSeconds = this.beatSecondsHigh(worstItems);
     const fitsWorst = elapsed + worstSeconds <= max;
     // The FIRST item of a beat is the one no interior check protects, so it is gated at the same
@@ -944,10 +1057,23 @@ export class Session {
     // it sits after the floor and not before it.
     if (!fitsWorst) return { admit: false, reason: "arc-complete" };
 
-    // Closing window: never OPEN a knowledge point the learner has not met. That beat begins with
-    // a `model` item — the world performing the algebra — and a sitting that ends on a
-    // demonstration ends on somebody else's win.
-    const warm = acquirable.filter((id) => m.stateOf(id).attempts > 0);
+    /**
+     * Closing window: never end a sitting on somebody else's win.
+     *
+     * The rule is about the FIRST ITEM of the last beat, not about novelty. A knowledge point the
+     * learner has never met normally opens with a `model` item — the world performing the algebra
+     * while the learner makes the last move — and closing there means the last thing that happened
+     * was the world being clever. So a node with `attempts > 0` is warm.
+     *
+     * **A node that has earned a test-out probe is warm too**, and that is not a loophole. A probe
+     * item is an ordinary solo item at the standard's own difficulty with no scaffold at all —
+     * `Scheduler._probeRequest` is explicit that it "cannot be cheaper to answer than the items it
+     * replaces". Closing on one is closing on an unaided answer, which is the most completely the
+     * learner's own win that this system produces. Without this clause the rule reads "never end on
+     * a fresh node" rather than "never end on a demonstration", which is a different and worse
+     * rule — it would refuse the single best ending available on a first encounter.
+     */
+    const warm = acquirable.filter((id) => m.stateOf(id).attempts > 0 || m.testOutOffered(id));
     const nearEnd = elapsed + worstSeconds > target;
     if (nearEnd && !couldBeEvent && warm.length === 0) return { admit: false, reason: "no-closing-win" };
 
@@ -977,7 +1103,7 @@ export class Session {
     const sch = this.scheduler;
     if (!sch) return;
     const remainingInBeat = beatOpen && this.beat ? Math.max(0, this.beat.items - this.beat.served) : 0;
-    const headroom = (remainingInBeat + (beatOpen ? 0 : MAX_EVENT_ITEMS) + 1) * REFERENCE_ITEM_SECONDS;
+    const headroom = (remainingInBeat + (beatOpen ? 0 : MAX_ATOMIC_ITEMS) + 1) * REFERENCE_ITEM_SECONDS;
     sch.sessionMinutes = (sch.secondsSpent + headroom) / 60;
   }
 
@@ -1124,7 +1250,10 @@ export class Session {
       level1Percent: m ? m.summary().level1Percent : null,
       closeReason: this.closeReason,
       closingWin: this.phase === "closed" ? this.closingWin : null,
-      lines: phase === "close" ? this.closing : phase === "open" ? this.opening : [],
+      // A HUD offering the way back in wants the same line the close carried, not a blank.
+      lines: phase === "close" || phase === "break" ? this.closing : phase === "open" ? this.opening : [],
+      /** Only on `break`: the sitting is over and the next one is one `resume()` away. */
+      resumable: phase === "break" ? this.resumable : undefined,
     };
   }
 
@@ -1193,6 +1322,8 @@ export class Session {
             kind: this.beat.kind,
             kpId: this.beat.kpId,
             atomic: this.beat.atomic,
+            /** A test-out probe. Atomic for a sharper reason than a check — see `candidates()`. */
+            testOut: this.beat.testOut === true,
             served: this.beat.served,
             items: this.beat.items,
             done: this.beat.done,
@@ -1219,6 +1350,7 @@ export class Session {
         resumes: this.resumes,
         resumable: this.resumable,
         resumedFrom: this._resumedFrom,
+        lastResumeReason: this.lastResumeReason,
         breakPending: this._breakPending,
         breakMinutes: this.arc.breakMinutes,
       },

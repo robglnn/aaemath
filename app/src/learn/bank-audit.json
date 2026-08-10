@@ -1,13 +1,13 @@
 {
- "version": 2,
- "fingerprint": "d6e2537d",
+ "version": 3,
+ "fingerprint": "c01e9128",
  "perCell": 192,
  "window": 40,
  "generatedAt": null,
- "sampled": 29754,
+ "sampled": 54796,
  "mixture": {
   "catalogue": 19032,
-  "generated": 10722
+  "generated": 35764
  },
  "notExecuted": [],
  "families": {
@@ -27,10 +27,10 @@
      "modalAnswer": "3"
     },
     "generated": {
-     "n": 64,
-     "rate": 0.09375,
-     "upper": 0.18982879693645915,
-     "modalAnswer": "14"
+     "n": 120,
+     "rate": 0.058333333333333334,
+     "upper": 0.11552592091113272,
+     "modalAnswer": "2"
     }
    }
   },
@@ -50,10 +50,10 @@
      "modalAnswer": "x = 9,\\; y = 9"
     },
     "generated": {
-     "n": 37,
-     "rate": 0.08108108108108109,
-     "upper": 0.21300679483709983,
-     "modalAnswer": "x = 4,\\; y = 4"
+     "n": 51,
+     "rate": 0.058823529411764705,
+     "upper": 0.15924626155208976,
+     "modalAnswer": "x = 9,\\; y = 9"
     }
    }
   },
@@ -96,9 +96,9 @@
      "modalAnswer": "2: g = 11"
     },
     "generated": {
-     "n": 66,
+     "n": 120,
      "rate": 0,
-     "upper": 0.05500255783352154,
+     "upper": 0.03101916689287469,
      "modalAnswer": null
     }
    }
@@ -107,7 +107,7 @@
    "n": 5,
    "distinct": 5,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.2424940095530979,
    "modalAnswer": "2: a = 17b",
    "executed": true,
    "source": "catalogue",
@@ -142,9 +142,9 @@
      "modalAnswer": "2: x = 8"
     },
     "generated": {
-     "n": 33,
-     "rate": 0.06060606060606061,
-     "upper": 0.19606244953268473,
+     "n": 50,
+     "rate": 0.06,
+     "upper": 0.16217091796874428,
      "modalAnswer": "2: x = 8"
     }
    }
@@ -154,7 +154,7 @@
    "distinct": 5,
    "rate": 0.2,
    "upper": 0.2,
-   "modalAnswer": "a = 12; b = 12",
+   "modalAnswer": "a = 4; b = 4",
    "executed": true,
    "source": "catalogue",
    "sources": {
@@ -162,7 +162,7 @@
      "n": 5,
      "rate": 0.2,
      "upper": 0.2,
-     "modalAnswer": "a = 12; b = 12"
+     "modalAnswer": "a = 4; b = 4"
     },
     "generated": {
      "n": 120,
@@ -177,7 +177,7 @@
    "distinct": 6,
    "rate": 0.16666666666666666,
    "upper": 0.16666666666666666,
-   "modalAnswer": "42",
+   "modalAnswer": "22",
    "executed": true,
    "source": "catalogue",
    "sources": {
@@ -185,12 +185,12 @@
      "n": 6,
      "rate": 0.16666666666666666,
      "upper": 0.16666666666666666,
-     "modalAnswer": "42"
+     "modalAnswer": "22"
     },
     "generated": {
-     "n": 43,
-     "rate": 0.046511627906976744,
-     "upper": 0.1545549812336292,
+     "n": 120,
+     "rate": 0.03333333333333333,
+     "upper": 0.0825803380922108,
      "modalAnswer": "16"
     }
    }
@@ -200,7 +200,7 @@
    "distinct": 6,
    "rate": 0.16666666666666666,
    "upper": 0.16666666666666666,
-   "modalAnswer": "4",
+   "modalAnswer": "12",
    "executed": true,
    "source": "catalogue",
    "sources": {
@@ -208,13 +208,13 @@
      "n": 6,
      "rate": 0.16666666666666666,
      "upper": 0.16666666666666666,
-     "modalAnswer": "4"
+     "modalAnswer": "12"
     },
     "generated": {
-     "n": 45,
-     "rate": 0.044444444444444446,
-     "upper": 0.1482751088465432,
-     "modalAnswer": "10"
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
+     "modalAnswer": "24"
     }
    }
   },
@@ -234,9 +234,9 @@
      "modalAnswer": "10"
     },
     "generated": {
-     "n": 25,
-     "rate": 0.28,
-     "upper": 0.4757660534777354,
+     "n": 93,
+     "rate": 0.12903225806451613,
+     "upper": 0.21211788143601132,
      "modalAnswer": "12"
     }
    }
@@ -257,10 +257,10 @@
      "modalAnswer": "2: 14 + 2"
     },
     "generated": {
-     "n": 41,
-     "rate": 0.07317073170731707,
-     "upper": 0.19427448662838706,
-     "modalAnswer": "2: 14 + 4"
+     "n": 120,
+     "rate": 0.041666666666666664,
+     "upper": 0.09384085288517821,
+     "modalAnswer": "2: 12 + 10"
     }
    }
   },
@@ -280,10 +280,10 @@
      "modalAnswer": "2: 14 + 2"
     },
     "generated": {
-     "n": 31,
-     "rate": 0.0967741935483871,
-     "upper": 0.24899938594300405,
-     "modalAnswer": "2: 14 + 4"
+     "n": 110,
+     "rate": 0.11818181818181818,
+     "upper": 0.19175045082000478,
+     "modalAnswer": "2: 2 \\cdot 6"
     }
    }
   },
@@ -303,10 +303,10 @@
      "modalAnswer": "2: 14 + 2"
     },
     "generated": {
-     "n": 40,
-     "rate": 0.05,
-     "upper": 0.16503877495105868,
-     "modalAnswer": "2: 14 + 2"
+     "n": 120,
+     "rate": 0.058333333333333334,
+     "upper": 0.11552592091113272,
+     "modalAnswer": "2: 2 \\cdot 6"
     }
    }
   },
@@ -334,10 +334,10 @@
    }
   },
   "expr-anatomy|construct|expr-anatomy.count": {
-   "n": 55,
+   "n": 120,
    "distinct": 1,
    "rate": 1,
-   "upper": 1,
+   "upper": 0.9999999999999998,
    "modalAnswer": "3",
    "executed": true,
    "source": "generated",
@@ -349,9 +349,9 @@
      "modalAnswer": "3"
     },
     "generated": {
-     "n": 55,
+     "n": 120,
      "rate": 1,
-     "upper": 1,
+     "upper": 0.9999999999999998,
      "modalAnswer": "3"
     }
    }
@@ -372,7 +372,7 @@
      "modalAnswer": "1"
     },
     "generated": {
-     "n": 25,
+     "n": 35,
      "rate": 1,
      "upper": 1,
      "modalAnswer": "1"
@@ -383,7 +383,7 @@
    "n": 5,
    "distinct": 5,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.20218999125158335,
    "modalAnswer": "-8x",
    "executed": true,
    "source": "catalogue",
@@ -395,18 +395,18 @@
      "modalAnswer": "-8x"
     },
     "generated": {
-     "n": 32,
-     "rate": 0.1875,
-     "upper": 0.353091553475614,
-     "modalAnswer": "-8x"
+     "n": 104,
+     "rate": 0.125,
+     "upper": 0.20218999125158335,
+     "modalAnswer": "-9x"
     }
    }
   },
   "expr-anatomy|repair|expr-anatomy.count": {
-   "n": 54,
+   "n": 120,
    "distinct": 1,
    "rate": 1,
-   "upper": 1,
+   "upper": 0.9999999999999998,
    "modalAnswer": "2: 3",
    "executed": true,
    "source": "generated",
@@ -418,9 +418,9 @@
      "modalAnswer": "2: 3"
     },
     "generated": {
-     "n": 54,
+     "n": 120,
      "rate": 1,
-     "upper": 1,
+     "upper": 0.9999999999999998,
      "modalAnswer": "2: 3"
     }
    }
@@ -441,7 +441,7 @@
      "modalAnswer": "2: 1"
     },
     "generated": {
-     "n": 25,
+     "n": 35,
      "rate": 1,
      "upper": 1,
      "modalAnswer": "2: 1"
@@ -464,16 +464,16 @@
      "modalAnswer": "2: -9x"
     },
     "generated": {
-     "n": 34,
-     "rate": 0.20588235294117646,
-     "upper": 0.3679838819198484,
-     "modalAnswer": "2: -3x"
+     "n": 104,
+     "rate": 0.1346153846153846,
+     "upper": 0.21335058891623804,
+     "modalAnswer": "2: -2x"
     }
    }
   },
   "expr-anatomy|generate|expr-anatomy.count": {
    "n": 120,
-   "distinct": 171,
+   "distinct": 514,
    "rate": 1,
    "upper": 0.9999999999999998,
    "modalAnswer": "9x + 2y - 8",
@@ -510,9 +510,9 @@
      "modalAnswer": "24"
     },
     "generated": {
-     "n": 27,
-     "rate": 0.037037037037037035,
-     "upper": 0.18283466100127826,
+     "n": 30,
+     "rate": 0.03333333333333333,
+     "upper": 0.16670391146115726,
      "modalAnswer": "12"
     }
    }
@@ -521,7 +521,7 @@
    "n": 5,
    "distinct": 5,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.21531080540298045,
    "modalAnswer": "-81",
    "executed": true,
    "source": "catalogue",
@@ -533,9 +533,9 @@
      "modalAnswer": "-81"
     },
     "generated": {
-     "n": 13,
+     "n": 14,
      "rate": 0,
-     "upper": 0.22809537513180025,
+     "upper": 0.21531080540298045,
      "modalAnswer": null
     }
    }
@@ -556,10 +556,10 @@
      "modalAnswer": "12"
     },
     "generated": {
-     "n": 65,
-     "rate": 0.046153846153846156,
-     "upper": 0.1271384735109759,
-     "modalAnswer": "12"
+     "n": 116,
+     "rate": 0.05172413793103448,
+     "upper": 0.10826814604646856,
+     "modalAnswer": "24"
     }
    }
   },
@@ -579,9 +579,9 @@
      "modalAnswer": "2: 3 \\cdot 2^{2}"
     },
     "generated": {
-     "n": 31,
-     "rate": 0.03225806451612903,
-     "upper": 0.16194105315828217,
+     "n": 32,
+     "rate": 0.03125,
+     "upper": 0.1574426396766845,
      "modalAnswer": "2: 12 \\cdot 6"
     }
    }
@@ -625,9 +625,9 @@
      "modalAnswer": "2: 12 \\cdot 6"
     },
     "generated": {
-     "n": 66,
-     "rate": 0.06060606060606061,
-     "upper": 0.14572908767172355,
+     "n": 117,
+     "rate": 0.03418803418803419,
+     "upper": 0.08461784912953067,
      "modalAnswer": "2: 3 \\cdot 2^{2}"
     }
    }
@@ -648,10 +648,10 @@
      "modalAnswer": "3x^{2}"
     },
     "generated": {
-     "n": 27,
-     "rate": 0.2222222222222222,
-     "upper": 0.4075692902399728,
-     "modalAnswer": "2x^{2}"
+     "n": 31,
+     "rate": 0.1935483870967742,
+     "upper": 0.3628025796020883,
+     "modalAnswer": "5x^{2}"
     }
    }
   },
@@ -694,9 +694,9 @@
      "modalAnswer": "5x"
     },
     "generated": {
-     "n": 67,
-     "rate": 0.13432835820895522,
-     "upper": 0.2360037235556483,
+     "n": 116,
+     "rate": 0.09482758620689655,
+     "upper": 0.16185301301019733,
      "modalAnswer": "7x"
     }
    }
@@ -705,7 +705,7 @@
    "n": 5,
    "distinct": 5,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.2575730099608091,
    "modalAnswer": "506",
    "executed": true,
    "source": "catalogue",
@@ -717,9 +717,9 @@
      "modalAnswer": "506"
     },
     "generated": {
-     "n": 17,
-     "rate": 0.058823529411764705,
-     "upper": 0.26982030858456973,
+     "n": 18,
+     "rate": 0.05555555555555555,
+     "upper": 0.2575730099608091,
      "modalAnswer": "12"
     }
    }
@@ -729,7 +729,7 @@
    "distinct": 4,
    "rate": 0.25,
    "upper": 0.25,
-   "modalAnswer": "15",
+   "modalAnswer": "14",
    "executed": true,
    "source": "catalogue",
    "sources": {
@@ -737,13 +737,13 @@
      "n": 4,
      "rate": 0.25,
      "upper": 0.25,
-     "modalAnswer": "15"
+     "modalAnswer": "14"
     },
     "generated": {
-     "n": 43,
-     "rate": 0.11627906976744186,
-     "upper": 0.24479161933313642,
-     "modalAnswer": "12"
+     "n": 60,
+     "rate": 0.11666666666666667,
+     "upper": 0.22178788124005724,
+     "modalAnswer": "10"
     }
    }
   },
@@ -763,9 +763,9 @@
      "modalAnswer": "14"
     },
     "generated": {
-     "n": 55,
-     "rate": 0.05454545454545454,
-     "upper": 0.1485306064439705,
+     "n": 117,
+     "rate": 0.03418803418803419,
+     "upper": 0.08461784912953067,
      "modalAnswer": "12"
     }
    }
@@ -786,10 +786,10 @@
      "modalAnswer": "2: 2 \\cdot 3"
     },
     "generated": {
-     "n": 17,
-     "rate": 0,
-     "upper": 0.18431813738065558,
-     "modalAnswer": null
+     "n": 19,
+     "rate": 0.05263157894736842,
+     "upper": 0.24638731374732356,
+     "modalAnswer": "2: 6 \\cdot 5"
     }
    }
   },
@@ -809,9 +809,9 @@
      "modalAnswer": "3: 17"
     },
     "generated": {
-     "n": 46,
-     "rate": 0.08695652173913043,
-     "upper": 0.20324664190688416,
+     "n": 60,
+     "rate": 0.06666666666666667,
+     "upper": 0.15925357408741433,
      "modalAnswer": "3: 14"
     }
    }
@@ -832,9 +832,9 @@
      "modalAnswer": "2: 2 \\cdot 3"
     },
     "generated": {
-     "n": 53,
-     "rate": 0.03773584905660377,
-     "upper": 0.12754287298702952,
+     "n": 117,
+     "rate": 0.02564102564102564,
+     "upper": 0.07268302404343314,
      "modalAnswer": "2: 5 \\cdot 8"
     }
    }
@@ -855,7 +855,7 @@
      "modalAnswer": "x^{2} + x"
     },
     "generated": {
-     "n": 18,
+     "n": 20,
      "rate": 1,
      "upper": 1,
      "modalAnswer": "x^{2} + x"
@@ -878,10 +878,10 @@
      "modalAnswer": "6 + n"
     },
     "generated": {
-     "n": 45,
-     "rate": 0.08888888888888889,
-     "upper": 0.20733575452693148,
-     "modalAnswer": "6 + n"
+     "n": 60,
+     "rate": 0.11666666666666667,
+     "upper": 0.22178788124005724,
+     "modalAnswer": "2 + n"
     }
    }
   },
@@ -901,10 +901,10 @@
      "modalAnswer": "11x"
     },
     "generated": {
-     "n": 54,
-     "rate": 0.12962962962962962,
-     "upper": 0.2442173032981712,
-     "modalAnswer": "5x"
+     "n": 117,
+     "rate": 0.08547008547008547,
+     "upper": 0.15020787489141035,
+     "modalAnswer": "x^{2} + x"
     }
    }
   },
@@ -947,10 +947,10 @@
      "modalAnswer": "-13"
     },
     "generated": {
-     "n": 58,
-     "rate": 0.06896551724137931,
-     "upper": 0.1643366641247426,
-     "modalAnswer": "-13"
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
+     "modalAnswer": "-16"
     }
    }
   },
@@ -970,9 +970,9 @@
      "modalAnswer": "16"
     },
     "generated": {
-     "n": 42,
-     "rate": 0.047619047619047616,
-     "upper": 0.15789852518403538,
+     "n": 108,
+     "rate": 0.06481481481481481,
+     "upper": 0.1277763639574102,
      "modalAnswer": "16"
     }
    }
@@ -1016,9 +1016,9 @@
      "modalAnswer": "2: \\left(-6\\right) + \\left(-2\\right)"
     },
     "generated": {
-     "n": 56,
-     "rate": 0.08928571428571429,
-     "upper": 0.19256001487876628,
+     "n": 120,
+     "rate": 0.09166666666666666,
+     "upper": 0.1567084703440582,
      "modalAnswer": "2: \\left(-13\\right) + \\left(-2\\right)"
     }
    }
@@ -1039,10 +1039,10 @@
      "modalAnswer": "2: \\left(-4\\right)^{2}"
     },
     "generated": {
-     "n": 44,
-     "rate": 0.09090909090909091,
-     "upper": 0.21159239286889966,
-     "modalAnswer": "2: \\left(-3\\right)^{2}"
+     "n": 107,
+     "rate": 0.06542056074766354,
+     "upper": 0.1289154639694711,
+     "modalAnswer": "2: \\left(-4\\right)^{2}"
     }
    }
   },
@@ -1085,10 +1085,10 @@
      "modalAnswer": "9 - x"
     },
     "generated": {
-     "n": 44,
-     "rate": 0.13636363636363635,
-     "upper": 0.2670945317062778,
-     "modalAnswer": "3 - x"
+     "n": 108,
+     "rate": 0.06481481481481481,
+     "upper": 0.1277763639574102,
+     "modalAnswer": "14 - x"
     }
    }
   },
@@ -1108,10 +1108,10 @@
      "modalAnswer": "x - 11"
     },
     "generated": {
-     "n": 58,
-     "rate": 0.1724137931034483,
-     "upper": 0.28908256613870853,
-     "modalAnswer": "x - 5"
+     "n": 120,
+     "rate": 0.1,
+     "upper": 0.16668174173512812,
+     "modalAnswer": "x - 7"
     }
    }
   },
@@ -1131,9 +1131,9 @@
      "modalAnswer": "50"
     },
     "generated": {
-     "n": 115,
-     "rate": 0.034782608695652174,
-     "upper": 0.08603296441627376,
+     "n": 120,
+     "rate": 0.03333333333333333,
+     "upper": 0.0825803380922108,
      "modalAnswer": "26"
     }
    }
@@ -1142,7 +1142,7 @@
    "n": 13,
    "distinct": 13,
    "rate": 0.07692307692307693,
-   "upper": 0.07692307692307693,
+   "upper": 0.0825803380922108,
    "modalAnswer": "2: 2 \\cdot 6 + 4 \\cdot 4",
    "executed": true,
    "source": "catalogue",
@@ -1154,9 +1154,9 @@
      "modalAnswer": "2: 2 \\cdot 6 + 4 \\cdot 4"
     },
     "generated": {
-     "n": 115,
-     "rate": 0.034782608695652174,
-     "upper": 0.08603296441627376,
+     "n": 120,
+     "rate": 0.03333333333333333,
+     "upper": 0.0825803380922108,
      "modalAnswer": "2: 2 \\cdot 9 + 3 \\cdot 3"
     }
    }
@@ -1177,9 +1177,9 @@
      "modalAnswer": "7r + 18"
     },
     "generated": {
-     "n": 118,
-     "rate": 0.0423728813559322,
-     "upper": 0.09536938561201587,
+     "n": 120,
+     "rate": 0.041666666666666664,
+     "upper": 0.09384085288517821,
      "modalAnswer": "3r + 8"
     }
    }
@@ -1211,7 +1211,7 @@
    "n": 7,
    "distinct": 7,
    "rate": 0.14285714285714285,
-   "upper": 0.14285714285714285,
+   "upper": 0.20388330359648707,
    "modalAnswer": "2n + 6",
    "executed": true,
    "source": "catalogue",
@@ -1257,7 +1257,7 @@
    "n": 8,
    "distinct": 8,
    "rate": 0.125,
-   "upper": 0.125,
+   "upper": 0.21531080540298045,
    "modalAnswer": "2: 2n + 20",
    "executed": true,
    "source": "catalogue",
@@ -1349,7 +1349,7 @@
    "n": 5,
    "distinct": 5,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.2991450517270439,
    "modalAnswer": "n - 7",
    "executed": true,
    "source": "catalogue",
@@ -1372,7 +1372,7 @@
    "n": 5,
    "distinct": 5,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.2991450517270439,
    "modalAnswer": "2: n - 12",
    "executed": true,
    "source": "catalogue",
@@ -1476,9 +1476,9 @@
      "modalAnswer": "-3x + 6"
     },
     "generated": {
-     "n": 37,
+     "n": 91,
      "rate": 0,
-     "upper": 0.09405782718146873,
+     "upper": 0.04050400454197976,
      "modalAnswer": null
     }
    }
@@ -1488,7 +1488,7 @@
    "distinct": 4,
    "rate": 0.25,
    "upper": 0.25,
-   "modalAnswer": "36",
+   "modalAnswer": "7",
    "executed": true,
    "source": "catalogue",
    "sources": {
@@ -1496,13 +1496,13 @@
      "n": 4,
      "rate": 0.25,
      "upper": 0.25,
-     "modalAnswer": "36"
+     "modalAnswer": "7"
     },
     "generated": {
-     "n": 61,
-     "rate": 0.04918032786885246,
-     "upper": 0.13491127619620483,
-     "modalAnswer": "4"
+     "n": 120,
+     "rate": 0.05,
+     "upper": 0.1048028859243862,
+     "modalAnswer": "5"
     }
    }
   },
@@ -1522,9 +1522,9 @@
      "modalAnswer": "x"
     },
     "generated": {
-     "n": 18,
+     "n": 19,
      "rate": 1,
-     "upper": 1,
+     "upper": 0.9999999999999998,
      "modalAnswer": "x"
     }
    }
@@ -1545,9 +1545,9 @@
      "modalAnswer": "2: -8x + 8"
     },
     "generated": {
-     "n": 35,
+     "n": 90,
      "rate": 0,
-     "upper": 0.0989009937303319,
+     "upper": 0.04093562618368095,
      "modalAnswer": null
     }
    }
@@ -1568,10 +1568,10 @@
      "modalAnswer": "2: 14 - 14"
     },
     "generated": {
-     "n": 64,
-     "rate": 0.046875,
-     "upper": 0.12899653828970611,
-     "modalAnswer": "2: 14 - 9"
+     "n": 120,
+     "rate": 0.06666666666666667,
+     "upper": 0.12605130462198694,
+     "modalAnswer": "2: 22 - 14"
     }
    }
   },
@@ -1591,9 +1591,9 @@
      "modalAnswer": "2: 0 + x"
     },
     "generated": {
-     "n": 17,
+     "n": 19,
      "rate": 1,
-     "upper": 1,
+     "upper": 0.9999999999999998,
      "modalAnswer": "2: 0 + x"
     }
    }
@@ -1614,9 +1614,9 @@
      "modalAnswer": "-9x + 4"
     },
     "generated": {
-     "n": 34,
+     "n": 92,
      "rate": 0,
-     "upper": 0.10151455559221921,
+     "upper": 0.04008138989259148,
      "modalAnswer": null
     }
    }
@@ -1637,9 +1637,9 @@
      "modalAnswer": "35 - \\left(3 + 7\\right)"
     },
     "generated": {
-     "n": 65,
-     "rate": 0.046153846153846156,
-     "upper": 0.1271384735109759,
+     "n": 120,
+     "rate": 0.03333333333333333,
+     "upper": 0.0825803380922108,
      "modalAnswer": "20 - \\left(9 + 7\\right)"
     }
    }
@@ -1660,9 +1660,9 @@
      "modalAnswer": "x + 9x \\cdot 0"
     },
     "generated": {
-     "n": 17,
+     "n": 19,
      "rate": 1,
-     "upper": 1,
+     "upper": 0.9999999999999998,
      "modalAnswer": "x + 9x \\cdot 0"
     }
    }
@@ -1671,7 +1671,7 @@
    "n": 6,
    "distinct": 6,
    "rate": 0.16666666666666666,
-   "upper": 0.16666666666666666,
+   "upper": 0.16817922625956366,
    "modalAnswer": "6x, 4x \\;\\mid\\; 3y, 8y \\;\\mid\\; 2",
    "executed": true,
    "source": "catalogue",
@@ -1683,9 +1683,9 @@
      "modalAnswer": "6x, 4x \\;\\mid\\; 3y, 8y \\;\\mid\\; 2"
     },
     "generated": {
-     "n": 1,
+     "n": 19,
      "rate": 0,
-     "upper": 0.7934506882081973,
+     "upper": 0.16817922625956366,
      "modalAnswer": null
     }
    }
@@ -1706,9 +1706,9 @@
      "modalAnswer": "9x, 4x \\;\\mid\\; 5x^{2}, 3x^{2} \\;\\mid\\; 7"
     },
     "generated": {
-     "n": 115,
+     "n": 120,
      "rate": 0,
-     "upper": 0.032324231942768525,
+     "upper": 0.03101916689287469,
      "modalAnswer": null
     }
    }
@@ -1729,9 +1729,9 @@
      "modalAnswer": "2: 4x, 5x \\;\\mid\\; 6y, 9y \\;\\mid\\; 7"
     },
     "generated": {
-     "n": 2,
+     "n": 20,
      "rate": 0,
-     "upper": 0.6576197760453506,
+     "upper": 0.16112516018512965,
      "modalAnswer": null
     }
    }
@@ -1752,9 +1752,9 @@
      "modalAnswer": "2: 2x, 3x \\;\\mid\\; 4x^{2}, 9x^{2} \\;\\mid\\; 8"
     },
     "generated": {
-     "n": 114,
+     "n": 120,
      "rate": 0,
-     "upper": 0.03259853465634346,
+     "upper": 0.03101916689287469,
      "modalAnswer": null
     }
    }
@@ -1775,9 +1775,9 @@
      "modalAnswer": "10x"
     },
     "generated": {
-     "n": 1,
+     "n": 19,
      "rate": 1,
-     "upper": 1,
+     "upper": 0.9999999999999998,
      "modalAnswer": "10x"
     }
    }
@@ -1798,9 +1798,9 @@
      "modalAnswer": "10x"
     },
     "generated": {
-     "n": 115,
+     "n": 120,
      "rate": 1,
-     "upper": 1,
+     "upper": 0.9999999999999998,
      "modalAnswer": "10x"
     }
    }
@@ -1821,9 +1821,9 @@
      "modalAnswer": "-x + 5y - 4"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.008620689655172414,
-     "upper": 0.04721983462604618,
+     "n": 120,
+     "rate": 0.008333333333333333,
+     "upper": 0.045696291727588344,
      "modalAnswer": "-x + 5y - 4"
     }
    }
@@ -1844,10 +1844,10 @@
      "modalAnswer": "2: 2x + 3y - 6"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.008620689655172414,
-     "upper": 0.04721983462604618,
-     "modalAnswer": "2: x + 3y - 8"
+     "n": 120,
+     "rate": 0.008333333333333333,
+     "upper": 0.045696291727588344,
+     "modalAnswer": "2: -x + 3y - 7"
     }
    }
   },
@@ -1867,9 +1867,9 @@
      "modalAnswer": "3x + 4y - 5 - 4x"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.008620689655172414,
-     "upper": 0.04721983462604618,
+     "n": 120,
+     "rate": 0.008333333333333333,
+     "upper": 0.045696291727588344,
      "modalAnswer": "3x + 4y - 5 - 4x"
     }
    }
@@ -1890,10 +1890,10 @@
      "modalAnswer": "72"
     },
     "generated": {
-     "n": 67,
-     "rate": 0.08955223880597014,
-     "upper": 0.18192752290454003,
-     "modalAnswer": "24"
+     "n": 116,
+     "rate": 0.10344827586206896,
+     "upper": 0.17214639337520402,
+     "modalAnswer": "60"
     }
    }
   },
@@ -1913,10 +1913,10 @@
      "modalAnswer": "48"
     },
     "generated": {
-     "n": 46,
-     "rate": 0.043478260869565216,
-     "upper": 0.14532259139496834,
-     "modalAnswer": "48"
+     "n": 120,
+     "rate": 0.05,
+     "upper": 0.1048028859243862,
+     "modalAnswer": "28"
     }
    }
   },
@@ -1936,10 +1936,10 @@
      "modalAnswer": "2: 5 \\cdot 6"
     },
     "generated": {
-     "n": 47,
-     "rate": 0.06382978723404255,
-     "upper": 0.17162614296341508,
-     "modalAnswer": "2: 2 \\cdot 12"
+     "n": 120,
+     "rate": 0.041666666666666664,
+     "upper": 0.09384085288517821,
+     "modalAnswer": "2: 5 \\cdot 12"
     }
    }
   },
@@ -1959,10 +1959,10 @@
      "modalAnswer": "2: 5 \\cdot 6"
     },
     "generated": {
-     "n": 67,
-     "rate": 0.1044776119402985,
-     "upper": 0.20031283140845974,
-     "modalAnswer": "2: 6 \\cdot 6"
+     "n": 118,
+     "rate": 0.09322033898305085,
+     "upper": 0.15923925193978275,
+     "modalAnswer": "2: 5 \\cdot 12"
     }
    }
   },
@@ -2005,10 +2005,10 @@
      "modalAnswer": "30x - 24"
     },
     "generated": {
-     "n": 116,
-     "rate": 0,
-     "upper": 0.032054506989113,
-     "modalAnswer": null
+     "n": 120,
+     "rate": 0.008333333333333333,
+     "upper": 0.045696291727588344,
+     "modalAnswer": "12x - 12"
     }
    }
   },
@@ -2028,9 +2028,9 @@
      "modalAnswer": "2: 4x - 12"
     },
     "generated": {
-     "n": 116,
+     "n": 120,
      "rate": 0,
-     "upper": 0.032054506989113,
+     "upper": 0.03101916689287469,
      "modalAnswer": null
     }
    }
@@ -2051,9 +2051,9 @@
      "modalAnswer": "6\\left(3x - 3\\right)"
     },
     "generated": {
-     "n": 116,
+     "n": 120,
      "rate": 0,
-     "upper": 0.032054506989113,
+     "upper": 0.03101916689287469,
      "modalAnswer": null
     }
    }
@@ -2074,10 +2074,10 @@
      "modalAnswer": "-5x - 4"
     },
     "generated": {
-     "n": 6,
-     "rate": 0,
-     "upper": 0.39033429165637346,
-     "modalAnswer": null
+     "n": 68,
+     "rate": 0.014705882352941176,
+     "upper": 0.07870973208531902,
+     "modalAnswer": "-5x - 2"
     }
    }
   },
@@ -2097,10 +2097,10 @@
      "modalAnswer": "-7x + 67"
     },
     "generated": {
-     "n": 106,
-     "rate": 0.009433962264150943,
-     "upper": 0.05151354857050809,
-     "modalAnswer": "-5x - 36"
+     "n": 120,
+     "rate": 0.008333333333333333,
+     "upper": 0.045696291727588344,
+     "modalAnswer": "-4x - 2"
     }
    }
   },
@@ -2120,9 +2120,9 @@
      "modalAnswer": "2: -3x - 14"
     },
     "generated": {
-     "n": 108,
-     "rate": 0.009259259259259259,
-     "upper": 0.05059345572529895,
+     "n": 120,
+     "rate": 0.008333333333333333,
+     "upper": 0.045696291727588344,
      "modalAnswer": "2: -2x - 3"
     }
    }
@@ -2143,9 +2143,9 @@
      "modalAnswer": "2: -2x - 3"
     },
     "generated": {
-     "n": 7,
+     "n": 69,
      "rate": 0,
-     "upper": 0.35433043867586833,
+     "upper": 0.052737258977145464,
      "modalAnswer": null
     }
    }
@@ -2189,9 +2189,9 @@
      "modalAnswer": "4x + 15"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.017241379310344827,
-     "upper": 0.060690924622068175,
+     "n": 120,
+     "rate": 0.016666666666666666,
+     "upper": 0.05873596347174441,
      "modalAnswer": "4x + 15"
     }
    }
@@ -2212,9 +2212,9 @@
      "modalAnswer": "3: 5x + 17"
     },
     "generated": {
-     "n": 115,
-     "rate": 0.008695652173913044,
-     "upper": 0.04761672684616639,
+     "n": 120,
+     "rate": 0.008333333333333333,
+     "upper": 0.045696291727588344,
      "modalAnswer": "3: 5x + 17"
     }
    }
@@ -2235,9 +2235,9 @@
      "modalAnswer": "5 + 5\\left(x + 8\\right)"
     },
     "generated": {
-     "n": 117,
+     "n": 120,
      "rate": 0,
-     "upper": 0.03178924614829014,
+     "upper": 0.03101916689287469,
      "modalAnswer": null
     }
    }
@@ -2269,7 +2269,7 @@
    "n": 13,
    "distinct": 13,
    "rate": 0.07692307692307693,
-   "upper": 0.07692307692307693,
+   "upper": 0.08200980441345543,
    "modalAnswer": "2: 2x + 4",
    "executed": true,
    "source": "catalogue",
@@ -2327,9 +2327,9 @@
      "modalAnswer": "3"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.11206896551724138,
-     "upper": 0.18233431121413277,
+     "n": 120,
+     "rate": 0.11666666666666667,
+     "upper": 0.1863335168181033,
      "modalAnswer": "3"
     }
    }
@@ -2350,9 +2350,9 @@
      "modalAnswer": "3: x = 9"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.06896551724137931,
-     "upper": 0.13020673969413335,
+     "n": 120,
+     "rate": 0.06666666666666667,
+     "upper": 0.12605130462198694,
      "modalAnswer": "3: x = 2"
     }
    }
@@ -2362,7 +2362,7 @@
    "distinct": 12,
    "rate": 0.25,
    "upper": 0.25,
-   "modalAnswer": "x - 1 = 11",
+   "modalAnswer": "x + 3 = 6",
    "executed": true,
    "source": "catalogue",
    "sources": {
@@ -2370,13 +2370,13 @@
      "n": 12,
      "rate": 0.25,
      "upper": 0.25,
-     "modalAnswer": "x - 1 = 11"
+     "modalAnswer": "x + 3 = 6"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.1206896551724138,
-     "upper": 0.192426557465911,
-     "modalAnswer": "x - 1 = 2"
+     "n": 120,
+     "rate": 0.125,
+     "upper": 0.196029402729284,
+     "modalAnswer": "x + 3 = 6"
     }
    }
   },
@@ -2396,10 +2396,10 @@
      "modalAnswer": "x = 8"
     },
     "generated": {
-     "n": 69,
-     "rate": 0.057971014492753624,
-     "upper": 0.1397924344315535,
-     "modalAnswer": "x = 12"
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
+     "modalAnswer": "x = 6"
     }
    }
   },
@@ -2419,9 +2419,9 @@
      "modalAnswer": "-2x = 0"
     },
     "generated": {
-     "n": 44,
+     "n": 49,
      "rate": 1,
-     "upper": 0.9999999999999998,
+     "upper": 1,
      "modalAnswer": "-2x = 0"
     }
    }
@@ -2442,9 +2442,9 @@
      "modalAnswer": "2: x = 6"
     },
     "generated": {
-     "n": 68,
-     "rate": 0.08823529411764706,
-     "upper": 0.17943769212907737,
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
      "modalAnswer": "2: x = 6"
     }
    }
@@ -2465,9 +2465,9 @@
      "modalAnswer": "2: -x = 0"
     },
     "generated": {
-     "n": 46,
+     "n": 50,
      "rate": 1,
-     "upper": 1,
+     "upper": 0.9999999999999998,
      "modalAnswer": "2: -x = 0"
     }
    }
@@ -2511,10 +2511,10 @@
      "modalAnswer": "5"
     },
     "generated": {
-     "n": 47,
-     "rate": 0.1276595744680851,
-     "upper": 0.25173940909799597,
-     "modalAnswer": "4"
+     "n": 120,
+     "rate": 0.09166666666666666,
+     "upper": 0.1567084703440582,
+     "modalAnswer": "8"
     }
    }
   },
@@ -2523,7 +2523,7 @@
    "distinct": 6,
    "rate": 0.16666666666666666,
    "upper": 0.16666666666666666,
-   "modalAnswer": "5",
+   "modalAnswer": "8",
    "executed": true,
    "source": "catalogue",
    "sources": {
@@ -2531,12 +2531,12 @@
      "n": 6,
      "rate": 0.16666666666666666,
      "upper": 0.16666666666666666,
-     "modalAnswer": "5"
+     "modalAnswer": "8"
     },
     "generated": {
-     "n": 68,
-     "rate": 0.08823529411764706,
-     "upper": 0.17943769212907737,
+     "n": 120,
+     "rate": 0.058333333333333334,
+     "upper": 0.11552592091113272,
      "modalAnswer": "1"
     }
    }
@@ -2557,9 +2557,9 @@
      "modalAnswer": "2: x = 1"
     },
     "generated": {
-     "n": 41,
-     "rate": 0.14634146341463414,
-     "upper": 0.28443458170067604,
+     "n": 120,
+     "rate": 0.11666666666666667,
+     "upper": 0.1863335168181033,
      "modalAnswer": "2: x = 6"
     }
    }
@@ -2580,9 +2580,9 @@
      "modalAnswer": "2: x = 7"
     },
     "generated": {
-     "n": 71,
-     "rate": 0.09859154929577464,
-     "upper": 0.18980722328765764,
+     "n": 120,
+     "rate": 0.06666666666666667,
+     "upper": 0.12605130462198694,
      "modalAnswer": "2: x = 1"
     }
    }
@@ -2626,9 +2626,9 @@
      "modalAnswer": "4"
     },
     "generated": {
-     "n": 47,
-     "rate": 0.06382978723404255,
-     "upper": 0.17162614296341508,
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
      "modalAnswer": "7"
     }
    }
@@ -2649,10 +2649,10 @@
      "modalAnswer": "12"
     },
     "generated": {
-     "n": 46,
-     "rate": 0.043478260869565216,
-     "upper": 0.14532259139496834,
-     "modalAnswer": "16"
+     "n": 47,
+     "rate": 0.0425531914893617,
+     "upper": 0.142485277892984,
+     "modalAnswer": "6"
     }
    }
   },
@@ -2672,10 +2672,10 @@
      "modalAnswer": "2: x = 9"
     },
     "generated": {
-     "n": 50,
-     "rate": 0.1,
-     "upper": 0.21360231548613243,
-     "modalAnswer": "2: x = 4"
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
+     "modalAnswer": "2: x = 8"
     }
    }
   },
@@ -2695,9 +2695,9 @@
      "modalAnswer": "2: x = 9"
     },
     "generated": {
-     "n": 47,
-     "rate": 0.0425531914893617,
-     "upper": 0.142485277892984,
+     "n": 49,
+     "rate": 0.04081632653061224,
+     "upper": 0.13713032413896772,
      "modalAnswer": "2: x = 16"
     }
    }
@@ -2718,9 +2718,9 @@
      "modalAnswer": "4x = 24"
     },
     "generated": {
-     "n": 100,
-     "rate": 0.1,
-     "upper": 0.17436566221012448,
+     "n": 120,
+     "rate": 0.09166666666666666,
+     "upper": 0.1567084703440582,
      "modalAnswer": "4x = 24"
     }
    }
@@ -2741,9 +2741,9 @@
      "modalAnswer": "2"
     },
     "generated": {
-     "n": 117,
-     "rate": 0.15384615384615385,
-     "upper": 0.2301136848056546,
+     "n": 120,
+     "rate": 0.15,
+     "upper": 0.2246752942350994,
      "modalAnswer": "2"
     }
    }
@@ -2752,7 +2752,7 @@
    "n": 13,
    "distinct": 10,
    "rate": 0.15384615384615385,
-   "upper": 0.15384615384615385,
+   "upper": 0.17655360278731622,
    "modalAnswer": "2: 2x = 4",
    "executed": true,
    "source": "catalogue",
@@ -2764,10 +2764,10 @@
      "modalAnswer": "2: 2x = 4"
     },
     "generated": {
-     "n": 115,
-     "rate": 0.08695652173913043,
-     "upper": 0.15269717267246607,
-     "modalAnswer": "2: 4x = 4"
+     "n": 120,
+     "rate": 0.10833333333333334,
+     "upper": 0.17655360278731622,
+     "modalAnswer": "2: 4x = 12"
     }
    }
   },
@@ -2787,9 +2787,9 @@
      "modalAnswer": "3x + 8 = 20"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.12931034482758622,
-     "upper": 0.20243132471673608,
+     "n": 120,
+     "rate": 0.125,
+     "upper": 0.196029402729284,
      "modalAnswer": "3x + 8 = 20"
     }
    }
@@ -2798,7 +2798,7 @@
    "n": 10,
    "distinct": 7,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.23409332413190787,
    "modalAnswer": "5",
    "executed": true,
    "source": "catalogue",
@@ -2810,9 +2810,9 @@
      "modalAnswer": "5"
     },
     "generated": {
-     "n": 118,
-     "rate": 0.16101694915254236,
-     "upper": 0.23783623197563003,
+     "n": 120,
+     "rate": 0.15833333333333333,
+     "upper": 0.23409332413190787,
      "modalAnswer": "5"
     }
    }
@@ -2821,7 +2821,7 @@
    "n": 12,
    "distinct": 8,
    "rate": 0.16666666666666666,
-   "upper": 0.16666666666666666,
+   "upper": 0.24345281461084062,
    "modalAnswer": "2: 9x + 6 = 51",
    "executed": true,
    "source": "catalogue",
@@ -2833,9 +2833,9 @@
      "modalAnswer": "2: 9x + 6 = 51"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.16379310344827586,
-     "upper": 0.2417004128207545,
+     "n": 120,
+     "rate": 0.16666666666666666,
+     "upper": 0.24345281461084062,
      "modalAnswer": "2: 9x + 6 = 51"
     }
    }
@@ -2844,7 +2844,7 @@
    "n": 14,
    "distinct": 14,
    "rate": 0.21428571428571427,
-   "upper": 0.21428571428571427,
+   "upper": 0.2527570994093363,
    "modalAnswer": "4x + 4x + 2 = 50",
    "executed": true,
    "source": "catalogue",
@@ -2856,9 +2856,9 @@
      "modalAnswer": "4x + 4x + 2 = 50"
     },
     "generated": {
-     "n": 114,
-     "rate": 0.16666666666666666,
-     "upper": 0.24569183612583956,
+     "n": 120,
+     "rate": 0.175,
+     "upper": 0.2527570994093363,
      "modalAnswer": "4x + 4x + 2 = 50"
     }
    }
@@ -2879,10 +2879,10 @@
      "modalAnswer": "5"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.14655172413793102,
-     "upper": 0.22220516831367323,
-     "modalAnswer": "1"
+     "n": 120,
+     "rate": 0.14166666666666666,
+     "upper": 0.21519494556064842,
+     "modalAnswer": "6"
     }
    }
   },
@@ -2902,9 +2902,9 @@
      "modalAnswer": "2: x + 1 = 2"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.12931034482758622,
-     "upper": 0.20243132471673608,
+     "n": 120,
+     "rate": 0.125,
+     "upper": 0.196029402729284,
      "modalAnswer": "2: x + 6 = 10"
     }
    }
@@ -2925,9 +2925,9 @@
      "modalAnswer": "2\\left(x + 8\\right) = 26"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.1206896551724138,
-     "upper": 0.192426557465911,
+     "n": 120,
+     "rate": 0.125,
+     "upper": 0.196029402729284,
      "modalAnswer": "3\\left(x + 8\\right) = 30"
     }
    }
@@ -2948,9 +2948,9 @@
      "modalAnswer": "3"
     },
     "generated": {
-     "n": 118,
-     "rate": 0.16101694915254236,
-     "upper": 0.23783623197563003,
+     "n": 120,
+     "rate": 0.16666666666666666,
+     "upper": 0.24345281461084062,
      "modalAnswer": "6"
     }
    }
@@ -2959,8 +2959,8 @@
    "n": 14,
    "distinct": 8,
    "rate": 0.21428571428571427,
-   "upper": 0.21428571428571427,
-   "modalAnswer": "2: -x + 7 = 5",
+   "upper": 0.23409332413190787,
+   "modalAnswer": "2: 4x + 8 = 12",
    "executed": true,
    "source": "catalogue",
    "sources": {
@@ -2968,12 +2968,12 @@
      "n": 14,
      "rate": 0.21428571428571427,
      "upper": 0.21428571428571427,
-     "modalAnswer": "2: -x + 7 = 5"
+     "modalAnswer": "2: 4x + 8 = 12"
     },
     "generated": {
-     "n": 114,
-     "rate": 0.14912280701754385,
-     "upper": 0.2258839417052221,
+     "n": 120,
+     "rate": 0.15833333333333333,
+     "upper": 0.23409332413190787,
      "modalAnswer": "2: 3x + 9 = 27"
     }
    }
@@ -2994,9 +2994,9 @@
      "modalAnswer": "3x + 1 = 2x + 4"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.11206896551724138,
-     "upper": 0.18233431121413277,
+     "n": 120,
+     "rate": 0.11666666666666667,
+     "upper": 0.1863335168181033,
      "modalAnswer": "7x + 5 = 2x + 25"
     }
    }
@@ -3017,7 +3017,7 @@
      "modalAnswer": "always"
     },
     "generated": {
-     "n": 6,
+     "n": 33,
      "rate": 1,
      "upper": 1,
      "modalAnswer": "always"
@@ -3040,7 +3040,7 @@
      "modalAnswer": "none"
     },
     "generated": {
-     "n": 106,
+     "n": 120,
      "rate": 1,
      "upper": 0.9999999999999998,
      "modalAnswer": "none"
@@ -3086,9 +3086,9 @@
      "modalAnswer": "5\\left(x + 2\\right) = 5x + 10"
     },
     "generated": {
-     "n": 6,
+     "n": 34,
      "rate": 1,
-     "upper": 1,
+     "upper": 0.9999999999999998,
      "modalAnswer": "5\\left(x + 2\\right) = 5x + 10"
     }
    }
@@ -3109,7 +3109,7 @@
      "modalAnswer": "4x - 3 = 4x - 1"
     },
     "generated": {
-     "n": 109,
+     "n": 120,
      "rate": 1,
      "upper": 0.9999999999999998,
      "modalAnswer": "4x - 3 = 4x - 1"
@@ -3132,9 +3132,9 @@
      "modalAnswer": "9n + 3 = 66"
     },
     "generated": {
-     "n": 116,
-     "rate": 0.07758620689655173,
-     "upper": 0.1408996631142598,
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
      "modalAnswer": "5n + 2 = 17"
     }
    }
@@ -3155,9 +3155,9 @@
      "modalAnswer": "2: 8n + 8 = 48"
     },
     "generated": {
-     "n": 117,
-     "rate": 0.07692307692307693,
-     "upper": 0.13974957614160421,
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
      "modalAnswer": "2: 8n + 8 = 48"
     }
    }
@@ -3178,9 +3178,9 @@
      "modalAnswer": "3n + 5 = 32"
     },
     "generated": {
-     "n": 115,
-     "rate": 0.0782608695652174,
-     "upper": 0.14206881852974784,
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
      "modalAnswer": "3n + 6 = 12"
     }
    }
@@ -3201,9 +3201,9 @@
      "modalAnswer": "9"
     },
     "generated": {
-     "n": 98,
-     "rate": 0.15306122448979592,
-     "upper": 0.23728867600546347,
+     "n": 120,
+     "rate": 0.15,
+     "upper": 0.2246752942350994,
      "modalAnswer": "7"
     }
    }
@@ -3224,10 +3224,10 @@
      "modalAnswer": "9"
     },
     "generated": {
-     "n": 15,
-     "rate": 0.26666666666666666,
-     "upper": 0.5195043425155204,
-     "modalAnswer": "5"
+     "n": 120,
+     "rate": 0.125,
+     "upper": 0.196029402729284,
+     "modalAnswer": "8"
     }
    }
   },
@@ -3247,9 +3247,9 @@
      "modalAnswer": "2: m \\ge \\frac{35}{4}"
     },
     "generated": {
-     "n": 95,
-     "rate": 0.010526315789473684,
-     "upper": 0.057238702010584265,
+     "n": 120,
+     "rate": 0.008333333333333333,
+     "upper": 0.045696291727588344,
      "modalAnswer": "2: m \\ge \\frac{25}{3}"
     }
    }
@@ -3270,10 +3270,10 @@
      "modalAnswer": "2: 5s = 15"
     },
     "generated": {
-     "n": 19,
-     "rate": 0.10526315789473684,
-     "upper": 0.31394082911909027,
-     "modalAnswer": "2: 3s = 21"
+     "n": 120,
+     "rate": 0.06666666666666667,
+     "upper": 0.12605130462198694,
+     "modalAnswer": "2: 5s = 40"
     }
    }
   },
@@ -3304,7 +3304,7 @@
    "n": 14,
    "distinct": 14,
    "rate": 0.07142857142857142,
-   "upper": 0.07142857142857142,
+   "upper": 0.12064330643947074,
    "modalAnswer": "x \\ge -4",
    "executed": true,
    "source": "catalogue",
@@ -3327,7 +3327,7 @@
    "n": 12,
    "distinct": 12,
    "rate": 0.08333333333333333,
-   "upper": 0.08333333333333333,
+   "upper": 0.11351339476145204,
    "modalAnswer": "2: x > 9",
    "executed": true,
    "source": "catalogue",
@@ -3350,7 +3350,7 @@
    "n": 10,
    "distinct": 10,
    "rate": 0.1,
-   "upper": 0.1,
+   "upper": 0.10717919976468034,
    "modalAnswer": "x - 1 > -6",
    "executed": true,
    "source": "catalogue",
@@ -3370,13 +3370,13 @@
    }
   },
   "ineq-one-step|construct|ineq-one-step.plus": {
-   "n": 32,
-   "distinct": 18,
+   "n": 8,
+   "distinct": 8,
    "rate": 0.125,
-   "upper": 0.2806830562944507,
+   "upper": 0.125,
    "modalAnswer": "x < 12",
    "executed": true,
-   "source": "generated",
+   "source": "catalogue",
    "sources": {
     "catalogue": {
      "n": 8,
@@ -3385,10 +3385,10 @@
      "modalAnswer": "x < 12"
     },
     "generated": {
-     "n": 32,
-     "rate": 0.125,
-     "upper": 0.2806830562944507,
-     "modalAnswer": "x < 12"
+     "n": 120,
+     "rate": 0.058333333333333334,
+     "upper": 0.11552592091113272,
+     "modalAnswer": "x < 11"
     }
    }
   },
@@ -3408,10 +3408,10 @@
      "modalAnswer": "x < 14"
     },
     "generated": {
-     "n": 80,
-     "rate": 0.0625,
-     "upper": 0.13810148844706396,
-     "modalAnswer": "x < 14"
+     "n": 120,
+     "rate": 0.058333333333333334,
+     "upper": 0.11552592091113272,
+     "modalAnswer": "x < 11"
     }
    }
   },
@@ -3431,10 +3431,10 @@
      "modalAnswer": "2: x < 11"
     },
     "generated": {
-     "n": 34,
-     "rate": 0.11764705882352941,
-     "upper": 0.2662084291289653,
-     "modalAnswer": "2: x < 12"
+     "n": 120,
+     "rate": 0.05,
+     "upper": 0.1048028859243862,
+     "modalAnswer": "2: x < 3"
     }
    }
   },
@@ -3454,10 +3454,10 @@
      "modalAnswer": "2: x < 12"
     },
     "generated": {
-     "n": 81,
-     "rate": 0.04938271604938271,
-     "upper": 0.12020230305396308,
-     "modalAnswer": "2: x < 5"
+     "n": 120,
+     "rate": 0.058333333333333334,
+     "upper": 0.11552592091113272,
+     "modalAnswer": "2: x < 11"
     }
    }
   },
@@ -3500,10 +3500,10 @@
      "modalAnswer": "x > 1"
     },
     "generated": {
-     "n": 35,
-     "rate": 0.05714285714285714,
-     "upper": 0.18607057558951973,
-     "modalAnswer": "x > -2"
+     "n": 120,
+     "rate": 0.03333333333333333,
+     "upper": 0.0825803380922108,
+     "modalAnswer": "x > 1"
     }
    }
   },
@@ -3523,9 +3523,9 @@
      "modalAnswer": "x > 1"
     },
     "generated": {
-     "n": 78,
-     "rate": 0.0641025641025641,
-     "upper": 0.14143595542222046,
+     "n": 120,
+     "rate": 0.05,
+     "upper": 0.1048028859243862,
      "modalAnswer": "x > -2"
     }
    }
@@ -3546,9 +3546,9 @@
      "modalAnswer": "2: x > 3"
     },
     "generated": {
-     "n": 36,
-     "rate": 0.05555555555555555,
-     "upper": 0.18144657344678355,
+     "n": 120,
+     "rate": 0.041666666666666664,
+     "upper": 0.09384085288517821,
      "modalAnswer": "2: x > -2"
     }
    }
@@ -3569,10 +3569,10 @@
      "modalAnswer": "2: x > -2"
     },
     "generated": {
-     "n": 78,
-     "rate": 0.05128205128205128,
-     "upper": 0.12456676624606526,
-     "modalAnswer": "2: x > 4"
+     "n": 120,
+     "rate": 0.058333333333333334,
+     "upper": 0.11552592091113272,
+     "modalAnswer": "2: x > 1"
     }
    }
   },
@@ -3615,10 +3615,10 @@
      "modalAnswer": "x \\ge 6"
     },
     "generated": {
-     "n": 106,
-     "rate": 0.1320754716981132,
-     "upper": 0.20955356226535857,
-     "modalAnswer": "x \\ge 1"
+     "n": 120,
+     "rate": 0.15,
+     "upper": 0.2246752942350994,
+     "modalAnswer": "x \\ge 9"
     }
    }
   },
@@ -3638,10 +3638,10 @@
      "modalAnswer": "x < \\frac{1}{5}"
     },
     "generated": {
-     "n": 7,
-     "rate": 0,
-     "upper": 0.35433043867586833,
-     "modalAnswer": null
+     "n": 90,
+     "rate": 0.044444444444444446,
+     "upper": 0.108768551013406,
+     "modalAnswer": "x < 1"
     }
    }
   },
@@ -3649,10 +3649,10 @@
    "n": 7,
    "distinct": 7,
    "rate": 0.14285714285714285,
-   "upper": 0.5131278321392249,
-   "modalAnswer": "2: -2x > 3",
+   "upper": 0.14285714285714285,
+   "modalAnswer": "2: -3x > 10",
    "executed": true,
-   "source": "generated",
+   "source": "catalogue",
    "sources": {
     "catalogue": {
      "n": 7,
@@ -3661,9 +3661,9 @@
      "modalAnswer": "2: -3x > 10"
     },
     "generated": {
-     "n": 7,
-     "rate": 0.14285714285714285,
-     "upper": 0.5131278321392249,
+     "n": 90,
+     "rate": 0.011111111111111112,
+     "upper": 0.060284083744831275,
      "modalAnswer": "2: -2x > 3"
     }
    }
@@ -3684,9 +3684,9 @@
      "modalAnswer": "3: x \\ge 4"
     },
     "generated": {
-     "n": 107,
-     "rate": 0.11214953271028037,
-     "upper": 0.18585389921257361,
+     "n": 120,
+     "rate": 0.1,
+     "upper": 0.16668174173512812,
      "modalAnswer": "3: x \\ge 8"
     }
    }
@@ -3710,7 +3710,7 @@
      "n": 120,
      "rate": 0.05,
      "upper": 0.1048028859243862,
-     "modalAnswer": "-5x - 2 > -7"
+     "modalAnswer": "-4x + 3 > -1"
     }
    }
   }
@@ -3729,7 +3729,7 @@
    "n": 17,
    "distinct": 17,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.2424940095530979,
    "modalAnswer": "2: a = 17b",
    "executed": true,
    "familyCount": 3
@@ -3739,7 +3739,7 @@
    "distinct": 5,
    "rate": 0.2,
    "upper": 0.2,
-   "modalAnswer": "a = 12; b = 12",
+   "modalAnswer": "a = 4; b = 4",
    "executed": true,
    "familyCount": 1
   },
@@ -3771,26 +3771,26 @@
    "familyCount": 1
   },
   "expr-anatomy|construct": {
-   "n": 65,
+   "n": 130,
    "distinct": 7,
    "rate": 1,
-   "upper": 1,
+   "upper": 0.9999999999999998,
    "modalAnswer": "3",
    "executed": true,
    "familyCount": 3
   },
   "expr-anatomy|repair": {
-   "n": 64,
+   "n": 130,
    "distinct": 6,
    "rate": 1,
-   "upper": 1,
+   "upper": 0.9999999999999998,
    "modalAnswer": "2: 3",
    "executed": true,
    "familyCount": 3
   },
   "expr-anatomy|generate": {
    "n": 120,
-   "distinct": 171,
+   "distinct": 514,
    "rate": 1,
    "upper": 0.9999999999999998,
    "modalAnswer": "9x + 2y - 8",
@@ -3829,7 +3829,7 @@
    "distinct": 13,
    "rate": 0.25,
    "upper": 0.25,
-   "modalAnswer": "15",
+   "modalAnswer": "14",
    "executed": true,
    "familyCount": 3
   },
@@ -3891,7 +3891,7 @@
    "n": 13,
    "distinct": 13,
    "rate": 0.07692307692307693,
-   "upper": 0.07692307692307693,
+   "upper": 0.0825803380922108,
    "modalAnswer": "2: 2 \\cdot 6 + 4 \\cdot 4",
    "executed": true,
    "familyCount": 1
@@ -3936,7 +3936,7 @@
    "n": 17,
    "distinct": 17,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.2991450517270439,
    "modalAnswer": "n - 7",
    "executed": true,
    "familyCount": 3
@@ -3990,7 +3990,7 @@
    "n": 12,
    "distinct": 12,
    "rate": 0.16666666666666666,
-   "upper": 0.16666666666666666,
+   "upper": 0.16817922625956366,
    "modalAnswer": "6x, 4x \\;\\mid\\; 3y, 8y \\;\\mid\\; 2",
    "executed": true,
    "familyCount": 2
@@ -4161,7 +4161,7 @@
    "n": 13,
    "distinct": 13,
    "rate": 0.07692307692307693,
-   "upper": 0.07692307692307693,
+   "upper": 0.08200980441345543,
    "modalAnswer": "2: 2x + 4",
    "executed": true,
    "familyCount": 1
@@ -4198,7 +4198,7 @@
    "distinct": 12,
    "rate": 0.25,
    "upper": 0.25,
-   "modalAnswer": "x - 1 = 11",
+   "modalAnswer": "x + 3 = 6",
    "executed": true,
    "familyCount": 1
   },
@@ -4296,7 +4296,7 @@
    "n": 13,
    "distinct": 10,
    "rate": 0.15384615384615385,
-   "upper": 0.15384615384615385,
+   "upper": 0.17655360278731622,
    "modalAnswer": "2: 2x = 4",
    "executed": true,
    "familyCount": 1
@@ -4314,7 +4314,7 @@
    "n": 10,
    "distinct": 7,
    "rate": 0.2,
-   "upper": 0.2,
+   "upper": 0.23409332413190787,
    "modalAnswer": "5",
    "executed": true,
    "familyCount": 1
@@ -4323,7 +4323,7 @@
    "n": 12,
    "distinct": 8,
    "rate": 0.16666666666666666,
-   "upper": 0.16666666666666666,
+   "upper": 0.24345281461084062,
    "modalAnswer": "2: 9x + 6 = 51",
    "executed": true,
    "familyCount": 1
@@ -4332,7 +4332,7 @@
    "n": 14,
    "distinct": 14,
    "rate": 0.21428571428571427,
-   "upper": 0.21428571428571427,
+   "upper": 0.2527570994093363,
    "modalAnswer": "4x + 4x + 2 = 50",
    "executed": true,
    "familyCount": 1
@@ -4377,8 +4377,8 @@
    "n": 14,
    "distinct": 8,
    "rate": 0.21428571428571427,
-   "upper": 0.21428571428571427,
-   "modalAnswer": "2: -x + 7 = 5",
+   "upper": 0.23409332413190787,
+   "modalAnswer": "2: 4x + 8 = 12",
    "executed": true,
    "familyCount": 1
   },
@@ -4476,7 +4476,7 @@
    "n": 14,
    "distinct": 14,
    "rate": 0.07142857142857142,
-   "upper": 0.07142857142857142,
+   "upper": 0.12064330643947074,
    "modalAnswer": "x \\ge -4",
    "executed": true,
    "familyCount": 1
@@ -4485,7 +4485,7 @@
    "n": 12,
    "distinct": 12,
    "rate": 0.08333333333333333,
-   "upper": 0.08333333333333333,
+   "upper": 0.11351339476145204,
    "modalAnswer": "2: x > 9",
    "executed": true,
    "familyCount": 1
@@ -4494,14 +4494,14 @@
    "n": 10,
    "distinct": 10,
    "rate": 0.1,
-   "upper": 0.1,
+   "upper": 0.10717919976468034,
    "modalAnswer": "x - 1 > -6",
    "executed": true,
    "familyCount": 1
   },
   "ineq-one-step|construct": {
-   "n": 40,
-   "distinct": 25,
+   "n": 16,
+   "distinct": 15,
    "rate": 0.25,
    "upper": 0.25,
    "modalAnswer": "x < 14",

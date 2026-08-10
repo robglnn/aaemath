@@ -1,0 +1,190 @@
+hid oo-numeric-BjsVHueV.js — the server will 404 it
+(node:53932) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+ "broken": "oo-numeric",
+ "ready": true,
+ "warm": {
+  "at": 1786383050804,
+  "kpId": "var-meaning",
+  "lesson": "expressions-1",
+  "groups": 2,
+  "failed": [
+   "oo-numeric"
+  ],
+  "ms": 1011.1,
+  "reason": "partial"
+ },
+ "errors": [],
+ "bankWarnings": [
+  "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+  "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+  "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
+  "itembank: group-load-failed on \"oo-numeric\" — Failed to fetch dynamically imported module: http://127.0.0.1:50062/assets/oo-numeric-BjsVHueV.js"
+ ],
+ "failedRequests": [
+  "http://127.0.0.1:50062/assets/oo-numeric-BjsVHueV.js — net::ERR_ABORTED"
+ ],
+ "groupChunksAtReady": [],
+ "groupChunksAfterSession": [
+  "eval-substitute-CIy76Axk.js",
+  "expr-anatomy-WYJhDm_0.js",
+  "oo-numeric-BjsVHueV.js",
+  "oo-structure-Bges-2rk.js",
+  "props-operations-zMhkLzfH.js",
+  "var-meaning-Ct12kn0-.js"
+ ],
+ "itemsServed": 34,
+ "steps": 35,
+ "blanks": 0,
+ "ms": 164,
+ "kpsTouched": [
+  "var-meaning",
+  "expr-anatomy",
+  "props-operations",
+  "oo-numeric",
+  "oo-structure",
+  "eval-substitute"
+ ],
+ "bySource": {
+  "catalogue/any-band": 21,
+  "catalogue/nearest-band": 2,
+  "generated/generated-group-absent": 4,
+  "generated/generated-group-failed": 7
+ },
+ "residentGroups": [
+  "var-meaning",
+  "expr-anatomy",
+  "oo-structure",
+  "props-operations",
+  "eval-substitute"
+ ],
+ "failedGroups": [
+  "oo-numeric"
+ ],
+ "degraded": [
+  "oo-numeric: Failed to fetch dynamically imported module: http://127.0.0.1:50062/assets/oo-numeric-BjsVHueV.js (3 attempts, retry in 29s)"
+ ],
+ "issues": [],
+ "onBrokenKp": [
+  {
+   "id": "oo-numeric.addmul/construct/1fxaesw",
+   "source": "generated",
+   "relaxation": "generated-group-failed",
+   "hasTex": true
+  },
+  {
+   "id": "oo-numeric.divmul/repair/1t4tgpf",
+   "source": "generated",
+   "relaxation": "generated-group-failed",
+   "hasTex": true
+  },
+  {
+   "id": "oo-numeric.addmul/generate/bj4lqs",
+   "source": "generated",
+   "relaxation": "generated-group-failed",
+   "hasTex": true
+  },
+  {
+   "id": "oo-numeric.addmul/generate/i0f2ec",
+   "source": "generated",
+   "relaxation": "generated-group-failed",
+   "hasTex": true
+  },
+  {
+   "id": "oo-numeric.divmul/construct/18mjxvk",
+   "source": "generated",
+   "relaxation": "generated-group-failed",
+   "hasTex": true
+  },
+  {
+   "id": "oo-numeric.addsub/repair/1vysjqw",
+   "source": "generated",
+   "relaxation": "generated-group-failed",
+   "hasTex": true
+  },
+  {
+   "id": "oo-numeric.addmul/generate/1fwm4pb",
+   "source": "generated",
+   "relaxation": "generated-group-failed",
+   "hasTex": true
+  }
+ ],
+ "firstFive": [
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.seat/repair/a7dacm",
+   "source": "catalogue",
+   "relaxation": "any-band",
+   "correct": true,
+   "tex": {
+    "stem": "w",
+    "given": [
+     "w = 8"
+    ],
+    "working": [
+     "w = 8",
+     "w = 23"
+    ]
+   }
+  },
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.seat/generate/8d9ygk",
+   "source": "catalogue",
+   "relaxation": "any-band",
+   "correct": true,
+   "tex": {
+    "stem": "m",
+    "given": [
+     "m = 4"
+    ],
+    "working": null
+   }
+  },
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.twin/construct/g1so14",
+   "source": "catalogue",
+   "relaxation": "any-band",
+   "correct": true,
+   "tex": {
+    "stem": "x + y = 14,\\quad x - y = 0",
+    "given": [],
+    "working": null
+   }
+  },
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.seat/repair/1en3shd",
+   "source": "catalogue",
+   "relaxation": "any-band",
+   "correct": false,
+   "tex": {
+    "stem": "q",
+    "given": [
+     "q = 9"
+    ],
+    "working": [
+     "q = 9",
+     "q = 17"
+    ]
+   }
+  },
+  {
+   "kpId": "var-meaning",
+   "id": "var-meaning.relate/repair/1pvg02w",
+   "source": "catalogue",
+   "relaxation": "any-band",
+   "correct": true,
+   "tex": {
+    "stem": "a,\\; b",
+    "given": [],
+    "working": [
+     "a,\\; b",
+     "17a = b"
+    ]
+   }
+  }
+ ]
+}

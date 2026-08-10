@@ -57,9 +57,9 @@ export async function loadItemStrings(locale) {
  * only trusts the scalar when the two agree, so a constant that changed without a rebuild falls
  * back to the spine instead of silently validating a stale price table.
  */
-export const BANK_FINGERPRINT = "d6e2537d";
-export const BANK_FINGERPRINT_BASIS = "e5a9c7e1";
-export const BANK_AUDIT_VERSION_AT_BUILD = 2;
+export const BANK_FINGERPRINT = "c01e9128";
+export const BANK_FINGERPRINT_BASIS = "d8ef1c36";
+export const BANK_AUDIT_VERSION_AT_BUILD = 3;
 
 export function bankFingerprintBasis({ version, perCell, window, candidates, sampleCap, forms, caps }) {
   const parts = [

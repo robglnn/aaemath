@@ -1,0 +1,692 @@
+{
+ "generated": "2026-08-10T17:23:39.183Z",
+ "ready": true,
+ "fatal": null,
+ "errors": [],
+ "warnings": [
+  "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+  "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+  "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
+  "math: claim \"leaf9-span\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer",
+  "math: claim \"leaf9-share\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer"
+ ],
+ "warm": {
+  "at": 1786382619017,
+  "kpId": "var-meaning",
+  "lesson": "expressions-1",
+  "groups": 3,
+  "failed": [],
+  "ms": 7.1,
+  "reason": "ok"
+ },
+ "probeAfterWarm": {
+  "knowledgePoints": 32,
+  "items": 108,
+  "catalogueItems": 1152,
+  "generatedThisSession": 0,
+  "locale": "en",
+  "minItemsPerKp": 36,
+  "minItemsPerMisconception": 3,
+  "groups": "3/32 resident, 0 loading",
+  "lessons": 22,
+  "residentGroups": [
+   "oo-numeric",
+   "var-meaning",
+   "expr-anatomy"
+  ],
+  "degraded": [],
+  "issues": 0,
+  "lastIssue": null,
+  "warm": {
+   "at": 1786382619017,
+   "kpId": "var-meaning",
+   "lesson": "expressions-1",
+   "groups": 3,
+   "failed": [],
+   "ms": 7.1,
+   "reason": "ok"
+  },
+  "itemLocale": "en",
+  "localesResident": [
+   "en"
+  ],
+  "formsPerKp": {
+   "var-meaning": "14/17/5",
+   "oo-numeric": "15/16/5",
+   "expr-anatomy": "16/15/5",
+   "oo-structure": "14/10/12",
+   "eval-substitute": "13/12/11",
+   "eval-signed": "12/13/11",
+   "eval-formula": "13/13/10",
+   "translate-phrase": "13/16/7",
+   "translate-order": "17/14/5",
+   "props-operations": "12/12/12",
+   "like-terms-id": "12/12/12",
+   "like-terms-combine": "12/12/12",
+   "distribute-numeric": "15/14/7",
+   "distribute-variable": "12/12/12",
+   "distribute-negative": "16/13/7",
+   "simplify-expression": "12/13/11",
+   "equivalent-expressions": "11/13/12",
+   "eq-meaning": "12/12/12",
+   "props-equality": "15/14/7",
+   "eq-one-add": "13/16/7",
+   "eq-one-mult": "15/14/7",
+   "eq-two-step": "11/13/12",
+   "eq-combine-side": "10/12/14",
+   "eq-distribute": "12/12/12",
+   "eq-both-sides": "10/14/12",
+   "eq-special-cases": "16/7/13",
+   "translate-sentence": "12/11/13",
+   "eq-model-context": "15/14/7",
+   "ineq-meaning": "14/12/10",
+   "ineq-one-step": "16/13/7",
+   "ineq-negative-flip": "15/14/7",
+   "ineq-two-step": "15/14/7"
+  }
+ },
+ "probe": {
+  "knowledgePoints": 32,
+  "items": 144,
+  "catalogueItems": 1152,
+  "generatedThisSession": 0,
+  "locale": "en",
+  "minItemsPerKp": 36,
+  "minItemsPerMisconception": 3,
+  "groups": "4/32 resident, 0 loading",
+  "lessons": 22,
+  "residentGroups": [
+   "oo-numeric",
+   "var-meaning",
+   "expr-anatomy",
+   "oo-structure"
+  ],
+  "degraded": [],
+  "issues": 0,
+  "lastIssue": null,
+  "warm": {
+   "at": 1786382619017,
+   "kpId": "var-meaning",
+   "lesson": "expressions-1",
+   "groups": 3,
+   "failed": [],
+   "ms": 7.1,
+   "reason": "ok"
+  },
+  "itemLocale": "en",
+  "localesResident": [
+   "en"
+  ],
+  "formsPerKp": {
+   "var-meaning": "14/17/5",
+   "oo-numeric": "15/16/5",
+   "expr-anatomy": "16/15/5",
+   "oo-structure": "14/10/12",
+   "eval-substitute": "13/12/11",
+   "eval-signed": "12/13/11",
+   "eval-formula": "13/13/10",
+   "translate-phrase": "13/16/7",
+   "translate-order": "17/14/5",
+   "props-operations": "12/12/12",
+   "like-terms-id": "12/12/12",
+   "like-terms-combine": "12/12/12",
+   "distribute-numeric": "15/14/7",
+   "distribute-variable": "12/12/12",
+   "distribute-negative": "16/13/7",
+   "simplify-expression": "12/13/11",
+   "equivalent-expressions": "11/13/12",
+   "eq-meaning": "12/12/12",
+   "props-equality": "15/14/7",
+   "eq-one-add": "13/16/7",
+   "eq-one-mult": "15/14/7",
+   "eq-two-step": "11/13/12",
+   "eq-combine-side": "10/12/14",
+   "eq-distribute": "12/12/12",
+   "eq-both-sides": "10/14/12",
+   "eq-special-cases": "16/7/13",
+   "translate-sentence": "12/11/13",
+   "eq-model-context": "15/14/7",
+   "ineq-meaning": "14/12/10",
+   "ineq-one-step": "16/13/7",
+   "ineq-negative-flip": "15/14/7",
+   "ineq-two-step": "15/14/7"
+  }
+ },
+ "bankAudit": {
+  "source": "committed",
+  "fingerprintSource": "build-time",
+  "setupMs": 0.1,
+  "fingerprint": "d6e2537d",
+  "version": 2,
+  "sampled": 29754,
+  "catalogueShare": 0.6396
+ },
+ "frontier": [
+  "var-meaning",
+  "oo-numeric"
+ ],
+ "resources": {
+  "atReady": [
+   {
+    "name": "http://127.0.0.1:51262/assets/index-XRRBCBzJ.js",
+    "startTime": 8,
+    "encoded": 130648
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/index-BuMqkyig.css",
+    "startTime": 8,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/02-autotier-BDgdNHd-.js",
+    "startTime": 2398,
+    "encoded": 5220
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/05-i18n-C5fupllz.js",
+    "startTime": 2402,
+    "encoded": 4068
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/10-world-Cl2CqU1N.js",
+    "startTime": 2409,
+    "encoded": 17608
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/Materials-E923nh_m.js",
+    "startTime": 2409,
+    "encoded": 14565
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/12-sky-Df0gsLV-.js",
+    "startTime": 2415,
+    "encoded": 11273
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/14-lighting-C-e2ejEP.js",
+    "startTime": 2418,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/16-scatter-Bq56u3-D.js",
+    "startTime": 2421,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/20-input-CegPAsJa.js",
+    "startTime": 2424,
+    "encoded": 12823
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/30-locomotion-DDoLa1fB.js",
+    "startTime": 2427,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/32-avatar-YDyyevT6.js",
+    "startTime": 2430,
+    "encoded": 5001
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/40-camera-qoXL3eYf.js",
+    "startTime": 2433,
+    "encoded": 5689
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/52-post-Dxmv96vf.js",
+    "startTime": 2435,
+    "encoded": 9621
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/60-mathtex-OZIbcsrA.js",
+    "startTime": 2438,
+    "encoded": 92135
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 2438,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/62-itembank-DJvEGcZA.js",
+    "startTime": 2452,
+    "encoded": 645
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/ItemBank-Bkv3MSq0.js",
+    "startTime": 2452,
+    "encoded": 29238
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/62-learning-hIc_9Lz7.js",
+    "startTime": 2460,
+    "encoded": 50342
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/90-flow-DxbVchMP.js",
+    "startTime": 2468,
+    "encoded": 8064
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/en-DiJtJ4AS.js",
+    "startTime": 2472,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 2553,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 2553,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 2553,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 2553,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 2553,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 2553,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 2553,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 2553,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/items-en-BvtiMYOY.js",
+    "startTime": 2580,
+    "encoded": 7879
+   }
+  ],
+  "afterWarm": [
+   {
+    "name": "http://127.0.0.1:51262/assets/index-XRRBCBzJ.js",
+    "startTime": 8,
+    "encoded": 130648
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/index-BuMqkyig.css",
+    "startTime": 8,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/02-autotier-BDgdNHd-.js",
+    "startTime": 2398,
+    "encoded": 5220
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/05-i18n-C5fupllz.js",
+    "startTime": 2402,
+    "encoded": 4068
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/10-world-Cl2CqU1N.js",
+    "startTime": 2409,
+    "encoded": 17608
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/Materials-E923nh_m.js",
+    "startTime": 2409,
+    "encoded": 14565
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/12-sky-Df0gsLV-.js",
+    "startTime": 2415,
+    "encoded": 11273
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/14-lighting-C-e2ejEP.js",
+    "startTime": 2418,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/16-scatter-Bq56u3-D.js",
+    "startTime": 2421,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/20-input-CegPAsJa.js",
+    "startTime": 2424,
+    "encoded": 12823
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/30-locomotion-DDoLa1fB.js",
+    "startTime": 2427,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/32-avatar-YDyyevT6.js",
+    "startTime": 2430,
+    "encoded": 5001
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/40-camera-qoXL3eYf.js",
+    "startTime": 2433,
+    "encoded": 5689
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/52-post-Dxmv96vf.js",
+    "startTime": 2435,
+    "encoded": 9621
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/60-mathtex-OZIbcsrA.js",
+    "startTime": 2438,
+    "encoded": 92135
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 2438,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/62-itembank-DJvEGcZA.js",
+    "startTime": 2452,
+    "encoded": 645
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/ItemBank-Bkv3MSq0.js",
+    "startTime": 2452,
+    "encoded": 29238
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/62-learning-hIc_9Lz7.js",
+    "startTime": 2460,
+    "encoded": 50342
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/90-flow-DxbVchMP.js",
+    "startTime": 2468,
+    "encoded": 8064
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/en-DiJtJ4AS.js",
+    "startTime": 2472,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 2553,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 2553,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 2553,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 2553,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 2553,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 2553,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 2553,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 2553,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/items-en-BvtiMYOY.js",
+    "startTime": 2580,
+    "encoded": 7879
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 3436,
+    "encoded": 2834
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 3436,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 3436,
+    "encoded": 2239
+   }
+  ],
+  "afterPrefetch": [
+   {
+    "name": "http://127.0.0.1:51262/assets/index-XRRBCBzJ.js",
+    "startTime": 8,
+    "encoded": 130648
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/index-BuMqkyig.css",
+    "startTime": 8,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/02-autotier-BDgdNHd-.js",
+    "startTime": 2398,
+    "encoded": 5220
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/05-i18n-C5fupllz.js",
+    "startTime": 2402,
+    "encoded": 4068
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/10-world-Cl2CqU1N.js",
+    "startTime": 2409,
+    "encoded": 17608
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/Materials-E923nh_m.js",
+    "startTime": 2409,
+    "encoded": 14565
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/12-sky-Df0gsLV-.js",
+    "startTime": 2415,
+    "encoded": 11273
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/14-lighting-C-e2ejEP.js",
+    "startTime": 2418,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/16-scatter-Bq56u3-D.js",
+    "startTime": 2421,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/20-input-CegPAsJa.js",
+    "startTime": 2424,
+    "encoded": 12823
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/30-locomotion-DDoLa1fB.js",
+    "startTime": 2427,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/32-avatar-YDyyevT6.js",
+    "startTime": 2430,
+    "encoded": 5001
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/40-camera-qoXL3eYf.js",
+    "startTime": 2433,
+    "encoded": 5689
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/52-post-Dxmv96vf.js",
+    "startTime": 2435,
+    "encoded": 9621
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/60-mathtex-OZIbcsrA.js",
+    "startTime": 2438,
+    "encoded": 92135
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 2438,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/62-itembank-DJvEGcZA.js",
+    "startTime": 2452,
+    "encoded": 645
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/ItemBank-Bkv3MSq0.js",
+    "startTime": 2452,
+    "encoded": 29238
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/62-learning-hIc_9Lz7.js",
+    "startTime": 2460,
+    "encoded": 50342
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/90-flow-DxbVchMP.js",
+    "startTime": 2468,
+    "encoded": 8064
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/en-DiJtJ4AS.js",
+    "startTime": 2472,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 2553,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 2553,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 2553,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 2553,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 2553,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 2553,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 2553,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 2553,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/items-en-BvtiMYOY.js",
+    "startTime": 2580,
+    "encoded": 7879
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 3436,
+    "encoded": 2834
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 3436,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 3436,
+    "encoded": 2239
+   },
+   {
+    "name": "http://127.0.0.1:51262/assets/oo-structure-Bges-2rk.js",
+    "startTime": 3450,
+    "encoded": 2619
+   }
+  ]
+ },
+ "classified": {
+  "criticalPath": {
+   "requests": 30,
+   "groupChunks": [],
+   "itemLocaleChunks": [
+    "items-en-BvtiMYOY.js"
+   ],
+   "spineChunks": [],
+   "encodedBytes": 583143
+  },
+  "warmPulled": {
+   "requests": 3,
+   "groupChunks": [
+    "var-meaning-Ct12kn0-.js",
+    "oo-numeric-BjsVHueV.js",
+    "expr-anatomy-WYJhDm_0.js"
+   ],
+   "itemLocaleChunks": [],
+   "spineChunks": [],
+   "encodedBytes": 7895
+  },
+  "idlePrefetched": {
+   "requests": 1,
+   "groupChunks": [
+    "oo-structure-Bges-2rk.js"
+   ],
+   "itemLocaleChunks": [],
+   "spineChunks": [],
+   "encodedBytes": 2619
+  }
+ }
+}

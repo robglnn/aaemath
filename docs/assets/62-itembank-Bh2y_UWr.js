@@ -1,1 +1,0 @@
-import{s as n,p as i}from"./index-Bu0U1eDj.js";import{i as e}from"./ItemBank-B5q9etEn.js";const m={id:"itembank",order:62,async setup(o){const a=document.documentElement.lang||"en";e.setLocale(a),n.on("ui:locale",t=>{t?.locale&&e.setLocale(t.locale)}),i("itembank",()=>e.probe()),o.mount("itembank",{dispose(){}})}};export{m as default};

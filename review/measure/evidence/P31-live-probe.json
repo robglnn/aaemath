@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-10T17:17:20.495Z",
+ "generated": "2026-08-10T17:26:49.467Z",
  "ready": true,
  "fatal": null,
  "errors": [],
@@ -11,12 +11,12 @@
   "math: claim \"leaf9-share\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer"
  ],
  "warm": {
-  "at": 1786382240326,
+  "at": 1786382809285,
   "kpId": "var-meaning",
   "lesson": "expressions-1",
   "groups": 3,
   "failed": [],
-  "ms": 7.9,
+  "ms": 7.7,
   "reason": "ok"
  },
  "probeAfterWarm": {
@@ -30,20 +30,20 @@
   "groups": "3/32 resident, 0 loading",
   "lessons": 22,
   "residentGroups": [
-   "oo-numeric",
+   "var-meaning",
    "expr-anatomy",
-   "var-meaning"
+   "oo-numeric"
   ],
   "degraded": [],
   "issues": 0,
   "lastIssue": null,
   "warm": {
-   "at": 1786382240326,
+   "at": 1786382809285,
    "kpId": "var-meaning",
    "lesson": "expressions-1",
    "groups": 3,
    "failed": [],
-   "ms": 7.9,
+   "ms": 7.7,
    "reason": "ok"
   },
   "itemLocale": "en",
@@ -96,21 +96,21 @@
   "groups": "4/32 resident, 0 loading",
   "lessons": 22,
   "residentGroups": [
-   "oo-numeric",
-   "expr-anatomy",
    "var-meaning",
+   "expr-anatomy",
+   "oo-numeric",
    "oo-structure"
   ],
   "degraded": [],
   "issues": 0,
   "lastIssue": null,
   "warm": {
-   "at": 1786382240326,
+   "at": 1786382809285,
    "kpId": "var-meaning",
    "lesson": "expressions-1",
    "groups": 3,
    "failed": [],
-   "ms": 7.9,
+   "ms": 7.7,
    "reason": "ok"
   },
   "itemLocale": "en",
@@ -168,492 +168,492 @@
  "resources": {
   "atReady": [
    {
-    "name": "http://127.0.0.1:54284/assets/index-B_i9UVxb.js",
-    "startTime": 8,
-    "encoded": 130654
+    "name": "http://127.0.0.1:49153/assets/index-XRRBCBzJ.js",
+    "startTime": 10,
+    "encoded": 130648
    },
    {
-    "name": "http://127.0.0.1:54284/assets/index-BuMqkyig.css",
-    "startTime": 8,
+    "name": "http://127.0.0.1:49153/assets/index-BuMqkyig.css",
+    "startTime": 11,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:54284/assets/02-autotier-CvJsEWl2.js",
-    "startTime": 2402,
-    "encoded": 5219
+    "name": "http://127.0.0.1:49153/assets/02-autotier-BDgdNHd-.js",
+    "startTime": 49,
+    "encoded": 5220
    },
    {
-    "name": "http://127.0.0.1:54284/assets/05-i18n-BrHXQ5NB.js",
-    "startTime": 2407,
-    "encoded": 4067
+    "name": "http://127.0.0.1:49153/assets/05-i18n-C5fupllz.js",
+    "startTime": 55,
+    "encoded": 4068
    },
    {
-    "name": "http://127.0.0.1:54284/assets/10-world-DKO-dlm-.js",
-    "startTime": 2415,
+    "name": "http://127.0.0.1:49153/assets/10-world-Cl2CqU1N.js",
+    "startTime": 62,
     "encoded": 17608
    },
    {
-    "name": "http://127.0.0.1:54284/assets/Materials-ohGs5Hmq.js",
-    "startTime": 2415,
-    "encoded": 14564
+    "name": "http://127.0.0.1:49153/assets/Materials-E923nh_m.js",
+    "startTime": 62,
+    "encoded": 14565
    },
    {
-    "name": "http://127.0.0.1:54284/assets/12-sky-BLVLAQR2.js",
-    "startTime": 2421,
-    "encoded": 11272
+    "name": "http://127.0.0.1:49153/assets/12-sky-Df0gsLV-.js",
+    "startTime": 68,
+    "encoded": 11273
    },
    {
-    "name": "http://127.0.0.1:54284/assets/14-lighting-Bs8XkkAh.js",
-    "startTime": 2425,
+    "name": "http://127.0.0.1:49153/assets/14-lighting-C-e2ejEP.js",
+    "startTime": 72,
     "encoded": 6758
    },
    {
-    "name": "http://127.0.0.1:54284/assets/16-scatter-Mqi19odW.js",
-    "startTime": 2429,
+    "name": "http://127.0.0.1:49153/assets/16-scatter-Bq56u3-D.js",
+    "startTime": 75,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:54284/assets/20-input-1IhwZ9CQ.js",
-    "startTime": 2433,
-    "encoded": 12822
+    "name": "http://127.0.0.1:49153/assets/20-input-CegPAsJa.js",
+    "startTime": 78,
+    "encoded": 12823
    },
    {
-    "name": "http://127.0.0.1:54284/assets/30-locomotion-CF-Ma-bJ.js",
-    "startTime": 2437,
+    "name": "http://127.0.0.1:49153/assets/30-locomotion-DDoLa1fB.js",
+    "startTime": 82,
     "encoded": 13486
    },
    {
-    "name": "http://127.0.0.1:54284/assets/32-avatar-B7zwp7hE.js",
-    "startTime": 2441,
-    "encoded": 4999
+    "name": "http://127.0.0.1:49153/assets/32-avatar-YDyyevT6.js",
+    "startTime": 85,
+    "encoded": 5001
    },
    {
-    "name": "http://127.0.0.1:54284/assets/40-camera-BQyCkT_p.js",
-    "startTime": 2443,
+    "name": "http://127.0.0.1:49153/assets/40-camera-qoXL3eYf.js",
+    "startTime": 88,
     "encoded": 5689
    },
    {
-    "name": "http://127.0.0.1:54284/assets/52-post-7z0Y5S8E.js",
-    "startTime": 2445,
-    "encoded": 9617
+    "name": "http://127.0.0.1:49153/assets/52-post-Dxmv96vf.js",
+    "startTime": 90,
+    "encoded": 9621
    },
    {
-    "name": "http://127.0.0.1:54284/assets/60-mathtex-BFYepSBM.js",
-    "startTime": 2448,
-    "encoded": 92133
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 2448,
+    "name": "http://127.0.0.1:49153/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 93,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:54284/assets/62-itembank-B9An2avz.js",
-    "startTime": 2465,
+    "name": "http://127.0.0.1:49153/assets/60-mathtex-OZIbcsrA.js",
+    "startTime": 93,
+    "encoded": 92135
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/62-itembank-DJvEGcZA.js",
+    "startTime": 107,
     "encoded": 645
    },
    {
-    "name": "http://127.0.0.1:54284/assets/ItemBank-CQNXpR2H.js",
-    "startTime": 2465,
-    "encoded": 29237
+    "name": "http://127.0.0.1:49153/assets/ItemBank-Bkv3MSq0.js",
+    "startTime": 107,
+    "encoded": 29238
    },
    {
-    "name": "http://127.0.0.1:54284/assets/62-learning-CBnbikAY.js",
-    "startTime": 2472,
-    "encoded": 50344
+    "name": "http://127.0.0.1:49153/assets/62-learning-hIc_9Lz7.js",
+    "startTime": 114,
+    "encoded": 50342
    },
    {
-    "name": "http://127.0.0.1:54284/assets/90-flow-D3ToW7A9.js",
-    "startTime": 2481,
-    "encoded": 7644
+    "name": "http://127.0.0.1:49153/assets/90-flow-DxbVchMP.js",
+    "startTime": 122,
+    "encoded": 8064
    },
    {
-    "name": "http://127.0.0.1:54284/assets/en-DiJtJ4AS.js",
-    "startTime": 2486,
+    "name": "http://127.0.0.1:49153/assets/en-DiJtJ4AS.js",
+    "startTime": 126,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 209,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 209,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 2567,
-    "encoded": 25324
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 2567,
-    "encoded": 16440
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 2567,
-    "encoded": 5468
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 209,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 209,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 209,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 209,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 209,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 209,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:54284/assets/items-en-BvtiMYOY.js",
-    "startTime": 2592,
+    "name": "http://127.0.0.1:49153/assets/items-en-BvtiMYOY.js",
+    "startTime": 239,
     "encoded": 7879
    }
   ],
   "afterWarm": [
    {
-    "name": "http://127.0.0.1:54284/assets/index-B_i9UVxb.js",
-    "startTime": 8,
-    "encoded": 130654
+    "name": "http://127.0.0.1:49153/assets/index-XRRBCBzJ.js",
+    "startTime": 10,
+    "encoded": 130648
    },
    {
-    "name": "http://127.0.0.1:54284/assets/index-BuMqkyig.css",
-    "startTime": 8,
+    "name": "http://127.0.0.1:49153/assets/index-BuMqkyig.css",
+    "startTime": 11,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:54284/assets/02-autotier-CvJsEWl2.js",
-    "startTime": 2402,
-    "encoded": 5219
+    "name": "http://127.0.0.1:49153/assets/02-autotier-BDgdNHd-.js",
+    "startTime": 49,
+    "encoded": 5220
    },
    {
-    "name": "http://127.0.0.1:54284/assets/05-i18n-BrHXQ5NB.js",
-    "startTime": 2407,
-    "encoded": 4067
+    "name": "http://127.0.0.1:49153/assets/05-i18n-C5fupllz.js",
+    "startTime": 55,
+    "encoded": 4068
    },
    {
-    "name": "http://127.0.0.1:54284/assets/10-world-DKO-dlm-.js",
-    "startTime": 2415,
+    "name": "http://127.0.0.1:49153/assets/10-world-Cl2CqU1N.js",
+    "startTime": 62,
     "encoded": 17608
    },
    {
-    "name": "http://127.0.0.1:54284/assets/Materials-ohGs5Hmq.js",
-    "startTime": 2415,
-    "encoded": 14564
+    "name": "http://127.0.0.1:49153/assets/Materials-E923nh_m.js",
+    "startTime": 62,
+    "encoded": 14565
    },
    {
-    "name": "http://127.0.0.1:54284/assets/12-sky-BLVLAQR2.js",
-    "startTime": 2421,
-    "encoded": 11272
+    "name": "http://127.0.0.1:49153/assets/12-sky-Df0gsLV-.js",
+    "startTime": 68,
+    "encoded": 11273
    },
    {
-    "name": "http://127.0.0.1:54284/assets/14-lighting-Bs8XkkAh.js",
-    "startTime": 2425,
+    "name": "http://127.0.0.1:49153/assets/14-lighting-C-e2ejEP.js",
+    "startTime": 72,
     "encoded": 6758
    },
    {
-    "name": "http://127.0.0.1:54284/assets/16-scatter-Mqi19odW.js",
-    "startTime": 2429,
+    "name": "http://127.0.0.1:49153/assets/16-scatter-Bq56u3-D.js",
+    "startTime": 75,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:54284/assets/20-input-1IhwZ9CQ.js",
-    "startTime": 2433,
-    "encoded": 12822
+    "name": "http://127.0.0.1:49153/assets/20-input-CegPAsJa.js",
+    "startTime": 78,
+    "encoded": 12823
    },
    {
-    "name": "http://127.0.0.1:54284/assets/30-locomotion-CF-Ma-bJ.js",
-    "startTime": 2437,
+    "name": "http://127.0.0.1:49153/assets/30-locomotion-DDoLa1fB.js",
+    "startTime": 82,
     "encoded": 13486
    },
    {
-    "name": "http://127.0.0.1:54284/assets/32-avatar-B7zwp7hE.js",
-    "startTime": 2441,
-    "encoded": 4999
+    "name": "http://127.0.0.1:49153/assets/32-avatar-YDyyevT6.js",
+    "startTime": 85,
+    "encoded": 5001
    },
    {
-    "name": "http://127.0.0.1:54284/assets/40-camera-BQyCkT_p.js",
-    "startTime": 2443,
+    "name": "http://127.0.0.1:49153/assets/40-camera-qoXL3eYf.js",
+    "startTime": 88,
     "encoded": 5689
    },
    {
-    "name": "http://127.0.0.1:54284/assets/52-post-7z0Y5S8E.js",
-    "startTime": 2445,
-    "encoded": 9617
+    "name": "http://127.0.0.1:49153/assets/52-post-Dxmv96vf.js",
+    "startTime": 90,
+    "encoded": 9621
    },
    {
-    "name": "http://127.0.0.1:54284/assets/60-mathtex-BFYepSBM.js",
-    "startTime": 2448,
-    "encoded": 92133
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 2448,
+    "name": "http://127.0.0.1:49153/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 93,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:54284/assets/62-itembank-B9An2avz.js",
-    "startTime": 2465,
+    "name": "http://127.0.0.1:49153/assets/60-mathtex-OZIbcsrA.js",
+    "startTime": 93,
+    "encoded": 92135
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/62-itembank-DJvEGcZA.js",
+    "startTime": 107,
     "encoded": 645
    },
    {
-    "name": "http://127.0.0.1:54284/assets/ItemBank-CQNXpR2H.js",
-    "startTime": 2465,
-    "encoded": 29237
+    "name": "http://127.0.0.1:49153/assets/ItemBank-Bkv3MSq0.js",
+    "startTime": 107,
+    "encoded": 29238
    },
    {
-    "name": "http://127.0.0.1:54284/assets/62-learning-CBnbikAY.js",
-    "startTime": 2472,
-    "encoded": 50344
+    "name": "http://127.0.0.1:49153/assets/62-learning-hIc_9Lz7.js",
+    "startTime": 114,
+    "encoded": 50342
    },
    {
-    "name": "http://127.0.0.1:54284/assets/90-flow-D3ToW7A9.js",
-    "startTime": 2481,
-    "encoded": 7644
+    "name": "http://127.0.0.1:49153/assets/90-flow-DxbVchMP.js",
+    "startTime": 122,
+    "encoded": 8064
    },
    {
-    "name": "http://127.0.0.1:54284/assets/en-DiJtJ4AS.js",
-    "startTime": 2486,
+    "name": "http://127.0.0.1:49153/assets/en-DiJtJ4AS.js",
+    "startTime": 126,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 209,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 209,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 2567,
-    "encoded": 25324
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 2567,
-    "encoded": 16440
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 2567,
-    "encoded": 5468
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 209,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 209,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 209,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 209,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 209,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 209,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:54284/assets/items-en-BvtiMYOY.js",
-    "startTime": 2592,
+    "name": "http://127.0.0.1:49153/assets/items-en-BvtiMYOY.js",
+    "startTime": 239,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:54284/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 3474,
+    "name": "http://127.0.0.1:49153/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 962,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:54284/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 3475,
-    "encoded": 2822
+    "name": "http://127.0.0.1:49153/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 962,
+    "encoded": 2239
    },
    {
-    "name": "http://127.0.0.1:54284/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 3475,
-    "encoded": 2239
+    "name": "http://127.0.0.1:49153/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 962,
+    "encoded": 2822
    }
   ],
   "afterPrefetch": [
    {
-    "name": "http://127.0.0.1:54284/assets/index-B_i9UVxb.js",
-    "startTime": 8,
-    "encoded": 130654
+    "name": "http://127.0.0.1:49153/assets/index-XRRBCBzJ.js",
+    "startTime": 10,
+    "encoded": 130648
    },
    {
-    "name": "http://127.0.0.1:54284/assets/index-BuMqkyig.css",
-    "startTime": 8,
+    "name": "http://127.0.0.1:49153/assets/index-BuMqkyig.css",
+    "startTime": 11,
     "encoded": 759
    },
    {
-    "name": "http://127.0.0.1:54284/assets/02-autotier-CvJsEWl2.js",
-    "startTime": 2402,
-    "encoded": 5219
+    "name": "http://127.0.0.1:49153/assets/02-autotier-BDgdNHd-.js",
+    "startTime": 49,
+    "encoded": 5220
    },
    {
-    "name": "http://127.0.0.1:54284/assets/05-i18n-BrHXQ5NB.js",
-    "startTime": 2407,
-    "encoded": 4067
+    "name": "http://127.0.0.1:49153/assets/05-i18n-C5fupllz.js",
+    "startTime": 55,
+    "encoded": 4068
    },
    {
-    "name": "http://127.0.0.1:54284/assets/10-world-DKO-dlm-.js",
-    "startTime": 2415,
+    "name": "http://127.0.0.1:49153/assets/10-world-Cl2CqU1N.js",
+    "startTime": 62,
     "encoded": 17608
    },
    {
-    "name": "http://127.0.0.1:54284/assets/Materials-ohGs5Hmq.js",
-    "startTime": 2415,
-    "encoded": 14564
+    "name": "http://127.0.0.1:49153/assets/Materials-E923nh_m.js",
+    "startTime": 62,
+    "encoded": 14565
    },
    {
-    "name": "http://127.0.0.1:54284/assets/12-sky-BLVLAQR2.js",
-    "startTime": 2421,
-    "encoded": 11272
+    "name": "http://127.0.0.1:49153/assets/12-sky-Df0gsLV-.js",
+    "startTime": 68,
+    "encoded": 11273
    },
    {
-    "name": "http://127.0.0.1:54284/assets/14-lighting-Bs8XkkAh.js",
-    "startTime": 2425,
+    "name": "http://127.0.0.1:49153/assets/14-lighting-C-e2ejEP.js",
+    "startTime": 72,
     "encoded": 6758
    },
    {
-    "name": "http://127.0.0.1:54284/assets/16-scatter-Mqi19odW.js",
-    "startTime": 2429,
+    "name": "http://127.0.0.1:49153/assets/16-scatter-Bq56u3-D.js",
+    "startTime": 75,
     "encoded": 12225
    },
    {
-    "name": "http://127.0.0.1:54284/assets/20-input-1IhwZ9CQ.js",
-    "startTime": 2433,
-    "encoded": 12822
+    "name": "http://127.0.0.1:49153/assets/20-input-CegPAsJa.js",
+    "startTime": 78,
+    "encoded": 12823
    },
    {
-    "name": "http://127.0.0.1:54284/assets/30-locomotion-CF-Ma-bJ.js",
-    "startTime": 2437,
+    "name": "http://127.0.0.1:49153/assets/30-locomotion-DDoLa1fB.js",
+    "startTime": 82,
     "encoded": 13486
    },
    {
-    "name": "http://127.0.0.1:54284/assets/32-avatar-B7zwp7hE.js",
-    "startTime": 2441,
-    "encoded": 4999
+    "name": "http://127.0.0.1:49153/assets/32-avatar-YDyyevT6.js",
+    "startTime": 85,
+    "encoded": 5001
    },
    {
-    "name": "http://127.0.0.1:54284/assets/40-camera-BQyCkT_p.js",
-    "startTime": 2443,
+    "name": "http://127.0.0.1:49153/assets/40-camera-qoXL3eYf.js",
+    "startTime": 88,
     "encoded": 5689
    },
    {
-    "name": "http://127.0.0.1:54284/assets/52-post-7z0Y5S8E.js",
-    "startTime": 2445,
-    "encoded": 9617
+    "name": "http://127.0.0.1:49153/assets/52-post-Dxmv96vf.js",
+    "startTime": 90,
+    "encoded": 9621
    },
    {
-    "name": "http://127.0.0.1:54284/assets/60-mathtex-BFYepSBM.js",
-    "startTime": 2448,
-    "encoded": 92133
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/60-mathtex-DLVrwanO.css",
-    "startTime": 2448,
+    "name": "http://127.0.0.1:49153/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 93,
     "encoded": 8044
    },
    {
-    "name": "http://127.0.0.1:54284/assets/62-itembank-B9An2avz.js",
-    "startTime": 2465,
+    "name": "http://127.0.0.1:49153/assets/60-mathtex-OZIbcsrA.js",
+    "startTime": 93,
+    "encoded": 92135
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/62-itembank-DJvEGcZA.js",
+    "startTime": 107,
     "encoded": 645
    },
    {
-    "name": "http://127.0.0.1:54284/assets/ItemBank-CQNXpR2H.js",
-    "startTime": 2465,
-    "encoded": 29237
+    "name": "http://127.0.0.1:49153/assets/ItemBank-Bkv3MSq0.js",
+    "startTime": 107,
+    "encoded": 29238
    },
    {
-    "name": "http://127.0.0.1:54284/assets/62-learning-CBnbikAY.js",
-    "startTime": 2472,
-    "encoded": 50344
+    "name": "http://127.0.0.1:49153/assets/62-learning-hIc_9Lz7.js",
+    "startTime": 114,
+    "encoded": 50342
    },
    {
-    "name": "http://127.0.0.1:54284/assets/90-flow-D3ToW7A9.js",
-    "startTime": 2481,
-    "encoded": 7644
+    "name": "http://127.0.0.1:49153/assets/90-flow-DxbVchMP.js",
+    "startTime": 122,
+    "encoded": 8064
    },
    {
-    "name": "http://127.0.0.1:54284/assets/en-DiJtJ4AS.js",
-    "startTime": 2486,
+    "name": "http://127.0.0.1:49153/assets/en-DiJtJ4AS.js",
+    "startTime": 126,
     "encoded": 8348
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Regular-B22Nviop.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 209,
     "encoded": 26272
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 209,
     "encoded": 16988
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
-    "startTime": 2567,
-    "encoded": 25324
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Math-Italic-t53AETM-.woff2",
-    "startTime": 2567,
-    "encoded": 16440
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
-    "startTime": 2567,
-    "encoded": 5468
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 209,
     "encoded": 5208
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 209,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 209,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 209,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 209,
     "encoded": 4928
    },
    {
-    "name": "http://127.0.0.1:54284/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
-    "startTime": 2567,
+    "name": "http://127.0.0.1:49153/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 209,
     "encoded": 28076
    },
    {
-    "name": "http://127.0.0.1:54284/assets/items-en-BvtiMYOY.js",
-    "startTime": 2592,
+    "name": "http://127.0.0.1:49153/assets/items-en-BvtiMYOY.js",
+    "startTime": 239,
     "encoded": 7879
    },
    {
-    "name": "http://127.0.0.1:54284/assets/var-meaning-Ct12kn0-.js",
-    "startTime": 3474,
+    "name": "http://127.0.0.1:49153/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 962,
     "encoded": 2834
    },
    {
-    "name": "http://127.0.0.1:54284/assets/oo-numeric-BjsVHueV.js",
-    "startTime": 3475,
-    "encoded": 2822
-   },
-   {
-    "name": "http://127.0.0.1:54284/assets/expr-anatomy-WYJhDm_0.js",
-    "startTime": 3475,
+    "name": "http://127.0.0.1:49153/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 962,
     "encoded": 2239
    },
    {
-    "name": "http://127.0.0.1:54284/assets/oo-structure-Bges-2rk.js",
-    "startTime": 3496,
+    "name": "http://127.0.0.1:49153/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 962,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:49153/assets/oo-structure-Bges-2rk.js",
+    "startTime": 985,
     "encoded": 2619
    }
   ]
@@ -666,14 +666,14 @@
     "items-en-BvtiMYOY.js"
    ],
    "spineChunks": [],
-   "encodedBytes": 582717
+   "encodedBytes": 583143
   },
   "warmPulled": {
    "requests": 3,
    "groupChunks": [
     "var-meaning-Ct12kn0-.js",
-    "oo-numeric-BjsVHueV.js",
-    "expr-anatomy-WYJhDm_0.js"
+    "expr-anatomy-WYJhDm_0.js",
+    "oo-numeric-BjsVHueV.js"
    ],
    "itemLocaleChunks": [],
    "spineChunks": [],

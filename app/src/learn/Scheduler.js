@@ -118,6 +118,13 @@ export class Scheduler {
      * ------------------------------------------------------------------------------------------
      */
     this.recentByCell = new Map();
+    /**
+     * `req.seq` -> the generator family `serve()` handed out for it, so `submit()` can report the
+     * family even when the presenter forgets to. Bounded in `serve()`; it is a short-lived note
+     * about open requests, not state, and it is deliberately NOT persisted: a request that did not
+     * survive the reload cannot be submitted either.
+     */
+    this._servedFamily = new Map();
     this._event = null;
     /** The open test-out probe: `{ kpId }`, or null. Atomic in the same way a retention check is. */
     this._probe = null;
@@ -623,13 +630,83 @@ export class Scheduler {
     return FADE[s.fadeIdx];
   }
 
+  // --------------------------------------------------------------------- serve
+
+  /**
+   * ------------------------------------------------------------------------------------------
+   * THE SANCTIONED PICKER. Turn one request into one item, honouring the refusal list.
+   * ------------------------------------------------------------------------------------------
+   *
+   * WHY THIS EXISTS AND IS NOT IN `ItemBank`. Every request the Scheduler publishes carries
+   * `avoidFamilies` — the generator families the audit refused on that (knowledge point x form),
+   * each of which has a single memorised answer. A critic measured what happens when nothing reads
+   * it: `ItemBank.select()` takes no `avoidFamilies` argument at all, so the very first
+   * `select({ kpId: "expr-anatomy", form: "construct" })` returns an `expr-anatomy.coefficient`
+   * item, measured 1.000 blind, on a band-1 node with 29 descendants. The engine's half of that is
+   * closed inside `Mastery` (see `UNREPORTED_FAMILY`): such an item is REFUSED rather than credited.
+   * But a refusal costs the learner 46 s and fails an honest probe, so the honest move is to not
+   * serve it — and `app/src/learn/ItemBank.js` belongs to another piece. This is the filter, on
+   * this side of the boundary, until it can live in `select()`.
+   *
+   * Two mechanisms, because the bank has two halves:
+   *   - the committed catalogue is filtered by ID. Refused families' items are added to the
+   *     exclusion set `select()` already honours, so the catalogue simply never offers them;
+   *   - the generator is filtered by REJECTION AND RETRY. `select()` is deterministic in `seed`, so
+   *     a rejected draw is retried at a different seed rather than argued with.
+   *
+   * It returns `{ item, family, source, tries, filtered }`, or `null` when the cell has nothing
+   * servable left — which is a real answer and better than a refused item: the caller should ask
+   * `next()` again rather than serve something the engine will not score.
+   *
+   * @param {object} req a request from `next()`
+   * @param {{select:Function, forKp?:Function}} bank the item bank (injected, never imported)
+   */
+  serve(req, bank, { maxTries = 24 } = {}) {
+    if (!req || !bank || typeof bank.select !== "function") return null;
+    const avoid = new Set(req.avoidFamilies ?? []);
+    const exclude = new Set(req.avoidItemIds ?? []);
+    // Catalogue half: name the refused items so `select()`'s own exclusion set does the work.
+    if (avoid.size && typeof bank.forKp === "function") {
+      for (const it of bank.forKp(req.kpId, { form: req.form }) ?? []) if (avoid.has(it.family)) exclude.add(it.id);
+    }
+    let tries = 0;
+    let filtered = 0;
+    for (; tries < maxTries; tries += 1) {
+      const sel = bank.select({
+        kpId: req.kpId,
+        form: req.form,
+        difficulty: req.difficulty == null ? null : Math.max(1, Math.min(5, Math.round(req.difficulty))),
+        misconception: req.targetMisconception ?? null,
+        exclude,
+        // Passed through even though today's bank ignores it: the day `select()` grows the filter,
+        // this loop becomes a no-op instead of a second implementation of the same rule.
+        avoidFamilies: [...avoid],
+        seed: ((req.seq + 1) * 2654435761 + tries * 7919) >>> 0,
+      });
+      if (!sel || !sel.item) break;
+      const family = sel.item.family ?? null;
+      if (family != null && avoid.has(family)) {
+        filtered += 1;
+        exclude.add(sel.item.id); // never offer this one again inside this request
+        continue;
+      }
+      this.noteServed({ itemId: sel.item.id, kpId: req.kpId, form: req.form });
+      this._servedFamily.set(req.seq, family);
+      // A cap, so one long-lived session cannot grow this without bound. Only the open request and
+      // its immediate predecessors can still be submitted.
+      if (this._servedFamily.size > 64) this._servedFamily.delete(this._servedFamily.keys().next().value);
+      return { item: sel.item, family, source: sel.source, relaxation: sel.relaxation ?? null, tries: tries + 1, filtered };
+    }
+    return null;
+  }
+
   // -------------------------------------------------------------------- submit
 
   /**
    * Score one response against the request `next()` produced, then move time and the ladder.
    *
    * @param {object} req the request from `next()`
-   * @param {object} outcome `{ correct, latencyMs?, promptTokens?, hinted?, itemId?, misconception?, response?, exercises? }`
+   * @param {object} outcome `{ correct, latencyMs?, promptTokens?, hinted?, itemId?, misconception?, response?, exercises?, family? }`
    */
   submit(req, outcome) {
     const result = this.mastery.respond({
@@ -644,10 +721,16 @@ export class Scheduler {
       // What the world ACTUALLY did on this item. `req.hinted` is only the default for the phase.
       hinted: typeof outcome.hinted === "boolean" ? outcome.hinted : req.hinted,
       itemId: outcome.itemId ?? null,
-      // Which generator family the presenter actually served. Twenty of the bank's families have
-      // a single memorised answer; the engine refuses those outright, and a presenter that does
-      // not say which family it served is priced at the worst family it was allowed to serve.
-      family: outcome.family ?? null,
+      /**
+       * WHICH GENERATOR FAMILY WAS SERVED. Forty-odd of the bank's families answer to a single
+       * memorised string and the audit refuses them by name; the engine will not score an item
+       * whose family it was not told, on any cell that has such a family (see
+       * `Mastery.UNREPORTED_FAMILY`). A presenter therefore has two honest options, and this line
+       * is the second one: report `family` on the outcome, or draw the item through `serve()`,
+       * which honours `avoidFamilies` and remembers what it handed out. Anything else is refused
+       * rather than priced at the surviving-family rate, which is the round-2 leak.
+       */
+      family: outcome.family ?? this._servedFamily.get(req.seq) ?? null,
       misconception: outcome.misconception ?? null,
       response: outcome.response ?? null,
       exercises: outcome.exercises,

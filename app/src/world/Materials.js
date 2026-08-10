@@ -633,6 +633,38 @@ const ARCHETYPES = {
     fog: false,
   },
 
+  /**
+   * **The contact shadow a body leaves where it meets the ground.**
+   *
+   * A cascaded shadow map is the right way to cast a six-metre shadow and the wrong thing to *rely*
+   * on for the half metre under a boot: it can miss for reasons that have nothing to do with the
+   * body — the cascade slides off the feet when the player pitches the view down, the sun goes
+   * behind the camera, the receiver is a mesh that does not read the map. Two rounds of this piece
+   * shipped a character with **zero** measured darkening under the sole for exactly those reasons,
+   * and a body with no contact shadow reads as a sticker pasted onto the terrain.
+   *
+   * So the contact patch is authored, not derived: a decal the light rig places under the body every
+   * frame (`Lighting._updateContact`). It is deliberately NOT a multiply — a multiply blend happens
+   * in whatever colour space the current render target is in, and this project renders through a
+   * post composer whose target space is not the canvas's. An alpha blend of an *authored colour*
+   * goes through three's own `colorspace_fragment` and is therefore correct in both.
+   *
+   * The colour is `ground.shadow` — §3.4's second dark family, the one a cast shadow on open ground
+   * lands on, hue 120 — so the patch under the boot is the same substance as the cast shadow beside
+   * it rather than a grey blob. Alpha comes from the geometry (a 4-component colour attribute, which
+   * three compiles as `USE_COLOR_ALPHA`), so the falloff is a property of the mesh and costs no
+   * shader of its own.
+   */
+  contactShadow: {
+    basic: true,
+    albedo: () => new THREE.Color(1, 1, 1), // the darkening lives in the vertex colour, see below
+    vertexColors: true,
+    transparent: true,
+    depthWrite: false,
+    fog: false,
+    blend: "multiply",
+  },
+
   // ---- unlit
   /** §6.2 — flat quads on the sky sphere, hard alpha test, two values per slab and never three. */
   cloudSlab: { basic: true, albedo: () => roleColor("cloud.slab"), alphaTest: 0.5 },
@@ -709,20 +741,41 @@ class MaterialFactory {
     const color = o.color !== undefined ? toColor(o.color) : spec.albedo();
 
     if (spec.basic) {
+      // `transparent` is opt-in per archetype and per call. §5's "alpha TEST, never alpha blend" is
+      // a rule about *cutouts* — foliage, cloud slabs — where a blend costs sorting and buys
+      // nothing. A contact shadow is the one surface in this language whose whole content is a soft
+      // edge, and a hard-edged one would read as a sticker of its own.
+      const transparent = o.transparent ?? spec.transparent ?? false;
+      const blend = o.blend ?? spec.blend ?? null;
       const basic = new THREE.MeshBasicMaterial({
         color,
         side: o.side ?? spec.side ?? THREE.FrontSide,
         vertexColors: o.vertexColors ?? spec.vertexColors ?? false,
-        transparent: false,
+        transparent,
+        opacity: o.opacity ?? 1,
+        depthWrite: o.depthWrite ?? spec.depthWrite ?? true,
         alphaTest: o.alphaTest ?? spec.alphaTest ?? 0,
         fog: o.fog ?? spec.fog ?? true,
         toneMapped: true,
         dithering: true,
       });
+      if (blend === "multiply") {
+        // `dst * src`, with `src` a per-fragment factor in [0,1] — so this blend can only ever
+        // darken. That is the whole reason it is here rather than an alpha blend toward a shadow
+        // colour: a body standing on ground that is *already* in shadow must not have its contact
+        // patch LIGHTEN the ground, and an alpha blend toward `ground.shadow` (Y 0.030) does exactly
+        // that wherever the surface underneath is darker than that — which on this leaf is every
+        // turned facet in the frame. Measured, first attempt: a green blob on blue-grey rock.
+        basic.blending = THREE.CustomBlending;
+        basic.blendSrc = THREE.DstColorFactor;
+        basic.blendDst = THREE.ZeroFactor;
+        basic.blendEquation = THREE.AddEquation;
+      }
       basic.name = o.name ?? `vs.${name}`;
       basic.userData.vsArchetype = name;
       basic.userData.vsAccent = o.accent ?? !!spec.accent; // P12's bloom mask reads this, never a luminance test
-      basic.customProgramCacheKey = () => `vs:basic:${basic.alphaTest > 0 ? "a" : "-"}`;
+      basic.customProgramCacheKey = () =>
+        `vs:basic:${basic.alphaTest > 0 ? "a" : "-"}:${transparent ? "t" : "-"}:${basic.vertexColors ? "c" : "-"}:${blend ?? "-"}`;
       return basic;
     }
 
@@ -852,6 +905,7 @@ class MaterialFactory {
   heroSkin(o) { return this.get("heroSkin", o); }
   heroHair(o) { return this.get("heroHair", o); }
   heroDark(o) { return this.get("heroDark", o); }
+  contactShadow(o) { return this.make("contactShadow", o); }
   cloudSlab(o) { return this.get("cloudSlab", o); }
   glyph(o) { return this.get("glyph", o); }
 
@@ -904,6 +958,134 @@ export function flatten(geometry) {
   g.computeVertexNormals();
   g.userData.vsFlat = true;
   return g;
+}
+
+/**
+ * **The contact patch under a body, as geometry.**
+ *
+ * An ellipse in the XZ plane whose local +X is the direction the cast shadow travels, so the patch
+ * reads as the near end of that shadow rather than as a disc a body happens to be standing in. Three
+ * numbers matter and each is a claim `review/measure/P11.mjs` checks on pixels:
+ *
+ *  * `plateau` — the fraction of the radius held at full alpha. The reflex authoring is a pure
+ *    radial gradient peaking at the centre, and it fails C2: "the darkening reaches 90 % of its own
+ *    peak within 0.10 m of the sole" is a peter-panning test, and a gradient whose peak sits 0.3 m
+ *    down-sun of the boot answers it with 0.3 m. A plateau that *contains* the sole answers 0.
+ *  * `offset` — how far down-sun the ellipse is pushed. It must stay inside `plateau * radius` or
+ *    the point above is undone.
+ *  * `bowl` — the rim is dropped below the centre so a patch lying on a slope buries its rim instead
+ *    of floating it. Alpha is already 0 out there, so nothing visible is lost.
+ *
+ * Alpha rides on a 4-component colour attribute (three compiles `USE_COLOR_ALPHA` when the colour
+ * attribute has `itemSize === 4`), so the falloff costs no shader of its own and the material stays
+ * a plain `MeshBasicMaterial` inside §5's ban list.
+ *
+ * Non-indexed with one normal per face, so `facetAudit` counts it as flat and F1 does not move.
+ */
+export function contactShadowGeometry({
+  radius = 0.70,
+  elongation = 1.55,
+  offset = 0.30,
+  plateau = 0.42,
+  bowl = 0.10,
+  segments = 28,
+  rings = 5,
+} = {}) {
+  const pos = [];
+  const nrm = [];
+  const fall = [];
+  const alphaAt = (u) => {
+    if (u <= plateau) return 1;
+    const t = Math.min(1, (u - plateau) / (1 - plateau));
+    return 1 - t * t * (3 - 2 * t); // smoothstep, evaluated here so the mesh carries the curve
+  };
+  const P = (u, a) => [offset + Math.cos(a) * u * radius * elongation, -bowl * u * u, Math.sin(a) * u * radius];
+  const push = (p, u) => {
+    pos.push(p[0], p[1], p[2]);
+    nrm.push(0, 1, 0);
+    fall.push(alphaAt(u));
+  };
+  for (let r = 0; r < rings; r++) {
+    const u0 = r / rings;
+    const u1 = (r + 1) / rings;
+    for (let s = 0; s < segments; s++) {
+      const a0 = (s / segments) * Math.PI * 2;
+      const a1 = ((s + 1) / segments) * Math.PI * 2;
+      if (r === 0) {
+        push(P(0, 0), 0);
+        push(P(u1, a1), u1);
+        push(P(u1, a0), u1);
+      } else {
+        push(P(u0, a0), u0);
+        push(P(u1, a1), u1);
+        push(P(u1, a0), u1);
+        push(P(u0, a0), u0);
+        push(P(u0, a1), u0);
+        push(P(u1, a1), u1);
+      }
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("normal", new THREE.Float32BufferAttribute(nrm, 3));
+  g.setAttribute("color", new THREE.Float32BufferAttribute(new Float32Array(fall.length * 3), 3));
+  g.userData.vsFlat = true;
+  g.userData.vsFalloff = new Float32Array(fall);
+  g.userData.vsFootprint = {
+    downSun: r4(offset + radius * elongation),
+    upSun: r4(radius * elongation - offset),
+    across: r4(radius),
+    plateauDownSun: r4(offset + plateau * radius * elongation),
+    plateauUpSun: r4(plateau * radius * elongation - offset),
+  };
+  setContactShadowStrength(g, 1);
+  g.computeBoundingSphere();
+  return g;
+}
+
+/**
+ * **The factor a contact patch multiplies the ground by, derived from the palette.**
+ *
+ * §3.2's witness is one ground plane, lit and inside its own cast shadow: `ground.lit` `#78632C`
+ * and `ground.shadow` `#223522`. Their per-channel ratio **is** what a cast shadow does to ground in
+ * this world, so a contact patch at full strength multiplies by exactly that and lands a lit facet
+ * on `ground.shadow` — hue 120, §3.4's second dark family, the same family as the cast shadow next
+ * to it. Nothing here is typed: re-sample the palette and the patch re-derives.
+ *
+ * The ratio is taken in **display** space and stored **linear**, and that is not a rounding detail.
+ * three encodes `gl_FragColor` to the output colour space, so a linear value `m^2.2` reaches an sRGB
+ * framebuffer as `m` — and reaches a *linear* framebuffer (which is what this project's post
+ * composer renders into) as `m^2.2`, which after the composer's own final encode is again a display
+ * factor of `m`. One number, correct on both paths, which is why this is a multiply and not the
+ * multiply-flavoured alpha blend that would have to know which path it is on.
+ */
+export function contactShadowMultiplier() {
+  const lit = roleColor("ground.lit");
+  const shadow = roleColor("ground.shadow");
+  const enc = (v) => (v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - 0.055);
+  return ["r", "g", "b"].map((c) => Math.min(1, enc(shadow[c]) / Math.max(enc(lit[c]), 1e-4)));
+}
+
+/**
+ * Re-weight a contact patch between 0 (invisible) and 1 (a full cast shadow on ground).
+ *
+ * The strength cannot ride on `material.opacity`, because a multiply blend ignores source alpha —
+ * so it rides on the vertex colour, which is the one thing in the draw that is per-fragment and
+ * free. `mix(1, M, falloff · strength)`, decoded to linear so three's own encode restores it.
+ */
+export function setContactShadowStrength(geometry, strength) {
+  const M = contactShadowMultiplier();
+  const fall = geometry.userData.vsFalloff;
+  const col = geometry.attributes.color;
+  const dec = (v) => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  const s = Math.max(0, Math.min(1, strength));
+  for (let i = 0; i < fall.length; i++) {
+    const t = fall[i] * s;
+    col.setXYZ(i, dec(1 + (M[0] - 1) * t), dec(1 + (M[1] - 1) * t), dec(1 + (M[2] - 1) * t));
+  }
+  col.needsUpdate = true;
+  geometry.userData.vsStrength = s;
+  return s;
 }
 
 /** `flatten()` a whole subtree in place — the one-liner a level builder actually wants. */

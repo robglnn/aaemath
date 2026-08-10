@@ -1,8 +1,8 @@
 {
   "piece": "P09",
   "viewport": [
-    1280,
-    720
+    1600,
+    900
   ],
   "tier": "high",
   "shot": "review\\shots\\p09\\measure.png",
@@ -14,41 +14,40 @@
       219.25
     ],
     "fov": 62,
-    "horizonRow": 293.8,
-    "focalPx": 599.1
+    "horizonRow": 367.3,
+    "focalPx": 748.9
   },
   "carryRun": {
     "geometrySamplesVisible": 542,
     "samplesInsideNearBand": 307,
-    "samplesPaintedCarryCyan": 302,
-    "paintedFractionInsideNearBand": 0.984,
-    "topRow": 391,
-    "bottomRow": 645,
-    "horizonRow": 293.8,
-    "rowsBelowHorizon": 97.2,
-    "allowedRowsBelowHorizon": 108,
+    "samplesPaintedCarryCyan": 0,
+    "paintedFractionInsideNearBand": 0,
+    "topRow": 488,
+    "bottomRow": 806,
+    "horizonRow": 367.3,
+    "rowsBelowHorizon": 120.7,
+    "allowedRowsBelowHorizon": 135,
     "worstVerticalGapRows": 16,
-    "unpaintedPixelMedianHue": 42.86,
-    "unpaintedPixelMedianSat": 0.42,
-    "frameHeight": 720
+    "unpaintedPixelMedianHue": 213.33,
+    "unpaintedPixelMedianSat": 0.69,
+    "frameHeight": 900
   },
   "river": {
     "ours": {
-      "area": 74908,
-      "x0": 487,
-      "x1": 1279,
-      "y0": 346,
-      "y1": 656,
-      "maxVerticalRun": 216,
-      "rows": 311,
-      "cols": 793,
+      "area": 0,
+      "x0": 0,
+      "x1": 0,
+      "y0": 0,
+      "y1": 0,
+      "maxVerticalRun": 0,
+      "rows": 0,
       "frame": [
-        1280,
-        720
+        1600,
+        900
       ],
-      "areaPpm": 81280.4,
-      "rowShare": 0.432,
-      "runShare": 0.3
+      "areaPpm": 0,
+      "rowShare": 0,
+      "runShare": 0
     },
     "reference": {
       "area": 245682,
@@ -86,62 +85,41 @@
         44.12
       ],
       "screenBox": [
-        158,
+        199,
         0,
-        520,
-        595
+        649,
+        742
       ]
     },
-    "samplesOnShard": 19018,
-    "warmFamilyBands": [
-      {
-        "band": 0,
-        "n": 1651,
-        "medianY": 0.1819
-      },
-      {
-        "band": 1,
-        "n": 1468,
-        "medianY": 0.1982
-      },
-      {
-        "band": 2,
-        "n": 6789,
-        "medianY": 0.1958
-      },
-      {
-        "band": 3,
-        "n": 2243,
-        "medianY": 0.0952
-      }
-    ],
+    "samplesOnShard": 29587,
+    "warmFamilyBands": [],
     "coolFamilyBands": [
       {
         "band": 0,
-        "n": 455,
-        "medianY": 0.0224
+        "n": 3416,
+        "medianY": 0.0023
       },
       {
         "band": 1,
-        "n": 2460,
-        "medianY": 0.021
+        "n": 6298,
+        "medianY": 0.0023
       },
       {
         "band": 2,
-        "n": 2369,
-        "medianY": 0.0189
+        "n": 14375,
+        "medianY": 0.0023
       },
       {
         "band": 3,
-        "n": 762,
-        "medianY": 0.0265
+        "n": 5498,
+        "medianY": 0.0023
       }
     ],
-    "warmBandSpreadRatio": 2.082,
-    "coolBandSpreadRatio": 1.402,
-    "bestFamilyInclinationSpread": 2.082,
-    "largestSingleValueShare": 0.301,
-    "valueBinsHolding5pct": 7,
+    "warmBandSpreadRatio": null,
+    "coolBandSpreadRatio": 1,
+    "bestFamilyInclinationSpread": 1,
+    "largestSingleValueShare": 1,
+    "valueBinsHolding5pct": 1,
     "rockShader": {
       "compiled": true,
       "hasTerrainGrade": true,
@@ -151,21 +129,21 @@
   },
   "sunSideDisagreement": {
     "facesTurnedTowardLethis": {
-      "n": 4722,
-      "Y": 0.023,
-      "hue": 190,
-      "sat": 0.404,
-      "v": 0.192
+      "n": 7372,
+      "Y": 0.002,
+      "hue": 213.3,
+      "sat": 0.692,
+      "v": 0.051
     },
     "facesTurnedAwayFromLethis": {
-      "n": 57,
-      "Y": 0.185,
-      "hue": 27.7,
-      "sat": 0.573,
-      "v": 0.616
+      "n": 87,
+      "Y": 0.002,
+      "hue": 213.3,
+      "sat": 0.692,
+      "v": 0.051
     },
     "measuredOn": "the hero shard only, above base + 20 m, excluding points in the key's cast shadow",
-    "heroSamplesInCastShadow": 10518,
+    "heroSamplesInCastShadow": 16330,
     "projectorRoundTripWorstPx": 0
   },
   "massif": {
@@ -176,8 +154,8 @@
     "elevationDeg": 10.57,
     "bearingOffAxisDeg": 14.3,
     "screen": [
-      484,
-      175
+      604,
+      218
     ],
     "occluded": false
   },
@@ -236,9 +214,9 @@
   },
   "frameCensus": {
     "measured": {
-      "cyanPct": 12.98,
-      "darkPct": 26.84,
-      "meanY": 0.257
+      "cyanPct": 0,
+      "darkPct": 100,
+      "meanY": 0.002
     },
     "reference": {
       "cyanPct": 9.54,
@@ -395,8 +373,8 @@
         "elevationDeg": 10.57,
         "bearingOffAxisDeg": 14.3,
         "screen": [
-          484,
-          175
+          604,
+          218
         ],
         "occluded": false
       },
@@ -405,21 +383,21 @@
     {
       "id": "K5",
       "claim": "the hero carry walks the eye from the foreground to the horizon",
-      "verdict": "PASS",
+      "verdict": "FAIL",
       "measuredOnArrivalFrame": {
         "geometrySamplesVisible": 542,
         "samplesInsideNearBand": 307,
-        "samplesPaintedCarryCyan": 302,
-        "paintedFractionInsideNearBand": 0.984,
-        "topRow": 391,
-        "bottomRow": 645,
-        "horizonRow": 293.8,
-        "rowsBelowHorizon": 97.2,
-        "allowedRowsBelowHorizon": 108,
+        "samplesPaintedCarryCyan": 0,
+        "paintedFractionInsideNearBand": 0,
+        "topRow": 488,
+        "bottomRow": 806,
+        "horizonRow": 367.3,
+        "rowsBelowHorizon": 120.7,
+        "allowedRowsBelowHorizon": 135,
         "worstVerticalGapRows": 16,
-        "unpaintedPixelMedianHue": 42.86,
-        "unpaintedPixelMedianSat": 0.42,
-        "frameHeight": 720
+        "unpaintedPixelMedianHue": 213.33,
+        "unpaintedPixelMedianSat": 0.69,
+        "frameHeight": 900
       },
       "threshold": "the river's own unoccluded triangles must reach below 2/3 frame height and up to within 15% of frame height of the horizon row, with no vertical gap over 6% of frame height, and >= 60% of the ones inside 250 m must actually read as cyan in the capture"
     },
@@ -433,24 +411,23 @@
     {
       "id": "K7",
       "claim": "the river is a connected body, not a strip light",
-      "verdict": "PASS",
+      "verdict": "FAIL",
       "measuredOnArrivalFrame": {
         "ours": {
-          "area": 74908,
-          "x0": 487,
-          "x1": 1279,
-          "y0": 346,
-          "y1": 656,
-          "maxVerticalRun": 216,
-          "rows": 311,
-          "cols": 793,
+          "area": 0,
+          "x0": 0,
+          "x1": 0,
+          "y0": 0,
+          "y1": 0,
+          "maxVerticalRun": 0,
+          "rows": 0,
           "frame": [
-            1280,
-            720
+            1600,
+            900
           ],
-          "areaPpm": 81280.4,
-          "rowShare": 0.432,
-          "runShare": 0.3
+          "areaPpm": 0,
+          "rowShare": 0,
+          "runShare": 0
         },
         "reference": {
           "area": 245682,
@@ -475,7 +452,7 @@
     {
       "id": "S5",
       "claim": "the big near form reads as several planes, not one cut-out",
-      "verdict": "PASS",
+      "verdict": "FAIL",
       "measuredOnArrivalFrame": {
         "shard": {
           "id": "hero.0",
@@ -494,62 +471,41 @@
             44.12
           ],
           "screenBox": [
-            158,
+            199,
             0,
-            520,
-            595
+            649,
+            742
           ]
         },
-        "samplesOnShard": 19018,
-        "warmFamilyBands": [
-          {
-            "band": 0,
-            "n": 1651,
-            "medianY": 0.1819
-          },
-          {
-            "band": 1,
-            "n": 1468,
-            "medianY": 0.1982
-          },
-          {
-            "band": 2,
-            "n": 6789,
-            "medianY": 0.1958
-          },
-          {
-            "band": 3,
-            "n": 2243,
-            "medianY": 0.0952
-          }
-        ],
+        "samplesOnShard": 29587,
+        "warmFamilyBands": [],
         "coolFamilyBands": [
           {
             "band": 0,
-            "n": 455,
-            "medianY": 0.0224
+            "n": 3416,
+            "medianY": 0.0023
           },
           {
             "band": 1,
-            "n": 2460,
-            "medianY": 0.021
+            "n": 6298,
+            "medianY": 0.0023
           },
           {
             "band": 2,
-            "n": 2369,
-            "medianY": 0.0189
+            "n": 14375,
+            "medianY": 0.0023
           },
           {
             "band": 3,
-            "n": 762,
-            "medianY": 0.0265
+            "n": 5498,
+            "medianY": 0.0023
           }
         ],
-        "warmBandSpreadRatio": 2.082,
-        "coolBandSpreadRatio": 1.402,
-        "bestFamilyInclinationSpread": 2.082,
-        "largestSingleValueShare": 0.301,
-        "valueBinsHolding5pct": 7,
+        "warmBandSpreadRatio": null,
+        "coolBandSpreadRatio": 1,
+        "bestFamilyInclinationSpread": 1,
+        "largestSingleValueShare": 1,
+        "valueBinsHolding5pct": 1,
         "rockShader": {
           "compiled": true,
           "hasTerrainGrade": true,
@@ -587,13 +543,7 @@
       "id": "P1",
       "claim": "the warm family on this piece's rock matches the reference's lit rock",
       "verdict": "FAIL",
-      "measured": {
-        "n": 3007,
-        "Y": 0.093,
-        "hue": 27.9,
-        "sat": 0.5,
-        "v": 0.412
-      },
+      "measured": null,
       "reference": {
         "hex": "#B8834D",
         "Y": 0.27,
@@ -607,11 +557,11 @@
       "claim": "the cool family on this piece's rock is the reference's blue shadow, not a dark orange",
       "verdict": "PASS",
       "measured": {
-        "n": 2201,
-        "Y": 0.023,
-        "hue": 193.3,
-        "sat": 0.386,
-        "v": 0.192
+        "n": 10038,
+        "Y": 0.002,
+        "hue": 213.3,
+        "sat": 0.692,
+        "v": 0.051
       },
       "reference": {
         "hex": "#1B2B32",
@@ -626,21 +576,21 @@
       "verdict": "FAIL",
       "measured": {
         "facesTurnedTowardLethis": {
-          "n": 4722,
-          "Y": 0.023,
-          "hue": 190,
-          "sat": 0.404,
-          "v": 0.192
+          "n": 7372,
+          "Y": 0.002,
+          "hue": 213.3,
+          "sat": 0.692,
+          "v": 0.051
         },
         "facesTurnedAwayFromLethis": {
-          "n": 57,
-          "Y": 0.185,
-          "hue": 27.7,
-          "sat": 0.573,
-          "v": 0.616
+          "n": 87,
+          "Y": 0.002,
+          "hue": 213.3,
+          "sat": 0.692,
+          "v": 0.051
         },
         "measuredOn": "the hero shard only, above base + 20 m, excluding points in the key's cast shadow",
-        "heroSamplesInCastShadow": 10518,
+        "heroSamplesInCastShadow": 16330,
         "projectorRoundTripWorstPx": 0
       },
       "threshold": "outside the key's cast shadow and outside P13's foliage hue band, faces with N.L > 0.12 must render at least 1.5x brighter than faces with N.L < -0.08, over >= 150 samples each, measured on this piece's own surfaces through the shipped arrival camera"
@@ -648,8 +598,8 @@
     {
       "id": "P3",
       "claim": "the warm:cool luminance ratio sits in the reference's band",
-      "verdict": "PASS",
-      "measuredRatio": 4.04,
+      "verdict": "FAIL",
+      "measuredRatio": 0,
       "referenceRatio": [
         4.15,
         5.47
@@ -660,11 +610,11 @@
       "id": "P4",
       "claim": "the frame is inside the performance budget",
       "verdict": "PASS",
-      "drawCalls": 139,
-      "triangles": 155015,
-      "programs": 22,
+      "drawCalls": 138,
+      "triangles": 151457,
+      "programs": 21,
       "threshold": "<= 320 draws, <= 1.6M triangles, <= 90 programs"
     }
   ],
-  "summary": "20/22 claims pass"
+  "summary": "16/22 claims pass"
 }

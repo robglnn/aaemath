@@ -195,6 +195,7 @@ export function acesToneMap(rgbLinear) {
 }
 
 const srgbToLin = (u) => (u <= 0.04045 ? u / 12.92 : Math.pow((u + 0.055) / 1.055, 2.4));
+const linToSrgb = (u) => (u <= 0.0031308 ? u * 12.92 : 1.055 * Math.pow(Math.max(u, 0), 1 / 2.4) - 0.055);
 
 /**
  * Scene-linear colour that ACES (at exposure 1) maps to the given display hex.
@@ -206,6 +207,29 @@ const srgbToLin = (u) => (u <= 0.04045 ? u / 12.92 : Math.pow((u + 0.055) / 1.05
  * off a requested colour was so a wish that cannot be granted is visible instead of silent.
  */
 const _sceneCache = new Map();
+/**
+ * **Every colour that asked for something the fit could not give, with the number.**
+ *
+ * `err` used to be computed and returned and read by nobody, and that silence cost a review round.
+ * `PAL.carry` was authored `#7ADCC8` (S 0.45); the inverse needs a *negative* red to make a teal
+ * that bright, red pinned on the `clamp(c, 0, 40)` floor, and the river shipped at a rendered
+ * S 0.93 — neon, three and a half times the reference river's share of the frame in saturation
+ * terms, in a world whose quality bar reserves cyan as the only saturated accent. Nobody saw it
+ * because nothing looked.
+ *
+ * So the fit now reports. Any request whose worst per-channel display error exceeds
+ * `SCENE_FIT_TOLERANCE` — or which pinned a channel against a clamp bound while asking for a
+ * non-zero value there, which is the specific way a bright saturated colour fails — is recorded
+ * here, warned about once, and published through `terrain.snapshot().paletteMisses` so
+ * `review/measure/P09.mjs` can fail on it instead of a critic finding it in the pixels.
+ *
+ * It warns rather than throws on purpose: a colour that misses by 0.03 is a colour to re-author,
+ * not a reason to blank the world in front of a player. The *test* is what refuses.
+ */
+export const SCENE_FIT_TOLERANCE = 0.02;
+export const paletteMisses = [];
+const _hex6 = (h) => "#" + (h >>> 0).toString(16).padStart(6, "0");
+
 export function sceneRGB(hexDisplay) {
   const hit = _sceneCache.get(hexDisplay);
   if (hit) return hit;
@@ -221,8 +245,28 @@ export function sceneRGB(hexDisplay) {
     }
   }
   const got = acesToneMap(c);
-  const out = { r: c[0], g: c[1], b: c[2], err: Math.max(...got.map((v, k) => Math.abs(v - target[k]))) };
+  const err = Math.max(...got.map((v, k) => Math.abs(v - target[k])));
+  // A channel sitting exactly on a clamp bound while its target is non-zero is the fit saying "I
+  // cannot reach this", and it is not always visible in `err`: the inverse can land the *other* two
+  // channels perfectly and still have thrown the first one away.
+  const pinned = [0, 1, 2].filter((k) => target[k] > 0.002 && (c[k] <= 1e-9 || c[k] >= 40 - 1e-9));
+  const out = { r: c[0], g: c[1], b: c[2], err, pinnedChannels: pinned };
   _sceneCache.set(hexDisplay, out);
+  if (err > SCENE_FIT_TOLERANCE || pinned.length) {
+    const miss = {
+      hex: _hex6(hexDisplay),
+      err: Number(err.toFixed(4)),
+      pinned: pinned.map((k) => "rgb"[k]).join("") || null,
+      rendersAs: _hex6(
+        got.reduce((acc, v, k) => acc | (Math.round(clamp01(linToSrgb(v)) * 255) << (16 - 8 * k)), 0)
+      ),
+    };
+    paletteMisses.push(miss);
+    console.warn(
+      `PALETTE: ${miss.hex} is outside the tonemap fit (err ${miss.err}` +
+        `${miss.pinned ? `, ${miss.pinned} pinned on the clamp` : ""}) — it renders as ${miss.rendersAs}`
+    );
+  }
   return out;
 }
 
@@ -254,19 +298,52 @@ export const PAL = {
   boneDark: 0x6d5844,
   glass: 0x2c3a44, // the dark glass of the Bollard
   shadow: 0x1b2c33, // the authored shadow family           ref #1B2B32, hue 198
-  underLit: 0x463f36, // leaf underside, catching bounce
+  /**
+   * **The keel is a three-stop ladder, not two stops of "how far down does it point".**
+   *
+   * The underside of the leaf is the bottom fifty-five rows of the arrival frame, and it shipped
+   * as a flat bar: a critic measured `vs.terrain.keel` at a toward/away luminance ratio of 1.02
+   * over 162 of the 370 large front-facing rock triangles inside 200 m, mean `#222527`, Y 0.018,
+   * against Y 0.064–0.078 in the same rows of `target-lowpoly.png`. Two colours chosen by `N.y`
+   * cannot make a ladder: every triangle of a near-horizontal underside has almost the same `N.y`,
+   * so `underLit`/`underDeep` were selecting between themselves at random and the shader had
+   * nothing left to grade. These three are chosen by **N·L against the key**, which is the axis
+   * that actually varies across a fractured underside, and they are separated by 3.5x in
+   * luminance so the bar reads as broken stone at any exposure.
+   */
+  keelLip: 0x6b5c46, // the near-vertical lip wall, turned into Lethis   Y 0.112
+  keelTurn: 0x40484d, // rolling away from the key, hue 203              Y 0.063
+  keelDeep: 0x2a3339, // square away from it, deep in the fracture       Y 0.032
+  underLit: 0x463f36, // leaf underside, catching bounce (backdrop leaves)
   underDeep: 0x23272c, // leaf underside, deep
-  // The cyan accents. ACES cannot reach the reference's V=1.0 S=0.44 cyan — it is outside the
-  // fit's gamut — so a carry is authored at the most saturated cyan the tonemap *can* hold and
-  // gets its brightness back from a near-white core lane, which is how the reference is built
-  // anyway: `#8EFDE2` at the edge, `#D5FDF6` down the middle.
-  carry: 0x7adcc8,
-  carryCore: 0xc9f6ec,
+  /**
+   * **The cyan accents, re-authored against the rendered pixel rather than against a wish.**
+   *
+   * These used to read `carry: 0x7ADCC8, carryCore: 0xC9F6EC` with a comment explaining that ACES
+   * cannot reach a V=1.0 S=0.44 cyan. That was true and it was not a licence: `sceneRGB()` needs a
+   * *negative* red to invert a teal that bright, red pinned on the clamp floor, and the shipped
+   * river measured a rendered **S 0.93** — 2.1x the reference river's S 0.44 — while covering 7.0%
+   * of the frame in one connected component against the reference river's 0.39%. §7.2 reserves
+   * saturated cyan as the *only* accent in this world; at that share and that saturation it had
+   * stopped being an accent and become the frame.
+   *
+   * Every value below now round-trips the fit exactly (`err` 0, nothing pinned — see `sceneRGB`'s
+   * gate) and is chosen so the *rendered* pixel lands where the reference's river measures:
+   * `#8BF7E4`, S 0.436, over `reference/target-lowpoly.png` x[1724,2180] y[908,1067].
+   *
+   *   carry      renders #6CC0B0  S 0.44  V 0.75    (ref river S 0.436)
+   *   carryCore  renders #BFE9DE  S 0.18  V 0.91    (ref core   #D5FDF6)
+   *   carryBank  renders #417F74  S 0.49  V 0.50
+   */
+  carry: 0x6cc0b0,
+  carryCore: 0xbfe9de,
   // The bank wall of a carry: the same teal walked down two stops, so a river carries its own
   // value structure — foot, body, core — instead of being one bright shape with no interior.
-  carryBank: 0x2f7a72,
+  carryBank: 0x417f74,
   crystal: 0x8fe0d2,
-  crystalHot: 0xc0f2e6,
+  // Was `0xC0F2E6`, which misses the fit by 0.04 and renders four stops off what it says. The
+  // gate in `sceneRGB` now names any colour that does that; this is the first one it caught.
+  crystalHot: 0xb2e6dc,
   hazeBase: 0xd89a5e, // the colour distance turns into: warm, and darker than the sky
   hazeSun: 0xf2c083,
   farStone: 0xb28d5f, // a leaf on the horizon, already mostly haze
@@ -324,14 +401,21 @@ uniform vec2  uVsDist;    // x virtual-distance multiplier, y extra haze bias
 `;
 
 const GLSL_SHADOW = /* glsl */ `
-// Slot 0 is the rig's only shadow caster (world/Lighting.js adds it first, on purpose).
+// **Both cascades, through the rig's own blend — this used to read slot 0 and nothing else.**
+//
+// The comment that stood here said "slot 0 is the rig's only shadow caster". That has not been true
+// for two revisions: world/Lighting.js runs a NEAR cascade fitted around the player and a FAR one
+// for the world, and slot 0 is only the near one. Sampling it alone means the terrain receives cast
+// shadows ONLY within fifteen metres of the player and, outside that ring, getShadow returns 1.0
+// for the honest reason that the fragment is off the edge of that texture — so every shadow in the
+// rest of the frame silently does not exist. A critic measured exactly that: vsFlatShadow() never
+// dropped below 1 anywhere on lit ground, and the frame contained no cast shadow at all.
+//
+// vsKeyShadow() is P11's own cascade blend and is injected into every material that factory makes,
+// including this one. Calling it rather than re-deriving it here is what stops the two files from
+// disagreeing about where the split is.
 float vsFlatShadow() {
-	float s = 1.0;
-	#if defined( USE_SHADOWMAP ) && NUM_DIR_LIGHT_SHADOWS > 0
-		DirectionalLightShadow vsDLS = directionalLightShadows[ 0 ];
-		s = receiveShadow ? getShadow( directionalShadowMap[ 0 ], vsDLS.shadowMapSize, vsDLS.shadowIntensity, vsDLS.shadowBias, vsDLS.shadowRadius, vDirectionalShadowCoord[ 0 ] ) : 1.0;
-	#endif
-	return s;
+	return receiveShadow ? vsKeyShadow( distance( cameraPosition, vVsWorld ) ) : 1.0;
 }
 `;
 
@@ -419,6 +503,13 @@ const _matCache = new Map();
  *   shade       how far a shaded facet travels to the authored shadow colour (0..1, default 0.86)
  *   terminator  half-width of the light/shadow edge in N·L (default 0.035 — nearly hard)
  *   unlit       1 for things that are their own light source: carries, certainties
+ *   emissive    whether P12's bloom mask picks this material up; defaults to `unlit > 0.5`, and is
+ *               separable from it because a river is unlit all the way across its section and
+ *               *glowing* only down its core lane — bloom on the whole 100k-px plate is what took
+ *               a rendered S 0.44 teal to S 0.93 and made the accent the subject
+ *   accent      whether the §7.2 saturated-accent census counts this material; defaults to
+ *               `emissive`, and stays true for a carry's bank and body, which are still accents
+ *               even once they have stopped glowing
  *   distance    virtual-distance multiplier for the compressed backdrop group
  *   hazeBias    extra haze added flat (used to sit a far object further back in the air)
  *   side        THREE side constant
@@ -476,11 +567,13 @@ export function flatMaterial(key, opts = {}) {
     },
   });
   mat.userData.vsUniforms = local;
-  mat.userData.vsEmissive = (opts.unlit ?? 0) > 0.5; // P12's bloom mask reads this flag
+  mat.userData.vsEmissive = opts.emissive ?? (opts.unlit ?? 0) > 0.5; // P12's bloom mask reads this
   // A carry and a certainty field are §7.2 accents — the only saturated things in this world — and
   // the factory's `vsAccent` flag is how every downstream census finds them. Without it P11's own
   // accent-leak row counted six hundred metres of luminous teal river as cyan that had escaped.
-  mat.userData.vsAccent = mat.userData.vsEmissive;
+  // It is *not* the same question as `vsEmissive`: a carry's bank and body are accents that do not
+  // glow, and dropping them out of the census to get them out of the bloom would be laundering.
+  mat.userData.vsAccent = opts.accent ?? mat.userData.vsEmissive;
 
   _matCache.set(key, mat);
   return mat;
@@ -947,9 +1040,16 @@ export class Terrain {
     // a plane and wants a hard edge; five hundred metres of open leaf is a *gradient*, and giving
     // it the same near-binary ramp as a spire turns every eleven-degree undulation into a hard
     // navy patch. Hard edges belong to the things whose edges are the point.
+    // `litFloor` 0.34 and not 0.52, which is a material-construction change P11 owns and the reason
+    // is arithmetic rather than taste. With the key at 11° an up-facing ground facet stands at
+    // N·L ≈ 0.19, and `mix(0.52, 1.0, pow(0.19, 0.6))` is 0.67; the same facet tilted to N·L 0.25
+    // is 0.70. Four per cent apart is inside one 8-bit histogram bin, so every lit facet on the
+    // whole slope landed in the same V 0.30–0.32 band and the leaf read as one flat value — which
+    // is what L2 kept failing on. At 0.34 the same two facets are 0.551 and 0.627, thirteen per cent
+    // apart, and inclination separates facets instead of compressing them.
     const surface = new THREE.Mesh(
       topGeo,
-      flatMaterial("terrain.surface", { litFloor: 0.52, shade: 0.62, terminator: 0.17 })
+      flatMaterial("terrain.surface", { litFloor: 0.34, shade: 0.62, terminator: 0.17 })
     );
     surface.name = "vs.terrain.surface";
     surface.receiveShadow = true;
@@ -994,7 +1094,7 @@ export class Terrain {
     this.lipEdges = lipEdges;
 
     const underGeo = facetGeometry(new Float32Array(under), (cx, cy, cz, nx2, ny, nz2, ti) =>
-      this._undersideColor(cx, cy, cz, ny, ti)
+      this._undersideColor(cx, cy, cz, [nx2, ny, nz2], ti)
     );
     this.underGeometry = underGeo;
     const keel = new THREE.Mesh(underGeo, flatMaterial("terrain.keel", { litFloor: 0.34, shade: 0.8, terminator: 0.1 }));
@@ -1027,14 +1127,37 @@ export class Terrain {
     return [c.r * j, c.g * j, c.b * j];
   }
 
-  _undersideColor(x, y, z, ny, ti) {
-    // Down-facing keel goes deep; the near-vertical lip catches the light the top does.
-    const down = clamp01(-ny);
-    const a = sceneRGB(PAL.underLit);
-    const b = sceneRGB(PAL.underDeep);
-    const t = Math.pow(down, 0.6);
+  /**
+   * The keel, graded by **how far the facet is turned from Lethis** — the same question the wall
+   * bands of a spire are graded by, asked of the one surface that was exempt from it.
+   *
+   * What was here interpolated `underLit → underDeep` on `pow(clamp01(-N.y), 0.6)`. An underside
+   * is a near-horizontal sheet: `-N.y` is within a few percent of 1 across almost all of it, so
+   * that expression returned one colour, the shader's own grade found one inclination, and the
+   * bottom of the arrival frame rendered as a flat bar at Y 0.018 — a critic measured its
+   * toward-key : away-from-key luminance ratio at **1.02** over 162 large near triangles.
+   *
+   * `N·L` is the axis that does vary down there: the lip wall stands up into the key, the fracture
+   * planes under it fall away from it, and between them a keel has as much shape as a cliff has.
+   * Three authored stops 3.5x apart in luminance, plus the shader's own back-hemisphere grade on
+   * top, is what turns the bar back into stone.
+   */
+  _undersideColor(x, y, z, n, ti) {
+    // `MAX_SUN` and not the live `uVsSun`: vertex colour is baked once at build time, so the ladder
+    // is authored against the key's authored bearing, exactly as the rock's slope ramp is.
+    const ndl = n[0] * MAX_SUN.x + n[1] * MAX_SUN.y + n[2] * MAX_SUN.z;
+    const lip = sceneRGB(PAL.keelLip);
+    const turn = sceneRGB(PAL.keelTurn);
+    const deep = sceneRGB(PAL.keelDeep);
+    // −0.55 → deep, −0.12 → turn, +0.22 → lip. Authored against the real distribution of an
+    // underside's normals rather than against a tidy [-1,1], or two of the three stops would never
+    // be reached and the ladder would be a ladder in this file only.
+    const t = clamp01((ndl + 0.55) / 0.77); // 0 at square-away, 1 at the terminator and beyond
+    const a = t < 0.56 ? deep : turn;
+    const b = t < 0.56 ? turn : lip;
+    const u = t < 0.56 ? t / 0.56 : (t - 0.56) / 0.44;
     const j = 1 + (hash2i(ti, 19, this.seed + 40) - 0.5) * 0.13;
-    return [lerp(a.r, b.r, t) * j, lerp(a.g, b.g, t) * j, lerp(a.b, b.b, t) * j];
+    return [lerp(a.r, b.r, u) * j, lerp(a.g, b.g, u) * j, lerp(a.b, b.b, u) * j];
   }
 
   /** The level's material class at a point, sampled from the grid (0 deck, 2 bank, 3 field, 4 pad). */
@@ -1209,6 +1332,10 @@ export class Terrain {
         minSeparationDeg: SHOULDER_MIN_SEPARATION_DEG,
         widestSpreadUsed: Number(shoulderAudit.widestSpreadUsed.toFixed(3)),
       },
+      // Every colour this world asked the tonemap for and did not get. Published so a test can
+      // fail on it; see `sceneRGB`. An empty array is the only acceptable value.
+      paletteMisses: paletteMisses.slice(),
+      sceneFitTolerance: SCENE_FIT_TOLERANCE,
     };
   }
 

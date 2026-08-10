@@ -1,0 +1,23 @@
+(node:33336) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  hostile 1/5: long20k (20000 chars, attacks source length)
+  hostile 2/5: deepFrac15 (151 chars, attacks parse depth — the measured renderer crash)
+  hostile 3/5: deepFrac60 (601 chars, attacks parse depth)
+  hostile 4/5: tallMatrix (772 chars, attacks ink height)
+  hostile 5/5: wideLine (1881 chars, attacks ink width)
+session restarted after a hot reload (1/6): page.evaluate: Execution context was destroyed, most likely because of a navigat
+session restarted after a hot reload (2/6): page.evaluate: Execution context was destroyed, most likely because of a navigat
+session restarted after a hot reload (3/6): page.evaluate: Execution context was destroyed, most likely because of a navigat
+session restarted after a hot reload (4/6): page.evaluate: Execution context was destroyed, most likely because of a navigat
+session restarted after a hot reload (5/6): page.evaluate: Execution context was destroyed, most likely because of a navigat
+page.evaluate: Execution context was destroyed, most likely because of a navigation
+    at Object.run [90m(C:\dev\math\aaemath\[39mtools\lib\session.mjs:235:30[90m)[39m
+    at shootRetry [90m(C:\dev\math\aaemath\[39mreview\measure\P15.mjs:793:15[90m)[39m
+    at [90mC:\dev\math\aaemath\[39mreview\measure\P15.mjs:1200:30
+    at async openGame [90m(C:\dev\math\aaemath\[39mtools\lib\session.mjs:250:12[90m)[39m
+    at async session [90m(C:\dev\math\aaemath\[39mreview\measure\P15.mjs:1127:16[90m)[39m
+    at async browserClaims [90m(C:\dev\math\aaemath\[39mreview\measure\P15.mjs:1157:7[90m)[39m
+    at async main [90m(C:\dev\math\aaemath\[39mreview\measure\P15.mjs:1636:5[90m)[39m {
+  log: [],
+  name: [32m'Error'[39m
+}

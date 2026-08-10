@@ -71,7 +71,9 @@ export default {
      * live — slow, loud, and correct — because the alternative is scoring on a table that does not
      * describe the bank, which is the whole defect this piece exists to close.
      */
+    const tAudit = performance.now();
     let bankAudit = bankAuditTable;
+    let auditSource = "committed";
     const want = bankAuditFingerprint({ bankFiles: BANK, model: graph.model });
     if (bankAuditTable.version !== BANK_AUDIT_VERSION || bankAuditTable.fingerprint !== want) {
       warn(
@@ -96,7 +98,14 @@ export default {
           spell: (item) => itemBank.accepts(item)[0],
         }
       );
+      auditSource = "recomputed-live";
     }
+    /**
+     * What resolving the price actually cost this page load, published so nobody has to take the
+     * claim on trust. Round 2 measured 1382 ms here; the committed table makes it the cost of one
+     * fingerprint pass over the catalogue.
+     */
+    const auditMs = Math.round((performance.now() - tAudit) * 10) / 10;
 
     const mastery = new Mastery(graph, { now: () => Date.now() / 60000, bankAudit });
     const scheduler = new Scheduler(mastery, { clock: realClock(), seed: 0x5eed, sessionMinutes: 25 });
@@ -193,6 +202,20 @@ export default {
       if (document.visibilityState === "hidden") flush();
     });
 
-    publish("mastery", () => ({ ...system.mastery.probe(), resumed, scheduler: system.scheduler.probe() }));
+    publish("mastery", () => ({
+      ...system.mastery.probe(),
+      resumed,
+      scheduler: system.scheduler.probe(),
+      // The third pricing axis, from outside the engine: where the table came from, what it cost
+      // this page load, and what population it was measured on.
+      bankAudit: {
+        source: auditSource,
+        setupMs: auditMs,
+        fingerprint: bankAudit.fingerprint ?? null,
+        version: bankAudit.version ?? null,
+        sampled: bankAudit.sampled ?? 0,
+        catalogueShare: bankAudit.sampled ? Number((bankAudit.mixture.catalogue / bankAudit.sampled).toFixed(4)) : null,
+      },
+    }));
   },
 };

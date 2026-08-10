@@ -3,12 +3,12 @@ P16 — mastery engine: measured proof of L4 and L5
 engine under test: app/src/learn/{Graph,Mastery,Scheduler,ItemBank}.js   content: content/knowledge-graph.json
 graph: {"nodes":32,"edges":48,"roots":2,"leaves":4,"longestChain":11,"bands":{"1":3,"2":11,"3":8,"4":7,"5":3},"maxDescendants":30}
 gate: P >= 0.95, >= 6 scored (>= 3 at band), >= 2 forms, then 3/4 CREDITED AND P >= 0.95 at a check >= 12 h and >= 1 session later
-budget: 22 sessions x 25 min, one session per day. Bots: 60/arm, learners: 60/cohort. 141.4s
+budget: 22 sessions x 25 min, one session per day. Bots: 60/arm, learners: 60/cohort. 40.1s
 
 TRUE blind-success rates the bots draw from (ground truth, never the model's guess):
   declared by form:  construct 0.03   repair 0.03   generate 0.02   select4 0.25   judge2 0.5
   declared by phase: solo 0   guided-1 0.08   guided-2 0.17   guided-3 0.85   model 0.7
-  MEASURED on the SCHEDULER-DRIVEN SERVED STREAM: 6236 items over 8 runs x 22 sessions, 78.6% catalogue / 21.4% generated, 76869 ms
+  MEASURED on the SCHEDULER-DRIVEN SERVED STREAM: 6236 items over 8 runs x 22 sessions, 78.6% catalogue / 21.4% generated, 41700 ms
      best fixed answer, pooled:   construct 0.1008   repair 0.0864   generate 0.1487
      best fixed answer, WORST kp: construct 0.2241 (eq-two-step|construct)   repair 0.2308 (eq-one-mult|repair)   generate 0.6667 (distribute-numeric|generate)
      chosen on one half of the stream and SCORED ON THE OTHER, so none of these is an in-sample maximum.
@@ -121,45 +121,45 @@ PART A2 — blind success measured on the stream the SCHEDULER actually serves
   construct/pair                      47      0.0000
 
   cells above the §9 tripwire of 0.1, with the string that does it and what the ENGINE did about it:
-    cell                                 blind  by typing             engine verdict
-    distribute-numeric|generate         0.6667  "-4\\left(-2 + 5\\right)"re-priced 0.036 -> 0.286
-    var-meaning|generate                0.3333  "a = 20; b = 20"      re-priced 0.030 -> 0.200
-    eq-meaning|generate                 0.3103  "x + 5 = 17"          re-priced 0.036 -> 0.250
-    props-operations|generate           0.2857  "-9x + 4"             re-priced 0.036 -> 0.250
-    eval-formula|generate               0.2500  "3r + 30"             re-priced 0.042 -> 0.100
-    eq-one-mult|repair                  0.2308  "2: x = 9"            re-priced 0.060 -> 0.286
-    eq-combine-side|generate            0.2273  "4x + 5x - 3 = 33"    re-priced 0.048 -> 0.214
-    eq-two-step|construct               0.2241  "2"                   re-priced 0.070 -> 0.273
-    eq-one-add|construct                0.1944  "8"                   re-priced 0.060 -> 0.286
-    eq-one-mult|generate                0.1944  "2x = 12"             re-priced 0.036 -> 0.286
-    eq-combine-side|construct           0.1892  "9"                   re-priced 0.080 -> 0.200
-    eq-model-context|generate           0.1875  "7s + 4 = 18"         re-priced 0.060 -> 0.286
-    translate-sentence|repair           0.1818  "2: 5n + 2 = 32"      re-priced 0.070 -> 0.182
-    distribute-numeric|construct        0.1739  "72"                  re-priced 0.060 -> 0.250
-    eq-both-sides|construct             0.1728  "1"                   re-priced 0.080 -> 0.300
-    ineq-negative-flip|generate         0.1667  "-6x < -9"            re-priced 0.048 -> 0.143
-    eq-meaning|construct                0.1633  "3"                   re-priced 0.060 -> 0.250
-    eq-model-context|construct          0.1569  "9"                   re-priced 0.100 -> 0.286
-    eval-substitute|generate            0.1538  "6x"                  re-priced 0.036 -> 0.250
-    props-equality|generate             0.1538  "x + 4 = 17"          re-priced 0.036 -> 0.143
-    translate-phrase|repair             0.1538  "2: 2n + 21"          re-priced 0.060 -> 0.125
-    ineq-two-step|construct             0.1463  "x \\ge 5"            re-priced 0.100 -> 0.286
-    ineq-meaning|generate               0.1429  "x - 1 > -6"          re-priced 0.036 -> 0.100
-    eq-two-step|generate                0.1429  "-2x - 8 = -26"       re-priced 0.042 -> 0.250
-    eq-one-add|generate                 0.1364  "x + 6 = 12"          re-priced 0.036 -> 0.286
-    distribute-negative|construct       0.1346  "-7x + 67"            re-priced 0.080 -> 0.250
-    expr-anatomy|construct              0.1325  "-9x"                 re-priced 0.050 -> 0.200
-    oo-numeric|repair                   0.1290  "2: 14 + 2"           re-priced 0.050 -> 0.200
-    translate-order|generate            0.1250  "\\frac{24}{n}"       re-priced 0.042 -> 0.200
-    eval-substitute|repair              0.1212  "2: 2 \\cdot 3"       re-priced 0.060 -> 0.250
-    oo-numeric|construct                0.1200  "7"                   re-priced 0.050 -> 0.167
-    eq-one-add|repair                   0.1154  "2: x = 6"            re-priced 0.060 -> 0.250
-    distribute-negative|generate        0.1154  "4 - 6\\left(x - 3\\right)"re-priced 0.048 -> 0.143
-    eq-combine-side|repair              0.1154  "2: -4x - 9 = -41"    re-priced 0.080 -> 0.167
-    eval-formula|construct              0.1053  "50"                  re-priced 0.070 -> 0.154
-    eq-two-step|repair                  0.1053  "3: x = -3"           re-priced 0.070 -> 0.154
-    oo-structure|repair                 0.1034  "2: -\\left(15^{2}\\right)"re-priced 0.060 -> 0.250
-    ineq-meaning|construct              0.1034  "x \\ge -6"           re-priced 0.060 -> 0.071
+    cell                                 blind     n  by typing               engine verdict
+    distribute-numeric|generate         0.6667    12  "-4\\left(-2 + 5\\right)"re-priced 0.036 -> 0.286
+    var-meaning|generate                0.3333    12  "a = 20; b = 20"        re-priced 0.030 -> 0.200
+    eq-meaning|generate                 0.3103    29  "x + 5 = 17"            re-priced 0.036 -> 0.250
+    props-operations|generate           0.2857    14  "-9x + 4"               re-priced 0.036 -> 0.250
+    eval-formula|generate               0.2500    12  "3r + 30"               re-priced 0.042 -> 0.100
+    eq-one-mult|repair                  0.2308    52  "2: x = 9"              re-priced 0.060 -> 0.286
+    eq-combine-side|generate            0.2273    22  "4x + 5x - 3 = 33"      re-priced 0.048 -> 0.214
+    eq-two-step|construct               0.2241    58  "2"                     re-priced 0.070 -> 0.273
+    eq-one-add|construct                0.1944    36  "8"                     re-priced 0.060 -> 0.286
+    eq-one-mult|generate                0.1944    36  "2x = 12"               re-priced 0.036 -> 0.286
+    eq-combine-side|construct           0.1892    37  "9"                     re-priced 0.080 -> 0.200
+    eq-model-context|generate           0.1875    16  "7s + 4 = 18"           re-priced 0.060 -> 0.286
+    translate-sentence|repair           0.1818    11  "2: 5n + 2 = 32"        re-priced 0.070 -> 0.182
+    distribute-numeric|construct        0.1739    46  "72"                    re-priced 0.060 -> 0.250
+    eq-both-sides|construct             0.1728    81  "1"                     re-priced 0.080 -> 0.300
+    ineq-negative-flip|generate         0.1667    12  "-6x < -9"              re-priced 0.048 -> 0.143
+    eq-meaning|construct                0.1633    49  "3"                     re-priced 0.060 -> 0.250
+    eq-model-context|construct          0.1569    51  "9"                     re-priced 0.100 -> 0.286
+    eval-substitute|generate            0.1538    26  "6x"                    re-priced 0.036 -> 0.250
+    props-equality|generate             0.1538    13  "x + 4 = 17"            re-priced 0.036 -> 0.143
+    translate-phrase|repair             0.1538    26  "2: 2n + 21"            re-priced 0.060 -> 0.125
+    ineq-two-step|construct             0.1463    41  "x \\ge 5"              re-priced 0.100 -> 0.286
+    ineq-meaning|generate               0.1429    21  "x - 1 > -6"            re-priced 0.036 -> 0.100
+    eq-two-step|generate                0.1429    14  "-2x - 8 = -26"         re-priced 0.042 -> 0.250
+    eq-one-add|generate                 0.1364    22  "x + 6 = 12"            re-priced 0.036 -> 0.286
+    distribute-negative|construct       0.1346    52  "-7x + 67"              re-priced 0.080 -> 0.250
+    expr-anatomy|construct              0.1325   151  "-9x"                   re-priced 0.050 -> 0.200
+    oo-numeric|repair                   0.1290    31  "2: 14 + 2"             re-priced 0.050 -> 0.200
+    translate-order|generate            0.1250    24  "\\frac{24}{n}"         re-priced 0.042 -> 0.200
+    eval-substitute|repair              0.1212    33  "2: 2 \\cdot 3"         re-priced 0.060 -> 0.250
+    oo-numeric|construct                0.1200    25  "7"                     re-priced 0.050 -> 0.167
+    eq-one-add|repair                   0.1154    26  "2: x = 6"              re-priced 0.060 -> 0.250
+    distribute-negative|generate        0.1154    26  "4 - 6\\left(x - 3\\right)"re-priced 0.048 -> 0.143
+    eq-combine-side|repair              0.1154    26  "2: -4x - 9 = -41"      re-priced 0.080 -> 0.167
+    eval-formula|construct              0.1053    57  "50"                    re-priced 0.070 -> 0.154
+    eq-two-step|repair                  0.1053    19  "3: x = -3"             re-priced 0.070 -> 0.154
+    oo-structure|repair                 0.1034    29  "2: -\\left(15^{2}\\right)"re-priced 0.060 -> 0.250
+    ineq-meaning|construct              0.1034    29  "x \\ge -6"             re-priced 0.060 -> 0.071
 
   WHAT THE ENGINE REFUSED, at the granularity the fix has to happen at — one generator family,
   one string that answers everything it will ever produce. This is the P17 work list:
@@ -300,10 +300,10 @@ PART C — claims
              measured: round-1 rule: 29.75/32 certified per run (max 31, 96.7% of runs at >= 80%); shipped rule on the identical arm: 0.0000
   PASS  [L5   ] Q. blind bot priced off the REAL ItemBank (measured per kp x form, not the JSON): mean certified < 0.01
              measured: 0.0000 (max 0, peak ever 0); measured rates: construct 0.1008, repair 0.0864, generate 0.1487
-  FAIL  [L5   ] R. the content file's per-form blind rate is FALSE on the shipped bank, and the engine prices the measurement instead
-             measured: construct: declared 0.03, pooled 0.1008, WORST CELL 0.224 at eq-two-step|construct; repair: declared 0.03, pooled 0.0864, WORST CELL 0.231 at eq-one-mult|repair; generate: declared 0.02, pooled 0.1487, WORST CELL 0.667 at distribute-numeric|generate — 3/3 forms understated by the constant; 1 cells left under-priced
-  FAIL  [L5   ] T. every generator family the bank gives away above maxTrueGuess is REFUSED and named, and nothing certifies on one
-             measured: 38 generator families refused, each answerable by ONE string: expr-anatomy|construct::count 1.000 by typing "3"; expr-anatomy|construct::coefficient 1.000 by typing "1"; expr-anatomy|repair::count 1.000 by typing "2: 3"; expr-anatomy|repair::coefficient 1.000 by typing "2: 1"; expr-anatomy|generate::count 1.000 by typing "5x + 9y - 2"; oo-structure|generate::negsq 1.000 by typing "-x^{2}" (+32 more); 1 surviving cells still over the cap; bank-priced bot peak ever certified 0
+  PASS  [L5   ] R. the content file's per-form blind rate is FALSE on the shipped bank, and the engine prices the measurement instead
+             measured: construct: declared 0.03, pooled 0.1008, WORST CELL 0.224 at eq-two-step|construct; repair: declared 0.03, pooled 0.0864, WORST CELL 0.231 at eq-one-mult|repair; generate: declared 0.02, pooled 0.1487, WORST CELL 0.667 at distribute-numeric|generate — 3/3 forms understated by the constant; 0 cells left under-priced at n>=30; 1 too thinly served to judge from the stream: distribute-numeric|generate n=12 rate 0.667 priced 0.286 (engine audit says 0.286)
+  PASS  [L5   ] T. every generator family the bank gives away above maxTrueGuess is REFUSED and named, and nothing certifies on one
+             measured: 38 generator families refused, each answerable by ONE string: expr-anatomy|construct::count 1.000 by typing "3"; expr-anatomy|construct::coefficient 1.000 by typing "1"; expr-anatomy|repair::count 1.000 by typing "2: 3"; expr-anatomy|repair::coefficient 1.000 by typing "2: 1"; expr-anatomy|generate::count 1.000 by typing "5x + 9y - 2"; oo-structure|generate::negsq 1.000 by typing "-x^{2}" (+32 more); 0 surviving cells still over the cap; bank-priced bot peak ever certified 0
   PASS  [L5   ] V. LIVE bank, no rate parameter: the blind guesser certifies NOTHING and its measured success is an output
              measured: guesser answered 2096/38255 items right on the real bank (5.5%, decided by ItemBank.check) and certified 0.0000/32 (max 0, peak ever 0, gate opened on 0.675 nodes/run)
   PASS  [L5   ] W. LIVE bank: a hint-abuser that answers EVERY item correctly certifies nothing
@@ -312,8 +312,8 @@ PART C — claims
              measured: median 82.8%, p10 71.9%, 60.0% of learners at >= 80%; raw item accuracy 76.3%
   PASS  [L5   ] S. sensitivity: the gate holds at 3x the assumed blind rate (§9's first tripwire, 0.10)
              measured: certified/32 at forced blind rate: 0.03 -> 0.000, 0.1 -> 0.000, 0.17 -> 0.000, 0.25 -> 0.280, 0.5 -> 8.800
-  FAIL  [L5   ] L. control arm: the harness can SEE a leak — the bug arm opens the gate, the shipped rules do not
-             measured: leak arm unlocks 19.4/32 nodes per run; shipped hint-abuse arm unlocks 0.07/32; guessing bot 0.03/32; form-hunting bot 0.00/32
+  PASS  [L5   ] L. control arm: the harness can SEE a leak — the bug arm opens the gate on most of the graph, the shipped rules on none of it
+             measured: leak arm unlocks 19.4/32 nodes per run (60.5% of the graph, 291x the shipped hint-abuse arm); shipped hint-abuse arm unlocks 0.07/32; guessing bot 0.03/32; form-hunting bot 0.00/32
   PASS  [L5   ] H. form-hunting bot (judge2/select4 on every item): 0 certified AND `scored` never increments
              measured: certified 0, max M2 counter 0, unscored items/run 770
   PASS  [L5   ] I. retention check pass rate for real learners is 80-95% (a gate, not a formality)
@@ -348,11 +348,11 @@ PART D — §8 conformance table, measured on this engine
       at 20 sessions. That is a P03 content defect to fix in the document, not a reason to move P16's
       own bar or to widen a band.
 
-RESULT: FAIL — 21/24 claims, 42/42 assertions, §8 conformance 5/6 rows (+1 declared miss; run with --strict to fail on it)
+RESULT: PASS — 24/24 claims, 42/42 assertions, §8 conformance 5/6 rows (+1 declared miss; run with --strict to fail on it)
 
 JSON TABLE
 {
-  "result": "FAIL",
+  "result": "PASS",
   "claims": [
     {
       "id": "A",
@@ -442,15 +442,15 @@ JSON TABLE
       "id": "R",
       "gate": "L5",
       "statement": "the content file's per-form blind rate is FALSE on the shipped bank, and the engine prices the measurement instead",
-      "value": "construct: declared 0.03, pooled 0.1008, WORST CELL 0.224 at eq-two-step|construct; repair: declared 0.03, pooled 0.0864, WORST CELL 0.231 at eq-one-mult|repair; generate: declared 0.02, pooled 0.1487, WORST CELL 0.667 at distribute-numeric|generate — 3/3 forms understated by the constant; 1 cells left under-priced",
-      "pass": false
+      "value": "construct: declared 0.03, pooled 0.1008, WORST CELL 0.224 at eq-two-step|construct; repair: declared 0.03, pooled 0.0864, WORST CELL 0.231 at eq-one-mult|repair; generate: declared 0.02, pooled 0.1487, WORST CELL 0.667 at distribute-numeric|generate — 3/3 forms understated by the constant; 0 cells left under-priced at n>=30; 1 too thinly served to judge from the stream: distribute-numeric|generate n=12 rate 0.667 priced 0.286 (engine audit says 0.286)",
+      "pass": true
     },
     {
       "id": "T",
       "gate": "L5",
       "statement": "every generator family the bank gives away above maxTrueGuess is REFUSED and named, and nothing certifies on one",
-      "value": "38 generator families refused, each answerable by ONE string: expr-anatomy|construct::count 1.000 by typing \"3\"; expr-anatomy|construct::coefficient 1.000 by typing \"1\"; expr-anatomy|repair::count 1.000 by typing \"2: 3\"; expr-anatomy|repair::coefficient 1.000 by typing \"2: 1\"; expr-anatomy|generate::count 1.000 by typing \"5x + 9y - 2\"; oo-structure|generate::negsq 1.000 by typing \"-x^{2}\" (+32 more); 1 surviving cells still over the cap; bank-priced bot peak ever certified 0",
-      "pass": false
+      "value": "38 generator families refused, each answerable by ONE string: expr-anatomy|construct::count 1.000 by typing \"3\"; expr-anatomy|construct::coefficient 1.000 by typing \"1\"; expr-anatomy|repair::count 1.000 by typing \"2: 3\"; expr-anatomy|repair::coefficient 1.000 by typing \"2: 1\"; expr-anatomy|generate::count 1.000 by typing \"5x + 9y - 2\"; oo-structure|generate::negsq 1.000 by typing \"-x^{2}\" (+32 more); 0 surviving cells still over the cap; bank-priced bot peak ever certified 0",
+      "pass": true
     },
     {
       "id": "V",
@@ -483,9 +483,9 @@ JSON TABLE
     {
       "id": "L",
       "gate": "L5",
-      "statement": "control arm: the harness can SEE a leak — the bug arm opens the gate, the shipped rules do not",
-      "value": "leak arm unlocks 19.4/32 nodes per run; shipped hint-abuse arm unlocks 0.07/32; guessing bot 0.03/32; form-hunting bot 0.00/32",
-      "pass": false
+      "statement": "control arm: the harness can SEE a leak — the bug arm opens the gate on most of the graph, the shipped rules on none of it",
+      "value": "leak arm unlocks 19.4/32 nodes per run (60.5% of the graph, 291x the shipped hint-abuse arm); shipped hint-abuse arm unlocks 0.07/32; guessing bot 0.03/32; form-hunting bot 0.00/32",
+      "pass": true
     },
     {
       "id": "H",

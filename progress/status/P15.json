@@ -1,9 +1,9 @@
 {
   "id": "P15",
   "state": "building",
-  "round": 2,
-  "gap": "Spawn frame shows a FALSE equation: 26.9% of leaf9-share's ink (the whole \\frac{1}{2} denominator + 2/3 of the bar) is eaten by the avatar and the rock spire, in en/es/pl at 900p and 4K. Raster bound is genuinely fixed (20k chars -> 45x44 canvas) but the working/em/panel-count halves of math:show have no gate at all.",
-  "note": "Moving claim anchors off the avatar/spire into open sky, adding occludedPct gate, clamping xTicks/yTicks/em/panel-count, gating a11y register on panel.ok",
+  "round": 3,
+  "gap": "leaf9-mark is mis-anchored and undersized: P15.mjs O2 measures 10.9% of its ink behind world geometry once the depth test is restored (129->115 px), and at emScreenPx 16.4-16.8 the bar of its \\ge renders at maxL 224 over bg 190 at 1600x900 versus maxL 255 at 3840x2160 - 47% of the stroke's contrast gone, so 2x+1>=9 reads as 2x+1>9. leaf9-span now measures a -3.7 dark halo against a cloud edge (C16), and a refused claim draws 0 ink (C14e). The builder's own harness returns 61/64, exit 1.",
+  "note": "Adding gate 8 legibility floor, filled refusal mark, deriving C12 threshold from actual rule thickness, adding 1280x720, fixing leaf9-mark anchor and probe truncation",
   "evidence": [],
-  "updated": "2026-08-10T14:20:19.571Z"
+  "updated": "2026-08-10T15:50:55.529Z"
 }

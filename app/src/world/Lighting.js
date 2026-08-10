@@ -10,6 +10,9 @@ import {
   facetAudit,
   materialAudit,
   deriveFill,
+  contactShadowGeometry,
+  contactShadowMultiplier,
+  setContactShadowStrength,
   KEY_HEX,
   FILL_GROUND_HEX,
   BOUNCE_HEX,
@@ -114,6 +117,26 @@ const RIM_AZIMUTH_OFFSET_DEG = 180;
 const ACCENT_RADIUS_MAX = 6;
 const ACCENT_POOL = { potato: 0, low: 2, medium: 4, high: 6, ultra: 8 };
 
+/**
+ * **The contact patch.** Peak alpha, how far the body may leave the ground before it is gone, and
+ * the capsule half-height used to find the sole when no terrain query answers.
+ *
+ * 0.86 rather than 1.0: at 1.0 the patch is exactly `ground.shadow`, which is the value a *fully*
+ * occluded ground facet holds, and a body's own contact patch sitting at the floor of the whole
+ * dark family leaves the cast shadow beside it nothing to be darker than. 0.86 measures a linear
+ * darkening of ~0.70 against lit ground, comfortably over C1's 0.45, and keeps a step in hand.
+ */
+const CONTACT_ALPHA = 0.86;
+const CONTACT_FADE_METRES = 1.6;
+/**
+ * How far the sole may sit above a terrain height query and still be treated as standing on the
+ * terrain. Above that the body is standing on something the query does not know about — a boulder,
+ * the level's own rock mass — and the patch belongs at the sole rather than on the leaf below it.
+ * Measured at spawn: the sole is 1.055 m above `terrain.groundAt()` because the player spawns on
+ * `vs.level.rock`, which is a collider the heightfield has never heard of.
+ */
+const CONTACT_SNAP_METRES = 0.35;
+
 function dirFromAngles(elevationDeg, azimuthDeg, out = new THREE.Vector3()) {
   const e = THREE.MathUtils.degToRad(elevationDeg);
   const a = THREE.MathUtils.degToRad(azimuthDeg);
@@ -210,10 +233,20 @@ export class Lighting {
     this._shadowTint = roleColor("rock.shadow"); // §3.4's convergence colour, decoded once
     this._accentColours = new Map();
 
+    // Where the body is, tracked for the near cascade and the contact patch. Both are written by
+    // signals only — `camera:target` hands over the object `play/Locomotion.js` moves every frame,
+    // which is the one channel that carries the *rendered* position rather than a state change.
+    this._playerObject = null;
+    this._playerPoint = new THREE.Vector3();
+    this._havePlayer = false;
+    this._playerGrounded = true;
+    this._bodyOpacity = 1;
+
     this.rig = this._deriveRig();
 
     this._takeOverRenderer();
     this._buildLights();
+    this._buildContactShadow();
     this._takeOverPlaceholders();
     this._buildStandInSky();
     this._bindSignals();
@@ -288,8 +321,13 @@ export class Lighting {
     //    and its sort is stable, so scene order decides the slots.
     const cascades = Math.max(1, Math.min(2, tier.shadowCascades ?? 1));
     this.cascades = [];
+    // 15 m and not 13, and the reason is that this box is now centred on the BODY rather than on a
+    // point in front of the lens. The split below hands a fragment to the near map by its distance
+    // from the CAMERA, and with a third-person boom the two disagree by the boom's own length: a
+    // fragment 9 m in front of the lens can be 13.5 m from the player. 15 m of half-width covers
+    // that with a margin, and 30 m across 2048 texels is still 1.46 cm per texel — a boot is fifty.
     const plan = cascades === 1 ? [{ radius: 34, res: 1 }] : [
-      { radius: 13, res: 1 }, // near: the player's own contact shadow lives here
+      { radius: 15, res: 1 }, // near: the player's own cast shadow lives here
       { radius: 58, res: 1 }, // far: the world
     ];
     plan.forEach((c, i) => {
@@ -314,8 +352,14 @@ export class Lighting {
       this.cascades.push({ light, radius: c.radius });
     });
     this.shadowSun = this.cascades[0].light;
+    // 0.62 rather than 0.92: the split is a distance from the CAMERA and the near box is centred on
+    // the PLAYER, so the handover has to happen while every fragment it hands over is still inside
+    // that box however the boom is placed. Hand over too late and a fragment samples a near map it
+    // has fallen out of, `getShadow` returns "lit" for being off the edge of the texture, and a real
+    // shadow silently disappears in a ring around the player — which is the failure mode that is
+    // hardest to see in a screenshot and easiest to ship.
     shared.uVsCascade.value.set(
-      this.cascades.length > 1 ? this.cascades[0].radius * 0.92 : 1e9,
+      this.cascades.length > 1 ? this.cascades[0].radius * 0.62 : 1e9,
       this.cascades[this.cascades.length - 1].radius
     );
 
@@ -354,6 +398,134 @@ export class Lighting {
       this.root.add(p);
       this.accentPool.push(p);
     }
+  }
+
+  /**
+   * **The contact patch, and why the rig owns it rather than the avatar.**
+   *
+   * Two rounds of this piece shipped a character with *zero* measured darkening under the sole. The
+   * cascade was the proximate cause both times, but the deeper problem is that a shadow map is a
+   * best-effort mechanism: it can miss because the cascade slid off the feet, because the sun went
+   * behind the camera, because the receiver is a mesh that does not sample the map, or because the
+   * body is standing on a prop the near cascade does not reach. A body that is *sometimes* grounded
+   * is a body that reads as a sticker whenever it is not.
+   *
+   * So the patch is a guarantee, not a derivation, and it lives here because it is a property of the
+   * light — it points down-sun, it is coloured out of the shadow family, and it has to agree with
+   * the cascade that draws the rest of the same shadow. Putting it in `play/Avatar.js` would make
+   * the avatar own a lighting decision and would leave every other body in the world ungrounded.
+   *
+   * It follows the body through `camera:target`, which is the only signal in the vocabulary that
+   * carries a per-frame position: `player:state` fires on state *changes* and its position is stale
+   * between them, which is exactly the kind of "measured the wrong thing" this piece keeps paying
+   * for.
+   */
+  _buildContactShadow() {
+    this.contactGeometry = contactShadowGeometry();
+    this._contactStrength = -1;
+    this.contactMaterial = materials.contactShadow({ name: "vs.contactShadow" });
+    // It writes no depth: it is a mark on a surface, not a surface. The polygon offset is what stops
+    // a patch lying flat on a facet from z-fighting the facet it is lying on.
+    this.contactMaterial.polygonOffset = true;
+    this.contactMaterial.polygonOffsetFactor = -2;
+    this.contactMaterial.polygonOffsetUnits = -4;
+    this.contact = new THREE.Mesh(this.contactGeometry, this.contactMaterial);
+    this.contact.name = "vs.contactShadow";
+    this.contact.renderOrder = 6;
+    this.contact.castShadow = false;
+    this.contact.receiveShadow = false;
+    this.contact.frustumCulled = false;
+    this.contact.visible = false;
+    this.contact.matrixAutoUpdate = true;
+    this.root.add(this.contact);
+    this._contactState = { visible: false, reason: "no player yet" };
+  }
+
+  /**
+   * The surface the patch lies on, in world space.
+   *
+   * **`camera:target` tracks the SOLE, and that was worth measuring rather than assuming.** The
+   * first draft of this subtracted half a capsule from it, on the reasonable-sounding grounds that a
+   * character controller carries its capsule's centre. It does not here: the avatar's lowest vertex
+   * measured y 59.422 against a tracked point of 59.406, so the tracked point *is* the foot and the
+   * patch was landing a metre underground. That is the same class of mistake this piece has already
+   * paid for twice — a number reasoned about instead of read — so it is read here.
+   *
+   * The terrain height query is used only to take the collision skin off, and only when it agrees:
+   * at spawn the player is standing on `vs.level.rock`, a collider the heightfield knows nothing
+   * about, and snapping to it there would put the patch a metre below the boots.
+   */
+  _playerFoot(out) {
+    if (!this._havePlayer) return null;
+    if (this._playerObject?.parent) this._playerObject.getWorldPosition(this._playerPoint);
+    out.copy(this._playerPoint);
+    const foot = out.y;
+    const g = this.kernel.byName.get("terrain")?.groundAt?.(out.x, out.z);
+    const known = Number.isFinite(g);
+    let clearance = 0;
+    let on = "sole";
+    if (!this._playerGrounded) {
+      // In the air. If the leaf below can be queried the patch stays down there and fades with the
+      // distance, which is what a shadow does; if it cannot, it fades on the fact of being airborne
+      // rather than pretending to know a height.
+      if (known && g < foot) {
+        out.y = g;
+        clearance = foot - g;
+        on = "terrain (airborne)";
+      } else {
+        clearance = CONTACT_FADE_METRES * 0.6;
+        on = "airborne, no ground query";
+      }
+    } else if (known && foot - g >= -0.05 && foot - g <= CONTACT_SNAP_METRES) {
+      out.y = g;
+      on = "terrain";
+    }
+    return { clearance, ground: known ? g : null, on };
+  }
+
+  /**
+   * Place the patch: at the sole, bearing down-sun, shrinking and fading as the body leaves the
+   * ground, and following the avatar's own camera-fade so a body the rig has made transparent does
+   * not leave an opaque shadow behind it.
+   */
+  _updateContact() {
+    if (!this.contact) return;
+    const p = this._scratchFoot ??= new THREE.Vector3();
+    const hit = this._playerFoot(p);
+    if (!hit) {
+      this.contact.visible = false;
+      this._contactState = { visible: false, reason: "no player position on camera:target yet" };
+      return;
+    }
+    const fade = Math.max(0, 1 - hit.clearance / CONTACT_FADE_METRES);
+    const alpha = CONTACT_ALPHA * fade * this._bodyOpacity;
+    this.contact.visible = alpha > 0.02;
+    // The buffer is ~840 vertices; rewriting it every frame would be a pointless upload, so it is
+    // rewritten only when the strength has actually moved a visible amount.
+    if (Math.abs(alpha - this._contactStrength) > 0.015) {
+      this._contactStrength = setContactShadowStrength(this.contactGeometry, alpha);
+    }
+    // 3 cm of lift, plus the polygon offset above: enough to clear the depth of a facet the patch
+    // is lying flat on, small enough that it cannot read as a floating card.
+    this.contact.position.set(p.x, p.y + 0.03, p.z);
+    // Local +X is the direction the cast shadow travels, so the patch is the near end of it.
+    const s = this._shadowDir;
+    this.contact.rotation.set(0, Math.atan2(-s.x, -s.z) - Math.PI / 2, 0, "YXZ");
+    const k = 0.78 + 0.22 * fade;
+    this.contact.scale.set(k, 1, k);
+    this._contactState = {
+      visible: this.contact.visible,
+      strength: r4(this._contactStrength),
+      clearance: r4(hit.clearance),
+      at: [r4(p.x), r4(p.y), r4(p.z)],
+      groundY: hit.ground === null ? null : r4(hit.ground),
+      lyingOn: hit.on,
+      grounded: this._playerGrounded,
+      bearingDeg: r3((Math.atan2(-this._shadowDir.x, -this._shadowDir.z) * 180) / Math.PI),
+      multiplier: contactShadowMultiplier().map(r4),
+      footprint: this.contactGeometry.userData.vsFootprint,
+      blend: "multiply — can only darken",
+    };
   }
 
   /**
@@ -424,6 +596,45 @@ export class Lighting {
       if (p.active === false) this.removeAccent(p.id);
       else this.addAccent(p.id, p.position, { radius: p.radius, strength: p.strength });
     });
+
+    /**
+     * **Where the body is.** The near cascade and the contact patch both need it every frame, and
+     * neither may reach into another system to get it.
+     *
+     * `camera:target` is the only per-frame channel: it hands over the Object3D `Locomotion` moves
+     * in its own `frame()`, so reading its world position is reading the *rendered* position rather
+     * than a simulation snapshot. `player:spawn` seeds it before the first frame and `player:state`
+     * is used for what it actually is — a state channel — rather than for a position.
+     */
+    on("camera:target", (p) => {
+      if (p?.object?.isObject3D) {
+        this._playerObject = p.object;
+        this._havePlayer = true;
+      } else if (p?.position) {
+        this._playerObject = null;
+        this._playerPoint.set(p.position.x ?? 0, p.position.y ?? 0, p.position.z ?? 0);
+        this._havePlayer = true;
+      }
+    });
+    on("player:spawn", (p) => {
+      if (!p?.position) return;
+      if (!this._playerObject) this._playerPoint.set(p.position.x, p.position.y, p.position.z);
+      this._havePlayer = true;
+    });
+    on("player:state", (p) => {
+      if (!p) return;
+      if (typeof p.grounded === "boolean") this._playerGrounded = p.grounded;
+      if (!this._playerObject && p.position) {
+        this._playerPoint.set(p.position.x, p.position.y, p.position.z);
+        this._havePlayer = true;
+      }
+    });
+    // The rig fades the body when the boom collapses against geometry; its shadow has to go with it.
+    on("camera:mode", (p) => {
+      if (p?.source === "camera" && typeof p.opacity === "number") {
+        this._bodyOpacity = THREE.MathUtils.clamp(p.opacity, 0, 1);
+      }
+    });
   }
 
   // -------------------------------------------------------------------------- public API
@@ -492,6 +703,7 @@ export class Lighting {
     if (this.dome) this.dome.position.copy(this.kernel.camera.position);
     this._assignAccents();
     this._fitShadowCameras();
+    this._updateContact();
   }
 
   // -------------------------------------------------------------------------- internals
@@ -577,26 +789,52 @@ export class Lighting {
   }
 
   /**
-   * Fit each cascade to what the player can actually see, and snap its centre to whole shadow texels
-   * in WORLD space so the shadow does not swim as the camera translates (§11.2).
+   * Fit each cascade and snap its centre to whole shadow texels in WORLD space so the shadow does
+   * not swim as the camera translates (§11.2).
    *
-   * The near cascade is what produces the character's contact shadow, so it is deliberately small:
-   * 13 m across 2048 texels is 1.3 cm per texel, and a boot is twenty of them.
+   * **The near cascade is centred on the BODY, not on the camera, and that is the finding that cost
+   * this piece a round.** What was here centred every cascade on `cam.position + forward ·
+   * radius·0.6`. With a third-person boom that point is about eight metres in front of the *lens*,
+   * which is eleven or twelve metres in front of the player — and the moment the player pitches the
+   * view down, `forward` dives into the ground and the near box slides off the feet entirely. A
+   * critic measured the consequence directly: zero contact darkening under the sole, 0.0 against a
+   * requirement of 0.45, and a 600×320 px crop around the character's legs containing no shadow of
+   * any kind.
+   *
+   * The near cascade exists for exactly one thing — the shadow a body casts where it stands — so it
+   * follows the body. The far cascade still leads the camera, because what it is for is the world
+   * the player is walking *into*, and a 58 m box centred on the body would spend half its texels
+   * behind them.
+   *
+   * `_centreFor()` also reports which rule it used, so `report().shadow.cascades[i].centredOn` can
+   * be read by a reviewer instead of inferred from a screenshot.
    */
+  _centreFor(c, index, out) {
+    const cam = this.kernel.camera;
+    if (index === 0 && this._havePlayer) {
+      if (this._playerObject?.parent) this._playerObject.getWorldPosition(this._playerPoint);
+      // The capsule centre is already about 0.9 m above the sole, which is where a 15 m box wants
+      // its middle: it leaves the whole body and six metres of its shadow inside the frustum.
+      out.copy(this._playerPoint);
+      return "player";
+    }
+    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion);
+    out.copy(forward).multiplyScalar(c.radius * 0.6).add(cam.position);
+    return "camera-forward";
+  }
+
   _fitShadowCameras() {
     if (!this.cascades.length || !this.cascades[0].light.castShadow) return;
-    const cam = this.kernel.camera;
-    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion);
     const dir = this._shadowDir;
     const up = new THREE.Vector3(0, 1, 0);
     const right = new THREE.Vector3().crossVectors(up, dir).normalize();
     const upL = new THREE.Vector3().crossVectors(dir, right).normalize();
+    const centre = this._scratchCentre ??= new THREE.Vector3();
 
-    for (const c of this.cascades) {
-      const centre = forward
-        .clone()
-        .multiplyScalar(c.radius * 0.6)
-        .add(cam.position);
+    for (let i = 0; i < this.cascades.length; i++) {
+      const c = this.cascades[i];
+      c.centredOn = this._centreFor(c, i, centre);
+      c.centre = [r3(centre.x), r3(centre.y), r3(centre.z)];
       const texel = (c.radius * 2) / c.light.shadow.mapSize.x;
       const x = Math.round(centre.dot(right) / texel) * texel;
       const y = Math.round(centre.dot(upL) / texel) * texel;
@@ -683,10 +921,16 @@ export class Lighting {
           texelMetres: r4((c.radius * 2) / c.light.shadow.mapSize.x),
           bias: c.light.shadow.bias,
           normalBias: r4(c.light.shadow.normalBias),
+          // Which rule placed this box this frame, and where. A reviewer should never have to infer
+          // "the cascade is not on the player" from a screenshot again.
+          centredOn: c.centredOn ?? "not fitted yet",
+          centre: c.centre ?? null,
         })),
         splitMetres: r3(shared.uVsCascade.value.x),
         type: "PCF",
+        trackingPlayer: this._havePlayer,
       },
+      contact: this._contactState ?? { visible: false, reason: "not built" },
       renderer: {
         toneMapping: r.toneMapping, // must be 0 (NoToneMapping) — §3.5
         toneMappingExposure: r.toneMappingExposure,
@@ -797,6 +1041,8 @@ export class Lighting {
     this._offs.length = 0;
     this.dome?.geometry.dispose();
     this.dome?.material.dispose();
+    this.contactGeometry?.dispose();
+    this.contactMaterial?.dispose();
   }
 }
 

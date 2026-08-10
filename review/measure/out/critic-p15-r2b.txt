@@ -1,0 +1,258 @@
+
+============ en @ 1600x900 (authored frame, untouched) ============
+boot ready=true fatal=null errors=0 katex={"rendered":3,"failed":0,"failedSamples":[],"rawSourceLeak":false,"leakSample":null}
+consoleErrors=[] failedRequests=[]
+occlusion probe: {"at":0.37,"ms":216.4,"occluders":44,"worstOccludedPct":0,"panels":[{"id":"leaf9-span","kind":"claim","occludedPct":0,"samples":24,"candidates":23,"position":[12.59,63.5,206.52]},{"id":"leaf9-share","kind":"claim","occludedPct":0,"samples":24,"candidates":19,"position":[12.59,62,206.52]},{"id":"leaf9-working","kind":"working","occludedPct":0,"samples":24,"candidates":8,"position":[16.59,62.8,206.52]},{"id":"leaf9-mark","kind":"claim","occludedPct":0,"samples":24,"candidates":37,"position":[38.55,62.7,178.52]}]}
+panels: [
+ {
+  "id": "leaf9-span",
+  "tex": "x + 3 = 7",
+  "ok": true,
+  "speech": "x plus 3 equals 7",
+  "locale": "en",
+  "textureSize": [
+   243,
+   49
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 1.28,
+  "emScreenPx": 37.5,
+  "bound": null
+ },
+ {
+  "id": "leaf9-share",
+  "tex": "\\frac{1}{2}x = 4",
+  "ok": true,
+  "speech": "1 over 2 x equals 4",
+  "locale": "en",
+  "textureSize": [
+   179,
+   123
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 1.26,
+  "emScreenPx": 38.2,
+  "bound": null
+ },
+ {
+  "id": "leaf9-working",
+  "tex": null,
+  "ok": true,
+  "speech": "",
+  "locale": "en",
+  "textureSize": [
+   192,
+   192
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 1.64,
+  "emScreenPx": 29.3,
+  "bound": null
+ },
+ {
+  "id": "leaf9-mark",
+  "tex": "2x + 1 \\ge 9",
+  "ok": true,
+  "speech": "2 x plus 1 is greater than or equal to 9",
+  "locale": "en",
+  "textureSize": [
+   381,
+   73
+  ],
+  "fontPx": 68,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 4.06,
+  "emScreenPx": 16.8,
+  "bound": null
+ }
+]
+raster: {"rasters":3,"ms":34.5,"glyphs":6,"paths":0,"rules":0,"unsupportedSvg":0,"baselineResidual":0,"maxCanvasWidth":381,"maxCanvasHeight":192,"maxCanvasPixels":36864,"scaledDown":0,"refusedGeometry":0,"caps":{"maxEdge":4096,"maxPixels":4194304,"maxInkEmsWide":48,"maxInkEmsTall":24,"minFontPx":8,"maxEmWorld":4,"minEmWorld":0.02,"maxWorkingTicks":64}}
+register text: "x+3=7\n2\n1\n\t​\n\nx=4\n2x+1≥9"
+overlay text : "x+3=7\n2\n1\n\t​\n\nx=4\n2x+1≥9"
+bodyHasRawTeXCommands=false katexErrorNodes=0 visibleAnnotations=0 rawSourceLeak=false
+tex probe: {"requests":6,"hits":3,"misses":3,"typesets":3,"failures":[],"evictions":0,"typesetMs":0.7,"cacheSize":3,"locale":"en","unspokenNodeTypes":[]}
+claim screen rects: [{"name":"mathtex","x":787,"y":166,"w":205,"h":48},{"name":"mathtex","x":813,"y":230,"w":150,"h":105},{"name":"mathtex","x":1056,"y":158,"w":152,"h":146},{"name":"mathtex","x":1243,"y":315,"w":140,"h":25}]
+captured review/shots/p15/criticB-en-1600x900.png
+  ink audit mathtex rect={"x":763,"y":142,"w":253,"h":96} -> {"inkPx":717,"inkLum":249.2,"box":[790,170,988,237],"bgNear":166.6,"bgFar":157.7,"halo":9}
+  ink audit mathtex rect={"x":789,"y":206,"w":198,"h":153} -> {"inkPx":768,"inkLum":250.8,"box":[790,206,957,331],"bgNear":183.3,"bgFar":178.2,"halo":5.1}
+  ink audit mathtex rect={"x":1032,"y":134,"w":200,"h":194} -> {"inkPx":810,"inkLum":247.9,"box":[1066,181,1192,294],"bgNear":179.8,"bgFar":173.6,"halo":6.2}
+  ink audit mathtex rect={"x":1219,"y":291,"w":188,"h":73} -> {"inkPx":164,"inkLum":250.3,"box":[1245,316,1380,336],"bgNear":189.7,"bgFar":180.4,"halo":9.3}
+
+============ es @ 1600x900 (authored frame, untouched) ============
+boot ready=true fatal=null errors=0 katex={"rendered":3,"failed":0,"failedSamples":[],"rawSourceLeak":false,"leakSample":null}
+consoleErrors=[] failedRequests=[]
+occlusion probe: {"at":0.52,"ms":1461.7,"occluders":43,"worstOccludedPct":0,"panels":[{"id":"leaf9-span","kind":"claim","occludedPct":0,"samples":24,"candidates":25,"position":[12.59,63.5,206.52]},{"id":"leaf9-share","kind":"claim","occludedPct":0,"samples":24,"candidates":21,"position":[12.59,62,206.52]},{"id":"leaf9-working","kind":"working","occludedPct":0,"samples":24,"candidates":8,"position":[16.59,62.8,206.52]},{"id":"leaf9-mark","kind":"claim","occludedPct":0,"samples":24,"candidates":37,"position":[38.55,62.7,178.52]}]}
+panels: [
+ {
+  "id": "leaf9-span",
+  "tex": "x + 3 = 7",
+  "ok": true,
+  "speech": "x más 3 igual a 7",
+  "locale": "es",
+  "textureSize": [
+   243,
+   49
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 1.27,
+  "emScreenPx": 37.7,
+  "bound": null
+ },
+ {
+  "id": "leaf9-share",
+  "tex": "\\frac{1}{2}x = 4",
+  "ok": true,
+  "speech": "1 sobre 2 x igual a 4",
+  "locale": "es",
+  "textureSize": [
+   179,
+   123
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 1.25,
+  "emScreenPx": 38.4,
+  "bound": null
+ },
+ {
+  "id": "leaf9-working",
+  "tex": null,
+  "ok": true,
+  "speech": "",
+  "locale": "es",
+  "textureSize": [
+   192,
+   192
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 1.63,
+  "emScreenPx": 29.4,
+  "bound": null
+ },
+ {
+  "id": "leaf9-mark",
+  "tex": "2x + 1 \\ge 9",
+  "ok": true,
+  "speech": "2 x más 1 mayor o igual que 9",
+  "locale": "es",
+  "textureSize": [
+   269,
+   51
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 2.86,
+  "emScreenPx": 16.8,
+  "bound": null
+ }
+]
+raster: {"rasters":4,"ms":33.9,"glyphs":6,"paths":0,"rules":0,"unsupportedSvg":0,"baselineResidual":0,"maxCanvasWidth":381,"maxCanvasHeight":192,"maxCanvasPixels":36864,"scaledDown":0,"refusedGeometry":0,"caps":{"maxEdge":4096,"maxPixels":4194304,"maxInkEmsWide":48,"maxInkEmsTall":24,"minFontPx":8,"maxEmWorld":4,"minEmWorld":0.02,"maxWorkingTicks":64}}
+register text: "x+3=7\n2\n1\n\t​\n\nx=4\n2x+1≥9"
+overlay text : "x+3=7\n2\n1\n\t​\n\nx=4\n2x+1≥9"
+bodyHasRawTeXCommands=false katexErrorNodes=0 visibleAnnotations=0 rawSourceLeak=false
+tex probe: {"requests":7,"hits":4,"misses":3,"typesets":3,"failures":[],"evictions":0,"typesetMs":0.7,"cacheSize":3,"locale":"es","unspokenNodeTypes":[]}
+claim screen rects: [{"name":"mathtex","x":787,"y":166,"w":205,"h":48},{"name":"mathtex","x":813,"y":230,"w":150,"h":105},{"name":"mathtex","x":1056,"y":158,"w":152,"h":146},{"name":"mathtex","x":1243,"y":315,"w":140,"h":25}]
+captured review/shots/p15/criticB-es-1600x900.png
+  ink audit mathtex rect={"x":763,"y":142,"w":253,"h":96} -> {"inkPx":718,"inkLum":249.2,"box":[790,170,988,237],"bgNear":166.5,"bgFar":157.9,"halo":8.5}
+  ink audit mathtex rect={"x":789,"y":206,"w":198,"h":153} -> {"inkPx":767,"inkLum":250.9,"box":[790,206,957,331],"bgNear":183.4,"bgFar":178.5,"halo":4.8}
+  ink audit mathtex rect={"x":1032,"y":134,"w":200,"h":194} -> {"inkPx":807,"inkLum":248,"box":[1066,181,1192,294],"bgNear":180.1,"bgFar":173.6,"halo":6.5}
+  ink audit mathtex rect={"x":1219,"y":291,"w":188,"h":73} -> {"inkPx":164,"inkLum":250.3,"box":[1245,316,1380,336],"bgNear":189.8,"bgFar":180.6,"halo":9.2}
+
+============ pl @ 1600x900 (authored frame, untouched) ============
+boot ready=true fatal=null errors=0 katex={"rendered":3,"failed":0,"failedSamples":[],"rawSourceLeak":false,"leakSample":null}
+consoleErrors=[] failedRequests=[]
+occlusion probe: {"at":0.48,"ms":207.8,"occluders":47,"worstOccludedPct":0,"panels":[{"id":"leaf9-span","kind":"claim","occludedPct":0,"samples":24,"candidates":24,"position":[12.59,63.5,206.52]},{"id":"leaf9-share","kind":"claim","occludedPct":0,"samples":24,"candidates":21,"position":[12.59,62,206.52]},{"id":"leaf9-working","kind":"working","occludedPct":0,"samples":24,"candidates":8,"position":[16.59,62.8,206.52]},{"id":"leaf9-mark","kind":"claim","occludedPct":0,"samples":24,"candidates":37,"position":[38.55,62.7,178.52]}]}
+panels: [
+ {
+  "id": "leaf9-span",
+  "tex": "x + 3 = 7",
+  "ok": true,
+  "speech": "x plus 3 równa się 7",
+  "locale": "pl",
+  "textureSize": [
+   243,
+   49
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 1.27,
+  "emScreenPx": 37.7,
+  "bound": null
+ },
+ {
+  "id": "leaf9-share",
+  "tex": "\\frac{1}{2}x = 4",
+  "ok": true,
+  "speech": "1 łamane przez 2 x równa się 4",
+  "locale": "pl",
+  "textureSize": [
+   179,
+   123
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 1.25,
+  "emScreenPx": 38.4,
+  "bound": null
+ },
+ {
+  "id": "leaf9-working",
+  "tex": null,
+  "ok": true,
+  "speech": "",
+  "locale": "pl",
+  "textureSize": [
+   192,
+   192
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 1.63,
+  "emScreenPx": 29.4,
+  "bound": null
+ },
+ {
+  "id": "leaf9-mark",
+  "tex": "2x + 1 \\ge 9",
+  "ok": true,
+  "speech": "2 x plus 1 większe lub równe 9",
+  "locale": "pl",
+  "textureSize": [
+   269,
+   51
+  ],
+  "fontPx": 48,
+  "occludedPct": 0,
+  "depthTest": false,
+  "texelsPerPixel": 4.05,
+  "emScreenPx": 16.8,
+  "bound": null
+ }
+]
+raster: {"rasters":4,"ms":98.5,"glyphs":6,"paths":0,"rules":0,"unsupportedSvg":0,"baselineResidual":0,"maxCanvasWidth":381,"maxCanvasHeight":192,"maxCanvasPixels":36864,"scaledDown":0,"refusedGeometry":0,"caps":{"maxEdge":4096,"maxPixels":4194304,"maxInkEmsWide":48,"maxInkEmsTall":24,"minFontPx":8,"maxEmWorld":4,"minEmWorld":0.02,"maxWorkingTicks":64}}
+register text: "x+3=7\n2\n1\n\t​\n\nx=4\n2x+1≥9"
+overlay text : "x+3=7\n2\n1\n\t​\n\nx=4\n2x+1≥9"
+bodyHasRawTeXCommands=false katexErrorNodes=0 visibleAnnotations=0 rawSourceLeak=false
+tex probe: {"requests":7,"hits":4,"misses":3,"typesets":3,"failures":[],"evictions":0,"typesetMs":40.1,"cacheSize":3,"locale":"pl","unspokenNodeTypes":[]}
+claim screen rects: [{"name":"mathtex","x":787,"y":166,"w":205,"h":48},{"name":"mathtex","x":813,"y":230,"w":150,"h":105},{"name":"mathtex","x":1056,"y":158,"w":152,"h":146},{"name":"mathtex","x":1243,"y":315,"w":140,"h":25}]
+captured review/shots/p15/criticB-pl-1600x900.png
+  ink audit mathtex rect={"x":763,"y":142,"w":253,"h":96} -> {"inkPx":717,"inkLum":249.2,"box":[790,170,988,237],"bgNear":166.6,"bgFar":157.6,"halo":8.9}
+  ink audit mathtex rect={"x":789,"y":206,"w":198,"h":153} -> {"inkPx":768,"inkLum":250.8,"box":[790,206,957,331],"bgNear":183.3,"bgFar":178.2,"halo":5.1}
+  ink audit mathtex rect={"x":1032,"y":134,"w":200,"h":194} -> {"inkPx":813,"inkLum":247.9,"box":[1066,181,1192,294],"bgNear":179.8,"bgFar":173.6,"halo":6.2}
+  ink audit mathtex rect={"x":1219,"y":291,"w":188,"h":73} -> {"inkPx":163,"inkLum":250.6,"box":[1245,316,1380,336],"bgNear":189.7,"bgFar":180.4,"halo":9.3}

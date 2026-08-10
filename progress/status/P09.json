@@ -1,9 +1,9 @@
 {
   "id": "P09",
-  "state": "critique",
-  "round": 2,
-  "gap": "Turned-face shading is inclination-blind: Materials.js:412 smoothstep(-0.035,0.14,NdL) saturates at 1.0 for the whole back hemisphere, so all four SHOULDERS bands collapse to one constant. Left spire measures 1 value band / lumSpread 0.000 over 240x400px vs the reference's 7 bands / 0.531 on the same crop. Subject test: 0 connected accent-cyan components span lower third to horizon, in both arrival and run frames.",
-  "note": "Shadow graded by N.L in Terrain.js GLSL_GRADE (the grade that actually paints the shipped rock; Materials.js's block is never emitted for the authored archetype). Shoulder rings derived per aspect with a >=12deg band-separation assertion. Hero carry re-routed across the frustum with a real cross-section. 20/22 claims pass. Two open: P1 lit rock 2.7x under reference value, P5 proven sign inversion between the key and the rendered light/shadow.",
+  "state": "building",
+  "round": 3,
+  "gap": "The fix gave the frame a subject and then let it eat the frame: the hero carry renders as ONE connected accent-cyan component of 100,997 px = 7.0%% of a 1600x900 spawn frame (total cyan 8.30%%) against the reference river's 16,591 px = 0.39%% (total 2.39%%), and at rendered saturation 0.93 / Y 0.528 where Level01 itself authors 0x7ADCC8 (S 0.45) and the reference river measures #8BF7E4 (S 0.44). Level01.js:155 carry.spine width:36 fans into a delta plate instead of converging as a ribbon - the failure the file's own comment at :157 says must not happen. Meanwhile the bottom 55 rows are a dead near-black bar (vs.terrain.keel, 162 large near tris, toward/away luminance ratio 1.02) and spire lit:shadow is 1.82 vs the reference's 4.15-5.47.",
+  "note": "Round 3: shrink hero carry to a converging ribbon, fix sceneRGB err gate, emissive only on core lane, keel N.L ladder, shadow family on turned-away rock, fix K7 reference box",
   "evidence": [],
-  "updated": "2026-08-10T15:07:29.603Z"
+  "updated": "2026-08-10T15:29:34.218Z"
 }

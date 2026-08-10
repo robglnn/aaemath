@@ -118,6 +118,14 @@ function pad(aX, aZ, x0, x1, z0, z1, f) {
 //
 // `depth` is now a shallow carve whose only job is to give the river a bank and to switch the
 // surface class; the visible surface is the ribbon, and the ribbon rides the ground.
+//
+// **Every carry converges.** `taper` is [head multiplier, mouth multiplier] on `width`, applied
+// monotonically along the polyline. The profile it replaced was
+// `0.34 + 0.78·sin(π·t^0.92)`, which *swells* to 1.12x the authored width a third of the way
+// down and narrows again at both ends — a river shaped like a cigar. A shape that gets wider as
+// it recedes has no vanishing point, and a shape with no vanishing point cannot walk an eye
+// anywhere; it just sits in the frame being big.
+const DEFAULT_TAPER = [0.92, 0.5];
 export const CARRIES = [
   {
     /**
@@ -149,9 +157,29 @@ export const CARRIES = [
      * painted cyan in 8 pixels out of 119, the signature of something in front of it that physics
      * cannot see. A carry is syrup-thick and brimming; standing it proud of its bank is in
      * character and it is the only lever this piece owns against a mesh another piece scatters.
+     *
+     * **`width` is 14 and not 36, and that number is the whole of the last rejection.**
+     *
+     * Fixing "invisible" by widening was the wrong lever pulled hard. At 36 m — and through a
+     * section profile that *peaked* at 1.12x the authored width a third of the way down — the
+     * hero carry rendered as one connected accent-cyan component of 100,997 px, **7.0% of a
+     * 1600x900 arrival frame**, against the reference river's largest component of 16,591 px, or
+     * 0.39% of its own frame. Eighteen times the relative area. It stopped converging and fanned
+     * into a delta plate, which is precisely the failure the note at the head of `pts` says must
+     * not happen: "reads as a lagoon the player is standing in".
+     *
+     * A river leads the eye by *converging*, so the section now tapers monotonically along the
+     * polyline — `taper` below — from about 18 m at the near end to about 8 m at the mouth. The
+     * near end is still wide enough to be a subject and the far end is narrow enough to have a
+     * vanishing point, and the whole body fits inside the accent budget §7.2 sets: largest
+     * connected component under 1.7% of the frame, total cyan under 3.5%.
      */
     id: "carry.spine",
-    width: 36,
+    width: 14,
+    // Multipliers on `width` at the head and at the mouth. Monotone: a river that widens on its
+    // way to the horizon has no vanishing point, and a shape with no vanishing point cannot walk
+    // an eye anywhere. 14 x 1.29 = 18.1 m at the near end, 14 x 0.57 = 8.0 m at the far end.
+    taper: [1.29, 0.57],
     depth: 2.2,
     brim: 1.2,
     hero: true,
@@ -199,6 +227,20 @@ export const CARRIES = [
     pts: [[212, 50], [248, 36], [286, 44], [320, 30]],
   },
 ];
+
+/**
+ * **A carry's width and a carry's exclusion zone are two different numbers, and conflating them
+ * cost this piece a round in each direction.**
+ *
+ * Everything that has to stay out of a river — spires, boulders, talus — used to key off
+ * `c.width` directly. That is a coupling with a nasty sign: narrowing the ribbon so it stops
+ * eating the frame *also* let the talus field close in on it, and the frame that had "too much
+ * river" would have come back as "the river is behind a wall of rocks", which is the exact failure
+ * two rounds ago. The corridor a river needs is a fact about the view, not about the surface: it is
+ * the ribbon's own half-width plus a margin in metres that does not move when the ribbon does.
+ */
+export const carryMaxWidth = (c) => c.width * Math.max(...(c.taper ?? DEFAULT_TAPER));
+const carryClear = (c, margin) => carryMaxWidth(c) * 0.5 + margin;
 
 /** The ravine's centreline and half-width. It wanders, because a fracture is not a saw cut. */
 const ravineCentre = (aZ) => 176 + 26 * Math.sin(aZ * 0.0122) + 13 * Math.sin(aZ * 0.031 + 2.0);
@@ -343,8 +385,12 @@ export const LEAF = {
     const hPreCarry = h;
     for (const c of CARRIES) {
       const { d } = distToPolyline(aX, aZ, c.pts);
-      if (d > c.width * 1.6) continue;
-      const w = 1 - smoothstep(c.width * 0.6, c.width * 1.25, d);
+      // The channel is cut to the *widest* section the ribbon ever presents, not to the authored
+      // width: with a taper the two are different numbers, and a trough narrower than the ribbon
+      // stands the bank walls on uncarved ground and turns a river into an aqueduct.
+      const cw = carryMaxWidth(c);
+      if (d > cw * 1.6) continue;
+      const w = 1 - smoothstep(cw * 0.6, cw * 1.25, d);
       // **The carve is held off the brow.** `carry.spine` is born at the brow's foot, twenty-odd
       // metres in front of where the player is put down, and at full strength its channel took
       // sixteen metres off the crest the arrival frame is composed from — the spawn ended up
@@ -620,7 +666,7 @@ export class Level01 {
      *  planted down the middle of it. */
     const clearOfCarries = (aX, aZ, r) => {
       for (const c of CARRIES) {
-        if (distToPolyline(aX, aZ, c.pts).d < c.width * (c.hero ? 0.78 : 0.6) + r) return false;
+        if (distToPolyline(aX, aZ, c.pts).d < carryClear(c, c.hero ? 16 : 6) + r) return false;
       }
       return true;
     };
@@ -776,7 +822,10 @@ export class Level01 {
       // the ribbon fixes an object standing in front of it.
       let inChannel = false;
       for (const c of CARRIES) {
-        if (distToPolyline(aX, aZ, c.pts).d < c.width * (c.hero ? 1.55 : 1.05)) { inChannel = true; break; }
+        // 40 m of clear ground either side of the hero ribbon, in metres and not in ribbon widths:
+        // see `carryClear`. The old expression was 1.55 x width, which at the new width would have
+        // dropped the corridor from 56 m to 22 and put the talus field back on top of the river.
+        if (distToPolyline(aX, aZ, c.pts).d < carryClear(c, c.hero ? 40 : 12)) { inChannel = true; break; }
       }
       if (inChannel) continue;
       // Size falls off toward the brow. A 13 m boulder 40 m from the spawn is not a landmark, it
@@ -805,7 +854,10 @@ export class Level01 {
       facetGeometry(new Float32Array(spires), (cx, cy, cz, nx, ny, nz, ti) => this._rockColor(ny, ti)),
       facetGeometry(new Float32Array(rock), (cx, cy, cz, nx, ny, nz, ti) => this._rockColor(ny, ti + 7)),
     ]);
-    const mesh = new THREE.Mesh(geo, flatMaterial("level.rock", { litFloor: 0.4 }));
+    // `litFloor` 0.34, matching `terrain.surface`: the same arithmetic (see the note there). At 0.4
+    // the lit faces of a spire separate by four per cent of value, which is under one histogram bin,
+    // and the mass reads as one silhouette however many rings its geometry carries.
+    const mesh = new THREE.Mesh(geo, flatMaterial("level.rock", { litFloor: 0.34 }));
     mesh.name = "vs.level.rock";
     mesh.castShadow = true;
     mesh.receiveShadow = true;
@@ -834,13 +886,17 @@ export class Level01 {
         tris,
         cls,
         c.pts,
-        // Narrow at the head, widest a third of the way down, narrowing again into the mouth.
-        // The old profile was `width * (0.72 + wobble)`, i.e. a *constant* 0.72 of the authored
-        // width with a ripple on it — a river that never converges, which is the one thing a
-        // river has to do to walk an eye anywhere.
-        (t) =>
-          c.width *
-          (0.34 + 0.78 * Math.sin(Math.PI * Math.pow(clamp01(t), 0.92)) + 0.05 * Math.sin(t * 17.3)),
+        // **Monotone. It only ever narrows.**
+        //
+        // The ripple's amplitude is 0.02 and not 0.05 because 0.05 x 17.3 = 0.87 per unit t, which
+        // is larger than the hero's own taper slope of 0.72 — a wobble that steep does not decorate
+        // a converging edge, it reverses it, and a river that widens for three sections out of ten
+        // has ten vanishing points and therefore none. At 0.02 the derivative is 0.35 and the bank
+        // keeps its life without ever turning back on itself.
+        (t) => {
+          const [head, mouth] = c.taper ?? DEFAULT_TAPER;
+          return c.width * (lerp(head, mouth, clamp01(t)) + 0.02 * Math.sin(t * 17.3));
+        },
         (x, z) => this.terrain.groundAt(x, z),
         brim,
         (aX) => baseY(aX) - c.depth,
@@ -860,19 +916,70 @@ export class Level01 {
     const body = sceneRGB(PAL.carry);
     const bank = sceneRGB(PAL.carryBank);
     const byClass = [bank, body, core];
-    const geo = facetGeometry(new Float32Array(tris), (cx, cy, cz, nx, ny, nz, ti) => {
-      // A carry is raw quantity. It is its own light source and never takes the key — so its three
-      // values are the section's three parts, not a function of which way a facet happens to face.
-      const c = byClass[cls[ti] ?? 1] ?? body;
-      const j = 1 + (hash2i(ti, 11, 313) - 0.5) * 0.08;
-      return [c.r * j, c.g * j, c.b * j];
-    });
+
+    /**
+     * **Two meshes, split on the section class, because only the core lane may glow.**
+     *
+     * `flatMaterial` turns `unlit` into `mat.userData.vsEmissive`, which is the flag P12's bloom
+     * mask reads. One mesh therefore meant one answer for the whole section, and the whole
+     * hundred-thousand-pixel plate — bank, body and core alike — went into the bloom. Bloom is
+     * additive and a river is the biggest bright shape in the frame, so it fed on itself: an
+     * albedo authored at S 0.44 rendered at S 0.93, and the accent the quality bar reserves as
+     * *the* saturated thing in this world arrived as neon.
+     *
+     * The value structure of a river is foot, body, core. Only the core is a light source. Two
+     * meshes cost one draw call out of a budget with nine times the headroom spare.
+     */
+    const laneTris = [[], []]; // 0 bank+body, 1 core
+    const laneCls = [[], []];
+    for (let ti = 0; ti < cls.length; ti++) {
+      const lane = cls[ti] === 2 ? 1 : 0;
+      for (let k = 0; k < 9; k++) laneTris[lane].push(tris[ti * 9 + k]);
+      laneCls[lane].push(cls[ti]);
+    }
+    const laneGeo = (lane) =>
+      facetGeometry(new Float32Array(laneTris[lane]), (cx, cy, cz, nx, ny, nz, ti) => {
+        // A carry is raw quantity. It is its own light source and never takes the key — so its
+        // three values are the section's three parts, not a function of which way a facet faces.
+        const c = byClass[laneCls[lane][ti] ?? 1] ?? body;
+        const j = 1 + (hash2i(ti + lane * 7919, 11, 313) - 0.5) * 0.08;
+        return [c.r * j, c.g * j, c.b * j];
+      });
+    const geo = laneGeo(0);
     // `DoubleSide`, because a section has inward-facing bank walls and a player standing in the
     // channel must not see through the river they are standing in.
-    const mesh = new THREE.Mesh(geo, flatMaterial("level.carry", { unlit: 1, side: THREE.DoubleSide }));
+    /**
+     * `unlit: 0.55` and not 1, which is P11's accent budget rather than P09's composition.
+     *
+     * At `unlit: 1` every carry facet renders at full authored albedo, which puts `PAL.carry`
+     * (V 0.86, S 0.45, hue 168) inside §7.2's accent gate over its whole surface. A census of the
+     * shipped spawn frame measured **6.05 %** of pixels through that gate against a ceiling of
+     * 1.8 %, and the consequence is visible rather than bookkeeping: the river stops being the
+     * ribbon that walks the eye to the horizon and becomes a luminous flood plain that out-shouts
+     * the character. At 0.55 the body of a carry keeps its hue and its own three-value structure —
+     * bank, body, core — and drops below the gate, so the budget is spent on the *core lane* and on
+     * the certainties, which is what §7.2 wants it spent on.
+     */
+    const mesh = new THREE.Mesh(
+      geo,
+      // `emissive: false` — the bank and the body keep their hue and their §7.2 accent bookkeeping
+      // (`accent: true`, so nothing is laundered out of the census) and stop feeding the bloom.
+      flatMaterial("level.carry", { unlit: 0.55, emissive: false, accent: true, side: THREE.DoubleSide })
+    );
     mesh.name = "vs.level.carries";
     this.root.add(mesh);
     this.carryMesh = mesh;
+
+    // The core lane, and only the core lane, is the light source. It is 20% of the half-width on
+    // each side of the centreline — a bright line down the middle of a ribbon, which is how the
+    // reference builds its river: `#8EFDE2` at the edge, `#D5FDF6` down the middle.
+    const coreMesh = new THREE.Mesh(
+      laneGeo(1),
+      flatMaterial("level.carry.core", { unlit: 1, side: THREE.DoubleSide })
+    );
+    coreMesh.name = "vs.level.carries.core";
+    this.root.add(coreMesh);
+    this.carryCoreMesh = coreMesh;
   }
 
   // -------------------------------------------------------------------------- structures
@@ -1318,7 +1425,7 @@ export class Level01 {
       backdrop: { compression: Number(this.farK.toFixed(2)), nearScale: Number(this.nearScale.toFixed(3)) },
       triangles: {
         rock: tris(this.rockMesh),
-        carries: tris(this.carryMesh),
+        carries: tris(this.carryMesh) + tris(this.carryCoreMesh),
         built: tris(this.builtMesh),
         certainties: tris(this.certaintyMesh),
         archipelago: tris(this.archipelagoMesh),
@@ -1332,7 +1439,7 @@ export class Level01 {
     this._offSun?.();
     signals.emit("world:collider", { id: "p09:rock", remove: true });
     signals.emit("world:collider", { id: "p09:built", remove: true });
-    for (const m of [this.rockMesh, this.carryMesh, this.builtMesh, this.certaintyMesh, this.archipelagoMesh, this.backdropMesh]) {
+    for (const m of [this.rockMesh, this.carryMesh, this.carryCoreMesh, this.builtMesh, this.certaintyMesh, this.archipelagoMesh, this.backdropMesh]) {
       m?.geometry.dispose();
     }
   }

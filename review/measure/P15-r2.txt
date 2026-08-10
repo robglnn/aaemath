@@ -1,0 +1,76 @@
+(node:34284) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  hostile 1/5: long20k (20000 chars, attacks source length)
+  hostile 2/5: deepFrac15 (151 chars, attacks parse depth — the measured renderer crash)
+  hostile 3/5: deepFrac60 (601 chars, attacks parse depth)
+  hostile 4/5: tallMatrix (772 chars, attacks ink height)
+  hostile 5/5: wideLine (1881 chars, attacks ink width)
+
+P15 — strict KaTeX pipeline, DOM and in-world
+────────────────────────────────────────────────────────────────────────────────────────────────
+PASS  C1     every fixture expression typesets in en/es/pl                   0 failures             got 0
+PASS  C2a    malformed TeX is refused by validate()                          21 refusals            got 21
+PASS  C2b    a refused expression never returns its source, a katex-error n  0 leaks                got 0
+PASS  C3a    every expression has a spoken form in every locale              0 missing              got 0
+PASS  C3b    no spoken form contains TeX notation                            0 with \ { } ^ _       got 0
+PASS  C4     ES/PL take a decimal comma, a centre dot and (PL) a colon for   0 wrong                got 0
+PASS  C5     the plain comparison text is identical in every locale          0 divergent            got 0
+PASS  C6     no banned classroom vocabulary in any player-facing string thi  0 hits (relation readings declared) got 0
+PASS  C7     1000 renders of one expression typeset it exactly once          typesets == 1          got 1
+PASS  H0a    a 20000-character claim is refused in every locale              3 refusals             got 3
+PASS  H0b    the over-length claim never reaches the parser                  cost < 20% of typesetting a 1,881-char claim got 0.04 ms vs 149.1 ms
+PASS  H0c    a refused over-length claim is not retained anywhere in the pi  record and failure log <= 200 chars got record 71, worst failure row 71
+PASS  H0d    the refusal shows the stand-in and says so, without notation    ok:false, speech has no \ { } got ok=false speech="unreadable claim"
+PASS  H0e    the nesting that crashes the renderer is refused before any HT  refused in all 3 locales, 0 fraction markup, < 2 KB of HTML got deepFrac15 depth 30: 3/3 refused, 0 frac markup, 188 B | deepFrac60 depth 120: 3/3 refused, 0 frac markup, 188 B
+PASS  H0f    the depth cap does not reach real mathematics                   all typeset, worst depth well under 16 got 4/6/2/3 of 16
+PASS  H0g    every expression in the shipped bank passes every offline gate  0 failures             got 0 of 8151 checks (2717 expressions, 1834 ms)
+PASS  H0h    the caps have real headroom over the content the game actually  >= 5x on both length and depth got length 41/2000, depth 3/16
+PASS  H0i    the geometry attacks get past every offline gate, so the brows  2 of 2 typeset offline got tallMatrix depth 3 nodes 451 ok=true | wideLine depth 0 nodes 941 ok=true
+PASS  C7b    the KaTeX raster is a hard-edged alpha mask, not a blurred one  partial-alpha band <= 1.3 px got 0.67
+PASS  C7c    a raster is produced at a real working resolution               >= 64 px tall          got 344
+PASS  C8a    zero KaTeX failures in every locale and size                    0                      got 0
+PASS  C8b    zero raw-TeX leaks into visible UI                              0 runs leaking         got 0
+PASS  C8c    KaTeX really ran (DOM nodes present in every run)               >= 3                   got 3
+PASS  C9     every claim carries role=math with a localized, notation-free   0 bad rows             got 0
+PASS  C9b    the aria-label language follows the requested locale            has en,es,pl           got en,es,pl
+PASS  C10    no panel is ever magnified: >= 1 texel per device pixel, at 90  >= 1.00                got 1.04
+PASS  C11    the raster grows with the viewport instead of staying fixed     4K bucket > 900p bucket got 96 vs 48
+PASS  C12    the claim standing ~38 m away is still drawn at a legible size  em >= 12 device px     got 16.8
+PASS  C13    120 frames of play cause no re-typeset and no re-raster         0 new typesets, 0 new rasters got 0 / 0
+PASS  C14a   a malformed claim never produces a katex-error node             0                      got 0
+PASS  C14b   the malformed source appears nowhere in the document            false                  got false
+PASS  C14c   no raw TeX reaches the visible UI when a claim is refused       false                  got false
+PASS  C14d   the refusal is logged to __vs.errors so a build cannot ship it  >= 1 new error naming the refusal got 1: KaTeX refused a claim [en,display]: KaTeX parse error: Unexp
+PASS  C14e   the player sees a typeset stand-in, not an empty space          ink present in the panel's rectangle got 445
+PASS  C14f   the stand-in announces itself as unreadable rather than readin  localized fallback phrase got unreadable claim
+PASS  O1     no standing claim has world geometry in front of its ink, in a  0.0% occluded, every claim really sampled got 0% worst of 24 panel-runs, 24 ink samples each
+PASS  O1b    the per-panel probe carries the occlusion number, not just a f  24 panel-runs report a number got 24
+PASS  O2     restoring the depth test to the shipped frame changes no claim  <= 1.0% of ink lost with depth on got leaf9-span 661->661 px (0%), leaf9-share 638->638 px (0%), leaf9-working 746->745 px (0.1%), leaf9-mark 132->132 px (0%)
+PASS  O3     the claim material never lets a nearer mesh amputate a claim m  depthTest false on every panel got 24/24
+PASS  T1a    a working's tick counts no longer set the loop bound: 1e6 tick  <= 20 ms at every count, same canvas got 10:0.7ms 256x256 10000:0.2ms 256x256 100000:0.1ms 256x256 1000000:0.1ms 256x256
+PASS  T1b    the same attack through the shipped math:show signal leaves a   panel present, texture inside the cap, frame not stalled got 192x192 texture, 57 ms wall for emit+36 frames
+PASS  T2     em is metres per em and is bounded, so 48 bounded ems cannot m  em <= 4, quad <= 192 x 96 m got asked 100000, got 4, quad 20.176 x 4.206 m
+PASS  T3a    the field itself is bounded, not only each raster in it         <= 32 panels after 400 distinct math:show ids got 32 panels, 371 evictions, 32 register entries
+PASS  T3b    the flooded field stays inside architecture.md's frame budget   <= 320 draw calls, <= 120 textures got 120 calls, 33 textures, 1.45 MiB of claim texels
+PASS  T4     a claim the world refuses is refused to the screen-reader user  register reads the fallback, never the source got panel ok=false bound=ink-extent | register "unreadable claim" (16 chars, state fallback)
+PASS  T5     the game survives the four bound attacks: clock advancing, no   fatal null, ready, 0 unexpected errors got fatal=null ready=true sim=20.02 unexpected=0
+PASS  H1     no hostile claim's texture exceeds the cap in either axis or i  <= 4096 px per axis, <= 4194304 px total got long20k 45x44, deepFrac15 45x44, deepFrac60 45x44, tallMatrix 45x44, wideLine 45x44
+PASS  H2     the largest canvas allocated anywhere in the session is inside  <= 4096 px per axis, <= 4194304 px total, over 18 rasters got 4092x850 = 3478200 px
+PASS  H3     no hostile claim stalls the game: rasterizing one costs a hitc  <= 400 ms of raster time got 42.3
+PASS  H4     the game survives all four: no crash, clock still advancing, n  fatal null, simTime advanced, 0 unexpected errors got fatal=null sim 12.42->16.42 unexpected=0
+PASS  H4b    the frame still renders with the attacks standing in it         ink present in the capture got 1428
+PASS  H5     every hostile claim is refused visibly, logged, and never show  0 bad rows             got 5/5 clean
+PASS  H5b    each refusal names the bound it broke, so a build cannot ship   every row logs a 'KaTeX refused' line got long20k: KaTeX refused a claim [en,display]: expression | deepFrac15: KaTeX refused a claim [en,display]: expression | deepFrac60: KaTeX refused a claim [en,display]: expression | tallMatrix: KaTeX refused a claim [en,display]: claim geom | wideLine: KaTeX refused a claim [en,display]: claim geom
+PASS  H6     the cap has real headroom: the shipped claims are nowhere near  >= 10x spare area      got 114x (worst shipped raster 36864 px)
+PASS  H7     no claim the ink-extent gate admits can ever be refused for ra  48x24 ems at 8 px fits the cap got 384x192 px
+PASS  H9     every nesting shape, at the deepest the cap admits, lays out s  7 shapes, all ok, <= 400 ms, inside the cap got frac n=8/d=16 235x586 10.4ms sqrt n=8/d=16 1004x490 7.9ms paren n=16/d=16 1503x126 7.9ms power n=8/d=16 351x262 5.9ms abs n=16/d=16 1084x126 3.7ms mixed n=4/d=16 603x547 11.7ms overline n=8/d=16 77x257 4ms
+PASS  H8     asked for a raster 3000 px per em, the pipeline scales it down  inside the cap, ok:true, bound=scaled got 4092x850 at 812px, bound=scaled, ok=true, 4ms
+PASS  C15    the ink is pure white, as it is in the target                   >= 248.0 (target 254)  got 249.7
+PASS  C16b   the raster this piece draws has no rim, no shadow and no glow   |halo| <= 0.5 in the texture's own alpha got 0
+PASS  C16    no panel, no frame and no glow: the sky 3-5 px from the ink is  >= -3.0 (target 5.3)   got 0.7
+PASS  C16c   the composited halo is the sky's, not ours: the same glyph sha  >= -2.0 against the displaced control got 2.1
+PASS  C17    glyph edges are hard: the partial-coverage band is about one p  <= 2.0 px (target 0.65) got 1.16
+PASS  C18    still hard-edged at 3840x2160 (no upscaled texture)             <= 2.0 px              got 0.75
+PASS  C19    the ink stands out at least as well as it does in the target    >= 1.72 (target 1.91)  got 1.81
+────────────────────────────────────────────────────────────────────────────────────────────────
+64/64 claims passed

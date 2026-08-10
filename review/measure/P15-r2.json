@@ -1,0 +1,4147 @@
+{
+ "piece": "P15",
+ "when": "2026-08-10T15:27:28.249Z",
+ "langs": [
+  "en",
+  "es",
+  "pl"
+ ],
+ "sizes": [
+  "1600x900",
+  "3840x2160"
+ ],
+ "summary": {
+  "claims": 64,
+  "passed": 64,
+  "failed": 0
+ },
+ "claims": [
+  {
+   "id": "C1",
+   "claim": "every fixture expression typesets in en/es/pl",
+   "threshold": "0 failures",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C2a",
+   "claim": "malformed TeX is refused by validate()",
+   "threshold": "21 refusals",
+   "value": 21,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C2b",
+   "claim": "a refused expression never returns its source, a katex-error node, or raw TeX",
+   "threshold": "0 leaks",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C3a",
+   "claim": "every expression has a spoken form in every locale",
+   "threshold": "0 missing",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C3b",
+   "claim": "no spoken form contains TeX notation",
+   "threshold": "0 with \\ { } ^ _",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C4",
+   "claim": "ES/PL take a decimal comma, a centre dot and (PL) a colon for division",
+   "threshold": "0 wrong",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C5",
+   "claim": "the plain comparison text is identical in every locale",
+   "threshold": "0 divergent",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C6",
+   "claim": "no banned classroom vocabulary in any player-facing string this piece emits",
+   "threshold": "0 hits (relation readings declared)",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C7",
+   "claim": "1000 renders of one expression typeset it exactly once",
+   "threshold": "typesets == 1",
+   "value": 1,
+   "pass": true,
+   "note": "hits=999 misses=1"
+  },
+  {
+   "id": "H0a",
+   "claim": "a 20000-character claim is refused in every locale",
+   "threshold": "3 refusals",
+   "value": 3,
+   "pass": true,
+   "note": "cap is 2000 characters"
+  },
+  {
+   "id": "H0b",
+   "claim": "the over-length claim never reaches the parser",
+   "threshold": "cost < 20% of typesetting a 1,881-char claim",
+   "value": "0.04 ms vs 149.1 ms",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0c",
+   "claim": "a refused over-length claim is not retained anywhere in the pipeline",
+   "threshold": "record and failure log <= 200 chars",
+   "value": "record 71, worst failure row 71",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0d",
+   "claim": "the refusal shows the stand-in and says so, without notation",
+   "threshold": "ok:false, speech has no \\ { }",
+   "value": "ok=false speech=\"unreadable claim\"",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0e",
+   "claim": "the nesting that crashes the renderer is refused before any HTML is built",
+   "threshold": "refused in all 3 locales, 0 fraction markup, < 2 KB of HTML",
+   "value": "deepFrac15 depth 30: 3/3 refused, 0 frac markup, 188 B | deepFrac60 depth 120: 3/3 refused, 0 frac markup, 188 B",
+   "pass": true,
+   "note": "cap is depth 16; Blink crashes laying out depth 30"
+  },
+  {
+   "id": "H0f",
+   "claim": "the depth cap does not reach real mathematics",
+   "threshold": "all typeset, worst depth well under 16",
+   "value": "4/6/2/3 of 16",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0g",
+   "claim": "every expression in the shipped bank passes every offline gate, in every locale",
+   "threshold": "0 failures",
+   "value": "0 of 8151 checks (2717 expressions, 1834 ms)",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0h",
+   "claim": "the caps have real headroom over the content the game actually serves",
+   "threshold": ">= 5x on both length and depth",
+   "value": "length 41/2000, depth 3/16",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0i",
+   "claim": "the geometry attacks get past every offline gate, so the browser has to stop them",
+   "threshold": "2 of 2 typeset offline",
+   "value": "tallMatrix depth 3 nodes 451 ok=true | wideLine depth 0 nodes 941 ok=true",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C7b",
+   "claim": "the KaTeX raster is a hard-edged alpha mask, not a blurred one",
+   "threshold": "partial-alpha band <= 1.3 px",
+   "value": 0.67,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C7c",
+   "claim": "a raster is produced at a real working resolution",
+   "threshold": ">= 64 px tall",
+   "value": 344,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C8a",
+   "claim": "zero KaTeX failures in every locale and size",
+   "threshold": "0",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C8b",
+   "claim": "zero raw-TeX leaks into visible UI",
+   "threshold": "0 runs leaking",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C8c",
+   "claim": "KaTeX really ran (DOM nodes present in every run)",
+   "threshold": ">= 3",
+   "value": 3,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C9",
+   "claim": "every claim carries role=math with a localized, notation-free aria-label",
+   "threshold": "0 bad rows",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C9b",
+   "claim": "the aria-label language follows the requested locale",
+   "threshold": "has en,es,pl",
+   "value": "en,es,pl",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C10",
+   "claim": "no panel is ever magnified: >= 1 texel per device pixel, at 900p and at 4K",
+   "threshold": ">= 1.00",
+   "value": 1.04,
+   "pass": true,
+   "note": "worst: leaf9-share"
+  },
+  {
+   "id": "C11",
+   "claim": "the raster grows with the viewport instead of staying fixed",
+   "threshold": "4K bucket > 900p bucket",
+   "value": "96 vs 48",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C12",
+   "claim": "the claim standing ~38 m away is still drawn at a legible size",
+   "threshold": "em >= 12 device px",
+   "value": 16.8,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C13",
+   "claim": "120 frames of play cause no re-typeset and no re-raster",
+   "threshold": "0 new typesets, 0 new rasters",
+   "value": "0 / 0",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14a",
+   "claim": "a malformed claim never produces a katex-error node",
+   "threshold": "0",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14b",
+   "claim": "the malformed source appears nowhere in the document",
+   "threshold": "false",
+   "value": false,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14c",
+   "claim": "no raw TeX reaches the visible UI when a claim is refused",
+   "threshold": "false",
+   "value": false,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14d",
+   "claim": "the refusal is logged to __vs.errors so a build cannot ship it quietly",
+   "threshold": ">= 1 new error naming the refusal",
+   "value": "1: KaTeX refused a claim [en,display]: KaTeX parse error: Unexp",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14e",
+   "claim": "the player sees a typeset stand-in, not an empty space",
+   "threshold": "ink present in the panel's rectangle",
+   "value": 445,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14f",
+   "claim": "the stand-in announces itself as unreadable rather than reading out notation",
+   "threshold": "localized fallback phrase",
+   "value": "unreadable claim",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "O1",
+   "claim": "no standing claim has world geometry in front of its ink, in any locale or size",
+   "threshold": "0.0% occluded, every claim really sampled",
+   "value": "0% worst of 24 panel-runs, 24 ink samples each",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "O1b",
+   "claim": "the per-panel probe carries the occlusion number, not just a field for it",
+   "threshold": "24 panel-runs report a number",
+   "value": 24,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "O2",
+   "claim": "restoring the depth test to the shipped frame changes no claim's ink: the anchors are clear, not just the material",
+   "threshold": "<= 1.0% of ink lost with depth on",
+   "value": "leaf9-span 661->661 px (0%), leaf9-share 638->638 px (0%), leaf9-working 746->745 px (0.1%), leaf9-mark 132->132 px (0%)",
+   "pass": true,
+   "note": "review\\shots\\p15\\measure\\en-1600x900.png vs review\\shots\\p15\\measure\\depth-restored.png"
+  },
+  {
+   "id": "O3",
+   "claim": "the claim material never lets a nearer mesh amputate a claim mid-glyph",
+   "threshold": "depthTest false on every panel",
+   "value": "24/24",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "T1a",
+   "claim": "a working's tick counts no longer set the loop bound: 1e6 ticks costs what 10 ticks costs",
+   "threshold": "<= 20 ms at every count, same canvas",
+   "value": "10:0.7ms 256x256 10000:0.2ms 256x256 100000:0.1ms 256x256 1000000:0.1ms 256x256",
+   "pass": true,
+   "note": "before the clamp, measured by the critic on this same scene: 1e4 11 ms, 1e5 99.9 ms, 1e6 2045.1 ms"
+  },
+  {
+   "id": "T1b",
+   "claim": "the same attack through the shipped math:show signal leaves a bounded working standing",
+   "threshold": "panel present, texture inside the cap, frame not stalled",
+   "value": "192x192 texture, 57 ms wall for emit+36 frames",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "T2",
+   "claim": "em is metres per em and is bounded, so 48 bounded ems cannot make an unbounded billboard",
+   "threshold": "em <= 4, quad <= 192 x 96 m",
+   "value": "asked 100000, got 4, quad 20.176 x 4.206 m",
+   "pass": true,
+   "note": "before the clamp: em 100000 produced a 503776.042 x 104557.292 m quad"
+  },
+  {
+   "id": "T3a",
+   "claim": "the field itself is bounded, not only each raster in it",
+   "threshold": "<= 32 panels after 400 distinct math:show ids",
+   "value": "32 panels, 371 evictions, 32 register entries",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "T3b",
+   "claim": "the flooded field stays inside architecture.md's frame budget",
+   "threshold": "<= 320 draw calls, <= 120 textures",
+   "value": "120 calls, 33 textures, 1.45 MiB of claim texels",
+   "pass": true,
+   "note": "before the cap: 407 panels, 494 calls, 408 textures, 32.3 MiB"
+  },
+  {
+   "id": "T4",
+   "claim": "a claim the world refuses is refused to the screen-reader user too",
+   "threshold": "register reads the fallback, never the source",
+   "value": "panel ok=false bound=ink-extent | register \"unreadable claim\" (16 chars, state fallback)",
+   "pass": true,
+   "note": "before: bound {reason:'ink-extent', emsWide:2082.8} in the world, aria-label '1 plus 1 plus 1 plus…' in the DOM"
+  },
+  {
+   "id": "T5",
+   "claim": "the game survives the four bound attacks: clock advancing, no crash, no error but the refusals",
+   "threshold": "fatal null, ready, 0 unexpected errors",
+   "value": "fatal=null ready=true sim=20.02 unexpected=0",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H1",
+   "claim": "no hostile claim's texture exceeds the cap in either axis or in area",
+   "threshold": "<= 4096 px per axis, <= 4194304 px total",
+   "value": "long20k 45x44, deepFrac15 45x44, deepFrac60 45x44, tallMatrix 45x44, wideLine 45x44",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H2",
+   "claim": "the largest canvas allocated anywhere in the session is inside the cap",
+   "threshold": "<= 4096 px per axis, <= 4194304 px total, over 18 rasters",
+   "value": "4092x850 = 3478200 px",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H3",
+   "claim": "no hostile claim stalls the game: rasterizing one costs a hitch, not a hang",
+   "threshold": "<= 400 ms of raster time",
+   "value": 42.3,
+   "pass": true,
+   "note": "long20k 3.7ms/1r deepFrac15 0.7ms/1r deepFrac60 1ms/1r tallMatrix 7.4ms/1r wideLine 42.3ms/1r"
+  },
+  {
+   "id": "H4",
+   "claim": "the game survives all four: no crash, clock still advancing, no error but the refusals",
+   "threshold": "fatal null, simTime advanced, 0 unexpected errors",
+   "value": "fatal=null sim 12.42->16.42 unexpected=0",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H4b",
+   "claim": "the frame still renders with the attacks standing in it",
+   "threshold": "ink present in the capture",
+   "value": 1428,
+   "pass": true,
+   "note": "review\\shots\\p15\\measure\\hostile.png"
+  },
+  {
+   "id": "H5",
+   "claim": "every hostile claim is refused visibly, logged, and never shows its source",
+   "threshold": "0 bad rows",
+   "value": "5/5 clean",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H5b",
+   "claim": "each refusal names the bound it broke, so a build cannot ship it quietly",
+   "threshold": "every row logs a 'KaTeX refused' line",
+   "value": "long20k: KaTeX refused a claim [en,display]: expression | deepFrac15: KaTeX refused a claim [en,display]: expression | deepFrac60: KaTeX refused a claim [en,display]: expression | tallMatrix: KaTeX refused a claim [en,display]: claim geom | wideLine: KaTeX refused a claim [en,display]: claim geom",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H6",
+   "claim": "the cap has real headroom: the shipped claims are nowhere near it",
+   "threshold": ">= 10x spare area",
+   "value": "114x (worst shipped raster 36864 px)",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H7",
+   "claim": "no claim the ink-extent gate admits can ever be refused for raster size",
+   "threshold": "48x24 ems at 8 px fits the cap",
+   "value": "384x192 px",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H9",
+   "claim": "every nesting shape, at the deepest the cap admits, lays out safely and inside the cap",
+   "threshold": "7 shapes, all ok, <= 400 ms, inside the cap",
+   "value": "frac n=8/d=16 235x586 10.4ms sqrt n=8/d=16 1004x490 7.9ms paren n=16/d=16 1503x126 7.9ms power n=8/d=16 351x262 5.9ms abs n=16/d=16 1084x126 3.7ms mixed n=4/d=16 603x547 11.7ms overline n=8/d=16 77x257 4ms",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H8",
+   "claim": "asked for a raster 3000 px per em, the pipeline scales it down and keeps the whole claim",
+   "threshold": "inside the cap, ok:true, bound=scaled",
+   "value": "4092x850 at 812px, bound=scaled, ok=true, 4ms",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C15",
+   "claim": "the ink is pure white, as it is in the target",
+   "threshold": ">= 248.0 (target 254)",
+   "value": 249.7,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C16b",
+   "claim": "the raster this piece draws has no rim, no shadow and no glow of its own",
+   "threshold": "|halo| <= 0.5 in the texture's own alpha",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C16",
+   "claim": "no panel, no frame and no glow: the sky 3-5 px from the ink is not darker than the sky 12-20 px away",
+   "threshold": ">= -3.0 (target 5.3)",
+   "value": 0.7,
+   "pass": true,
+   "note": "our own raster's alpha halo: 0 | leaf9-span halo 6.5 bgGradient -2.1 bg 159.8 | leaf9-share halo 0.7 bgGradient 8.1 bg 180.6 | leaf9-working halo 4.4 bgGradient -1.5 bg 173.5 | leaf9-mark halo 8.8 bgGradient -4.6 bg 181.3 | leaf9-span halo 4.3 bgGradient -2.5 bg 159.1 | leaf9-share halo 2.6 bgGradient 7.6 bg 178.7 | leaf9-working halo 5.1 bgGradient -0.2 bg 173.9 | leaf9-mark halo 9.3 bgGradient -5 bg 180.6 | leaf9-span halo 4.3 bgGradient -2.4 bg 159.1 | leaf9-share halo 1.9 bgGradient 8 bg 179.2 | leaf9-working halo 5 bgGradient -0.4 bg 173.8 | leaf9-mark halo 9.2 bgGradient -5 bg 180.7 | leaf9-span halo 2.3 bgGradient 2.8 bg 161.9 | leaf9-share halo 0.7 bgGradient -0.4 bg 182.4 | leaf9-working halo 1.9 bgGradient 3.7 bg 177.4 | leaf9-mark halo 2.2 bgGradient 6.2 bg 185.8 | leaf9-span halo 2.1 bgGradient 2.4 bg 161.8 | leaf9-share halo 1 bgGradient -0.2 bg 182.3 | leaf9-working halo 1.9 bgGradient 3.7 bg 177.4 | leaf9-mark halo 2.2 bgGradient 6.2 bg 185.7 | leaf9-span halo 2.1 bgGradient 2.4 bg 161.8 | leaf9-share halo 1.1 bgGradient -0.2 bg 182.3 | leaf9-working halo 2 bgGradient 3.6 bg 177.4 | leaf9-mark halo 2.3 bgGradient 6.2 bg 185.7"
+  },
+  {
+   "id": "C16c",
+   "claim": "the composited halo is the sky's, not ours: the same glyph shape over bare sky measures the same",
+   "threshold": ">= -2.0 against the displaced control",
+   "value": 2.1,
+   "pass": true,
+   "note": "en-1600x900 leaf9-span halo 6.5 control -9.9..8 | en-1600x900 leaf9-share halo 0.7 control -20.1..1.7 | en-1600x900 leaf9-working halo 4.4 control -3..4.8 | en-1600x900 leaf9-mark halo 8.8 control 0.4..0.7 | es-1600x900 leaf9-span halo 4.3 control -8.1..7.5 | es-1600x900 leaf9-share halo 2.6 control -20.8..3.8"
+  },
+  {
+   "id": "C17",
+   "claim": "glyph edges are hard: the partial-coverage band is about one pixel wide",
+   "threshold": "<= 2.0 px (target 0.65)",
+   "value": 1.16,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C18",
+   "claim": "still hard-edged at 3840x2160 (no upscaled texture)",
+   "threshold": "<= 2.0 px",
+   "value": 0.75,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C19",
+   "claim": "the ink stands out at least as well as it does in the target",
+   "threshold": ">= 1.72 (target 1.91)",
+   "value": 1.81,
+   "pass": true,
+   "note": null
+  }
+ ],
+ "data": {
+  "speechSamples": [
+   {
+    "id": "share-half",
+    "locale": "en",
+    "speech": "1 over 2 x equals 4"
+   },
+   {
+    "id": "share-half",
+    "locale": "es",
+    "speech": "1 sobre 2 x igual a 4"
+   },
+   {
+    "id": "share-half",
+    "locale": "pl",
+    "speech": "1 łamane przez 2 x równa się 4"
+   },
+   {
+    "id": "decimals",
+    "locale": "en",
+    "speech": "3 point 5 x equals 10 point 25"
+   },
+   {
+    "id": "decimals",
+    "locale": "es",
+    "speech": "3 coma 5 x igual a 10 coma 25"
+   },
+   {
+    "id": "decimals",
+    "locale": "pl",
+    "speech": "3 przecinek 5 x równa się 10 przecinek 25"
+   },
+   {
+    "id": "signed",
+    "locale": "en",
+    "speech": "negative 3 over 4 x plus 2 equals negative 7"
+   },
+   {
+    "id": "signed",
+    "locale": "es",
+    "speech": "menos 3 sobre 4 x más 2 igual a menos 7"
+   },
+   {
+    "id": "signed",
+    "locale": "pl",
+    "speech": "minus 3 łamane przez 4 x plus 2 równa się minus 7"
+   }
+  ],
+  "conventions": [
+   {
+    "id": "decimal-en",
+    "locale": "en",
+    "out": "3.5",
+    "ok": true
+   },
+   {
+    "id": "decimal-es",
+    "locale": "es",
+    "out": "3{,}5",
+    "ok": true
+   },
+   {
+    "id": "decimal-pl",
+    "locale": "pl",
+    "out": "3{,}5",
+    "ok": true
+   },
+   {
+    "id": "times-en",
+    "locale": "en",
+    "out": "5 \\times 4",
+    "ok": true
+   },
+   {
+    "id": "times-es",
+    "locale": "es",
+    "out": "5 \\cdot 4",
+    "ok": true
+   },
+   {
+    "id": "times-pl",
+    "locale": "pl",
+    "out": "5 \\cdot 4",
+    "ok": true
+   },
+   {
+    "id": "div-pl",
+    "locale": "pl",
+    "out": "6 \\mathbin{:} 2",
+    "ok": true
+   },
+   {
+    "id": "group-en",
+    "locale": "en",
+    "out": "16{,}000",
+    "ok": true
+   },
+   {
+    "id": "group-es",
+    "locale": "es",
+    "out": "16\\,000",
+    "ok": true
+   },
+   {
+    "id": "verbatim-text",
+    "locale": "es",
+    "out": "\\text{3.5 spans}",
+    "ok": true
+   }
+  ],
+  "declaredVocabularyExceptions": [
+   "is less than",
+   "is greater than",
+   "is less than or equal to",
+   "is greater than or equal to",
+   "menor que",
+   "mayor que",
+   "menor o igual que",
+   "mayor o igual que",
+   "mniejsze od",
+   "większe od",
+   "mniejsze lub równe",
+   "większe lub równe"
+  ],
+  "hostileOffline": {
+   "caps": {
+    "MAX_TEX_LENGTH": 2000,
+    "MAX_TEX_DEPTH": 16
+   },
+   "longChars": 20000,
+   "longRefuseMs": 0.036,
+   "wideTypesetMs": 149.1,
+   "deep": [
+    {
+     "id": "deepFrac15",
+     "depth": 30,
+     "refused": 3,
+     "errors": [
+      "expression nested too deeply: depth 30, cap 16"
+     ],
+     "fracMarkup": 0,
+     "htmlBytes": 188
+    },
+    {
+     "id": "deepFrac60",
+     "depth": 120,
+     "refused": 3,
+     "errors": [
+      "expression nested too deeply: depth 120, cap 16"
+     ],
+     "fracMarkup": 0,
+     "htmlBytes": 188
+    }
+   ],
+   "realDeep": [
+    {
+     "tex": "\\frac{\\frac{1}{2}}{\\frac{3}{4}}",
+     "ok": true,
+     "depth": 4
+    },
+    {
+     "tex": "\\sqrt{\\frac{x^{2}+1}{2}}",
+     "ok": true,
+     "depth": 6
+    },
+    {
+     "tex": "\\frac{-3}{4}x + 2 = -7",
+     "ok": true,
+     "depth": 2
+    },
+    {
+     "tex": "\\left|\\frac{x}{2}\\right| = 5",
+     "ok": true,
+     "depth": 3
+    }
+   ],
+   "bank": {
+    "expressions": 2717,
+    "checks": 8151,
+    "failures": 0,
+    "maxChars": 41,
+    "maxDepth": 3,
+    "ms": 1834
+   },
+   "attacks": [
+    {
+     "id": "long20k",
+     "chars": 20000,
+     "attacks": "source length",
+     "gate": "1 length"
+    },
+    {
+     "id": "deepFrac15",
+     "chars": 151,
+     "attacks": "parse depth — the measured renderer crash",
+     "gate": "2 depth"
+    },
+    {
+     "id": "deepFrac60",
+     "chars": 601,
+     "attacks": "parse depth",
+     "gate": "2 depth"
+    },
+    {
+     "id": "tallMatrix",
+     "chars": 772,
+     "attacks": "ink height",
+     "gate": "3 ink extent"
+    },
+    {
+     "id": "wideLine",
+     "chars": 1881,
+     "attacks": "ink width",
+     "gate": "3 ink extent"
+    }
+   ]
+  },
+  "reference": {
+   "equation": {
+    "box": [
+     1100,
+     380,
+     1500,
+     680
+    ],
+    "inkCount": 4878,
+    "inkCoverage": 0.0406,
+    "inkLuminance": 254,
+    "nearBgLuminance": 188.6,
+    "farBgLuminance": 183.2,
+    "veryFarBgLuminance": 179.2,
+    "haloDelta": 5.3,
+    "bgGradient": 4,
+    "controlHalo": {
+     "min": -4.6,
+     "max": 0.3,
+     "samples": 4
+    },
+    "perimeter": 2167,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 1.91
+   },
+   "working": {
+    "box": [
+     1500,
+     350,
+     1900,
+     690
+    ],
+    "inkCount": 5579,
+    "inkCoverage": 0.041,
+    "inkLuminance": 253.9,
+    "nearBgLuminance": 193.1,
+    "farBgLuminance": 189.8,
+    "veryFarBgLuminance": 187.3,
+    "haloDelta": 3.3,
+    "bgGradient": 2.5,
+    "controlHalo": {
+     "min": -6.7,
+     "max": 2.5,
+     "samples": 4
+    },
+    "perimeter": 2616,
+    "edgeWidthPx": 0.58,
+    "contrastRatio": 1.77
+   }
+  },
+  "occlusionPixels": {
+   "meshesFlipped": 4,
+   "shippedShot": "review\\shots\\p15\\measure\\en-1600x900.png",
+   "depthShot": "review\\shots\\p15\\measure\\depth-restored.png",
+   "rows": [
+    {
+     "id": "leaf9-span",
+     "shipped": 661,
+     "depthOn": 661,
+     "eatenPct": 0
+    },
+    {
+     "id": "leaf9-share",
+     "shipped": 638,
+     "depthOn": 638,
+     "eatenPct": 0
+    },
+    {
+     "id": "leaf9-working",
+     "shipped": 746,
+     "depthOn": 745,
+     "eatenPct": 0.1
+    },
+    {
+     "id": "leaf9-mark",
+     "shipped": 132,
+     "depthOn": 132,
+     "eatenPct": 0
+    }
+   ]
+  },
+  "stress": {
+   "ticks": [
+    {
+     "n": 10,
+     "ms": 0.7,
+     "w": 256,
+     "h": 256
+    },
+    {
+     "n": 10000,
+     "ms": 0.2,
+     "w": 256,
+     "h": 256
+    },
+    {
+     "n": 100000,
+     "ms": 0.1,
+     "w": 256,
+     "h": 256
+    },
+    {
+     "n": 1000000,
+     "ms": 0.1,
+     "w": 256,
+     "h": 256
+    }
+   ],
+   "ticksWallMs": 57,
+   "ticksPanel": {
+    "id": "p15-ticks",
+    "kpId": null,
+    "kind": "working",
+    "tex": null,
+    "ok": true,
+    "speech": "",
+    "locale": "en",
+    "em": 0.5,
+    "emRequested": 0.5,
+    "emClamped": false,
+    "occludedPct": null,
+    "occlusionSamples": 0,
+    "depthTest": false,
+    "worldSize": [
+     2,
+     2
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     192,
+     192
+    ],
+    "bound": null,
+    "emScreenPx": 31.3,
+    "texelsPerPixel": 1.53,
+    "rasters": 1,
+    "position": [
+     11.15,
+     61.61,
+     207.32
+    ]
+   },
+   "emPanel": {
+    "id": "p15-em",
+    "kpId": null,
+    "kind": "claim",
+    "tex": "x + 3 = 7",
+    "ok": true,
+    "speech": "x plus 3 equals 7",
+    "locale": "en",
+    "em": 4,
+    "emRequested": 100000,
+    "emClamped": true,
+    "occludedPct": null,
+    "occlusionSamples": 0,
+    "depthTest": false,
+    "worldSize": [
+     20.176,
+     4.206
+    ],
+    "texturePx": 272,
+    "fontPx": 272,
+    "textureSize": [
+     1372,
+     286
+    ],
+    "bound": null,
+    "emScreenPx": 250.3,
+    "texelsPerPixel": 1.09,
+    "rasters": 1,
+    "position": [
+     11.15,
+     61.61,
+     207.32
+    ]
+   },
+   "a11y": {
+    "panel": {
+     "id": "p15-a11y",
+     "kpId": null,
+     "kind": "claim",
+     "tex": "1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1",
+     "ok": false,
+     "speech": "unreadable claim",
+     "locale": "en",
+     "em": 0.6,
+     "emRequested": 0.6,
+     "emClamped": false,
+     "occludedPct": null,
+     "occlusionSamples": 0,
+     "depthTest": false,
+     "worldSize": [
+      0.563,
+      0.55
+     ],
+     "texturePx": 48,
+     "fontPx": 48,
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": {
+      "reason": "ink-extent",
+      "emsWide": 834.1,
+      "emsTall": 3.5
+     },
+     "emScreenPx": 37.5,
+     "texelsPerPixel": 1.28,
+     "rasters": 1,
+     "position": [
+      11.15,
+      61.61,
+      207.32
+     ]
+    },
+    "label": "unreadable claim",
+    "state": "fallback",
+    "present": true,
+    "labelChars": 16,
+    "labelReadsSource": false,
+    "registerText": "□"
+   },
+   "budget": {
+    "emitMs": 25.8,
+    "cap": 32
+   },
+   "flood": {
+    "panels": 32,
+    "maxPanels": 32,
+    "evictions": 371,
+    "registered": 32,
+    "texels": 381024,
+    "mib": 1.45,
+    "textures": 33,
+    "calls": 120,
+    "triangles": 98280
+   },
+   "alive": {
+    "simTime": 20.017,
+    "fatal": null,
+    "ready": true,
+    "unexpectedErrors": []
+   }
+  },
+  "occlusion": [
+   {
+    "label": "en-1600x900",
+    "at": 1.47,
+    "ms": 1229.4,
+    "occluders": 51,
+    "worstOccludedPct": 0,
+    "panels": [
+     {
+      "id": "leaf9-span",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 25,
+      "position": [
+       12.59,
+       63.53,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-share",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 21,
+      "position": [
+       12.59,
+       62.03,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-working",
+      "kind": "working",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 8,
+      "position": [
+       16.59,
+       62.83,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-mark",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 37,
+      "position": [
+       38.55,
+       62.73,
+       178.52
+      ]
+     }
+    ]
+   },
+   {
+    "label": "es-1600x900",
+    "at": 1.33,
+    "ms": 191.8,
+    "occluders": 51,
+    "worstOccludedPct": 0,
+    "panels": [
+     {
+      "id": "leaf9-span",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 25,
+      "position": [
+       12.59,
+       63.53,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-share",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 21,
+      "position": [
+       12.59,
+       62.03,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-working",
+      "kind": "working",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 8,
+      "position": [
+       16.59,
+       62.83,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-mark",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 37,
+      "position": [
+       38.55,
+       62.73,
+       178.52
+      ]
+     }
+    ]
+   },
+   {
+    "label": "pl-1600x900",
+    "at": 1.47,
+    "ms": 229.5,
+    "occluders": 51,
+    "worstOccludedPct": 0,
+    "panels": [
+     {
+      "id": "leaf9-span",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 25,
+      "position": [
+       12.59,
+       63.53,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-share",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 21,
+      "position": [
+       12.59,
+       62.03,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-working",
+      "kind": "working",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 8,
+      "position": [
+       16.59,
+       62.83,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-mark",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 37,
+      "position": [
+       38.55,
+       62.73,
+       178.52
+      ]
+     }
+    ]
+   },
+   {
+    "label": "en-3840x2160",
+    "at": 1.47,
+    "ms": 254.5,
+    "occluders": 51,
+    "worstOccludedPct": 0,
+    "panels": [
+     {
+      "id": "leaf9-span",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 25,
+      "position": [
+       12.59,
+       63.53,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-share",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 21,
+      "position": [
+       12.59,
+       62.03,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-working",
+      "kind": "working",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 8,
+      "position": [
+       16.59,
+       62.83,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-mark",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 37,
+      "position": [
+       38.55,
+       62.73,
+       178.52
+      ]
+     }
+    ]
+   },
+   {
+    "label": "es-3840x2160",
+    "at": 1.33,
+    "ms": 210.8,
+    "occluders": 51,
+    "worstOccludedPct": 0,
+    "panels": [
+     {
+      "id": "leaf9-span",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 25,
+      "position": [
+       12.59,
+       63.53,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-share",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 21,
+      "position": [
+       12.59,
+       62.03,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-working",
+      "kind": "working",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 8,
+      "position": [
+       16.59,
+       62.83,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-mark",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 37,
+      "position": [
+       38.55,
+       62.73,
+       178.52
+      ]
+     }
+    ]
+   },
+   {
+    "label": "pl-3840x2160",
+    "at": 1.47,
+    "ms": 171.2,
+    "occluders": 49,
+    "worstOccludedPct": 0,
+    "panels": [
+     {
+      "id": "leaf9-span",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 25,
+      "position": [
+       12.59,
+       63.53,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-share",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 21,
+      "position": [
+       12.59,
+       62.03,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-working",
+      "kind": "working",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 8,
+      "position": [
+       16.59,
+       62.83,
+       206.52
+      ]
+     },
+     {
+      "id": "leaf9-mark",
+      "kind": "claim",
+      "occludedPct": 0,
+      "samples": 24,
+      "candidates": 37,
+      "position": [
+       38.55,
+       62.73,
+       178.52
+      ]
+     }
+    ]
+   }
+  ],
+  "panels": [
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "kpId": "eq-one-add",
+    "kind": "claim",
+    "tex": "x + 3 = 7",
+    "ok": true,
+    "speech": "x plus 3 equals 7",
+    "locale": "en",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     3.341,
+     0.674
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     243,
+     49
+    ],
+    "bound": null,
+    "emScreenPx": 37.6,
+    "texelsPerPixel": 1.28,
+    "rasters": 1,
+    "position": [
+     12.59,
+     63.53,
+     206.52
+    ]
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "kpId": "eq-one-mult",
+    "kind": "claim",
+    "tex": "\\frac{1}{2}x = 4",
+    "ok": true,
+    "speech": "1 over 2 x equals 4",
+    "locale": "en",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.461,
+     1.691
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     179,
+     123
+    ],
+    "bound": null,
+    "emScreenPx": 38.4,
+    "texelsPerPixel": 1.25,
+    "rasters": 1,
+    "position": [
+     12.59,
+     62.03,
+     206.52
+    ]
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "kpId": null,
+    "kind": "working",
+    "tex": null,
+    "ok": true,
+    "speech": "",
+    "locale": "en",
+    "em": 0.55,
+    "emRequested": 0.55,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.2,
+     2.2
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     192,
+     192
+    ],
+    "bound": null,
+    "emScreenPx": 29.4,
+    "texelsPerPixel": 1.63,
+    "rasters": 1,
+    "position": [
+     16.59,
+     62.83,
+     206.52
+    ]
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "kpId": "ineq-one-step",
+    "kind": "claim",
+    "tex": "2x + 1 \\ge 9",
+    "ok": true,
+    "speech": "2 x plus 1 is greater than or equal to 9",
+    "locale": "en",
+    "em": 1.1,
+    "emRequested": 1.1,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     6.165,
+     1.169
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     269,
+     51
+    ],
+    "bound": null,
+    "emScreenPx": 16.8,
+    "texelsPerPixel": 2.86,
+    "rasters": 2,
+    "position": [
+     38.55,
+     62.73,
+     178.52
+    ]
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-span",
+    "kpId": "eq-one-add",
+    "kind": "claim",
+    "tex": "x + 3 = 7",
+    "ok": true,
+    "speech": "x más 3 igual a 7",
+    "locale": "es",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     3.341,
+     0.674
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     243,
+     49
+    ],
+    "bound": null,
+    "emScreenPx": 37.6,
+    "texelsPerPixel": 1.28,
+    "rasters": 1,
+    "position": [
+     12.59,
+     63.53,
+     206.52
+    ]
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-share",
+    "kpId": "eq-one-mult",
+    "kind": "claim",
+    "tex": "\\frac{1}{2}x = 4",
+    "ok": true,
+    "speech": "1 sobre 2 x igual a 4",
+    "locale": "es",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.461,
+     1.691
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     179,
+     123
+    ],
+    "bound": null,
+    "emScreenPx": 38.4,
+    "texelsPerPixel": 1.25,
+    "rasters": 1,
+    "position": [
+     12.59,
+     62.03,
+     206.52
+    ]
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-working",
+    "kpId": null,
+    "kind": "working",
+    "tex": null,
+    "ok": true,
+    "speech": "",
+    "locale": "es",
+    "em": 0.55,
+    "emRequested": 0.55,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.2,
+     2.2
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     192,
+     192
+    ],
+    "bound": null,
+    "emScreenPx": 29.4,
+    "texelsPerPixel": 1.63,
+    "rasters": 1,
+    "position": [
+     16.59,
+     62.83,
+     206.52
+    ]
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-mark",
+    "kpId": "ineq-one-step",
+    "kind": "claim",
+    "tex": "2x + 1 \\ge 9",
+    "ok": true,
+    "speech": "2 x más 1 mayor o igual que 9",
+    "locale": "es",
+    "em": 1.1,
+    "emRequested": 1.1,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     6.165,
+     1.169
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     269,
+     51
+    ],
+    "bound": null,
+    "emScreenPx": 16.8,
+    "texelsPerPixel": 2.86,
+    "rasters": 2,
+    "position": [
+     38.55,
+     62.73,
+     178.52
+    ]
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-span",
+    "kpId": "eq-one-add",
+    "kind": "claim",
+    "tex": "x + 3 = 7",
+    "ok": true,
+    "speech": "x plus 3 równa się 7",
+    "locale": "pl",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     3.341,
+     0.674
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     243,
+     49
+    ],
+    "bound": null,
+    "emScreenPx": 37.6,
+    "texelsPerPixel": 1.28,
+    "rasters": 1,
+    "position": [
+     12.59,
+     63.53,
+     206.52
+    ]
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-share",
+    "kpId": "eq-one-mult",
+    "kind": "claim",
+    "tex": "\\frac{1}{2}x = 4",
+    "ok": true,
+    "speech": "1 łamane przez 2 x równa się 4",
+    "locale": "pl",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.461,
+     1.691
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     179,
+     123
+    ],
+    "bound": null,
+    "emScreenPx": 38.4,
+    "texelsPerPixel": 1.25,
+    "rasters": 1,
+    "position": [
+     12.59,
+     62.03,
+     206.52
+    ]
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-working",
+    "kpId": null,
+    "kind": "working",
+    "tex": null,
+    "ok": true,
+    "speech": "",
+    "locale": "pl",
+    "em": 0.55,
+    "emRequested": 0.55,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.2,
+     2.2
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     192,
+     192
+    ],
+    "bound": null,
+    "emScreenPx": 29.4,
+    "texelsPerPixel": 1.63,
+    "rasters": 1,
+    "position": [
+     16.59,
+     62.83,
+     206.52
+    ]
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-mark",
+    "kpId": "ineq-one-step",
+    "kind": "claim",
+    "tex": "2x + 1 \\ge 9",
+    "ok": true,
+    "speech": "2 x plus 1 większe lub równe 9",
+    "locale": "pl",
+    "em": 1.1,
+    "emRequested": 1.1,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     6.165,
+     1.169
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     269,
+     51
+    ],
+    "bound": null,
+    "emScreenPx": 16.8,
+    "texelsPerPixel": 2.86,
+    "rasters": 2,
+    "position": [
+     38.55,
+     62.73,
+     178.52
+    ]
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-span",
+    "kpId": "eq-one-add",
+    "kind": "claim",
+    "tex": "x + 3 = 7",
+    "ok": true,
+    "speech": "x plus 3 equals 7",
+    "locale": "en",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     3.341,
+     0.681
+    ],
+    "texturePx": 96,
+    "fontPx": 96,
+    "textureSize": [
+     486,
+     99
+    ],
+    "bound": null,
+    "emScreenPx": 90.3,
+    "texelsPerPixel": 1.06,
+    "rasters": 1,
+    "position": [
+     12.59,
+     63.53,
+     206.52
+    ]
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-share",
+    "kpId": "eq-one-mult",
+    "kind": "claim",
+    "tex": "\\frac{1}{2}x = 4",
+    "ok": true,
+    "speech": "1 over 2 x equals 4",
+    "locale": "en",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.468,
+     1.698
+    ],
+    "texturePx": 96,
+    "fontPx": 96,
+    "textureSize": [
+     359,
+     247
+    ],
+    "bound": null,
+    "emScreenPx": 92.1,
+    "texelsPerPixel": 1.04,
+    "rasters": 1,
+    "position": [
+     12.59,
+     62.03,
+     206.52
+    ]
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-working",
+    "kpId": null,
+    "kind": "working",
+    "tex": null,
+    "ok": true,
+    "speech": "",
+    "locale": "en",
+    "em": 0.55,
+    "emRequested": 0.55,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.2,
+     2.2
+    ],
+    "texturePx": 86,
+    "fontPx": 86,
+    "textureSize": [
+     344,
+     344
+    ],
+    "bound": null,
+    "emScreenPx": 70.5,
+    "texelsPerPixel": 1.22,
+    "rasters": 1,
+    "position": [
+     16.59,
+     62.83,
+     206.52
+    ]
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-mark",
+    "kpId": "ineq-one-step",
+    "kind": "claim",
+    "tex": "2x + 1 \\ge 9",
+    "ok": true,
+    "speech": "2 x plus 1 is greater than or equal to 9",
+    "locale": "en",
+    "em": 1.1,
+    "emRequested": 1.1,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     6.165,
+     1.169
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     269,
+     51
+    ],
+    "bound": null,
+    "emScreenPx": 40.2,
+    "texelsPerPixel": 1.19,
+    "rasters": 2,
+    "position": [
+     38.55,
+     62.73,
+     178.52
+    ]
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-span",
+    "kpId": "eq-one-add",
+    "kind": "claim",
+    "tex": "x + 3 = 7",
+    "ok": true,
+    "speech": "x más 3 igual a 7",
+    "locale": "es",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     3.341,
+     0.681
+    ],
+    "texturePx": 96,
+    "fontPx": 96,
+    "textureSize": [
+     486,
+     99
+    ],
+    "bound": null,
+    "emScreenPx": 90.3,
+    "texelsPerPixel": 1.06,
+    "rasters": 1,
+    "position": [
+     12.59,
+     63.53,
+     206.52
+    ]
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-share",
+    "kpId": "eq-one-mult",
+    "kind": "claim",
+    "tex": "\\frac{1}{2}x = 4",
+    "ok": true,
+    "speech": "1 sobre 2 x igual a 4",
+    "locale": "es",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.468,
+     1.698
+    ],
+    "texturePx": 96,
+    "fontPx": 96,
+    "textureSize": [
+     359,
+     247
+    ],
+    "bound": null,
+    "emScreenPx": 92.1,
+    "texelsPerPixel": 1.04,
+    "rasters": 1,
+    "position": [
+     12.59,
+     62.03,
+     206.52
+    ]
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-working",
+    "kpId": null,
+    "kind": "working",
+    "tex": null,
+    "ok": true,
+    "speech": "",
+    "locale": "es",
+    "em": 0.55,
+    "emRequested": 0.55,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.2,
+     2.2
+    ],
+    "texturePx": 86,
+    "fontPx": 86,
+    "textureSize": [
+     344,
+     344
+    ],
+    "bound": null,
+    "emScreenPx": 70.5,
+    "texelsPerPixel": 1.22,
+    "rasters": 1,
+    "position": [
+     16.59,
+     62.83,
+     206.52
+    ]
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-mark",
+    "kpId": "ineq-one-step",
+    "kind": "claim",
+    "tex": "2x + 1 \\ge 9",
+    "ok": true,
+    "speech": "2 x más 1 mayor o igual que 9",
+    "locale": "es",
+    "em": 1.1,
+    "emRequested": 1.1,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     6.165,
+     1.169
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     269,
+     51
+    ],
+    "bound": null,
+    "emScreenPx": 40.2,
+    "texelsPerPixel": 1.19,
+    "rasters": 2,
+    "position": [
+     38.55,
+     62.73,
+     178.52
+    ]
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-span",
+    "kpId": "eq-one-add",
+    "kind": "claim",
+    "tex": "x + 3 = 7",
+    "ok": true,
+    "speech": "x plus 3 równa się 7",
+    "locale": "pl",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     3.341,
+     0.681
+    ],
+    "texturePx": 96,
+    "fontPx": 96,
+    "textureSize": [
+     486,
+     99
+    ],
+    "bound": null,
+    "emScreenPx": 90.3,
+    "texelsPerPixel": 1.06,
+    "rasters": 1,
+    "position": [
+     12.59,
+     63.53,
+     206.52
+    ]
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-share",
+    "kpId": "eq-one-mult",
+    "kind": "claim",
+    "tex": "\\frac{1}{2}x = 4",
+    "ok": true,
+    "speech": "1 łamane przez 2 x równa się 4",
+    "locale": "pl",
+    "em": 0.66,
+    "emRequested": 0.66,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.468,
+     1.698
+    ],
+    "texturePx": 96,
+    "fontPx": 96,
+    "textureSize": [
+     359,
+     247
+    ],
+    "bound": null,
+    "emScreenPx": 92.1,
+    "texelsPerPixel": 1.04,
+    "rasters": 1,
+    "position": [
+     12.59,
+     62.03,
+     206.52
+    ]
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-working",
+    "kpId": null,
+    "kind": "working",
+    "tex": null,
+    "ok": true,
+    "speech": "",
+    "locale": "pl",
+    "em": 0.55,
+    "emRequested": 0.55,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     2.2,
+     2.2
+    ],
+    "texturePx": 86,
+    "fontPx": 86,
+    "textureSize": [
+     344,
+     344
+    ],
+    "bound": null,
+    "emScreenPx": 70.5,
+    "texelsPerPixel": 1.22,
+    "rasters": 1,
+    "position": [
+     16.59,
+     62.83,
+     206.52
+    ]
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-mark",
+    "kpId": "ineq-one-step",
+    "kind": "claim",
+    "tex": "2x + 1 \\ge 9",
+    "ok": true,
+    "speech": "2 x plus 1 większe lub równe 9",
+    "locale": "pl",
+    "em": 1.1,
+    "emRequested": 1.1,
+    "emClamped": false,
+    "occludedPct": 0,
+    "occlusionSamples": 24,
+    "depthTest": false,
+    "worldSize": [
+     6.165,
+     1.169
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     269,
+     51
+    ],
+    "bound": null,
+    "emScreenPx": 40.2,
+    "texelsPerPixel": 1.19,
+    "rasters": 2,
+    "position": [
+     38.55,
+     62.73,
+     178.52
+    ]
+   }
+  ],
+  "regions": [
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "box": [
+     762,
+     140,
+     1017,
+     238
+    ],
+    "inkCount": 644,
+    "inkCoverage": 0.0258,
+    "inkLuminance": 250.8,
+    "nearBgLuminance": 166.3,
+    "farBgLuminance": 159.8,
+    "veryFarBgLuminance": 161.9,
+    "haloDelta": 6.5,
+    "bgGradient": -2.1,
+    "controlHalo": {
+     "min": -9.9,
+     "max": 8,
+     "samples": 4
+    },
+    "perimeter": 454,
+    "edgeWidthPx": 1.16,
+    "contrastRatio": 2.5
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "box": [
+     788,
+     204,
+     987,
+     358
+    ],
+    "inkCount": 653,
+    "inkCoverage": 0.0213,
+    "inkLuminance": 251.5,
+    "nearBgLuminance": 181.3,
+    "farBgLuminance": 180.6,
+    "veryFarBgLuminance": 172.5,
+    "haloDelta": 0.7,
+    "bgGradient": 8.1,
+    "controlHalo": {
+     "min": -20.1,
+     "max": 1.7,
+     "samples": 4
+    },
+    "perimeter": 478,
+    "edgeWidthPx": 0.87,
+    "contrastRatio": 1.92
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "box": [
+     1032,
+     132,
+     1232,
+     327
+    ],
+    "inkCount": 665,
+    "inkCoverage": 0.0171,
+    "inkLuminance": 249.7,
+    "nearBgLuminance": 177.9,
+    "farBgLuminance": 173.5,
+    "veryFarBgLuminance": 175,
+    "haloDelta": 4.4,
+    "bgGradient": -1.5,
+    "controlHalo": {
+     "min": -3,
+     "max": 4.8,
+     "samples": 4
+    },
+    "perimeter": 608,
+    "edgeWidthPx": 0.69,
+    "contrastRatio": 2.06
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "box": [
+     1218,
+     290,
+     1408,
+     364
+    ],
+    "inkCount": 146,
+    "inkCoverage": 0.0104,
+    "inkLuminance": 251.4,
+    "nearBgLuminance": 190.1,
+    "farBgLuminance": 181.3,
+    "veryFarBgLuminance": 185.8,
+    "haloDelta": 8.8,
+    "bgGradient": -4.6,
+    "controlHalo": {
+     "min": 0.4,
+     "max": 0.7,
+     "samples": 3
+    },
+    "perimeter": 140,
+    "edgeWidthPx": 1,
+    "contrastRatio": 1.87
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-span",
+    "box": [
+     762,
+     140,
+     1017,
+     238
+    ],
+    "inkCount": 644,
+    "inkCoverage": 0.0258,
+    "inkLuminance": 250.7,
+    "nearBgLuminance": 163.4,
+    "farBgLuminance": 159.1,
+    "veryFarBgLuminance": 161.5,
+    "haloDelta": 4.3,
+    "bgGradient": -2.5,
+    "controlHalo": {
+     "min": -8.1,
+     "max": 7.5,
+     "samples": 4
+    },
+    "perimeter": 453,
+    "edgeWidthPx": 1.04,
+    "contrastRatio": 2.52
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-share",
+    "box": [
+     788,
+     204,
+     987,
+     358
+    ],
+    "inkCount": 653,
+    "inkCoverage": 0.0213,
+    "inkLuminance": 251.6,
+    "nearBgLuminance": 181.3,
+    "farBgLuminance": 178.7,
+    "veryFarBgLuminance": 171.1,
+    "haloDelta": 2.6,
+    "bgGradient": 7.6,
+    "controlHalo": {
+     "min": -20.8,
+     "max": 3.8,
+     "samples": 4
+    },
+    "perimeter": 479,
+    "edgeWidthPx": 0.98,
+    "contrastRatio": 1.97
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-working",
+    "box": [
+     1032,
+     132,
+     1232,
+     327
+    ],
+    "inkCount": 671,
+    "inkCoverage": 0.0172,
+    "inkLuminance": 249.7,
+    "nearBgLuminance": 178.9,
+    "farBgLuminance": 173.9,
+    "veryFarBgLuminance": 174,
+    "haloDelta": 5.1,
+    "bgGradient": -0.2,
+    "controlHalo": {
+     "min": -3,
+     "max": 4.1,
+     "samples": 4
+    },
+    "perimeter": 615,
+    "edgeWidthPx": 0.73,
+    "contrastRatio": 2.05
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-mark",
+    "box": [
+     1218,
+     290,
+     1408,
+     364
+    ],
+    "inkCount": 146,
+    "inkCoverage": 0.0104,
+    "inkLuminance": 251.4,
+    "nearBgLuminance": 189.9,
+    "farBgLuminance": 180.6,
+    "veryFarBgLuminance": 185.6,
+    "haloDelta": 9.3,
+    "bgGradient": -5,
+    "controlHalo": {
+     "min": 0.4,
+     "max": 0.7,
+     "samples": 3
+    },
+    "perimeter": 140,
+    "edgeWidthPx": 1.06,
+    "contrastRatio": 1.88
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-span",
+    "box": [
+     762,
+     140,
+     1017,
+     238
+    ],
+    "inkCount": 642,
+    "inkCoverage": 0.0257,
+    "inkLuminance": 250.7,
+    "nearBgLuminance": 163.5,
+    "farBgLuminance": 159.1,
+    "veryFarBgLuminance": 161.5,
+    "haloDelta": 4.3,
+    "bgGradient": -2.4,
+    "controlHalo": {
+     "min": -8.2,
+     "max": 8.2,
+     "samples": 4
+    },
+    "perimeter": 452,
+    "edgeWidthPx": 1.04,
+    "contrastRatio": 2.52
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-share",
+    "box": [
+     788,
+     204,
+     987,
+     358
+    ],
+    "inkCount": 653,
+    "inkCoverage": 0.0213,
+    "inkLuminance": 251.5,
+    "nearBgLuminance": 181.1,
+    "farBgLuminance": 179.2,
+    "veryFarBgLuminance": 171.2,
+    "haloDelta": 1.9,
+    "bgGradient": 8,
+    "controlHalo": {
+     "min": -21.1,
+     "max": 3.6,
+     "samples": 4
+    },
+    "perimeter": 479,
+    "edgeWidthPx": 0.94,
+    "contrastRatio": 1.96
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-working",
+    "box": [
+     1032,
+     132,
+     1232,
+     327
+    ],
+    "inkCount": 671,
+    "inkCoverage": 0.0172,
+    "inkLuminance": 249.7,
+    "nearBgLuminance": 178.7,
+    "farBgLuminance": 173.8,
+    "veryFarBgLuminance": 174.1,
+    "haloDelta": 5,
+    "bgGradient": -0.4,
+    "controlHalo": {
+     "min": -3.2,
+     "max": 4,
+     "samples": 4
+    },
+    "perimeter": 615,
+    "edgeWidthPx": 0.73,
+    "contrastRatio": 2.06
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-mark",
+    "box": [
+     1218,
+     290,
+     1408,
+     364
+    ],
+    "inkCount": 146,
+    "inkCoverage": 0.0104,
+    "inkLuminance": 251.4,
+    "nearBgLuminance": 190,
+    "farBgLuminance": 180.7,
+    "veryFarBgLuminance": 185.7,
+    "haloDelta": 9.2,
+    "bgGradient": -5,
+    "controlHalo": {
+     "min": 0.4,
+     "max": 0.7,
+     "samples": 3
+    },
+    "perimeter": 140,
+    "edgeWidthPx": 1.03,
+    "contrastRatio": 1.88
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-span",
+    "box": [
+     21,
+     40,
+     632,
+     275
+    ],
+    "inkCount": 4871,
+    "inkCoverage": 0.0339,
+    "inkLuminance": 253.9,
+    "nearBgLuminance": 164.2,
+    "farBgLuminance": 161.9,
+    "veryFarBgLuminance": 159,
+    "haloDelta": 2.3,
+    "bgGradient": 2.8,
+    "controlHalo": {
+     "min": -3.7,
+     "max": -0.5,
+     "samples": 2
+    },
+    "perimeter": 1627,
+    "edgeWidthPx": 0.75,
+    "contrastRatio": 2.5
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-share",
+    "box": [
+     98,
+     209,
+     547,
+     550
+    ],
+    "inkCount": 5224,
+    "inkCoverage": 0.0341,
+    "inkLuminance": 254.2,
+    "nearBgLuminance": 183.2,
+    "farBgLuminance": 182.4,
+    "veryFarBgLuminance": 182.8,
+    "haloDelta": 0.7,
+    "bgGradient": -0.4,
+    "controlHalo": null,
+    "perimeter": 1677,
+    "edgeWidthPx": 0.58,
+    "contrastRatio": 1.92
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-working",
+    "box": [
+     682,
+     37,
+     1135,
+     475
+    ],
+    "inkCount": 7599,
+    "inkCoverage": 0.0383,
+    "inkLuminance": 254.5,
+    "nearBgLuminance": 179.3,
+    "farBgLuminance": 177.4,
+    "veryFarBgLuminance": 173.7,
+    "haloDelta": 1.9,
+    "bgGradient": 3.7,
+    "controlHalo": {
+     "min": -0.6,
+     "max": 1.6,
+     "samples": 2
+    },
+    "perimeter": 2625,
+    "edgeWidthPx": 0.44,
+    "contrastRatio": 2.06
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-mark",
+    "box": [
+     1134,
+     419,
+     1553,
+     562
+    ],
+    "inkCount": 1678,
+    "inkCoverage": 0.028,
+    "inkLuminance": 253,
+    "nearBgLuminance": 188,
+    "farBgLuminance": 185.8,
+    "veryFarBgLuminance": 179.6,
+    "haloDelta": 2.2,
+    "bgGradient": 6.2,
+    "controlHalo": {
+     "min": 0.1,
+     "max": 0.2,
+     "samples": 2
+    },
+    "perimeter": 1008,
+    "edgeWidthPx": 0.7,
+    "contrastRatio": 1.81
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-span",
+    "box": [
+     21,
+     40,
+     632,
+     275
+    ],
+    "inkCount": 4871,
+    "inkCoverage": 0.0339,
+    "inkLuminance": 253.9,
+    "nearBgLuminance": 163.9,
+    "farBgLuminance": 161.8,
+    "veryFarBgLuminance": 159.4,
+    "haloDelta": 2.1,
+    "bgGradient": 2.4,
+    "controlHalo": {
+     "min": -3.6,
+     "max": -0.6,
+     "samples": 2
+    },
+    "perimeter": 1627,
+    "edgeWidthPx": 0.75,
+    "contrastRatio": 2.51
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-share",
+    "box": [
+     98,
+     209,
+     547,
+     550
+    ],
+    "inkCount": 5224,
+    "inkCoverage": 0.0341,
+    "inkLuminance": 254.2,
+    "nearBgLuminance": 183.3,
+    "farBgLuminance": 182.3,
+    "veryFarBgLuminance": 182.6,
+    "haloDelta": 1,
+    "bgGradient": -0.2,
+    "controlHalo": null,
+    "perimeter": 1677,
+    "edgeWidthPx": 0.58,
+    "contrastRatio": 1.92
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-working",
+    "box": [
+     682,
+     37,
+     1135,
+     475
+    ],
+    "inkCount": 7599,
+    "inkCoverage": 0.0383,
+    "inkLuminance": 254.5,
+    "nearBgLuminance": 179.3,
+    "farBgLuminance": 177.4,
+    "veryFarBgLuminance": 173.7,
+    "haloDelta": 1.9,
+    "bgGradient": 3.7,
+    "controlHalo": {
+     "min": -1.3,
+     "max": 1.6,
+     "samples": 2
+    },
+    "perimeter": 2625,
+    "edgeWidthPx": 0.44,
+    "contrastRatio": 2.06
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-mark",
+    "box": [
+     1134,
+     419,
+     1553,
+     562
+    ],
+    "inkCount": 1678,
+    "inkCoverage": 0.028,
+    "inkLuminance": 253,
+    "nearBgLuminance": 188,
+    "farBgLuminance": 185.7,
+    "veryFarBgLuminance": 179.6,
+    "haloDelta": 2.2,
+    "bgGradient": 6.2,
+    "controlHalo": {
+     "min": 0.1,
+     "max": 0.2,
+     "samples": 2
+    },
+    "perimeter": 1008,
+    "edgeWidthPx": 0.7,
+    "contrastRatio": 1.81
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-span",
+    "box": [
+     21,
+     40,
+     632,
+     275
+    ],
+    "inkCount": 4871,
+    "inkCoverage": 0.0339,
+    "inkLuminance": 253.9,
+    "nearBgLuminance": 163.9,
+    "farBgLuminance": 161.8,
+    "veryFarBgLuminance": 159.3,
+    "haloDelta": 2.1,
+    "bgGradient": 2.4,
+    "controlHalo": {
+     "min": -3.5,
+     "max": -0.6,
+     "samples": 2
+    },
+    "perimeter": 1627,
+    "edgeWidthPx": 0.74,
+    "contrastRatio": 2.51
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-share",
+    "box": [
+     98,
+     209,
+     547,
+     550
+    ],
+    "inkCount": 5225,
+    "inkCoverage": 0.0341,
+    "inkLuminance": 254.2,
+    "nearBgLuminance": 183.4,
+    "farBgLuminance": 182.3,
+    "veryFarBgLuminance": 182.5,
+    "haloDelta": 1.1,
+    "bgGradient": -0.2,
+    "controlHalo": null,
+    "perimeter": 1677,
+    "edgeWidthPx": 0.58,
+    "contrastRatio": 1.92
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-working",
+    "box": [
+     682,
+     37,
+     1135,
+     475
+    ],
+    "inkCount": 7599,
+    "inkCoverage": 0.0383,
+    "inkLuminance": 254.5,
+    "nearBgLuminance": 179.4,
+    "farBgLuminance": 177.4,
+    "veryFarBgLuminance": 173.8,
+    "haloDelta": 2,
+    "bgGradient": 3.6,
+    "controlHalo": {
+     "min": -1.3,
+     "max": 1.5,
+     "samples": 2
+    },
+    "perimeter": 2625,
+    "edgeWidthPx": 0.44,
+    "contrastRatio": 2.06
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-mark",
+    "box": [
+     1134,
+     419,
+     1553,
+     562
+    ],
+    "inkCount": 1677,
+    "inkCoverage": 0.028,
+    "inkLuminance": 253,
+    "nearBgLuminance": 188,
+    "farBgLuminance": 185.7,
+    "veryFarBgLuminance": 179.5,
+    "haloDelta": 2.3,
+    "bgGradient": 6.2,
+    "controlHalo": {
+     "min": 0.1,
+     "max": 0.2,
+     "samples": 2
+    },
+    "perimeter": 1008,
+    "edgeWidthPx": 0.7,
+    "contrastRatio": 1.81
+   }
+  ],
+  "a11y": [
+   {
+    "label": "en-1600x900",
+    "count": 3,
+    "rows": [
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "x plus 3 equals 7",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "1 over 2 x equals 4",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "2 x plus 1 is greater than or equal to 9",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     }
+    ],
+    "katexNodes": 3,
+    "katexErrors": 0
+   },
+   {
+    "label": "es-1600x900",
+    "count": 3,
+    "rows": [
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "x más 3 igual a 7",
+      "lang": "es",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "1 sobre 2 x igual a 4",
+      "lang": "es",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "2 x más 1 mayor o igual que 9",
+      "lang": "es",
+      "innerHidden": true,
+      "textHasBackslash": false
+     }
+    ],
+    "katexNodes": 3,
+    "katexErrors": 0
+   },
+   {
+    "label": "pl-1600x900",
+    "count": 3,
+    "rows": [
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "x plus 3 równa się 7",
+      "lang": "pl",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "1 łamane przez 2 x równa się 4",
+      "lang": "pl",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "2 x plus 1 większe lub równe 9",
+      "lang": "pl",
+      "innerHidden": true,
+      "textHasBackslash": false
+     }
+    ],
+    "katexNodes": 3,
+    "katexErrors": 0
+   },
+   {
+    "label": "en-3840x2160",
+    "count": 3,
+    "rows": [
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "x plus 3 equals 7",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "1 over 2 x equals 4",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "2 x plus 1 is greater than or equal to 9",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     }
+    ],
+    "katexNodes": 3,
+    "katexErrors": 0
+   },
+   {
+    "label": "es-3840x2160",
+    "count": 3,
+    "rows": [
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "x más 3 igual a 7",
+      "lang": "es",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "1 sobre 2 x igual a 4",
+      "lang": "es",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "2 x más 1 mayor o igual que 9",
+      "lang": "es",
+      "innerHidden": true,
+      "textHasBackslash": false
+     }
+    ],
+    "katexNodes": 3,
+    "katexErrors": 0
+   },
+   {
+    "label": "pl-3840x2160",
+    "count": 3,
+    "rows": [
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "x plus 3 równa się 7",
+      "lang": "pl",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "1 łamane przez 2 x równa się 4",
+      "lang": "pl",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "2 x plus 1 większe lub równe 9",
+      "lang": "pl",
+      "innerHidden": true,
+      "textHasBackslash": false
+     }
+    ],
+    "katexNodes": 3,
+    "katexErrors": 0
+   }
+  ],
+  "leaks": [
+   {
+    "label": "en-1600x900",
+    "katexFailed": 0,
+    "rawSourceLeak": false,
+    "katexRendered": 3,
+    "katexErrors": 0,
+    "bootProblems": 0
+   },
+   {
+    "label": "es-1600x900",
+    "katexFailed": 0,
+    "rawSourceLeak": false,
+    "katexRendered": 3,
+    "katexErrors": 0,
+    "bootProblems": 0
+   },
+   {
+    "label": "pl-1600x900",
+    "katexFailed": 0,
+    "rawSourceLeak": false,
+    "katexRendered": 3,
+    "katexErrors": 0,
+    "bootProblems": 0
+   },
+   {
+    "label": "en-3840x2160",
+    "katexFailed": 0,
+    "rawSourceLeak": false,
+    "katexRendered": 3,
+    "katexErrors": 0,
+    "bootProblems": 0
+   },
+   {
+    "label": "es-3840x2160",
+    "katexFailed": 0,
+    "rawSourceLeak": false,
+    "katexRendered": 3,
+    "katexErrors": 0,
+    "bootProblems": 0
+   },
+   {
+    "label": "pl-3840x2160",
+    "katexFailed": 0,
+    "rawSourceLeak": false,
+    "katexRendered": 3,
+    "katexErrors": 0,
+    "bootProblems": 0
+   }
+  ],
+  "textures": [
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "width": 243,
+    "height": 49,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     243,
+     49
+    ],
+    "inkCount": 1036,
+    "inkCoverage": 0.087,
+    "inkLuminance": 253,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 699,
+    "edgeWidthPx": 0.67,
+    "contrastRatio": 20.65
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "width": 179,
+    "height": 123,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     179,
+     123
+    ],
+    "inkCount": 1210,
+    "inkCoverage": 0.055,
+    "inkLuminance": 253.3,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 805,
+    "edgeWidthPx": 0.67,
+    "contrastRatio": 20.7
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "width": 192,
+    "height": 192,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     192,
+     192
+    ],
+    "inkCount": 2544,
+    "inkCoverage": 0.069,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 1428,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "width": 269,
+    "height": 51,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     269,
+     51
+    ],
+    "inkCount": 1374,
+    "inkCoverage": 0.1002,
+    "inkLuminance": 252.9,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 911,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 20.63
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-span",
+    "width": 243,
+    "height": 49,
+    "file": "review\\shots\\p15\\measure\\tex-es-1600x900-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     243,
+     49
+    ],
+    "inkCount": 1036,
+    "inkCoverage": 0.087,
+    "inkLuminance": 253,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 699,
+    "edgeWidthPx": 0.67,
+    "contrastRatio": 20.65
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-share",
+    "width": 179,
+    "height": 123,
+    "file": "review\\shots\\p15\\measure\\tex-es-1600x900-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     179,
+     123
+    ],
+    "inkCount": 1210,
+    "inkCoverage": 0.055,
+    "inkLuminance": 253.3,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 805,
+    "edgeWidthPx": 0.67,
+    "contrastRatio": 20.7
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-working",
+    "width": 192,
+    "height": 192,
+    "file": "review\\shots\\p15\\measure\\tex-es-1600x900-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     192,
+     192
+    ],
+    "inkCount": 2544,
+    "inkCoverage": 0.069,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 1428,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-mark",
+    "width": 269,
+    "height": 51,
+    "file": "review\\shots\\p15\\measure\\tex-es-1600x900-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     269,
+     51
+    ],
+    "inkCount": 1374,
+    "inkCoverage": 0.1002,
+    "inkLuminance": 252.9,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 911,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 20.63
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-span",
+    "width": 243,
+    "height": 49,
+    "file": "review\\shots\\p15\\measure\\tex-pl-1600x900-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     243,
+     49
+    ],
+    "inkCount": 1036,
+    "inkCoverage": 0.087,
+    "inkLuminance": 253,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 699,
+    "edgeWidthPx": 0.67,
+    "contrastRatio": 20.65
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-share",
+    "width": 179,
+    "height": 123,
+    "file": "review\\shots\\p15\\measure\\tex-pl-1600x900-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     179,
+     123
+    ],
+    "inkCount": 1210,
+    "inkCoverage": 0.055,
+    "inkLuminance": 253.3,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 805,
+    "edgeWidthPx": 0.67,
+    "contrastRatio": 20.7
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-working",
+    "width": 192,
+    "height": 192,
+    "file": "review\\shots\\p15\\measure\\tex-pl-1600x900-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     192,
+     192
+    ],
+    "inkCount": 2544,
+    "inkCoverage": 0.069,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 1428,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "pl-1600x900",
+    "id": "leaf9-mark",
+    "width": 269,
+    "height": 51,
+    "file": "review\\shots\\p15\\measure\\tex-pl-1600x900-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     269,
+     51
+    ],
+    "inkCount": 1374,
+    "inkCoverage": 0.1002,
+    "inkLuminance": 252.9,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 911,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 20.63
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-span",
+    "width": 486,
+    "height": 99,
+    "file": "review\\shots\\p15\\measure\\tex-en-3840x2160-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     486,
+     99
+    ],
+    "inkCount": 4591,
+    "inkCoverage": 0.0954,
+    "inkLuminance": 254.3,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 1539,
+    "edgeWidthPx": 0.6,
+    "contrastRatio": 20.87
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-share",
+    "width": 359,
+    "height": 247,
+    "file": "review\\shots\\p15\\measure\\tex-en-3840x2160-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     359,
+     247
+    ],
+    "inkCount": 5437,
+    "inkCoverage": 0.0613,
+    "inkLuminance": 254.1,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 1702,
+    "edgeWidthPx": 0.51,
+    "contrastRatio": 20.85
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-working",
+    "width": 344,
+    "height": 344,
+    "file": "review\\shots\\p15\\measure\\tex-en-3840x2160-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     344,
+     344
+    ],
+    "inkCount": 9396,
+    "inkCoverage": 0.0794,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 2734,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "en-3840x2160",
+    "id": "leaf9-mark",
+    "width": 269,
+    "height": 51,
+    "file": "review\\shots\\p15\\measure\\tex-en-3840x2160-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     269,
+     51
+    ],
+    "inkCount": 1374,
+    "inkCoverage": 0.1002,
+    "inkLuminance": 252.9,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 911,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 20.63
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-span",
+    "width": 486,
+    "height": 99,
+    "file": "review\\shots\\p15\\measure\\tex-es-3840x2160-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     486,
+     99
+    ],
+    "inkCount": 4591,
+    "inkCoverage": 0.0954,
+    "inkLuminance": 254.3,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 1539,
+    "edgeWidthPx": 0.6,
+    "contrastRatio": 20.87
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-share",
+    "width": 359,
+    "height": 247,
+    "file": "review\\shots\\p15\\measure\\tex-es-3840x2160-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     359,
+     247
+    ],
+    "inkCount": 5437,
+    "inkCoverage": 0.0613,
+    "inkLuminance": 254.1,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 1702,
+    "edgeWidthPx": 0.51,
+    "contrastRatio": 20.85
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-working",
+    "width": 344,
+    "height": 344,
+    "file": "review\\shots\\p15\\measure\\tex-es-3840x2160-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     344,
+     344
+    ],
+    "inkCount": 9396,
+    "inkCoverage": 0.0794,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 2734,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "es-3840x2160",
+    "id": "leaf9-mark",
+    "width": 269,
+    "height": 51,
+    "file": "review\\shots\\p15\\measure\\tex-es-3840x2160-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     269,
+     51
+    ],
+    "inkCount": 1374,
+    "inkCoverage": 0.1002,
+    "inkLuminance": 252.9,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 911,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 20.63
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-span",
+    "width": 486,
+    "height": 99,
+    "file": "review\\shots\\p15\\measure\\tex-pl-3840x2160-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     486,
+     99
+    ],
+    "inkCount": 4591,
+    "inkCoverage": 0.0954,
+    "inkLuminance": 254.3,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 1539,
+    "edgeWidthPx": 0.6,
+    "contrastRatio": 20.87
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-share",
+    "width": 359,
+    "height": 247,
+    "file": "review\\shots\\p15\\measure\\tex-pl-3840x2160-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     359,
+     247
+    ],
+    "inkCount": 5437,
+    "inkCoverage": 0.0613,
+    "inkLuminance": 254.1,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 1702,
+    "edgeWidthPx": 0.51,
+    "contrastRatio": 20.85
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-working",
+    "width": 344,
+    "height": 344,
+    "file": "review\\shots\\p15\\measure\\tex-pl-3840x2160-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     344,
+     344
+    ],
+    "inkCount": 9396,
+    "inkCoverage": 0.0794,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 2734,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "pl-3840x2160",
+    "id": "leaf9-mark",
+    "width": 269,
+    "height": 51,
+    "file": "review\\shots\\p15\\measure\\tex-pl-3840x2160-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     269,
+     51
+    ],
+    "inkCount": 1374,
+    "inkCoverage": 0.1002,
+    "inkLuminance": 252.9,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "controlHalo": null,
+    "perimeter": 911,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 20.63
+   }
+  ],
+  "cache": {
+   "framesAdvanced": 120,
+   "typesetsBefore": 3,
+   "typesetsAfter": 3,
+   "rastersBefore": 4,
+   "rastersAfter": 4
+  },
+  "fallback": {
+   "errorsBefore": 0,
+   "source": "\\frac{1}{",
+   "panel": {
+    "id": "p15-malformed",
+    "kpId": null,
+    "kind": "claim",
+    "tex": "\\frac{1}{",
+    "ok": false,
+    "speech": "unreadable claim",
+    "locale": "en",
+    "em": 0.75,
+    "emRequested": 0.75,
+    "emClamped": false,
+    "occludedPct": null,
+    "occlusionSamples": 0,
+    "depthTest": false,
+    "worldSize": [
+     0.684,
+     0.695
+    ],
+    "texturePx": 68,
+    "fontPx": 68,
+    "textureSize": [
+     62,
+     63
+    ],
+    "bound": null,
+    "emScreenPx": 62.7,
+    "texelsPerPixel": 1.08,
+    "rasters": 1,
+    "position": [
+     11.15,
+     61.01,
+     210.3
+    ]
+   },
+   "katexErrors": 0,
+   "sourceInDom": false,
+   "overlayHasBackslash": false,
+   "errorsAfter": 1,
+   "lastError": "KaTeX refused a claim [en,display]: KaTeX parse error: Unexpected end of input in a macro argument, expected '}' at end of input: \\frac{1}{ — source withheld from the world, fallback shown",
+   "rawSourceLeak": false,
+   "ink": {
+    "box": [
+     750,
+     283,
+     850,
+     383
+    ],
+    "inkCount": 445,
+    "inkCoverage": 0.0445,
+    "inkLuminance": 251.8,
+    "nearBgLuminance": 177,
+    "farBgLuminance": 175.3,
+    "veryFarBgLuminance": 168.1,
+    "haloDelta": 1.8,
+    "bgGradient": 7.2,
+    "controlHalo": {
+     "min": -4.4,
+     "max": 0.6,
+     "samples": 4
+    },
+    "perimeter": 387,
+    "edgeWidthPx": 0.46,
+    "contrastRatio": 2.01
+   }
+  },
+  "hostile": {
+   "caps": {
+    "maxEdge": 4096,
+    "maxPixels": 4194304,
+    "maxInkEmsWide": 48,
+    "maxInkEmsTall": 24,
+    "minFontPx": 8,
+    "maxEmWorld": 4,
+    "minEmWorld": 0.02,
+    "maxWorkingTicks": 64
+   },
+   "rows": [
+    {
+     "id": "long20k",
+     "attacks": "source length",
+     "chars": 20000,
+     "panel": {
+      "id": "long20k",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "x + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + x",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "emRequested": 0.6,
+      "emClamped": false,
+      "occludedPct": null,
+      "occlusionSamples": 0,
+      "depthTest": false,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": null,
+      "emScreenPx": 42.9,
+      "texelsPerPixel": 1.12,
+      "rasters": 1,
+      "position": [
+       7.85,
+       60.91,
+       209.31
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": null,
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 3.7,
+     "wallMs": 39,
+     "newErrors": 1,
+     "lastError": "KaTeX refused a claim [en,display]: expression too long: 20000 characters, cap 2000 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    },
+    {
+     "id": "deepFrac15",
+     "attacks": "parse depth — the measured renderer crash",
+     "chars": 151,
+     "panel": {
+      "id": "deepFrac15",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{2}}}}}}}}}}}}}}}",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "emRequested": 0.6,
+      "emClamped": false,
+      "occludedPct": null,
+      "occlusionSamples": 0,
+      "depthTest": false,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": null,
+      "emScreenPx": 44.9,
+      "texelsPerPixel": 1.07,
+      "rasters": 1,
+      "position": [
+       10.05,
+       60.91,
+       209.31
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": null,
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 0.7,
+     "wallMs": 123,
+     "newErrors": 1,
+     "lastError": "KaTeX refused a claim [en,display]: expression nested too deeply: depth 30, cap 16 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    },
+    {
+     "id": "deepFrac60",
+     "attacks": "parse depth",
+     "chars": 601,
+     "panel": {
+      "id": "deepFrac60",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{2}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "emRequested": 0.6,
+      "emClamped": false,
+      "occludedPct": null,
+      "occlusionSamples": 0,
+      "depthTest": false,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": null,
+      "emScreenPx": 44.9,
+      "texelsPerPixel": 1.07,
+      "rasters": 1,
+      "position": [
+       12.25,
+       60.91,
+       209.31
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": null,
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 1,
+     "wallMs": 96,
+     "newErrors": 1,
+     "lastError": "KaTeX refused a claim [en,display]: expression nested too deeply: depth 120, cap 16 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    },
+    {
+     "id": "tallMatrix",
+     "attacks": "ink height",
+     "chars": 772,
+     "panel": {
+      "id": "tallMatrix",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "\\begin{matrix}1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1\\end{matrix}",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "emRequested": 0.6,
+      "emClamped": false,
+      "occludedPct": null,
+      "occlusionSamples": 0,
+      "depthTest": false,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": {
+       "reason": "ink-extent",
+       "emsWide": 0.6,
+       "emsTall": 219.8
+      },
+      "emScreenPx": 42.9,
+      "texelsPerPixel": 1.12,
+      "rasters": 1,
+      "position": [
+       14.45,
+       60.91,
+       209.31
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": {
+      "reason": "ink-extent",
+      "emsWide": 0.6,
+      "emsTall": 219.8
+     },
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 7.4,
+     "wallMs": 173,
+     "newErrors": 1,
+     "lastError": "KaTeX refused a claim [en,display]: claim geometry out of bounds: 0.6x219.8 ems, cap 48x24 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    },
+    {
+     "id": "wideLine",
+     "attacks": "ink width",
+     "chars": 1881,
+     "panel": {
+      "id": "wideLine",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "emRequested": 0.6,
+      "emClamped": false,
+      "occludedPct": null,
+      "occlusionSamples": 0,
+      "depthTest": false,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": {
+       "reason": "ink-extent",
+       "emsWide": 979.9,
+       "emsTall": 3.5
+      },
+      "emScreenPx": 39.5,
+      "texelsPerPixel": 1.21,
+      "rasters": 1,
+      "position": [
+       16.65,
+       60.91,
+       209.31
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": {
+      "reason": "ink-extent",
+      "emsWide": 979.9,
+      "emsTall": 3.5
+     },
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 42.3,
+     "wallMs": 132,
+     "newErrors": 2,
+     "lastError": "KaTeX refused a claim [en,display]: claim geometry out of bounds: 979.9x3.5 ems, cap 48x24 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    }
+   ],
+   "shapes": [
+    {
+     "name": "frac",
+     "nesting": 8,
+     "depth": 16,
+     "ms": 10.4,
+     "width": 235,
+     "height": 586,
+     "ok": true
+    },
+    {
+     "name": "sqrt",
+     "nesting": 8,
+     "depth": 16,
+     "ms": 7.9,
+     "width": 1004,
+     "height": 490,
+     "ok": true
+    },
+    {
+     "name": "paren",
+     "nesting": 16,
+     "depth": 16,
+     "ms": 7.9,
+     "width": 1503,
+     "height": 126,
+     "ok": true
+    },
+    {
+     "name": "power",
+     "nesting": 8,
+     "depth": 16,
+     "ms": 5.9,
+     "width": 351,
+     "height": 262,
+     "ok": true
+    },
+    {
+     "name": "abs",
+     "nesting": 16,
+     "depth": 16,
+     "ms": 3.7,
+     "width": 1084,
+     "height": 126,
+     "ok": true
+    },
+    {
+     "name": "mixed",
+     "nesting": 4,
+     "depth": 16,
+     "ms": 11.7,
+     "width": 603,
+     "height": 547,
+     "ok": true
+    },
+    {
+     "name": "overline",
+     "nesting": 8,
+     "depth": 16,
+     "ms": 4,
+     "width": 77,
+     "height": 257,
+     "ok": true
+    }
+   ],
+   "scaleDown": {
+    "ms": 4,
+    "width": 4092,
+    "height": 850,
+    "fontPx": 812,
+    "bound": {
+     "reason": "scaled",
+     "fromFontPx": 3000,
+     "toFontPx": 812
+    },
+    "ok": true
+   },
+   "frameInk": {
+    "box": [
+     0,
+     0,
+     1600,
+     900
+    ],
+    "inkCount": 1428,
+    "inkCoverage": 0.001,
+    "inkLuminance": 251.4,
+    "nearBgLuminance": 157.1,
+    "farBgLuminance": 155.7,
+    "veryFarBgLuminance": 152.7,
+    "haloDelta": 1.4,
+    "bgGradient": 3.1,
+    "controlHalo": null,
+    "perimeter": 1363,
+    "edgeWidthPx": 0.96,
+    "contrastRatio": 2.54
+   },
+   "shot": "review\\shots\\p15\\measure\\hostile.png",
+   "simBefore": 12.417,
+   "alive": {
+    "simTime": 16.417,
+    "frames": 391,
+    "fatal": null,
+    "ready": true,
+    "raster": {
+     "rasters": 18,
+     "ms": 135,
+     "glyphs": 1,
+     "paths": 0,
+     "rules": 8,
+     "unsupportedSvg": 0,
+     "baselineResidual": 0,
+     "maxCanvasWidth": 4092,
+     "maxCanvasHeight": 850,
+     "maxCanvasPixels": 3478200,
+     "scaledDown": 1,
+     "refusedGeometry": 2,
+     "caps": {
+      "maxEdge": 4096,
+      "maxPixels": 4194304,
+      "maxInkEmsWide": 48,
+      "maxInkEmsTall": 24,
+      "minFontPx": 8,
+      "maxEmWorld": 4,
+      "minEmWorld": 0.02,
+      "maxWorkingTicks": 64
+     }
+    },
+    "unexpectedErrors": []
+   },
+   "totalWallMs": 18744
+  }
+ }
+}

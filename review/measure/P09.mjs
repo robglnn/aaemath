@@ -67,9 +67,35 @@ const REF = {
   rockLitLow: { hex: "#785C3E", Y: 0.12, h: 31 },
   rockShadow: { hex: "#1B2B32", Y: 0.022, h: 198 },
   litShadowRatio: [4.15, 5.47],
-  cyanShare: 9.54,
   meanY: 0.273,
 };
+
+/**
+ * **Where the reference's river actually is, and why this box exists.**
+ *
+ * K7 used to compare our largest connected accent-cyan component against "the reference's",
+ * computed by running the same component finder over the whole of `target-lowpoly.png` and taking
+ * the biggest thing it found. The biggest teal thing in that image is not the river — it is the
+ * **cold band across the top of the sky**, x[0,2361] y[0,173], 245,682 px. So the claim passed by
+ * comparing our river to the reference's sky, which is worth precisely nothing, and it went on
+ * passing while our river covered eighteen times the reference river's share of its frame.
+ *
+ * The river is the teal body in the lower right of the reference, x[1724,2180] y[908,1067]:
+ * 16,591 px in one connected component, mean `#8BF7E4`, S 0.436, i.e. **0.39% of that frame**.
+ * `referenceRiverSanity` below re-derives those numbers from the pixels every run rather than
+ * trusting this comment, so a wrong box shows up as a wrong mean colour instead of a silent pass.
+ */
+const REF_RIVER_BOX = [1724, 908, 2180, 1067];
+
+/**
+ * §7.2's accent budget, in the terms the last critic measured it in: hue 150–205, S >= 0.35,
+ * V >= 0.30, over the shipped arrival frame. The reference measures 2.39% of its frame through
+ * this gate with a largest single component of 1.13% (that sky band). Ours shipped at 8.30% with
+ * a largest component of 7.0%.
+ */
+const ACCENT = { hue: [150, 205], sat: 0.35, val: 0.3 };
+const ACCENT_MAX_TOTAL_PCT = 3.5;
+const ACCENT_MAX_COMPONENT_PCT = 1.74; // 25,000 px of a 1600x900 frame
 
 const results = [];
 function claim(id, what, pass, detail) {
@@ -81,6 +107,22 @@ const round = (v, n = 3) => (Number.isFinite(v) ? Number(v.toFixed(n)) : v);
 
 await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   await d.play(1.2);
+
+  /**
+   * **The capture is taken before the measurement, and the order is load-bearing.**
+   *
+   * It used to be taken after. The in-page evaluate below casts the better part of forty thousand
+   * rays through the collision world on the page's own main thread; while it runs, no
+   * `requestAnimationFrame` fires, and the screenshot Playwright takes on the far side of it comes
+   * back as the clear colour. This script duly printed a full table of claims — P2 "PASS", hue
+   * 213.3, Y 0.002 — measured on a frame that was 100% black, and it reported no boot problem,
+   * because there wasn't one. Every pixel claim it made was a claim about nothing.
+   *
+   * Game time only moves through `__vs.advance()`, so shooting first measures exactly the same
+   * world state and simply catches it while the renderer is still alive. `blackFrame` below then
+   * refuses to let a dark capture be reported as a pass ever again.
+   */
+  await d.shoot(SHOT);
 
   // ------------------------------------------------------------------ in-page measurement
   const M = await d.run(() => {
@@ -359,6 +401,33 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       _ray.sub(cam.position).normalize();
       return [_ray.x, _ray.y, _ray.z];
     };
+    /**
+     * Which collider a hit triangle belongs to, rebuilt from the collision world's own bake order.
+     *
+     * `raycast` returns a global triangle index, and `_rebuild` walks `colliders` in Map insertion
+     * order skipping degenerate triangles, so the ranges are reproducible exactly. Without this a
+     * finding about "the spires" is measured over the heightfield, the boulders and the built stone
+     * averaged together, and a colour claim about one of them cannot be made at all.
+     */
+    const ownerRanges = [];
+    {
+      let t0 = 0;
+      for (const [id, c] of collision.colliders) {
+        let n = 0;
+        for (let i = 0; i + 8 < c.verts.length; i += 9) {
+          const ux = c.verts[i + 3] - c.verts[i], uy = c.verts[i + 4] - c.verts[i + 1], uz = c.verts[i + 5] - c.verts[i + 2];
+          const vx = c.verts[i + 6] - c.verts[i], vy = c.verts[i + 7] - c.verts[i + 1], vz = c.verts[i + 8] - c.verts[i + 2];
+          if (Math.hypot(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx) >= 1e-9) n++;
+        }
+        ownerRanges.push({ id, from: t0, to: t0 + n });
+        t0 += n;
+      }
+    }
+    const ownerOf = (tri) => {
+      for (const r of ownerRanges) if (tri >= r.from && tri < r.to) return r.id;
+      return null;
+    };
+
     const hitOut = {};
     const shadowOut = {};
     const castPixel = (pxl, py, maxDist, wantShadow = false) => {
@@ -369,7 +438,10 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       // dark because a spire stands between it and Lethis, and any claim that reads brightness off
       // N·L alone is wrong about a low-sun world. Traced against the same soup the shadow map is
       // built from, offset off the surface so a face cannot shadow itself.
-      const sr = wantShadow
+      // Only inside 220 m: past that the pixel belongs to the aerial-perspective curve rather than
+      // to the key, and a shadow ray per sample over the whole frame doubles this script's cost for
+      // a distinction no claim below reads.
+      const sr = wantShadow && r.t <= 220
         ? collision.raycast(
             r.x + r.nx * 0.08, r.y + r.ny * 0.08, r.z + r.nz * 0.08,
             sun[0], sun[1], sun[2], 260, shadowOut
@@ -382,6 +454,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         ndl: Number((r.nx * sun[0] + r.ny * sun[1] + r.nz * sun[2]).toFixed(3)),
         up: Number(r.ny.toFixed(3)),
         cast: sr.hit ? 1 : 0,
+        owner: ownerOf(r.tri),
         wx: r.x, wy: r.y, wz: r.z,
       };
     };
@@ -560,14 +633,21 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       }
       return best;
     };
+    // The ribbon is two meshes now — `vs.level.carries` (bank + body) and
+    // `vs.level.carries.core` (the one lane P12's bloom is allowed to see) — so both are walked,
+    // and each sample records which lane it came from. The saturation claim is asked of the *body*
+    // lane specifically: the core is authored near-white on purpose and averaging it in would hide
+    // exactly the neon the last round shipped.
     const carrySamples = [];
-    if (heroSpec && level.carryMesh) {
-      const cp = level.carryMesh.geometry.getAttribute("position").array;
+    const halfWidest = heroSpec ? (heroSpec.width * Math.max(...(heroSpec.taper ?? [1, 1]))) * 0.55 : 0;
+    for (const [lane, mesh] of [["body", level.carryMesh], ["core", level.carryCoreMesh]]) {
+      if (!heroSpec || !mesh) continue;
+      const cp = mesh.geometry.getAttribute("position").array;
       for (let i = 0; i < cp.length; i += 9) {
         const cx = (cp[i] + cp[i + 3] + cp[i + 6]) / 3;
         const cy = (cp[i + 1] + cp[i + 4] + cp[i + 7]) / 3;
         const cz = (cp[i + 2] + cp[i + 5] + cp[i + 8]) / 3;
-        if (segDist(-cz, cx, heroSpec.pts) > heroSpec.width * 0.55) continue;
+        if (segDist(-cz, cx, heroSpec.pts) > halfWidest) continue;
         const dx2 = cx - eyeP[0], dy2 = cy - eyeP[1], dz2 = cz - eyeP[2];
         const dist = Math.hypot(dx2, dy2, dz2);
         // Visible means the world does not stand in front of it. The collision world holds this
@@ -577,7 +657,62 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         if (r?.hit) continue;
         const s = scr(cx, cy, cz);
         if (s[2] > 1 || s[0] < 0 || s[0] >= W || s[1] < 0 || s[1] >= H) continue;
-        carrySamples.push({ x: Math.round(s[0]), y: Math.round(s[1]), d: Math.round(dist) });
+        carrySamples.push({ x: Math.round(s[0]), y: Math.round(s[1]), d: Math.round(dist), lane });
+      }
+    }
+
+    /**
+     * --- the keel: the bottom fifty-five rows of the arrival frame ----------------------
+     *
+     * The underside of the leaf is not in the collision world — there is deliberately nothing to
+     * stand on down there — so it cannot be sampled by casting rays like everything else. Its own
+     * triangles are projected instead, kept only where the collision world says nothing of this
+     * piece's stands in front of them, and paired with the N·L of the facet that was hit. That is
+     * the pairing the last round had no measurement of at all: a critic found `vs.terrain.keel`
+     * rendering at a toward-key : away-from-key luminance ratio of 1.02 — a flat bar — and this
+     * script could not have caught it, because it never looked below the horizon at its own frame.
+     */
+    const keelSamples = [];
+    if (terrain.keel) {
+      const kp = terrain.keel.geometry.getAttribute("position").array;
+      const nearest = new Map(); // screen cell -> nearest keel triangle, so a sample is a surface
+      for (let i = 0; i < kp.length; i += 9) {
+        const cx = (kp[i] + kp[i + 3] + kp[i + 6]) / 3;
+        const cy = (kp[i + 1] + kp[i + 4] + kp[i + 7]) / 3;
+        const cz = (kp[i + 2] + kp[i + 5] + kp[i + 8]) / 3;
+        const dx2 = cx - eyeP[0], dy2 = cy - eyeP[1], dz2 = cz - eyeP[2];
+        const dist = Math.hypot(dx2, dy2, dz2);
+        if (dist > 200) continue; // "the foreground", the same 200 m the finding was made inside
+        const s = scr(cx, cy, cz);
+        if (s[2] > 1 || s[0] < 2 || s[0] >= W - 2 || s[1] < 2 || s[1] >= H - 2) continue;
+        const ux = kp[i + 3] - kp[i], uy = kp[i + 4] - kp[i + 1], uz = kp[i + 5] - kp[i + 2];
+        const vx = kp[i + 6] - kp[i], vy = kp[i + 7] - kp[i + 1], vz = kp[i + 8] - kp[i + 2];
+        let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+        const nl = Math.hypot(nx, ny, nz) || 1;
+        nx /= nl; ny /= nl; nz /= nl;
+        // Orient toward the camera, exactly as the fragment shader does, so N·L here is the N·L
+        // the pixel was actually shaded with.
+        if (nx * dx2 + ny * dy2 + nz * dz2 > 0) { nx = -nx; ny = -ny; nz = -nz; }
+        const key = (Math.round(s[1] / 3) << 12) | Math.round(s[0] / 3);
+        const prev = nearest.get(key);
+        if (prev && prev.d <= dist) continue;
+        nearest.set(key, {
+          x: Math.round(s[0]), y: Math.round(s[1]), d: dist,
+          wx: cx, wy: cy, wz: cz,
+          ndl: Number((nx * sun[0] + ny * sun[1] + nz * sun[2]).toFixed(3)),
+        });
+      }
+      for (const v of nearest.values()) {
+        // Nothing of this piece's may stand in front of it: the leaf's own lip hides most of its
+        // own underside from most stands, and counting a hidden facet as a rendered one would let
+        // a ladder exist in the geometry and nowhere in the frame.
+        const r = collision.raycast(
+          eyeP[0], eyeP[1], eyeP[2],
+          v.wx - eyeP[0], v.wy - eyeP[1], v.wz - eyeP[2],
+          v.d - 0.35
+        );
+        if (r?.hit) continue;
+        keelSamples.push({ x: v.x, y: v.y, d: Math.round(v.d), ndl: v.ndl });
       }
     }
 
@@ -601,6 +736,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       heroBandSamples,
       rockShader: L.rockShader ?? null,
       carrySamples,
+      keelSamples,
       carryClearance: L.carryClearance ?? null,
       terrain: t,
       level: {
@@ -652,7 +788,6 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     };
   });
 
-  await d.shoot(SHOT);
   const report = await d.report();
   M.problems = [];
   if (report.fatal) M.problems.push(`fatal: ${String(report.fatal).split("\n")[0]}`);
@@ -808,15 +943,24 @@ const heroForm = {
 // the frame. A river reads as a river when it is one big connected shape; a strip light reads as a
 // scatter of slivers. Measured identically on our capture and on `reference/target-lowpoly.png`,
 // then compared per unit of frame area so two different capture sizes can be argued about.
-function accentComponents(image) {
+function accentComponents(image, box = null) {
   const w = image.width;
   const h = image.height;
   const mask = new Uint8Array(w * h);
+  let masked = 0;
+  let sumS = 0;
+  let sumR = 0, sumG = 0, sumB = 0;
   for (let y = 0; y < h; y++)
     for (let x = 0; x < w; x++) {
+      if (box && (x < box[0] || x > box[2] || y < box[1] || y > box[3])) continue;
       const [r, g, b] = px(image, x, y);
       const [hu, sa, v] = hsv(r, g, b);
-      if (hu >= 150 && hu <= 205 && sa >= 0.22 && v >= 0.28) mask[y * w + x] = 1;
+      if (hu >= ACCENT.hue[0] && hu <= ACCENT.hue[1] && sa >= ACCENT.sat && v >= ACCENT.val) {
+        mask[y * w + x] = 1;
+        masked++;
+        sumS += sa;
+        sumR += r; sumG += g; sumB += b;
+      }
     }
   const seen = new Uint8Array(w * h);
   const stack = new Int32Array(w * h);
@@ -854,37 +998,109 @@ function accentComponents(image) {
       best = { area, x0, x1, y0, y1, maxVerticalRun: thickest, rows: y1 - y0 + 1, cols: x1 - x0 + 1 };
     }
   }
+  const hex2 = (r, g, b) =>
+    "#" + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, "0")).join("").toUpperCase();
   return {
     ...best,
     frame: [w, h],
-    areaPpm: round((1e6 * best.area) / (w * h), 1),
+    // Shares are always of the WHOLE frame, never of the box, so a boxed reference measurement and
+    // a whole-frame capture are directly comparable numbers.
+    areaPctOfFrame: round((100 * best.area) / (w * h), 3),
+    totalAccentPx: masked,
+    totalAccentPctOfFrame: round((100 * masked) / (w * h), 2),
+    meanAccentSat: masked ? round(sumS / masked, 3) : null,
+    meanAccentHex: masked ? hex2(sumR / masked, sumG / masked, sumB / masked) : null,
     rowShare: round(best.rows / h, 3),
     runShare: round(best.maxVerticalRun / h, 4),
   };
 }
 const river = accentComponents(img);
+let refImg = null;
 let refRiver = null;
+let refWhole = null;
 try {
-  refRiver = accentComponents(readPNG(path.resolve(ROOT, "reference/target-lowpoly.png")));
+  refImg = readPNG(path.resolve(ROOT, "reference/target-lowpoly.png"));
+  refRiver = accentComponents(refImg, REF_RIVER_BOX);
+  refWhole = accentComponents(refImg);
 } catch {
   refRiver = null;
 }
+/**
+ * The box is checked against the pixels, not against the comment above it. If someone moves the
+ * crop — or swaps the reference image — the mean colour and the component area move with it, and
+ * this row says so out loud instead of the claim quietly comparing our river to a cloud.
+ */
+const referenceRiverSanity = refRiver
+  ? {
+      box: REF_RIVER_BOX,
+      largestComponentPx: refRiver.area,
+      meanAccentHex: refRiver.meanAccentHex,
+      meanAccentSat: refRiver.meanAccentSat,
+      expected: { largestComponentPx: 16591, meanAccentHex: "#8BF7E4", meanAccentSat: 0.436 },
+      looksLikeTheRiver:
+        Math.abs(refRiver.area - 16591) <= 400 && Math.abs((refRiver.meanAccentSat ?? 0) - 0.436) <= 0.03,
+      whatTheWholeFrameWouldHaveGiven: refWhole
+        ? { largestComponentPx: refWhole.area, box: [refWhole.x0, refWhole.y0, refWhole.x1, refWhole.y1] }
+        : null,
+    }
+  : null;
 // Both measured the same way, both expressed as a share of their own frame, so a 1600x900 capture
 // and a 2752x1536 reference can be compared without either being rescaled.
-const riverVsReference = { ours: river, reference: refRiver };
+const riverVsReference = { ours: river, referenceRiver: refRiver, referenceWholeFrame: refWhole, referenceRiverSanity };
 
 // whole-frame census, for comparison with the reference's own
-let cyan = 0, dark = 0, sumY = 0, total = 0;
-for (let y = 0; y < img.height; y += 2)
-  for (let x = 0; x < img.width; x += 2) {
-    const [r, g, b] = px(img, x, y);
-    const [h, s] = hsv(r, g, b);
-    const Y = lum(r, g, b);
-    sumY += Y; total++;
-    if (s >= 0.3 && h >= 150 && h <= 200) cyan++;
-    if (Y < 0.05) dark++;
-  }
-const census = { cyanPct: round((100 * cyan) / total, 2), darkPct: round((100 * dark) / total, 2), meanY: round(sumY / total) };
+function frameCensus(image) {
+  let cyan = 0, dark = 0, sumY = 0, total = 0;
+  for (let y = 0; y < image.height; y += 2)
+    for (let x = 0; x < image.width; x += 2) {
+      const [r, g, b] = px(image, x, y);
+      const [h, s] = hsv(r, g, b);
+      const Y = lum(r, g, b);
+      sumY += Y; total++;
+      if (s >= 0.3 && h >= 150 && h <= 200) cyan++;
+      if (Y < 0.05) dark++;
+    }
+  return {
+    cyanPct: round((100 * cyan) / total, 2),
+    darkPct: round((100 * dark) / total, 2),
+    meanY: round(sumY / total),
+  };
+}
+const census = frameCensus(img);
+// Measured off the reference every run rather than copied out of it once. `REF.cyanShare` used to
+// be the constant 9.54, which nothing in this file could check and which is four times what the
+// same census actually returns.
+const refCensus = refImg ? frameCensus(refImg) : null;
+
+/**
+ * **A dark capture is a bug, never a result.** This whole script once printed sixteen passing
+ * claims off a frame that was 100% black — the mean luminance was 0.002 and P2 "passed" at hue
+ * 213 because the void is bluish. Nothing downstream may be believed if the frame did not render,
+ * so the frame has to answer for itself before any claim is allowed to.
+ */
+const blackFrame = census.meanY < 0.02 || census.darkPct > 92;
+
+/**
+ * The bottom of the frame. `target-lowpoly.png` puts ground there and it measures Y 0.078 over its
+ * last 6% of rows; ours put `vs.terrain.keel` there and it measured Y 0.018 — a flat bar with no
+ * inclination structure at all, under the most important 55 rows of the composition.
+ */
+function bottomRows(image, share = 0.061) {
+  const rows = Math.max(4, Math.round(image.height * share));
+  let sum = 0, n = 0, r0 = 0, g0 = 0, b0 = 0;
+  for (let y = image.height - rows; y < image.height; y++)
+    for (let x = 0; x < image.width; x++) {
+      const [r, g, b] = px(image, x, y);
+      sum += lum(r, g, b); r0 += r; g0 += g; b0 += b; n++;
+    }
+  return {
+    rows,
+    meanY: round(sum / n, 4),
+    meanHex:
+      "#" + [r0 / n, g0 / n, b0 / n].map((v) => Math.round(v).toString(16).padStart(2, "0")).join("").toUpperCase(),
+  };
+}
+const bottom = { ours: bottomRows(img), reference: refImg ? bottomRows(refImg) : null };
 
 // ------------------------------------------------------------------- K5: the carry in the frame
 //

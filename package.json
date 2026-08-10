@@ -11,6 +11,7 @@
     "deploy": "vite build --outDir ../docs --emptyOutDir && node -e \"require('fs').writeFileSync('docs/.nojekyll','')\"",
     "bank-audit": "node tools/bank-audit.mjs",
     "bank-audit:check": "node tools/bank-audit.mjs --check",
+    "bank-audit:lint": "node tools/bank-audit.mjs --lint",
     "review": "node tools/review.mjs",
     "shot": "node tools/review.mjs shot",
     "verify": "node tools/review.mjs verify"

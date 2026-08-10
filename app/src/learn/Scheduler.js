@@ -348,7 +348,9 @@ export class Scheduler {
     const phase = this.phaseFor(kpId);
     const form = this._acquisitionForm(kpId);
     const target = this.mastery.targetDifficulty(kpId, "acquire");
-    const difficulty = this._nearestVariant(kpId, target);
+    // Rotated on this node's own attempt count, so a learner walks the tier neighbourhood instead
+    // of being handed the same two committed items eight times. See `_nearestVariant`.
+    const difficulty = this._nearestVariant(kpId, target, s.attempts);
     const seconds = this.M.phases.secondsPerItemByPhase?.[phase] ?? SECONDS_DEFAULT;
     this.mastery.emit("learn:teach", { kpId, phase });
     return {
@@ -444,19 +446,34 @@ export class Scheduler {
     return wanted.filter((form) => this.mastery.isScorable(kpId, form, "solo", null));
   }
 
-  /** Nearest available variant tier to the target, on the logit scale. P17 owes five tiers per node. */
-  _nearestVariant(kpId, target) {
+  /**
+   * A variant tier near the target, ROTATED across this node's exposure.
+   *
+   * ------------------------------------------------------------------------------------------
+   * WHY THIS IS NOT "THE NEAREST ONE", WHICH IS WHAT IT USED TO BE
+   *
+   * It returned the single nearest offset, every time, for as long as theta sat still. A learner's
+   * whole exposure to one (knowledge point x form) is about eight items — a 22-session budget is
+   * ~780 items over 96 cells — and `ItemBank.select()` files the committed catalogue by tier, so
+   * all eight came out of the two or three items filed under that one tier. Measured on a real run,
+   * `distribute-numeric|generate` served 72 draws over 7 distinct committed items, and ONE fixed
+   * string answered 0.667 of them; those same seven items, met evenly, hand the same string 0.286.
+   * The leak was not in the item set, it was in the WEIGHTS, and no amount of re-pricing fixes a
+   * learner being handed the same two questions.
+   *
+   * So the offsets are ordered by distance from the target — the pitch §1.3 asks for is still the
+   * first choice and the far tail is still the last — and the exposure walks that order instead of
+   * standing on its head. It costs the acquisition pitch nothing that matters (the neighbourhood is
+   * ±0.6 logits) and it is what makes the bank audit's equal-weighted measurement describe what a
+   * learner actually meets.
+   * ------------------------------------------------------------------------------------------
+   */
+  _nearestVariant(kpId, target, rotation = 0) {
     const centre = this.graph.centre(kpId);
-    let best = centre;
-    let bestGap = Infinity;
-    for (const off of this.M.ability.variantOffsets) {
-      const gap = Math.abs(centre + off - target);
-      if (gap < bestGap) {
-        bestGap = gap;
-        best = centre + off;
-      }
-    }
-    return best;
+    const ranked = [...this.M.ability.variantOffsets].sort(
+      (a, b) => Math.abs(centre + a - target) - Math.abs(centre + b - target) || a - b
+    );
+    return centre + ranked[((rotation % ranked.length) + ranked.length) % ranked.length];
   }
 
   // ------------------------------------------------------------- teaching phase

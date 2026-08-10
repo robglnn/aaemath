@@ -211,13 +211,13 @@ class TiltAct {
     return [
       // The lean is fixed and it is not a verdict: a threshold's Sill rests on a detent, so the
       // pans are entitled to sit at different heights for as long as the claim stands.
-      { key: "near", tex: pan(c.near, "near"), up: 1.78, right: -3.2 },
-      { key: "sill", tex: this.atSill ? `\\rule{0.3em}{0.3em}\\,${rel}` : rel, up: 1.6, right: 0 },
-      { key: "far", tex: pan(c.far ?? [], "far"), up: 1.42, right: 3.2 },
-      { key: "detent", tex: notch, up: 0.9, right: 0 },
+      { key: "near", tex: pan(c.near, "near"), up: 0.17, right: -2.9 },
+      { key: "sill", tex: this.atSill ? `\\rule{0.3em}{0.3em}\\,${rel}` : rel, up: 0, right: 0 },
+      { key: "far", tex: pan(c.far ?? [], "far"), up: -0.17, right: 2.9 },
+      { key: "detent", tex: notch, up: -0.7, right: 0 },
       {
         key: "hand",
-        up: 0.2,
+        up: -1.36,
         right: 0,
         tex: this.atSill
           ? `\\rule{0.3em}{0.3em}\\;${this.dial === 1 ? "\\rule{1.4em}{0.06em}" : R.tex(rat(this.dial))}`

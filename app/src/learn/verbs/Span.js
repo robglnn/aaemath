@@ -224,8 +224,8 @@ class SpanAct {
     if (this.mode === "ratio") {
       const head = this.sockets[this.head];
       const other = this.sockets[(this.head + 1) % this.sockets.length];
-      rows.push({ key: "value", tex: `${head.name} = ${R.tex(head.value)}${other.name}`, up: 1.6 });
-      rows.push({ key: "deck", tex: this._deck(Math.abs(head.n)), up: 0.85 });
+      rows.push({ key: "value", tex: `${head.name} = ${R.tex(head.value)}${other.name}`, up: 0 });
+      rows.push({ key: "deck", tex: this._deck(Math.abs(head.n)), up: -0.72 });
       return rows;
     }
     // The solid square is the hand: a grip plate resting on the socket you are holding. It is a
@@ -234,8 +234,8 @@ class SpanAct {
       const body = `${s.name} = ${s.tex()}`;
       return i === this.grip && this.sockets.length > 1 ? `\\rule{0.34em}{0.34em}\\,${body}` : body;
     });
-    rows.push({ key: "value", tex: parts.join(",\\; ") || "\\rule{2.4em}{0.06em}", up: 1.6 });
-    rows.push({ key: "deck", tex: this._deck(Math.abs(this.socket?.n ?? 0)), up: 0.85 });
+    rows.push({ key: "value", tex: parts.join(",\\; ") || "\\rule{2.4em}{0.06em}", up: 0 });
+    rows.push({ key: "deck", tex: this._deck(Math.abs(this.socket?.n ?? 0)), up: -0.72 });
     return rows;
   }
 

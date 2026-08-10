@@ -1,0 +1,34 @@
+(node:4048) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+=== AFTER FIRST E ===
+verbs.phase: performing verb: span
+verbs.item: {"itemId":"var-meaning.seat/generate/1spsl3y","kpId":"var-meaning","form":"generate","answerType":"construction","objectClass":"Emitter","unknown":"t","stem":"t","given":["t = 5"]}
+verbs.state: {"mode":"cut","grip":0,"head":0,"fine":false,"acts":0,"sockets":[{"name":"p","n":0,"d":1,"charged":false},{"name":"q","n":0,"d":1,"charged":false}]}
+verbs.rows: [{"id":"verb-value","tex":"\\rule{0.34em}{0.34em}\\,p = 0,\\; q = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{0.35em}{0.14em}","em":0.66}]
+teaching.open: [90mundefined[39m phase: standing response: ""
+
+=== HOLD W FOR 1.5s (walking forward while a claim stands) ===
+teaching.response AFTER WALKING: "w"
+verbs.state: {"mode":"cut","grip":0,"head":0,"fine":false,"acts":10,"sockets":[{"name":"p","n":10,"d":1,"charged":true},{"name":"q","n":0,"d":1,"charged":false}]}
+verbs.rows: [{"id":"verb-value","tex":"\\rule{0.34em}{0.34em}\\,p = 10,\\; q = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{6.20em}{0.14em}","em":0.66}]
+
+=== HOLD A, then D, then SPACE (strafe + jump) ===
+teaching.response AFTER STRAFE+JUMP: "wad "
+presenter stood rows: ["\\text{Cut two sockets under different names that}","\\text{hold the same value.}","t","t = 5","wad \\;\\rule{1em}{1pt}"]
+
+=== PERFORM THE VERB: primary(Mouse0) taps, work axis, set down with E ===
+mastery probe BEFORE: {"theta":-0.8,"unlocked":0,"learning":32,"provisional":0,"mastered":0,"total":32,"level1Percent":0,"session":1,"responses":0,"dueNow":0,"due":[],"inFlight":["var-meaning"],"openEvents":[],"unscoredItems":0,"refusedUpward":0,"stats":{"items":0,"scoredItems":0,"unscoredItems":0,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":0,"creditsByDis
+after take+carry, state: {"mode":"cut","grip":2,"head":0,"fine":false,"acts":19,"sockets":[{"name":"p","n":10,"d":1,"charged":true},{"name":"q","n":0,"d":1,"charged":false},{"name":"r","n":7,"d":1,"charged":true},{"name":"s","n":0,"d":1,"charged":false}]}
+after take+carry, rows: [{"id":"verb-value","tex":"p = 10,\\; q = 0,\\; \\rule{0.34em}{0.34em}\\,r = 7,\\; s = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{4.34em}{0.14em}","em":0.66}]
+
+=== AFTER SET DOWN ===
+lastResponse: {"itemId":"var-meaning.seat/generate/1spsl3y","kpId":"var-meaning","verb":"span","response":"p = 10, q = 0, r = 7, s = 0","refusedChars":0,"latencyMs":13117,"scaffoldLevel":0,"acts":19,"at":14.62,"correct":false,"scored":true,"credited":false,"family":"var-meaning.seat","misconception":null,"form":"generate","phase":"solo","engineLatencyMs":13117,"read":"fail.seat.partial"}
+stats: {"presented":2,"posed":2,"unposed":0,"byVerb":{"span":2},"unposedByType":{},"committed":1,"correct":0,"familyOnWire":1,"refusedChars":0,"reads":1,"readsRefused":0,"shows":58,"hides":4,"respondHeard":1,"masteryHeard":1}
+rows now: [{"id":"verb-value","tex":"\\rule{0.34em}{0.34em}\\,x = 0,\\; y = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{0.35em}{0.14em}","em":0.66}]
+mastery probe AFTER: {"theta":-1.173476,"unlocked":0,"learning":32,"provisional":0,"mastered":0,"total":32,"level1Percent":0,"session":1,"responses":1,"dueNow":0,"due":[],"inFlight":["var-meaning"],"openEvents":[],"unscoredItems":0,"refusedUpward":0,"stats":{"items":1,"scoredItems":1,"unscoredItems":0,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":0,"credits
+
+=== TRACE COUNTS === {"learn:present":2,"math:show":73,"learn:respond":1,"learn:mastery":1,"math:hide":9}
+respond events: [{"itemId":"var-meaning.seat/generate/1spsl3y","kpId":"var-meaning","correct":false,"latencyMs":13117,"response":"p = 10, q = 0, r = 7, s = 0","form":"generate","phase":"solo","hinted":false,"scored":true,"credited":false,"family":"var-meaning.seat","difficulty":-1.3,"mode":"acquire","testOut":true,"reason":null}]
+mastery events: [{"kpId":"var-meaning","p":0.316788,"delta":-0.033212,"status":"learning"}]
+
+console errors: [33m0[39m []

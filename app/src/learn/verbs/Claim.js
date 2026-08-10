@@ -108,8 +108,8 @@ export const R = {
 // the tagged misconception `distributed-to-first-only`, and the world can draw the half-open bracket
 // that says so.
 
-export const term = (c, v = null) => ({ c, v: v ?? null });
-export const bundle = (k, inner) => ({ bundle: true, k, inner, reached: 0 });
+const term = (c, v = null) => ({ c, v: v ?? null });
+const bundle = (k, inner) => ({ bundle: true, k, inner, reached: 0 });
 export const isBundle = (t) => !!t && t.bundle === true;
 
 /** The load a bundle currently contributes: reached wards scaled, unreached wards as they stand. */
@@ -186,7 +186,7 @@ export function loadTex(load, firstIsBare = true) {
  * sign, which is not an object anybody can pick up. Round 1 shipped the second one and it read as
  * a typographical accident rather than as a grip.
  */
-export const GRIP = "\\rule{0.3em}{0.3em}\\,";
+const GRIP = "\\rule{0.3em}{0.3em}\\,";
 
 export function markedLoadTex(load, markIndex, mark = GRIP) {
   if (!load.length) return "0";
@@ -434,13 +434,6 @@ export const cloneClaim = (c) => ({
 });
 const cloneTerm = (t) => (isBundle(t) ? { bundle: true, k: t.k, inner: t.inner.map(cloneTerm), reached: t.reached } : term(t.c, t.v));
 
-/** Everything standing on both pans, in grip order: near pan first, far pan after. */
-export function grips(c) {
-  const out = c.near.map((t, i) => ({ side: "near", index: i, t }));
-  if (c.far) out.push(...c.far.map((t, i) => ({ side: "far", index: i, t })));
-  return out;
-}
-
 /**
  * Lift a term off its pan, walk it over the Sill and set it down. It turns around on the way
  * (Law 2), and because it left one pan and arrived on the other the claim is still level.
@@ -517,7 +510,7 @@ export function foldOpenBundles(c) {
   if (c.far) c.far = fold(c.far);
 }
 
-export const flipRel = (rel) => ({ ">=": "<=", "<=": ">=", ">": "<", "<": ">", "=": "=" })[rel] ?? rel;
+const flipRel = (rel) => ({ ">=": "<=", "<=": ">=", ">": "<", "<": ">", "=": "=" })[rel] ?? rel;
 
 /**
  * Walk round to the other side of the Sill: the pans exchange places and the relation turns with
@@ -575,10 +568,6 @@ export function claimTex(c) {
   const rel = { "=": "=", ">=": "\\ge", "<=": "\\le", ">": ">", "<": "<" }[c.rel] ?? "=";
   return `${near} ${rel} ${loadTex(c.far ?? [])}`;
 }
-
-/** Is there still a bundle standing shut anywhere on this claim? */
-export const hasShutBundle = (c) =>
-  [...c.near, ...(c.far ?? [])].some((t) => isBundle(t) && t.reached < t.inner.length);
 
 /** Are there still two terms of one kind standing apart on either pan? */
 export function ungathered(c) {

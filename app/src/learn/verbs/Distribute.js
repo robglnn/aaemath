@@ -115,11 +115,11 @@ class DistributeAct {
 
   rows() {
     const b = this.bundleTerm;
-    const rows = [{ key: "load", tex: loadTex(this.load), up: 1.6, right: 0 }];
+    const rows = [{ key: "load", tex: loadTex(this.load), up: 0, right: 0 }];
     const depth = (b?.reached ?? 0) + this.drive;
     rows.push({
       key: "hand",
-      up: 0.72,
+      up: -0.78,
       right: 0,
       // The value, standing as far into the lock as it has got. One notch per ward, and the last
       // notch is only as long as the push has carried it.

@@ -1,0 +1,63 @@
+(node:66104) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS  P19.1 the return half of the loop exists  —  unassisted keyboard play: learn:present 7 · math:show 170 · learn:respond 6 · learn:mastery 4 (was 1 / 11 / 0 / 0)
+PASS  P19.2 the cycle is ordered, not merely counted  —  6 present->show->respond cycles, 4 of them reaching learn:mastery; first: var-meaning present 1.28s -> show 1.28s -> respond 3.17s -> mastery 3.17s (p 0.316788)
+PASS  P19.3 the verbs are playable on a pad  —  synthetic Standard Gamepad only: learn:present 4 · learn:respond 4 · learn:mastery 4 · device "pad/xbox" · pad edges 20 · left stick reached the verb as {"x":0,"y":1}
+PASS  P19.10 a player who does the algebra closes the claim  —  span/pair on "x + y = 24,\\quad x - y = 0" — read off the screen, solved in the harness (two of it is 24, and the difference is 0), built with the pad, sent "x = 12, y = 12" · correct=true scored=true family=var-meaning.twin
+PASS  P19.4 every response reached Mastery with its family  —  familyOnWire 6 of respondHeard 6 — Mastery refuses a response whose family it was never told
+PASS  P19.5 no character of a response was mangled on the way in  —  ItemBank.ENTRY_GRAMMAR refused 0 characters of 6 committed responses
+PASS  P19.6 the verb reports no scaffold and the engine agrees  —  last response: verb "span" response "a = 8*b" scaffoldLevel 0 correct false scored true family var-meaning.relate misconception null
+PASS  P19.7 the runtime is wired to the presenter it commits through  —  probe("verbs").presenter = {"open":true,"phase":"standing"} · posed 7 · unposed 0
+PASS  P19.8 all five verbs pose and perform in the running game  —  span: 2 rows standing · balance: 4 rows standing · combine: 2 rows standing · distribute: 2 rows standing · tilt: 5 rows standing
+PASS  P19.11 the world answers the misconception, in the player's language  —  a lock left open at ward 1/2 stood 2 row(s): "\\text{The bundle opened onto one thing}" + "\\text{and shut on the other.}" — the same key in three locales: {"en":"The bracket opened onto one thing and shut on the other.","es":"El corchete se abrió sobre una cosa y se cerró sobre la otra.","pl":"Nawias otworzył się na jedno, a zamknął na drugim."}
+PASS  P19.9 nothing on the console  —  0 + 0 console errors
+
+---- verb captures ----
+span        posed=span        6m \ge 47
+   state {"mode":"one","grip":0,"head":0,"fine":false,"acts":4,"sockets":[{"name":"m","n":4,"d":1,"charged":true}]}
+   rows  verb-value=m = 4 | verb-deck=\rule{2.48em}{0.14em}
+   shot  review/shots/P19/verb-span.png
+balance     posed=balance     5x + 1 = 21
+   state {"claim":"1 = 21 - 5x","grip":0,"holding":"near:0","travel":0,"dial":1,"tilt":"0","oneSided":false,"lastAct":"carry","acts":1,"isolated":false}
+   rows  verb-near=\rule{0.3em}{0.3em}\,1 | verb-sill== | verb-far=21 - 5x | verb-hand=\rule{0.35em}{0.1em}
+   shot  review/shots/P19/verb-balance.png
+combine     posed=combine     5x + 5y - 7 - 2x
+   state {"load":"5y + 5x - 7 - 2x","grip":1,"push":0,"refused":false,"joins":0,"slides":1,"acts":1,"settled":3}
+   rows  verb-load=5y + \rule{0.3em}{0.3em}\,5x\rule{1.02em}{0em}- 7 - 2x | verb-hand=\rule{0.35em}{0.12em}
+   shot  review/shots/P19/verb-combine.png
+distribute  posed=distribute  4\left(4x + 9\right)
+   state {"load":"16x + 4\\left(9\\right)","wards":2,"reached":1,"drive":0,"acts":1}
+   rows  verb-load=16x + 4\left(9\right) | verb-hand=4\;\rule{1.25em}{0.12em}\;\rule{0.24em}{0.04em}
+   shot  review/shots/P19/verb-distribute.png
+tilt        posed=tilt        -5x < -5
+   state {"claim":"0 < -5 + 5x","admits":"below","grip":2,"holding":"far:1","dial":1,"travel":0,"railTurns":0,"markTurns":0,"acts":1,"isolated":false}
+   rows  verb-near=0 | verb-sill=< | verb-far=-5 + \rule{0.3em}{0.3em}\,5x | verb-detent=\rule{1.5em}{0.11em}\rule{0.34em}{0.34em}\rule{0.35em}{0.03em} | verb-hand=\rule{0.20em}{0.1em}
+   shot  review/shots/P19/verb-tilt.png
+
+---- unassisted keyboard trace (math:show/hide elided) ----
+   1.28  learn:teach    var-meaning  
+   1.28  learn:present  var-meaning var-meaning.seat/generate/1spsl3y 
+   3.17  learn:respond  var-meaning var-meaning.seat/generate/1spsl3y correct=false scored=true family=var-meaning.seat
+   3.17  learn:mastery  var-meaning  
+   5.28  learn:teach    var-meaning  
+   5.28  learn:present  var-meaning var-meaning.twin/construct/1vlr62k 
+   7.05  learn:respond  var-meaning var-meaning.twin/construct/1vlr62k correct=false scored=false family=var-meaning.twin
+   9.13  learn:teach    var-meaning  
+   9.13  learn:present  var-meaning var-meaning.twin/construct/p1bbch 
+  10.92  learn:respond  var-meaning var-meaning.twin/construct/p1bbch correct=false scored=true family=var-meaning.twin
+  10.92  learn:mastery  var-meaning  
+     13  learn:teach    var-meaning  
+     13  learn:present  var-meaning var-meaning.relate/construct/1pv16h8 
+   14.8  learn:respond  var-meaning var-meaning.relate/construct/1pv16h8 correct=false scored=false family=var-meaning.relate
+   16.9  learn:teach    var-meaning  
+   16.9  learn:present  var-meaning var-meaning.relate/construct/n5wzld 
+  18.68  learn:respond  var-meaning var-meaning.relate/construct/n5wzld correct=false scored=true family=var-meaning.relate
+  18.68  learn:mastery  var-meaning  
+   20.8  learn:teach    var-meaning  
+   20.8  learn:present  var-meaning var-meaning.relate/construct/1pvg02w 
+  22.57  learn:respond  var-meaning var-meaning.relate/construct/1pvg02w correct=false scored=true family=var-meaning.relate
+  22.57  learn:mastery  var-meaning  
+  24.68  learn:teach    var-meaning  
+  24.68  learn:present  var-meaning var-meaning.twin/construct/g1so14 
+
+11/11 claims pass · evidence review/measure/evidence/P19.json

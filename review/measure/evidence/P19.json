@@ -3,12 +3,12 @@
   {
    "id": "P19.1 the return half of the loop exists",
    "pass": true,
-   "detail": "unassisted keyboard play: learn:present 7 · math:show 163 · learn:respond 6 · learn:mastery 4 (was 1 / 11 / 0 / 0)"
+   "detail": "unassisted keyboard play: learn:present 7 · math:show 170 · learn:respond 6 · learn:mastery 4 (was 1 / 11 / 0 / 0)"
   },
   {
    "id": "P19.2 the cycle is ordered, not merely counted",
    "pass": true,
-   "detail": "6 present->show->respond cycles, 4 of them reaching learn:mastery; first: var-meaning present 1.3s -> show 1.3s -> respond 3.3s -> mastery 3.3s (p 0.316788)"
+   "detail": "6 present->show->respond cycles, 4 of them reaching learn:mastery; first: var-meaning present 1.28s -> show 1.28s -> respond 3.17s -> mastery 3.17s (p 0.316788)"
   },
   {
    "id": "P19.3 the verbs are playable on a pad",
@@ -33,7 +33,7 @@
   {
    "id": "P19.6 the verb reports no scaffold and the engine agrees",
    "pass": true,
-   "detail": "last response: verb \"span\" response \"x = 8, y = 0\" scaffoldLevel 0 correct false scored true family var-meaning.twin misconception null"
+   "detail": "last response: verb \"span\" response \"a = 8*b\" scaffoldLevel 0 correct false scored true family var-meaning.relate misconception null"
   },
   {
    "id": "P19.7 the runtime is wired to the presenter it commits through",
@@ -48,7 +48,7 @@
   {
    "id": "P19.11 the world answers the misconception, in the player's language",
    "pass": true,
-   "detail": "a lock left open at ward 1/2 stood \"\\\\text{The bundle opened onto one thing and shut on the other.}\" — the same key in three locales: {\"en\":\"The bracket opened onto one thing and shut on the other.\",\"es\":\"El corchete se abrió sobre una cosa y se cerró sobre la otra.\",\"pl\":\"Nawias otworzył się na jedno, a zamknął na drugim.\"}"
+   "detail": "a lock left open at ward 1/2 stood 2 row(s): \"\\\\text{The bundle opened onto one thing}\" + \"\\\\text{and shut on the other.}\" — the same key in three locales: {\"en\":\"The bracket opened onto one thing and shut on the other.\",\"es\":\"El corchete se abrió sobre una cosa y se cerró sobre la otra.\",\"pl\":\"Nawias otworzył się na jedno, a zamknął na drugim.\"}"
   },
   {
    "id": "P19.9 nothing on the console",
@@ -60,37 +60,37 @@
   "keyboard": {
    "counts": {
     "learn:teach": 7,
-    "math:show": 163,
     "learn:present": 7,
+    "math:show": 170,
     "learn:respond": 6,
     "learn:mastery": 4,
-    "math:hide": 46
+    "math:hide": 52
    },
    "cycles": [
     {
      "item": "var-meaning.seat/generate/1spsl3y",
      "kpId": "var-meaning",
-     "at": 1.3,
-     "show": 1.3,
-     "respond": 3.3,
+     "at": 1.28,
+     "show": 1.28,
+     "respond": 3.17,
      "correct": false,
      "scored": true,
      "family": "var-meaning.seat",
      "mastery": {
-      "t": 3.3,
+      "t": 3.17,
       "p": 0.316788,
       "delta": -0.033212
      }
     },
     {
-     "item": "var-meaning.relate/construct/1pvg02w",
+     "item": "var-meaning.twin/construct/1vlr62k",
      "kpId": "var-meaning",
-     "at": 5.42,
-     "show": 5.42,
+     "at": 5.28,
+     "show": 5.28,
      "respond": 7.05,
      "correct": false,
      "scored": false,
-     "family": "var-meaning.relate",
+     "family": "var-meaning.twin",
      "mastery": null
     },
     {
@@ -98,12 +98,12 @@
      "kpId": "var-meaning",
      "at": 9.13,
      "show": 9.13,
-     "respond": 10.93,
+     "respond": 10.92,
      "correct": false,
      "scored": true,
      "family": "var-meaning.twin",
      "mastery": {
-      "t": 10.93,
+      "t": 10.92,
       "p": 0.311905,
       "delta": -0.004883
      }
@@ -111,9 +111,9 @@
     {
      "item": "var-meaning.relate/construct/1pv16h8",
      "kpId": "var-meaning",
-     "at": 13.02,
-     "show": 13.02,
-     "respond": 14.82,
+     "at": 13,
+     "show": 13,
+     "respond": 14.8,
      "correct": false,
      "scored": false,
      "family": "var-meaning.relate",
@@ -122,8 +122,8 @@
     {
      "item": "var-meaning.relate/construct/n5wzld",
      "kpId": "var-meaning",
-     "at": 16.92,
-     "show": 16.92,
+     "at": 16.9,
+     "show": 16.9,
      "respond": 18.68,
      "correct": false,
      "scored": true,
@@ -135,18 +135,18 @@
      }
     },
     {
-     "item": "var-meaning.twin/construct/1vlr62k",
+     "item": "var-meaning.relate/construct/1pvg02w",
      "kpId": "var-meaning",
      "at": 20.8,
      "show": 20.8,
-     "respond": 22.55,
+     "respond": 22.57,
      "correct": false,
      "scored": true,
-     "family": "var-meaning.twin",
+     "family": "var-meaning.relate",
      "mastery": {
-      "t": 22.55,
-      "p": 0.311403,
-      "delta": -0.001804
+      "t": 22.57,
+      "p": 0.313399,
+      "delta": 0.000192
      }
     }
    ],
@@ -202,6 +202,7 @@
      }
     },
     "restands": 1,
+    "columnTop": -0.09,
     "standing": [
      "verb-value",
      "verb-deck"
@@ -219,23 +220,23 @@
      }
     ],
     "lastResponse": {
-     "itemId": "var-meaning.twin/construct/1vlr62k",
+     "itemId": "var-meaning.relate/construct/1pvg02w",
      "kpId": "var-meaning",
      "verb": "span",
-     "response": "x = 8, y = 0",
+     "response": "a = 8*b",
      "refusedChars": 0,
-     "latencyMs": 1733,
+     "latencyMs": 1750,
      "scaffoldLevel": 0,
      "acts": 8,
-     "at": 22.53,
+     "at": 22.55,
      "correct": false,
      "scored": true,
      "credited": false,
-     "family": "var-meaning.twin",
+     "family": "var-meaning.relate",
      "misconception": null,
      "form": "construct",
      "phase": "guided-1",
-     "engineLatencyMs": 1733,
+     "engineLatencyMs": 1750,
      "read": "fail.slip"
     },
     "verbs": [
@@ -259,12 +260,12 @@
      "refusedChars": 0,
      "reads": 6,
      "readsRefused": 0,
-     "shows": 120,
-     "hides": 18,
+     "shows": 127,
+     "hides": 24,
      "respondHeard": 6,
      "masteryHeard": 4
     },
-    "simTime": 25.2,
+    "simTime": 25.22,
     "presenter": {
      "open": true,
      "phase": "standing"
@@ -280,7 +281,7 @@
    "trace": [
     {
      "n": "learn:teach",
-     "t": 1.3,
+     "t": 1.28,
      "id": null,
      "kpId": "var-meaning",
      "correct": null,
@@ -292,7 +293,7 @@
     },
     {
      "n": "learn:present",
-     "t": 1.3,
+     "t": 1.28,
      "id": "var-meaning.seat/generate/1spsl3y",
      "kpId": "var-meaning",
      "correct": null,
@@ -304,7 +305,7 @@
     },
     {
      "n": "learn:respond",
-     "t": 3.3,
+     "t": 3.17,
      "id": "var-meaning.seat/generate/1spsl3y",
      "kpId": "var-meaning",
      "correct": false,
@@ -316,7 +317,7 @@
     },
     {
      "n": "learn:mastery",
-     "t": 3.3,
+     "t": 3.17,
      "id": null,
      "kpId": "var-meaning",
      "correct": null,
@@ -328,7 +329,7 @@
     },
     {
      "n": "learn:teach",
-     "t": 5.42,
+     "t": 5.28,
      "id": null,
      "kpId": "var-meaning",
      "correct": null,
@@ -340,12 +341,12 @@
     },
     {
      "n": "learn:present",
-     "t": 5.42,
-     "id": "var-meaning.relate/construct/1pvg02w",
+     "t": 5.28,
+     "id": "var-meaning.twin/construct/1vlr62k",
      "kpId": "var-meaning",
      "correct": null,
      "scored": null,
-     "family": "var-meaning.relate",
+     "family": "var-meaning.twin",
      "hinted": null,
      "p": null,
      "delta": null
@@ -353,11 +354,11 @@
     {
      "n": "learn:respond",
      "t": 7.05,
-     "id": "var-meaning.relate/construct/1pvg02w",
+     "id": "var-meaning.twin/construct/1vlr62k",
      "kpId": "var-meaning",
      "correct": false,
      "scored": false,
-     "family": "var-meaning.relate",
+     "family": "var-meaning.twin",
      "hinted": true,
      "p": null,
      "delta": null
@@ -388,7 +389,7 @@
     },
     {
      "n": "learn:respond",
-     "t": 10.93,
+     "t": 10.92,
      "id": "var-meaning.twin/construct/p1bbch",
      "kpId": "var-meaning",
      "correct": false,
@@ -400,7 +401,7 @@
     },
     {
      "n": "learn:mastery",
-     "t": 10.93,
+     "t": 10.92,
      "id": null,
      "kpId": "var-meaning",
      "correct": null,
@@ -412,7 +413,7 @@
     },
     {
      "n": "learn:teach",
-     "t": 13.02,
+     "t": 13,
      "id": null,
      "kpId": "var-meaning",
      "correct": null,
@@ -424,7 +425,7 @@
     },
     {
      "n": "learn:present",
-     "t": 13.02,
+     "t": 13,
      "id": "var-meaning.relate/construct/1pv16h8",
      "kpId": "var-meaning",
      "correct": null,
@@ -436,7 +437,7 @@
     },
     {
      "n": "learn:respond",
-     "t": 14.82,
+     "t": 14.8,
      "id": "var-meaning.relate/construct/1pv16h8",
      "kpId": "var-meaning",
      "correct": false,
@@ -448,7 +449,7 @@
     },
     {
      "n": "learn:teach",
-     "t": 16.92,
+     "t": 16.9,
      "id": null,
      "kpId": "var-meaning",
      "correct": null,
@@ -460,7 +461,7 @@
     },
     {
      "n": "learn:present",
-     "t": 16.92,
+     "t": 16.9,
      "id": "var-meaning.relate/construct/n5wzld",
      "kpId": "var-meaning",
      "correct": null,
@@ -509,42 +510,42 @@
     {
      "n": "learn:present",
      "t": 20.8,
-     "id": "var-meaning.twin/construct/1vlr62k",
+     "id": "var-meaning.relate/construct/1pvg02w",
      "kpId": "var-meaning",
      "correct": null,
      "scored": null,
-     "family": "var-meaning.twin",
+     "family": "var-meaning.relate",
      "hinted": null,
      "p": null,
      "delta": null
     },
     {
      "n": "learn:respond",
-     "t": 22.55,
-     "id": "var-meaning.twin/construct/1vlr62k",
+     "t": 22.57,
+     "id": "var-meaning.relate/construct/1pvg02w",
      "kpId": "var-meaning",
      "correct": false,
      "scored": true,
-     "family": "var-meaning.twin",
+     "family": "var-meaning.relate",
      "hinted": false,
      "p": null,
      "delta": null
     },
     {
      "n": "learn:mastery",
-     "t": 22.55,
+     "t": 22.57,
      "id": null,
      "kpId": "var-meaning",
      "correct": null,
      "scored": null,
      "family": null,
      "hinted": null,
-     "p": 0.311403,
-     "delta": -0.001804
+     "p": 0.313399,
+     "delta": 0.000192
     },
     {
      "n": "learn:teach",
-     "t": 24.67,
+     "t": 24.68,
      "id": null,
      "kpId": "var-meaning",
      "correct": null,
@@ -556,7 +557,7 @@
     },
     {
      "n": "learn:present",
-     "t": 24.67,
+     "t": 24.68,
      "id": "var-meaning.twin/construct/g1so14",
      "kpId": "var-meaning",
      "correct": null,
@@ -573,7 +574,7 @@
     "math:show": 94,
     "learn:respond": 4,
     "learn:mastery": 4,
-    "math:hide": 26,
+    "math:hide": 30,
     "learn:teach": 4,
     "learn:present": 4
    },
@@ -581,46 +582,46 @@
     {
      "item": "var-meaning.twin/construct/ce162e",
      "kpId": "var-meaning",
-     "at": 32.22,
-     "show": 32.22,
-     "respond": 34.17,
+     "at": 32.02,
+     "show": 32.02,
+     "respond": 33.98,
      "correct": false,
      "scored": true,
      "family": "var-meaning.twin",
      "mastery": {
-      "t": 34.17,
-      "p": 0.311117,
-      "delta": -0.000035
+      "t": 33.98,
+      "p": 0.311155,
+      "delta": -0.000274
      }
     },
     {
      "item": "var-meaning.twin/construct/1t5gd5s",
      "kpId": "var-meaning",
-     "at": 36.28,
-     "show": 36.28,
-     "respond": 38.25,
+     "at": 36.1,
+     "show": 36.1,
+     "respond": 38.07,
      "correct": false,
      "scored": true,
      "family": "var-meaning.twin",
      "mastery": {
-      "t": 38.25,
-      "p": 0.311112,
-      "delta": -0.000005
+      "t": 38.07,
+      "p": 0.311117,
+      "delta": -0.000038
      }
     },
     {
      "item": "var-meaning.relate/construct/n68np2",
      "kpId": "var-meaning",
-     "at": 40.37,
-     "show": 40.37,
-     "respond": 42.33,
+     "at": 40.18,
+     "show": 40.18,
+     "respond": 42.15,
      "correct": false,
      "scored": true,
      "family": "var-meaning.relate",
      "mastery": {
-      "t": 42.33,
-      "p": 0.31309,
-      "delta": 0.001978
+      "t": 42.15,
+      "p": 0.313091,
+      "delta": 0.001974
      }
     }
    ],
@@ -707,6 +708,7 @@
      }
     },
     "restands": 1,
+    "columnTop": -0.09,
     "standing": [
      "verb-value",
      "verb-deck"
@@ -732,7 +734,7 @@
      "latencyMs": 1950,
      "scaffoldLevel": 0,
      "acts": 7,
-     "at": 42.32,
+     "at": 42.13,
      "correct": false,
      "scored": true,
      "credited": false,
@@ -764,12 +766,12 @@
      "refusedChars": 0,
      "reads": 10,
      "readsRefused": 0,
-     "shows": 196,
-     "hides": 30,
+     "shows": 203,
+     "hides": 40,
      "respondHeard": 10,
      "masteryHeard": 8
     },
-    "simTime": 45.43,
+    "simTime": 45.25,
     "presenter": {
      "open": true,
      "phase": "standing"
@@ -1028,9 +1030,14 @@
      "em": 0.66
     },
     {
-     "id": "verb-read",
-     "tex": "\\text{The bundle opened onto one thing and shut on the other.}",
-     "em": 0.6
+     "id": "verb-read-0",
+     "tex": "\\text{The bundle opened onto one thing}",
+     "em": 0.58
+    },
+    {
+     "id": "verb-read-1",
+     "tex": "\\text{and shut on the other.}",
+     "em": 0.58
     }
    ],
    "state": {

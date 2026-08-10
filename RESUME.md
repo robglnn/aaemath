@@ -279,7 +279,33 @@ nothing on the gameplay path reaches them — *"the warm is a one-shot inside bo
 on the gameplay path ever asks the bank for an item"*, and *"the shipped path never reports item
 family, so Mastery.respond refuses every response on the 24 cells with refused families."*
 
-## 6d. Learning loop: forward half connected, return half MISSING (measured 2026-08-10)
+## 6d. THE LEARNING LOOP IS CLOSED (measured 2026-08-10, after P19)
+
+`node review/measure/loop-trace.mjs`, run independently of the builder, on the shipped app:
+
+```
+learn:present 3 · math:show 51 · learn:respond 2 · learn:mastery 1     <- A learning cycle FIRED
+baseline before P19:  present 1 · show 15 · respond 0 · mastery 0
+```
+
+**A player can now answer a question and be granted mastery for it.** Before P19 that was impossible
+in the running game — every mastery figure this project had produced came from offline harnesses
+driving `Mastery.js` directly.
+
+The five verbs are SPAN / BALANCE / COMBINE / DISTRIBUTE / TILT, plus `Claim.js` physics and a
+`Verbs.js` runtime. Two integrity properties worth preserving:
+ - **No verb file reads an answer.** Verbs submit what the hands built; they cannot check their own work.
+ - **`Mastery` is the sole emitter of `learn:respond`/`learn:mastery`.** A verb cannot award itself
+   credit the engine did not grant. Given three separate critics found ways scaffolded practice could
+   launder into unearned mastery, one authoritative place to say "this counts" is worth the indirection.
+
+Still open on this path:
+ - `math:show` fires ~17x per presentation (51 for 3). Almost certainly redundant re-issue rather than
+   one show per item; check before building anything on the show/hide pair.
+ - Contrast (gate G10): the presented text measures 1.85-2.10:1 against the dusk sky, five of seven
+   rows below the 3:1 floor.
+
+### Historical: how it looked before P19 (kept because the diagnosis technique is reusable)
 
 `node review/measure/loop-trace.mjs` drives the shipped app and records the ordered signal trace.
 Result after the wiring wave:

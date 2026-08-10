@@ -184,10 +184,10 @@ class CombineAct {
     const tail = this.load.slice(this.grip + 1);
     const spacer = tail.length ? `\\rule{${gap.toFixed(2)}em}{0em}` : "";
     const rest = tail.length ? loadTex(tail, false) : "";
-    const rows = [{ key: "load", tex: `${head}${spacer}${rest}`.trim() || "0", up: 1.6, right: 0 }];
+    const rows = [{ key: "load", tex: `${head}${spacer}${rest}`.trim() || "0", up: 0, right: 0 }];
     rows.push({
       key: "hand",
-      up: 0.72,
+      up: -0.78,
       right: 0,
       // A bar as long as the gathering has got: it grows as terms go together and it stops growing
       // the instant a kind refuses one.

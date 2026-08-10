@@ -97,11 +97,30 @@ export const HAND = {
    * Three rows at 34 characters is 102, and the longest `fail.*` spelling in any of the three
    * shipped locales is 63.
    */
-  readUp: -0.55,
+  readUp: -1.7,
   readEm: 0.58,
   readStep: 0.62,
   readWrap: 34,
   readRows: 3,
+  /**
+   * WHERE THE HANDS SIT RELATIVE TO THE CLAIM, AND WHY IT IS MEASURED RATHER THAN CHOSEN.
+   *
+   * Round 1 stood this column at a fixed height and `review/shots/P19/01-keyboard-cycle.png` shows
+   * what that is worth: the presenter's stem `x + y = 14,\quad x - y = 0` and the verb's own
+   * `x = 0, y = 0` drawn through each other, both `depthTest:false` at the same renderOrder, both
+   * unreadable. `math/TexPanel.js`'s header calls that "the ninth way to lose a claim" — the
+   * compositor turning a true statement into an unreadable one — and it is worse here than between
+   * two authored claims, because one of the two is the thing the player is doing.
+   *
+   * The presenter's column is not a fixed depth either: it grows a row per `given`, per `working`
+   * line, per wrapped line of the question and per line of a said claim, so its lowest row lands
+   * anywhere from `up 6.3` to `up -3.6` depending on the item. So the hands READ where it ends —
+   * `probe("teaching").stood[].up`, published for exactly this kind of question — and stand a row
+   * under the lowest of them, converted from the presenter's depth to this one so the two columns
+   * are separated ON SCREEN and not merely in metres.
+   */
+  gapUnderEntry: 1.7,
+  presenterForward: 14,
   /** Sim seconds a read stands after the claim falls. Shorter than Teaching's own feedback window. */
   readSeconds: 1.5,
 };
@@ -372,11 +391,16 @@ export class VerbRuntime {
 
     this.act = act;
     this.anchor = this.basis();
+    // Sampled on the first render, not here: the presenter emits `learn:present` BEFORE it stands
+    // its own rows, so its column depth is still the previous claim's at this instant.
+    this._topUp = null;
     this.phase = "performing";
     this.startedAt = this.simTime;
     this.stats.posed += 1;
     this.stats.byVerb[act.id] = (this.stats.byVerb[act.id] ?? 0) + 1;
-    this._render();
+    // NOT rendered here. `Teaching._present()` emits `learn:present` and only THEN stands its own
+    // rows, so a column measured inside this handler is measured against the claim before this one.
+    // The first `fixed()` is the earliest moment the presenter can honestly be asked how tall it is.
   }
 
   // ------------------------------------------------------------------------ driving
@@ -601,7 +625,35 @@ export class VerbRuntime {
     if (!b) return null;
     const f = HAND.forward;
     const r = (socket.right ?? 0) + HAND.right;
-    return [b.o[0] + b.f[0] * f + b.r[0] * r, b.o[1] + (socket.up ?? 0), b.o[2] + b.f[1] * f + b.r[1] * r];
+    return [b.o[0] + b.f[0] * f + b.r[0] * r, b.o[1] + this._top() + (socket.up ?? 0), b.o[2] + b.f[1] * f + b.r[1] * r];
+  }
+
+  /**
+   * The top of the hands' column: one row under whatever row the presenter's column ends on,
+   * expressed at this column's depth so the separation is the one the player sees.
+   *
+   * Sampled once per claim, on the first render after posing rather than on the signal itself,
+   * because `Teaching._display()` runs AFTER it emits `learn:present` — read it any earlier and the
+   * height belongs to the claim before this one.
+   */
+  _top() {
+    if (this._topUp != null) return this._topUp;
+    let lowest = 1.56;
+    try {
+      const p = this.getTeaching()?.probe?.();
+      // Every row the presenter ACTUALLY stood for this item, with its height — not just the entry
+      // slot. A wrapped `ask` and a two-line said claim are rows too, and round 2 collided with one
+      // of them by trusting `entryUp` alone.
+      const ups = (p?.stood ?? []).map((r) => r.up).filter((v) => Number.isFinite(v));
+      if (ups.length) lowest = Math.min(...ups);
+      else if (Number.isFinite(p?.entryUp)) lowest = p.entryUp;
+    } catch {
+      /* a presenter that cannot describe itself gets the default */
+    }
+    // Equal screen angle needs `up` proportional to depth (tan θ = up / forward), so the gap is
+    // expressed at the presenter's depth and converted to this one.
+    this._topUp = (lowest - HAND.gapUnderEntry) * (HAND.forward / HAND.presenterForward);
+    return this._topUp;
   }
 
   _show(key, tex, socket, force = false) {
@@ -670,6 +722,7 @@ export class VerbRuntime {
     this.act = null;
     this.ctx = null;
     this.anchor = null;
+    this._topUp = null;
     this.phase = "idle";
   }
 
@@ -707,6 +760,7 @@ export class VerbRuntime {
         held: [...this.hand.held],
       },
       restands: this.restands,
+      columnTop: this._topUp == null ? null : round2(this._topUp),
       standing: [...this.standing.keys()],
       rows: [...this.standing.entries()].map(([id, r]) => ({ id, tex: r.tex, em: r.em })),
       lastResponse: this.lastResponse ? { ...this.lastResponse } : null,

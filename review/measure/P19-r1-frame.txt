@@ -1,0 +1,205 @@
+(node:67380) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+== A: posed, body has not moved ==
+{
+ "verb": "span",
+ "phase": "performing",
+ "camY": 60.6,
+ "w": 1280,
+ "h": 720,
+ "panels": [
+  {
+   "id": "teach-ask-0",
+   "at": [
+    12.6,
+    65.8,
+    205.2
+   ],
+   "sx": 705,
+   "sy": 61,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "teach-ask-1",
+   "at": [
+    12.6,
+    64.6,
+    205.2
+   ],
+   "sx": 704,
+   "sy": 114,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "teach-claim",
+   "at": [
+    12.6,
+    63.5,
+    205.2
+   ],
+   "sx": 703,
+   "sy": 167,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "teach-given-0",
+   "at": [
+    12.6,
+    62.2,
+    205.2
+   ],
+   "sx": 703,
+   "sy": 225,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "teach-entry",
+   "at": [
+    12.6,
+    60.9,
+    205.2
+   ],
+   "sx": 702,
+   "sy": 283,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "verb-value",
+   "at": [
+    12.6,
+    59.6,
+    209.7
+   ],
+   "sx": 730,
+   "sy": 356,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "verb-deck",
+   "at": [
+    12.6,
+    58.9,
+    209.7
+   ],
+   "sx": 730,
+   "sy": 400,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  }
+ ]
+}
+
+== B: verb worked with the TRIGGER (Mouse0 held) — body does not walk ==
+{
+ "verb": "span",
+ "phase": "performing",
+ "camY": 60.6,
+ "w": 1280,
+ "h": 720,
+ "panels": [
+  {
+   "id": "teach-ask-0",
+   "at": [
+    12.6,
+    65.8,
+    205.2
+   ],
+   "sx": 705,
+   "sy": 61,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "teach-ask-1",
+   "at": [
+    12.6,
+    64.6,
+    205.2
+   ],
+   "sx": 704,
+   "sy": 114,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "teach-claim",
+   "at": [
+    12.6,
+    63.5,
+    205.2
+   ],
+   "sx": 703,
+   "sy": 167,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "teach-given-0",
+   "at": [
+    12.6,
+    62.2,
+    205.2
+   ],
+   "sx": 703,
+   "sy": 225,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "teach-entry",
+   "at": [
+    12.6,
+    60.9,
+    205.2
+   ],
+   "sx": 702,
+   "sy": 283,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "verb-value",
+   "at": [
+    12.6,
+    59.6,
+    209.7
+   ],
+   "sx": 730,
+   "sy": 356,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  },
+  {
+   "id": "verb-deck",
+   "at": [
+    12.6,
+    58.9,
+    209.7
+   ],
+   "sx": 730,
+   "sy": 400,
+   "behind": false,
+   "onScreen": true,
+   "visible": true
+  }
+ ]
+}

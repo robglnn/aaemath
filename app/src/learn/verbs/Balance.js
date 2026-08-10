@@ -56,7 +56,7 @@ function gripRow(c) {
   return [...near, { kind: "sill" }, ...far];
 }
 
-export class BalanceAct {
+class BalanceAct {
   constructor(ctx, claim, opts = {}) {
     this.id = opts.id ?? "balance";
     this.ctx = ctx;
@@ -277,12 +277,12 @@ export class BalanceAct {
     const travelling = this.travel !== 0 && held?.kind === "term";
     const sill = this.atSill ? `\\rule{0.3em}{0.3em}\\,${rel}` : rel;
     return [
-      { key: "near", tex: pan(c.near, "near"), up: 1.6 + lean, right: -3.2 },
-      { key: "sill", tex: sill, up: 1.6, right: 0 },
-      { key: "far", tex: pan(c.far ?? [], "far"), up: 1.6 - lean, right: 3.2 },
+      { key: "near", tex: pan(c.near, "near"), up: lean, right: -2.9 },
+      { key: "sill", tex: sill, up: 0, right: 0 },
+      { key: "far", tex: pan(c.far ?? [], "far"), up: -lean, right: 2.9 },
       {
         key: "hand",
-        up: 0.72,
+        up: -0.78,
         right: 0,
         tex: this.atSill
           ? `\\rule{0.3em}{0.3em}\\;${this.dial === 1 ? "\\rule{1.4em}{0.06em}" : R.tex(rat(this.dial))}`

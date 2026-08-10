@@ -39,6 +39,33 @@ const claim = (id, pass, detail) => {
   console.log(`${pass ? "PASS" : "FAIL"}  ${id}  —  ${detail}`);
 };
 
+/**
+ * Advance game time in coarse slices.
+ *
+ * The kernel runs simulation at a fixed 60 Hz no matter how big the slice is, so every verb, every
+ * input edge and every timer sees exactly the same steps — only the number of RENDERS changes, and a
+ * SwiftShader render of this scene costs about a fifth of a second. At the harness's default slice
+ * this script spends nine minutes of wall clock drawing frames nobody reads. Captures still render
+ * normally, because a capture is the one place a frame matters.
+ */
+const fast = (d, seconds) => d.play(seconds, 1 / 10);
+const holdFast = async (d, key, seconds) => {
+  await d.page.keyboard.down(key);
+  await fast(d, seconds);
+  await d.page.keyboard.up(key);
+};
+/** Tap a pad button n times, in batches the one-transition-per-step queue can actually absorb. */
+const tapN = async (d, btn, n) => {
+  for (let i = 0; i < n; i += 3) {
+    const k = Math.min(3, n - i);
+    await d.run(([b, c]) => {
+      for (let j = 0; j < c; j += 1) window.__vsInput.tap(b);
+      return true;
+    }, [btn, k]);
+    await fast(d, 0.14);
+  }
+};
+
 const installTrace = (d) =>
   d.run((names) => {
     window.__p19 = [];
@@ -96,18 +123,18 @@ function orderedCycle(trace) {
 const evidence = { keyboard: null, pad: null, captures: [] };
 
 await openGame({ width: 1280, height: 720 }, async (d) => {
-  await d.play(1.0);
+  await fast(d, 1.0);
   await installTrace(d);
 
   // ---------------------------------------------------------------- keyboard
   // Exactly the vocabulary `review/measure/loop-trace.mjs` uses: walk, take the claim on, walk the
   // deck out, set it down. No key here does anything a player's key would not.
   await d.page.keyboard.press("KeyE"); // take the mathematics on
-  await d.play(0.6);
-  for (let i = 0; i < 7; i += 1) {
-    await d.hold("KeyW", 1.1); // walk the deck out / carry the term
+  await fast(d, 0.6);
+  for (let i = 0; i < 6; i += 1) {
+    await holdFast(d, "KeyW", 1.2); // walk the deck out / carry the term
     await d.page.keyboard.press("KeyE"); // set it down
-    await d.play(2.6); // the mark stands, then the next claim
+    await fast(d, 2.4); // the mark stands, then the next claim
   }
 
   const kb = await d.run(() => ({ trace: window.__p19.slice(), verbs: window.__vs.probe("verbs"), teaching: window.__vs.probe("teaching") }));
@@ -126,33 +153,135 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
     window.__vsInput.connect({ style: "xbox" });
     return true;
   });
-  await d.play(0.4);
+  await fast(d, 0.4);
   await d.run(() => window.__vsInput.tap("X")); // interact — take the claim on
-  await d.play(0.8);
-  for (let i = 0; i < 6; i += 1) {
+  await fast(d, 0.8);
+  for (let i = 0; i < 4; i += 1) {
     await d.run(() => window.__vsInput.stick("left", 0, -1)); // ly is negative forward, W3C standard
-    await d.play(1.1);
+    await fast(d, 1.2);
     await d.run(() => window.__vsInput.stick("left", 0, 0));
-    await d.play(0.2);
+    await fast(d, 0.2);
     await d.run(() => window.__vsInput.tap("X"));
-    await d.play(2.6);
+    await fast(d, 2.4);
   }
+  const midPush = await d.run(async () => {
+    window.__vsInput.stick("left", 0, -1);
+    window.__vs.advance(0.3);
+    const v = window.__vs.probe("verbs");
+    window.__vsInput.stick("left", 0, 0);
+    return { move: v?.hand?.move ?? null, state: v?.state ?? null };
+  });
+  await fast(d, 0.3);
+
   const pad = await d.run(() => ({
     trace: window.__p19.slice(),
     verbs: window.__vs.probe("verbs"),
     input: window.__vs.probe("input"),
   }));
+  evidence.padMidPush = midPush;
   const padCounts = {};
   for (const e of pad.trace) padCounts[e.n] = (padCounts[e.n] ?? 0) + 1;
   evidence.pad = {
     counts: padCounts,
     cycles: orderedCycle(pad.trace),
-    device: pad.input?.device ?? pad.input?.deviceKind ?? null,
-    padConnected: pad.input?.pad?.connected ?? pad.input?.padConnected ?? null,
-    move: pad.verbs?.hand?.move ?? null,
+    device: pad.input?.device?.active ?? null,
+    style: pad.input?.device?.style ?? null,
+    padConnected: pad.input?.pad?.connected ?? null,
+    padEdges: pad.input?.pad?.edges ?? null,
+    midPush,
     verbs: pad.verbs,
   };
   await d.shoot("review/shots/P19/02-gamepad-cycle.png");
+
+  // ---------------------------------------------------------------- the deliberate close
+  /**
+   * EVERYTHING ABOVE PROVES THE LOOP TURNS. THIS PROVES IT CAN BE TURNED THE RIGHT WAY.
+   *
+   * The two runs above hold a direction and set the deck down wherever it got to, which is honest
+   * play and produces honest wrong answers. It is not evidence that a player who does the algebra
+   * can be right, and a verb layer that can only ever be wrong would pass every count in this file.
+   *
+   * So this phase reads the claim OFF THE SCREEN — the stem and the given from `probe("verbs")`, the
+   * said claim from `probe("teaching").prose.spoken`, all three of which are standing in world space
+   * at the moment it reads them — does the algebra HERE, in the harness, and then drives the verb to
+   * that value using nothing but the pad. `learn/Teaching.js` deleted its `expected()` hook in round
+   * 3 for exactly this reason: "a run that reads the answer key measures the harness". There is no
+   * answer key in this block. There is a stem, a said claim, and arithmetic.
+   */
+  const deliberate = [];
+  for (let attempt = 0; attempt < 5 && !deliberate.some((r) => r.correct); attempt += 1) {
+    const seen = await d.run(() => ({
+      verbs: window.__vs.probe("verbs"),
+      spoken: window.__vs.probe("teaching")?.prose?.spoken ?? null,
+      phase: window.__vs.probe("teaching")?.phase ?? null,
+    }));
+    if (seen.phase !== "standing" || !seen.verbs?.verb) {
+      await fast(d, 1.2);
+      continue;
+    }
+    const st = seen.verbs.state ?? {};
+    const item = seen.verbs.item ?? {};
+    /** Solve what is on the screen. Three shapes, and every input is a row the player can read. */
+    let plan = null;
+    if (st.mode === "cut") {
+      const g = /=\s*(-?\d+)/.exec(String((item.given ?? [])[0] ?? ""));
+      if (g) plan = { charges: [Number(g[1]), Number(g[1])], why: `both sockets hold what ${item.stem} holds: ${g[1]}` };
+    } else if (st.mode === "pair") {
+      // `x + y = S,  x - y = 0` -> the two names hold the same thing, and two of it is S.
+      const sum = /\+\s*[a-zA-Z]\s*=\s*(-?\d+)/.exec(String(item.stem ?? ""));
+      const diff = /-\s*[a-zA-Z]\s*=\s*(-?\d+)/.exec(String(item.stem ?? ""));
+      if (sum && diff && Number(diff[1]) === 0) {
+        const half = Number(sum[1]) / 2;
+        if (Number.isInteger(half)) plan = { charges: [half, half], why: `two of it is ${sum[1]}, and the difference is 0` };
+      }
+    } else if (st.mode === "ratio") {
+      const n = /(-?\d+)/.exec(String(seen.spoken ?? ""));
+      if (n) plan = { ratio: Number(n[1]), why: `the said claim counts ${n[1]} for every one` };
+    }
+    if (!plan) {
+      // Not a shape this reader solves. Set it down as it stands and take the next claim.
+      await d.run(() => window.__vsInput.tap("X"));
+      await fast(d, 2.4);
+      continue;
+    }
+
+    const before = await d.run(() => window.__p19.length);
+    if (plan.ratio != null) {
+      await tapN(d, plan.ratio > 0 ? "RT" : "LT", Math.abs(plan.ratio));
+    } else {
+      for (let s = 0; s < plan.charges.length; s += 1) {
+        if (s > 0) {
+          await d.run(() => window.__vsInput.tap("RB")); // cycleNext — the next socket
+          await fast(d, 0.14);
+        }
+        const v = plan.charges[s];
+        await tapN(d, v > 0 ? "RT" : "LT", Math.abs(v));
+      }
+    }
+    // The latency floor is 900 ms and a correct response under it is refused upward by design.
+    await fast(d, 1.2);
+    const built = await d.probe("verbs");
+    await d.run(() => window.__vsInput.tap("X"));
+    await fast(d, 2.4);
+    const after = await d.run((n) => window.__p19.slice(n), before);
+    const resp = after.find((e) => e.n === "learn:respond");
+    deliberate.push({
+      verb: seen.verbs.verb,
+      mode: st.mode ?? null,
+      stem: item.stem,
+      given: item.given,
+      spoken: seen.spoken,
+      reasoning: plan.why,
+      built: built?.state ?? null,
+      response: built ? null : null,
+      sent: (await d.probe("verbs"))?.lastResponse?.response ?? null,
+      correct: resp?.correct === true,
+      scored: resp?.scored === true,
+      family: resp?.family ?? null,
+    });
+  }
+  evidence.deliberate = deliberate;
+  await d.shoot("review/shots/P19/03-deliberate-close.png");
 
   evidence.consoleErrors = d.consoleErrors.slice(0, 8);
 });
@@ -207,16 +336,30 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
       window.__vs.kernel.signals.emit("learn:present", p);
       return true;
     }, wire);
-    await d.play(0.3);
+    await fast(d, 0.3);
 
-    // Perform the act with the stick, part-way, and stop: a capture of a verb that has finished is a
-    // capture of a result. What has to be legible is the ACT.
+    /**
+     * Perform the act part-way and stop. A capture of a verb that has finished is a capture of a
+     * result; what has to be legible is the ACT — a deck half walked out, a lock half open, a term
+     * in the air over the Sill.
+     *
+     * The right trigger, not the stick: `primary` is the work axis that does not also walk the
+     * player, which is the whole point of it existing (see `learn/verbs/Verbs.js`). Round 1 drove
+     * these with the left stick, walked eleven metres in the process, and captured five frames of
+     * scenery with the mathematics standing behind the camera.
+     */
     await d.run(() => window.__vsInput.connect({ style: "xbox" }));
-    await d.play(0.2);
-    await d.run(() => window.__vsInput.stick("left", 0, -1));
-    await d.play(verb === "span" ? 0.75 : 1.15);
-    await d.run(() => window.__vsInput.stick("left", 0, 0));
-    await d.play(0.25);
+    await fast(d, 0.2);
+    await d.run(() => window.__vsInput.press("RT"));
+    await fast(d, { span: 0.95, distribute: 0.15, combine: 0.62, balance: 0.2, tilt: 0.2 }[verb] ?? 0.6);
+    await d.run(() => window.__vsInput.release("RT"));
+    if (verb === "tilt") {
+      await fast(d, 0.2);
+      await d.run(() => window.__vsInput.tap("RB")); // walk the grip along to the Sill
+      await fast(d, 0.2);
+      await d.run(() => window.__vsInput.tap("RB"));
+    }
+    await d.play(0.3);
 
     const probe = await d.probe("verbs");
     const shot = `review/shots/P19/verb-${verb}.png`;
@@ -233,8 +376,54 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
     });
   }
 
+  /**
+   * THE WORLD ANSWERING A MISCONCEPTION — gate L7, in the frame.
+   *
+   * A lock left half open IS `distributed-to-first-only`, and the read for it is
+   * `fail.partial.open`: "The bracket opened onto one thing and shut on the other." The read is
+   * stood by the shipped `_stand(false)` — the same method `learn:respond` calls — driven directly,
+   * because a claim that falls onto a TAGGED distractor cannot be arranged out of the `var-meaning`
+   * items the scheduler serves in the first minute of Level 1. Everything downstream of the call is
+   * the game: the verb's own read of the object it was holding, `ItemBank.text` in the live locale,
+   * `Tex.validate` at `strict: "error"`, and the same world-space renderer as every other row.
+   * `review/measure/P19-unit.mjs` runs the same path over 170 misconception performances offline.
+   */
+  const fell = picks.distribute;
+  if (fell) {
+    const { _answer, ...wire } = fell;
+    void _answer;
+    await d.run((p) => {
+      window.__vs.kernel.signals.emit("learn:present", p);
+      return true;
+    }, wire);
+    await fast(d, 0.3);
+    await d.run(() => window.__vsInput.press("RT"));
+    await fast(d, 0.15);
+    await d.run(() => window.__vsInput.release("RT"));
+    await fast(d, 0.3);
+    const read = await d.run(() => {
+      const v = window.__vs.kernel.get("verbs");
+      v._stand(false);
+      const p = window.__vs.probe("verbs");
+      return { rows: p.rows, state: p.state, reads: p.stats.reads, refused: p.stats.readsRefused };
+    });
+    await d.play(0.3);
+    await d.shoot("review/shots/P19/04-the-world-answers.png");
+    evidence.read = read;
+  }
+
   evidence.captureConsoleErrors = d.consoleErrors.slice(0, 8);
 });
+
+/** The same key, in the three shipped locales, straight off the content files. */
+function localeReads(key) {
+  const out = {};
+  for (const lang of ["en", "es", "pl"]) {
+    const j = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "locales", `${lang}.json`), "utf8"));
+    out[lang] = key.split(".").reduce((o, k) => (o == null ? null : o[k]), j);
+  }
+  return out;
+}
 
 // ==================================================================== claims
 
@@ -258,9 +447,21 @@ claim(
 
 claim(
   "P19.3 the verbs are playable on a pad",
-  (padc["learn:respond"] ?? 0) > 0,
+  (padc["learn:respond"] ?? 0) > 0 && evidence.pad?.padConnected === true && Math.abs(evidence.pad?.midPush?.move?.y ?? 0) > 0.5,
   `synthetic Standard Gamepad only: learn:present ${padc["learn:present"] ?? 0} · learn:respond ${padc["learn:respond"] ?? 0} · ` +
-    `learn:mastery ${padc["learn:mastery"] ?? 0} · device "${evidence.pad?.device}" · stick reached the verb as ${JSON.stringify(evidence.pad?.move)}`
+    `learn:mastery ${padc["learn:mastery"] ?? 0} · device "${evidence.pad?.device}/${evidence.pad?.style}" · pad edges ${evidence.pad?.padEdges} · ` +
+    `left stick reached the verb as ${JSON.stringify(evidence.pad?.midPush?.move)}`
+);
+
+const won = (evidence.deliberate ?? []).find((r) => r.correct);
+claim(
+  "P19.10 a player who does the algebra closes the claim",
+  !!won,
+  won
+    ? `${won.verb}/${won.mode} on ${JSON.stringify(won.stem)}${won.spoken ? ` + said "${won.spoken}"` : ""} — read off the screen, solved in the harness ` +
+      `(${won.reasoning}), built with the pad, sent ${JSON.stringify(won.sent)} · correct=${won.correct} scored=${won.scored} family=${won.family}`
+    : `${(evidence.deliberate ?? []).length} deliberate attempts, none marked correct: ` +
+      JSON.stringify((evidence.deliberate ?? []).map((r) => ({ mode: r.mode, sent: r.sent, correct: r.correct })))
 );
 
 const vs = evidence.keyboard?.verbs?.stats ?? {};
@@ -297,6 +498,19 @@ claim(
   "P19.8 all five verbs pose and perform in the running game",
   captured.length === 5 && new Set(captured.map((c) => c.posed)).size === 5,
   captured.map((c) => `${c.posed}: ${c.rows.length} rows standing`).join(" · ")
+);
+
+const readRows = (evidence.read?.rows ?? []).filter((r) => r.id.startsWith("verb-read"));
+const readRow = readRows[0] ?? null;
+const partial = localeReads("fail.partial.open");
+claim(
+  "P19.11 the world answers the misconception, in the player's language",
+  !!readRow && (evidence.read?.readsRefused ?? 0) === 0,
+  readRow
+    ? `a lock left open at ward ${evidence.read.state?.reached}/${evidence.read.state?.wards} stood ${readRows.length} row(s): ` +
+      `${readRows.map((r) => JSON.stringify(r.tex)).join(" + ")} ` +
+      `— the same key in three locales: ${JSON.stringify(partial)}`
+    : `no read row stood (${JSON.stringify(evidence.read ?? null)})`
 );
 
 claim(

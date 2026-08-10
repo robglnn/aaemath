@@ -22,7 +22,7 @@
  * `requiresGathered` in `ItemBank.check` and `fail.load.unsettled` in `voice.md` §4. You may always
  * set the load down. The world will simply be holding something that is still in two pieces.
  */
-import { R, alike, isBundle, loadCanon, loadTex, parseClaim, settle } from "./Claim.js";
+import { R, alike, isBundle, loadCanon, loadTex, markedLoadTex, parseClaim, settle } from "./Claim.js";
 
 const REFUSE_AT = 0.78;
 
@@ -177,17 +177,14 @@ class CombineAct {
    */
   rows() {
     const gap = (1 - this.push) * 0.9 + 0.12;
-    const parts = [];
-    for (let i = 0; i < this.load.length; i += 1) {
-      const t = this.load[i];
-      const body = loadTex([t], i === 0);
-      const gripped = i === this.grip;
-      parts.push(gripped ? `\\rule{0.3em}{0.3em}\\,${body}` : body);
-      // A zero-height rule is a measured space that KaTeX's strict pipeline sets without a spacing
-      // macro, so the gap is a real width the raster can be checked against rather than a `\quad`.
-      if (i === this.grip && this.mateIndex === i + 1) parts.push(`\\rule{${gap.toFixed(2)}em}{0em}`);
-    }
-    const rows = [{ key: "load", tex: parts.join(" ") || "0", up: 1.6, right: 0 }];
+    // The gap the push is closing, drawn where it actually is: between the term in your hand and
+    // the one it is being pushed into. A zero-height rule is a measured space the strict pipeline
+    // sets without a spacing macro, so the width is a number a raster can be checked against.
+    const head = markedLoadTex(this.load.slice(0, this.grip + 1), this.grip);
+    const tail = this.load.slice(this.grip + 1);
+    const spacer = tail.length ? `\\rule{${gap.toFixed(2)}em}{0em}` : "";
+    const rest = tail.length ? loadTex(tail, false) : "";
+    const rows = [{ key: "load", tex: `${head}${spacer}${rest}`.trim() || "0", up: 1.6, right: 0 }];
     rows.push({
       key: "hand",
       up: 0.72,

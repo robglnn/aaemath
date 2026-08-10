@@ -38,6 +38,7 @@ import {
   isBundle,
   isolated,
   loadTex,
+  markedLoadTex,
   parseClaim,
   reachWard,
   settle,
@@ -271,9 +272,7 @@ export class BalanceAct {
     const t = Math.max(-1.6, Math.min(1.6, R.num(c.tilt ?? R.zero) / 6));
     const lean = t * 0.34;
     const held = this.held;
-    const mark = (side, i) => (held?.kind === "term" && held.side === side && held.index === i ? "\\rule{0.3em}{0.3em}\\," : "");
-    const pan = (load, side) =>
-      load.map((tm, i) => `${mark(side, i)}${loadTex([tm], i === 0)}`).join(" ") || "0";
+    const pan = (load, side) => markedLoadTex(load, held?.kind === "term" && held.side === side ? held.index : -1);
     const rel = { "=": "=", ">=": "\\ge", "<=": "\\le", ">": ">", "<": "<" }[c.rel] ?? "=";
     const travelling = this.travel !== 0 && held?.kind === "term";
     const sill = this.atSill ? `\\rule{0.3em}{0.3em}\\,${rel}` : rel;

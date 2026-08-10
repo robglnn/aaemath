@@ -99,10 +99,14 @@ class SpanAct {
       return;
     }
     this.push += step;
-    // A segment a third of a second at a walk, four a second once the deck is running. Fortnite's
-    // build verb resolves in a few frames; a deck a learner has to hold a key on for nine seconds
-    // to reach 9 is not a verb, it is a wait.
-    const rate = 3 + Math.min(11, this.push * 9);
+    /**
+     * Two and a half segments a second from a standing start, eight a second once the deck is
+     * running. Fortnite's build verb resolves in a few frames and a deck a learner has to hold a key
+     * on for nine seconds to reach 9 is a wait, not a verb — but the ceiling is 8/s and not 14/s for
+     * a measured reason: every segment re-typesets two rows, and a deck outrunning the raster gate
+     * shows a player a number that skips. The second grip lays ten at a time for the long ones.
+     */
+    const rate = 2.5 + Math.min(5.5, this.push * 6);
     this.carry += rate * step * Math.sign(y) * Math.min(1, Math.abs(y));
     while (this.carry >= 1) {
       this.carry -= 1;

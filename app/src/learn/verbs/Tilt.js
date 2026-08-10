@@ -26,7 +26,7 @@
  * `voice.md` §1 forbids the words this verb is about: not "inequality", not "greater than", not "at
  * least". A threshold, a mark, what it admits and what it refuses. Nothing on screen is a label.
  */
-import { R, rat, carry, cloneClaim, isBundle, isolated, loadTex, parseClaim, settle, share, shed, swap, turn, valueOf } from "./Claim.js";
+import { R, rat, carry, cloneClaim, isBundle, isolated, loadTex, markedLoadTex, parseClaim, settle, share, shed, swap, turn, valueOf } from "./Claim.js";
 
 function gripRow(c) {
   const near = c.near.map((t, i) => ({ kind: "term", side: "near", index: i, t }));
@@ -202,8 +202,7 @@ class TiltAct {
   rows() {
     const c = this.claim;
     const held = this.held;
-    const mark = (side, i) => (held?.kind === "term" && held.side === side && held.index === i ? "\\rule{0.3em}{0.3em}\\," : "");
-    const pan = (load, side) => load.map((tm, i) => `${mark(side, i)}${loadTex([tm], i === 0)}`).join(" ") || "0";
+    const pan = (load, side) => markedLoadTex(load, held?.kind === "term" && held.side === side ? held.index : -1);
     const rel = { ">=": "\\ge", "<=": "\\le", ">": ">", "<": "<", "=": "=" }[c.rel] ?? "\\ge";
     const admitsLow = c.rel === "<=" || c.rel === "<";
     const notch = admitsLow

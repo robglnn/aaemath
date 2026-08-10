@@ -1,0 +1,1048 @@
+{
+ "claims": [
+  {
+   "id": "P19.1 the return half of the loop exists",
+   "pass": true,
+   "detail": "unassisted keyboard play: learn:present 7 · math:show 163 · learn:respond 6 · learn:mastery 4 (was 1 / 11 / 0 / 0)"
+  },
+  {
+   "id": "P19.2 the cycle is ordered, not merely counted",
+   "pass": true,
+   "detail": "6 present->show->respond cycles, 4 of them reaching learn:mastery; first: var-meaning present 1.3s -> show 1.3s -> respond 3.3s -> mastery 3.3s (p 0.316788)"
+  },
+  {
+   "id": "P19.3 the verbs are playable on a pad",
+   "pass": true,
+   "detail": "synthetic Standard Gamepad only: learn:present 4 · learn:respond 4 · learn:mastery 4 · device \"pad/xbox\" · pad edges 20 · left stick reached the verb as {\"x\":0,\"y\":1}"
+  },
+  {
+   "id": "P19.10 a player who does the algebra closes the claim",
+   "pass": true,
+   "detail": "span/pair on \"x + y = 24,\\\\quad x - y = 0\" — read off the screen, solved in the harness (two of it is 24, and the difference is 0), built with the pad, sent \"x = 12, y = 12\" · correct=true scored=true family=var-meaning.twin"
+  },
+  {
+   "id": "P19.4 every response reached Mastery with its family",
+   "pass": true,
+   "detail": "familyOnWire 6 of respondHeard 6 — Mastery refuses a response whose family it was never told"
+  },
+  {
+   "id": "P19.5 no character of a response was mangled on the way in",
+   "pass": true,
+   "detail": "ItemBank.ENTRY_GRAMMAR refused 0 characters of 6 committed responses"
+  },
+  {
+   "id": "P19.6 the verb reports no scaffold and the engine agrees",
+   "pass": true,
+   "detail": "last response: verb \"span\" response \"x = 8, y = 0\" scaffoldLevel 0 correct false scored true family var-meaning.twin misconception null"
+  },
+  {
+   "id": "P19.7 the runtime is wired to the presenter it commits through",
+   "pass": true,
+   "detail": "probe(\"verbs\").presenter = {\"open\":true,\"phase\":\"standing\"} · posed 7 · unposed 0"
+  },
+  {
+   "id": "P19.8 all five verbs pose and perform in the running game",
+   "pass": true,
+   "detail": "span: 2 rows standing · balance: 4 rows standing · combine: 2 rows standing · distribute: 2 rows standing · tilt: 5 rows standing"
+  },
+  {
+   "id": "P19.11 the world answers the misconception, in the player's language",
+   "pass": true,
+   "detail": "a lock left open at ward 1/2 stood \"\\\\text{The bundle opened onto one thing and shut on the other.}\" — the same key in three locales: {\"en\":\"The bracket opened onto one thing and shut on the other.\",\"es\":\"El corchete se abrió sobre una cosa y se cerró sobre la otra.\",\"pl\":\"Nawias otworzył się na jedno, a zamknął na drugim.\"}"
+  },
+  {
+   "id": "P19.9 nothing on the console",
+   "pass": true,
+   "detail": "0 + 0 console errors"
+  }
+ ],
+ "evidence": {
+  "keyboard": {
+   "counts": {
+    "learn:teach": 7,
+    "math:show": 163,
+    "learn:present": 7,
+    "learn:respond": 6,
+    "learn:mastery": 4,
+    "math:hide": 46
+   },
+   "cycles": [
+    {
+     "item": "var-meaning.seat/generate/1spsl3y",
+     "kpId": "var-meaning",
+     "at": 1.3,
+     "show": 1.3,
+     "respond": 3.3,
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.seat",
+     "mastery": {
+      "t": 3.3,
+      "p": 0.316788,
+      "delta": -0.033212
+     }
+    },
+    {
+     "item": "var-meaning.relate/construct/1pvg02w",
+     "kpId": "var-meaning",
+     "at": 5.42,
+     "show": 5.42,
+     "respond": 7.05,
+     "correct": false,
+     "scored": false,
+     "family": "var-meaning.relate",
+     "mastery": null
+    },
+    {
+     "item": "var-meaning.twin/construct/p1bbch",
+     "kpId": "var-meaning",
+     "at": 9.13,
+     "show": 9.13,
+     "respond": 10.93,
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.twin",
+     "mastery": {
+      "t": 10.93,
+      "p": 0.311905,
+      "delta": -0.004883
+     }
+    },
+    {
+     "item": "var-meaning.relate/construct/1pv16h8",
+     "kpId": "var-meaning",
+     "at": 13.02,
+     "show": 13.02,
+     "respond": 14.82,
+     "correct": false,
+     "scored": false,
+     "family": "var-meaning.relate",
+     "mastery": null
+    },
+    {
+     "item": "var-meaning.relate/construct/n5wzld",
+     "kpId": "var-meaning",
+     "at": 16.92,
+     "show": 16.92,
+     "respond": 18.68,
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.relate",
+     "mastery": {
+      "t": 18.68,
+      "p": 0.313207,
+      "delta": 0.001302
+     }
+    },
+    {
+     "item": "var-meaning.twin/construct/1vlr62k",
+     "kpId": "var-meaning",
+     "at": 20.8,
+     "show": 20.8,
+     "respond": 22.55,
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.twin",
+     "mastery": {
+      "t": 22.55,
+      "p": 0.311403,
+      "delta": -0.001804
+     }
+    }
+   ],
+   "verbs": {
+    "phase": "performing",
+    "verb": "span",
+    "item": {
+     "itemId": "var-meaning.twin/construct/g1so14",
+     "kpId": "var-meaning",
+     "form": "construct",
+     "answerType": "pair",
+     "objectClass": "Emitter",
+     "unknown": "x",
+     "stem": "x + y = 14,\\quad x - y = 0",
+     "given": []
+    },
+    "state": {
+     "mode": "pair",
+     "grip": 0,
+     "head": 0,
+     "fine": false,
+     "acts": 0,
+     "sockets": [
+      {
+       "name": "x",
+       "n": 0,
+       "d": 1,
+       "charged": false
+      },
+      {
+       "name": "y",
+       "n": 0,
+       "d": 1,
+       "charged": false
+      }
+     ]
+    },
+    "hand": {
+     "move": {
+      "x": 0,
+      "y": 0
+     },
+     "work": 0,
+     "trigger": {
+      "push": 0,
+      "pull": 0
+     },
+     "held": [],
+     "column": {
+      "right": 1.44,
+      "forward": 9.5,
+      "em": 0.66
+     }
+    },
+    "restands": 1,
+    "standing": [
+     "verb-value",
+     "verb-deck"
+    ],
+    "rows": [
+     {
+      "id": "verb-value",
+      "tex": "\\rule{0.34em}{0.34em}\\,x = 0,\\; y = 0",
+      "em": 0.66
+     },
+     {
+      "id": "verb-deck",
+      "tex": "\\rule{0.35em}{0.14em}",
+      "em": 0.66
+     }
+    ],
+    "lastResponse": {
+     "itemId": "var-meaning.twin/construct/1vlr62k",
+     "kpId": "var-meaning",
+     "verb": "span",
+     "response": "x = 8, y = 0",
+     "refusedChars": 0,
+     "latencyMs": 1733,
+     "scaffoldLevel": 0,
+     "acts": 8,
+     "at": 22.53,
+     "correct": false,
+     "scored": true,
+     "credited": false,
+     "family": "var-meaning.twin",
+     "misconception": null,
+     "form": "construct",
+     "phase": "guided-1",
+     "engineLatencyMs": 1733,
+     "read": "fail.slip"
+    },
+    "verbs": [
+     "tilt",
+     "distribute",
+     "combine",
+     "balance",
+     "span"
+    ],
+    "stats": {
+     "presented": 7,
+     "posed": 7,
+     "unposed": 0,
+     "byVerb": {
+      "span": 7
+     },
+     "unposedByType": {},
+     "committed": 6,
+     "correct": 0,
+     "familyOnWire": 6,
+     "refusedChars": 0,
+     "reads": 6,
+     "readsRefused": 0,
+     "shows": 120,
+     "hides": 18,
+     "respondHeard": 6,
+     "masteryHeard": 4
+    },
+    "simTime": 25.2,
+    "presenter": {
+     "open": true,
+     "phase": "standing"
+    },
+    "registry": [
+     "tilt",
+     "distribute",
+     "combine",
+     "balance",
+     "span"
+    ]
+   },
+   "trace": [
+    {
+     "n": "learn:teach",
+     "t": 1.3,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:present",
+     "t": 1.3,
+     "id": "var-meaning.seat/generate/1spsl3y",
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": "var-meaning.seat",
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:respond",
+     "t": 3.3,
+     "id": "var-meaning.seat/generate/1spsl3y",
+     "kpId": "var-meaning",
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.seat",
+     "hinted": false,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:mastery",
+     "t": 3.3,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": 0.316788,
+     "delta": -0.033212
+    },
+    {
+     "n": "learn:teach",
+     "t": 5.42,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:present",
+     "t": 5.42,
+     "id": "var-meaning.relate/construct/1pvg02w",
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": "var-meaning.relate",
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:respond",
+     "t": 7.05,
+     "id": "var-meaning.relate/construct/1pvg02w",
+     "kpId": "var-meaning",
+     "correct": false,
+     "scored": false,
+     "family": "var-meaning.relate",
+     "hinted": true,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:teach",
+     "t": 9.13,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:present",
+     "t": 9.13,
+     "id": "var-meaning.twin/construct/p1bbch",
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": "var-meaning.twin",
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:respond",
+     "t": 10.93,
+     "id": "var-meaning.twin/construct/p1bbch",
+     "kpId": "var-meaning",
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.twin",
+     "hinted": false,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:mastery",
+     "t": 10.93,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": 0.311905,
+     "delta": -0.004883
+    },
+    {
+     "n": "learn:teach",
+     "t": 13.02,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:present",
+     "t": 13.02,
+     "id": "var-meaning.relate/construct/1pv16h8",
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": "var-meaning.relate",
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:respond",
+     "t": 14.82,
+     "id": "var-meaning.relate/construct/1pv16h8",
+     "kpId": "var-meaning",
+     "correct": false,
+     "scored": false,
+     "family": "var-meaning.relate",
+     "hinted": true,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:teach",
+     "t": 16.92,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:present",
+     "t": 16.92,
+     "id": "var-meaning.relate/construct/n5wzld",
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": "var-meaning.relate",
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:respond",
+     "t": 18.68,
+     "id": "var-meaning.relate/construct/n5wzld",
+     "kpId": "var-meaning",
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.relate",
+     "hinted": false,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:mastery",
+     "t": 18.68,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": 0.313207,
+     "delta": 0.001302
+    },
+    {
+     "n": "learn:teach",
+     "t": 20.8,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:present",
+     "t": 20.8,
+     "id": "var-meaning.twin/construct/1vlr62k",
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": "var-meaning.twin",
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:respond",
+     "t": 22.55,
+     "id": "var-meaning.twin/construct/1vlr62k",
+     "kpId": "var-meaning",
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.twin",
+     "hinted": false,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:mastery",
+     "t": 22.55,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": 0.311403,
+     "delta": -0.001804
+    },
+    {
+     "n": "learn:teach",
+     "t": 24.67,
+     "id": null,
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": null,
+     "hinted": null,
+     "p": null,
+     "delta": null
+    },
+    {
+     "n": "learn:present",
+     "t": 24.67,
+     "id": "var-meaning.twin/construct/g1so14",
+     "kpId": "var-meaning",
+     "correct": null,
+     "scored": null,
+     "family": "var-meaning.twin",
+     "hinted": null,
+     "p": null,
+     "delta": null
+    }
+   ]
+  },
+  "pad": {
+   "counts": {
+    "math:show": 94,
+    "learn:respond": 4,
+    "learn:mastery": 4,
+    "math:hide": 26,
+    "learn:teach": 4,
+    "learn:present": 4
+   },
+   "cycles": [
+    {
+     "item": "var-meaning.twin/construct/ce162e",
+     "kpId": "var-meaning",
+     "at": 32.22,
+     "show": 32.22,
+     "respond": 34.17,
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.twin",
+     "mastery": {
+      "t": 34.17,
+      "p": 0.311117,
+      "delta": -0.000035
+     }
+    },
+    {
+     "item": "var-meaning.twin/construct/1t5gd5s",
+     "kpId": "var-meaning",
+     "at": 36.28,
+     "show": 36.28,
+     "respond": 38.25,
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.twin",
+     "mastery": {
+      "t": 38.25,
+      "p": 0.311112,
+      "delta": -0.000005
+     }
+    },
+    {
+     "item": "var-meaning.relate/construct/n68np2",
+     "kpId": "var-meaning",
+     "at": 40.37,
+     "show": 40.37,
+     "respond": 42.33,
+     "correct": false,
+     "scored": true,
+     "family": "var-meaning.relate",
+     "mastery": {
+      "t": 42.33,
+      "p": 0.31309,
+      "delta": 0.001978
+     }
+    }
+   ],
+   "device": "pad",
+   "style": "xbox",
+   "padConnected": true,
+   "padEdges": 20,
+   "midPush": {
+    "move": {
+     "x": 0,
+     "y": 1
+    },
+    "state": {
+     "mode": "pair",
+     "grip": 0,
+     "head": 0,
+     "fine": false,
+     "acts": 0,
+     "sockets": [
+      {
+       "name": "x",
+       "n": 0,
+       "d": 1,
+       "charged": false
+      },
+      {
+       "name": "y",
+       "n": 0,
+       "d": 1,
+       "charged": false
+      }
+     ]
+    }
+   },
+   "verbs": {
+    "phase": "performing",
+    "verb": "span",
+    "item": {
+     "itemId": "var-meaning.twin/construct/40qfdf",
+     "kpId": "var-meaning",
+     "form": "construct",
+     "answerType": "pair",
+     "objectClass": "Emitter",
+     "unknown": "x",
+     "stem": "x + y = 24,\\quad x - y = 0",
+     "given": []
+    },
+    "state": {
+     "mode": "pair",
+     "grip": 0,
+     "head": 0,
+     "fine": false,
+     "acts": 0,
+     "sockets": [
+      {
+       "name": "x",
+       "n": 0,
+       "d": 1,
+       "charged": false
+      },
+      {
+       "name": "y",
+       "n": 0,
+       "d": 1,
+       "charged": false
+      }
+     ]
+    },
+    "hand": {
+     "move": {
+      "x": 0,
+      "y": 0
+     },
+     "work": 0,
+     "trigger": {
+      "push": 0,
+      "pull": 0
+     },
+     "held": [],
+     "column": {
+      "right": 1.44,
+      "forward": 9.5,
+      "em": 0.66
+     }
+    },
+    "restands": 1,
+    "standing": [
+     "verb-value",
+     "verb-deck"
+    ],
+    "rows": [
+     {
+      "id": "verb-value",
+      "tex": "\\rule{0.34em}{0.34em}\\,x = 0,\\; y = 0",
+      "em": 0.66
+     },
+     {
+      "id": "verb-deck",
+      "tex": "\\rule{0.35em}{0.14em}",
+      "em": 0.66
+     }
+    ],
+    "lastResponse": {
+     "itemId": "var-meaning.relate/construct/n68np2",
+     "kpId": "var-meaning",
+     "verb": "span",
+     "response": "a = 7*b",
+     "refusedChars": 0,
+     "latencyMs": 1950,
+     "scaffoldLevel": 0,
+     "acts": 7,
+     "at": 42.32,
+     "correct": false,
+     "scored": true,
+     "credited": false,
+     "family": "var-meaning.relate",
+     "misconception": null,
+     "form": "construct",
+     "phase": "guided-1",
+     "engineLatencyMs": 1950,
+     "read": "fail.slip"
+    },
+    "verbs": [
+     "tilt",
+     "distribute",
+     "combine",
+     "balance",
+     "span"
+    ],
+    "stats": {
+     "presented": 11,
+     "posed": 11,
+     "unposed": 0,
+     "byVerb": {
+      "span": 11
+     },
+     "unposedByType": {},
+     "committed": 10,
+     "correct": 0,
+     "familyOnWire": 10,
+     "refusedChars": 0,
+     "reads": 10,
+     "readsRefused": 0,
+     "shows": 196,
+     "hides": 30,
+     "respondHeard": 10,
+     "masteryHeard": 8
+    },
+    "simTime": 45.43,
+    "presenter": {
+     "open": true,
+     "phase": "standing"
+    },
+    "registry": [
+     "tilt",
+     "distribute",
+     "combine",
+     "balance",
+     "span"
+    ]
+   }
+  },
+  "captures": [
+   {
+    "verb": "span",
+    "shot": "review/shots/P19/verb-span.png",
+    "posed": "span",
+    "item": {
+     "itemId": "eq-model-context.members/construct/1us8lt2",
+     "kpId": "eq-model-context",
+     "form": "construct",
+     "answerType": "integer",
+     "objectClass": "Span",
+     "unknown": "m",
+     "stem": "6m \\ge 47",
+     "given": []
+    },
+    "state": {
+     "mode": "one",
+     "grip": 0,
+     "head": 0,
+     "fine": false,
+     "acts": 4,
+     "sockets": [
+      {
+       "name": "m",
+       "n": 4,
+       "d": 1,
+       "charged": true
+      }
+     ]
+    },
+    "rows": [
+     "verb-value=m = 4",
+     "verb-deck=\\rule{2.48em}{0.14em}"
+    ],
+    "wouldRespond": null,
+    "answerForTheReader": "8"
+   },
+   {
+    "verb": "balance",
+    "shot": "review/shots/P19/verb-balance.png",
+    "posed": "balance",
+    "item": {
+     "itemId": "eq-two-step.core/construct/gv0zhs",
+     "kpId": "eq-two-step",
+     "form": "construct",
+     "answerType": "rational",
+     "objectClass": "Span",
+     "unknown": "x",
+     "stem": "5x + 1 = 21",
+     "given": []
+    },
+    "state": {
+     "claim": "1 = 21 - 5x",
+     "grip": 0,
+     "holding": "near:0",
+     "travel": 0,
+     "dial": 1,
+     "tilt": "0",
+     "oneSided": false,
+     "lastAct": "carry",
+     "acts": 1,
+     "isolated": false
+    },
+    "rows": [
+     "verb-near=\\rule{0.3em}{0.3em}\\,1",
+     "verb-sill==",
+     "verb-far=21 - 5x",
+     "verb-hand=\\rule{0.35em}{0.1em}"
+    ],
+    "wouldRespond": null,
+    "answerForTheReader": "4"
+   },
+   {
+    "verb": "combine",
+    "shot": "review/shots/P19/verb-combine.png",
+    "posed": "combine",
+    "item": {
+     "itemId": "like-terms-combine.core/construct/1dpaukc",
+     "kpId": "like-terms-combine",
+     "form": "construct",
+     "answerType": "expression",
+     "objectClass": "Bearer",
+     "unknown": "x",
+     "stem": "5x + 5y - 7 - 2x",
+     "given": []
+    },
+    "state": {
+     "load": "5y + 5x - 7 - 2x",
+     "grip": 1,
+     "push": 0,
+     "refused": false,
+     "joins": 0,
+     "slides": 1,
+     "acts": 1,
+     "settled": 3
+    },
+    "rows": [
+     "verb-load=5y + \\rule{0.3em}{0.3em}\\,5x\\rule{1.02em}{0em}- 7 - 2x",
+     "verb-hand=\\rule{0.35em}{0.12em}"
+    ],
+    "wouldRespond": null,
+    "answerForTheReader": "3*x + 5*y + -7"
+   },
+   {
+    "verb": "distribute",
+    "shot": "review/shots/P19/verb-distribute.png",
+    "posed": "distribute",
+    "item": {
+     "itemId": "distribute-variable.core/construct/1of3p1i",
+     "kpId": "distribute-variable",
+     "form": "construct",
+     "answerType": "expression",
+     "objectClass": "Aperture",
+     "unknown": "x",
+     "stem": "4\\left(4x + 9\\right)",
+     "given": []
+    },
+    "state": {
+     "load": "16x + 4\\left(9\\right)",
+     "wards": 2,
+     "reached": 1,
+     "drive": 0,
+     "acts": 1
+    },
+    "rows": [
+     "verb-load=16x + 4\\left(9\\right)",
+     "verb-hand=4\\;\\rule{1.25em}{0.12em}\\;\\rule{0.24em}{0.04em}"
+    ],
+    "wouldRespond": null,
+    "answerForTheReader": "16*x + 36"
+   },
+   {
+    "verb": "tilt",
+    "shot": "review/shots/P19/verb-tilt.png",
+    "posed": "tilt",
+    "item": {
+     "itemId": "ineq-negative-flip.divide/construct/vtqjik",
+     "kpId": "ineq-negative-flip",
+     "form": "construct",
+     "answerType": "inequality",
+     "objectClass": "Threshold",
+     "unknown": "x",
+     "stem": "-5x < -5",
+     "given": []
+    },
+    "state": {
+     "claim": "0 < -5 + 5x",
+     "admits": "below",
+     "grip": 2,
+     "holding": "far:1",
+     "dial": 1,
+     "travel": 0,
+     "railTurns": 0,
+     "markTurns": 0,
+     "acts": 1,
+     "isolated": false
+    },
+    "rows": [
+     "verb-near=0",
+     "verb-sill=<",
+     "verb-far=-5 + \\rule{0.3em}{0.3em}\\,5x",
+     "verb-detent=\\rule{1.5em}{0.11em}\\rule{0.34em}{0.34em}\\rule{0.35em}{0.03em}",
+     "verb-hand=\\rule{0.20em}{0.1em}"
+    ],
+    "wouldRespond": null,
+    "answerForTheReader": "x > 1"
+   }
+  ],
+  "padMidPush": {
+   "move": {
+    "x": 0,
+    "y": 1
+   },
+   "state": {
+    "mode": "pair",
+    "grip": 0,
+    "head": 0,
+    "fine": false,
+    "acts": 0,
+    "sockets": [
+     {
+      "name": "x",
+      "n": 0,
+      "d": 1,
+      "charged": false
+     },
+     {
+      "name": "y",
+      "n": 0,
+      "d": 1,
+      "charged": false
+     }
+    ]
+   }
+  },
+  "deliberate": [
+   {
+    "verb": "span",
+    "mode": "pair",
+    "stem": "x + y = 24,\\quad x - y = 0",
+    "given": [],
+    "spoken": null,
+    "reasoning": "two of it is 24, and the difference is 0",
+    "built": {
+     "mode": "pair",
+     "grip": 1,
+     "head": 0,
+     "fine": false,
+     "acts": 24,
+     "sockets": [
+      {
+       "name": "x",
+       "n": 12,
+       "d": 1,
+       "charged": true
+      },
+      {
+       "name": "y",
+       "n": 12,
+       "d": 1,
+       "charged": true
+      }
+     ]
+    },
+    "response": null,
+    "sent": "x = 12, y = 12",
+    "correct": true,
+    "scored": true,
+    "family": "var-meaning.twin"
+   }
+  ],
+  "consoleErrors": [],
+  "read": {
+   "rows": [
+    {
+     "id": "verb-load",
+     "tex": "16x + 4\\left(9\\right)",
+     "em": 0.66
+    },
+    {
+     "id": "verb-hand",
+     "tex": "4\\;\\rule{1.25em}{0.12em}\\;\\rule{0.24em}{0.04em}",
+     "em": 0.66
+    },
+    {
+     "id": "verb-read",
+     "tex": "\\text{The bundle opened onto one thing and shut on the other.}",
+     "em": 0.6
+    }
+   ],
+   "state": {
+    "load": "16x + 4\\left(9\\right)",
+    "wards": 2,
+    "reached": 1,
+    "drive": 0,
+    "acts": 1
+   },
+   "reads": 1,
+   "refused": 0
+  },
+  "captureConsoleErrors": []
+ }
+}

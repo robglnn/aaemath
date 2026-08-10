@@ -179,6 +179,29 @@ export function loadTex(load, firstIsBare = true) {
 }
 
 /**
+ * The same load with a grip plate resting on one term.
+ *
+ * The plate goes AFTER the join and before the term, because the join belongs to the load and the
+ * term belongs to your hand: `5y + ■5x` is a hand on a term, and `5y ■+ 5x` is a hand on a plus
+ * sign, which is not an object anybody can pick up. Round 1 shipped the second one and it read as
+ * a typographical accident rather than as a grip.
+ */
+export const GRIP = "\\rule{0.3em}{0.3em}\\,";
+
+export function markedLoadTex(load, markIndex, mark = GRIP) {
+  if (!load.length) return "0";
+  return load
+    .map((t, i) => {
+      const full = termTex(t, i === 0);
+      if (i !== markIndex) return full;
+      if (i === 0) return `${mark}${full}`;
+      const m = /^([+-]\s*)([\s\S]*)$/.exec(full);
+      return m ? `${m[1]}${mark}${m[2]}` : `${mark}${full}`;
+    })
+    .join(" ");
+}
+
+/**
  * The load as a string a learner could have typed, in `ItemBank.ENTRY_GRAMMAR`.
  *
  * `-5*x + -6` rather than `-5x - 6`, because that is the shape the bank's own committed answers

@@ -86,9 +86,22 @@ export const HAND = {
   right: 1.44,
   forward: 9.5,
   em: 0.66,
-  /** The prose row that carries the world's read. Same column, one step under the hands. */
-  readUp: -0.62,
-  readEm: 0.6,
+  /**
+   * The prose rows that carry the world's read, under the hands.
+   *
+   * `wrapChars` is 34 and not "as many as fit", because round 2 stood
+   * `fail.partial.open` as one 52-character line at `em 0.6` and the last seven characters were off
+   * the right edge of a 1280x720 frame: "...and shut on the ot". `RESUME.md` §6a's round-2 rule was
+   * written about mathematics — "a claim that cannot be rendered in full must never render
+   * partially" — and it is the same rule for a sentence: a read that is cut is a different read.
+   * Three rows at 34 characters is 102, and the longest `fail.*` spelling in any of the three
+   * shipped locales is 63.
+   */
+  readUp: -0.55,
+  readEm: 0.58,
+  readStep: 0.62,
+  readWrap: 34,
+  readRows: 3,
   /** Sim seconds a read stands after the claim falls. Shorter than Teaching's own feedback window. */
   readSeconds: 1.5,
 };
@@ -109,6 +122,24 @@ const TEXT_ESCAPES = {
   "~": "\\textasciitilde{}",
 };
 const escapeText = (s) => String(s ?? "").replace(/[\\{}$&#_%^~]/g, (c) => TEXT_ESCAPES[c]);
+
+/** Greedy word wrap. Never splits a word: a broken word in a sentence is a new sentence. */
+function wrapText(text, max) {
+  const words = String(text ?? "").trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  const lines = [];
+  let line = "";
+  for (const w of words) {
+    if (!line) line = w;
+    else if (line.length + 1 + w.length <= max) line += ` ${w}`;
+    else {
+      lines.push(line);
+      line = w;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
 
 const round2 = (v) => Math.round(v * 100) / 100;
 
@@ -138,9 +169,27 @@ export class VerbRuntime {
     this.ctx = null;
     this.anchor = null;
     this.standing = new Map();
-    this.hand = { move: { x: 0, y: 0 }, held: new Set() };
+    this.hand = { move: { x: 0, y: 0 }, held: new Set(), work: 0 };
+    /**
+     * THE TRIGGERS, AND WHY THE VERB NEEDS AN AXIS THAT IS NOT THE LEFT STICK.
+     *
+     * The body can work a claim — leaning into a term carries it, and walking a deck out is exactly
+     * what walking a deck out means. But the left stick also WALKS, so a player who works a claim
+     * with it walks away from the thing they are working, and past a few metres the claim is behind
+     * them. Measured: `review/shots/P19/verb-span.png`, round 1, a legible claim at 40.4 px per em
+     * standing 9.5 m in front of where the player USED to be and out of frame at the top.
+     *
+     * So both routes exist and they are the same axis. `primary`/`secondary` are analog on a pad
+     * (Pad:RT / Pad:LT) and are the two mouse buttons on a keyboard, neither of them moves the
+     * player, and both carry a 0..1 value — a squeeze is a push. The stick stays wired because it is
+     * legible and because the shape of the act is "lean into it", and the column re-stands when the
+     * player genuinely leaves it behind (see `fixed`).
+     */
+    this.trigger = { push: 0, pull: 0, since: 0 };
     this.stepCharge = 0;
     this.readUntil = 0;
+    /** How many times a column had to re-stand because the player walked past it. */
+    this.restands = 0;
     this.lastResponse = null;
     this.phase = "idle";
 
@@ -205,19 +254,26 @@ export class VerbRuntime {
         const down = e.phase === "down";
         if (down) this.hand.held.add(e.action);
         else this.hand.held.delete(e.action);
+        if (e.action === "primary") this.trigger.push = down ? Math.max(0.35, Number(e.value) || 1) : 0;
+        if (e.action === "secondary") this.trigger.pull = down ? Math.max(0.35, Number(e.value) || 1) : 0;
+        if (down && (e.action === "primary" || e.action === "secondary")) this.trigger.since = this.simTime;
         if (!this.act) return;
         switch (e.action) {
           case "interact":
             if (down) this._setDown();
             break;
           case "primary":
+            // Tap: the act appropriate to what is under your hand. Hold: the same work the body
+            // does by leaning into it, without taking a step. See `_work`.
             if (down) this._drive("take");
             break;
           case "secondary":
-            // Held, it is the second grip (a share denominator, a rail turn); tapped, it puts the
-            // last act back. Both are the same physical idea: the hand that is not doing the work.
-            if (down) this._drive("hold");
-            else this._drive("back");
+            if (down) this._drive("back");
+            break;
+          case "crouch":
+            // Set your feet. The second grip: ten spans at a time, a rail turned over, both pans
+            // gathered rather than shared. Held state, not an edge, so a verb reads it every step.
+            this._drive(down ? "hold" : "release");
             break;
           case "cycleNext":
             if (down) this._drive("stepNext");
@@ -352,15 +408,53 @@ export class VerbRuntime {
     this._drive(x > 0 ? "stepNext" : "stepPrev");
   }
 
+  /**
+   * One work axis, from either hand.
+   *
+   * The stick's forward push and the right trigger's squeeze are the same movement as far as every
+   * verb is concerned, so they are resolved here rather than five times over. A trigger only starts
+   * working after a quarter of a second, because its edge already fired the discrete act and a tap
+   * must not also be a shove.
+   */
+  _work() {
+    const stick = Math.abs(this.hand.move.y) > 0.12 ? this.hand.move.y : 0;
+    const heldFor = this.simTime - this.trigger.since;
+    const squeeze = heldFor >= 0.25 ? this.trigger.push - this.trigger.pull : 0;
+    return Math.abs(squeeze) > Math.abs(stick) ? squeeze : stick;
+  }
+
   fixed(step, simTime) {
     this.simTime = simTime ?? this.simTime + step;
     if (this.phase === "read" && this.simTime >= this.readUntil) this._retire();
     if (!this.act || this.phase !== "performing") return;
-    // A held second grip is a state, not an edge: a verb reads it every step.
-    if (!this.hand.held.has("secondary") && this.act.fine) this.act.act("release", this.hand);
+    /**
+     * THE CLAIM STANDS STILL UNTIL THE PLAYER HAS GENUINELY LEFT IT.
+     *
+     * It does not follow the head — a row re-resolved against a live camera every step is a HUD
+     * wearing world space, and this project's whole art direction is that the mathematics is IN the
+     * world. But a claim you have taken on and then walked eleven metres past is a claim you cannot
+     * read, and the left stick both works a verb and walks a body. So the column re-stands, once, as
+     * a discrete move, when the player is further from it than a person can read at. In ordinary play
+     * this never fires; it fires when someone holds forward for two seconds, which is exactly when
+     * a claim silently left the frame in round 1.
+     */
+    const b = this.basis();
+    if (b && this.anchor) {
+      const dx = b.o[0] - this.anchor.o[0];
+      const dz = b.o[2] - this.anchor.o[2];
+      const behind = dx * this.anchor.f[0] + dz * this.anchor.f[1] > HAND.forward - 2.5;
+      if (behind || Math.hypot(dx, dz) > 11) {
+        this.anchor = b;
+        this.restands += 1;
+        for (const v of this.standing.values()) v.tex = "";
+      }
+    }
+    // The second grip is a state, not an edge: a verb reads it every step.
+    if (!this.hand.held.has("crouch") && this.act.fine) this.act.act("release", this.hand);
     this._slide(step);
+    this.hand.work = this._work();
     try {
-      this.act.fixed(step, this.hand);
+      this.act.fixed(step, { ...this.hand, move: { x: this.hand.move.x, y: this.hand.work } });
     } catch {
       /* never let a verb take the kernel down with it */
     }
@@ -479,12 +573,19 @@ export class VerbRuntime {
       line = "";
     }
     if (!line || line === read.key) return;
-    const tex = `\\text{${escapeText(line)}}`;
-    if (this.validateTex && !this.validateTex(tex)) {
+
+    // Wrap first, then gate: a sentence is refused WHOLE or stood whole, never in part.
+    const lines = wrapText(line, HAND.readWrap);
+    if (!lines.length || lines.length > HAND.readRows) {
       this.stats.readsRefused += 1;
       return;
     }
-    this._show("read", tex, { up: HAND.readUp, right: 0, em: HAND.readEm });
+    const rows = lines.map((l) => `\\text{${escapeText(l)}}`);
+    if (this.validateTex && !rows.every((t) => this.validateTex(t))) {
+      this.stats.readsRefused += 1;
+      return;
+    }
+    rows.forEach((tex, i) => this._show(`read-${i}`, tex, { up: HAND.readUp - i * HAND.readStep, right: 0, em: HAND.readEm }, true));
     this.stats.reads += 1;
   }
 
@@ -553,7 +654,7 @@ export class VerbRuntime {
     for (const row of rows) this._show(row.key, row.tex, { up: row.up ?? 0, right: row.right ?? 0, em: row.em }, force);
     // A row a verb stopped drawing — a term that was carried away, a bundle that folded — comes down.
     for (const id of [...this.standing.keys()]) {
-      if (live.has(id) || id === `${PREFIX}read`) continue;
+      if (live.has(id) || id.startsWith(`${PREFIX}read`)) continue;
       this.emit("math:hide", { id });
       this.standing.delete(id);
       this.stats.hides += 1;
@@ -587,6 +688,9 @@ export class VerbRuntime {
             objectClass: this.ctx.objectClass,
             unknown: this.ctx.unknown,
             stem: this.ctx.stem,
+            // The charge already in the socket, published because it is on screen: a reviewer
+            // deriving a response the way a player would needs the same rows the player has.
+            given: this.ctx.given,
           }
         : null,
       state: (() => {
@@ -596,7 +700,13 @@ export class VerbRuntime {
           return null;
         }
       })(),
-      hand: { move: { x: round2(this.hand.move.x), y: round2(this.hand.move.y) }, held: [...this.hand.held] },
+      hand: {
+        move: { x: round2(this.hand.move.x), y: round2(this.hand.move.y) },
+        work: round2(this.hand.work ?? 0),
+        trigger: { push: round2(this.trigger.push), pull: round2(this.trigger.pull) },
+        held: [...this.hand.held],
+      },
+      restands: this.restands,
       standing: [...this.standing.keys()],
       rows: [...this.standing.entries()].map(([id, r]) => ({ id, tex: r.tex, em: r.em })),
       lastResponse: this.lastResponse ? { ...this.lastResponse } : null,

@@ -1,0 +1,93 @@
+PASS  A1  a genuinely weak machine steps down and stays down (10 min)
+        7.49s medium→low(down,1r,52.05ms) · 22.03s low→potato(down,1r,31.04ms) — final potato, recoveries 0, budget {"changesLeft":3,"downStepsLeft":2,"upStepsLeft":0,"recoveriesLeft":2,"ceiling":"medium"}
+        why no revocation: improvement is consistent with the tier step (18.0 ms is 1.38x the 13.0 ms a 2-rung step predicts)
+PASS  A2  a machine one rung over budget takes exactly one rung
+        7.14s medium→low(down,1r,38.01ms) — final low; at low this machine measures 18.5 ms, inside the 21 ms floor
+        revocation gate: improvement is consistent with the tier step (18.5 ms is 0.97x the 19.0 ms a 1-rung step predicts)
+PASS  A3  a fast machine stays high for ten minutes
+        no changes — median 16.62 ms, p10 16.26, p99 17.04, 36119 frames scored
+PASS  A4  a 5 s boot storm does not decide the session — the Chromebook ends at medium
+        no changes — final medium (started medium). Route: never stepped down at all
+        storm was 120 ms frames for 5 s; the first window is 6000 ms of rendered time and the tail is 2500 ms
+PASS  A5  a 20 s storm costs one rung and the rung is handed back once the machine is quiet
+        7.54s medium→low(down,1r,119.62ms) · 51.17s low→medium(recover,1r,14ms) — final medium
+        descent: {"from":"medium","to":"low","atMs":7655.9,"medianMs":119.62,"corroborated":false}
+        recovery reason: the 119.62 ms that bought medium→low at 7.7 s cannot have been render cost: the tier steps taken since predict 59.8 ms at best and this machine measures 14.0 ms (0.234x), with headroom held for 20 s — restoring medium
+PASS  A6  no storm length between 0 s and 24 s ends the session below medium, and none leaps
+         0s storm → medium (0 change(s), 0 down, 0 recovered, max 0 rung)
+         2s storm → medium (0 change(s), 0 down, 0 recovered, max 0 rung)
+         4s storm → medium (0 change(s), 0 down, 0 recovered, max 0 rung)
+         6s storm → medium (0 change(s), 0 down, 0 recovered, max 0 rung)
+         8s storm → medium (2 change(s), 1 down, 1 recovered, max 1 rung)
+        10s storm → medium (2 change(s), 1 down, 1 recovered, max 1 rung)
+        12s storm → medium (2 change(s), 1 down, 1 recovered, max 1 rung)
+        14s storm → medium (2 change(s), 1 down, 1 recovered, max 1 rung)
+        16s storm → medium (2 change(s), 1 down, 1 recovered, max 1 rung)
+        18s storm → medium (2 change(s), 1 down, 1 recovered, max 1 rung)
+        20s storm → medium (2 change(s), 1 down, 1 recovered, max 1 rung)
+        22s storm → medium (4 change(s), 2 down, 2 recovered, max 1 rung)
+        24s storm → medium (4 change(s), 2 down, 2 recovered, max 1 rung)
+PASS  A7  a 4.2 s freeze every 12 s changes nothing — a stall is not evidence about the GPU
+        24 excursions discarded (100.8 s of stall), 11971 frames scored, median 16.57 ms, 0 changes
+PASS  A8  a machine at 2 fps is not mistaken for a stall and gets relief inside 30 s
+        9.50s medium→low(down,1r,250ms) · 24.40s low→potato(down,1r,250ms) — first relief at 9.5 s, final potato; 51 periods over 250 ms were winsorised rather than discarded
+PASS  A9  no change anywhere in the dead band (54 fps, 15 minutes)
+        median 18.49 ms, p10 17.58 ms, 48629 frames, 0 changes
+PASS  A10  an improvement a tier step can explain never arms a revocation
+        at low: improvement is consistent with the tier step (18.5 ms is 0.97x the 19.0 ms a 1-rung step predicts)
+PASS  B1  corroboration is a relation: a miss AT the predicted tier falsifies it, a miss ABOVE it confirms
+        predicted "medium" → corroboratesAt(medium)=false, (low)=false, (high)=true
+        round 2 answered this once at boot from the GPU string and got "true" for all three
+PASS  B2  the same part: a miss at the capped tier is revocable, a miss above it is final
+        falsified: medium→low corroborated=false, recoveries used 1
+        promoted: medium→high→medium, descent corroborated=true, recoveriesLeft 0
+        promoted gate: the descent corroborated the heuristic (measured at high, above the predicted medium)
+PASS  B3  400 hostile streams: every change is exactly one rung, inside budget, under the ceiling
+        814 changes across 400 sessions, all single-rung
+PASS  B4  400 streams: no up-step ever follows a down-step, and a failed revocation locks the ratchet
+        no oscillation in 400 sessions
+PASS  B5  the first-frame heuristic predicts the tier for the fleet this game is for
+        ok  ANGLE (Intel, Intel(R) UHD Graphics 600 Direct   → medium (want medium, 2 cap(s))
+        ok  ANGLE (Intel, Intel(R) Iris(R) Xe Graphics Dir   → medium (want medium, 1 cap(s))
+        ok  ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Direct3   → high (want high, 0 cap(s))
+        ok  WebKit WebGL                                     → medium (want medium, 0 cap(s))
+        ok  Mali-G57 MC2                                     → medium (want medium, 3 cap(s))
+        ok  Mali-T860                                        → low (want low, 5 cap(s))
+        ok  Mali-T860                                        → potato (want potato, 5 cap(s))
+PASS  B6  an explicit ?tier= stands auto-tiering down, at boot and mid-session
+        boot: enabled=false, "explicit: a tier was chosen (settings or ?tier=), autoTier stood down", 2000 frames, 0 changes
+        mid: player chose "low", the tier the heuristic had already applied — enabled true → false at frame 41, player tier low, renderer re-applied=true, autoTier now false
+PASS  B7  after a falsified descent the revocation budget is spendable, not decorative
+        after the storm: tier medium, {"changesLeft":3,"downStepsLeft":3,"upStepsLeft":0,"recoveriesLeft":1,"ceiling":"medium"}
+        round 2 reported recoveriesLeft 0 here because "provisional" was false on any capped machine
+PASS  B8  the heuristic's cap is the ceiling, and a descent past the arming window loses its revocation
+        (a) capped at medium: 10 min of vsync → medium (0 change(s), ups 0); then heavy → low (1 total), ceiling medium
+        (b) walking down: 7.67s ultra→high(down,1r,130.02ms) · 22.20s high→medium(down,1r,83.97ms) · 36.77s medium→low(down,1r,52ms) · 51.40s low→potato(down,1r,30.99ms)
+            last down-step at 51401.4 ms vs arm window 45000 ms → late=true; after 5 min of flawless frames: 0 recoveries, gate "the descent continued past the arming window"
+PASS  B9  a wrong revocation is caught, locks the ratchet, and is never repeated
+        7.66s medium→low(down,1r,119.62ms) · 51.18s low→medium(recover,1r,14ms) · 128.57s medium→low(down,1r,39.56ms)
+        after the wrong revocation: locked=true, recoveries 1/2, final low
+        gate now: a revocation already failed — locked
+(node:57556) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS  C1  the game boots with auto-tiering mounted and no errors of its own
+        fatal=null, errors mine=0 foreign=0, HMR reloads survived=0
+        start high, ceiling high (configured tier), predicted high, GPU "WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+PASS  C2  quality:tier has a listener in the shipped app (it had none — tools/seams.mjs)
+        autotier probe: signal.subscribed=true; post probe: tierSignal.subscribed=true
+        live signal registry contains "quality:tier": true
+PASS  C3  real measured frame cost steps the tier down in the real game, one rung
+        high→medium (1 rung) at 115.5 ms median (8.7 fps) over 35 frames / 4.0 s rendered; medium→low (1 rung) at 103.5 ms median (9.7 fps) over 40 frames / 4.1 s rendered
+PASS  C4  the RENDERER moved, not a config value: pixel ratio, drawing buffer and shadow maps
+        renderer.getPixelRatio() 1.5 → 1; drawing buffer 720x405 → 480x270; shadow map 2048² → 512² across 2 caster(s); shadowMap.enabled true → true
+PASS  C5  the post stack followed the tier down, and it arrived on the signal
+        route on every applied change: signal, signal
+        post effects {"bloom":true,"sunGlow":true,"grain":true,"vignette":true} → {"bloom":false,"sunGlow":false,"grain":false,"vignette":false}; installed true → false; passes 9 → 0
+        PostStack recorded: {"tier":"low","direction":"down","source":"autotier","why":"median frame 103.5 ms (9.7 fps) over 40 frames / 4.1 s of rendered time is 4.9x the 21 ms floor, tail 102.6 ms — one rung, falsifies the predicted high and is revocable","honoured":true,"installed":false,"effects":{"bloom":false,"sunGlow":false,"grain":false,"vignette":false}}
+PASS  C6  no multi-rung leap and no oscillation in the live session
+        2 change(s): high→medium(down,1r,post=signal), medium→low(down,1r,post=signal)
+        budget {"changesLeft":3,"downStepsLeft":2,"upStepsLeft":0,"recoveriesLeft":2,"ceiling":"high"}; final tier low; window 4000/4000 ms; excursions 5, stalled 1839 ms
+PASS  C7  ?tier=low stands the module down in the real game
+        enabled=false, autoTier=false, tier=low, 114 frames observed, 0 changes, reason "explicit: a tier was chosen (settings or ?tier=), autoTier stood down"
+
+26/26 claims pass

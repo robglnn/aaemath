@@ -15,13 +15,13 @@
       "math: claim \"leaf9-share\" reads 23.4 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.06 px, so the mark stands until the player is closer"
     ],
     "stats": {
-      "fps": 0,
-      "frameMs": -5.5,
+      "fps": 435,
+      "frameMs": 2.3,
       "simTime": 0,
       "frames": 1,
       "steps": 0,
       "drawCalls": 126,
-      "triangles": 129649,
+      "triangles": 130369,
       "programs": 19,
       "textures": 12,
       "geometries": 47,
@@ -1193,6 +1193,19 @@
             "relative": 0.28
           }
         },
+        "accents": {
+          "registered": 4,
+          "active": 0,
+          "pool": 6,
+          "lit": 0,
+          "peakIntensity": 0,
+          "ids": [
+            "leaf9-span",
+            "leaf9-share",
+            "leaf9-working",
+            "leaf9-mark"
+          ]
+        },
         "lights": {
           "key": {
             "hex": "#FFE3B8",
@@ -1504,14 +1517,14 @@
         "tier": "high",
         "density": 1,
         "surface": "terrain",
-        "surfaceQueries": 5655,
+        "surfaceQueries": 5758,
         "built": true,
         "outstanding": true,
-        "genCalls": 545,
-        "genMsTotal": 9.3,
-        "instances": 1475,
-        "triangles": 31617,
-        "groundTriangles": 26912,
+        "genCalls": 553,
+        "genMsTotal": 9.7,
+        "instances": 1495,
+        "triangles": 31857,
+        "groundTriangles": 27152,
         "meshes": 6,
         "solids": 0,
         "missingRoles": [],
@@ -1631,16 +1644,16 @@
             ],
             "drawn": [
               86,
-              371
+              391
             ],
             "geoTris": [
               15,
               12
             ],
-            "tris": 5742,
-            "candidates": 644,
-            "rejected": 852,
-            "tiles": 110,
+            "tris": 5982,
+            "candidates": 675,
+            "rejected": 917,
+            "tiles": 118,
             "gather": 150,
             "fade": [
               105.92857142857142,
@@ -2414,10 +2427,10 @@
         "state": "idle",
         "grounded": true,
         "weights": {
-          "stride": 0,
+          "stride": 0.029,
           "air": 0,
           "land": 0,
-          "idle": 1
+          "idle": 0.971
         },
         "travelled": 14.56,
         "cycles": 0.532,
@@ -2751,7 +2764,7 @@
           "ready": true,
           "loaded": 9,
           "failed": [],
-          "ms": 15.6
+          "ms": 16.5
         },
         "raster": {
           "rasters": 3,
@@ -2780,7 +2793,7 @@
       },
       "mathocclusion": {
         "at": 0,
-        "ms": 165.7,
+        "ms": 159.5,
         "occluders": 44,
         "worstOccludedPct": 83.3,
         "panels": [
@@ -2841,7 +2854,7 @@
         "typesets": 4,
         "failures": [],
         "evictions": 0,
-        "typesetMs": 0.4,
+        "typesetMs": 0.5,
         "cacheSize": 4,
         "locale": "en",
         "unspokenNodeTypes": [
@@ -5283,8 +5296,8 @@
       "accepted": 0,
       "rejected": 1,
       "excursions": 1,
-      "stalledMs": 664,
-      "clockMs": 680
+      "stalledMs": 635,
+      "clockMs": 652
     },
     "thresholds": {
       "downMs": 21,
@@ -5467,7 +5480,7 @@
     "forced": true,
     "reason": "measuring",
     "standDown": null,
-    "frames": 62,
+    "frames": 61,
     "bootTier": "high",
     "startTier": "high",
     "tier": "medium",
@@ -5487,8 +5500,8 @@
         "from": "high",
         "to": "medium",
         "rungs": 1,
-        "atMs": 5414.6,
-        "medianMs": 116.8,
+        "atMs": 6571.2,
+        "medianMs": 137.3,
         "corroborated": false,
         "late": false
       },
@@ -5496,7 +5509,7 @@
       "recoveries": 0,
       "quietForMs": 0,
       "armed": false,
-      "gate": "improvement is consistent with the tier step (116.8 ms is 2.00x the 58.4 ms a 1-rung step predicts)",
+      "gate": "improvement is consistent with the tier step (137.3 ms is 2.00x the 68.7 ms a 1-rung step predicts)",
       "ratio": 2
     },
     "signal": {
@@ -5539,23 +5552,23 @@
       }
     },
     "measured": {
-      "fps": 8.6,
-      "medianMs": 116.8,
-      "p10Ms": 26.6,
-      "p95Ms": 175.4,
-      "p99Ms": 226.1,
-      "maxMs": 236.7,
-      "frames": 37,
-      "spanMs": 4075.6,
+      "fps": 7.3,
+      "medianMs": 137.3,
+      "p10Ms": 16.9,
+      "p95Ms": 175.5,
+      "p99Ms": 182.4,
+      "maxMs": 190,
+      "frames": 34,
+      "spanMs": 4006.1,
       "windowFull": true,
       "tailMedianMs": null
     },
     "samples": {
-      "accepted": 37,
-      "rejected": 3,
-      "excursions": 3,
-      "stalledMs": 1332,
-      "clockMs": 5794
+      "accepted": 34,
+      "rejected": 6,
+      "excursions": 6,
+      "stalledMs": 2167,
+      "clockMs": 6571
     },
     "thresholds": {
       "downMs": 21,
@@ -5593,19 +5606,19 @@
     },
     "changes": [
       {
-        "at": 5414.6,
+        "at": 6571.2,
         "from": "high",
         "to": "medium",
         "direction": "down",
         "rungs": 1,
-        "why": "median frame 116.8 ms (8.6 fps) over 37 frames / 4.1 s of rendered time is 5.6x the 21 ms floor, tail 117.9 ms — one rung, falsifies the predicted high and is revocable",
-        "fps": 8.6,
-        "medianMs": 116.8,
-        "p10Ms": 26.6,
-        "p95Ms": 175.4,
-        "p99Ms": 226.1,
-        "frames": 37,
-        "spanMs": 4075.6,
+        "why": "median frame 137.3 ms (7.3 fps) over 34 frames / 4.0 s of rendered time is 6.5x the 21 ms floor, tail 142.4 ms — one rung, falsifies the predicted high and is revocable",
+        "fps": 7.3,
+        "medianMs": 137.3,
+        "p10Ms": 16.9,
+        "p95Ms": 175.5,
+        "p99Ms": 182.4,
+        "frames": 34,
+        "spanMs": 4006.1,
         "corroborated": false,
         "applied": true,
         "dry": false,
@@ -5650,7 +5663,7 @@
     "forced": true,
     "reason": "measuring",
     "standDown": null,
-    "frames": 110,
+    "frames": 105,
     "bootTier": "high",
     "startTier": "high",
     "tier": "low",
@@ -5670,8 +5683,8 @@
         "from": "high",
         "to": "low",
         "rungs": 1,
-        "atMs": 5414.6,
-        "medianMs": 116.8,
+        "atMs": 6571.2,
+        "medianMs": 137.3,
         "corroborated": false,
         "late": false
       },
@@ -5679,8 +5692,8 @@
       "recoveries": 0,
       "quietForMs": 0,
       "armed": false,
-      "gate": "improvement is consistent with the tier step (108.0 ms is 3.70x the 29.2 ms a 2-rung step predicts)",
-      "ratio": 3.699
+      "gate": "improvement is consistent with the tier step (143.8 ms is 4.19x the 34.3 ms a 2-rung step predicts)",
+      "ratio": 4.189
     },
     "signal": {
       "name": "quality:tier",
@@ -5722,23 +5735,23 @@
       }
     },
     "measured": {
-      "fps": 9.3,
-      "medianMs": 108,
-      "p10Ms": 15.5,
-      "p95Ms": 135.2,
-      "p99Ms": 192.7,
-      "maxMs": 209.5,
-      "frames": 39,
-      "spanMs": 4076,
+      "fps": 7,
+      "medianMs": 143.8,
+      "p10Ms": 13.3,
+      "p95Ms": 179.5,
+      "p99Ms": 220.6,
+      "maxMs": 233.9,
+      "frames": 32,
+      "spanMs": 4109.2,
       "windowFull": true,
       "tailMedianMs": null
     },
     "samples": {
-      "accepted": 76,
-      "rejected": 3,
-      "excursions": 3,
-      "stalledMs": 1332,
-      "clockMs": 11105
+      "accepted": 66,
+      "rejected": 11,
+      "excursions": 11,
+      "stalledMs": 3781,
+      "clockMs": 13065
     },
     "thresholds": {
       "downMs": 21,
@@ -5776,19 +5789,19 @@
     },
     "changes": [
       {
-        "at": 5414.6,
+        "at": 6571.2,
         "from": "high",
         "to": "medium",
         "direction": "down",
         "rungs": 1,
-        "why": "median frame 116.8 ms (8.6 fps) over 37 frames / 4.1 s of rendered time is 5.6x the 21 ms floor, tail 117.9 ms — one rung, falsifies the predicted high and is revocable",
-        "fps": 8.6,
-        "medianMs": 116.8,
-        "p10Ms": 26.6,
-        "p95Ms": 175.4,
-        "p99Ms": 226.1,
-        "frames": 37,
-        "spanMs": 4075.6,
+        "why": "median frame 137.3 ms (7.3 fps) over 34 frames / 4.0 s of rendered time is 6.5x the 21 ms floor, tail 142.4 ms — one rung, falsifies the predicted high and is revocable",
+        "fps": 7.3,
+        "medianMs": 137.3,
+        "p10Ms": 16.9,
+        "p95Ms": 175.5,
+        "p99Ms": 182.4,
+        "frames": 34,
+        "spanMs": 4006.1,
         "corroborated": false,
         "applied": true,
         "dry": false,
@@ -5815,19 +5828,19 @@
         "post": "signal"
       },
       {
-        "at": 11105.3,
+        "at": 13064.9,
         "from": "medium",
         "to": "low",
         "direction": "down",
         "rungs": 1,
-        "why": "median frame 108.0 ms (9.3 fps) over 39 frames / 4.1 s of rendered time is 5.1x the 21 ms floor, tail 99.7 ms — one rung, falsifies the predicted high and is revocable",
-        "fps": 9.3,
-        "medianMs": 108,
-        "p10Ms": 15.5,
-        "p95Ms": 135.2,
-        "p99Ms": 192.7,
-        "frames": 39,
-        "spanMs": 4076,
+        "why": "median frame 143.8 ms (7.0 fps) over 32 frames / 4.1 s of rendered time is 6.8x the 21 ms floor, tail 129.5 ms — one rung, falsifies the predicted high and is revocable",
+        "fps": 7,
+        "medianMs": 143.8,
+        "p10Ms": 13.3,
+        "p95Ms": 179.5,
+        "p99Ms": 220.6,
+        "frames": 32,
+        "spanMs": 4109.2,
         "corroborated": false,
         "applied": true,
         "dry": false,
@@ -5888,7 +5901,7 @@
         "tier": "low",
         "direction": "down",
         "source": "autotier",
-        "why": "median frame 108.0 ms (9.3 fps) over 39 frames / 4.1 s of rendered time is 5.1x the 21 ms floor, tail 99.7 ms — one rung, falsifies the predicted high and is revocable",
+        "why": "median frame 143.8 ms (7.0 fps) over 32 frames / 4.1 s of rendered time is 6.8x the 21 ms floor, tail 129.5 ms — one rung, falsifies the predicted high and is revocable",
         "honoured": true,
         "installed": false,
         "effects": {
@@ -5968,7 +5981,7 @@
       "white": 1,
       "gradeIsIdentity": true
     },
-    "frames": 109
+    "frames": 104
   },
   "explicit": {
     "enabled": false,
@@ -5976,7 +5989,7 @@
     "forced": false,
     "reason": "explicit: a tier was chosen (settings or ?tier=), autoTier stood down",
     "standDown": null,
-    "frames": 109,
+    "frames": 84,
     "bootTier": "low",
     "startTier": "low",
     "tier": "low",

@@ -16,6 +16,10 @@
 //   node tools/seams.mjs --signals  also audit signal names emitted with no listener, and vice versa
 //   node tools/seams.mjs --check    exit non-zero if anything is unreached (for gates)
 //
+// `--signals` exits non-zero on its own for ONE class of finding: a one-ended signal name that
+// `design/architecture.md` does not document, or documents without a ⟨pending Pnn⟩ marker. See
+// `vocabulary()` below for why that check is machine-run and not a review habit.
+//
 // Static analysis only — deliberately. A runtime trace proves a path ran on ONE playthrough; this
 // proves nobody ever wrote the call at all, which is the failure actually being made here.
 
@@ -144,6 +148,53 @@ const EMIT_SITE_RE = /(?<![\w$])(?:[\w$]+\s*\.\s*)?emit\(\s*["'`]([^"'`]+)["'`]/
 const LISTEN_SITE_RE = /(?<![\w$])(?:[\w$]+\s*\.\s*)?on\(\s*["'`]([^"'`]+)["'`]/g;
 const SIGNAL_NAME_RE = /^[a-z][\w-]*:[\w:-]+$/;
 
+/**
+ * The signal vocabulary as `design/architecture.md` states it: name -> was it marked ⟨…⟩.
+ *
+ * ## Why this is a machine check and not a review habit
+ *
+ * The round that introduced the ⟨pending Pnn⟩ convention wrote the rule down — "an unmarked
+ * one-ended name is a defect, and the audit is entitled to say so" — and in the same edit shipped
+ * `world:resonance`: subscribed by `world/Lighting.js`, emitted by nothing, absent from the
+ * document, and holding the entire accent-light feature dark. The name was sitting in this tool's
+ * own `listenedWithNoEmitter` output at the time. A convention that depends on somebody reading
+ * their own audit output to the end lasts exactly as long as attention does.
+ *
+ * ## What counts as documented
+ *
+ * Only **entry blocks** — a paragraph whose first line is a bold one-word domain followed by an em
+ * dash (`**Camera** — …`). The prose paragraphs between entries discuss the same names in backticks
+ * while explaining them, and counting those would let an undocumented name pass because somebody
+ * wrote a sentence about it. Within a block, entries are separated by `·`, so a marker binds to the
+ * name it follows, and a name is the leading `domain:event` token inside a backtick span — the rest
+ * of the span is the payload shape, which may itself contain colons (`phase:"start"`).
+ */
+const DOC = path.join(ROOT, "design/architecture.md");
+
+function vocabulary() {
+  if (!fs.existsSync(DOC)) return null;
+  const text = fs.readFileSync(DOC, "utf8");
+  const start = text.indexOf("## Signal vocabulary");
+  if (start < 0) return null;
+  const end = text.indexOf("\n## ", start + 1);
+  const section = text.slice(start, end < 0 ? text.length : end);
+
+  const entries = new Map();
+  for (const block of section.split(/\r?\n\s*\r?\n/)) {
+    const first = block.split(/\r?\n/)[0];
+    if (!/^\*\*[A-Z][A-Za-z]*\*\*[^—\n]*—/.test(first)) continue;
+    for (const chunk of block.replace(/\r?\n/g, " ").split("·")) {
+      const marked = /⟨[^⟩]*⟩/.test(chunk);
+      for (const span of chunk.matchAll(/`([^`]+)`/g)) {
+        const name = span[1].match(/^([a-z][\w-]*:[\w:-]+)/)?.[1];
+        if (!name || !SIGNAL_NAME_RE.test(name)) continue;
+        entries.set(name, { marked: marked || entries.get(name)?.marked === true });
+      }
+    }
+  }
+  return entries;
+}
+
 let signalReport = null;
 if (has("signals")) {
   const emits = new Map();
@@ -183,6 +234,33 @@ if (has("signals")) {
       ...orphanListens.map((n) => [n, { listenedAt: sites(listens, n) }]),
     ]),
   };
+
+  // ------------------------------------------------------------ the vocabulary gate
+  const vocab = vocabulary();
+  const orphans = [...orphanEmits, ...orphanListens];
+  if (!vocab) {
+    signalReport.vocabulary = { read: false, why: `${rel(DOC)} has no "## Signal vocabulary" section` };
+  } else {
+    const undocumented = orphans.filter((n) => !vocab.has(n)).sort();
+    const unmarked = orphans.filter((n) => vocab.has(n) && !vocab.get(n).marked).sort();
+    const allNames = [...new Set([...emits.keys(), ...listens.keys()])].sort();
+    signalReport.vocabulary = {
+      read: rel(DOC),
+      documented: vocab.size,
+      // FATAL. A one-ended name the document does not carry is an accident nobody owns; a
+      // one-ended name it carries without ⟨…⟩ is a claim that both ends exist, and it is false.
+      undocumented,
+      unmarked,
+      // Informational. A name whose other end has since been written but which still reads as a
+      // known hole — the document is now describing a seam that was closed.
+      staleMarkers: [...vocab.keys()]
+        .filter((n) => vocab.get(n).marked && emits.has(n) && listens.has(n))
+        .sort(),
+      // Informational. Two-ended names nobody added to the vocabulary. Not a seam, but the
+      // document is the only place the shape of a payload is written down.
+      notInVocabulary: allNames.filter((n) => !vocab.has(n)),
+    };
+  }
 }
 
 // ---------------------------------------------------------------- report
@@ -215,4 +293,20 @@ console.error(
     "genuine leaf. But every entry here is a seam somebody has to justify out loud."
 );
 
-if (has("check") && problems > 0) process.exit(1);
+const v = signalReport?.vocabulary;
+const undeclared = (v?.undocumented?.length ?? 0) + (v?.unmarked?.length ?? 0);
+if (undeclared) {
+  console.error(`\nFAIL — ${undeclared} one-ended signal name(s) the vocabulary does not own:`);
+  for (const n of v.undocumented) {
+    console.error(`  ${n}  — absent from design/architecture.md's signal vocabulary entirely`);
+  }
+  for (const n of v.unmarked) {
+    console.error(`  ${n}  — listed there with no ⟨pending Pnn⟩ marker, so the document claims both ends exist`);
+  }
+  console.error(
+    "Do one of three things to each: WIRE the other end, REMOVE the name from code and document,\n" +
+      "or mark the entry ⟨pending Pnn⟩ naming the piece that owes the other half."
+  );
+}
+
+if (undeclared || (has("check") && problems > 0)) process.exit(1);

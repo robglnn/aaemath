@@ -185,6 +185,24 @@ export default {
      *
      * Reconciled in `after()`, after every `frame()` hook, so the transform read is the one that
      * was rendered. Emits only on a change: appear, move more than 5 cm, or disappear.
+     *
+     * ## Measured — including the part that is not good news
+     *
+     * `review/measure/P36-spill.mjs` drives the shipped app and reports where these lights land.
+     * The seam works: four accents registered, four pool lights at intensity 0.348, each sitting on
+     * its claim's rendered position; remove this bridge and all four go to zero with the claims
+     * still standing. **But every claim at spawn stands 10.7 – 21.2 m above the ground beneath it,
+     * and the closest a lit accent came to the body in fourteen seconds of running was 6.61 m** —
+     * so with §5.4's 6 m radius cap, nothing is inside the falloff and the spill currently lands on
+     * nothing.
+     *
+     * That is not a wiring fault and it is not fixable from here. It is two rules meeting: P15
+     * stands every claim on bare sky because a claim with world geometry in front of its ink can be
+     * read wrong (`review/measure/P15.mjs` claim O1 enforces 0.0% occlusion), and §5.4 caps an
+     * accent at 6 m so that it marks the world rather than lighting it. A claim that is never
+     * within 6 m of a surface can never spill on one. Whoever owns level composition or the accent
+     * radius policy has that decision; raising `radius` past 6 here would only be clamped by
+     * `Lighting.addAccent`, and moving the claims is P15's call and has a measured reason.
      */
     const RESONANCE = {
       // §5.4 caps accent radius at 6 m; a claim is ink, not a crystal core, so it stands under

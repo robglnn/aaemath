@@ -1,0 +1,8 @@
+file:///C:/dev/math/aaemath/review/measure/P16.mjs:2137
+  `${at18.median.toFixed(1)}% with ${pct(at18.shareAt80)} of learners past 80%, and lands inside the 90-96% band at ` +
+          ^
+
+TypeError: Cannot read properties of null (reading 'median')
+    at [90mfile:///C:/dev/math/aaemath/[39mreview/measure/P16.mjs:2137:11
+
+Node.js v24.11.0

@@ -1,5 +1,5 @@
 {
-  "at": "2026-08-10T20:43:02.960Z",
+  "at": "2026-08-10T20:55:23.207Z",
   "only": [
     "C"
   ],
@@ -20,7 +20,7 @@
       "id": "C3",
       "title": "real measured frame cost steps the tier down in the real game, one rung",
       "pass": true,
-      "detail": "high→medium (1 rung) at 116.8 ms median (8.6 fps) over 37 frames / 4.1 s rendered; medium→low (1 rung) at 108 ms median (9.3 fps) over 39 frames / 4.1 s rendered"
+      "detail": "high→medium (1 rung) at 137.3 ms median (7.3 fps) over 34 frames / 4.0 s rendered; medium→low (1 rung) at 143.8 ms median (7 fps) over 32 frames / 4.1 s rendered"
     },
     {
       "id": "C4",
@@ -32,19 +32,19 @@
       "id": "C5",
       "title": "the post stack followed the tier down, and it arrived on the signal",
       "pass": true,
-      "detail": "route on every applied change: signal, signal\npost effects {\"bloom\":true,\"sunGlow\":true,\"grain\":true,\"vignette\":true} → {\"bloom\":false,\"sunGlow\":false,\"grain\":false,\"vignette\":false}; installed true → false; passes 9 → 0\nPostStack recorded: {\"tier\":\"low\",\"direction\":\"down\",\"source\":\"autotier\",\"why\":\"median frame 108.0 ms (9.3 fps) over 39 frames / 4.1 s of rendered time is 5.1x the 21 ms floor, tail 99.7 ms — one rung, falsifies the predicted high and is revocable\",\"honoured\":true,\"installed\":false,\"effects\":{\"bloom\":false,\"sunGlow\":false,\"grain\":false,\"vignette\":false}}"
+      "detail": "route on every applied change: signal, signal\npost effects {\"bloom\":true,\"sunGlow\":true,\"grain\":true,\"vignette\":true} → {\"bloom\":false,\"sunGlow\":false,\"grain\":false,\"vignette\":false}; installed true → false; passes 9 → 0\nPostStack recorded: {\"tier\":\"low\",\"direction\":\"down\",\"source\":\"autotier\",\"why\":\"median frame 143.8 ms (7.0 fps) over 32 frames / 4.1 s of rendered time is 6.8x the 21 ms floor, tail 129.5 ms — one rung, falsifies the predicted high and is revocable\",\"honoured\":true,\"installed\":false,\"effects\":{\"bloom\":false,\"sunGlow\":false,\"grain\":false,\"vignette\":false}}"
     },
     {
       "id": "C6",
       "title": "no multi-rung leap and no oscillation in the live session",
       "pass": true,
-      "detail": "2 change(s): high→medium(down,1r,post=signal), medium→low(down,1r,post=signal)\nbudget {\"changesLeft\":3,\"downStepsLeft\":2,\"upStepsLeft\":0,\"recoveriesLeft\":2,\"ceiling\":\"high\"}; final tier low; window 4000/4000 ms; excursions 3, stalled 1332 ms"
+      "detail": "2 change(s): high→medium(down,1r,post=signal), medium→low(down,1r,post=signal)\nbudget {\"changesLeft\":3,\"downStepsLeft\":2,\"upStepsLeft\":0,\"recoveriesLeft\":2,\"ceiling\":\"high\"}; final tier low; window 4000/4000 ms; excursions 11, stalled 3781 ms"
     },
     {
       "id": "C7",
       "title": "?tier=low stands the module down in the real game",
       "pass": true,
-      "detail": "enabled=false, autoTier=false, tier=low, 109 frames observed, 0 changes, reason \"explicit: a tier was chosen (settings or ?tier=), autoTier stood down\""
+      "detail": "enabled=false, autoTier=false, tier=low, 84 frames observed, 0 changes, reason \"explicit: a tier was chosen (settings or ?tier=), autoTier stood down\""
     }
   ]
 }

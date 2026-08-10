@@ -73,6 +73,8 @@ export const TEACH = {
   maxResponseChars: 48,
   /** Requests to skip when `Scheduler.serve()` comes back empty before giving the cycle up. */
   maxServeRetries: 4,
+  /** How long the presenter waits before asking a momentarily empty engine again. See `fixed()`. */
+  waitRetrySeconds: 5,
   /**
    * Sockets, in metres right / up / ahead of the camera. These are the three positions
    * `boot/60-mathtex.js` measured clear of world geometry for the standing claims (its header
@@ -95,10 +97,16 @@ export const TEACH = {
   workingStep: 1.35,
 };
 
-/** Panel ids this presenter owns. Stable, because `math:show` is idempotent on `id`. */
-export const CLAIM_ID = "teach-claim";
-export const ENTRY_ID = "teach-entry";
-export const WORKING_ID = "teach-working";
+/**
+ * Panel ids this presenter owns, published on `TEACH` rather than as three loose exports so the seam
+ * audit does not have to be told about names nobody imports. Stable, because `math:show` is
+ * idempotent on `id` — re-sending one re-typesets that claim in place instead of standing a second.
+ * Any surface that stands its own claims must stay off this prefix.
+ */
+const CLAIM_ID = "teach-claim";
+const ENTRY_ID = "teach-entry";
+const WORKING_ID = "teach-working";
+TEACH.ids = { claim: CLAIM_ID, entry: ENTRY_ID, working: WORKING_ID, prefix: "teach-" };
 
 /**
  * What a keystroke may put into a response.
@@ -119,7 +127,7 @@ export class Teaching {
    * @param {object|null} opts.session  P33's `flow/Session.js`. Preferred: it holds the arc.
    * @param {object|null} opts.learning P16's mounted engine. Used only when no session exists.
    * @param {object|null} opts.bank     P17's `ItemBank` — INJECTED, never imported (a feature module
-   *                                    may not import a sibling; `boot/65-teaching.js` is where the
+   *                                    may not import a sibling; `boot/92-teaching.js` is where the
    *                                    two are allowed to meet, exactly like `boot/63-learnserve.js`).
    * @param {(a:object)=>number[]|null} [opts.place] resolve a socket to a world position.
    * @param {(name:string,value:any)=>void} [opts.emit]
@@ -299,6 +307,18 @@ export class Teaching {
       this._entryDirty = false;
       this._showEntry();
     }
+    /**
+     * `waiting` means the engine had nothing legal to offer THIS INSTANT — a cell whose whole
+     * servable pool was exhausted inside one request, most likely. It is not `spent`: the sitting is
+     * still open, so parking here forever would be a presenter that stops teaching and never says
+     * so. `Session.next()` on a closed sitting returns immediately, so the retry costs a Map lookup
+     * and cannot turn into a loop; a learner can also just take the claim on again with `interact`.
+     */
+    if (this.phase === "waiting" && this.simTime >= this.until) {
+      this.until = this.simTime + TEACH.waitRetrySeconds;
+      this._present();
+      return;
+    }
     if (this.phase === "idle" || this.phase === "dormant" || this.phase === "spent" || this.phase === "waiting") return;
     if (this.phase === "marked" && this.simTime >= this.until) {
       this._retire();
@@ -334,6 +354,7 @@ export class Teaching {
         // The engine has nothing legal left, or the sitting is spent. Both are real answers.
         this.stats.emptyRequests += 1;
         this.phase = this.session && this.session.phase === "closed" ? "spent" : "waiting";
+        this.until = this.simTime + TEACH.waitRetrySeconds;
         return null;
       }
       if (candidate.item) req = candidate;
@@ -341,6 +362,7 @@ export class Teaching {
     }
     if (!req) {
       this.phase = "waiting";
+      this.until = this.simTime + TEACH.waitRetrySeconds;
       return null;
     }
 
@@ -418,7 +440,15 @@ export class Teaching {
      * demonstrate would make the announcement a lie. `hintShown` records that it happened, and it is
      * reported on the outcome, so the response is priced as what it was.
      */
-    if (this.announced?.phase === "model" && this.announced.kpId === this.req?.kpId) {
+    /**
+     * BOTH have to say `model`: the announcement the engine made, and the request it then handed
+     * over. `learn:teach` is what gates the demonstration — that is the consumption — but a stale
+     * announcement must never be able to scaffold an item the engine served as `solo`, and a test-out
+     * probe announces `{phase:"solo", testOut:true}` precisely so it can never be demonstrated at.
+     * One belt, one pair of braces, on the surface where a mistake buys unearned mastery.
+     */
+    const announcedHere = this.announced?.kpId === this.req?.kpId && this.announced?.phase === this.req?.phase;
+    if (announcedHere && this.req?.phase === "model" && this.req?.testOut !== true) {
       const shown = this.item?.answer?.tex ?? this.item?.answer?.canonical ?? null;
       if (shown) {
         this._show(`${WORKING_ID}-model`, shown, {

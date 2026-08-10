@@ -185,7 +185,13 @@ export default {
       expected: () => {
         const item = teaching.item;
         if (!item) return null;
-        return itemBank.accepts(item)[0] ?? null;
+        try {
+          return itemBank.accepts(item)[0] ?? null;
+        } catch {
+          // An answer shape `accepts()` has no case for is a content question, not a reason to make
+          // a measurement run die inside a page.evaluate where the stack would never be read.
+          return null;
+        }
       },
       /** REVIEW HARNESS ONLY — the whole trace, not the tail the probe publishes. */
       trace: () => ({ names: TRACE_NAMES, total: traced, counts: { ...counts }, entries: trace.slice(), cap: TRACE_CAP }),

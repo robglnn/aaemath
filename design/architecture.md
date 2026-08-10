@@ -104,7 +104,8 @@ audio director (P25). Until one of those lands it is a bracket nobody reads.
 
 **Camera** — `camera:shake {amount, seconds}` · `camera:fov {target, seconds}` ⟨pending P19/P23⟩ ·
 `camera:focus {target, seconds}` ⟨pending P19/P23⟩ · `camera:mode {id, opacity}` ·
-`camera:probe {origin, direction, radius, maxDistance → handled, hit, distance}`
+`camera:probe {origin, direction, radius, maxDistance → handled, hit, distance}` ·
+`camera:target {object}`
 
 `camera:probe` is the vocabulary's only **request** signal: the rig fills a reusable object, emits
 it, and reads the answer back off the same object. A handler that answers must set `handled = true`;
@@ -123,6 +124,7 @@ inside a wall to keep it in shot. Listeners that only care about the inbound dir
 ignore payloads carrying `source:"camera"`.
 
 **World** — `world:ready` · `world:region {id, entered}` · `world:interact {id, kind}` ·
+`world:collider {id, mesh|geometry, matrix}` · `world:sun {toLight, direction, color, intensity, …}` ·
 `world:resonance {id, position, radius, strength, active}`
 
 `world:resonance` is how anything unresolved standing in the world — a live claim, an open socket, a
@@ -139,9 +141,12 @@ frame, in `after()`, so the position it sends is the transform that was rendered
 a payload asked for. Read the result at `__vs.probe("lighting").accents`: `registered` is what this
 signal put in the map, `lit` is how many pool lights carry non-zero intensity as a consequence.
 
-`camera:target` is the other name in this section's neighbourhood and belongs to the camera: the rig
-hands the rendered player object over on it, and both `world/Lighting.js` and `render/PostStack.js`
-read the body position from it rather than reaching into `play/`.
+Known and measured (`review/measure/P36-spill.mjs`): the accents are live, but **at spawn nothing is
+inside their falloff.** Every standing claim is 10.7 – 21.2 m above the ground beneath it and the
+closest a lit accent came to the body in 14 s of running was 6.61 m, against a 6 m cap. P15 stands
+claims on bare sky so their ink is 0.0% occluded; §5.4 caps an accent at 6 m so it marks the world
+rather than lighting it. Both rules are right and together they mean a claim's spill lands on
+nothing at the distances this level uses. The signal is not the open question — the composition is.
 
 **Learning** — `learn:present {itemId, kpId, form}` · `learn:respond {itemId, correct, latencyMs, response}` ·
 `learn:mastery {kpId, p, delta}` · `learn:teach {kpId, phase:"model"|"guided"|"solo"}` ·
@@ -161,10 +166,11 @@ learning system takes the surface over rather than fighting it.
 **UI** — `ui:locale {locale}` · `ui:menu {id, open}` ⟨pending P22 emitter⟩ ·
 `ui:prompt {key, params}` ⟨pending P21⟩ · `ui:toast {key, tone}` ⟨pending P21⟩
 
-`ui:menu` is the one name in this document that is listened for and never sent: `play/Input.js`
-counts menu depth from it and swaps the action context, so opening a menu mid-sprint cannot leave a
-key stuck down behind it. The receiving half is built and proven; the menus that would open (P22)
-are not. `ui:prompt` and `ui:toast` have neither end and exist here as P21's reserved names.
+`ui:menu` is one of three names still listened for and never sent — the others are `camera:fov` and
+`camera:focus` above. `play/Input.js` counts menu depth from it and swaps the action context, so
+opening a menu mid-sprint cannot leave a key stuck down behind it. The receiving half is built and
+proven; the menus that would open (P22) are not. `ui:prompt` and `ui:toast` have neither end and
+exist here as P21's reserved names.
 
 **Audio** — `audio:cue {id, params}` ⟨pending P25⟩ · `audio:mood {id, intensity}` ⟨pending P25⟩
 
@@ -173,7 +179,8 @@ or more per minute of ordinary play, all of it into nothing, because `app/src/au
 exist yet. The controller is not at fault: it is doing exactly what a controller should, which is
 report what happened and let the mixer decide what it sounds like.
 
-**Kernel** — `kernel:frame {dt, alpha, simTime}` · `kernel:resize {width, height}` ⟨no subscriber⟩
+**Kernel** — `kernel:frame {dt, alpha, simTime}` ⟨no subscriber⟩ ·
+`kernel:resize {width, height}` ⟨no subscriber⟩
 
 Both are broadcasts for code that is **not** a mounted system, and nothing in `app/src` subscribes
 to either — a mounted system gets the same information from its `frame(dt, alpha)` and

@@ -279,6 +279,34 @@ nothing on the gameplay path reaches them — *"the warm is a one-shot inside bo
 on the gameplay path ever asks the bank for an item"*, and *"the shipped path never reports item
 family, so Mastery.respond refuses every response on the 24 cells with refused families."*
 
+## 6d. Learning loop: forward half connected, return half MISSING (measured 2026-08-10)
+
+`node review/measure/loop-trace.mjs` drives the shipped app and records the ordered signal trace.
+Result after the wiring wave:
+
+```
+learn:present  1    (kpId "var-meaning")
+math:show     11    (same kpId, re-emitted about every 1.1 s)
+learn:respond  0
+learn:mastery  0
+```
+
+**Engine → screen works.** The scheduler chooses a knowledge point, Teaching presents it, and the
+world-space KaTeX renderer receives it. That is the seam the wiring wave was built to close, and it
+is closed.
+
+**Screen → engine does not exist, and it is not a wiring bug.** Nothing can emit `learn:respond`
+because **P19 (in-world learning verbs) was never built**. There is no way for a player to answer.
+Until P19 lands, no mastery can be earned in the running game no matter how good the engine is —
+every simulated mastery result to date comes from offline harnesses driving `Mastery` directly.
+
+**P19 is therefore the critical path to a playable lesson**, ahead of any further art or engine work.
+Its brief already exists in `design/pieces.json`; its acceptance test is the one that matters: a critic
+must describe what they did with their hands, and it must have been algebra. Any modal quiz box fails.
+
+Also open: `math:show` firing 11 times for a single presentation looks like redundant re-issue rather
+than one show plus one hide. Check before building on it.
+
 ## 7. Learning-integrity findings that must not regress
 
 Critics found three separate routes by which scaffolded practice could be laundered into unearned

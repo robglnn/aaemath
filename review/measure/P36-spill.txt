@@ -1,0 +1,13 @@
+(node:54456) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+=== at spawn: every lit accent, and the ground beneath it ===
+{"name":"vs.accent.0","intensity":0.348,"falloff":5,"at":[12.59,61.66,206.06],"groundY":51,"metresAboveGround":10.66,"reachesGround":false}
+{"name":"vs.accent.1","intensity":0.348,"falloff":5,"at":[12.59,63.86,206.06],"groundY":51,"metresAboveGround":12.86,"reachesGround":false}
+{"name":"vs.accent.2","intensity":0.348,"falloff":5,"at":[17.45,62.76,206.06],"groundY":51.08,"metresAboveGround":11.68,"reachesGround":false}
+{"name":"vs.accent.3","intensity":0.348,"falloff":5,"at":[31.65,65.2,194.06],"groundY":44.01,"metresAboveGround":21.19,"reachesGround":false}
+
+=== 14 s of running forward: closest a lit accent ever came to the body ===
+{"closestMetres":6.61,"light":"vs.accent.0","falloffMetres":5,"atStep":141,"insideFalloff":false}
+per second: [{"s":0,"closest":10.03},{"s":1,"closest":6.61},{"s":2,"closest":6.61},{"s":3,"closest":6.61},{"s":4,"closest":6.61},{"s":5,"closest":6.61},{"s":6,"closest":6.61},{"s":7,"closest":6.61},{"s":8,"closest":6.61},{"s":9,"closest":6.61},{"s":10,"closest":6.61},{"s":11,"closest":6.61},{"s":12,"closest":6.61},{"s":13,"closest":6.61}]
+
+errors: [33m0[39m | warnings: [33m9[39m

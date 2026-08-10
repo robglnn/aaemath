@@ -210,15 +210,6 @@
       ]
     },
     {
-      "file": "app/src/learn/Teaching.js",
-      "importedBy": 1,
-      "neverImported": [
-        "CLAIM_ID",
-        "ENTRY_ID",
-        "WORKING_ID"
-      ]
-    },
-    {
       "file": "app/src/core/Kernel.js",
       "importedBy": 1,
       "neverImported": [
@@ -428,6 +419,18 @@
           "app/src/play/Input.js:401"
         ]
       }
+    },
+    "vocabulary": {
+      "read": "design/architecture.md",
+      "documented": 43,
+      "undocumented": [],
+      "unmarked": [],
+      "staleMarkers": [],
+      "notInVocabulary": []
     }
   }
 }
+
+1 file(s) imported by nothing, 29 file(s) with never-imported exports, 10 signal(s) with no listener, 3 listener(s) with no emitter
+A file imported by nothing is not necessarily dead — it may be reached by the boot glob or be a
+genuine leaf. But every entry here is a seam somebody has to justify out loud.

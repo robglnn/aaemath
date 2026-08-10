@@ -1,9 +1,9 @@
 {
   "id": "P34",
-  "state": "building",
+  "state": "critique",
   "round": 1,
   "gap": null,
-  "note": "Closing the learning round trip: Session->Scheduler.serve->math:show->learn:present->learn:respond->Mastery",
+  "note": "Learning round trip closed end to end. New app/src/learn/Teaching.js + boot/92-teaching.js present the item Scheduler.serve() drew (math:show + learn:present), take a TYPED constructed response, mark it with the shipped ItemBank.check and submit through flow.session -> Scheduler.submit -> Mastery.respond. learn:teach and learn:respond now have consumers; learn:unlock and learn:present drive the per-lesson loader. Proof: review/measure/P34.mjs, 16/16 on the production bundle, 40 cycles driven by real keystrokes. Seams: 18/4 -> 10/3, all six learning+math seams closed. verify --langs=en,es,pl passes.",
   "evidence": [],
-  "updated": "2026-08-10T20:13:59.762Z"
+  "updated": "2026-08-10T20:56:41.690Z"
 }

@@ -1,0 +1,62 @@
+(node:57280) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+=== world:resonance — boot/60-mathtex.js (NEW emitter) -> world/Lighting.js:624 ===
+Four claims stand at spawn; their view anchors resolve at simTime 0.25.
+
+at install (pre-roll)  {"derived":{"registered":4,"active":4,"pool":6,"lit":4,"peakIntensity":0.348,"ids":["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"]},"litLights":4}
+
+DERIVED  probe('lighting').accents {"registered":4,"active":4,"pool":6,"lit":4,"peakIntensity":0.348,"ids":["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"]}
+CLAIMS   probe('mathtex').panels   [{"id":"leaf9-span","at":[12.59,64.09,206.52]},{"id":"leaf9-share","at":[12.59,61.89,206.52]},{"id":"leaf9-working","at":[17.45,62.99,206.52]},{"id":"leaf9-mark","at":[31.65,65.43,194.52]}]
+RAW      accent PointLights, straight off the scene graph:
+         {"name":"vs.accent.0","intensity":0.348,"distance":5,"at":[12.59,61.89,206.52]}
+         {"name":"vs.accent.1","intensity":0.348,"distance":5,"at":[12.59,64.09,206.52]}
+         {"name":"vs.accent.2","intensity":0.348,"distance":5,"at":[17.45,62.99,206.52]}
+         {"name":"vs.accent.3","intensity":0.348,"distance":5,"at":[31.65,65.43,194.52]}
+         {"name":"vs.accent.4","intensity":0,"distance":6,"at":[0,0,0]}
+         {"name":"vs.accent.5","intensity":0,"distance":6,"at":[0,0,0]}
+
+=== A/B: same session, same pose, the emitter removed ===
+emitter mounted    {"accents":{"registered":4,"active":4,"pool":6,"lit":4,"peakIntensity":0.348,"ids":["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"]},"litLights":4,"peak":0.348}
+emitter removed    {"accents":{"registered":0,"active":0,"pool":6,"lit":0,"peakIntensity":0,"ids":[]},"litLights":0,"peak":0}
+claims unchanged   ["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"] — the mathematics is still standing; only the spill went out
+
+world:resonance payloads this harness observed on the bus:
+         {"step":16,"id":"leaf9-span","active":true,"position":[12.59,64.09,206.52],"radius":5,"strength":0.6}
+         {"step":16,"id":"leaf9-share","active":true,"position":[12.59,61.89,206.52],"radius":5,"strength":0.6}
+         {"step":16,"id":"leaf9-working","active":true,"position":[17.45,62.99,206.52],"radius":5,"strength":0.6}
+         {"step":16,"id":"leaf9-mark","active":true,"position":[31.65,65.43,194.52],"radius":5,"strength":0.6}
+         {"step":79,"id":"leaf9-span","active":false,"position":null,"radius":null,"strength":null}
+         {"step":79,"id":"leaf9-share","active":false,"position":null,"radius":null,"strength":null}
+         {"step":79,"id":"leaf9-working","active":false,"position":null,"radius":null,"strength":null}
+         {"step":79,"id":"leaf9-mark","active":false,"position":null,"radius":null,"strength":null}
+
+
+errors: [33m0[39m | warnings: [33m8[39m
+
+=== the same seam on the gameplay path: press E, the presenter takes the field ===
+before E   {"accents":{"registered":4,"active":4,"pool":6,"lit":4,"peakIntensity":0.348,"ids":["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"]},"claims":["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"]}
+after  E   {"accents":{"registered":1,"active":1,"pool":6,"lit":1,"peakIntensity":0.348,"ids":["teach-claim"]},"claims":["teach-claim"]}
+RAW accent PointLights once the presenter owns the field:
+         {"name":"vs.accent.0","intensity":0.348,"distance":5,"at":[12.59,63.47,205.24]}
+         {"name":"vs.accent.1","intensity":0,"distance":5,"at":[12.59,64.09,206.52]}
+         {"name":"vs.accent.2","intensity":0,"distance":5,"at":[17.45,62.99,206.52]}
+         {"name":"vs.accent.3","intensity":0,"distance":5,"at":[31.65,65.43,194.52]}
+         {"name":"vs.accent.4","intensity":0,"distance":6,"at":[0,0,0]}
+         {"name":"vs.accent.5","intensity":0,"distance":6,"at":[0,0,0]}
+
+resonance emits: [33m9[39m 
+  stood  : ["leaf9-span","leaf9-share","leaf9-working","leaf9-mark","teach-claim"] 
+  retired: ["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"]
+full payloads, every one of them emitted by boot/60-mathtex.js and by nothing else:
+         {"step":16,"id":"leaf9-span","active":true,"position":[12.59,64.09,206.52],"radius":5,"strength":0.6}
+         {"step":16,"id":"leaf9-share","active":true,"position":[12.59,61.89,206.52],"radius":5,"strength":0.6}
+         {"step":16,"id":"leaf9-working","active":true,"position":[17.45,62.99,206.52],"radius":5,"strength":0.6}
+         {"step":16,"id":"leaf9-mark","active":true,"position":[31.65,65.43,194.52],"radius":5,"strength":0.6}
+         {"step":84,"id":"teach-claim","active":true,"position":[12.59,63.47,205.24],"radius":5,"strength":0.6}
+         {"step":84,"id":"leaf9-span","active":false,"position":null,"radius":null,"strength":null}
+         {"step":84,"id":"leaf9-share","active":false,"position":null,"radius":null,"strength":null}
+         {"step":84,"id":"leaf9-working","active":false,"position":null,"radius":null,"strength":null}
+         {"step":84,"id":"leaf9-mark","active":false,"position":null,"radius":null,"strength":null}
+teaching probe     {"open":null,"phase":"standing","shows":1}
+
+errors: [33m0[39m | warnings: [33m8[39m

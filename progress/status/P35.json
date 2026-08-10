@@ -1,9 +1,9 @@
 {
   "id": "P35",
-  "state": "building",
+  "state": "critique",
   "round": 1,
-  "gap": null,
-  "note": "Rebuilding AutoTier corroboration model: measurement must agree with prediction; robust window statistic; single-rung steps; wiring quality:tier to renderer/shadows/post",
+  "gap": "A recovery has never executed in a real browser: every live session walks only DOWN, so _onDecision(direction='recover') - config.applyTier upward, kernel.resize growing the drawing buffer, _applyShadows growing a disposed shadow map back - is proven only in Node against the simulated cost tables the builder wrote.",
+  "note": "Corroboration is now a relation (miss at/below the predicted tier falsifies it); time-based 6s/12s windows; stalls excluded, sustained slowness winsorised; maxLeap=1; recovery reachable and one rung at a time; quality:tier wired to PostStack. P35 26/26, verify en,es,pl PASSED.",
   "evidence": [],
-  "updated": "2026-08-10T20:13:55.782Z"
+  "updated": "2026-08-10T21:11:30.374Z"
 }

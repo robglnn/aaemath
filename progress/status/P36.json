@@ -1,9 +1,13 @@
 {
   "id": "P36",
-  "state": "building",
+  "state": "critique",
   "round": 2,
   "gap": "world:resonance is a live listener (world/Lighting.js:624) with zero emitters anywhere in the repo, gating addAccent/removeAccent which have no other caller, and it appears nowhere in design/architecture.md - one signal silently left in the same state, and the whole resonance-accent lighting feature is unreachable",
-  "note": "Round 2: closing world:resonance seam, adding accent probe, fixing architecture.md errors, making seams.mjs gate on pending markers",
-  "evidence": [],
-  "updated": "2026-08-10T20:40:38.130Z"
+  "note": "world:resonance WIRED (boot/60-mathtex.js reconciles standing claims in after() and emits it; Lighting's accent pool lights up: raw PointLight intensity 0.348 at each claim's rendered position, and removing the emitter takes registered/active/lit to 0 with the claims still standing). probe('lighting').accents added {registered,active,pool,lit,peakIntensity,ids}. MEASURED CAVEAT, stated not hidden: at spawn nothing is inside the 6 m falloff (claims stand 10.7-21.2 m above ground; closest approach to the body over 14 s is 6.61 m) - P15's 0% occlusion rule and section 5.4's 6 m cap together mean a claim's spill lands on nothing at this level's distances; the composition is the open question, not the signal. seams.mjs now parses architecture.md and exits 1 on any one-ended name that is undocumented or unmarked (negative-tested by stripping two markers: exit 1, both named). HONEST AUDIT NUMBERS apples-to-apples: old tool+old code 18/4; new tool+old code 15/7; new tool+round-1 code 10/4; new tool+round-2 code 10/3. Of the eight orphans closed before this round six were P34's learning loop and one P35's quality:tier; P36 closed camera:probe (r1) and world:resonance (r2). All 13 remaining orphans are documented with an owner and now mechanically enforced.",
+  "evidence": [
+    "review/measure/P36-resonance.txt",
+    "review/measure/P36-spill.txt",
+    "review/measure/_p36r2-seams-after.json"
+  ],
+  "updated": "2026-08-10T20:58:26.454Z"
 }

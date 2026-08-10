@@ -1,0 +1,837 @@
+{
+  "wire": {
+    "names": [
+      "camera:focus",
+      "camera:fov",
+      "camera:mode",
+      "camera:probe",
+      "camera:shake",
+      "camera:target",
+      "input:action",
+      "input:look",
+      "input:move",
+      "learn:mastery",
+      "learn:present",
+      "learn:respond",
+      "learn:session",
+      "learn:teach",
+      "learn:unlock",
+      "math:hide",
+      "math:show",
+      "player:jump",
+      "player:land",
+      "player:spawn",
+      "player:state",
+      "quality:tier",
+      "ui:locale",
+      "ui:menu",
+      "world:collider",
+      "world:ready",
+      "world:resonance",
+      "world:sun"
+    ],
+    "hasQualityTier": true
+  },
+  "t0": {
+    "probe": {
+      "enabled": true,
+      "dry": false,
+      "forced": true,
+      "reason": "measuring",
+      "standDown": null,
+      "frames": 6,
+      "bootTier": "high",
+      "startTier": "high",
+      "tier": "high",
+      "policyTier": "high",
+      "ceiling": "high",
+      "ceilingSource": "configured tier",
+      "autoTierSetting": true,
+      "prediction": {
+        "predictedTier": "high",
+        "evidence": [],
+        "measuringAt": "high",
+        "corroboratesHere": false,
+        "forceCorroborated": false
+      },
+      "provisional": {
+        "descent": null,
+        "locked": false,
+        "recoveries": 0,
+        "quietForMs": 0,
+        "armed": false,
+        "gate": "no descent to revoke"
+      },
+      "signal": {
+        "name": "quality:tier",
+        "subscribed": true,
+        "appliedHere": [
+          "maxPixelRatio",
+          "shadowResolution",
+          "shadows"
+        ],
+        "appliedByListener": [
+          "postStack"
+        ],
+        "advisory": [
+          "drawDistance",
+          "grassDensity",
+          "particleBudget"
+        ]
+      },
+      "heuristic": {
+        "tier": "high",
+        "standDown": true,
+        "caps": [],
+        "strengths": [],
+        "notes": [
+          "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
+        ],
+        "env": {
+          "renderer": "WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "vendor": "Google Inc. (Google)",
+          "maxTextureSize": 8192,
+          "webgl2": true,
+          "devicePixelRatio": 2,
+          "cores": 20,
+          "memoryGB": 32,
+          "viewport": [
+            480,
+            270
+          ]
+        }
+      },
+      "measured": {
+        "fps": 59.5,
+        "medianMs": 16.8,
+        "p10Ms": 16.8,
+        "p95Ms": 16.8,
+        "p99Ms": 16.8,
+        "maxMs": 35.2,
+        "frames": 2,
+        "spanMs": 52,
+        "windowFull": false,
+        "tailMedianMs": 16.8
+      },
+      "samples": {
+        "accepted": 2,
+        "rejected": 2,
+        "excursions": 2,
+        "stalledMs": 1656,
+        "clockMs": 1734
+      },
+      "thresholds": {
+        "downMs": 21,
+        "upMs": 13.5,
+        "windowMs": 12000,
+        "firstWindowMs": 6000,
+        "windowFrames": 900,
+        "minFrames": 24,
+        "firstMinFrames": 15,
+        "warmupFrames": 90,
+        "warmupMs": 2500,
+        "firstWarmupFrames": 30,
+        "firstWarmupMs": 1500,
+        "tailMs": 2500,
+        "tailMinFrames": 8,
+        "cooldownMs": 4000,
+        "maxChanges": 5,
+        "maxDownSteps": 4,
+        "maxUpSteps": 1,
+        "maxLeap": 1,
+        "maxRecoveries": 2,
+        "recoveryArmMs": 45000,
+        "recoveryQuietMs": 20000,
+        "recoveryInconsistency": 0.6,
+        "sampleMinMs": 2,
+        "sampleMaxMs": 250,
+        "stallRun": 5
+      },
+      "budget": {
+        "changesLeft": 5,
+        "downStepsLeft": 4,
+        "upStepsLeft": 1,
+        "recoveriesLeft": 0,
+        "ceiling": "high"
+      },
+      "changes": [],
+      "renderer": {
+        "pixelRatio": 1.5,
+        "shadowMapEnabled": true,
+        "shadowMapSize": 2048,
+        "shadowCasters": 2,
+        "drawingBuffer": [
+          720,
+          405
+        ]
+      },
+      "postRoute": null
+    },
+    "post": {
+      "installed": true,
+      "mode": "tier",
+      "tier": "high",
+      "requested": [
+        "bloom",
+        "godrays",
+        "tonemap",
+        "grain",
+        "vignette"
+      ],
+      "declined": [],
+      "unknown": [],
+      "effects": {
+        "bloom": true,
+        "sunGlow": true,
+        "grain": true,
+        "vignette": true
+      },
+      "tierSignal": {
+        "name": "quality:tier",
+        "subscribed": true,
+        "applied": null
+      },
+      "display": {
+        "mode": 0,
+        "name": "none",
+        "mirrors": 0,
+        "exposure": 1
+      },
+      "size": [
+        720,
+        405
+      ],
+      "samples": 0,
+      "targets": 6,
+      "targetBytes": 4416840,
+      "megabytes": 4.21,
+      "postDrawCalls": 9,
+      "bloom": {
+        "base": 0,
+        "top": 3,
+        "lobes": 3,
+        "tentRadius": 0.81,
+        "compositeSize": [
+          360,
+          202
+        ],
+        "mipSizes": [
+          [
+            360,
+            202
+          ],
+          [
+            180,
+            101
+          ],
+          [
+            90,
+            50
+          ],
+          [
+            45,
+            25
+          ]
+        ],
+        "drawCalls": 6,
+        "radiusFractionOfHeight": 0.032
+      },
+      "sun": {
+        "source": "light:vs.key",
+        "direction": [
+          0.8667,
+          0.1908,
+          -0.4608
+        ],
+        "uv": [
+          1.4281,
+          0.9574
+        ],
+        "weight": 0.0069,
+        "onScreen": false
+      },
+      "look": {
+        "bloomThreshold": 1.25,
+        "bloomKnee": 0.35,
+        "bloomStrength": 0.055,
+        "sunGlowStrength": 0.42,
+        "vignetteAmount": 0.08,
+        "vignetteStart": 0.72,
+        "grainAmount": 0.0018,
+        "ditherAmount": 0.5,
+        "shoulder": 1,
+        "white": 1,
+        "gradeIsIdentity": true
+      },
+      "frames": 7
+    },
+    "raw": {
+      "rawPixelRatio": 1.5,
+      "rawCanvas": [
+        720,
+        405
+      ],
+      "rawShadowEnabled": true,
+      "rawShadowMapSize": 2048,
+      "rawCasters": 2,
+      "rawToneMapping": 0
+    }
+  },
+  "t1": {
+    "probe": {
+      "enabled": true,
+      "dry": false,
+      "forced": true,
+      "reason": "measuring",
+      "standDown": null,
+      "frames": 254,
+      "bootTier": "high",
+      "startTier": "high",
+      "tier": "low",
+      "policyTier": "low",
+      "ceiling": "high",
+      "ceilingSource": "configured tier",
+      "autoTierSetting": true,
+      "prediction": {
+        "predictedTier": "high",
+        "evidence": [],
+        "measuringAt": "low",
+        "corroboratesHere": false,
+        "forceCorroborated": false
+      },
+      "provisional": {
+        "descent": {
+          "from": "high",
+          "to": "low",
+          "rungs": 1,
+          "atMs": 9869.6,
+          "medianMs": 73.9,
+          "corroborated": false,
+          "late": false
+        },
+        "locked": false,
+        "recoveries": 0,
+        "quietForMs": 0,
+        "armed": false,
+        "gate": "window not full"
+      },
+      "signal": {
+        "name": "quality:tier",
+        "subscribed": true,
+        "appliedHere": [
+          "maxPixelRatio",
+          "shadowResolution",
+          "shadows"
+        ],
+        "appliedByListener": [
+          "postStack"
+        ],
+        "advisory": [
+          "drawDistance",
+          "grassDensity",
+          "particleBudget"
+        ]
+      },
+      "heuristic": {
+        "tier": "high",
+        "standDown": true,
+        "caps": [],
+        "strengths": [],
+        "notes": [
+          "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
+        ],
+        "env": {
+          "renderer": "WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "vendor": "Google Inc. (Google)",
+          "maxTextureSize": 8192,
+          "webgl2": true,
+          "devicePixelRatio": 2,
+          "cores": 20,
+          "memoryGB": 32,
+          "viewport": [
+            480,
+            270
+          ]
+        }
+      },
+      "measured": {
+        "fps": 10.6,
+        "medianMs": 94.6,
+        "p10Ms": 15.4,
+        "p95Ms": 108.1,
+        "p99Ms": 108.1,
+        "maxMs": 117.8,
+        "frames": 7,
+        "spanMs": 558.7,
+        "windowFull": false,
+        "tailMedianMs": 94.6
+      },
+      "samples": {
+        "accepted": 197,
+        "rejected": 9,
+        "excursions": 9,
+        "stalledMs": 5141,
+        "clockMs": 28593
+      },
+      "thresholds": {
+        "downMs": 21,
+        "upMs": 13.5,
+        "windowMs": 12000,
+        "firstWindowMs": 6000,
+        "windowFrames": 900,
+        "minFrames": 24,
+        "firstMinFrames": 15,
+        "warmupFrames": 90,
+        "warmupMs": 2500,
+        "firstWarmupFrames": 30,
+        "firstWarmupMs": 1500,
+        "tailMs": 2500,
+        "tailMinFrames": 8,
+        "cooldownMs": 4000,
+        "maxChanges": 5,
+        "maxDownSteps": 4,
+        "maxUpSteps": 1,
+        "maxLeap": 1,
+        "maxRecoveries": 2,
+        "recoveryArmMs": 45000,
+        "recoveryQuietMs": 20000,
+        "recoveryInconsistency": 0.6,
+        "sampleMinMs": 2,
+        "sampleMaxMs": 250,
+        "stallRun": 5
+      },
+      "budget": {
+        "changesLeft": 3,
+        "downStepsLeft": 2,
+        "upStepsLeft": 0,
+        "recoveriesLeft": 2,
+        "ceiling": "high"
+      },
+      "changes": [
+        {
+          "at": 9869.6,
+          "from": "high",
+          "to": "medium",
+          "direction": "down",
+          "rungs": 1,
+          "why": "median frame 73.9 ms (13.5 fps) over 67 frames / 6.1 s of rendered time is 3.5x the 21 ms floor, tail 123.4 ms — one rung, falsifies the predicted high and is revocable",
+          "fps": 13.5,
+          "medianMs": 73.9,
+          "p10Ms": 15.6,
+          "p95Ms": 205.5,
+          "p99Ms": 234.3,
+          "frames": 67,
+          "spanMs": 6129.8,
+          "corroborated": false,
+          "applied": true,
+          "dry": false,
+          "before": {
+            "pixelRatio": 1.5,
+            "shadowMapEnabled": true,
+            "shadowMapSize": 2048,
+            "shadowCasters": 2,
+            "drawingBuffer": [
+              720,
+              405
+            ]
+          },
+          "after": {
+            "pixelRatio": 1.25,
+            "shadowMapEnabled": true,
+            "shadowMapSize": 1024,
+            "shadowCasters": 2,
+            "drawingBuffer": [
+              600,
+              337
+            ]
+          },
+          "post": "signal"
+        },
+        {
+          "at": 24802.4,
+          "from": "medium",
+          "to": "low",
+          "direction": "down",
+          "rungs": 1,
+          "why": "median frame 99.7 ms (10.0 fps) over 119 frames / 12.0 s of rendered time is 4.7x the 21 ms floor, tail 97.8 ms — one rung, falsifies the predicted high and is revocable",
+          "fps": 10,
+          "medianMs": 99.7,
+          "p10Ms": 52.3,
+          "p95Ms": 196.2,
+          "p99Ms": 212.8,
+          "frames": 119,
+          "spanMs": 12001.9,
+          "corroborated": false,
+          "applied": true,
+          "dry": false,
+          "before": {
+            "pixelRatio": 1.25,
+            "shadowMapEnabled": true,
+            "shadowMapSize": 1024,
+            "shadowCasters": 2,
+            "drawingBuffer": [
+              600,
+              337
+            ]
+          },
+          "after": {
+            "pixelRatio": 1,
+            "shadowMapEnabled": true,
+            "shadowMapSize": 512,
+            "shadowCasters": 2,
+            "drawingBuffer": [
+              480,
+              270
+            ]
+          },
+          "post": "signal"
+        }
+      ],
+      "renderer": {
+        "pixelRatio": 1,
+        "shadowMapEnabled": true,
+        "shadowMapSize": 512,
+        "shadowCasters": 2,
+        "drawingBuffer": [
+          480,
+          270
+        ]
+      },
+      "postRoute": "signal"
+    },
+    "post": {
+      "installed": false,
+      "mode": "tier",
+      "tier": "low",
+      "requested": [
+        "tonemap"
+      ],
+      "declined": [],
+      "unknown": [],
+      "effects": {
+        "bloom": false,
+        "sunGlow": false,
+        "grain": false,
+        "vignette": false
+      },
+      "tierSignal": {
+        "name": "quality:tier",
+        "subscribed": true,
+        "applied": {
+          "tier": "low",
+          "direction": "down",
+          "source": "autotier",
+          "why": "median frame 99.7 ms (10.0 fps) over 119 frames / 12.0 s of rendered time is 4.7x the 21 ms floor, tail 97.8 ms — one rung, falsifies the predicted high and is revocable",
+          "honoured": true,
+          "installed": false,
+          "effects": {
+            "bloom": false,
+            "sunGlow": false,
+            "grain": false,
+            "vignette": false
+          }
+        }
+      },
+      "display": {
+        "mode": 0,
+        "name": "none",
+        "mirrors": 0,
+        "exposure": 1
+      },
+      "size": null,
+      "samples": 0,
+      "targets": 0,
+      "targetBytes": 1962720,
+      "megabytes": 1.87,
+      "postDrawCalls": 0,
+      "bloom": {
+        "base": 0,
+        "top": 3,
+        "lobes": 3,
+        "tentRadius": 0.54,
+        "compositeSize": [
+          240,
+          135
+        ],
+        "mipSizes": [
+          [
+            240,
+            135
+          ],
+          [
+            120,
+            67
+          ],
+          [
+            60,
+            33
+          ],
+          [
+            30,
+            16
+          ]
+        ],
+        "drawCalls": 6,
+        "radiusFractionOfHeight": 0.032
+      },
+      "sun": {
+        "source": "light:vs.key",
+        "direction": [
+          0.8667,
+          0.1908,
+          -0.4608
+        ],
+        "uv": [
+          1.4281,
+          0.9574
+        ],
+        "weight": 0.0069,
+        "onScreen": false
+      },
+      "look": {
+        "bloomThreshold": 1.25,
+        "bloomKnee": 0.35,
+        "bloomStrength": 0.055,
+        "sunGlowStrength": 0.42,
+        "vignetteAmount": 0.08,
+        "vignetteStart": 0.72,
+        "grainAmount": 0.0018,
+        "ditherAmount": 0.5,
+        "shoulder": 1,
+        "white": 1,
+        "gradeIsIdentity": true
+      },
+      "frames": 222
+    },
+    "raw": {
+      "rawPixelRatio": 1,
+      "rawCanvas": [
+        480,
+        270
+      ],
+      "rawShadowEnabled": true,
+      "rawShadowMapSize": 512,
+      "rawCasters": 2,
+      "rawToneMapping": 0
+    }
+  },
+  "spy": [
+    {
+      "tier": "medium",
+      "dir": "down",
+      "post": [
+        "bloom",
+        "tonemap",
+        "vignette"
+      ],
+      "at": 10607.300000011921
+    },
+    {
+      "tier": "low",
+      "dir": "down",
+      "post": [
+        "tonemap"
+      ],
+      "at": 25597
+    }
+  ],
+  "low": {
+    "probe": {
+      "enabled": false,
+      "dry": false,
+      "forced": false,
+      "reason": "explicit: a tier was chosen (settings or ?tier=), autoTier stood down",
+      "standDown": null,
+      "frames": 319,
+      "bootTier": "low",
+      "startTier": "low",
+      "tier": "low",
+      "policyTier": "low",
+      "ceiling": "low",
+      "ceilingSource": "configured tier",
+      "autoTierSetting": false,
+      "prediction": {
+        "predictedTier": "low",
+        "evidence": [],
+        "measuringAt": "low",
+        "corroboratesHere": false,
+        "forceCorroborated": false
+      },
+      "provisional": {
+        "descent": null,
+        "locked": false,
+        "recoveries": 0,
+        "quietForMs": 0,
+        "armed": false,
+        "gate": "no descent to revoke"
+      },
+      "signal": {
+        "name": "quality:tier",
+        "subscribed": true,
+        "appliedHere": [
+          "maxPixelRatio",
+          "shadowResolution",
+          "shadows"
+        ],
+        "appliedByListener": [
+          "postStack"
+        ],
+        "advisory": [
+          "drawDistance",
+          "grassDensity",
+          "particleBudget"
+        ]
+      },
+      "heuristic": {
+        "tier": "low",
+        "standDown": true,
+        "caps": [],
+        "strengths": [],
+        "notes": [
+          "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
+        ],
+        "env": {
+          "renderer": "WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "vendor": "Google Inc. (Google)",
+          "maxTextureSize": 8192,
+          "webgl2": true,
+          "devicePixelRatio": 2,
+          "cores": 20,
+          "memoryGB": 32,
+          "viewport": [
+            480,
+            270
+          ]
+        }
+      },
+      "measured": null,
+      "samples": {
+        "accepted": 0,
+        "rejected": 0,
+        "excursions": 0,
+        "stalledMs": 0,
+        "clockMs": 0
+      },
+      "thresholds": {
+        "downMs": 21,
+        "upMs": 13.5,
+        "windowMs": 12000,
+        "firstWindowMs": 6000,
+        "windowFrames": 900,
+        "minFrames": 24,
+        "firstMinFrames": 15,
+        "warmupFrames": 90,
+        "warmupMs": 2500,
+        "firstWarmupFrames": 30,
+        "firstWarmupMs": 1500,
+        "tailMs": 2500,
+        "tailMinFrames": 8,
+        "cooldownMs": 4000,
+        "maxChanges": 5,
+        "maxDownSteps": 4,
+        "maxUpSteps": 1,
+        "maxLeap": 1,
+        "maxRecoveries": 2,
+        "recoveryArmMs": 45000,
+        "recoveryQuietMs": 20000,
+        "recoveryInconsistency": 0.6,
+        "sampleMinMs": 2,
+        "sampleMaxMs": 250,
+        "stallRun": 5
+      },
+      "budget": {
+        "changesLeft": 5,
+        "downStepsLeft": 4,
+        "upStepsLeft": 1,
+        "recoveriesLeft": 0,
+        "ceiling": "low"
+      },
+      "changes": [],
+      "renderer": {
+        "pixelRatio": 1,
+        "shadowMapEnabled": true,
+        "shadowMapSize": 1024,
+        "shadowCasters": 1,
+        "drawingBuffer": [
+          480,
+          270
+        ]
+      },
+      "postRoute": null
+    },
+    "post": {
+      "installed": false,
+      "mode": "tier",
+      "tier": "low",
+      "requested": [
+        "tonemap"
+      ],
+      "declined": [],
+      "unknown": [],
+      "effects": {
+        "bloom": false,
+        "sunGlow": false,
+        "grain": false,
+        "vignette": false
+      },
+      "tierSignal": {
+        "name": "quality:tier",
+        "subscribed": true,
+        "applied": null
+      },
+      "display": {
+        "mode": 0,
+        "name": "none",
+        "mirrors": 0,
+        "exposure": 1
+      },
+      "size": null,
+      "samples": 0,
+      "targets": 0,
+      "targetBytes": 0,
+      "megabytes": 0,
+      "postDrawCalls": 0,
+      "bloom": null,
+      "sun": {
+        "source": "default",
+        "direction": [
+          0.351,
+          0.1604,
+          -0.9225
+        ],
+        "uv": [
+          0.5,
+          0.5
+        ],
+        "weight": 0,
+        "onScreen": false
+      },
+      "look": {
+        "bloomThreshold": 1.25,
+        "bloomKnee": 0.35,
+        "bloomStrength": 0.055,
+        "sunGlowStrength": 0.42,
+        "vignetteAmount": 0.08,
+        "vignetteStart": 0.72,
+        "grainAmount": 0.0018,
+        "ditherAmount": 0.5,
+        "shoulder": 1,
+        "white": 1,
+        "gradeIsIdentity": true
+      },
+      "frames": 0
+    },
+    "raw": {
+      "rawPixelRatio": 1,
+      "rawCanvas": [
+        480,
+        270
+      ],
+      "rawShadowEnabled": true,
+      "rawShadowMapSize": 1024,
+      "rawCasters": 1,
+      "rawToneMapping": 0
+    }
+  },
+  "errors": []
+}

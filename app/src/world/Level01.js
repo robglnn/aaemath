@@ -254,8 +254,14 @@ export const LEAF = {
     protect = Math.max(protect, brow * 0.5);
 
     // --- the crest: the angular spires that frame the left of every arrival shot -------
+    // **The crest stops where the brow starts, and that is C1 rather than taste.** The crest pad
+    // reaches up-leaf as far as aX −300, which is over the brow, so its ridge stacked 44 m on top of
+    // the brow's own 20 and made a ~100 m vantage at aX −248 from which the Bollard in the head bowl
+    // AND the Second Lip five hundred metres down-leaf were both visible — the one framing world.md
+    // §12 says may never exist. Held off the brow, the sightline down-leaf grazes the brow crest at
+    // 59.6 m against ground at 60.6 and is blocked by the very feature that exists to block it.
     const crest = pad(aX, aZ, -300, -110, -172, -34, 30);
-    h += crest * (10 + ridged(aX * 0.0195, aZ * 0.0195, 401, 3) * 44);
+    h += crest * (1 - brow * 0.92) * (10 + ridged(aX * 0.0195, aZ * 0.0195, 401, 3) * 44);
     rough = lerp(rough, 2.4, crest);
 
     // --- the Standing House shelf --------------------------------------------------------
@@ -1212,6 +1218,10 @@ export class Level01 {
       lowerTerrace: at(126, 84),
       ravineOverlook: at(146, -66),
       farRidgeHead: at(276, -186),
+      crestFoot: at(-160, -118),
+      eastBench: at(212, 128),
+      southRim: at(44, -180),
+      browShoulder: at(-176, 120),
       spanNear: at(nearX - 1.5, spanZ),
       spanFar: at(farX + 1.5, spanZ),
       secondLip: at(268, 26),

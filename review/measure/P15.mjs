@@ -208,6 +208,65 @@ function inkPixels(img, rect) {
 }
 
 /**
+ * The null control for C16, and the reason C16 can be trusted at all.
+ *
+ * C16 reads a *composited* frame, so its number is "the sky 3-5 px from the ink minus the sky
+ * 12-20 px away" — and if the sky itself has structure at that scale, which a banded dusk sky
+ * with hard-edged cloud slabs certainly does, part of that number belongs to the background
+ * and not to this piece. `bgGradient` catches a smooth slope and misses a hard edge; C16b
+ * measures our own raster and cannot see the composite at all.
+ *
+ * So: take the *same glyph shape*, in the *same frame*, and lay it over a patch of background
+ * the mathematics is not standing on. Every distance band is identical, the sky is the same
+ * sky, and the only thing removed is our render. Whatever halo that measures is the sky's.
+ * A panel, frame or glow drawn by this piece would show up as the real halo being *below* the
+ * control; anything the two share is scenery.
+ */
+function controlHalo(img, rect, dist, ink, W, H, x0, y0) {
+  const isInk = (gx, gy) => {
+    const i = (gy * img.width + gx) * img.channels;
+    const r = img.data[i];
+    const g = img.data[i + 1];
+    const b = img.data[i + 2];
+    const mn = Math.min(r, g, b);
+    return mn >= 232 && Math.max(r, g, b) - mn <= 14;
+  };
+  const sample = (sx, sy) => {
+    let nearN = 0, nearS = 0, farN = 0, farS = 0, dirty = 0, total = 0;
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const d = dist[y * W + x];
+        const isNear = d >= 3 && d <= 5;
+        const isFar = d >= 12 && d <= 20;
+        if (!isNear && !isFar) continue;
+        const gx = x0 + x + sx;
+        const gy = y0 + y + sy;
+        if (gx < 0 || gy < 0 || gx >= img.width || gy >= img.height) return null;
+        total++;
+        // The displaced patch must be background. If it lands on another claim's ink the
+        // control is measuring us again, which is exactly what it exists not to do.
+        if (isInk(gx, gy)) { dirty++; continue; }
+        const i = (gy * img.width + gx) * img.channels;
+        const L = lum(img.data[i], img.data[i + 1], img.data[i + 2]);
+        if (isNear) { nearN++; nearS += L; } else { farN++; farS += L; }
+      }
+    }
+    if (!nearN || !farN || dirty / Math.max(1, total) > 0.05) return null;
+    return Number((nearS / nearN - farS / farN).toFixed(1));
+  };
+  // Left and right by one region width — far enough to be off the claim, near enough to be
+  // the same part of the sky. Both are reported; the *lower* one is the honest control,
+  // because a control that flatters us is not a control.
+  const out = [];
+  for (const sx of [-W, W, -Math.round(W * 1.5), Math.round(W * 1.5)]) {
+    const v = sample(sx, 0);
+    if (v !== null) out.push(v);
+  }
+  if (!out.length) return null;
+  return { min: Math.min(...out), max: Math.max(...out), samples: out.length };
+}
+
+/**
  * Measure one rectangle of an image the way the reference was measured:
  * how bright the ink is, how far the sky next to the ink differs from the sky away from it,
  * and how many pixels the ink takes to stop being ink.
@@ -352,6 +411,8 @@ function measureRegion(img, rect, { inkMin = 236, alpha = false } = {}) {
     // The same statistic one band further out, where no glow could reach. Non-zero here means
     // the background is sloped and `haloDelta` is measuring the slope, not the mathematics.
     bgGradient: far.mean !== null && veryFar.mean !== null ? Number((far.mean - veryFar.mean).toFixed(1)) : null,
+    // The same statistic with our render taken out of it — see `controlHalo`.
+    controlHalo: alpha ? null : controlHalo(img, rect, dist, ink, W, H, x0, y0),
     perimeter,
     edgeWidthPx: perimeter ? Number((partial / perimeter).toFixed(2)) : null,
     contrastRatio: Number(contrast.toFixed(2)),
@@ -1606,6 +1667,18 @@ async function main() {
         // `bgGradient` says whether the background is sloped where it was sampled.
         `our own raster's alpha halo: ${worstAlphaHalo} | ` +
           real.map((r) => `${r.id} halo ${r.haloDelta} bgGradient ${r.bgGradient} bg ${r.farBgLuminance}`).join(" | "));
+
+      // C16 with the background taken out of it. A panel, a frame or a glow would make our
+      // halo *worse* than the same glyph shape laid over neighbouring sky; anything the two
+      // share is the sky's own structure, which is not something this piece drew.
+      const controlled = real.filter((r) => r.controlHalo);
+      const worstVsControl = controlled.length
+        ? Math.min(...controlled.map((r) => r.haloDelta - r.controlHalo.min))
+        : null;
+      claim("C16c", "the composited halo is the sky's, not ours: the same glyph shape over bare sky measures the same",
+        ">= -2.0 against the displaced control", worstVsControl === null ? "n/a" : Number(worstVsControl.toFixed(1)),
+        worstVsControl !== null && worstVsControl >= -2.0 && controlled.length >= real.length * 0.5,
+        controlled.map((r) => `${r.label} ${r.id} halo ${r.haloDelta} control ${r.controlHalo.min}..${r.controlHalo.max}`).slice(0, 6).join(" | "));
 
       const worstEdge = Math.max(...real.map((r) => r.edgeWidthPx ?? 99));
       claim("C17", "glyph edges are hard: the partial-coverage band is about one pixel wide",

@@ -93,9 +93,65 @@ export class Scheduler {
     this.secondsSpent = 0;
     this.sessionEndsAt = -Infinity;
     this.recentItemIds = [];
+    /**
+     * The no-repeat window, PER (knowledge point x form), which is the reading of
+     * `antiGuessing.noRepeatWithinItems` that the rule was written for.
+     *
+     * ------------------------------------------------------------------------------------------
+     * WHY THIS IS NOT ONE GLOBAL LIST OF FORTY
+     *
+     * It used to be. A global forty spans about forty different knowledge points, so it excluded
+     * roughly one of any single cell's own items — and a cell's committed catalogue is 12-17 items.
+     * `ItemBank.select()` answers from the catalogue first, so the catalogue was never walked out
+     * and a learner was served the SAME handful of items for the whole curriculum: 97% of 17,126
+     * items in a measured run came from the catalogue, and inside one (kp x form x family) the
+     * concentration was worse still — one family served 24 times showed a single fixed string
+     * winning 0.958 of them. That is not a pricing problem, it is a SERVING problem, and re-pricing
+     * it would have been agreeing to keep showing a learner the same three questions.
+     *
+     * Per-cell is strictly stronger than the global list it replaces: excluding the last 40 items
+     * of THIS cell implies no repeat within the last 40 items overall, so the content file's rule
+     * still holds and holds harder. The catalogue is now walked out in its first pass and the
+     * generator supplies the rest, which is what the bank audit measures and what the mastery gate
+     * was priced against. Both windows are published on the request; the union is what a presenter
+     * must honour.
+     * ------------------------------------------------------------------------------------------
+     */
+    this.recentByCell = new Map();
     this._event = null;
     this._seq = 0;
     this._syncInFlight();
+  }
+
+  /** The no-repeat window a request publishes: this cell's last N, plus the global last N. */
+  _recentFor(kpId, form) {
+    const cell = this.recentByCell.get(`${kpId}|${form}`);
+    if (!cell || !cell.length) return this.recentItemIds.slice();
+    const seen = new Set(cell);
+    const out = cell.slice();
+    for (const id of this.recentItemIds) if (!seen.has(id)) out.push(id);
+    return out;
+  }
+
+  /**
+   * Record that an item was SERVED, whether or not it was ever answered.
+   *
+   * The window has to close on presentation, not on submission: an item a learner looked at and
+   * walked away from is an item they have seen, and serving it again is the repeat the rule
+   * forbids. P17 signals `learn:present`; `submit` calls this too so the rule holds however the
+   * bank is wired.
+   */
+  noteServed({ itemId, kpId, form } = {}) {
+    if (!itemId) return;
+    const cap = this.M.antiGuessing.noRepeatWithinItems ?? 40;
+    this.recentItemIds.push(itemId);
+    while (this.recentItemIds.length > cap) this.recentItemIds.shift();
+    if (!kpId || !form) return;
+    const key = `${kpId}|${form}`;
+    let ring = this.recentByCell.get(key);
+    if (!ring) this.recentByCell.set(key, (ring = []));
+    ring.push(itemId);
+    while (ring.length > cap) ring.shift();
   }
 
   /**
@@ -307,7 +363,7 @@ export class Scheduler {
       // §4: retrieval practice against the specific wrong idea is what kills it. A fresh
       // unrelated item just lets the misconception survive.
       targetMisconception: s.lastCorrect === false ? s.lastMisconception : null,
-      avoidItemIds: this.recentItemIds.slice(),
+      avoidItemIds: this._recentFor(kpId, form),
       sampling: "theta-targeted",
       // Generator families this node's engine will NOT score, so whoever picks the item can pick
       // something else. Each one has a single memorised answer; see `Mastery.refusedFamilies`.
@@ -354,7 +410,7 @@ export class Scheduler {
       seconds: SECONDS_DEFAULT,
       hinted: spec.hinted ?? false,
       targetMisconception: null,
-      avoidItemIds: this.recentItemIds.slice(),
+      avoidItemIds: this._recentFor(kpId, form),
       sampling: spec.sampling ?? "uniform-over-variant-pool",
       itemIndex: ev.index,
       itemsInEvent: ev.items,
@@ -515,11 +571,7 @@ export class Scheduler {
     if (req.mode !== "acquire") this.reviewItemsThisSession += 1;
     this.clock.advance(seconds / 60);
 
-    if (outcome.itemId) {
-      this.recentItemIds.push(outcome.itemId);
-      const cap = this.M.antiGuessing.noRepeatWithinItems ?? 40;
-      while (this.recentItemIds.length > cap) this.recentItemIds.shift();
-    }
+    if (outcome.itemId) this.noteServed({ itemId: outcome.itemId, kpId: req.kpId, form: req.form });
 
     if (req.mode === "acquire") {
       this.blockCount += 1;
@@ -638,6 +690,9 @@ export class Scheduler {
     return {
       event: this._event ? { ...this._event } : null,
       recentItemIds: [...this.recentItemIds],
+      // The per-cell window is state: dropping it on reload would hand the learner the same items
+      // again, which is exactly the repeat the audit priced against.
+      recentByCell: Object.fromEntries([...this.recentByCell].map(([k, v]) => [k, [...v]])),
       inFlight: this.inFlight,
       blockCount: this.blockCount,
       secondsSpent: this.secondsSpent,
@@ -651,6 +706,7 @@ export class Scheduler {
     if (!snap) return false;
     this._event = snap.event ? { ...snap.event } : null;
     this.recentItemIds = [...(snap.recentItemIds ?? [])];
+    this.recentByCell = new Map(Object.entries(snap.recentByCell ?? {}).map(([k, v]) => [k, [...v]]));
     this.inFlight = snap.inFlight ?? null;
     this.blockCount = snap.blockCount ?? 0;
     this.secondsSpent = snap.secondsSpent ?? 0;
@@ -673,6 +729,11 @@ export class Scheduler {
       inFlight: this.inFlight ? [this.inFlight] : [],
       blockCount: this.blockCount,
       recentItemIds: this.recentItemIds.length,
+      // How wide the window a presenter is actually handed is, at its widest cell. A reviewer can
+      // read straight off the probe whether the catalogue is being walked out or recycled.
+      noRepeatWindow: this.M.antiGuessing.noRepeatWithinItems ?? 40,
+      recentCells: this.recentByCell.size,
+      widestCellWindow: this.recentByCell.size ? Math.max(...[...this.recentByCell.values()].map((v) => v.length)) : 0,
       event: this._event
         ? {
             kpId: this._event.kpId,

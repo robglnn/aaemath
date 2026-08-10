@@ -99,31 +99,50 @@ export function bktUpdate(p, correct, slip, guess, learn, weight = 1) {
 // ============================================================== the bank audit (third axis)
 
 /**
- * How many generator draws the audit takes per (knowledge point x form) cell. Exported so the
- * browser and `review/measure/P16.mjs` cannot drift apart: a proof that measures a different
- * sample from the one the shipped engine prices on is a proof about a different game.
+ * How many items the audit DRAWS THROUGH THE SERVING PATH per (knowledge point x form) cell.
  *
- * 384 is chosen to make the decision the audit exists to make — "is this cell's blind rate above
- * `maxTrueGuess`?" — safe by a wide margin. On the shipped bank the measured cell rates land in
- * two clusters, 0.333 and up on one side and 0.154 and down on the other; the standard error at
- * n=384 is at most 0.026, so the two clusters are more than six standard errors apart. P16.mjs
- * re-runs the whole audit at 2400 draws per cell and FAILS if a single accept/reject verdict
- * moves, which is the check that keeps this number honest rather than merely cheap.
+ * ------------------------------------------------------------------------------------------
+ * ROUND 2's FINDING, AND WHY THIS NUMBER IS NOW A DRAW COUNT AND NOT A GENERATOR COUNT
+ *
+ * The previous version of this audit pooled the committed catalogue (12-17 items per cell) with
+ * 256 GENERATOR draws per form and priced the mixture. That sample is 4.5% catalogue. A real
+ * Scheduler-driven run is 97% catalogue, because `ItemBank.select()` answers from the catalogue
+ * first and the no-repeat window is far too small to exhaust it. So the engine was pricing a
+ * population no player is ever served — the same defect class that cost this project two pieces.
+ *
+ * The sample is now DRAWN THROUGH `select()` itself, with the same exclusion window the Scheduler
+ * publishes on `req.avoidItemIds`, so pricing and serving are the same distribution by
+ * construction rather than by hope. `review/measure/P16.mjs` re-measures on a stream produced by
+ * the real Scheduler and FAILS if the two disagree.
+ * ------------------------------------------------------------------------------------------
+ *
+ * 160 is chosen so that the draw walks the committed catalogue out (12-17 items) and then spends
+ * the remainder in the generator, which is exactly the sequence a learner meets on one knowledge
+ * point. Both halves are then measured SEPARATELY and the worse one is the price (see
+ * `auditBlindGuessing`), so the number only has to be large enough to characterise the generator,
+ * not to balance the two populations against each other.
  */
-export const BANK_AUDIT_PER_CELL = 256;
+export const BANK_AUDIT_PER_CELL = 160;
 
 /**
- * Candidate strings tried per family, and the cap on how many items the EXECUTED path marks.
- *
- * Both are cost controls with a stated accuracy consequence, not arbitrary. The verdicts this
- * audit produces on the shipped bank separate into two clusters that are nowhere near each other
- * — 0.239 and up get refused, 0.15 and down get re-priced — so the sample only has to resolve a
- * gap of about 0.09, which 96 draws does at better than two standard errors. `review/measure/
- * P16.mjs` re-runs the whole audit at six times this sample with no cap and FAILS if one verdict
- * moves, which is what makes these numbers a budget rather than a guess.
+ * The no-repeat window the audit draws under. It must equal `model.antiGuessing.noRepeatWithinItems`
+ * AND the window the Scheduler actually publishes per (knowledge point x form); `review/measure/
+ * P16.mjs` asserts all three are the same number, because a window mismatch is precisely how the
+ * audit came to describe a different bank from the one being served.
  */
-export const EXECUTED_CANDIDATES = 5;
-export const EXECUTED_SAMPLE_CAP = 96;
+export const BANK_AUDIT_WINDOW = 40;
+
+/**
+ * Candidate strings tried per cell, and the cap on how many items of one group get marked.
+ *
+ * The candidate pool is built ACROSS THE WHOLE CELL and then tried against every family in it.
+ * Per-family candidate pools were too narrow: `generate` items are marked against a PROPERTY, so
+ * a string harvested from `eval-signed.minusneg` also satisfies items in `eval-signed.sumneg`, and
+ * a family that only ever saw its own answers looked honest while a guesser typing the neighbour's
+ * string was at 0.49.
+ */
+export const EXECUTED_CANDIDATES = 8;
+export const EXECUTED_SAMPLE_CAP = 120;
 
 /** Wilson 95% upper bound. A measured 0.136 over 400 draws is not "0.136"; it is "at most 0.175". */
 export function wilsonUpper(hits, n) {
@@ -137,60 +156,164 @@ export function wilsonUpper(hits, n) {
 }
 
 /**
- * Draw the population a player is actually served, per (knowledge point x form).
+ * Draw the population a player is actually served, per (knowledge point x form), THROUGH THE
+ * SERVING PATH.
  *
- * `ItemBank.select()` answers from the committed catalogue first and falls back to the generator
- * families when exclusions exhaust it, so BOTH are part of the served distribution and both are
- * pooled here. The catalogue is ~12 items per cell against 384 generated draws, which is also
- * what stops the catalogue's small-sample noise from driving a rejection: `eq-model-context |
- * construct` shows a modal frequency of 0.333 over its 15 committed items and 0.136 over the
- * generator, and pooling lands it at 0.14 where it belongs.
+ * `select` is `ItemBank.select` — injected, never imported, for the same reason `Graph` takes its
+ * JSON as an argument: this file must run unchanged inside Vite, inside plain Node and inside a
+ * build tool, and a mastery module must not reach into a sibling feature module to do its own
+ * pricing. Handing it in is also the only way the audit and the game can be the SAME draw: there
+ * is one implementation of "what item comes next", and both call it.
  *
- * `generateOne`, `tiers` and the band lookup are ARGUMENTS, not imports, for the same reason
- * `Graph` takes its JSON as an argument: this file must run unchanged inside Vite and inside
- * plain Node, and it must not reach into a sibling feature module to do its own pricing.
+ * The exclusion set is a rolling window of the last `window` items drawn FROM THIS CELL, which is
+ * exactly what `Scheduler` publishes on `req.avoidItemIds` (see `Scheduler._recentFor`). That is
+ * the whole correction of round 2: the audit's window and the game's window are now one rule, so
+ * "the catalogue is walked out and then the generator supplies" is either true of both or false
+ * of both. `review/measure/P16.mjs` re-measures on a real Scheduler-driven stream and fails if the
+ * mixtures diverge.
+ *
+ * Each row is tagged with the `source` `select()` reported, because the two sub-populations are
+ * NOT pooled downstream — a guesser meets the catalogue first and can be certified inside it, so
+ * diluting a degenerate 15-item catalogue with 145 generator draws is how a leak hides.
  *
  * @param {object} o
- * @param {Array<{kpId:string, items:Array<object>}>} o.bankFiles the committed catalogue
- * @param {(kpId:string, opts:object)=>object|null} o.generateOne generator entry point
- * @param {string[]} o.tiers generator tiers to sweep
+ * @param {(req:object)=>({item:object, source:string}|null)} o.select the shipped `ItemBank.select`
+ * @param {string[]} o.kpIds knowledge points to audit
  * @param {(kpId:string)=>number} o.bandOf difficulty band of a knowledge point
  * @param {string[]} [o.forms] which forms to audit
- * @param {number} [o.perCell]
+ * @param {number} [o.perCell] draws per (knowledge point x form)
+ * @param {number} [o.window] no-repeat window, per cell, in items
+ * @param {Array<{kpId:string, items:Array<object>}>} [o.bankFiles] legacy shape, see `catalogueSelect`
+ * @param {(kpId:string, opts:object)=>object|null} [o.generateOne] legacy shape
+ * @param {string[]} [o.tiers] legacy shape
  * @returns {Array<{kpId:string, form:string, item:object, source:"catalogue"|"generated"}>}
  */
 export function collectBankSample({
-  bankFiles,
-  generateOne,
-  tiers,
+  select,
+  kpIds,
   bandOf,
   forms = ["construct", "repair", "generate"],
   perCell = BANK_AUDIT_PER_CELL,
+  window = BANK_AUDIT_WINDOW,
+  bankFiles = null,
+  generateOne = null,
+  tiers = null,
 }) {
+  // Callers written against the round-1 shape get the round-2 SEMANTICS rather than a silent
+  // measurement of a population nobody is served: their catalogue and generator are wrapped in a
+  // stand-in for `select()` that answers catalogue-first, exactly as the shipped bank does.
+  const draw = typeof select === "function" ? select : catalogueSelect({ bankFiles, generateOne, tiers, bandOf });
+  const ids = kpIds ?? (bankFiles ?? []).map((f) => f.kpId);
+
   const sample = [];
-  for (const file of bankFiles ?? []) {
-    const kpId = file.kpId;
-    for (const item of file.items ?? []) {
-      if (!forms.includes(item.form)) continue;
-      sample.push({ kpId, form: item.form, item, source: "catalogue" });
-    }
-    if (typeof generateOne !== "function") continue;
-    const band = bandOf(kpId);
+  for (const kpId of ids) {
+    const band = typeof bandOf === "function" ? bandOf(kpId) : 3;
     for (const form of forms) {
-      for (let s = 0; s < perCell; s += 1) {
+      const recent = [];
+      const exclude = new Set();
+      for (let d = 0; d < perCell; d += 1) {
+        // Sweep the five variant tiers the Scheduler asks for, in the order it asks for them, so
+        // the thin tiers of a thin catalogue are represented at the weight a learner meets them.
+        const difficulty = Math.max(1, Math.min(5, band + ((d % 5) - 2)));
         // Fixed seeds: the audit is a property of the bank, not of the run that measured it.
-        const item = generateOne(kpId, {
-          form,
-          tier: tiers[s % tiers.length],
-          band,
-          seed: (s * 7919 + 13) >>> 0,
-        });
-        if (!item) continue;
-        sample.push({ kpId, form, item, source: "generated" });
+        const sel = draw({ kpId, form, difficulty, seed: (d * 2654435761 + 17) >>> 0, exclude });
+        if (!sel || !sel.item) continue;
+        sample.push({ kpId, form, item: sel.item, source: sel.source === "catalogue" ? "catalogue" : "generated" });
+        recent.push(sel.item.id);
+        exclude.add(sel.item.id);
+        while (recent.length > window) exclude.delete(recent.shift());
       }
     }
   }
   return sample;
+}
+
+/**
+ * A stand-in for `ItemBank.select()` built from a raw catalogue and a generator entry point.
+ *
+ * Only for callers that cannot hand in the real one (the round-1 call shape, and any harness that
+ * wants the audit without constructing an `ItemBank`). It reproduces the one property the pricing
+ * depends on: **the catalogue answers first**, and the generator is the fallback when exclusions
+ * have walked the catalogue out.
+ */
+export function catalogueSelect({ bankFiles, generateOne, tiers, bandOf }) {
+  const byCell = new Map();
+  for (const file of bankFiles ?? [])
+    for (const item of file.items ?? []) {
+      const key = `${file.kpId}|${item.form}`;
+      let list = byCell.get(key);
+      if (!list) byCell.set(key, (list = []));
+      list.push(item);
+    }
+  return ({ kpId, form, difficulty, seed, exclude }) => {
+    const pool = byCell.get(`${kpId}|${form}`) ?? [];
+    for (const d of [difficulty, null]) {
+      const live = pool.filter((i) => !exclude.has(i.id) && (d == null || i.difficulty === d));
+      if (live.length) return { item: live[(seed >>> 3) % live.length], source: "catalogue" };
+    }
+    if (typeof generateOne !== "function") return null;
+    const band = typeof bandOf === "function" ? bandOf(kpId) : 3;
+    const list = tiers ?? ["core"];
+    for (let attempt = 0; attempt < 64; attempt += 1) {
+      const item = generateOne(kpId, {
+        form,
+        tier: list[(seed + attempt) % list.length],
+        band,
+        seed: (seed + attempt * 7919 + 13) >>> 0,
+      });
+      if (item && !exclude.has(item.id)) return { item, source: "generated" };
+    }
+    return null;
+  };
+}
+
+/**
+ * The audit table is a property of the BANK, not of the run that measured it, so it is computed
+ * once at build time (`tools/bank-audit.mjs`) and committed. This is the fingerprint that says the
+ * committed table still describes the committed content: every item's identity and answer, plus
+ * every constant that changes what the audit means.
+ *
+ * A build-time table is not an optimisation for its own sake. Measured on this machine, computing
+ * it inside `setup()` costs 1.4 s of blocking main-thread arithmetic on EVERY page load, and it
+ * has to finish before the first item can be priced, so it is 1.4 s the player spends looking at
+ * nothing. It is also the same answer every time.
+ *
+ * The generator families are deliberately NOT hashed — hashing them means running them, which is
+ * the cost this exists to avoid. `review/measure/P16.mjs` recomputes the whole table from scratch
+ * and fails on any difference, so generator drift is caught by the proof rather than by the hash.
+ */
+export const BANK_AUDIT_VERSION = 2;
+
+export function bankAuditFingerprint({ bankFiles, model }) {
+  let h = 0x811c9dc5;
+  const eat = (s) => {
+    const str = String(s);
+    for (let i = 0; i < str.length; i += 1) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 0x01000193) >>> 0;
+    }
+    h ^= 0x7c; // field separator, so "ab"+"c" and "a"+"bc" differ
+    h = Math.imul(h, 0x01000193) >>> 0;
+  };
+  eat(`v${BANK_AUDIT_VERSION}`);
+  eat(BANK_AUDIT_PER_CELL);
+  eat(BANK_AUDIT_WINDOW);
+  eat(EXECUTED_CANDIDATES);
+  eat(EXECUTED_SAMPLE_CAP);
+  eat(EXECUTED_FORMS.join(","));
+  const caps = model?.bkt?.identifiabilityCaps ?? {};
+  for (const k of Object.keys(caps).sort()) eat(`${k}=${caps[k]}`);
+  for (const file of bankFiles ?? []) {
+    eat(file.kpId);
+    for (const item of file.items ?? []) {
+      eat(item.id);
+      eat(item.form);
+      eat(item.family ?? "");
+      eat(item.difficulty ?? "");
+      eat(canonicalKey(item));
+    }
+  }
+  return (h >>> 0).toString(16).padStart(8, "0");
 }
 
 /** The string a responder has to produce. `repair` carries its line number; both halves matter. */
@@ -207,10 +330,16 @@ export function canonicalKey(item) {
  * no solution" — so a single well-chosen string satisfies a whole family at once. Counting
  * canonical answers says `expr-anatomy|generate` has 437 distinct answers and is flukeable at
  * 0.011; running the shipped checker says one expression with three terms in it satisfies 93% of
- * the pool. The canonical count is not a conservative approximation of that, it is the wrong
- * quantity, so these forms MUST be measured by executing the real checker.
+ * the pool.
+ *
+ * Round 2 measured every OTHER form by counting canonical answers, and that was wrong too, only
+ * less spectacularly: `check()` accepts more spellings than one canonical key, so a single string
+ * can satisfy several distinct answers. On the committed catalogue the executed count beats the
+ * canonical count on 17 family groups, by as much as 0.86. There is therefore no form left whose
+ * marking rule can be inferred instead of run: **every form is executed**, and this constant only
+ * survives as the list of forms that CANNOT fall back to counting when no checker is supplied.
  */
-export const EXECUTED_FORMS = ["generate"];
+export const EXECUTED_FORMS = ["construct", "repair", "generate"];
 
 /**
  * GROUND TRUTH, measured. What a responder with zero knowledge of the knowledge point actually
@@ -225,13 +354,31 @@ export const EXECUTED_FORMS = ["generate"];
  * numbers are 0.53 and 1.00. A responder who does strictly better than best-fixed-answer would
  * have to know something about the mathematics, at which point they are not guessing.
  *
- * Reported per cell as the point estimate (which decides REJECTION) and its Wilson 95% upper
- * bound (which decides the MODELLED guess, because conservatism must survive sampling noise).
+ * Reported per family as the point estimate (which decides REJECTION) and an upper bound (which
+ * decides the MODELLED guess, because conservatism must survive sampling noise).
+ *
+ * ------------------------------------------------------------------------------------------
+ * THE TWO SUB-POPULATIONS ARE NEVER POOLED, AND THAT IS THE ROUND-2 CORRECTION
+ *
+ * A cell's committed catalogue is 12-17 items and the generator behind it is unbounded. Pool them
+ * and a 15-item catalogue whose modal answer wins 5 times — 0.333, already over the cap — is
+ * diluted to 0.14 by 145 generator draws and priced as safe. But a learner meets the CATALOGUE
+ * FIRST and the mastery gate needs only `minScoredOpportunities` items, so the catalogue alone is
+ * a long enough horizon to be certified inside. Each source is therefore measured on its own and
+ * the family's price is the WORSE of the two.
+ *
+ * The catalogue half is a CENSUS, not a sample: `collectBankSample` walks it out under the
+ * no-repeat window, so every committed item of the family is seen and de-duplicated here. There is
+ * no sampling error to bound, and its `upper` is its own rate exactly. Putting a Wilson bound on a
+ * census would refuse most of the bank for the crime of being small, which is a different error
+ * from the one this audit exists to catch.
+ * ------------------------------------------------------------------------------------------
  *
  * @param {ReturnType<typeof collectBankSample>} sample
  * @param {object} [o]
- * @param {(item:object, response:string)=>boolean} [o.mark] the SHIPPED checker. Required for
- *        `executedForms`; without it those cells are audited on canonical counts and flagged.
+ * @param {(item:object, response:string)=>boolean} [o.mark] the SHIPPED checker. Without it the
+ *        audit falls back to counting canonical answers, which UNDERSTATES the blind rate, and
+ *        every affected group is named in `notExecuted`.
  * @param {(item:object)=>string} [o.spell] a typable spelling of an item's own answer.
  * @param {string[]} [o.executedForms]
  */
@@ -245,83 +392,134 @@ export function auditBlindGuessing(
     executedCap = EXECUTED_SAMPLE_CAP,
   } = {}
 ) {
-  const byGroup = new Map();
+  /** cell -> every row of it, so the candidate pool can be built across families. */
+  const byCell = new Map();
   for (const row of sample ?? []) {
-    // GRANULARITY IS THE WHOLE ARGUMENT. The leak is not in the form and it is not evenly spread
-    // across a knowledge point: it is in individual GENERATOR FAMILIES. `expr-anatomy.coefficient`
-    // asks for the coefficient of a bare x and the answer is 1, every single time, forever;
-    // `expr-anatomy.term` sitting beside it in the same (kp x form) cell is perfectly sound.
-    // Measuring the cell as a lump either condemns the sound family or excuses the broken one.
-    const key = `${row.kpId}|${row.form}|${row.item.family ?? "(unfamilied)"}`;
-    let rows = byGroup.get(key);
-    if (!rows) byGroup.set(key, (rows = []));
-    rows.push(row.item);
+    const cell = `${row.kpId}|${row.form}`;
+    let rows = byCell.get(cell);
+    if (!rows) byCell.set(cell, (rows = []));
+    rows.push(row);
   }
 
   const families = {};
   const notExecuted = [];
-  for (const [key, items] of byGroup) {
-    const form = key.split("|")[1];
+  const mixture = { catalogue: 0, generated: 0 };
+
+  for (const [cell, rows] of byCell) {
+    const form = cell.slice(cell.indexOf("|") + 1);
+    const executed = executedForms.includes(form) && typeof mark === "function";
+
+    // ---- the candidate pool, built ACROSS THE WHOLE CELL.
+    // A guesser sees one cell, not one family, and the string that beats `eval-signed.minusneg`
+    // is harvested from whichever family happens to produce it. Ranking by canonical frequency
+    // first means the cheap strings a responder actually reaches for come first, and the early
+    // abandonment below makes the tail nearly free.
     const counts = new Map();
-    for (const item of items) {
-      const ckey = canonicalKey(item);
+    for (const row of rows) {
+      const ckey = canonicalKey(row.item);
       const hit = counts.get(ckey);
       if (hit) hit.n += 1;
-      else counts.set(ckey, { n: 1, item });
+      else counts.set(ckey, { n: 1, item: row.item });
     }
     const ranked = [...counts.entries()].sort((a, b) => b[1].n - a[1].n);
-    const n = items.length;
+    const candidates = [];
+    const seenCandidate = new Set();
+    const addCandidate = (raw) => {
+      if (raw == null) return;
+      const str = String(raw);
+      if (seenCandidate.has(str)) return;
+      seenCandidate.add(str);
+      candidates.push(str);
+    };
+    for (const [ckey, rec] of ranked.slice(0, candidateCount))
+      addCandidate(typeof spell === "function" ? spell(rec.item) : ckey);
+    // EVERY family's own top two answers, on top of the cell's, so the executed rate can never be
+    // LOWER than a plain count of canonical answers would have been. A cell-wide top-8 misses a
+    // three-item family whose answers never reach the cell's leaderboard, and the executed number
+    // then reads 0.000 for a pool that a canonical count says is 0.333 — an audit that understates
+    // is the only kind that matters.
+    const perFamily = new Map();
+    for (const row of rows) {
+      const fam = row.item.family ?? "(unfamilied)";
+      let c = perFamily.get(fam);
+      if (!c) perFamily.set(fam, (c = new Map()));
+      const ck = canonicalKey(row.item);
+      const hit = c.get(ck);
+      if (hit) hit.n += 1;
+      else c.set(ck, { n: 1, item: row.item });
+    }
+    for (const c of perFamily.values())
+      for (const [ckey, rec] of [...c.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 2))
+        addCandidate(typeof spell === "function" ? spell(rec.item) : ckey);
+    // The zero-knowledge staples: what a teenager types before reading the question.
+    for (const s of ["0", "1", "x", "always", "none"]) addCandidate(s);
 
-    let modal = ranked.length ? ranked[0][1].n : 0;
-    let modalAnswer = ranked.length ? ranked[0][0] : null;
-    let executed = false;
+    // ---- group by (family x source). Catalogue groups are de-duplicated into a census.
+    const groups = new Map();
+    for (const row of rows) {
+      mixture[row.source === "catalogue" ? "catalogue" : "generated"] += 1;
+      // GRANULARITY IS THE WHOLE ARGUMENT. The leak is not in the form and it is not evenly spread
+      // across a knowledge point: it is in individual FAMILIES. `expr-anatomy.coefficient` asks for
+      // the coefficient of a bare x and the answer is 1, every single time, forever;
+      // `expr-anatomy.term` sitting beside it in the same (kp x form) cell is perfectly sound.
+      // Measuring the cell as a lump either condemns the sound family or excuses the broken one.
+      const key = `${row.item.family ?? "(unfamilied)"}|${row.source}`;
+      let g = groups.get(key);
+      if (!g) groups.set(key, (g = { items: [], ids: new Set(), keys: new Set() }));
+      if (row.source === "catalogue" && g.ids.has(row.item.id)) continue; // census, not a tally
+      g.ids.add(row.item.id);
+      g.keys.add(canonicalKey(row.item));
+      g.items.push(row.item);
+    }
 
-    if (executedForms.includes(form)) {
-      if (typeof mark !== "function") notExecuted.push(key);
-      else {
-        executed = true;
-        // Candidates: the answers this family actually produces most often, spelled the way the
-        // shipped checker documents them, plus two staples a responder types for free.
-        const candidates = [];
-        for (const [ckey, rec] of ranked.slice(0, candidateCount)) {
-          const s = typeof spell === "function" ? spell(rec.item) : ckey;
-          if (s) candidates.push(String(s));
-        }
-        candidates.push("0", "x");
-        const marked = Math.min(n, executedCap);
-        modal = 0;
-        modalAnswer = null;
+    for (const [key, g] of groups) {
+      const cut = key.lastIndexOf("|");
+      const family = key.slice(0, cut);
+      const source = key.slice(cut + 1);
+      const marked = Math.min(g.items.length, executedCap);
+      let hits = 0;
+      let modalAnswer = null;
+
+      if (executed) {
         for (const candidate of candidates) {
-          let hits = 0;
+          let h = 0;
           for (let i = 0; i < marked; i += 1) {
             // Early abandonment: a candidate that cannot catch the leader is not worth finishing.
-            if (hits + (marked - i) <= modal) break;
+            if (h + (marked - i) <= hits) break;
             try {
-              if (mark(items[i], candidate)) hits += 1;
+              if (mark(g.items[i], candidate)) h += 1;
             } catch {
               /* an unreadable response is simply wrong */
             }
           }
-          if (hits > modal) {
-            modal = hits;
+          if (h > hits) {
+            hits = h;
             modalAnswer = candidate;
           }
         }
-        // `n` is what was actually MARKED on this path, so the confidence bound is honest about
-        // the evidence behind it rather than borrowing the unmarked draws' sample size.
-        families[key] = { n: marked, distinct: counts.size, rate: marked ? modal / marked : 0, upper: wilsonUpper(modal, marked), modalAnswer, executed };
-        continue;
+      } else {
+        notExecuted.push(`${cell}|${family}|${source}`);
+        const local = new Map();
+        for (let i = 0; i < marked; i += 1) {
+          const ck = canonicalKey(g.items[i]);
+          local.set(ck, (local.get(ck) ?? 0) + 1);
+        }
+        for (const [ck, n] of local) if (n > hits) ((hits = n), (modalAnswer = ck));
+      }
+
+      const rate = marked ? hits / marked : 0;
+      // A CENSUS has no sampling error. A DRAW from an unbounded generator does.
+      const upper = source === "catalogue" ? rate : wilsonUpper(hits, marked);
+      const key2 = `${cell}|${family}`;
+      const prev = families[key2];
+      const rec = { n: marked, distinct: g.keys.size, rate, upper, modalAnswer, executed, source };
+      // The family's price is the WORSE of its two sub-populations, never their blend.
+      if (!prev || rec.rate > prev.rate || (rec.rate === prev.rate && rec.upper > prev.upper)) {
+        families[key2] = { ...rec, sources: { ...(prev?.sources ?? {}), [source]: { n: marked, rate, upper, modalAnswer } } };
+      } else {
+        prev.sources = { ...(prev.sources ?? {}), [source]: { n: marked, rate, upper, modalAnswer } };
       }
     }
-
-    families[key] = {
-      n,
-      distinct: counts.size,
-      rate: n ? modal / n : 0,
-      upper: wilsonUpper(modal, n),
-      modalAnswer,
-      executed,
-    };
   }
 
   // The cell aggregate, kept because it is what a caller that reports no family gets priced at,
@@ -341,7 +539,7 @@ export function auditBlindGuessing(
       agg.modalAnswer = rec.modalAnswer;
     }
   }
-  return { families, cells, sampled: sample?.length ?? 0, notExecuted };
+  return { families, cells, sampled: sample?.length ?? 0, notExecuted, mixture };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -479,12 +677,20 @@ export class Mastery {
     );
   }
 
-  /** GROUND TRUTH: what a responder with zero knowledge actually achieves on this exact item. */
-  trueGuess(kpId, form, phase) {
+  /**
+   * GROUND TRUTH: what a responder with zero knowledge actually achieves on this exact item.
+   *
+   * When the presenter says which family it served, that family's OWN measured rate is the honest
+   * number — it is the granularity the refusal is made at, so it is the granularity the price is
+   * made at too. When it does not, the cell's worst SURVIVING family stands, which is the
+   * conservative default and the only one available: the engine cannot price what it was not told.
+   */
+  trueGuess(kpId, form, phase, family = null) {
+    const fam = family == null ? null : this.cell(kpId, form)?.families?.[family];
     return Math.max(
       this.pricing.trueByForm[form] ?? 0,
       this.pricing.trueByPhase[phase] ?? 0,
-      this.bankBlindRate(kpId, form)
+      fam && fam.priceable ? fam.blind : this.bankBlindRate(kpId, form)
     );
   }
 
@@ -497,9 +703,12 @@ export class Mastery {
    * cell is refused instead of being clamped down to `maxGuess`, because a clamp is precisely the
    * leak the caps exist to forbid.
    */
-  modelledGuess(kpId, band, form, phase) {
+  modelledGuess(kpId, band, form, phase, family = null) {
     const base = band.guess * Math.max(this.pricing.multByForm[form] ?? 1, this.pricing.multByPhase[phase] ?? 1);
-    return Math.max(base, this.cell(kpId, form)?.blindUpper ?? 0);
+    const fam = family == null ? null : this.cell(kpId, form)?.families?.[family];
+    // A named, surviving family is priced at its own bound; anything else at the worst family the
+    // engine is still willing to serve. Both are >= the true blind rate of what was actually asked.
+    return Math.max(base, (fam && fam.priceable ? fam.blindUpper : this.cell(kpId, form)?.blindUpper) ?? 0);
   }
 
   /**
@@ -536,8 +745,8 @@ export class Mastery {
       family,
       band: band.difficulty,
       slip: band.slip,
-      modelledGuess: scorable ? this.modelledGuess(kpId, band, form, phase) : null,
-      trueGuess: this.trueGuess(kpId, form, phase),
+      modelledGuess: scorable ? this.modelledGuess(kpId, band, form, phase, family) : null,
+      trueGuess: this.trueGuess(kpId, form, phase, family),
       scorable,
       masteryEligible: this.isMasteryEligible(kpId, form, phase, family),
       // Serve none of these. Each one is a generator family with a single memorised answer.
@@ -759,7 +968,7 @@ export class Mastery {
 
     // ---- BKT, §1.2. ONE guess prices both directions: using a smaller guess on the down-update
     // would be a second, quieter version of the clamping the caps forbid.
-    const guess = this.modelledGuess(kpId, band, form, phase);
+    const guess = this.modelledGuess(kpId, band, form, phase, r.family ?? null);
     const learn = this.learnRate(kpId);
     s.p = bktUpdate(s.p, correct, band.slip, guess, learn, 1);
     out.p = s.p;
@@ -788,7 +997,7 @@ export class Mastery {
       // The prerequisite is priced at its OWN band, but never below what the item that paid the
       // credit was worth: a correct answer to something flukeable at 0.15 is not stronger evidence
       // about the prerequisite than it is about the knowledge point it was actually aimed at.
-      const pguess = Math.max(pband.guess, this.trueGuess(kpId, form, phase));
+      const pguess = Math.max(pband.guess, this.trueGuess(kpId, form, phase, r.family ?? null));
       ps.p = bktUpdate(ps.p, correct, pband.slip, pguess, this.learnRate(pid), this.M.bkt.prerequisiteCreditWeight);
       ps.creditedAt = this.now();
       this.stats.prerequisiteCredits += 1;
@@ -1408,10 +1617,14 @@ function deriveCellPricing(graph, M, pricing, audit, issues) {
   }
   if (audit.notExecuted?.length)
     issues.push(
-      `bank audit ran without the shipped checker on ${audit.notExecuted.length} property-marked cell(s) ` +
-        `(${EXECUTED_FORMS.join(",")}); those rates are counts of canonical answers and UNDERSTATE the real ` +
-        `blind rate. Pass { mark, spell } to auditBlindGuessing.`
+      `bank audit ran without the shipped checker on ${audit.notExecuted.length} group(s); those rates are ` +
+        `counts of canonical answers and UNDERSTATE the real blind rate — on the committed catalogue the ` +
+        `executed count beats the canonical one by as much as 0.86. Pass { mark, spell } to auditBlindGuessing.`
     );
+  // The audit is only worth anything if it drew the population the player is served. A sample that
+  // is mostly generator when the game serves mostly catalogue is the round-2 defect, restated.
+  if (audit.mixture && audit.mixture.catalogue === 0)
+    issues.push("bank audit drew ZERO catalogue items — it is pricing a population `ItemBank.select()` does not serve first");
 
   /** The four caps, run against one measured rate at one band. Returns null when it passes. */
   const refuseReason = (band, form, blind, blindUpper) => {
@@ -1515,6 +1728,11 @@ function deriveCellPricing(graph, M, pricing, audit, issues) {
     description: {
       audited: true,
       cellsPriced: Object.keys(cells).length,
+      // What the price was measured ON. A reviewer must be able to read the sample's composition
+      // off the probe rather than take the sampler's word for it.
+      sampled: audit.sampled ?? 0,
+      mixture: audit.mixture ?? null,
+      catalogueShare: audit.mixture && audit.sampled ? round6(audit.mixture.catalogue / audit.sampled) : null,
       // Named at the granularity the fix has to happen at: a generator family and the one string
       // that answers everything it will ever produce.
       rejectedCells: rejected.sort((a, b) => (b.blind ?? 1) - (a.blind ?? 1)),

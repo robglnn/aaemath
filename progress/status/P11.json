@@ -1,9 +1,9 @@
 {
   "id": "P11",
-  "state": "critique",
-  "round": 1,
-  "gap": "Materials.js is imported by nothing but Lighting.js: zero shipped meshes use the factory, so in-game rock shadows read warm hue 33-40 instead of the reference's blue-grey hue 196, and the player has no contact shadow (own C1/C2 fail).",
-  "note": "Factory wired into every shipped world mesh (51/51 carry a Materials archetype, 0 MeshStandardMaterial left); rock turned from the key moved from hue 33-40 to 197.5/S0.453/V0.208; synthetic materialBoard deleted; P11.mjs rewritten to measure only the shipped scene",
+  "state": "building",
+  "round": 2,
+  "gap": "No cast shadow reaches the shipped frame: contact darkening under the avatar's boot on lit ground measures 0.00 (V 0.314 under sole vs 0.306/0.314 one metre away) against P11's own C1 target of 0.45 — the character floats",
+  "note": "Round 3: shadow camera on player feet, ground decal fallback, litFloor ladder, accent budget",
   "evidence": [],
-  "updated": "2026-08-10T14:42:02.686Z"
+  "updated": "2026-08-10T15:06:01.102Z"
 }

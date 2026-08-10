@@ -189,6 +189,22 @@ Also outstanding from the same round: P16's audit sampled `collectBankSample` at
 95.5% generator, which is not the population the player is actually served — the prices it computed
 describe a distribution nobody sees.
 
+### Round 3 visual state (integrator observation, review/shots/integration/r2.png)
+
+P09's "no subject" gap is genuinely closed — the carry now leads the eye from the foreground to the
+horizon, spires read as several planes, and an inequality renders in world space beside the equations.
+
+But it **over-corrected**: the cyan carry is far more saturated and far wider than the target's, and it
+now dominates the frame rather than supporting the composition. `target-lowpoly.png` keeps the river a
+restrained winding ribbon whose job is to lead, not to be the subject. `design/art-direction.md`'s
+colour law caps the frame percentage that may be saturated resonance cyan — measure the current frame
+against that cap; it is very likely violated. Fixing "invisible" by making it neon trades one failure
+for another.
+
+P11 round 2, still open and measured: "No cast shadow reaches the shipped frame: contact darkening
+under the avatar's boot on lit ground measures 0.00." The factory is wired (33 meshes painted) but the
+shadow is not arriving.
+
 ### The meta-lesson: two builders' proof scripts were themselves broken
 - `review/measure/P09.mjs:290` references `belowHits`, never declared in the page-evaluate scope. The
   script dies with a ReferenceError before printing a single claim — so claims S1–S4, C1–C3, K1–K3 and

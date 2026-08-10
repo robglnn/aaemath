@@ -9,6 +9,8 @@
     "build": "vite build",
     "preview": "vite preview --port 4180 --strictPort",
     "deploy": "vite build --outDir ../docs --emptyOutDir && node -e \"require('fs').writeFileSync('docs/.nojekyll','')\"",
+    "bank-audit": "node tools/bank-audit.mjs",
+    "bank-audit:check": "node tools/bank-audit.mjs --check",
     "review": "node tools/review.mjs",
     "shot": "node tools/review.mjs shot",
     "verify": "node tools/review.mjs verify"

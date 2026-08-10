@@ -97,15 +97,23 @@
  *    which is the target's reading of ink standing unadorned in world space, and which makes
  *    "a claim is drawn whole or not at all" a property of the renderer rather than a hope
  *    about level layout. The alternative — keep depth and test occlusion every frame — was
- *    measured and rejected: a camera-to-ink ray against the shipped scene costs 1.20 ms
- *    (140 rays, 50 depth-writing meshes, 33.8k triangles), so a 35-sample check per panel is
- *    a 170 ms stall. That is not a per-frame budget; it is a probe.
- *  - **`occludedPct`, published per panel from `probe()`.** Floating in front hides bad
- *    placement rather than fixing it, so the placement is measured anyway, geometrically and
- *    independently of what the depth buffer did: rays from the camera to ink-weighted points
- *    on the quad, against every mesh in the scene that writes depth. `review/measure/P15.mjs`
- *    claim O1 fails the run if any standing claim reads above 0. A capture with a claim
- *    standing behind a spire now fails a gate instead of being signed off by eye.
+ *    measured and rejected: one camera-to-ink ray against the shipped spawn scene costs
+ *    2.58 ms across its 50 depth-writing meshes, 1.61 ms of that in the two terrain meshes
+ *    alone (`vs.terrain.surface` 9,443 triangles at 0.86 ms, `vs.terrain.keel` 10,253 at
+ *    0.75 ms). Twenty-four samples on each of four panels is a couple of hundred milliseconds
+ *    of headless software rasterization. That is not a per-frame budget; it is an instrument.
+ *  - **`occludedPct`, published per panel and measured by `__vs.probe("mathocclusion")`.**
+ *    Floating in front hides bad placement rather than fixing it, so the placement is measured
+ *    anyway, geometrically and independently of what the depth buffer did: rays from the
+ *    camera to ink-weighted points on the quad, against every mesh in the scene that writes
+ *    depth. It has a probe of its own because of the milliseconds above and because
+ *    `design/architecture.md` requires probes to be cheap; `probe()` reports the last
+ *    measurement without taking one, and a `null` there means unmeasured, never zero.
+ *    `review/measure/P15.mjs` claim O1 fails the run if any standing claim reads above 0, and
+ *    claim O2 puts the depth test back on the shipped frame and proves the ink does not
+ *    change — so the anchors are clear on their own merits and the material flag is the belt
+ *    and not the braces. A capture with a claim standing behind a spire now fails a gate
+ *    instead of being signed off by eye.
  */
 import * as THREE from "three";
 import { introspect } from "../core/Introspect.js";
@@ -692,6 +700,26 @@ export function rasterizeTex(tex, { locale = getLocale(), displayMode = true, fo
   const ox = ink.left - pad;
   const oy = ink.top - pad;
 
+  // Where the ink is, as a coarse grid in quad-local terms, built from the paint instructions
+  // themselves. The occlusion probe needs to know which parts of the quad carry mathematics,
+  // and the obvious way to find out — downscale the finished canvas and read its alpha — was
+  // measured costing 5.4 s at 1600x900 and 19.6 s at 4K in a headless session, growing with
+  // texture area, because `getImageData` on a canvas that is also a live GPU texture is a
+  // read-back. These boxes are already in hand and cost nothing.
+  const inkCells = new Uint8Array(INK_GRID_W * INK_GRID_H);
+  const markInk = (l, t, r, b) => {
+    const gx0 = Math.max(0, Math.floor(((l - ox) / cw) * INK_GRID_W));
+    const gx1 = Math.min(INK_GRID_W - 1, Math.floor(((r - ox) / cw) * INK_GRID_W));
+    const gy0 = Math.max(0, Math.floor(((t - oy) / ch) * INK_GRID_H));
+    const gy1 = Math.min(INK_GRID_H - 1, Math.floor(((b - oy) / ch) * INK_GRID_H));
+    for (let gy = gy0; gy <= gy1; gy++) for (let gx = gx0; gx <= gx1; gx++) inkCells[gy * INK_GRID_W + gx] = 1;
+  };
+  for (const it of items) {
+    if (it.kind === "text") markInk(it.x, it.baseline - it.ascent, it.x + it.width, it.baseline + it.descent);
+    else if (it.kind === "rect") markInk(it.x, it.y, it.x + it.w, it.y + it.h);
+    else if (it.box) markInk(it.box.left, it.box.top, it.box.right, it.box.bottom);
+  }
+
   const paint = () => {
     for (const it of items) {
       ctx.save();
@@ -754,6 +782,7 @@ export function rasterizeTex(tex, { locale = getLocale(), displayMode = true, fo
     emsTall: (Math.ceil(ink.height) + pad * 2) / usedFontPx,
     stats,
     bound,
+    inkCells,
     ok: record.ok,
   };
 }
@@ -891,7 +920,19 @@ export function rasterizeWorking({
 
   // `fontPx` here is the working's own em — it is four ems to a side by definition — so a
   // clamped working still reports the right world size and the right texels-per-pixel.
-  return { canvas, ink: { width: size, height: size }, fontPx: size / 4, emsWide: 4, emsTall: 4 };
+  //
+  // `inkCells` is every cell: a plot's axes run the full height and the full width and its
+  // staircase crosses the diagonal, so the ink reaches into every part of the square. Where it
+  // over-states — the two empty corners — it over-states the *occlusion* of a working, which
+  // is the safe direction for a gate that exists to catch mathematics being hidden.
+  return {
+    canvas,
+    ink: { width: size, height: size },
+    fontPx: size / 4,
+    emsWide: 4,
+    emsTall: 4,
+    inkCells: new Uint8Array(INK_GRID_W * INK_GRID_H).fill(1),
+  };
 }
 
 // ---------------------------------------------------------------- the panel
@@ -1017,6 +1058,7 @@ export class TexPanel {
     this._texelsPerPixel = 0;
     // The occlusion measurement, filled in by `measureOcclusion`; null until something asks.
     this._occlusion = null;
+    this._inkCells = null;
     this._inkSamples = null;
     this._inkSamplesAt = -1;
     this.record = null;
@@ -1102,6 +1144,7 @@ export class TexPanel {
     this._emsWide = out.emsWide || this._widthPerEm;
     this._emsTall = out.emsTall || this._heightPerEm;
     this._bound = out.bound ?? null;
+    this._inkCells = out.inkCells ?? null;
     this._fontPx = pxPerEm;
     this._bucket = bucket;
     this._rasters++;
@@ -1174,44 +1217,30 @@ export class TexPanel {
   /**
    * Where the ink actually is on this quad, as points in local space.
    *
-   * The claim is white on transparent, so the alpha channel *is* the ink. The texture is
-   * downsampled into a small fixed grid once per raster — `drawImage` into a 24x12 canvas,
-   * one `getImageData` of 288 pixels, rather than reading back up to 16 MiB — and the cells
-   * that carry ink become the sample set. Ink-weighted and not uniform on purpose: a claim is
-   * mostly empty quad, and "40% of the rectangle is behind a rock" says nothing about whether
-   * the mathematics is readable. The critic's pixel measurement counted ink; so does this.
-   *
-   * The threshold is relative to the strongest cell rather than absolute, because a thin
-   * glyph downsampled a hundred to one covers a cell far below any fixed alpha you would pick.
+   * Ink-weighted and not uniform on purpose: a claim is mostly empty quad, and "40% of the
+   * rectangle is behind a rock" says nothing about whether the mathematics is readable. The
+   * critic's pixel measurement counted ink; so does this. The grid comes from `rasterizeTex`,
+   * which builds it out of the paint instructions it already has — see the comment there for
+   * why reading the finished canvas back instead was measured and abandoned.
    */
   _samplePoints() {
     if (this._inkSamples && this._inkSamplesAt === this._rasters) return this._inkSamples;
-    const img = this._texture?.image;
-    if (!img || !img.width || !img.height) return null;
+    if (!this._texture) return null;
+    const cells = this._inkCells;
     const out = [];
-    try {
-      const c = inkScratch();
-      const ctx = c.getContext("2d", { willReadFrequently: true });
-      ctx.clearRect(0, 0, INK_GRID_W, INK_GRID_H);
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "low";
-      ctx.drawImage(img, 0, 0, INK_GRID_W, INK_GRID_H);
-      const px = ctx.getImageData(0, 0, INK_GRID_W, INK_GRID_H).data;
-      let peak = 0;
-      for (let i = 3; i < px.length; i += 4) peak = Math.max(peak, px[i]);
-      const floor = Math.max(4, peak * 0.25);
+    if (cells && cells.length === INK_GRID_W * INK_GRID_H) {
       for (let y = 0; y < INK_GRID_H; y++) {
         for (let x = 0; x < INK_GRID_W; x++) {
-          if (px[(y * INK_GRID_W + x) * 4 + 3] < floor) continue;
+          if (!cells[y * INK_GRID_W + x]) continue;
           // Local space on a unit plane: +x right, +y up, and the texture's y runs down.
           out.push([(x + 0.5) / INK_GRID_W - 0.5, 0.5 - (y + 0.5) / INK_GRID_H]);
         }
       }
-    } catch {
-      // A tainted or zero-sized canvas: fall through to the uniform grid below rather than
-      // reporting "no occlusion" for a claim nobody measured.
     }
     let points = out;
+    // No grid — a raster that refused before it painted. A uniform sample of the quad is
+    // still an honest answer to "is there something in front of this thing", and reporting
+    // nothing would let an unmeasured claim read as an unoccluded one.
     if (!points.length) {
       points = [];
       for (let y = 0; y < 5; y++) {
@@ -1336,6 +1365,9 @@ function UNIT_PLANE() {
 
 // The occlusion probe's working set. Module-level and reused: a measurement that allocates
 // per sample is a measurement that changes what it is measuring.
+// The ink grid a raster reports and the occlusion probe samples. 24x12 is fine enough that a
+// fraction's numerator, bar and denominator land in different rows — which is the distinction
+// that mattered when a spire ate a denominator — and coarse enough to build and walk for free.
 const INK_GRID_W = 24;
 const INK_GRID_H = 12;
 const MAX_OCCLUSION_SAMPLES = 24;
@@ -1345,6 +1377,7 @@ const _v3c = new THREE.Vector3();
 const _v3d = new THREE.Vector3();
 const _v3e = new THREE.Vector3();
 
+
 /** Shortest distance from a point to the segment [a,b]. Used to cull the occlusion probe. */
 function distanceToSegment(p, a, b) {
   const ab = _v3d.copy(b).sub(a);
@@ -1352,16 +1385,6 @@ function distanceToSegment(p, a, b) {
   const t = len2 > 1e-9 ? Math.max(0, Math.min(1, _v3e.copy(p).sub(a).dot(ab) / len2)) : 0;
   return _v3e.copy(a).addScaledVector(ab, t).distanceTo(p);
 }
-let inkScratchCanvas = null;
-function inkScratch() {
-  if (!inkScratchCanvas) {
-    inkScratchCanvas = document.createElement("canvas");
-    inkScratchCanvas.width = INK_GRID_W;
-    inkScratchCanvas.height = INK_GRID_H;
-  }
-  return inkScratchCanvas;
-}
-
 let MAX_ANISO = 1;
 export function setMaxAnisotropy(value) {
   MAX_ANISO = Math.max(1, value || 1);
@@ -1601,9 +1624,11 @@ export class TexField {
    * triangles at 0.86 ms, `vs.terrain.keel` 10,253 at 0.75 ms); Three's own bounding-sphere
    * and bounding-box rejects cannot help, because the corridor from the eye to a claim
    * fourteen metres ahead is inside the terrain's bounds by construction. Twenty-four samples
-   * across four panels is therefore ~190 ms, and `design/architecture.md` says probes must be
-   * cheap. So this is an instrument with its own name — `__vs.probe("mathocclusion")` — and
-   * `probe()` reports what it last measured without paying for it again.
+   * across four panels is therefore a couple of hundred milliseconds, and
+   * `design/architecture.md` says probes must be cheap. So this is an instrument with its own
+   * name — `__vs.probe("mathocclusion")` — and `probe()` reports what it last measured
+   * without paying for it again. The published `occlusionMs` is the number that keeps this
+   * paragraph honest.
    */
   measureOcclusion({ force = false, interval = 0.4 } = {}) {
     const camera = this.kernel?.camera;

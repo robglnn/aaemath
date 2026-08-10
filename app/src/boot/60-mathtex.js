@@ -39,28 +39,38 @@ import { TexField, ensureMathFonts, setMaxAnisotropy } from "../math/TexPanel.js
  * So the pair now stands to the *right* of the subject and above the horizon line, which is
  * where `reference/target-lowpoly.png` puts its equation block: entirely on the smooth upper
  * sky gradient, crossed by nothing. `leaf9-working` moves out with them to stay clear of the
- * wider `right 1.6` column. The rule this encodes, and the one `review/measure/P15.mjs`
- * claim O1 enforces every run: **a standing claim's ink is 0.0% occluded.** Not "mostly
- * visible" — a claim with something in front of it is a claim that may be read wrong.
+ * wider column. The rule this encodes, and the one `review/measure/P15.mjs` claim O1 enforces
+ * every run: **a standing claim's ink is 0.0% occluded.** Not "mostly visible" — a claim with
+ * something in front of it is a claim that may be read wrong.
+ *
+ * The exact heights are a measurement too, not a nudge. The dusk sky is *banded* — hard-edged
+ * cloud slabs and a step in the gradient — and the first placement put `x + 3 = 7` straddling
+ * one of those steps, which reads in `P15.mjs` claim C16 as a −8.4 halo: the sky 3–5 px from
+ * the ink measurably darker than the sky 12–20 px away, which is the signature this piece
+ * exists to never produce. It was the sky and not our raster (C16b measures our own alpha
+ * halo at 0), but a claim standing across a hard sky edge is still a claim fighting its
+ * background. The block was moved onto the flat part of the gradient by predicting the C16
+ * statistic for every candidate position against a claim-free capture of the same frame, and
+ * these heights sit in the middle of a plateau where a ±10 px error still measures positive.
  */
 const STANDING_CLAIMS = [
   {
     id: "leaf9-span",
     kpId: "eq-one-add",
     tex: "x + 3 = 7",
-    anchor: { right: 1.6, up: 2.6, forward: 14 },
+    anchor: { right: 1.44, up: 2.27, forward: 14 },
     em: 0.66,
   },
   {
     id: "leaf9-share",
     kpId: "eq-one-mult",
     tex: "\\frac{1}{2}x = 4",
-    anchor: { right: 1.6, up: 1.1, forward: 14 },
+    anchor: { right: 1.44, up: 0.77, forward: 14 },
     em: 0.66,
   },
   {
     id: "leaf9-working",
-    anchor: { right: 5.6, up: 1.9, forward: 14 },
+    anchor: { right: 5.44, up: 1.57, forward: 14 },
     em: 0.55,
     working: { slope: 0.62, intercept: 0.02, xTicks: 10, yTicks: 8 },
   },
@@ -73,7 +83,7 @@ const STANDING_CLAIMS = [
     tex: "2x + 1 \\ge 9",
     // Pushed further out than it used to be so it clears the working's plot on screen as
     // well as in the world: the pair moving right brought the whole block into its column.
-    anchor: { right: 25.5, up: 2.2, forward: 42 },
+    anchor: { right: 27.4, up: 1.47, forward: 42 },
     em: 1.1,
   },
 ];
@@ -138,10 +148,10 @@ export default {
 
     publish("mathtex", () => field.probe());
     // Deliberately a probe of its own, and deliberately not folded into `mathtex`. It fires
-    // one camera-to-ink ray per sample against every depth-writing mesh in the scene, which
-    // is ~190 ms in the spawn frame — an instrument, not something `__vs.report()` should pay
-    // for on every call. `review/measure/P15.mjs` claim O1 reads it and fails the run if any
-    // standing claim has world geometry in front of its ink.
+    // one camera-to-ink ray per sample against every depth-writing mesh in the scene, which is
+    // a couple of hundred milliseconds in the spawn frame — an instrument, not something
+    // `__vs.report()` should pay for on every call. `review/measure/P15.mjs` claim O1 reads it
+    // and fails the run if any standing claim has world geometry in front of its ink.
     publish("mathocclusion", () => field.occlusionReport());
     publish("tex", () => ({ ...texStats(), failures: texFailures() }));
   },

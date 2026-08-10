@@ -1,11 +1,11 @@
 import graphSource from "../../../content/knowledge-graph.json";
 import { BANK } from "../../../content/items/index.mjs";
-import { generateOne, TIERS } from "../../../content/items/generators.mjs";
 import { publish, warn } from "../core/Introspect.js";
 import { signals } from "../core/Signals.js";
 import { Graph } from "../learn/Graph.js";
 import { itemBank } from "../learn/ItemBank.js";
-import { Mastery, auditBlindGuessing, collectBankSample } from "../learn/Mastery.js";
+import bankAuditTable from "../learn/bank-audit.json";
+import { Mastery, auditBlindGuessing, collectBankSample, bankAuditFingerprint, BANK_AUDIT_VERSION } from "../learn/Mastery.js";
 import { Scheduler, realClock, virtualClock, mulberry32 } from "../learn/Scheduler.js";
 
 /**
@@ -50,32 +50,53 @@ export default {
      * Price the bank we actually ship, not the bank the content file describes.
      *
      * `model.trueGuessByForm` says a `construct` item is flukeable at 0.03 because a numeric slot
-     * accepts about forty values. `content/items` disagrees on eight knowledge points: the whole
-     * `eq-special-cases` construct pool answers `always` or `none` (measured 0.53 blind) and every
-     * one of its repair items answers `3|0 = 0` (measured 1.00). This audit is what lets the
-     * engine see that, and it is deliberately computed here from the SAME content the item bank
-     * is built from, rather than reaching into P17's module — the numbers are then identical to
-     * the ones `review/measure/P16.mjs` proves against, because both call the same function on
-     * the same data with the same fixed seeds.
+     * accepts about forty values. `content/items` disagrees on a dozen knowledge points: the whole
+     * `eq-special-cases` construct pool answers `always` or `none` (measured 1.00 blind) and every
+     * one of its repair items answers `3|0 = 0` (measured 1.00). The audit is what lets the engine
+     * see that.
      *
-     * `mark` and `spell` are the SHIPPED checker. They are needed because `generate` items are
-     * marked against a PROPERTY, not against a string: counting distinct canonical answers says
-     * `expr-anatomy|generate` is flukeable at 0.011, and running the real checker says one
-     * three-term expression satisfies 93% of that pool. This is the composition root, and wiring
-     * two features together is the one thing a boot module is for — `Mastery.js` itself never
-     * imports the item bank, it is handed two functions.
+     * IT IS READ, NOT COMPUTED. The audit draws 15,000-odd items through `ItemBank.select()` and
+     * marks each of them with the shipped checker; measured on this machine that is 62 s of pure
+     * blocking arithmetic, and it produces the same answer every time because it is a property of
+     * `content/items` and of nothing else. Round 2 paid 1.4 s of it inside `setup()` on every page
+     * load — before the first item could be priced, so it was 1.4 s of the player looking at
+     * nothing — for a table that is already known at build time. `node tools/bank-audit.mjs`
+     * writes it; `review/measure/P16.mjs` U37 recomputes the whole thing and fails if the
+     * committed file differs by one field.
      *
-     * Cost is roughly a second of pure arithmetic inside an async setup, once, and it is paid
-     * before the first item can be priced on purpose: a table that arrives late is a table that
-     * priced the first session wrong.
+     * The fingerprint below is the runtime half of that guarantee: it covers every committed
+     * item's identity and answer plus every constant that changes what the audit means, so a
+     * content edit that was never followed by a regeneration is caught here rather than silently
+     * pricing new content against an old table. When it does not match, the audit is recomputed
+     * live — slow, loud, and correct — because the alternative is scoring on a table that does not
+     * describe the bank, which is the whole defect this piece exists to close.
      */
-    const bankAudit = auditBlindGuessing(
-      collectBankSample({ bankFiles: BANK, generateOne, tiers: TIERS, bandOf: (id) => graph.difficulty(id) }),
-      {
-        mark: (item, response) => itemBank.check(item, response).correct === true,
-        spell: (item) => itemBank.accepts(item)[0],
-      }
-    );
+    let bankAudit = bankAuditTable;
+    const want = bankAuditFingerprint({ bankFiles: BANK, model: graph.model });
+    if (bankAuditTable.version !== BANK_AUDIT_VERSION || bankAuditTable.fingerprint !== want) {
+      warn(
+        `learning: bank-audit.json is STALE (fingerprint ${bankAuditTable.fingerprint} v${bankAuditTable.version}, ` +
+          `content wants ${want} v${BANK_AUDIT_VERSION}) — recomputing it live, which is slow. Run: node tools/bank-audit.mjs`
+      );
+      const { generateOne, TIERS } = await import("../../../content/items/generators.mjs");
+      bankAudit = auditBlindGuessing(
+        collectBankSample({
+          select: (o) => itemBank.select(o),
+          kpIds: graph.ids,
+          bandOf: (id) => graph.difficulty(id),
+          bankFiles: BANK,
+          generateOne,
+          tiers: TIERS,
+        }),
+        {
+          // The SHIPPED checker. Every form is marked by running it, because `check()` accepts
+          // more spellings than one canonical key and counting answers understates the guesser by
+          // as much as 0.86 on the committed catalogue.
+          mark: (item, response) => itemBank.check(item, response).correct === true,
+          spell: (item) => itemBank.accepts(item)[0],
+        }
+      );
+    }
 
     const mastery = new Mastery(graph, { now: () => Date.now() / 60000, bankAudit });
     const scheduler = new Scheduler(mastery, { clock: realClock(), seed: 0x5eed, sessionMinutes: 25 });
@@ -156,14 +177,13 @@ export default {
 
     kernel.mount("learning", system);
 
-    // P17 may present an item without going through submit(); record the id either way so the
-    // "no exact repeat within 40 items" rule holds however the bank is wired.
+    // P17 may present an item without going through submit(); record it either way so the
+    // "no exact repeat within 40 items" rule holds however the bank is wired. `kpId` and `form`
+    // are what put it in the right per-cell window — without them the item only closes the global
+    // window, which is the weaker of the two rules.
     signals.on("learn:present", (e) => {
       if (!e?.itemId) return;
-      const ids = system.scheduler.recentItemIds;
-      ids.push(e.itemId);
-      const cap = system.mastery.M.antiGuessing.noRepeatWithinItems ?? 40;
-      while (ids.length > cap) ids.shift();
+      system.scheduler.noteServed({ itemId: e.itemId, kpId: e.kpId, form: e.form });
     });
 
     // A browser game is closed, not exited. Persist on the way out so a session resumes.

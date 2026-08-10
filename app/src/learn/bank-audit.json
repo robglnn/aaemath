@@ -1,0 +1,4584 @@
+{
+ "version": 2,
+ "fingerprint": "931a28c6",
+ "perCell": 160,
+ "window": 40,
+ "generatedAt": null,
+ "sampled": 15314,
+ "mixture": {
+  "catalogue": 4608,
+  "generated": 10706
+ },
+ "notExecuted": [],
+ "families": {
+  "var-meaning|construct|var-meaning.seat": {
+   "n": 5,
+   "distinct": 4,
+   "rate": 0.4,
+   "upper": 0.4,
+   "modalAnswer": "3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.4,
+     "upper": 0.4,
+     "modalAnswer": "3"
+    },
+    "generated": {
+     "n": 49,
+     "rate": 0.16326530612244897,
+     "upper": 0.2903633854905909,
+     "modalAnswer": "15"
+    }
+   }
+  },
+  "var-meaning|construct|var-meaning.twin": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "x = 9,\\; y = 9",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "x = 9,\\; y = 9"
+    },
+    "generated": {
+     "n": 36,
+     "rate": 0.1111111111111111,
+     "upper": 0.253148087279096,
+     "modalAnswer": "x = 9,\\; y = 9"
+    }
+   }
+  },
+  "var-meaning|construct|var-meaning.relate": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "a = 4b",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "a = 4b"
+    },
+    "generated": {
+     "n": 19,
+     "rate": 0,
+     "upper": 0.16817922625956366,
+     "modalAnswer": null
+    }
+   }
+  },
+  "var-meaning|repair|var-meaning.seat": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: q = 9",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: q = 9"
+    },
+    "generated": {
+     "n": 46,
+     "rate": 0,
+     "upper": 0.07707356420776004,
+     "modalAnswer": null
+    }
+   }
+  },
+  "var-meaning|repair|var-meaning.twin": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: x = 3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: x = 3"
+    },
+    "generated": {
+     "n": 29,
+     "rate": 0.06896551724137931,
+     "upper": 0.2196458030800441,
+     "modalAnswer": "2: x = 3"
+    }
+   }
+  },
+  "var-meaning|repair|var-meaning.relate": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2: a = 10b",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "2: a = 10b"
+    },
+    "generated": {
+     "n": 17,
+     "rate": 0,
+     "upper": 0.18431813738065558,
+     "modalAnswer": null
+    }
+   }
+  },
+  "var-meaning|generate|var-meaning.seat": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "a = 4; b = 4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "a = 4; b = 4"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.08333333333333333,
+     "upper": 0.1466223222485231,
+     "modalAnswer": "a = 6; b = 6"
+    }
+   }
+  },
+  "oo-numeric|construct|oo-numeric.addmul": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "17",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "17"
+    },
+    "generated": {
+     "n": 42,
+     "rate": 0.07142857142857142,
+     "upper": 0.1900942692413506,
+     "modalAnswer": "21"
+    }
+   }
+  },
+  "oo-numeric|construct|oo-numeric.addsub": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "12"
+    },
+    "generated": {
+     "n": 33,
+     "rate": 0.12121212121212122,
+     "upper": 0.27325505316198356,
+     "modalAnswer": "12"
+    }
+   }
+  },
+  "oo-numeric|construct|oo-numeric.divmul": {
+   "n": 3,
+   "distinct": 3,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "20",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 3,
+     "rate": 0.3333333333333333,
+     "upper": 0.3333333333333333,
+     "modalAnswer": "20"
+    },
+    "generated": {
+     "n": 25,
+     "rate": 0.08,
+     "upper": 0.24966109123460217,
+     "modalAnswer": "24"
+    }
+   }
+  },
+  "oo-numeric|repair|oo-numeric.addmul": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 14 + 2",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: 14 + 2"
+    },
+    "generated": {
+     "n": 34,
+     "rate": 0.058823529411764705,
+     "upper": 0.19093607045929484,
+     "modalAnswer": "2: 7 + 10"
+    }
+   }
+  },
+  "oo-numeric|repair|oo-numeric.addsub": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2: 14 + 2",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "2: 14 + 2"
+    },
+    "generated": {
+     "n": 33,
+     "rate": 0.15151515151515152,
+     "upper": 0.30919876025212834,
+     "modalAnswer": "2: 5 + 7"
+    }
+   }
+  },
+  "oo-numeric|repair|oo-numeric.divmul": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2: 14 + 2",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "2: 14 + 2"
+    },
+    "generated": {
+     "n": 29,
+     "rate": 0.06896551724137931,
+     "upper": 0.2196458030800441,
+     "modalAnswer": "2: 14 + 4"
+    }
+   }
+  },
+  "oo-numeric|generate|oo-numeric.addmul": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "9 + 7 \\cdot 7",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "9 + 7 \\cdot 7"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.05,
+     "upper": 0.1048028859243862,
+     "modalAnswer": "12 + 3 \\cdot 7"
+    }
+   }
+  },
+  "expr-anatomy|construct|expr-anatomy.count": {
+   "n": 41,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "3",
+   "executed": true,
+   "source": "generated",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.6666666666666666,
+     "upper": 0.6666666666666666,
+     "modalAnswer": "3"
+    },
+    "generated": {
+     "n": 41,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "3"
+    }
+   }
+  },
+  "expr-anatomy|construct|expr-anatomy.term": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "-8x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "-8x"
+    },
+    "generated": {
+     "n": 32,
+     "rate": 0.1875,
+     "upper": 0.353091553475614,
+     "modalAnswer": "-8x"
+    }
+   }
+  },
+  "expr-anatomy|construct|expr-anatomy.coefficient": {
+   "n": 5,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "1",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "1"
+    },
+    "generated": {
+     "n": 23,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "1"
+    }
+   }
+  },
+  "expr-anatomy|repair|expr-anatomy.count": {
+   "n": 41,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "2: 3",
+   "executed": true,
+   "source": "generated",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.6,
+     "upper": 0.6,
+     "modalAnswer": "2: 3"
+    },
+    "generated": {
+     "n": 41,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "2: 3"
+    }
+   }
+  },
+  "expr-anatomy|repair|expr-anatomy.term": {
+   "n": 5,
+   "distinct": 4,
+   "rate": 0.4,
+   "upper": 0.4,
+   "modalAnswer": "2: -9x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.4,
+     "upper": 0.4,
+     "modalAnswer": "2: -9x"
+    },
+    "generated": {
+     "n": 33,
+     "rate": 0.18181818181818182,
+     "upper": 0.34388231778649414,
+     "modalAnswer": "2: -2x"
+    }
+   }
+  },
+  "expr-anatomy|repair|expr-anatomy.coefficient": {
+   "n": 5,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "2: 1",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "2: 1"
+    },
+    "generated": {
+     "n": 26,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "2: 1"
+    }
+   }
+  },
+  "expr-anatomy|generate|expr-anatomy.count": {
+   "n": 120,
+   "distinct": 131,
+   "rate": 1,
+   "upper": 0.9999999999999998,
+   "modalAnswer": "5x + 9y - 2",
+   "executed": true,
+   "source": "generated",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.6,
+     "upper": 0.6,
+     "modalAnswer": "5x + 9y - 2"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 1,
+     "upper": 0.9999999999999998,
+     "modalAnswer": "5x + 9y - 2"
+    }
+   }
+  },
+  "oo-structure|construct|oo-structure.coefsq": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "24",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "24"
+    },
+    "generated": {
+     "n": 35,
+     "rate": 0.05714285714285714,
+     "upper": 0.18607057558951973,
+     "modalAnswer": "12"
+    }
+   }
+  },
+  "oo-structure|construct|oo-structure.juxt": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "12"
+    },
+    "generated": {
+     "n": 50,
+     "rate": 0.1,
+     "upper": 0.21360231548613243,
+     "modalAnswer": "20"
+    }
+   }
+  },
+  "oo-structure|construct|oo-structure.negsq": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "-49",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "-49"
+    },
+    "generated": {
+     "n": 19,
+     "rate": 0,
+     "upper": 0.16817922625956366,
+     "modalAnswer": null
+    }
+   }
+  },
+  "oo-structure|repair|oo-structure.coefsq": {
+   "n": 3,
+   "distinct": 3,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "2: 3 \\cdot 2^{2}",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 3,
+     "rate": 0.3333333333333333,
+     "upper": 0.3333333333333333,
+     "modalAnswer": "2: 3 \\cdot 2^{2}"
+    },
+    "generated": {
+     "n": 40,
+     "rate": 0.05,
+     "upper": 0.16503877495105868,
+     "modalAnswer": "2: 12 \\cdot 6"
+    }
+   }
+  },
+  "oo-structure|repair|oo-structure.juxt": {
+   "n": 3,
+   "distinct": 3,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "2: 12 \\cdot 6",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 3,
+     "rate": 0.3333333333333333,
+     "upper": 0.3333333333333333,
+     "modalAnswer": "2: 12 \\cdot 6"
+    },
+    "generated": {
+     "n": 53,
+     "rate": 0.05660377358490566,
+     "upper": 0.15370208413471226,
+     "modalAnswer": "2: 3 \\cdot 2^{2}"
+    }
+   }
+  },
+  "oo-structure|repair|oo-structure.negsq": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: -\\left(15^{2}\\right)",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: -\\left(15^{2}\\right)"
+    },
+    "generated": {
+     "n": 27,
+     "rate": 0,
+     "upper": 0.12455503146207125,
+     "modalAnswer": null
+    }
+   }
+  },
+  "oo-structure|generate|oo-structure.coefsq": {
+   "n": 4,
+   "distinct": 3,
+   "rate": 0.5,
+   "upper": 0.5,
+   "modalAnswer": "3x^{2}",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.5,
+     "upper": 0.5,
+     "modalAnswer": "3x^{2}"
+    },
+    "generated": {
+     "n": 37,
+     "rate": 0.2972972972972973,
+     "upper": 0.4578313604131308,
+     "modalAnswer": "2x^{2}"
+    }
+   }
+  },
+  "oo-structure|generate|oo-structure.juxt": {
+   "n": 4,
+   "distinct": 3,
+   "rate": 0.5,
+   "upper": 0.5,
+   "modalAnswer": "5x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.5,
+     "upper": 0.5,
+     "modalAnswer": "5x"
+    },
+    "generated": {
+     "n": 57,
+     "rate": 0.17543859649122806,
+     "upper": 0.29367352935386215,
+     "modalAnswer": "7x"
+    }
+   }
+  },
+  "oo-structure|generate|oo-structure.negsq": {
+   "n": 4,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "-x^{2}",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "-x^{2}"
+    },
+    "generated": {
+     "n": 18,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "-x^{2}"
+    }
+   }
+  },
+  "eval-substitute|construct|eval-substitute.twice": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "20",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "20"
+    },
+    "generated": {
+     "n": 23,
+     "rate": 0.13043478260869565,
+     "upper": 0.32127482448539857,
+     "modalAnswer": "12"
+    }
+   }
+  },
+  "eval-substitute|construct|eval-substitute.coefficient": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "14",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "14"
+    },
+    "generated": {
+     "n": 48,
+     "rate": 0.0625,
+     "upper": 0.16835438166384809,
+     "modalAnswer": "20"
+    }
+   }
+  },
+  "eval-substitute|construct|eval-substitute.concat": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "12"
+    },
+    "generated": {
+     "n": 37,
+     "rate": 0.1891891891891892,
+     "upper": 0.342046970649007,
+     "modalAnswer": "11"
+    }
+   }
+  },
+  "eval-substitute|repair|eval-substitute.twice": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: 2 \\cdot 3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: 2 \\cdot 3"
+    },
+    "generated": {
+     "n": 24,
+     "rate": 0.08333333333333333,
+     "upper": 0.25848802370497664,
+     "modalAnswer": "2: 6 \\cdot 5"
+    }
+   }
+  },
+  "eval-substitute|repair|eval-substitute.coefficient": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: 2 \\cdot 3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: 2 \\cdot 3"
+    },
+    "generated": {
+     "n": 52,
+     "rate": 0.038461538461538464,
+     "upper": 0.12981189260300013,
+     "modalAnswer": "2: 6 \\cdot 5"
+    }
+   }
+  },
+  "eval-substitute|repair|eval-substitute.concat": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "3: 12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "3: 12"
+    },
+    "generated": {
+     "n": 36,
+     "rate": 0.19444444444444445,
+     "upper": 0.35028043132140113,
+     "modalAnswer": "3: 11"
+    }
+   }
+  },
+  "eval-substitute|generate|eval-substitute.twice": {
+   "n": 3,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "x^{2} + x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 3,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "x^{2} + x"
+    },
+    "generated": {
+     "n": 28,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "x^{2} + x"
+    }
+   }
+  },
+  "eval-substitute|generate|eval-substitute.coefficient": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "7x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "7x"
+    },
+    "generated": {
+     "n": 50,
+     "rate": 0.2,
+     "upper": 0.3303710604648203,
+     "modalAnswer": "7x"
+    }
+   }
+  },
+  "eval-substitute|generate|eval-substitute.concat": {
+   "n": 4,
+   "distinct": 3,
+   "rate": 0.5,
+   "upper": 0.5,
+   "modalAnswer": "6 + n",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.5,
+     "upper": 0.5,
+     "modalAnswer": "6 + n"
+    },
+    "generated": {
+     "n": 38,
+     "rate": 0.23684210526315788,
+     "upper": 0.3920681249493721,
+     "modalAnswer": "2 + n"
+    }
+   }
+  },
+  "eval-signed|construct|eval-signed.square": {
+   "n": 3,
+   "distinct": 3,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "25",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 3,
+     "rate": 0.3333333333333333,
+     "upper": 0.3333333333333333,
+     "modalAnswer": "25"
+    },
+    "generated": {
+     "n": 25,
+     "rate": 0.04,
+     "upper": 0.1954406391161776,
+     "modalAnswer": "16"
+    }
+   }
+  },
+  "eval-signed|construct|eval-signed.sumneg": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "-13",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "-13"
+    },
+    "generated": {
+     "n": 51,
+     "rate": 0.13725490196078433,
+     "upper": 0.2572169236922519,
+     "modalAnswer": "-13"
+    }
+   }
+  },
+  "eval-signed|construct|eval-signed.minusneg": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "14",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "14"
+    },
+    "generated": {
+     "n": 36,
+     "rate": 0.1388888888888889,
+     "upper": 0.2865953052710122,
+     "modalAnswer": "14"
+    }
+   }
+  },
+  "eval-signed|repair|eval-signed.square": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: 11 - \\left(-5\\right)",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: 11 - \\left(-5\\right)"
+    },
+    "generated": {
+     "n": 21,
+     "rate": 0,
+     "upper": 0.15463902098714374,
+     "modalAnswer": null
+    }
+   }
+  },
+  "eval-signed|repair|eval-signed.sumneg": {
+   "n": 4,
+   "distinct": 3,
+   "rate": 0.5,
+   "upper": 0.5,
+   "modalAnswer": "2: \\left(-3\\right) + \\left(-5\\right)",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.5,
+     "upper": 0.5,
+     "modalAnswer": "2: \\left(-3\\right) + \\left(-5\\right)"
+    },
+    "generated": {
+     "n": 54,
+     "rate": 0.1111111111111111,
+     "upper": 0.2219470112759889,
+     "modalAnswer": "2: \\left(-6\\right) + \\left(-6\\right)"
+    }
+   }
+  },
+  "eval-signed|repair|eval-signed.minusneg": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2: 11 - \\left(-5\\right)",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "2: 11 - \\left(-5\\right)"
+    },
+    "generated": {
+     "n": 33,
+     "rate": 0.15151515151515152,
+     "upper": 0.30919876025212834,
+     "modalAnswer": "2: 5 - \\left(-9\\right)"
+    }
+   }
+  },
+  "eval-signed|generate|eval-signed.square": {
+   "n": 4,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "x^{2}",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "x^{2}"
+    },
+    "generated": {
+     "n": 23,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "x^{2}"
+    }
+   }
+  },
+  "eval-signed|generate|eval-signed.sumneg": {
+   "n": 3,
+   "distinct": 3,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "x - 8",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 3,
+     "rate": 0.3333333333333333,
+     "upper": 0.3333333333333333,
+     "modalAnswer": "x - 8"
+    },
+    "generated": {
+     "n": 51,
+     "rate": 0.13725490196078433,
+     "upper": 0.2572169236922519,
+     "modalAnswer": "x - 3"
+    }
+   }
+  },
+  "eval-signed|generate|eval-signed.minusneg": {
+   "n": 4,
+   "distinct": 3,
+   "rate": 0.5,
+   "upper": 0.5,
+   "modalAnswer": "9 - x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.5,
+     "upper": 0.5,
+     "modalAnswer": "9 - x"
+    },
+    "generated": {
+     "n": 42,
+     "rate": 0.21428571428571427,
+     "upper": 0.35939845441916035,
+     "modalAnswer": "2 - x"
+    }
+   }
+  },
+  "eval-formula|construct|eval-formula.two": {
+   "n": 13,
+   "distinct": 12,
+   "rate": 0.15384615384615385,
+   "upper": 0.15384615384615385,
+   "modalAnswer": "50",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 13,
+     "rate": 0.15384615384615385,
+     "upper": 0.15384615384615385,
+     "modalAnswer": "50"
+    },
+    "generated": {
+     "n": 108,
+     "rate": 0.046296296296296294,
+     "upper": 0.10382482643755231,
+     "modalAnswer": "36"
+    }
+   }
+  },
+  "eval-formula|repair|eval-formula.two": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.07692307692307693,
+   "upper": 0.07692307692307693,
+   "modalAnswer": "2: 5 \\cdot 4 + 2 \\cdot 8",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 13,
+     "rate": 0.07692307692307693,
+     "upper": 0.07692307692307693,
+     "modalAnswer": "2: 5 \\cdot 4 + 2 \\cdot 8"
+    },
+    "generated": {
+     "n": 108,
+     "rate": 0.046296296296296294,
+     "upper": 0.10382482643755231,
+     "modalAnswer": "2: 5 \\cdot 4 + 2 \\cdot 8"
+    }
+   }
+  },
+  "eval-formula|generate|eval-formula.two": {
+   "n": 10,
+   "distinct": 10,
+   "rate": 0.1,
+   "upper": 0.1,
+   "modalAnswer": "2r + 36",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 10,
+     "rate": 0.1,
+     "upper": 0.1,
+     "modalAnswer": "2r + 36"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.05,
+     "upper": 0.1048028859243862,
+     "modalAnswer": "3r + 14"
+    }
+   }
+  },
+  "translate-phrase|construct|translate-phrase.groups": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "4n + 4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "4n + 4"
+    },
+    "generated": {
+     "n": 79,
+     "rate": 0,
+     "upper": 0.046371212351540646,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-phrase|construct|translate-phrase.twice": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "2n + 5",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "2n + 5"
+    },
+    "generated": {
+     "n": 29,
+     "rate": 0,
+     "upper": 0.11696980012918377,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-phrase|repair|translate-phrase.groups": {
+   "n": 8,
+   "distinct": 8,
+   "rate": 0.125,
+   "upper": 0.125,
+   "modalAnswer": "2: 3n + 2",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.125,
+     "upper": 0.125,
+     "modalAnswer": "2: 3n + 2"
+    },
+    "generated": {
+     "n": 64,
+     "rate": 0,
+     "upper": 0.05662406063551054,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-phrase|repair|translate-phrase.twice": {
+   "n": 8,
+   "distinct": 8,
+   "rate": 0.125,
+   "upper": 0.125,
+   "modalAnswer": "2: 2n + 4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.125,
+     "upper": 0.125,
+     "modalAnswer": "2: 2n + 4"
+    },
+    "generated": {
+     "n": 32,
+     "rate": 0,
+     "upper": 0.10717919976468034,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-phrase|generate|translate-phrase.groups": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "6n + 8",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "6n + 8"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.025,
+     "upper": 0.07093003384472338,
+     "modalAnswer": "5n + 2"
+    }
+   }
+  },
+  "translate-order|construct|translate-order.lessthan": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "n - 7",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "n - 7"
+    },
+    "generated": {
+     "n": 17,
+     "rate": 0,
+     "upper": 0.18431813738065558,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-order|construct|translate-order.dividedinto": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "\\frac{24}{n}",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "\\frac{24}{n}"
+    },
+    "generated": {
+     "n": 44,
+     "rate": 0,
+     "upper": 0.08029560492349135,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-order|construct|translate-order.subtractfrom": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "27 - n",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "27 - n"
+    },
+    "generated": {
+     "n": 31,
+     "rate": 0,
+     "upper": 0.11025539700802303,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-order|repair|translate-order.lessthan": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2: n - 3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "2: n - 3"
+    },
+    "generated": {
+     "n": 18,
+     "rate": 0,
+     "upper": 0.17587922593328437,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-order|repair|translate-order.dividedinto": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2: \\frac{18}{n}",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "2: \\frac{18}{n}"
+    },
+    "generated": {
+     "n": 51,
+     "rate": 0,
+     "upper": 0.07004662092616488,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-order|repair|translate-order.subtractfrom": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: 16 - n",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: 16 - n"
+    },
+    "generated": {
+     "n": 35,
+     "rate": 0,
+     "upper": 0.0989009937303319,
+     "modalAnswer": null
+    }
+   }
+  },
+  "translate-order|generate|translate-order.dividedinto": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "\\frac{24}{n}",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 5,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "\\frac{24}{n}"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.03333333333333333,
+     "upper": 0.0825803380922108,
+     "modalAnswer": "\\frac{7}{n}"
+    }
+   }
+  },
+  "props-operations|construct|props-operations.commute": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "-7x + 5",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "-7x + 5"
+    },
+    "generated": {
+     "n": 34,
+     "rate": 0,
+     "upper": 0.10151455559221921,
+     "modalAnswer": null
+    }
+   }
+  },
+  "props-operations|construct|props-operations.identity": {
+   "n": 4,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "x"
+    },
+    "generated": {
+     "n": 23,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "x"
+    }
+   }
+  },
+  "props-operations|construct|props-operations.regroup": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "4"
+    },
+    "generated": {
+     "n": 55,
+     "rate": 0.14545454545454545,
+     "upper": 0.26160913038404787,
+     "modalAnswer": "10"
+    }
+   }
+  },
+  "props-operations|repair|props-operations.commute": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: -6x + 2",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: -6x + 2"
+    },
+    "generated": {
+     "n": 35,
+     "rate": 0,
+     "upper": 0.0989009937303319,
+     "modalAnswer": null
+    }
+   }
+  },
+  "props-operations|repair|props-operations.identity": {
+   "n": 4,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "2: 0 + x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "2: 0 + x"
+    },
+    "generated": {
+     "n": 21,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "2: 0 + x"
+    }
+   }
+  },
+  "props-operations|repair|props-operations.regroup": {
+   "n": 4,
+   "distinct": 3,
+   "rate": 0.5,
+   "upper": 0.5,
+   "modalAnswer": "2: 17 - 17",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.5,
+     "upper": 0.5,
+     "modalAnswer": "2: 17 - 17"
+    },
+    "generated": {
+     "n": 56,
+     "rate": 0.125,
+     "upper": 0.2362547666298885,
+     "modalAnswer": "2: 18 - 8"
+    }
+   }
+  },
+  "props-operations|generate|props-operations.commute": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "-2x + 4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "-2x + 4"
+    },
+    "generated": {
+     "n": 34,
+     "rate": 0,
+     "upper": 0.10151455559221921,
+     "modalAnswer": null
+    }
+   }
+  },
+  "props-operations|generate|props-operations.identity": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "x + 5x \\cdot 0",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "x + 5x \\cdot 0"
+    },
+    "generated": {
+     "n": 20,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "x + 5x \\cdot 0"
+    }
+   }
+  },
+  "props-operations|generate|props-operations.regroup": {
+   "n": 4,
+   "distinct": 4,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "20 - \\left(9 + 7\\right)",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 4,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "20 - \\left(9 + 7\\right)"
+    },
+    "generated": {
+     "n": 58,
+     "rate": 0.017241379310344827,
+     "upper": 0.09140858185579413,
+     "modalAnswer": "23 - \\left(3 + 4\\right)"
+    }
+   }
+  },
+  "like-terms-id|construct|like-terms-id.xy": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "3x, 7x \\;\\mid\\; 4y, 2y \\;\\mid\\; 6",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "3x, 7x \\;\\mid\\; 4y, 2y \\;\\mid\\; 6"
+    },
+    "generated": {
+     "n": 42,
+     "rate": 0,
+     "upper": 0.08379879207691124,
+     "modalAnswer": null
+    }
+   }
+  },
+  "like-terms-id|construct|like-terms-id.pow": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "8x, 6x \\;\\mid\\; 2x^{2}, 3x^{2} \\;\\mid\\; 5",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "8x, 6x \\;\\mid\\; 2x^{2}, 3x^{2} \\;\\mid\\; 5"
+    },
+    "generated": {
+     "n": 70,
+     "rate": 0,
+     "upper": 0.05202306318827402,
+     "modalAnswer": null
+    }
+   }
+  },
+  "like-terms-id|repair|like-terms-id.xy": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 3x, 6x \\;\\mid\\; 4y, 5y \\;\\mid\\; 9",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: 3x, 6x \\;\\mid\\; 4y, 5y \\;\\mid\\; 9"
+    },
+    "generated": {
+     "n": 42,
+     "rate": 0,
+     "upper": 0.08379879207691124,
+     "modalAnswer": null
+    }
+   }
+  },
+  "like-terms-id|repair|like-terms-id.pow": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 7x, 3x \\;\\mid\\; 6x^{2}, 4x^{2} \\;\\mid\\; 5",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: 7x, 3x \\;\\mid\\; 6x^{2}, 4x^{2} \\;\\mid\\; 5"
+    },
+    "generated": {
+     "n": 70,
+     "rate": 0,
+     "upper": 0.05202306318827402,
+     "modalAnswer": null
+    }
+   }
+  },
+  "like-terms-id|generate|like-terms-id.xy": {
+   "n": 6,
+   "distinct": 3,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "10x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "10x"
+    },
+    "generated": {
+     "n": 42,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "10x"
+    }
+   }
+  },
+  "like-terms-id|generate|like-terms-id.pow": {
+   "n": 6,
+   "distinct": 2,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "10x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "10x"
+    },
+    "generated": {
+     "n": 70,
+     "rate": 1,
+     "upper": 0.9999999999999998,
+     "modalAnswer": "10x"
+    }
+   }
+  },
+  "like-terms-combine|construct|like-terms-combine.core": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "3x + 5y - 7",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.08333333333333333,
+     "upper": 0.08333333333333333,
+     "modalAnswer": "3x + 5y - 7"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0,
+     "upper": 0.03316134757274064,
+     "modalAnswer": null
+    }
+   }
+  },
+  "like-terms-combine|repair|like-terms-combine.core": {
+   "n": 12,
+   "distinct": 11,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 2x + 3y - 6",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: 2x + 3y - 6"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.008928571428571428,
+     "upper": 0.04884846882308416,
+     "modalAnswer": "2: 2x + 4y - 8"
+    }
+   }
+  },
+  "like-terms-combine|generate|like-terms-combine.core": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "4x + 4y - 7 - 5x",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.08333333333333333,
+     "upper": 0.08333333333333333,
+     "modalAnswer": "4x + 4y - 7 - 5x"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.008928571428571428,
+     "upper": 0.04884846882308416,
+     "modalAnswer": "6x + 2y - 3 - 3x"
+    }
+   }
+  },
+  "distribute-numeric|construct|distribute-numeric.sum": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "48",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "48"
+    },
+    "generated": {
+     "n": 44,
+     "rate": 0.045454545454545456,
+     "upper": 0.1513499855485438,
+     "modalAnswer": "24"
+    }
+   }
+  },
+  "distribute-numeric|construct|distribute-numeric.product": {
+   "n": 8,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "72",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "72"
+    },
+    "generated": {
+     "n": 56,
+     "rate": 0.10714285714285714,
+     "upper": 0.21468445274771747,
+     "modalAnswer": "48"
+    }
+   }
+  },
+  "distribute-numeric|repair|distribute-numeric.sum": {
+   "n": 8,
+   "distinct": 8,
+   "rate": 0.125,
+   "upper": 0.125,
+   "modalAnswer": "2: 18 + 6",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.125,
+     "upper": 0.125,
+     "modalAnswer": "2: 18 + 6"
+    },
+    "generated": {
+     "n": 45,
+     "rate": 0.044444444444444446,
+     "upper": 0.1482751088465432,
+     "modalAnswer": "2: 18 + 6"
+    }
+   }
+  },
+  "distribute-numeric|repair|distribute-numeric.product": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 18 + 6",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: 18 + 6"
+    },
+    "generated": {
+     "n": 59,
+     "rate": 0.1016949152542373,
+     "upper": 0.20463813726086577,
+     "modalAnswer": "2: 5 \\cdot 12"
+    }
+   }
+  },
+  "distribute-numeric|generate|distribute-numeric.sum": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "-4\\left(-2 + 5\\right)",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "-4\\left(-2 + 5\\right)"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.06666666666666667,
+     "upper": 0.12605130462198694,
+     "modalAnswer": "2\\left(7 + 4\\right)"
+    }
+   }
+  },
+  "distribute-variable|construct|distribute-variable.core": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "12x + 6",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.08333333333333333,
+     "upper": 0.08333333333333333,
+     "modalAnswer": "12x + 6"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.008928571428571428,
+     "upper": 0.04884846882308416,
+     "modalAnswer": "12x + 6"
+    }
+   }
+  },
+  "distribute-variable|repair|distribute-variable.core": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "2: 25x + 30",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.08333333333333333,
+     "upper": 0.08333333333333333,
+     "modalAnswer": "2: 25x + 30"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0,
+     "upper": 0.03316134757274064,
+     "modalAnswer": null
+    }
+   }
+  },
+  "distribute-variable|generate|distribute-variable.core": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "2\\left(4x + 8\\right)",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.08333333333333333,
+     "upper": 0.08333333333333333,
+     "modalAnswer": "2\\left(4x + 8\\right)"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.008928571428571428,
+     "upper": 0.04884846882308416,
+     "modalAnswer": "3\\left(6x - 9\\right)"
+    }
+   }
+  },
+  "distribute-negative|construct|distribute-negative.bare": {
+   "n": 8,
+   "distinct": 8,
+   "rate": 0.125,
+   "upper": 0.125,
+   "modalAnswer": "-3x - 1",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.125,
+     "upper": 0.125,
+     "modalAnswer": "-3x - 1"
+    },
+    "generated": {
+     "n": 28,
+     "rate": 0.03571428571428571,
+     "upper": 0.17712197905773489,
+     "modalAnswer": "-4x - 5"
+    }
+   }
+  },
+  "distribute-negative|construct|distribute-negative.subtract": {
+   "n": 8,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "-7x + 67",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "-7x + 67"
+    },
+    "generated": {
+     "n": 68,
+     "rate": 0.014705882352941176,
+     "upper": 0.07870973208531902,
+     "modalAnswer": "-4x - 5"
+    }
+   }
+  },
+  "distribute-negative|repair|distribute-negative.bare": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: -2x - 3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: -2x - 3"
+    },
+    "generated": {
+     "n": 34,
+     "rate": 0,
+     "upper": 0.10151455559221921,
+     "modalAnswer": null
+    }
+   }
+  },
+  "distribute-negative|repair|distribute-negative.subtract": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "2: -3x - 14",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "2: -3x - 14"
+    },
+    "generated": {
+     "n": 74,
+     "rate": 0.013513513513513514,
+     "upper": 0.07265356594495075,
+     "modalAnswer": "2: -2x - 3"
+    }
+   }
+  },
+  "distribute-negative|generate|distribute-negative.subtract": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "2 - 2\\left(x + 8\\right)",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "2 - 2\\left(x + 8\\right)"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.016666666666666666,
+     "upper": 0.05873596347174441,
+     "modalAnswer": "7 - 7\\left(x - 4\\right)"
+    }
+   }
+  },
+  "simplify-expression|construct|simplify-expression.core": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "-2x + 9",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.08333333333333333,
+     "upper": 0.08333333333333333,
+     "modalAnswer": "-2x + 9"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.008928571428571428,
+     "upper": 0.04884846882308416,
+     "modalAnswer": "-2x + 9"
+    }
+   }
+  },
+  "simplify-expression|repair|simplify-expression.core": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.07692307692307693,
+   "upper": 0.07692307692307693,
+   "modalAnswer": "3: 2x + 12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 13,
+     "rate": 0.07692307692307693,
+     "upper": 0.07692307692307693,
+     "modalAnswer": "3: 2x + 12"
+    },
+    "generated": {
+     "n": 108,
+     "rate": 0.009259259259259259,
+     "upper": 0.05059345572529895,
+     "modalAnswer": "3: 2x + 12"
+    }
+   }
+  },
+  "simplify-expression|generate|simplify-expression.core": {
+   "n": 11,
+   "distinct": 11,
+   "rate": 0.09090909090909091,
+   "upper": 0.09090909090909091,
+   "modalAnswer": "5 + 5\\left(x + 8\\right)",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 11,
+     "rate": 0.09090909090909091,
+     "upper": 0.09090909090909091,
+     "modalAnswer": "5 + 5\\left(x + 8\\right)"
+    },
+    "generated": {
+     "n": 116,
+     "rate": 0.008620689655172414,
+     "upper": 0.04721983462604618,
+     "modalAnswer": "8 + 5\\left(x + 3\\right)"
+    }
+   }
+  },
+  "equivalent-expressions|construct|equivalent-expressions.count": {
+   "n": 11,
+   "distinct": 9,
+   "rate": 0.18181818181818182,
+   "upper": 0.18181818181818182,
+   "modalAnswer": "12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 11,
+     "rate": 0.18181818181818182,
+     "upper": 0.18181818181818182,
+     "modalAnswer": "12"
+    },
+    "generated": {
+     "n": 116,
+     "rate": 0.08620689655172414,
+     "upper": 0.1514423063770009,
+     "modalAnswer": "24"
+    }
+   }
+  },
+  "equivalent-expressions|repair|equivalent-expressions.count": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.07692307692307693,
+   "upper": 0.07692307692307693,
+   "modalAnswer": "2: 2x + 4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 13,
+     "rate": 0.07692307692307693,
+     "upper": 0.07692307692307693,
+     "modalAnswer": "2: 2x + 4"
+    },
+    "generated": {
+     "n": 108,
+     "rate": 0,
+     "upper": 0.03434736026980092,
+     "modalAnswer": null
+    }
+   }
+  },
+  "equivalent-expressions|generate|equivalent-expressions.count": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "4x + 32",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.08333333333333333,
+     "upper": 0.08333333333333333,
+     "modalAnswer": "4x + 32"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0,
+     "upper": 0.03316134757274064,
+     "modalAnswer": null
+    }
+   }
+  },
+  "eq-meaning|construct|eq-meaning.magazine": {
+   "n": 12,
+   "distinct": 8,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "3"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.15178571428571427,
+     "upper": 0.2296862423583034,
+     "modalAnswer": "1"
+    }
+   }
+  },
+  "eq-meaning|repair|eq-meaning.magazine": {
+   "n": 12,
+   "distinct": 10,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "3: x = 9",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "3: x = 9"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.08035714285714286,
+     "upper": 0.14569555337027973,
+     "modalAnswer": "2: x + 2 - 2 = 6 - 2"
+    }
+   }
+  },
+  "eq-meaning|generate|eq-meaning.magazine": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "x + 5 = 17",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "x + 5 = 17"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.08928571428571429,
+     "upper": 0.15658957708222773,
+     "modalAnswer": "x + 7 = 15"
+    }
+   }
+  },
+  "props-equality|construct|props-equality.move": {
+   "n": 8,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "x = 8",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "x = 8"
+    },
+    "generated": {
+     "n": 67,
+     "rate": 0.1044776119402985,
+     "upper": 0.20031283140845974,
+     "modalAnswer": "x = 4"
+    }
+   }
+  },
+  "props-equality|construct|props-equality.zero": {
+   "n": 7,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "-6x = 0",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "-6x = 0"
+    },
+    "generated": {
+     "n": 33,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "-6x = 0"
+    }
+   }
+  },
+  "props-equality|repair|props-equality.move": {
+   "n": 8,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: x = 6",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: x = 6"
+    },
+    "generated": {
+     "n": 68,
+     "rate": 0.10294117647058823,
+     "upper": 0.19757911400459396,
+     "modalAnswer": "2: x = 5"
+    }
+   }
+  },
+  "props-equality|repair|props-equality.zero": {
+   "n": 6,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "2: -7x = 0",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "2: -7x = 0"
+    },
+    "generated": {
+     "n": 36,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "2: -7x = 0"
+    }
+   }
+  },
+  "props-equality|generate|props-equality.move": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "x + 6 = 14",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "x + 6 = 14"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.075,
+     "upper": 0.1364091766576058,
+     "modalAnswer": "x + 9 = 14"
+    }
+   }
+  },
+  "eq-one-add|construct|eq-one-add.plus": {
+   "n": 7,
+   "distinct": 6,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "5",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "5"
+    },
+    "generated": {
+     "n": 52,
+     "rate": 0.15384615384615385,
+     "upper": 0.27524085287336875,
+     "modalAnswer": "4"
+    }
+   }
+  },
+  "eq-one-add|construct|eq-one-add.minus": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "5",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "5"
+    },
+    "generated": {
+     "n": 56,
+     "rate": 0.16071428571428573,
+     "upper": 0.2780620677611101,
+     "modalAnswer": "1"
+    }
+   }
+  },
+  "eq-one-add|repair|eq-one-add.plus": {
+   "n": 8,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: x = 1",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: x = 1"
+    },
+    "generated": {
+     "n": 42,
+     "rate": 0.14285714285714285,
+     "upper": 0.2784108960016483,
+     "modalAnswer": "2: x = 5"
+    }
+   }
+  },
+  "eq-one-add|repair|eq-one-add.minus": {
+   "n": 8,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: x = 7",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: x = 7"
+    },
+    "generated": {
+     "n": 54,
+     "rate": 0.18518518518518517,
+     "upper": 0.3083594789140262,
+     "modalAnswer": "2: x = 1"
+    }
+   }
+  },
+  "eq-one-add|generate|eq-one-add.plus": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "x + 9 = 15",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "x + 9 = 15"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.13333333333333333,
+     "upper": 0.20564796640271357,
+     "modalAnswer": "x + 4 = 6"
+    }
+   }
+  },
+  "eq-one-mult|construct|eq-one-mult.mult": {
+   "n": 6,
+   "distinct": 5,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.3333333333333333,
+     "upper": 0.3333333333333333,
+     "modalAnswer": "4"
+    },
+    "generated": {
+     "n": 41,
+     "rate": 0.14634146341463414,
+     "upper": 0.28443458170067604,
+     "modalAnswer": "2"
+    }
+   }
+  },
+  "eq-one-mult|construct|eq-one-mult.fraction": {
+   "n": 9,
+   "distinct": 6,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 9,
+     "rate": 0.3333333333333333,
+     "upper": 0.3333333333333333,
+     "modalAnswer": "12"
+    },
+    "generated": {
+     "n": 59,
+     "rate": 0.06779661016949153,
+     "upper": 0.16175524465547492,
+     "modalAnswer": "6"
+    }
+   }
+  },
+  "eq-one-mult|repair|eq-one-mult.mult": {
+   "n": 7,
+   "distinct": 4,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "2: x = 4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "2: x = 4"
+    },
+    "generated": {
+     "n": 49,
+     "rate": 0.16326530612244897,
+     "upper": 0.2903633854905909,
+     "modalAnswer": "2: x = 5"
+    }
+   }
+  },
+  "eq-one-mult|repair|eq-one-mult.fraction": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "2: x = 9",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "2: x = 9"
+    },
+    "generated": {
+     "n": 55,
+     "rate": 0.09090909090909091,
+     "upper": 0.19577494687716468,
+     "modalAnswer": "2: x = 6"
+    }
+   }
+  },
+  "eq-one-mult|generate|eq-one-mult.mult": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "2x = 12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "2x = 12"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.14166666666666666,
+     "upper": 0.21519494556064842,
+     "modalAnswer": "3x = 15"
+    }
+   }
+  },
+  "eq-two-step|construct|eq-two-step.core": {
+   "n": 11,
+   "distinct": 8,
+   "rate": 0.2727272727272727,
+   "upper": 0.2727272727272727,
+   "modalAnswer": "2",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 11,
+     "rate": 0.2727272727272727,
+     "upper": 0.2727272727272727,
+     "modalAnswer": "2"
+    },
+    "generated": {
+     "n": 116,
+     "rate": 0.19827586206896552,
+     "upper": 0.2799822374507939,
+     "modalAnswer": "1"
+    }
+   }
+  },
+  "eq-two-step|repair|eq-two-step.core": {
+   "n": 13,
+   "distinct": 10,
+   "rate": 0.15384615384615385,
+   "upper": 0.15384615384615385,
+   "modalAnswer": "2: 5x = 30",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 13,
+     "rate": 0.15384615384615385,
+     "upper": 0.15384615384615385,
+     "modalAnswer": "2: 5x = 30"
+    },
+    "generated": {
+     "n": 108,
+     "rate": 0.10185185185185185,
+     "upper": 0.17322506213658148,
+     "modalAnswer": "2: -3x = -15"
+    }
+   }
+  },
+  "eq-two-step|generate|eq-two-step.core": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "3x + 8 = 20",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "3x + 8 = 20"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.16071428571428573,
+     "upper": 0.23978554269609897,
+     "modalAnswer": "-2x + 2 = 0"
+    }
+   }
+  },
+  "eq-combine-side|construct|eq-combine-side.core": {
+   "n": 10,
+   "distinct": 7,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 10,
+     "rate": 0.2,
+     "upper": 0.2,
+     "modalAnswer": "2"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.175,
+     "upper": 0.2527570994093363,
+     "modalAnswer": "2"
+    }
+   }
+  },
+  "eq-combine-side|repair|eq-combine-side.core": {
+   "n": 12,
+   "distinct": 8,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 9x + 6 = 51",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: 9x + 6 = 51"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.16071428571428573,
+     "upper": 0.23978554269609897,
+     "modalAnswer": "2: 9x + 6 = 51"
+    }
+   }
+  },
+  "eq-combine-side|generate|eq-combine-side.core": {
+   "n": 14,
+   "distinct": 14,
+   "rate": 0.21428571428571427,
+   "upper": 0.21428571428571427,
+   "modalAnswer": "2x + 4x + 5 = 35",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 14,
+     "rate": 0.21428571428571427,
+     "upper": 0.21428571428571427,
+     "modalAnswer": "2x + 4x + 5 = 35"
+    },
+    "generated": {
+     "n": 104,
+     "rate": 0.16346153846153846,
+     "upper": 0.2462636283029224,
+     "modalAnswer": "2x + 4x + 5 = 35"
+    }
+   }
+  },
+  "eq-distribute|construct|eq-distribute.core": {
+   "n": 12,
+   "distinct": 8,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "5",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "5"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.16964285714285715,
+     "upper": 0.24981686790594293,
+     "modalAnswer": "1"
+    }
+   }
+  },
+  "eq-distribute|repair|eq-distribute.core": {
+   "n": 12,
+   "distinct": 10,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: x + 5 = 6",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: x + 5 = 6"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.11607142857142858,
+     "upper": 0.18850569358027203,
+     "modalAnswer": "2: x + 5 = 6"
+    }
+   }
+  },
+  "eq-distribute|generate|eq-distribute.core": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "2\\left(x + 8\\right) = 26",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.3333333333333333,
+     "upper": 0.3333333333333333,
+     "modalAnswer": "2\\left(x + 8\\right) = 26"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.16964285714285715,
+     "upper": 0.24981686790594293,
+     "modalAnswer": "4\\left(x + 6\\right) = 28"
+    }
+   }
+  },
+  "eq-both-sides|construct|eq-both-sides.core": {
+   "n": 10,
+   "distinct": 6,
+   "rate": 0.3,
+   "upper": 0.3,
+   "modalAnswer": "3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 10,
+     "rate": 0.3,
+     "upper": 0.3,
+     "modalAnswer": "3"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.13333333333333333,
+     "upper": 0.20564796640271357,
+     "modalAnswer": "4"
+    }
+   }
+  },
+  "eq-both-sides|repair|eq-both-sides.core": {
+   "n": 14,
+   "distinct": 8,
+   "rate": 0.21428571428571427,
+   "upper": 0.21428571428571427,
+   "modalAnswer": "2: -2x - 1 = -3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 14,
+     "rate": 0.21428571428571427,
+     "upper": 0.21428571428571427,
+     "modalAnswer": "2: -2x - 1 = -3"
+    },
+    "generated": {
+     "n": 104,
+     "rate": 0.1346153846153846,
+     "upper": 0.21335058891623804,
+     "modalAnswer": "2: -2x - 1 = -3"
+    }
+   }
+  },
+  "eq-both-sides|generate|eq-both-sides.core": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "3x + 1 = 2x + 4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.3333333333333333,
+     "upper": 0.3333333333333333,
+     "modalAnswer": "3x + 1 = 2x + 4"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.125,
+     "upper": 0.19893074242220668,
+     "modalAnswer": "7x + 5 = 2x + 25"
+    }
+   }
+  },
+  "eq-special-cases|construct|eq-special-cases.always": {
+   "n": 8,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "always",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "always"
+    },
+    "generated": {
+     "n": 24,
+     "rate": 1,
+     "upper": 0.9999999999999998,
+     "modalAnswer": "always"
+    }
+   }
+  },
+  "eq-special-cases|construct|eq-special-cases.refusal": {
+   "n": 8,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "none",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "none"
+    },
+    "generated": {
+     "n": 72,
+     "rate": 1,
+     "upper": 0.9999999999999998,
+     "modalAnswer": "none"
+    }
+   }
+  },
+  "eq-special-cases|repair|eq-special-cases.always": {
+   "n": 7,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "3: 0 = 0",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "3: 0 = 0"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 1,
+     "upper": 0.9999999999999998,
+     "modalAnswer": "3: 0 = 0"
+    }
+   }
+  },
+  "eq-special-cases|generate|eq-special-cases.always": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "5\\left(x + 7\\right) = 5x + 35",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "5\\left(x + 7\\right) = 5x + 35"
+    },
+    "generated": {
+     "n": 29,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "5\\left(x + 7\\right) = 5x + 35"
+    }
+   }
+  },
+  "eq-special-cases|generate|eq-special-cases.refusal": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "-3x - 3 = -3x + 5",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "-3x - 3 = -3x + 5"
+    },
+    "generated": {
+     "n": 79,
+     "rate": 1,
+     "upper": 1,
+     "modalAnswer": "-3x - 3 = -3x + 5"
+    }
+   }
+  },
+  "translate-sentence|construct|translate-sentence.core": {
+   "n": 12,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "8n + 9 = 65",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "8n + 9 = 65"
+    },
+    "generated": {
+     "n": 112,
+     "rate": 0.08035714285714286,
+     "upper": 0.14569555337027973,
+     "modalAnswer": "8n + 9 = 41"
+    }
+   }
+  },
+  "translate-sentence|repair|translate-sentence.core": {
+   "n": 11,
+   "distinct": 9,
+   "rate": 0.18181818181818182,
+   "upper": 0.18181818181818182,
+   "modalAnswer": "2: 4n + 2 = 22",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 11,
+     "rate": 0.18181818181818182,
+     "upper": 0.18181818181818182,
+     "modalAnswer": "2: 4n + 2 = 22"
+    },
+    "generated": {
+     "n": 116,
+     "rate": 0.08620689655172414,
+     "upper": 0.1514423063770009,
+     "modalAnswer": "2: 6n + 5 = 29"
+    }
+   }
+  },
+  "translate-sentence|generate|translate-sentence.core": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.15384615384615385,
+   "upper": 0.15384615384615385,
+   "modalAnswer": "3n + 5 = 32",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 13,
+     "rate": 0.15384615384615385,
+     "upper": 0.15384615384615385,
+     "modalAnswer": "3n + 5 = 32"
+    },
+    "generated": {
+     "n": 108,
+     "rate": 0.08333333333333333,
+     "upper": 0.15082906253293685,
+     "modalAnswer": "4n + 9 = 25"
+    }
+   }
+  },
+  "eq-model-context|construct|eq-model-context.span": {
+   "n": 7,
+   "distinct": 5,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "9",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "9"
+    },
+    "generated": {
+     "n": 35,
+     "rate": 0.2,
+     "upper": 0.3589161320454949,
+     "modalAnswer": "4"
+    }
+   }
+  },
+  "eq-model-context|construct|eq-model-context.members": {
+   "n": 8,
+   "distinct": 4,
+   "rate": 0.375,
+   "upper": 0.375,
+   "modalAnswer": "9",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.375,
+     "upper": 0.375,
+     "modalAnswer": "9"
+    },
+    "generated": {
+     "n": 65,
+     "rate": 0.2,
+     "upper": 0.3127013273674554,
+     "modalAnswer": "3"
+    }
+   }
+  },
+  "eq-model-context|repair|eq-model-context.span": {
+   "n": 8,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: 6s = 18",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "2: 6s = 18"
+    },
+    "generated": {
+     "n": 45,
+     "rate": 0.1111111111111111,
+     "upper": 0.23499097115314704,
+     "modalAnswer": "3: s = 4"
+    }
+   }
+  },
+  "eq-model-context|repair|eq-model-context.members": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: m \\ge \\frac{25}{3}",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: m \\ge \\frac{25}{3}"
+    },
+    "generated": {
+     "n": 59,
+     "rate": 0.03389830508474576,
+     "upper": 0.11543570842929508,
+     "modalAnswer": "2: m \\ge \\frac{25}{3}"
+    }
+   }
+  },
+  "eq-model-context|generate|eq-model-context.span": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "4s + 4 = 12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "4s + 4 = 12"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.14166666666666666,
+     "upper": 0.21519494556064842,
+     "modalAnswer": "4s + 4 = 12"
+    }
+   }
+  },
+  "ineq-meaning|construct|ineq-meaning.stretch": {
+   "n": 14,
+   "distinct": 14,
+   "rate": 0.07142857142857142,
+   "upper": 0.07142857142857142,
+   "modalAnswer": "x > 1",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 14,
+     "rate": 0.07142857142857142,
+     "upper": 0.07142857142857142,
+     "modalAnswer": "x > 1"
+    },
+    "generated": {
+     "n": 98,
+     "rate": 0,
+     "upper": 0.037719990694295866,
+     "modalAnswer": null
+    }
+   }
+  },
+  "ineq-meaning|repair|ineq-meaning.stretch": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "2: x \\ge 8",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 12,
+     "rate": 0.08333333333333333,
+     "upper": 0.08333333333333333,
+     "modalAnswer": "2: x \\ge 8"
+    },
+    "generated": {
+     "n": 102,
+     "rate": 0,
+     "upper": 0.03629446269825417,
+     "modalAnswer": null
+    }
+   }
+  },
+  "ineq-meaning|generate|ineq-meaning.stretch": {
+   "n": 10,
+   "distinct": 10,
+   "rate": 0.1,
+   "upper": 0.1,
+   "modalAnswer": "x - 1 \\ge 11",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 10,
+     "rate": 0.1,
+     "upper": 0.1,
+     "modalAnswer": "x - 1 \\ge 11"
+    },
+    "generated": {
+     "n": 110,
+     "rate": 0,
+     "upper": 0.033743935812536804,
+     "modalAnswer": null
+    }
+   }
+  },
+  "ineq-one-step|construct|ineq-one-step.plus": {
+   "n": 8,
+   "distinct": 8,
+   "rate": 0.125,
+   "upper": 0.125,
+   "modalAnswer": "x < 7",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.125,
+     "upper": 0.125,
+     "modalAnswer": "x < 7"
+    },
+    "generated": {
+     "n": 43,
+     "rate": 0.06976744186046512,
+     "upper": 0.18608987022143006,
+     "modalAnswer": "x < 7"
+    }
+   }
+  },
+  "ineq-one-step|construct|ineq-one-step.negconstant": {
+   "n": 8,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "x < 14",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "x < 14"
+    },
+    "generated": {
+     "n": 53,
+     "rate": 0.05660377358490566,
+     "upper": 0.15370208413471226,
+     "modalAnswer": "x < 16"
+    }
+   }
+  },
+  "ineq-one-step|repair|ineq-one-step.plus": {
+   "n": 6,
+   "distinct": 6,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: x < 11",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 6,
+     "rate": 0.16666666666666666,
+     "upper": 0.16666666666666666,
+     "modalAnswer": "2: x < 11"
+    },
+    "generated": {
+     "n": 48,
+     "rate": 0.08333333333333333,
+     "upper": 0.19553301903421058,
+     "modalAnswer": "2: x < 12"
+    }
+   }
+  },
+  "ineq-one-step|repair|ineq-one-step.negconstant": {
+   "n": 7,
+   "distinct": 6,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "2: x < 12",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "2: x < 12"
+    },
+    "generated": {
+     "n": 60,
+     "rate": 0.06666666666666667,
+     "upper": 0.15925357408741433,
+     "modalAnswer": "2: x < 9"
+    }
+   }
+  },
+  "ineq-one-step|generate|ineq-one-step.plus": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "x + 2 < 17",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "x + 2 < 17"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.05,
+     "upper": 0.1048028859243862,
+     "modalAnswer": "x + 8 < 10"
+    }
+   }
+  },
+  "ineq-negative-flip|construct|ineq-negative-flip.divide": {
+   "n": 8,
+   "distinct": 8,
+   "rate": 0.125,
+   "upper": 0.125,
+   "modalAnswer": "x > 1",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.125,
+     "upper": 0.125,
+     "modalAnswer": "x > 1"
+    },
+    "generated": {
+     "n": 50,
+     "rate": 0.1,
+     "upper": 0.21360231548613243,
+     "modalAnswer": "x > -1"
+    }
+   }
+  },
+  "ineq-negative-flip|construct|ineq-negative-flip.subneg": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "x > 1",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "x > 1"
+    },
+    "generated": {
+     "n": 50,
+     "rate": 0.1,
+     "upper": 0.21360231548613243,
+     "modalAnswer": "x > 5"
+    }
+   }
+  },
+  "ineq-negative-flip|repair|ineq-negative-flip.divide": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "2: x > 3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "2: x > 3"
+    },
+    "generated": {
+     "n": 49,
+     "rate": 0.08163265306122448,
+     "upper": 0.19189127707939885,
+     "modalAnswer": "2: x > -2"
+    }
+   }
+  },
+  "ineq-negative-flip|repair|ineq-negative-flip.subneg": {
+   "n": 7,
+   "distinct": 5,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "2: x > -2",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "2: x > -2"
+    },
+    "generated": {
+     "n": 55,
+     "rate": 0.07272727272727272,
+     "upper": 0.172599401743276,
+     "modalAnswer": "2: x > 5"
+    }
+   }
+  },
+  "ineq-negative-flip|generate|ineq-negative-flip.divide": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "-5x < 8",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "-5x < 8"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.05,
+     "upper": 0.1048028859243862,
+     "modalAnswer": "-2x < -2"
+    }
+   }
+  },
+  "ineq-two-step|construct|ineq-two-step.turned": {
+   "n": 8,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "x < \\frac{1}{5}",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 8,
+     "rate": 0.25,
+     "upper": 0.25,
+     "modalAnswer": "x < \\frac{1}{5}"
+    },
+    "generated": {
+     "n": 34,
+     "rate": 0.058823529411764705,
+     "upper": 0.19093607045929484,
+     "modalAnswer": "x < \\frac{1}{5}"
+    }
+   }
+  },
+  "ineq-two-step|construct|ineq-two-step.inclusive": {
+   "n": 7,
+   "distinct": 5,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "x \\ge 5",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "x \\ge 5"
+    },
+    "generated": {
+     "n": 66,
+     "rate": 0.18181818181818182,
+     "upper": 0.2914519277431613,
+     "modalAnswer": "x \\ge 4"
+    }
+   }
+  },
+  "ineq-two-step|repair|ineq-two-step.turned": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "2: -2x > 3",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "2: -2x > 3"
+    },
+    "generated": {
+     "n": 36,
+     "rate": 0,
+     "upper": 0.09641862996887933,
+     "modalAnswer": null
+    }
+   }
+  },
+  "ineq-two-step|repair|ineq-two-step.inclusive": {
+   "n": 7,
+   "distinct": 6,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "3: x \\ge 4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.2857142857142857,
+     "upper": 0.2857142857142857,
+     "modalAnswer": "3: x \\ge 4"
+    },
+    "generated": {
+     "n": 68,
+     "rate": 0.11764705882352941,
+     "upper": 0.21534903812040815,
+     "modalAnswer": "3: x \\ge 8"
+    }
+   }
+  },
+  "ineq-two-step|generate|ineq-two-step.turned": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "-5x + 3 > -4",
+   "executed": true,
+   "source": "catalogue",
+   "sources": {
+    "catalogue": {
+     "n": 7,
+     "rate": 0.14285714285714285,
+     "upper": 0.14285714285714285,
+     "modalAnswer": "-5x + 3 > -4"
+    },
+    "generated": {
+     "n": 120,
+     "rate": 0.05,
+     "upper": 0.1048028859243862,
+     "modalAnswer": "-2x + 11 > 8"
+    }
+   }
+  }
+ },
+ "cells": {
+  "var-meaning|construct": {
+   "n": 14,
+   "distinct": 13,
+   "rate": 0.4,
+   "upper": 0.4,
+   "modalAnswer": "3",
+   "executed": true,
+   "familyCount": 3
+  },
+  "var-meaning|repair": {
+   "n": 17,
+   "distinct": 17,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2: a = 10b",
+   "executed": true,
+   "familyCount": 3
+  },
+  "var-meaning|generate": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "a = 4; b = 4",
+   "executed": true,
+   "familyCount": 1
+  },
+  "oo-numeric|construct": {
+   "n": 15,
+   "distinct": 15,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "20",
+   "executed": true,
+   "familyCount": 3
+  },
+  "oo-numeric|repair": {
+   "n": 16,
+   "distinct": 16,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2: 14 + 2",
+   "executed": true,
+   "familyCount": 3
+  },
+  "oo-numeric|generate": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "9 + 7 \\cdot 7",
+   "executed": true,
+   "familyCount": 1
+  },
+  "expr-anatomy|construct": {
+   "n": 51,
+   "distinct": 7,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "3",
+   "executed": true,
+   "familyCount": 3
+  },
+  "expr-anatomy|repair": {
+   "n": 51,
+   "distinct": 6,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "2: 3",
+   "executed": true,
+   "familyCount": 3
+  },
+  "expr-anatomy|generate": {
+   "n": 120,
+   "distinct": 131,
+   "rate": 1,
+   "upper": 0.9999999999999998,
+   "modalAnswer": "5x + 9y - 2",
+   "executed": true,
+   "familyCount": 1
+  },
+  "oo-structure|construct": {
+   "n": 14,
+   "distinct": 14,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "12",
+   "executed": true,
+   "familyCount": 3
+  },
+  "oo-structure|repair": {
+   "n": 10,
+   "distinct": 10,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "2: 3 \\cdot 2^{2}",
+   "executed": true,
+   "familyCount": 3
+  },
+  "oo-structure|generate": {
+   "n": 12,
+   "distinct": 7,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "-x^{2}",
+   "executed": true,
+   "familyCount": 3
+  },
+  "eval-substitute|construct": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "14",
+   "executed": true,
+   "familyCount": 3
+  },
+  "eval-substitute|repair": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: 2 \\cdot 3",
+   "executed": true,
+   "familyCount": 3
+  },
+  "eval-substitute|generate": {
+   "n": 11,
+   "distinct": 8,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "x^{2} + x",
+   "executed": true,
+   "familyCount": 3
+  },
+  "eval-signed|construct": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "25",
+   "executed": true,
+   "familyCount": 3
+  },
+  "eval-signed|repair": {
+   "n": 13,
+   "distinct": 12,
+   "rate": 0.5,
+   "upper": 0.5,
+   "modalAnswer": "2: \\left(-3\\right) + \\left(-5\\right)",
+   "executed": true,
+   "familyCount": 3
+  },
+  "eval-signed|generate": {
+   "n": 11,
+   "distinct": 7,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "x^{2}",
+   "executed": true,
+   "familyCount": 3
+  },
+  "eval-formula|construct": {
+   "n": 13,
+   "distinct": 12,
+   "rate": 0.15384615384615385,
+   "upper": 0.15384615384615385,
+   "modalAnswer": "50",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eval-formula|repair": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.07692307692307693,
+   "upper": 0.07692307692307693,
+   "modalAnswer": "2: 5 \\cdot 4 + 2 \\cdot 8",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eval-formula|generate": {
+   "n": 10,
+   "distinct": 10,
+   "rate": 0.1,
+   "upper": 0.1,
+   "modalAnswer": "2r + 36",
+   "executed": true,
+   "familyCount": 1
+  },
+  "translate-phrase|construct": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "4n + 4",
+   "executed": true,
+   "familyCount": 2
+  },
+  "translate-phrase|repair": {
+   "n": 16,
+   "distinct": 16,
+   "rate": 0.125,
+   "upper": 0.125,
+   "modalAnswer": "2: 3n + 2",
+   "executed": true,
+   "familyCount": 2
+  },
+  "translate-phrase|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "6n + 8",
+   "executed": true,
+   "familyCount": 1
+  },
+  "translate-order|construct": {
+   "n": 17,
+   "distinct": 17,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "n - 7",
+   "executed": true,
+   "familyCount": 3
+  },
+  "translate-order|repair": {
+   "n": 14,
+   "distinct": 14,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: 16 - n",
+   "executed": true,
+   "familyCount": 3
+  },
+  "translate-order|generate": {
+   "n": 5,
+   "distinct": 5,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "\\frac{24}{n}",
+   "executed": true,
+   "familyCount": 1
+  },
+  "props-operations|construct": {
+   "n": 12,
+   "distinct": 9,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "x",
+   "executed": true,
+   "familyCount": 3
+  },
+  "props-operations|repair": {
+   "n": 12,
+   "distinct": 8,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "2: 0 + x",
+   "executed": true,
+   "familyCount": 3
+  },
+  "props-operations|generate": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "x + 5x \\cdot 0",
+   "executed": true,
+   "familyCount": 3
+  },
+  "like-terms-id|construct": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "3x, 7x \\;\\mid\\; 4y, 2y \\;\\mid\\; 6",
+   "executed": true,
+   "familyCount": 2
+  },
+  "like-terms-id|repair": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 3x, 6x \\;\\mid\\; 4y, 5y \\;\\mid\\; 9",
+   "executed": true,
+   "familyCount": 2
+  },
+  "like-terms-id|generate": {
+   "n": 12,
+   "distinct": 5,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "10x",
+   "executed": true,
+   "familyCount": 2
+  },
+  "like-terms-combine|construct": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "3x + 5y - 7",
+   "executed": true,
+   "familyCount": 1
+  },
+  "like-terms-combine|repair": {
+   "n": 12,
+   "distinct": 11,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 2x + 3y - 6",
+   "executed": true,
+   "familyCount": 1
+  },
+  "like-terms-combine|generate": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "4x + 4y - 7 - 5x",
+   "executed": true,
+   "familyCount": 1
+  },
+  "distribute-numeric|construct": {
+   "n": 15,
+   "distinct": 14,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "72",
+   "executed": true,
+   "familyCount": 2
+  },
+  "distribute-numeric|repair": {
+   "n": 14,
+   "distinct": 14,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 18 + 6",
+   "executed": true,
+   "familyCount": 2
+  },
+  "distribute-numeric|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "-4\\left(-2 + 5\\right)",
+   "executed": true,
+   "familyCount": 1
+  },
+  "distribute-variable|construct": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "12x + 6",
+   "executed": true,
+   "familyCount": 1
+  },
+  "distribute-variable|repair": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "2: 25x + 30",
+   "executed": true,
+   "familyCount": 1
+  },
+  "distribute-variable|generate": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "2\\left(4x + 8\\right)",
+   "executed": true,
+   "familyCount": 1
+  },
+  "distribute-negative|construct": {
+   "n": 16,
+   "distinct": 15,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "-7x + 67",
+   "executed": true,
+   "familyCount": 2
+  },
+  "distribute-negative|repair": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: -2x - 3",
+   "executed": true,
+   "familyCount": 2
+  },
+  "distribute-negative|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "2 - 2\\left(x + 8\\right)",
+   "executed": true,
+   "familyCount": 1
+  },
+  "simplify-expression|construct": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "-2x + 9",
+   "executed": true,
+   "familyCount": 1
+  },
+  "simplify-expression|repair": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.07692307692307693,
+   "upper": 0.07692307692307693,
+   "modalAnswer": "3: 2x + 12",
+   "executed": true,
+   "familyCount": 1
+  },
+  "simplify-expression|generate": {
+   "n": 11,
+   "distinct": 11,
+   "rate": 0.09090909090909091,
+   "upper": 0.09090909090909091,
+   "modalAnswer": "5 + 5\\left(x + 8\\right)",
+   "executed": true,
+   "familyCount": 1
+  },
+  "equivalent-expressions|construct": {
+   "n": 11,
+   "distinct": 9,
+   "rate": 0.18181818181818182,
+   "upper": 0.18181818181818182,
+   "modalAnswer": "12",
+   "executed": true,
+   "familyCount": 1
+  },
+  "equivalent-expressions|repair": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.07692307692307693,
+   "upper": 0.07692307692307693,
+   "modalAnswer": "2: 2x + 4",
+   "executed": true,
+   "familyCount": 1
+  },
+  "equivalent-expressions|generate": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "4x + 32",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-meaning|construct": {
+   "n": 12,
+   "distinct": 8,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "3",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-meaning|repair": {
+   "n": 12,
+   "distinct": 10,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "3: x = 9",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-meaning|generate": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "x + 5 = 17",
+   "executed": true,
+   "familyCount": 1
+  },
+  "props-equality|construct": {
+   "n": 15,
+   "distinct": 8,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "-6x = 0",
+   "executed": true,
+   "familyCount": 2
+  },
+  "props-equality|repair": {
+   "n": 14,
+   "distinct": 8,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "2: -7x = 0",
+   "executed": true,
+   "familyCount": 2
+  },
+  "props-equality|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "x + 6 = 14",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-one-add|construct": {
+   "n": 13,
+   "distinct": 12,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "5",
+   "executed": true,
+   "familyCount": 2
+  },
+  "eq-one-add|repair": {
+   "n": 16,
+   "distinct": 14,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: x = 1",
+   "executed": true,
+   "familyCount": 2
+  },
+  "eq-one-add|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "x + 9 = 15",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-one-mult|construct": {
+   "n": 15,
+   "distinct": 11,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "4",
+   "executed": true,
+   "familyCount": 2
+  },
+  "eq-one-mult|repair": {
+   "n": 14,
+   "distinct": 11,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "2: x = 4",
+   "executed": true,
+   "familyCount": 2
+  },
+  "eq-one-mult|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "2x = 12",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-two-step|construct": {
+   "n": 11,
+   "distinct": 8,
+   "rate": 0.2727272727272727,
+   "upper": 0.2727272727272727,
+   "modalAnswer": "2",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-two-step|repair": {
+   "n": 13,
+   "distinct": 10,
+   "rate": 0.15384615384615385,
+   "upper": 0.15384615384615385,
+   "modalAnswer": "2: 5x = 30",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-two-step|generate": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "3x + 8 = 20",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-combine-side|construct": {
+   "n": 10,
+   "distinct": 7,
+   "rate": 0.2,
+   "upper": 0.2,
+   "modalAnswer": "2",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-combine-side|repair": {
+   "n": 12,
+   "distinct": 8,
+   "rate": 0.16666666666666666,
+   "upper": 0.16666666666666666,
+   "modalAnswer": "2: 9x + 6 = 51",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-combine-side|generate": {
+   "n": 14,
+   "distinct": 14,
+   "rate": 0.21428571428571427,
+   "upper": 0.21428571428571427,
+   "modalAnswer": "2x + 4x + 5 = 35",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-distribute|construct": {
+   "n": 12,
+   "distinct": 8,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "5",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-distribute|repair": {
+   "n": 12,
+   "distinct": 10,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: x + 5 = 6",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-distribute|generate": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "2\\left(x + 8\\right) = 26",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-both-sides|construct": {
+   "n": 10,
+   "distinct": 6,
+   "rate": 0.3,
+   "upper": 0.3,
+   "modalAnswer": "3",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-both-sides|repair": {
+   "n": 14,
+   "distinct": 8,
+   "rate": 0.21428571428571427,
+   "upper": 0.21428571428571427,
+   "modalAnswer": "2: -2x - 1 = -3",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-both-sides|generate": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.3333333333333333,
+   "upper": 0.3333333333333333,
+   "modalAnswer": "3x + 1 = 2x + 4",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-special-cases|construct": {
+   "n": 16,
+   "distinct": 2,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "always",
+   "executed": true,
+   "familyCount": 2
+  },
+  "eq-special-cases|repair": {
+   "n": 7,
+   "distinct": 1,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "3: 0 = 0",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-special-cases|generate": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 1,
+   "upper": 1,
+   "modalAnswer": "5\\left(x + 7\\right) = 5x + 35",
+   "executed": true,
+   "familyCount": 2
+  },
+  "translate-sentence|construct": {
+   "n": 12,
+   "distinct": 7,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "8n + 9 = 65",
+   "executed": true,
+   "familyCount": 1
+  },
+  "translate-sentence|repair": {
+   "n": 11,
+   "distinct": 9,
+   "rate": 0.18181818181818182,
+   "upper": 0.18181818181818182,
+   "modalAnswer": "2: 4n + 2 = 22",
+   "executed": true,
+   "familyCount": 1
+  },
+  "translate-sentence|generate": {
+   "n": 13,
+   "distinct": 13,
+   "rate": 0.15384615384615385,
+   "upper": 0.15384615384615385,
+   "modalAnswer": "3n + 5 = 32",
+   "executed": true,
+   "familyCount": 1
+  },
+  "eq-model-context|construct": {
+   "n": 15,
+   "distinct": 9,
+   "rate": 0.375,
+   "upper": 0.375,
+   "modalAnswer": "9",
+   "executed": true,
+   "familyCount": 2
+  },
+  "eq-model-context|repair": {
+   "n": 14,
+   "distinct": 13,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "2: 6s = 18",
+   "executed": true,
+   "familyCount": 2
+  },
+  "eq-model-context|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "4s + 4 = 12",
+   "executed": true,
+   "familyCount": 1
+  },
+  "ineq-meaning|construct": {
+   "n": 14,
+   "distinct": 14,
+   "rate": 0.07142857142857142,
+   "upper": 0.07142857142857142,
+   "modalAnswer": "x > 1",
+   "executed": true,
+   "familyCount": 1
+  },
+  "ineq-meaning|repair": {
+   "n": 12,
+   "distinct": 12,
+   "rate": 0.08333333333333333,
+   "upper": 0.08333333333333333,
+   "modalAnswer": "2: x \\ge 8",
+   "executed": true,
+   "familyCount": 1
+  },
+  "ineq-meaning|generate": {
+   "n": 10,
+   "distinct": 10,
+   "rate": 0.1,
+   "upper": 0.1,
+   "modalAnswer": "x - 1 \\ge 11",
+   "executed": true,
+   "familyCount": 1
+  },
+  "ineq-one-step|construct": {
+   "n": 16,
+   "distinct": 15,
+   "rate": 0.25,
+   "upper": 0.25,
+   "modalAnswer": "x < 14",
+   "executed": true,
+   "familyCount": 2
+  },
+  "ineq-one-step|repair": {
+   "n": 13,
+   "distinct": 12,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "2: x < 12",
+   "executed": true,
+   "familyCount": 2
+  },
+  "ineq-one-step|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "x + 2 < 17",
+   "executed": true,
+   "familyCount": 1
+  },
+  "ineq-negative-flip|construct": {
+   "n": 15,
+   "distinct": 15,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "x > 1",
+   "executed": true,
+   "familyCount": 2
+  },
+  "ineq-negative-flip|repair": {
+   "n": 14,
+   "distinct": 12,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "2: x > -2",
+   "executed": true,
+   "familyCount": 2
+  },
+  "ineq-negative-flip|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "-5x < 8",
+   "executed": true,
+   "familyCount": 1
+  },
+  "ineq-two-step|construct": {
+   "n": 15,
+   "distinct": 12,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "x \\ge 5",
+   "executed": true,
+   "familyCount": 2
+  },
+  "ineq-two-step|repair": {
+   "n": 14,
+   "distinct": 13,
+   "rate": 0.2857142857142857,
+   "upper": 0.2857142857142857,
+   "modalAnswer": "3: x \\ge 4",
+   "executed": true,
+   "familyCount": 2
+  },
+  "ineq-two-step|generate": {
+   "n": 7,
+   "distinct": 7,
+   "rate": 0.14285714285714285,
+   "upper": 0.14285714285714285,
+   "modalAnswer": "-5x + 3 > -4",
+   "executed": true,
+   "familyCount": 1
+  }
+ }
+}

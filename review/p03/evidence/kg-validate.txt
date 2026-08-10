@@ -16,6 +16,15 @@
 == property 2: transitively reduced ==
   PASS  no edge is implied transitively; the graph is its own transitive reduction
 
+== concept requirements: does an item need something the graph has not taught? ==
+  variable-exponent      -> requires oo-structure       fires on  6 node(s): oo-structure, eval-substitute, eval-signed, like-terms-id, like-terms-combine, distribute-variable
+  signed-value           -> requires eval-signed        fires on  4 node(s): eval-signed, distribute-negative, ineq-one-step, ineq-negative-flip
+  distributive-property  -> requires distribute-numeric fires on  4 node(s): distribute-numeric, distribute-negative, simplify-expression, eq-distribute
+  like-terms             -> requires like-terms-id      fires on  3 node(s): like-terms-combine, simplify-expression, eq-combine-side
+  PASS  every node whose items need a concept has that concept's teaching node in its ancestor closure
+  control arm (round-2 prerequisites re-injected): 3 gap(s) detected — signed-value/ineq-one-step, variable-exponent/like-terms-combine, variable-exponent/like-terms-id
+  PASS  the lint reproduces all 3 round-2 gaps when they are re-injected, and none on the shipped graph
+
 == form scorability (derived from the caps, not read from the file) ==
   construct  trueGuess 0.03  modelled 0.050/0.060/0.070/0.080/0.100  -> SCORABLE
   repair     trueGuess 0.03  modelled 0.050/0.060/0.070/0.080/0.100  -> SCORABLE
@@ -26,7 +35,53 @@
       trueGuess 0.5 > maxTrueGuess 0.3; trueGuess + maxSlip = 0.66 >= maxSlipPlusGuess 0.5 (+12 more)
   PASS  model.forms.scored matches the derivation: [construct, repair, generate]
   PASS  model.bkt.formsEligibleForMastery matches the derivation
+
+== phase scorability (same four rules, run over the teaching phase) ==
+  solo       trueGuess 0     modelled 0.050/0.060/0.070/0.080/0.100  -> SCORABLE
+  guided-1   trueGuess 0.08  modelled 0.100/0.120/0.140/0.160/0.200  -> SCORABLE
+      round-3 price (form only, construct): 0.050/0.060/0.070/0.080/0.100 against a true 0.08 -> conservatism failed at band(s) 1, 2, 3
+  guided-2   trueGuess 0.17  modelled 0.170/0.204/0.238/0.272/0.340  -> NOT SCORABLE
+      band 5: modelled guess 0.340 > maxGuess 0.3; band 5: modelled guess + slip = 0.500 >= 0.5
+      no multiplier fixes it: conservatism at band 1 needs x3.40, maxGuess at band 5 allows at most x3.00 -> STRUCTURALLY EXCLUDED
+      round-3 price (form only, construct): 0.050/0.060/0.070/0.080/0.100 against a true 0.17 -> conservatism failed at band(s) 1, 2, 3, 4, 5
+  guided-3   trueGuess 0.85  modelled 0.850/1.020/1.190/1.360/1.700  -> NOT SCORABLE
+      trueGuess 0.85 > maxTrueGuess 0.3; trueGuess + maxSlip = 1.01 >= maxSlipPlusGuess 0.5 (+10 more)
+      no multiplier fixes it: conservatism at band 1 needs x17.00, maxGuess at band 5 allows at most x3.00 -> STRUCTURALLY EXCLUDED
+      round-3 price (form only, construct): 0.050/0.060/0.070/0.080/0.100 against a true 0.85 -> conservatism failed at band(s) 1, 2, 3, 4, 5
+  model      trueGuess 0.7   modelled 0.700/0.840/0.980/1.120/1.400  -> NOT SCORABLE
+      trueGuess 0.7 > maxTrueGuess 0.3; trueGuess + maxSlip = 0.86 >= maxSlipPlusGuess 0.5 (+10 more)
+      no multiplier fixes it: conservatism at band 1 needs x14.00, maxGuess at band 5 allows at most x3.00 -> STRUCTURALLY EXCLUDED
+      round-3 price (form only, construct): 0.050/0.060/0.070/0.080/0.100 against a true 0.7 -> conservatism failed at band(s) 1, 2, 3, 4, 5
+  PASS  model.phases.scored matches the derivation: [solo, guided-1]
+  PASS  M2/M3 count phases [solo] only — every one contributes 0.00 to the blind rate and is unhinted
+
+== composed (form x phase) scorability matrix ==
+                  solo guided-1 guided-2 guided-3    model
+  construct        yes      yes        -        -        -
+  repair           yes      yes        -        -        -
+  generate         yes      yes        -        -        -
+  select4            -        -        -        -        -
+  judge2             -        -        -        -        -
+  PASS  6 of 25 cells scorable, exactly the product of the two axes; 3 of them are mastery-eligible
   PASS  all 4 scored surfaces draw only from the eligible forms
+  PASS  consolidation, retention and review all pinned to phase "solo", hinted false
+
+== anti-gaming: speed and help are priced symmetrically ==
+  PASS  latency floor 900 ms + 120 ms/token and hint surface 12000 ms both resolve to "not-scored-upward" on a correct response and "scored-normally" on a wrong one
+  PASS  a director-chosen scaffold is inert both ways; a learner-chosen shortcut (fast, or hinted) is refused upward only
+  PASS  gate fully specified in JSON: consolidation passAtLeast 0/2, retention 3/4 with threshold re-check true, form cycle indexed on scoredCount, phases model>guided-1>guided-2>guided-3>solo with the fade ladder guided-1>guided-2>guided-3 and M2/M3 counting [solo]
+
+== misconception collisions on generated instances (rule 4, PAIRWISE-SEPARATED) ==
+  eq-two-step              820 valid stems,    12 collide     1.46%
+  eq-both-sides          13128 valid stems,   444 collide     3.38%
+  eq-combine-side        11384 valid stems,   996 collide     8.75%
+  eq-distribute           1054 valid stems,    74 collide     7.02%
+  eq-one-add               324 valid stems,    18 collide     5.56%
+  eq-one-mult               55 valid stems,     0 collide     0.00%
+  distribute-variable     2375 valid stems,     0 collide     0.00%
+  distribute-numeric      3716 valid stems,    54 collide     1.45%
+  PASS  worst family eq-combine-side at 8.75%, under the 25% build threshold; P17 implements rule 4 as a stem filter
+  PASS  control arm flags 100% of an algebraically identical signature pair, so the scan can see a collision
 
 == invariant: one lucky answer never clears M1 ==
   band 1 normal  (t=0.280): all-wrong floor 0.3057 -> +1 correct 0.9209 -> +2 0.9967  
@@ -40,11 +95,22 @@
   band 5 normal  (t=0.130): all-wrong floor 0.1581 -> +1 correct 0.6625 -> +2 0.9502  
   band 5 relearn (t=0.208): all-wrong floor 0.2530 -> +1 correct 0.7940 -> +2 0.9763  
 
+== the same invariant, read correctly: 'two corrects in the window', not 'two in a row' ==
+  band 1 from the prior 0.35, pattern C,W,C: 0.3500 -> 0.9340 -> 0.6715 -> 0.9814  clears 0.95 on two NON-consecutive corrects
+  band 2 from the prior 0.25, pattern C,W,C: 0.2500 -> 0.8733 -> 0.5616 -> 0.9624  clears 0.95 on two NON-consecutive corrects
+  band 3 from the prior 0.18, pattern C,W,C: 0.1800 -> 0.7872 -> 0.4585 -> 0.9313  does not clear 0.95 on two NON-consecutive corrects
+  band 4 from the prior 0.12, pattern C,W,C: 0.1200 -> 0.6594 -> 0.3511 -> 0.8768  does not clear 0.95 on two NON-consecutive corrects
+  band 5 from the prior 0.08, pattern C,W,C: 0.0800 -> 0.4972 -> 0.2601 -> 0.7799  does not clear 0.95 on two NON-consecutive corrects
+
 == standards ==
   62 distinct codes cited across 4 frameworks
-  non-CCSS frameworks in use: FL, VA, TEKS
+  non-CCSS frameworks in use: VA, TEKS, FL
   codes marked NEEDS_VERIFICATION: 0
   registered but not yet cited by a node (available to P17): 11
+  CCSS  node coverage 32/32
+  TEKS  node coverage 24/32   uncovered: var-meaning, expr-anatomy, eval-substitute, eval-signed, eval-formula, translate-phrase, translate-order, props-equality
+  FL    node coverage 28/32   uncovered: var-meaning, oo-numeric, oo-structure, props-equality
+  VA    node coverage 31/32   uncovered: expr-anatomy
 
 == topology ==
   roots (no prerequisites): var-meaning, oo-numeric
@@ -61,14 +127,14 @@
    4. oo-structure  (d2)
    5. translate-phrase  (d2)
    6. props-operations  (d2)
-   7. like-terms-id  (d2)
-   8. eval-substitute  (d2)
+   7. eval-substitute  (d2)
+   8. like-terms-id  (d2)
    9. translate-order  (d3)
   10. distribute-numeric  (d2)
-  11. like-terms-combine  (d3)
-  12. eval-signed  (d3)
-  13. eval-formula  (d3)
-  14. eq-meaning  (d2)
+  11. eval-signed  (d3)
+  12. eval-formula  (d3)
+  13. eq-meaning  (d2)
+  14. like-terms-combine  (d3)
   15. distribute-variable  (d3)
   16. props-equality  (d2)
   17. translate-sentence  (d3)

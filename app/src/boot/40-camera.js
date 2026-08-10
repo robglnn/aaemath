@@ -6,6 +6,13 @@ import { CameraRig } from "../play/CameraRig.js";
  * Mounted at 40 so the player already exists: the rig resolves what to follow from signals
  * (`camera:target`, `player:state`) and, failing those, by asking the kernel at runtime for a
  * system that can name a camera target. It imports nothing but its own module and `core/*`.
+ *
+ * One outbound contract worth knowing about when wiring the avatar (P08): when geometry forces
+ * the lens close to the body the rig emits `camera:mode {id:"tight"|"follow", opacity,
+ * source:"camera"}`. Fade the avatar to `opacity`; the rig will never place the camera inside a
+ * wall to keep the body in shot, so something has to give and this is the handshake for it.
+ * Anything that also *sends* `camera:mode` to put the rig in a control mode should ignore
+ * payloads carrying `source:"camera"`.
  */
 export default {
   id: "camera",

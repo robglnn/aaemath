@@ -874,9 +874,12 @@ export const PROVING_GROUND = {
   spawn: { x: 4, y: 0.12, z: 14 },
   rampAnglesDeg: [10, 20, 30, 40, 52],
   rampRise: 3,
-  // Chosen to bracket the step-up limit from both sides so a measurement can find where a ledge
-  // stops being a step and starts being a wall.
+  // Two banks that bracket the step-up limit from both sides. The coarse bank spans the whole
+  // question; the fine bank sits on the far side of the deck and pins the crossover to ±0.05 m,
+  // because "how tall a ledge can I walk up" is a number P06's mantle and P09's level geometry
+  // are both designed against and it has to be measured, not asserted.
   stairRisers: [0.25, 0.5, 0.7, 0.9],
+  stairRisersFine: [0.45, 0.55, 0.6, 0.65],
   terraceHeight: 3,
   blockHeight: 5,
   cone: [-14, -26],       // 45° apron, 54° crown — brackets the 47° slope limit in open ground
@@ -972,17 +975,19 @@ function buildProvingGround() {
   // terrace the ramps deliver you onto, with a 3 m drop off its far edge
   box(-20, DECK, topZ, 20, DECK + PROVING_GROUND.terraceHeight, 46, C_TERRACE, C_SIDE);
 
-  // --- stair flights bracketing the 0.45 m step height
+  // --- stair flights bracketing the step height, coarse bank west and fine bank east
   const tread = 0.9;
   const flightZ = [[-14, -9], [-7, -2], [2, 7], [9, 14]];
-  PROVING_GROUND.stairRisers.forEach((h, f) => {
-    const [z0, z1] = flightZ[f];
-    const xStart = -22;
+  const flight = (xStart, dir, z0, z1, h) => {
     for (let i = 0; i < 4; i++) {
-      box(xStart - (i + 1) * tread, DECK, z0, xStart - i * tread, DECK + (i + 1) * h, z1, C_STAIR, C_SIDE);
+      const a = xStart + dir * (i + 1) * tread, b = xStart + dir * i * tread;
+      box(Math.min(a, b), DECK, z0, Math.max(a, b), DECK + (i + 1) * h, z1, C_STAIR, C_SIDE);
     }
-    box(xStart - 4 * tread - 4, DECK, z0, xStart - 4 * tread, DECK + 4 * h, z1, C_STAIR, C_SIDE);
-  });
+    const a = xStart + dir * (4 * tread + 4), b = xStart + dir * 4 * tread;
+    box(Math.min(a, b), DECK, z0, Math.max(a, b), DECK + 4 * h, z1, C_STAIR, C_SIDE);
+  };
+  PROVING_GROUND.stairRisers.forEach((h, f) => flight(-22, -1, flightZ[f][0], flightZ[f][1], h));
+  PROVING_GROUND.stairRisersFine.forEach((h, f) => flight(22, 1, flightZ[f][0], flightZ[f][1], h));
 
   // --- inside corner: two walls meeting at 90°, the classic depenetration trap
   box(-40, DECK, 24, -31, DECK + 3, 25.2, C_TERRACE, C_SIDE);

@@ -44,3 +44,27 @@
 {"t":"2026-08-09T21:14:43.792Z","piece":"P03","msg":"building — Round 3: fixing like-terms-id prerequisite to oo-structure, adding exponent-closure lint, gate fields, cycle-index rule, TEKS count correction"}
 {"t":"2026-08-09T21:21:21.915Z","piece":"P01","msg":"critique — gap: A span is declared 'the unit of length in the Margin' and never given a magnitude; SS2.1 rule 4 mandates that object dimensions are a pure function of the closed value and never supplies the function, so the Beat 5 climax already contradicts itself (11 km chasm, stops 'Halfway', Dace sees 'three kilometres of new stone')."}
 {"t":"2026-08-09T21:21:52.613Z","piece":"P04","msg":"passed"}
+{"t":"2026-08-09T21:39:12.276Z","piece":"P07","msg":"passed"}
+{"t":"2026-08-09T21:41:33.074Z","piece":"P03","msg":"passed"}
+{"t":"2026-08-09T21:46:34.506Z","piece":"P04","msg":"critique — gap: The reversal skid misfires on an ordinary sustained turn in the default run band: a 90-degree stick reads as 111.6-128.7 degrees against the lagging velocity, so brakeAngleDeg=110 plants the feet, the state flickers run-skid-walk-run and speed collapses 5.6 to 3.11 m/s and never recovers while the turn is held. At sprint the lag is only 12.1 degrees so the same input carves free at 8.3 m/s -- the model is non-monotonic across its own speed bands."}
+{"t":"2026-08-09T21:48:00.814Z","piece":"P04","msg":"building — Round 3: fixing sustained-turn brake misfire in run band, turn rate ladder, carve cost, landing-lock jump gate, step height truth, blocked state"}
+{"t":"2026-08-09T21:53:14.935Z","piece":"P07","msg":"critique — gap: releaseAll() is a no-op for the gamepad: after window blur / tab hide the 250 Hz sweep keeps re-latching held pad buttons and _updateMove/_updateLook keep reading _padAxes, so a held stick runs the avatar 11.2 m and spins the camera 288 deg while the player is in another window — the keyboard path stops dead, the pad path does not"}
+{"t":"2026-08-09T21:54:46.009Z","piece":"P07","msg":"building — Round 4: fixing blur/focus gating for gamepad, releaseAll analog zeroing, bind() slot-full failure, unboundActions() API"}
+{"t":"2026-08-09T21:57:02.740Z","piece":"P03","msg":"critique — gap: Scaffolded acquisition items (guided-1/-2/-3) are scored at the same guess parameter as unconstrained construct items, so hint-abuse buys M1/M2/M3 credit that the doc's own conservatism rule would reject"}
+{"t":"2026-08-09T21:59:21.355Z","piece":"P03","msg":"building — Round 4: pricing scaffolded acquisition items honestly (phase-aware guess), gating M2/M3 on solo phase, hint-abuse policy + bot, pairwise-separated signatures, dropping 3 over-tags"}
+{"t":"2026-08-09T21:59:24.683Z","piece":"P02","msg":"passed"}
+{"t":"2026-08-09T22:09:42.289Z","piece":"P05","msg":"passed"}
+{"t":"2026-08-09T22:11:42.836Z","piece":"P02","msg":"critique — gap: art-direction.md is written against reference/brief-hero.png and never against design/world.md: it inherits none of world.md 11's four P02 canon hooks (Grey as a third material, diegetic stone-vs-teal, certainty-vs-live-claim hierarchy, the non-human-silhouette rule) and 15.7 forbids Lethis, the variable star the game is named after, from varying."}
+{"t":"2026-08-09T22:14:47.189Z","piece":"P02","msg":"building — Round 4: binding art-direction.md to world.md canon (new S0), then working the 10 concrete actions"}
+{"t":"2026-08-09T22:32:17.745Z","piece":"P07","msg":"passed"}
+{"t":"2026-08-09T22:35:47.774Z","piece":"P05","msg":"critique — gap: Collision response has one degree of freedom: the boom only shortens, all the way to 0.16 m, so backing into any wall ends the third-person shot (measured: dist 0.162 m / avatarOpacity 0.00 against a flat rock face, 0.197 m in an inside corner). It never clips - worst lens clearance 0.2007 m by my own AABB math, 0/144 penetrating samples - but it also never reframes: no lateral orbit, no pitch lift over the obstruction, unlike BotW which slides the lens up a cliff face and keeps the hero in shot."}
+{"t":"2026-08-09T22:37:10.398Z","piece":"P05","msg":"building — Round 3: adding lateral/pitch escape orbit so framing survives occlusion, plus 6 tuning fixes"}
+{"t":"2026-08-09T22:39:29.917Z","piece":"P11","msg":"building — Reading design docs and surveying existing world systems"}
+{"t":"2026-08-09T22:39:29.921Z","piece":"P09","msg":"building — Reading binding docs, surveying existing systems before authoring terrain"}
+{"t":"2026-08-09T22:39:30.686Z","piece":"P12","msg":"building — Reading design docs and kernel render path before writing PostStack"}
+{"t":"2026-08-09T22:39:31.358Z","piece":"P13","msg":"building — Reading design docs and terrain API before building scatter"}
+{"t":"2026-08-10T00:34:08.945Z","piece":"P13","msg":"building — Reading binding docs, surveying terrain API and existing world modules"}
+{"t":"2026-08-10T00:34:09.620Z","piece":"P12","msg":"building — Reading design docs and kernel render path before writing PostStack"}
+{"t":"2026-08-10T00:34:09.695Z","piece":"P11","msg":"building — Reading design docs, surveying existing world/scene code before building lighting rig"}
+{"t":"2026-08-10T00:34:09.695Z","piece":"P09","msg":"building — Reading design docs and existing scaffolding before authoring Terrain.js + Level01.js"}
+{"t":"2026-08-10T00:34:10.115Z","piece":"P10","msg":"building — Reading binding docs, surveying architecture before authoring Sky/Atmosphere"}

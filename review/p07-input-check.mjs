@@ -174,8 +174,10 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
   });
   results.deadzoneCurve = curve;
   const at = (r) => curve.find((c) => c.r === r)?.out;
-  truth("inner deadzone is silent", at(0.11) === 0 && at(0.05) === 0);
-  truth("just past the inner band the stick answers", at(0.13) > 0);
+  // The inner band is 0.24 (XInput's 0.2395/0.2650, for a pad with a year of wear on it), so
+  // everything below that is deliberately free travel; 0.35 is the first sampled row above it.
+  truth("inner deadzone is silent", at(0.11) === 0 && at(0.2) === 0);
+  truth("just past the inner band the stick answers", at(0.35) > 0 && at(0.35) < 0.15);
   near("outer band saturates at 1", at(0.94), 1, 1e-6);
   near("full deflection stays at 1", at(1), 1, 1e-6);
 
@@ -243,7 +245,9 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
   results.padLook = look;
   truth("look ramps up while the stick is pinned", look.marks[0].degPerSec < look.marks.at(-1).degPerSec);
   near("look starts at the unboosted base rate", look.firstStepDegPerSec, 186, 3);
-  near("look tops out near base × boost", look.marks.at(-1).degPerSec, 410, 25);
+  // 186.2°/s base × 1.7 boost = 316.6°/s. Deliberately below the 409°/s the ramp used to reach:
+  // a 2.2× boost gave the pad a wider dynamic range than either BotW or Fortnite's default.
+  near("look tops out near base × boost", look.marks.at(-1).degPerSec, 317, 20);
   truth("half stick is well under half speed (squared curve)", look.halfStickDegPerSec < 90);
   truth("stick down pitches down", look.pitchDownSign === 1);
 
@@ -297,6 +301,13 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
   await d.run(reset);
   const device = await d.run(() => {
     const i = __vs.kernel.get("input");
+    // `kernel.advance` runs at most 8 catch-up steps per call, so anything longer than 0.133 s has
+    // to be stepped. The dwell is 0.35 s of *sim* time and this section deliberately crosses it.
+    const adv = (s) => {
+      const n = Math.max(1, Math.round(s * 60));
+      for (let k = 0; k < n; k++) __vs.advance(1 / 60, { render: false });
+    };
+    adv(0.5); // let any dwell from an earlier section expire, so this one starts clean
     const out = { start: i.device };
     __vsInput.connect({ style: "playstation" });
     __vsInput.press("A");
@@ -307,16 +318,38 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
     out.padJumpHeld = i.held("jump");
     __vsInput.release("A");
     __vs.advance(1 / 60);
+    adv(0.5);
     __vsInput.connect({ style: "xbox" });
     __vsInput.press("A");
     __vs.advance(1 / 60);
     out.xboxGlyph = i.glyph("jump").text;
     __vsInput.release("A");
     __vs.advance(1 / 60);
+    // Outside the dwell a keystroke takes the prompts on the spot.
     window.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyW" }));
     __vs.advance(1 / 60);
     out.afterKey = i.device;
     out.kbmJumpGlyph = i.glyph("jump").text;
+    window.dispatchEvent(new KeyboardEvent("keyup", { code: "KeyW" }));
+    __vs.advance(1 / 60);
+
+    // Inside the dwell the loser is *parked*, not dropped — both ways round. This is the round-2
+    // rejection: only the pad ever retried, so a keyboard claim refused here was gone for good.
+    __vsInput.press("B");
+    __vs.advance(1 / 60);
+    out.padParkedInsideDwell = i._pendingDevice;
+    out.deviceDuringPadPark = i.device;
+    adv(0.5);
+    out.padAfterDwell = i.device;
+    __vsInput.release("B");
+    __vs.advance(1 / 60);
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyW" }));
+    __vs.advance(1 / 60);
+    out.kbmParkedInsideDwell = i._pendingDevice;
+    out.deviceDuringKbmPark = i.device;
+    adv(0.5);
+    out.kbmAfterDwell = i.device;
     window.dispatchEvent(new KeyboardEvent("keyup", { code: "KeyW" }));
     __vs.advance(1 / 60);
     __vsInput.disconnect();
@@ -329,7 +362,18 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
   truth("a pad button really presses the action", device.padJumpHeld === true);
   truth("PlayStation pad shows a cross for jump", device.jumpGlyph === "✕");
   truth("Xbox pad shows A for jump", device.xboxGlyph === "A");
-  truth("a keystroke switches back", device.afterKey === "kbm");
+  truth("a keystroke outside the dwell switches back at once", device.afterKey === "kbm");
+  truth("the keyboard glyph follows", device.kbmJumpGlyph === "Space");
+  truth(
+    "a pad claim inside the dwell is parked, not dropped",
+    device.padParkedInsideDwell === "pad" && device.deviceDuringPadPark === "kbm"
+  );
+  truth("the parked pad claim lands once the dwell is over", device.padAfterDwell === "pad");
+  truth(
+    "a keyboard claim inside the dwell is parked, not dropped",
+    device.kbmParkedInsideDwell === "kbm" && device.deviceDuringKbmPark === "pad"
+  );
+  truth("the parked keyboard claim lands once the dwell is over", device.kbmAfterDwell === "kbm");
   truth("input:device was emitted for both", device.tape.length >= 2);
 
   // ------------------------------------------------------------------ 9. contexts
@@ -564,11 +608,15 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
     __vsInput.set({ axes: { lx: 0.6, ly: -0.6, rx: 0.9 }, buttons: { RT: 0.9, A: 1 } });
     __vs.advance(1 / 60);
     const N = 4000;
+    // Warm the JIT first. Without this the number is a cold-compile artefact — measured 118 µs on
+    // the first sample and 5 µs on the very next, in the same page.
+    for (let n = 0; n < 500; n++) i.fixed(1 / 60, i.simTime + 1 / 60);
     const t0 = performance.now();
     for (let n = 0; n < N; n++) i.fixed(1 / 60, i.simTime + 1 / 60);
     const busy = (performance.now() - t0) / N;
     __vsInput.disconnect();
     __vs.advance(1 / 60);
+    for (let n = 0; n < 500; n++) i.fixed(1 / 60, i.simTime + 1 / 60);
     const t1 = performance.now();
     for (let n = 0; n < N; n++) i.fixed(1 / 60, i.simTime + 1 / 60);
     const idle = (performance.now() - t1) / N;

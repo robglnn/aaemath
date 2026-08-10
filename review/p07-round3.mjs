@@ -179,6 +179,48 @@ await openGame({ width: 1280, height: 720, query: { bindings: "default" } }, asy
   log("1f_IDLE_NO_STROBE", idle);
   check("1f idle pad + idle keyboard causes no switches", idle.switches === 0, idle.switches);
 
+  // 1h. A parked claim is not a promise. One stray keystroke while the player is on the pad must
+  //     not take the prompts a third of a second later, once the hands are back on the stick.
+  const stray = await run(() => {
+    const H = window.__vsInput;
+    const key = (type) => window.dispatchEvent(new KeyboardEvent(type, { code: "KeyW", key: "w", bubbles: true }));
+    H.stick("left", 0, 0);
+    H.poll();
+    window.__adv(0.6);
+    key("keydown");
+    window.__adv(0.5);
+    key("keyup");
+    window.__adv(0.2);
+    const start = window.__dev(); // keyboard owns the prompts, everything quiet
+    H.press("A");
+    H.poll();
+    window.__adv(1 / 60);
+    const padOwns = window.__dev(); // pad claims on a button edge, dwell restarts
+    H.release("A");
+    H.poll();
+    window.__adv(1 / 60);
+    key("keydown"); // one stray tap, inside the dwell
+    key("keyup");
+    window.__adv(0.1);
+    const parked = window.__dev();
+    H.stick("left", 0, -0.9); // ...and the player goes straight back to the stick
+    H.poll();
+    window.__adv(0.6);
+    const end = window.__dev();
+    H.stick("left", 0, 0);
+    H.poll();
+    window.__adv(0.6);
+    return { start, padOwns, parked, end };
+  });
+  log("1h_STRAY_KEY_DOES_NOT_STEAL", stray);
+  check("1h keyboard owns the prompts at the start", stray.start.device === "kbm", stray.start.device);
+  check("1h the pad claims on its button edge", stray.padOwns.device === "pad", stray.padOwns.device);
+  check("1h the stray tap parks a claim", stray.parked.pending === "kbm", stray.parked.pending);
+  check("1h the stale claim is dropped, not applied", stray.end.device === "pad" && stray.end.pending === null, {
+    device: stray.end.device,
+    pending: stray.end.pending,
+  });
+
   // 1g. PlayStation glyph swap (must not regress).
   const ps = await run(() => {
     window.__vsInput.disconnect();

@@ -1,25 +1,39 @@
-Worked trace — "ineq-negative-flip" (Multiplying by a negative), difficulty band 4
+Worked trace - "ineq-negative-flip" (Multiplying by a negative), difficulty band 4
   band parameters:  prior 0.12   learn 0.16   slip 0.14   guess 0.08   difficulty centre 0.8 logit
   gate: P >= 0.95, >= 6 scored, >= 3 at band, >= 2 forms
+  M2/M3 count phases [solo] only; phases [model, guided-2, guided-3] are inert in both directions
 
-  learner enters with theta = -0.30 and P(known) = 0.1200 (the band prior)
+  learner enters with theta = -0.30 and P(known) = 0.1200 (the band prior), K = 0.35
 
-  #  phase   item b   P(correct|theta)  resp  P(known) after   theta after   scored/atBand/forms
-  1  model     0.20           0.3775   wrong          0.1771         -0.43   1/0/1   [construct]
-       error matches misconception "no-flip-on-negative-divide" — Divides by a negative coefficient and keeps the direction.
-  2  guided    0.20           0.3470    ok           0.7465         -0.20   2/0/1   [construct]
-       after the modelled example, repeats the method on a scaffolded item
-  3  guided    0.20           0.4004    ok           0.9844          0.01   3/0/2   [generate]
-       same method, scaffold reduced one level
-  4  solo      1.10           0.2509   wrong          0.9206         -0.08   4/1/2   [construct]
-       first item at the certification pitch; error matches "flip-but-sign-lost" — Reverses the symbol correctly but reports a positive quotient.
-  5  guided    1.10           0.2348    ok           0.9933          0.19   5/2/3   [repair]
-       recovers on a same-trap item drawn from that misconception's variant pool
-  6  solo      1.10           0.2862    ok           0.9997          0.44   6/3/3   [generate]
-       clean, unscaffolded, at band
+   #  phase     item b  P(correct)  resp    guess   P(known) after   theta after   scored/atBand/forms  form
+   1  model      0.20      0.3775   ok          -          0.1200         -0.30    0/0/0                construct
+      watches the machine do it, then makes the last move itself   [inert: a scaffold the director chose - no posterior, no counters, either way]
+   2  guided-1   0.20      0.3775   ok     0.1600          0.5153         -0.08    0/0/0                construct
+      the first step is already placed; repeats the method on the rest   [scored, NOT mastery-eligible: guided-1 moves P(known) and never fills M2 or M3]
+   3  guided-2   0.20      0.4299   ok          -          0.5153         -0.08    0/0/0                construct
+      answer space constrained to legal moves; builds it   [inert: a scaffold the director chose - no posterior, no counters, either way]
+   4  guided-3   0.20      0.4299   ok          -          0.5153         -0.08    0/0/0                construct
+      hint surface available but not needed; promotes itself to solo   [inert: a scaffold the director chose - no posterior, no counters, either way]
+   5  solo       0.20      0.4299  wrong   0.0800          0.2770         -0.23    1/0/1                construct
+      first unaided item; error matches "no-flip-on-negative-divide" - Divides by a negative coefficient and keeps the direction.
+   6  guided-3   0.20      0.3935   ok          -          0.2770         -0.23    1/0/1                construct
+      same-trap item drawn from that misconception's variant pool   [inert: a scaffold the director chose - no posterior, no counters, either way]
+   7  solo       0.20      0.3935   ok     0.0800          0.8359         -0.02    2/0/1                construct
+      clean
+   8  solo       0.20      0.4451  wrong   0.0800          0.5268         -0.18    3/0/2                generate
+      certification pitch has fired; error matches "flip-but-sign-lost" - Reverses the symbol correctly but reports a positive quotient.
+   9  guided-3   0.20      0.4071   ok          -          0.5268         -0.18    3/0/2                construct
+      recovers, still at the certification pitch   [inert: a scaffold the director chose - no posterior, no counters, either way]
+  10  solo       0.20      0.4071   ok     0.0800          0.9352          0.03    4/0/2                construct
+      at band, unscaffolded, clean
+  11  solo       1.10      0.2557   ok     0.0800          0.9946          0.29    5/1/3                repair
+      at band, unscaffolded, clean
+  12  solo       1.10      0.3083   ok     0.0800          0.9996          0.53    6/2/3                generate
+      at band, unscaffolded, clean
 
-  after 6 scored opportunities: P(known) = 0.9997, scored 6, at band 3, forms 3
-  mastery gate M1-M3: OPEN -> status becomes `provisional`
+  after 12 acquisition items: P(known) = 0.9996, scored 6, at band 2, forms 3
+  mastery gate M1-M3: still closed
+  acquisition cost: 12 items, 8.5 min of item time (model 22s, guided-1 34s, guided-2 40s, guided-3 46s, solo 46s)
   next: consolidation pass (+20 min, 2 items), then a retention check no sooner than +12 h
 
 Retention check: 3 of 4, sampled uniformly over the variant pool, never hinted, forms ["construct","repair","generate"]
@@ -64,3 +78,22 @@ Why a guesser cannot get there (band 4 numbers)
   so the relearn boost is capped at 0.32 and withheld until a node has genuinely been
   mastered once (spacing.relearnRequiresPriorMastery), or the floor rises far enough that a single
   lucky answer clears M1 on its own.
+
+The second axis, in closed form: what the SCAFFOLD is worth at band 4
+  phase       modelled    true   scored?    M2/M3?   3-of-4 retention pass rate at that phase's blind rate
+  model         1.1200  0.7000        NO        NO   6.52e-1
+  guided-1      0.1600  0.0800       yes        NO   1.93e-3
+  guided-2      0.2720  0.1700        NO        NO   1.71e-2
+  guided-3      1.3600  0.8500        NO        NO   8.90e-1
+  solo          0.0800  0.0000       yes       yes   1.06e-4
+  Read the guided-3 row against the construct row of the form table above. A responder who
+  idles 12 s and reads the hint is right 0.8500 of the time, against a modelled 0.0800 if the
+  engine prices the item by form alone - which is what round 3 did. That is a factor of
+  10.6 of unearned credit per correct response, on the path every learner walks.
+  Priced honestly the phase is not scorable at all, so the response is worth nothing instead:
+  no posterior, no M2, no M3. The retention column is unchanged either way, because the check
+  is pinned to phase "solo" with hinted false - which is why a blind bot still failed L5
+  under the round-3 rules even while its P(known) was climbing on hint-reads. The defect was
+  never that a bot could certify; it was that M1, M2 and M3 filled on evidence worth nothing,
+  the certification pitch fired early, and the learner was told they had it.
+

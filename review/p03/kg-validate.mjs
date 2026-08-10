@@ -29,6 +29,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { collisionScan } from "./signature-collide.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..", "..");
@@ -450,6 +451,120 @@ if (caps.clampTrueRates !== false) fail(`identifiabilityCaps.clampTrueRates must
 if (M.bkt.minDistinctItemForms > M.bkt.formsEligibleForMastery.length)
   fail(`minDistinctItemForms ${M.bkt.minDistinctItemForms} exceeds the ${M.bkt.formsEligibleForMastery.length} eligible forms — the gate can never open`);
 
+// -------------------------------------------------- phase scorability ------
+// The SAME four rules, on the other axis. A form shrinks the answer space by how the question is
+// asked; a teaching phase shrinks it by how much of the item the world has already done. Round 3
+// ran the rules over forms only, priced every guided item at the unscaffolded `construct` rate,
+// and thereby credited a hint-read at the price of a blind construction — the exact conservatism
+// failure rule (c) exists to catch, committed on the axis nobody was looking at.
+say("");
+say("== phase scorability (same four rules, run over the teaching phase) ==");
+const allPhases = Object.keys(M.trueGuessByPhase).filter((k) => typeof M.trueGuessByPhase[k] === "number");
+const derivedScorablePhases = [];
+for (const phase of allPhases) {
+  const tg = M.trueGuessByPhase[phase];
+  const mult = M.guessByPhase[phase];
+  const reasons = [];
+  if (typeof mult !== "number") reasons.push(`no guessByPhase multiplier`);
+  if (tg > caps.maxTrueGuess) reasons.push(`trueGuess ${tg} > maxTrueGuess ${caps.maxTrueGuess}`);
+  if (tg + caps.maxSlip >= caps.maxSlipPlusGuess)
+    reasons.push(`trueGuess + maxSlip = ${(tg + caps.maxSlip).toFixed(2)} >= maxSlipPlusGuess ${caps.maxSlipPlusGuess}`);
+  for (const b of bands) {
+    const modelled = b.guess * (mult ?? 0);
+    if (modelled < tg)
+      reasons.push(`band ${b.difficulty}: modelled guess ${modelled.toFixed(3)} < trueGuess ${tg} (credits help as knowledge)`);
+    if (modelled > caps.maxGuess) reasons.push(`band ${b.difficulty}: modelled guess ${modelled.toFixed(3)} > maxGuess ${caps.maxGuess}`);
+    if (modelled + b.slip >= caps.maxSlipPlusGuess)
+      reasons.push(`band ${b.difficulty}: modelled guess + slip = ${(modelled + b.slip).toFixed(3)} >= ${caps.maxSlipPlusGuess}`);
+  }
+  const ok = reasons.length === 0;
+  if (ok) derivedScorablePhases.push(phase);
+  say(
+    `  ${phase.padEnd(10)} trueGuess ${String(tg).padEnd(5)} modelled ${bands.map((b) => (b.guess * (mult ?? 0)).toFixed(3)).join("/")}  -> ${ok ? "SCORABLE" : "NOT SCORABLE"}`
+  );
+  if (!ok) {
+    say(`      ${reasons.slice(0, 2).join("; ")}${reasons.length > 2 ? ` (+${reasons.length - 2} more)` : ""}`);
+    // Is the rejection STRUCTURAL, or would some other multiplier rescue it? That is the select4
+    // argument and it has to be re-run per phase rather than assumed.
+    const needAtBand1 = tg / bands[0].guess;
+    const allowedAtBand5 = caps.maxGuess / bands[bands.length - 1].guess;
+    const rescuable = tg <= caps.maxTrueGuess && tg + caps.maxSlip < caps.maxSlipPlusGuess && needAtBand1 <= allowedAtBand5;
+    say(
+      `      no multiplier fixes it: conservatism at band 1 needs x${needAtBand1.toFixed(2)}, maxGuess at band 5 allows at most x${allowedAtBand5.toFixed(2)} -> ${rescuable ? "REPAIRABLE (so the exclusion is a choice, not a derivation)" : "STRUCTURALLY EXCLUDED"}`
+    );
+    if (rescuable)
+      fail(`phase "${phase}" is excluded but a multiplier in [${needAtBand1.toFixed(2)}, ${allowedAtBand5.toFixed(2)}] would make it scorable — say why it is out, or let it in`);
+  }
+  // The round-3 price, printed for every phase whether it passes or not: what this phase cost
+  // when the engine priced it by FORM ALONE. That is the leak, in the currency it leaked in.
+  const r3 = bands.map((b) => b.guess * (M.guessByForm[M.forms.beforeThreshold] ?? 1));
+  const r3Fails = bands.filter((b, i) => r3[i] < tg).map((b) => b.difficulty);
+  if (r3Fails.length)
+    say(
+      `      round-3 price (form only, ${M.forms.beforeThreshold}): ${r3.map((v) => v.toFixed(3)).join("/")} against a true ${tg} -> conservatism failed at band(s) ${r3Fails.join(", ")}`
+    );
+}
+if (!sameSet(derivedScorablePhases, M.phases.scored))
+  fail(`model.phases.scored is [${M.phases.scored.join(", ")}] but the caps derive [${derivedScorablePhases.join(", ")}]`);
+else say(`  PASS  model.phases.scored matches the derivation: [${derivedScorablePhases.join(", ")}]`);
+for (const phase of M.phases.unscored ?? [])
+  if (derivedScorablePhases.includes(phase)) fail(`phase "${phase}" is listed as unscored but the derivation says it is scorable`);
+if (!M.phases.scored.includes("solo")) fail(`phase "solo" must be scorable — nothing else can be`);
+// Mastery eligibility is STRICTER than scorability on this axis, and that has to be true rather
+// than merely stated: a phase may count toward M2/M3 only if it gives the learner nothing at all.
+for (const phase of M.bkt.phasesEligibleForMastery) {
+  if (!derivedScorablePhases.includes(phase))
+    fail(`phasesEligibleForMastery contains "${phase}", which the derivation says is not even scorable`);
+  if ((M.trueGuessByPhase[phase] ?? 1) > 0)
+    fail(
+      `phasesEligibleForMastery contains "${phase}", whose true blind rate is ${M.trueGuessByPhase[phase]} > 0 — M2 and M3 may only count opportunities where the world contributed nothing to the answer space`
+    );
+  if (M.phases.hinted?.[phase] !== false) fail(`phasesEligibleForMastery contains "${phase}", which is flagged hinted`);
+}
+say(
+  `  PASS  M2/M3 count phases [${M.bkt.phasesEligibleForMastery.join(", ")}] only — every one contributes 0.00 to the blind rate and is unhinted`
+);
+
+// -------------------------------------------------- the composed matrix ----
+// What P16 actually implements is a PAIR, and the pair is what has to clear the rules:
+//   trueGuess(form, phase)     = max(trueGuessByForm[form], trueGuessByPhase[phase])
+//   modelledGuess(b, f, phase) = b.guess x max(guessByForm[f], guessByPhase[phase])
+// Composition is by max, not by product: a scaffold puts a floor under blind success, and a
+// product would let generate's x0.6 undercut the scaffold floor.
+say("");
+say("== composed (form x phase) scorability matrix ==");
+const pairOK = (form, phase) => {
+  const tg = Math.max(M.trueGuessByForm[form], M.trueGuessByPhase[phase]);
+  const mult = Math.max(M.guessByForm[form] ?? 0, M.guessByPhase[phase] ?? 0);
+  if (tg > caps.maxTrueGuess) return false;
+  if (tg + caps.maxSlip >= caps.maxSlipPlusGuess) return false;
+  for (const b of bands) {
+    const modelled = b.guess * mult;
+    if (modelled < tg || modelled > caps.maxGuess || modelled + b.slip >= caps.maxSlipPlusGuess) return false;
+  }
+  return true;
+};
+const scorablePairs = [];
+say(`  ${"".padEnd(10)} ${allPhases.map((p) => p.padStart(9)).join("")}`);
+for (const form of allForms) {
+  const cells = allPhases.map((phase) => {
+    const ok = pairOK(form, phase);
+    if (ok) scorablePairs.push(`${form}/${phase}`);
+    return (ok ? "yes" : "-").padStart(9);
+  });
+  say(`  ${form.padEnd(10)} ${cells.join("")}`);
+}
+const expectedPairs = [];
+for (const f of derivedScorable) for (const p of derivedScorablePhases) expectedPairs.push(`${f}/${p}`);
+if (!sameSet(scorablePairs, expectedPairs))
+  fail(
+    `the composed matrix derives ${scorablePairs.length} scorable cells but the per-axis derivations imply ${expectedPairs.length}: [${scorablePairs.filter((x) => !expectedPairs.includes(x)).join(", ")}] / [${expectedPairs.filter((x) => !scorablePairs.includes(x)).join(", ")}]`
+  );
+else
+  say(
+    `  PASS  ${scorablePairs.length} of ${allForms.length * allPhases.length} cells scorable, exactly the product of the two axes; ${derivedScorable.length * M.bkt.phasesEligibleForMastery.length} of them are mastery-eligible`
+  );
+
 // Every scored surface must draw its forms from the eligible set. Three separate surfaces,
 // three separate chances for an engineer to reach for a quick yes/no confirmation.
 const surfaces = [
@@ -473,6 +588,67 @@ for (const [name, list] of surfaces) {
 }
 if (surfaceFaults === 0) say(`  PASS  all ${surfaces.length} scored surfaces draw only from the eligible forms`);
 
+// ...and the same three surfaces must pin the PHASE, for the same reason. A retention check that
+// runs at guided-3 is a retention check with the answer printed on it.
+let phaseSurfaceFaults = 0;
+for (const [name, block] of [
+  ["spacing.consolidation", M.spacing.consolidation],
+  ["spacing.retentionCheck", M.spacing.retentionCheck],
+  ["spacing.review", M.spacing.review],
+]) {
+  if (!block || block.phase === undefined) {
+    phaseSurfaceFaults++;
+    fail(`${name}.phase is undefined — a scored surface with no declared phase inherits whatever the director last set`);
+    continue;
+  }
+  if (!M.bkt.phasesEligibleForMastery.includes(block.phase)) {
+    phaseSurfaceFaults++;
+    fail(`${name}.phase is "${block.phase}", which is not mastery-eligible`);
+  }
+  if (block.hinted !== false) {
+    phaseSurfaceFaults++;
+    fail(`${name}.hinted must be false`);
+  }
+}
+if (phaseSurfaceFaults === 0)
+  say(`  PASS  consolidation, retention and review all pinned to phase "${M.spacing.retentionCheck.phase}", hinted false`);
+
+// The help axis of the anti-gaming rules. Without hintedCorrectPolicy the latency floor makes
+// IDLING strictly dominant: fast-and-right is refused, slow-and-right-after-the-hint is not.
+say("");
+say("== anti-gaming: speed and help are priced symmetrically ==");
+const ag = M.antiGuessing ?? {};
+let agFaults = 0;
+for (const [name, want] of [
+  ["fastCorrectPolicy", "not-scored-upward"],
+  ["hintedCorrectPolicy", "not-scored-upward"],
+  ["fastWrongPolicy", "scored-normally"],
+  ["hintedWrongPolicy", "scored-normally"],
+]) {
+  if (ag[name] !== want) {
+    agFaults++;
+    fail(`antiGuessing.${name} must be "${want}" — otherwise ${name.startsWith("hinted") ? "waiting for the hint" : "answering instantly"} pays`);
+  }
+}
+if (typeof ag.hintSurfaceMs !== "number" || ag.hintSurfaceMs <= 0) {
+  agFaults++;
+  fail(`antiGuessing.hintSurfaceMs must be a positive number — the engine cannot flag a hinted response without knowing when the hint appears`);
+}
+if (agFaults === 0)
+  say(
+    `  PASS  latency floor ${ag.latencyFloorMs} ms + ${ag.latencyPerTokenMs} ms/token and hint surface ${ag.hintSurfaceMs} ms both resolve to "${ag.fastCorrectPolicy}" on a correct response and "${ag.fastWrongPolicy}" on a wrong one`
+  );
+// Two policies, and confusing them is a measured 34-point mistake. What the DIRECTOR chose is
+// inert both ways; what the LEARNER chose is refused upward only.
+if (M.phases?.unscoredPolicy !== "inert")
+  fail(
+    `model.phases.unscoredPolicy must be "inert": a scaffold the DIRECTOR chose measures learner-plus-scaffold, not learner, so it must record nothing in either direction. Scoring its wrong answers punishes a learner for being taught and cost 34 points of median Level 1 mastery when it was tried.`
+  );
+else
+  say(
+    `  PASS  a director-chosen scaffold is inert both ways; a learner-chosen shortcut (fast, or hinted) is refused upward only`
+  );
+
 // The gate fields P16 implements §2 from must exist in the JSON, not only in the prose. Two of
 // them were implicit in round 2: consolidation had no pass requirement written anywhere (so
 // "a consolidation pass" read as a gate that is not one), and the retention check's re-assertion
@@ -483,6 +659,15 @@ const gateFields = [
   ["spacing.retentionCheck.passAtLeast", M.spacing.retentionCheck?.passAtLeast],
   ["spacing.retentionCheck.requiresThresholdAtCheck", M.spacing.retentionCheck?.requiresThresholdAtCheck],
   ["forms.cycleIndexedOn", M.forms?.cycleIndexedOn],
+  ["bkt.phasesEligibleForMastery", M.bkt?.phasesEligibleForMastery],
+  ["phases.scored", M.phases?.scored],
+  ["phases.unscored", M.phases?.unscored],
+  ["phases.fadeOrder", M.phases?.fadeOrder],
+  ["phases.soloThreshold", M.phases?.soloThreshold],
+  ["phases.modelPhaseThreshold", M.phases?.modelPhaseThreshold],
+  ["phases.modelEventsPerNodePerSession", M.phases?.modelEventsPerNodePerSession],
+  ["antiGuessing.hintSurfaceMs", M.antiGuessing?.hintSurfaceMs],
+  ["antiGuessing.hintedCorrectPolicy", M.antiGuessing?.hintedCorrectPolicy],
 ];
 let gateFieldFaults = 0;
 for (const [name, value] of gateFields) {
@@ -505,10 +690,50 @@ if (M.forms?.cycleIndexedOn !== undefined && M.forms.cycleIndexedOn !== "scoredC
     `forms.cycleIndexedOn is "${M.forms.cycleIndexedOn}" — the worked trace in design/learning-architecture.md §5.1 is computed on "scoredCount"; changing it changes the third item's guess multiplier and every number after it`
   );
 }
+for (const p of M.phases?.fadeOrder ?? [])
+  if (!M.phases.order.includes(p)) {
+    gateFieldFaults++;
+    fail(`phases.fadeOrder names "${p}", which is not in phases.order`);
+  }
+if (M.phases && !sameSet([...(M.phases.scored ?? []), ...(M.phases.unscored ?? [])], M.phases.order ?? [])) {
+  gateFieldFaults++;
+  fail(`phases.scored + phases.unscored must partition phases.order exactly — an unclassified phase is a phase with no price`);
+}
+if (M.phases && !(M.phases.modelPhaseThreshold < M.phases.soloThreshold)) {
+  gateFieldFaults++;
+  fail(`phases.modelPhaseThreshold must sit below phases.soloThreshold or the guided band is empty`);
+}
 if (gateFieldFaults === 0)
   say(
-    `  PASS  gate fully specified in JSON: consolidation passAtLeast ${M.spacing.consolidation.passAtLeast}/${M.spacing.consolidation.items}, retention ${M.spacing.retentionCheck.passAtLeast}/${M.spacing.retentionCheck.items} with threshold re-check ${M.spacing.retentionCheck.requiresThresholdAtCheck}, form cycle indexed on ${M.forms.cycleIndexedOn}`
+    `  PASS  gate fully specified in JSON: consolidation passAtLeast ${M.spacing.consolidation.passAtLeast}/${M.spacing.consolidation.items}, retention ${M.spacing.retentionCheck.passAtLeast}/${M.spacing.retentionCheck.items} with threshold re-check ${M.spacing.retentionCheck.requiresThresholdAtCheck}, form cycle indexed on ${M.forms.cycleIndexedOn}, phases ${M.phases.order.join(">")} with the fade ladder ${M.phases.fadeOrder.join(">")} and M2/M3 counting [${M.bkt.phasesEligibleForMastery.join(", ")}]`
   );
+
+// -------------------------------------- PAIRWISE-SEPARATED (rule 4) --------
+// Rules (1) and (2) are string checks. Rule (4) is arithmetic: on a GENERATED instance, no two
+// misconceptions on the same node may evaluate to the same response. review/p03/signature-collide.mjs
+// scans every node family whose signatures share a stem and can be evaluated in closed form. It
+// carries its own control arm (two algebraically identical signatures, which must flag at 100%).
+say("");
+say("== misconception collisions on generated instances (rule 4, PAIRWISE-SEPARATED) ==");
+const collide = collisionScan();
+for (const r of collide.rows)
+  say(
+    `  ${r.node.padEnd(20)} ${String(r.allValid).padStart(7)} valid stems, ${String(r.collide).padStart(5)} collide  ${(r.pct.toFixed(2) + "%").padStart(8)}${r.pct >= collide.threshold ? "   OVER THRESHOLD" : ""}`
+  );
+const worstCollide = collide.rows.reduce((a, r) => (r.pct > a.pct ? r : a), collide.rows[0]);
+if (worstCollide.pct >= collide.threshold)
+  fail(
+    `node "${worstCollide.node}" has two misconceptions that collide on ${worstCollide.pct.toFixed(2)}% of otherwise-valid stems (threshold ${collide.threshold}%) — at that rate they are not different misconceptions and no stem filter repairs it`
+  );
+else
+  say(
+    `  PASS  worst family ${worstCollide.node} at ${worstCollide.pct.toFixed(2)}%, under the ${collide.threshold}% build threshold; P17 implements rule 4 as a stem filter`
+  );
+if (collide.control.pct !== 100)
+  fail(
+    `the collision scan's control arm (two algebraically identical signatures) flagged ${collide.control.pct.toFixed(2)}% instead of 100% — the scan is not detecting collisions and its zeroes mean nothing`
+  );
+else say(`  PASS  control arm flags 100% of an algebraically identical signature pair, so the scan can see a collision`);
 
 // ------------------------------------------- the one-lucky-answer invariant --
 // The learn rate puts a FLOOR under the all-wrong BKT fixed point: a responder who is never
@@ -543,6 +768,26 @@ for (const b of bands) {
 if (M.spacing.relearnRequiresPriorMastery !== true)
   fail(`spacing.relearnRequiresPriorMastery must be true — the savings boost belongs to relearning, not to a first failed certification`);
 
+// The invariant above is about the all-wrong FIXED POINT, and it is easy to over-read it as
+// "two CONSECUTIVE corrects are always needed". That is false away from the floor, and P16 must
+// not build a consecutive-run detector on it: from the ordinary band prior the pattern
+// correct, wrong, correct clears 0.95 at bands 1 and 2. Printed so the claim in
+// design/learning-architecture.md §1.1a is checkable rather than asserted.
+say("");
+say("== the same invariant, read correctly: 'two corrects in the window', not 'two in a row' ==");
+for (const b of bands) {
+  let p = b.prior;
+  const seq = [true, false, true];
+  const path = [p];
+  for (const c of seq) {
+    p = withLearning(post(p, c, b.slip, b.guess), b.learn);
+    path.push(p);
+  }
+  say(
+    `  band ${b.difficulty} from the prior ${b.prior.toFixed(2)}, pattern C,W,C: ${path.map((x) => x.toFixed(4)).join(" -> ")}  ${p >= M.bkt.masteryThreshold ? "clears" : "does not clear"} ${M.bkt.masteryThreshold} on two NON-consecutive corrects`
+  );
+}
+
 // ------------------------------------------------------- standards audit ----
 say("");
 say("== standards ==");
@@ -572,6 +817,18 @@ say(`  codes marked NEEDS_VERIFICATION: ${needsVerification.length}`);
 for (const [id] of needsVerification) say(`    - ${id}`);
 const unusedCodes = Object.keys(codes).filter((c) => !usedCodes.has(c));
 say(`  registered but not yet cited by a node (available to P17): ${unusedCodes.length}`);
+// Per-framework node coverage, with the uncovered nodes named. §7 of
+// design/learning-architecture.md justifies every hole here node by node; printing the holes is
+// what stops that prose drifting away from the data, which is exactly how round 2 came to say
+// "two nodes" where the file said seven.
+for (const f of standards.frameworks) {
+  const uncovered = nodes
+    .filter((n) => !(n.standards ?? []).some((c) => codes[c]?.framework === f.id))
+    .map((n) => n.id);
+  say(
+    `  ${f.id.padEnd(5)} node coverage ${String(nodes.length - uncovered.length).padStart(2)}/${nodes.length}${uncovered.length ? `   uncovered: ${uncovered.join(", ")}` : ""}`
+  );
+}
 for (const [id, v] of Object.entries(codes)) {
   if (!v.text || v.text.length < 20) fail(`standard "${id}" has no usable text`);
   if (!standards.frameworks.some((f) => f.id === v.framework))

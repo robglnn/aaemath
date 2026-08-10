@@ -19,9 +19,16 @@ import { Input } from "../play/Input.js";
  * additionally sampled on its own 250 Hz timer inside the module, because a pad read only on the
  * render loop loses inputs on any machine that ever drops a frame.
  *
+ * **Focus.** While the window is blurred or the tab is hidden, the whole pad sweep is gated off
+ * and every action, analog vector and look rate is zeroed — a pad player who alt-tabs mid-stride
+ * comes back exactly where they left, the same as a keyboard player always did. `input:focus
+ * {focused, reason}` is emitted on each real transition, so a system that wants to auto-pause can
+ * listen for it rather than duplicating the detection.
+ *
  * Reviewers drive a synthetic pad through `window.__vsInput` — see the `_installTestHook` block
- * in play/Input.js for the full method list. `__vsInput.probe()` and `__vs.probe("input")` return
- * the same JSON-safe snapshot.
+ * in play/Input.js for the full method list, including `blur()`, `focus()` and `hidden(true)`,
+ * which dispatch the genuine DOM events rather than poking internal state. `__vsInput.probe()`
+ * and `__vs.probe("input")` return the same JSON-safe snapshot.
  */
 export default {
   id: "input",

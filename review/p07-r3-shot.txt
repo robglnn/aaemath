@@ -1,16 +1,16 @@
-(node:35064) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(node:54952) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
 (Use `node --trace-deprecation ...` to show where the warning was created)
 {
   "image": "review/shots/p07/r3-pad-diagonal-sprint.png",
-  "bytes": 75827,
+  "bytes": 70122,
   "lang": "en",
   "ready": true,
   "stats": {
-    "fps": 5,
-    "frameMs": 209.04,
-    "simTime": 4.583,
-    "frames": 158,
-    "steps": 275,
+    "fps": 6,
+    "frameMs": 181.63,
+    "simTime": 7.467,
+    "frames": 174,
+    "steps": 448,
     "drawCalls": 9,
     "triangles": 5096,
     "programs": 3,
@@ -28,8 +28,8 @@
   },
   "probes": {
     "scaffold": {
-      "markerY": 1.1541,
-      "markerSpin": 2.5208,
+      "markerY": 0.9803,
+      "markerSpin": 4.1067,
       "temporary": true
     },
     "input": {
@@ -41,17 +41,17 @@
         "padVirtual": true,
         "everPad": true,
         "switches": 1,
-        "switchedAt": 1.2,
+        "switchedAt": 1.1833,
         "dwell": 0.35,
         "pending": null,
         "usedAt": {
           "kbm": -1,
-          "pad": 4.5833
+          "pad": 7.4667
         }
       },
       "pad": {
         "connected": true,
-        "samples": 506,
+        "samples": 2897,
         "edges": 3,
         "axesRaw": [
           0.72,
@@ -68,7 +68,7 @@
         "zero": null,
         "zeroAt": -1,
         "zeroCount": 0,
-        "still": 0.25,
+        "still": 0.3333,
         "latched": [
           "L3"
         ],
@@ -79,7 +79,7 @@
         "pending": 0
       },
       "context": "play",
-      "step": 275,
+      "step": 448,
       "move": {
         "x": 0.722,
         "y": 0.6919,
@@ -148,7 +148,7 @@
           "released": false,
           "buffered": false,
           "value": 1,
-          "hold": 3.3833,
+          "hold": 6.2667,
           "chords": [
             "Pad:LSUp"
           ]
@@ -159,7 +159,7 @@
           "released": false,
           "buffered": false,
           "value": 1,
-          "hold": 3.3833,
+          "hold": 6.2667,
           "chords": [
             "Pad:LSRight"
           ]
@@ -170,7 +170,7 @@
           "released": false,
           "buffered": false,
           "value": 1,
-          "hold": 3.3833,
+          "hold": 6.2667,
           "chords": [
             "Pad:L3"
           ]
@@ -498,15 +498,15 @@
       "fallbackGround": true,
       "counters": {
         "depenetrations": 0,
-        "rays": 1376,
-        "triTests": 11311
+        "rays": 2241,
+        "triTests": 15014
       }
     },
     "locomotion": {
       "position": [
-        23.3879,
+        40.6665,
         1.035,
-        -4.6558
+        -21.214
       ],
       "velocity": [
         5.9926,
@@ -557,7 +557,7 @@
         "airtime": 0,
         "at": -1
       },
-      "simTime": 4.5833,
+      "simTime": 7.4667,
       "spawnPoint": [
         4,
         0.12,
@@ -631,19 +631,19 @@
       "framing": "follow",
       "targetSource": "object",
       "position": [
-        24.0324,
+        41.3108,
         2.5107,
-        1.4942
+        -15.0639
       ],
       "target": [
-        24.0324,
+        41.3108,
         1.885,
-        -4.1713
+        -20.7294
       ],
       "player": [
-        23.3877,
+        40.6661,
         1.035,
-        -4.6556
+        -21.2137
       ],
       "yaw": 0,
       "pitch": -0.11,
@@ -653,7 +653,7 @@
       "allowedDistance": 5.7,
       "penetrating": false,
       "avatarOpacity": 1,
-      "fov": 70.9999,
+      "fov": 71,
       "occluded": false,
       "occlusionDepth": 0,
       "trauma": 0,
@@ -664,11 +664,11 @@
       "airTime": 0,
       "pivotLift": 0,
       "pivotDip": 0,
-      "speed": 8.3187,
-      "speedMeasured": 8.3187,
+      "speed": 8.3009,
+      "speedMeasured": 8.3009,
       "speedSignal": 6.1628,
-      "speedSignalAge": 3.1667,
-      "followError": 0.7,
+      "speedSignalAge": 6.05,
+      "followError": 0.6998,
       "focus": {
         "active": false,
         "weight": 0,

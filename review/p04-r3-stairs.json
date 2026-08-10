@@ -1,0 +1,112 @@
+{
+  "errors": [],
+  "out": {
+    "stepHeight": 0.55,
+    "rows": [
+      {
+        "riser": 0.25,
+        "expected": 1,
+        "climbed": 0.9997,
+        "climbedPct": 99.9746,
+        "byStepUp": 0.5266,
+        "byRide": 0.4732,
+        "steppedFrames": 4,
+        "stalledSteps": 0,
+        "traverseEvents": 4,
+        "cruise": 5.6,
+        "minSpeed": 4.8834
+      },
+      {
+        "riser": 0.5,
+        "expected": 2,
+        "climbed": 2,
+        "climbedPct": 100,
+        "byStepUp": 1.3644,
+        "byRide": 0.6356,
+        "steppedFrames": 4,
+        "stalledSteps": 0,
+        "traverseEvents": 4,
+        "cruise": 5.6,
+        "minSpeed": 4.1721
+      },
+      {
+        "riser": 0.7,
+        "expected": 2.8,
+        "climbed": 0,
+        "climbedPct": 0,
+        "byStepUp": 0,
+        "byRide": 0,
+        "steppedFrames": 0,
+        "stalledSteps": 225,
+        "traverseEvents": 0,
+        "cruise": 5.6,
+        "minSpeed": 0
+      },
+      {
+        "riser": 0.9,
+        "expected": 3.6,
+        "climbed": 0,
+        "climbedPct": 0,
+        "byStepUp": 0,
+        "byRide": 0,
+        "steppedFrames": 0,
+        "stalledSteps": 225,
+        "traverseEvents": 0,
+        "cruise": 5.6,
+        "minSpeed": 0
+      },
+      {
+        "riser": 0.45,
+        "expected": 1.8,
+        "climbed": 1.8,
+        "climbedPct": 100,
+        "byStepUp": 1.2253,
+        "byRide": 0.5747,
+        "steppedFrames": 4,
+        "stalledSteps": 0,
+        "traverseEvents": 4,
+        "cruise": 5.6,
+        "minSpeed": 4.3146
+      },
+      {
+        "riser": 0.55,
+        "expected": 2.2,
+        "climbed": 2.2,
+        "climbedPct": 100,
+        "byStepUp": 1.4244,
+        "byRide": 0.7756,
+        "steppedFrames": 4,
+        "stalledSteps": 0,
+        "traverseEvents": 4,
+        "cruise": 5.6,
+        "minSpeed": 4.032
+      },
+      {
+        "riser": 0.6,
+        "expected": 2.4,
+        "climbed": 0.4238,
+        "climbedPct": 17.658,
+        "byStepUp": 0.3586,
+        "byRide": 0.0641,
+        "steppedFrames": 1,
+        "stalledSteps": 205,
+        "traverseEvents": 0,
+        "cruise": 5.6,
+        "minSpeed": 0
+      },
+      {
+        "riser": 0.65,
+        "expected": 2.6,
+        "climbed": 0.4367,
+        "climbedPct": 16.795,
+        "byStepUp": 0.388,
+        "byRide": 0.0478,
+        "steppedFrames": 2,
+        "stalledSteps": 207,
+        "traverseEvents": 0,
+        "cruise": 5.6,
+        "minSpeed": 0
+      }
+    ]
+  }
+}

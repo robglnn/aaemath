@@ -19,17 +19,26 @@ import { config } from "../core/Config.js";
  *  new heading is then renormalised against the band cap, because a turn that hands back more
  *  speed than you had is not a turn, it is a boost.
  *
- *  **Momentum has to cost something.** The brake is judged against the *velocity*, never the
- *  heading — at sprint the heading can only sweep three degrees per step, so a heading-based
- *  reversal test can never fire and the character would carve a free constant-speed 180° arc.
- *  Oppose your own travel by more than `brakeAngleDeg` and the feet plant instead: steering
- *  stops dead, speed is scraped off at `groundBrake · reverseBoost`, and the body keeps sliding
- *  the way it was going while you watch. Only once speed falls to `pivotSpeed` does the skid
- *  release, and the pivot out of it is taxed for `pivotTime` at `pivotAccel` of normal
- *  authority. Measured: a full reversal from 8.3 m/s takes 0.333 s and 1.15 m to get moving
- *  the other way, 1.08 m of which is overshoot in the direction you no longer wanted, and
- *  0.633 s to be back at full speed. That is the commitment, and it is the reason a sprint is
- *  a decision rather than a speed setting.
+ *  **Momentum has to cost something — but only when you actually asked to reverse.** The brake
+ *  is gated on *two* tests that must both fire: the stick has to oppose the **velocity** by
+ *  more than `brakeAngleDeg` *and* the **heading** by more than `brakeHeadingDeg`. Either test
+ *  alone is a trap. Velocity alone plants the feet on an ordinary sustained curve, because the
+ *  velocity always lags the heading by the drift angle `atan(ω / lateralGrip)`, so a plain 90°
+ *  stick reads as 90° + lag of opposition and the amount of lag — and therefore whether you
+ *  skid — depends on which speed band you happen to be in. Heading alone can never fire at
+ *  speed, because the heading only sweeps ~2.6°/step there and by the time it noticed a
+ *  reversal the body would have carved a free 180° arc. Together they mean exactly one thing:
+ *  a turn is a turn at every speed, and a reversal is a reversal at every speed. When both do
+ *  fire the feet plant — steering stops dead, speed is scraped off at `groundBrake ·
+ *  reverseBoost`, and the body keeps sliding the way it was going while you watch. Only once
+ *  speed falls to `pivotSpeed` does the skid release, and the pivot out of it is taxed for
+ *  `pivotTime` at `pivotAccel` of normal authority.
+ *
+ *  **A turn is not free either.** Steering at full lock scrubs speed: the band top you can
+ *  hold through a carve is `1 − carveScrub` of the straight-line one, and momentum you brought
+ *  into the turn above that ceiling is shaved at `carveScrubDecel`. So a sustained sprint
+ *  circle settles below sprint speed instead of orbiting forever at exactly the top of the
+ *  band, and the fastest line through a corner is the one you straighten out of.
  *
  *  **Acceleration with a soft top.** `a = groundAccel · (1 + launchBoost·(1 − v/target))`. The
  *  first metre is eager and the last metre per second is lazy, which reads as mass leaving the
@@ -47,7 +56,13 @@ import { config } from "../core/Config.js";
  *
  *  **A landing that costs something.** Touchdown speed becomes an impact value: squash, a brief
  *  authority loss, a bite out of horizontal speed, and `player:land {impact}` for the avatar,
- *  the camera and audio to spend.
+ *  the camera and audio to spend. The launch of a jump taken *out* of a hard landing is scaled
+ *  by the authority that landing left you, so the recovery cannot be bought out with the jump
+ *  button — a recovery you can cancel is not a recovery.
+ *
+ *  **A wall is an event.** When the solver takes more than `blockImpactSpeed` out of you in one
+ *  step the controller says so: a `blocked` state, one `camera:shake` and one `audio:cue` on
+ *  the edge. Standing on full forward against something solid reports `blocked`, not `idle`.
  *
  * Intent arrives as `input:move {x,y}` and `input:action {action, phase}`. If P07 has not
  * mounted, a minimal keyboard fallback stands in so this piece is reviewable alone; it disables
@@ -81,14 +96,23 @@ export const LOCOMOTION_TUNING = {
   groundBrake: 26,      // m/s² when the target drops below current speed
   reverseBoost: 1.6,    // multiplier while the heading opposes the velocity
   idleFriction: 23,     // m/s² with no stick at all
-  lateralGrip: 12,      // 1/s exponential bleed of sideways velocity
+  // 1/s exponential bleed of sideways velocity. This sets the drift angle between where the
+  // body points and where it is actually going: steady-state lag = atan(turnRate / lateralGrip).
+  // At 12 a run-band carve lagged 35–39°, which is a rally car, not a runner — and a lag that
+  // large is what let a 90° stick read as 129° of opposition against the velocity.
+  // At 19 the same carve lags 13° and the sprint carve 9°.
+  lateralGrip: 19,
 
   // The skid. This is the only thing in the file that takes something from you for free, so
   // every number here is load-bearing: the brake decelerates at groundBrake · reverseBoost =
   // 41.6 m/s², about twice what coasting gives you, and while it runs you have no steering at
-  // all. `brakeAngleDeg` is deliberately past 90° so that a hard carve is still a carve.
-  brakeAngleDeg: 110,      // stick must oppose travel by more than this to plant the feet
+  // all. Both angle tests must fire — see the header. `brakeAngleDeg` is measured against the
+  // velocity and `brakeHeadingDeg` against the heading; the second is what makes a 90° stick
+  // impossible to skid on in *any* band, while a real reversal still trips both instantly.
+  brakeAngleDeg: 110,      // stick must oppose travel by more than this…
+  brakeHeadingDeg: 100,    // …and the heading by more than this, before the feet plant
   brakeHoldDeg: 99,        // hysteresis: once planted, it takes less to stay planted
+  brakeHeadingHoldDeg: 90,
   pivotSpeed: 3.3,         // m/s at which the skid releases into a pivot (0.4 × sprint)
   pivotTime: 0.14,         // s of reduced push-off after a skid — the recovery
   pivotAccel: 0.4,         // acceleration multiplier during that recovery
@@ -102,14 +126,31 @@ export const LOCOMOTION_TUNING = {
   airLateralK: 0.55,       // sideways cap as a fraction of takeoff speed…
   airLateralMin: 2.6,      // …with this floor, so a standing jump can still be aimed
 
-  // turning
-  turnRateSlow: 13.0,   // rad/s at a standstill
-  turnRateFast: 3.2,    // rad/s at full sprint → 183°/s, a measured 2.55 m carve at 8.3 m/s
+  // Turning. The rate falls off *linearly* with speed, and the pair of endpoints is chosen by
+  // the turning-circle ladder it produces rather than by how the numbers read: a sustained
+  // full-lock circle measures 0.38 m at walk, 1.22 m at run and 2.67 m at sprint — monotonic,
+  // and every band pays the same 9% of its top speed to hold the turn. A squared falloff was
+  // worse at both ends: it left the walk band turning at 745°/s with no radius at all while
+  // making the run band lag its own heading by 39°.
+  turnRateSlow: 7.0,    // rad/s at a standstill → 401°/s, a beat rather than a snap
+  turnRateFast: 2.45,   // rad/s at full sprint  → 140°/s
   turnRateAir: 2.6,     // rad/s of facing change in flight
-  // Lateral acceleration that reads as a full lean. Peak available is ~48 m/s² in a run-speed
-  // hairpin, so 34 lets a run hairpin saturate — it should — while a sprint carve, which pulls
-  // 26.6, still reports 0.78 instead of clipping to the same number as everything else.
-  leanReference: 34,
+  // The pivot out of a skid is the one place the body is allowed to turn like a standstill even
+  // though it just arrived at 8.3 m/s: the feet are planted, the weight has already been paid.
+  // Without it, dropping `turnRateSlow` far enough to give the walk band a radius also made the
+  // reversal 40% slower, and the reversal is the best thing in this file.
+  pivotTurnBoost: 1.75,
+  // What a carve costs. `carveScrub` is the fraction of the band top you give up while the
+  // turn rate is saturated — a full-lock sprint circle settles at 0.91 × 8.3 = 7.55 m/s rather
+  // than orbiting forever at exactly top speed, which is the difference between a turn and a
+  // free rail. `carveScrubDecel` is how fast momentum above that ceiling is shaved off, kept
+  // well under `groundBrake` so that carving is a tax, not a skid.
+  carveScrub: 0.09,
+  carveScrubDecel: 3.4,    // m/s² at full lock
+  // Lateral acceleration that reads as a full lean. A saturated carve pulls v·ω: 14 m/s² at
+  // walk, 24 at run and 23 at sprint, so 26 lets the two fast bands read ~0.9 without every
+  // turn in the game clipping to the same number.
+  leanReference: 26,
 
   // Jump. Sized against the body, not against the level: the measured arc is 1.337 m for a
   // 1.82 m capsule — 0.73 body heights, which is where Breath of the Wild and Fortnite both
@@ -144,10 +185,25 @@ export const LOCOMOTION_TUNING = {
   uphillK: 0.85,           // speed scale uphill = 1/(1 + k·grade)
   downhillK: 0.18,
 
-  // Ground contact. `stepHeight` is the assisted lift *and* the rise budget per ledge; a capsule
-  // with a rounded bottom also rides an edge on its own, so the measured walk-up limit is about
-  // 0.7 m and 0.9 m is a hard wall. Those are the numbers in the handoff table, not this one.
-  stepHeight: 0.5,
+  // Ground contact.
+  //
+  // `stepHeight` is **the tallest ledge you can walk up**, and it is measured rather than
+  // asserted — review/p04-r3-stairs.mjs walks a ladder of risers from 0.25 m to 0.9 m and finds
+  // the crossover. It is the number P06's mantle and P09's level geometry are designed against,
+  // so it has to be the truth and not the input that produces it.
+  //
+  // `stepAssist` is that input: the lift the solver is allowed to apply on a blocked sub-step.
+  // The gap between the two is the free ride a rounded capsule bottom gets over an edge once
+  // the assist has carried its bottom sphere above the lip — it cannot be designed away without
+  // giving the character square feet, so it is named, measured and subtracted instead of
+  // quietly inflating the published limit by 30%.
+  stepHeight: 0.55,
+  stepAssist: 0.35,
+  // What a climb costs. A ledge at the limit takes this fraction of your speed by the time you
+  // are standing on it, spread across the frames the climb actually takes. A kerb is nearly
+  // free; a hip-high ledge is a decision you feel. `player:traverse {verb:"step"}` brackets it
+  // so P08 can animate the reach and P25 can hear it.
+  stepSpeedCost: 0.28,
   stepGraceSteps: 3,       // frames a step-up keeps you grounded while the body clears the edge
   snapDistance: 0.38,
   snapSuppress: 0.09,
@@ -164,6 +220,13 @@ export const LOCOMOTION_TUNING = {
   landControlMin: 0.35,    // authority multiplier at maximum impact
   landSpeedKeep: 0.55,     // horizontal speed kept through the worst landing
   squashDecay: 0.22,
+
+  // Running into something solid. Below `blockImpactSpeed` a wall is just geometry you brushed;
+  // above it, it is an event with a state, a shake and a cue — otherwise sprinting head-on into
+  // a cliff reports `idle` while the player holds full forward, and nobody downstream has
+  // anything to spend.
+  blockImpactSpeed: 4,     // m/s the solver must take in one step to count as an impact
+  blockStateTime: 0.25,    // s the `blocked` state is held after that impact
 
   // Housekeeping. The void limit is measured *down from the spawn surface*, not from world
   // zero: a terrain that puts its start plateau at y = 40 would otherwise never trigger it,
@@ -215,6 +278,9 @@ export class Locomotion {
     this.jumpActive = false;
     this.braking = false;
     this.pivot = 0;
+    this.turnUsed = 0;       // fraction of the available turn rate spent this step, 0..1
+    this.blockTimer = 0;     // s left of the `blocked` state after a solid hit
+    this.lastBlock = { speed: 0, at: -1 };
     this.takeoffSpeed = 0;
     this.takeoffDir = new THREE.Vector2(0, -1);
     // Signed body accelerations, published for whoever animates this thing. P08 cannot lean a
@@ -227,8 +293,12 @@ export class Locomotion {
     this.stride = 0;
     this._liftoff = false;
     this._jumpAirborne = false;
-    this.stepBudget = T.stepHeight + 0.02;
+    this.stepAssist = Math.min(T.stepAssist, T.stepHeight);
+    this.stepBudget = this.stepAssist + 0.02;
     this._stepGrace = 0;
+    this._ledgeRise = 0;
+    this._ledgeBaseY = 0;
+    this._stepLocked = false;
 
     this.lastLand = { impact: 0, severity: 0, hard: false, at: -1 };
     this.lastJump = { apex: 0, height: 0, airtime: 0, at: -1 };
@@ -252,6 +322,8 @@ export class Locomotion {
     this._voidFalls = 0;
     this.brakeDot = Math.cos((180 - T.brakeAngleDeg) * DEG);
     this.brakeHoldDot = Math.cos((180 - T.brakeHoldDeg) * DEG);
+    this.brakeHeadDot = Math.cos((180 - T.brakeHeadingDeg) * DEG);
+    this.brakeHeadHoldDot = Math.cos((180 - T.brakeHeadingHoldDeg) * DEG);
 
     // --- scratch (fixed step must not allocate)
     this._delta = new THREE.Vector3();
@@ -385,6 +457,9 @@ export class Locomotion {
     this.takeoffDir.copy(this.heading);
     this.braking = false;
     this.pivot = 0;
+    this.turnUsed = 0;
+    this.blockTimer = 0;
+    this.lastBlock = { speed: 0, at: -1 };
     this.lean = 0;
     this.push = 0;
     this.landControl = 1;
@@ -403,8 +478,11 @@ export class Locomotion {
     this.jumpActive = false;
     this._liftoff = false;
     this._jumpAirborne = false;
-    this.stepBudget = this.tune.stepHeight + 0.02;
+    this.stepBudget = this.stepAssist + 0.02;
     this._stepGrace = 0;
+    this._ledgeRise = 0;
+    this._ledgeBaseY = y;
+    this._stepLocked = false;
     this._setState("idle", true);
   }
 
@@ -543,17 +621,30 @@ export class Locomotion {
     let planar = Math.hypot(v.x, v.z);
 
     // ---- the brake ------------------------------------------------------------------------
-    // Judged against the velocity, never the heading, and evaluated before the steer for the
-    // same reason: at sprint the heading can only sweep three degrees per step, so by the time
-    // a heading test could notice a reversal the character has already carved a free 180° arc
-    // at constant speed. Opposing your own travel by more than `brakeAngleDeg` plants the feet:
-    // steering stops, speed is scraped off at groundBrake · reverseBoost, and you keep sliding
-    // the way you were going. The skid releases at `pivotSpeed`, and `pivot` then taxes the
-    // push-off out of it — a start, a commitment and a recovery, in that order.
+    // Two tests, both required, both evaluated before the steer so the heading here is still
+    // the one you entered the step with.
+    //
+    //   * against the **velocity**, because at sprint the heading only sweeps 2.5° per step and
+    //     a heading-only test would let a full reversal carve a free 180° arc at constant speed
+    //     before it ever noticed;
+    //   * against the **heading**, because the velocity always trails the heading by the drift
+    //     angle atan(ω / lateralGrip), so a velocity-only test fires on an ordinary held curve
+    //     — and fires at some speeds and not others, since the drift angle is a function of
+    //     speed. That is how a plain 90° stick used to plant the feet in the run band and
+    //     carve for free one band up.
+    //
+    // Together: a 90° stick can never skid in any band, and a reversal trips both instantly.
+    // When it fires, steering stops, speed is scraped off at groundBrake · reverseBoost, and
+    // you keep sliding the way you were going. The skid releases at `pivotSpeed`, and `pivot`
+    // then taxes the push-off out of it — a start, a commitment and a recovery, in that order.
+    const hx0 = this.heading.x, hz0 = this.heading.y;
     let braking = false;
     if (this.grounded && !this.sliding && wishMag > 0.35 && planar > T.pivotSpeed) {
-      const opp = -(wx * v.x + wz * v.z) / planar;
-      braking = opp > (this.braking ? this.brakeHoldDot : this.brakeDot);
+      const oppVel = -(wx * v.x + wz * v.z) / planar;
+      const oppHead = -(wx * hx0 + wz * hz0);
+      braking =
+        oppVel > (this.braking ? this.brakeHoldDot : this.brakeDot) &&
+        oppHead > (this.braking ? this.brakeHeadHoldDot : this.brakeHeadDot);
     }
     if (braking) {
       if (!this.braking) {
@@ -570,13 +661,20 @@ export class Locomotion {
     this.braking = braking;
 
     // ---- heading steering (this is the turn radius)
+    // `turnUsed` is the fraction of the available rate the steer actually spent. A straight
+    // line spends nothing; a held curve saturates it. It is what the carve tax is charged on,
+    // so the cost is proportional to how hard you are actually turning rather than to which
+    // key you are holding.
+    this.turnUsed = 0;
     if (wishMag > 0.02 && !braking) {
       const t = clamp(planar / Math.max(T.sprintSpeed, 0.001), 0, 1);
       let rate = this.grounded
-        ? lerp(T.turnRateSlow, T.turnRateFast, t * t)
+        ? lerp(T.turnRateSlow, T.turnRateFast, t)
         : T.turnRateAir;
+      if (this.grounded && this.pivot > 0) rate *= T.pivotTurnBoost;
       rate *= control;
-      this._steer(wx, wz, rate * step);
+      const maxRad = rate * step;
+      this.turnUsed = maxRad > 1e-9 ? this._steer(wx, wz, maxRad) / maxRad : 0;
     }
     const hx = this.heading.x, hz = this.heading.y;
 
@@ -613,12 +711,21 @@ export class Locomotion {
         const grip = Math.exp(-T.lateralGrip * step);
         v.x = hx * fwd + latX * grip;
         v.z = hz * fwd + latZ * grip;
-        // A turn must never hand back more speed than it was given. Recomposing along the new
-        // heading leaves |v| = hypot(fwd, lat), which is larger than either — without this a
-        // walk-speed carve peaks 18% over `walkSpeed` and the speed bands stop meaning
-        // anything. The cap is the band, or the speed you entered the step with if that is
-        // higher, so easing off the stick still decelerates rather than snapping.
-        const cap = Math.max(target, planar);
+        // A turn must never hand back more speed than it was given — recomposing along the new
+        // heading leaves |v| = hypot(fwd, lat), which is larger than either — and a turn held
+        // at full lock must cost something, or a 360° carve at sprint is a free rail you can
+        // orbit a landmark on forever at exactly top speed.
+        //
+        // So the ceiling is the band top reduced by `carveScrub · turnUsed`, and momentum you
+        // brought in above that ceiling is shaved at `carveScrubDecel` rather than clipped —
+        // clipping it would decelerate harder than the skid does. With `turnUsed` at zero both
+        // terms collapse back to max(target, planar): a straight line is untouched and easing
+        // off the stick still decelerates smoothly instead of snapping to the new band.
+        const carve = T.carveScrub * this.turnUsed;
+        const cap = Math.max(
+          target * (1 - carve),
+          planar - T.carveScrubDecel * this.turnUsed * step
+        );
         const m = Math.hypot(v.x, v.z);
         if (m > cap + 1e-6) { const s = cap / m; v.x *= s; v.z *= s; }
       } else if (!braking) {
@@ -699,7 +806,15 @@ export class Locomotion {
     // ---- jump (buffered, with coyote authority)
     this._liftoff = false;
     if (this.jumpBuffer > 0 && this.jumpCooldown <= 0 && (this.grounded || this.coyote > 0)) {
-      v.y = T.jumpSpeed;
+      // A hard landing is a recovery, and a recovery you can cancel with the jump button is not
+      // a recovery. Before this gate a 12 m drop — impact 28.7 m/s, 0.26 s of lock — could be
+      // bought out with a buffered Space that launched at the full 7.45 m/s and restored top
+      // speed *faster* than staying on the ground did. The launch is now scaled by the same
+      // authority the landing left, which recovers across the lock, so the escape is available
+      // but it is worth 0.16 m at the moment of impact and 1.34 m once you have stood up. Soft
+      // landings are untouched: `control` is 1 unless the landing was hard.
+      const authority = this.landLock > 0 && this.lastLand.hard ? control : 1;
+      v.y = T.jumpSpeed * authority;
       this.jumpBuffer = 0;
       this.jumpCooldown = T.jumpCooldown;
       this.coyote = 0;
@@ -715,34 +830,78 @@ export class Locomotion {
       this._apexY = this.position.y;
       this.airtime = 0;
       this.lastJump = { apex: 0, height: 0, airtime: 0, at: r4(this.simTime) };
-      signals.emit("player:jump", { charged: false });
-      signals.emit("audio:cue", { id: "jump", params: { speed: r4(planar) } });
+      signals.emit("player:jump", { charged: false, authority: r4(authority) });
+      signals.emit("audio:cue", {
+        id: "jump", params: { speed: r4(planar), authority: r4(authority) },
+      });
     }
 
     // ---- integrate through the world
     this._delta.set(v.x * step, v.y * step, v.z * step);
     const wasGrounded = this.grounded;
+    const yWanted = this.position.y + this._delta.y;
+    let solverRise = 0;
+    if (this.blockTimer > 0) this.blockTimer = Math.max(0, this.blockTimer - step);
     if (col) {
-      // The step budget is what makes `stepHeight` an honest number. A capsule with a rounded
-      // bottom can ride up over a ledge a couple of centimetres per frame, so a per-frame limit
-      // alone lets a patient player walk up anything. Spending a shared budget per ledge — and
-      // only re-arming it after a frame of clean, unobstructed contact — turns the constant into
-      // the real thing: 0.45 m is a step, taller is a wall for P06's mantle to answer.
-      const canStep = wasGrounded && !this._liftoff && this.stepBudget > 0.01;
+      // The assist the solver is allowed to apply is `stepHeight − stepRide`, because a capsule
+      // with a rounded bottom finishes the last `stepRide` of a ledge for free once the assist
+      // has lifted its bottom sphere over the edge. Handing the solver the whole number would
+      // make the real limit `stepHeight + stepRide` — which is exactly the lie this constant
+      // used to tell. The budget is a *shared* allowance per ledge, spent by every metre the
+      // solver adds, so a patient player cannot ladder up a cliff a few centimetres a frame.
+      const canStep =
+        wasGrounded && !this._liftoff && this.stepBudget > 0.01 && !this._stepLocked;
       col.moveCapsule(this.position, this._delta, {
         radius: this.radius,
         halfSeg: this.halfSeg,
-        stepHeight: canStep ? Math.min(T.stepHeight, this.stepBudget) : 0,
+        stepHeight: canStep ? Math.min(this.stepAssist, this.stepBudget) : 0,
         slopeCos: this.slopeCos,
         grounded: wasGrounded && !this._liftoff,
         out: this._moveOut,
       });
-      if (this._moveOut.stepped) this.stepBudget -= this._moveOut.stepRise;
-      // A wall took the component of velocity that pointed into it; keep the rest.
+      // Charge the budget for **every** metre the solver put under the body, not only the
+      // rises it labelled a step. A capsule with a rounded bottom also rides a ledge by plain
+      // depenetration, and leaving that free is what made a 0.5 m constant into a silent 0.7 m
+      // walk-up limit. `yWanted` is the height we asked for, so the difference is exactly what
+      // the world added — on a slope the ground glue already asked for the climb and this is
+      // ~0, which is why ramps are unaffected.
+      solverRise = this.position.y - yWanted;
+      if (solverRise > 0.0005 && wasGrounded) {
+        this.stepBudget -= solverRise;
+        if (this._ledgeRise <= 0) {
+          this._ledgeBaseY = yWanted;
+          signals.emit("player:traverse", { verb: "step", phase: "start" });
+        }
+        this._ledgeRise += solverRise;
+      }
+      // A climb that gives all its height back is a climb that failed. Left alone the body
+      // bounces — assist, ride the lip, run out of allowance, drop, re-arm, assist again —
+      // which is the worst possible answer to a ledge just over the limit. One attempt, then
+      // the thing is a wall until you stop pushing on it.
+      if (this._ledgeRise > 0.05 && this.position.y <= this._ledgeBaseY + 0.01) {
+        this._ledgeRise = 0;
+        this._stepLocked = true;
+        signals.emit("player:traverse", { verb: "step", phase: "cancel" });
+      }
+      // A wall took the component of velocity that pointed into it; keep the rest. Above
+      // `blockImpactSpeed` that is not bookkeeping, it is a collision: say so once, on the edge.
       if (this._moveOut.blocked) {
         const wn = this._moveOut;
         const into = v.x * wn.wnx + v.y * wn.wny + v.z * wn.wnz;
-        if (into < 0) { v.x -= wn.wnx * into; v.y -= wn.wny * into; v.z -= wn.wnz * into; }
+        if (into < 0) {
+          v.x -= wn.wnx * into; v.y -= wn.wny * into; v.z -= wn.wnz * into;
+          if (-into > T.blockImpactSpeed && this.blockTimer <= 0) {
+            this.blockTimer = T.blockStateTime;
+            this.lastBlock = { speed: r4(-into), at: r4(this.simTime) };
+            signals.emit("audio:cue", { id: "impact", params: { speed: r4(-into) } });
+            if (config.get("cameraShake") > 0) {
+              signals.emit("camera:shake", {
+                amount: r4(clamp(-into / T.sprintSpeed, 0, 1) * 0.5),
+                seconds: 0.2,
+              });
+            }
+          }
+        }
       }
     } else {
       this.position.add(this._delta);
@@ -768,7 +927,12 @@ export class Locomotion {
           // A step-up must never be undone by the snap: mid-climb the capsule is perched on a
           // ledge edge, where a downward ray still reports the floor it came from. Snapping to
           // that floor cancels the climb, and the character spends forever bouncing off a stair.
-          !stepped && wasGrounded && walkable && this.snapSuppress <= 0 &&
+          // `!stepped` covers the assist frame; `_ledgeRise` covers the two or three frames
+          // afterwards where the body is riding over the lip under its own depenetration. Both
+          // are needed, and the gap between them was silently non-monotonic: a 0.45 m riser
+          // perched the body 0.33 m up, inside `snapDistance`, and got yanked back down, while
+          // a 0.55 m riser perched it 0.43 m up, outside it, and climbed fine.
+          !stepped && this._ledgeRise <= 0 && wasGrounded && walkable && this.snapSuppress <= 0 &&
           v.y <= 0.6 && p.gap <= T.snapDistance
         ) {
           this.position.y -= p.gap - 0.002;
@@ -793,9 +957,32 @@ export class Locomotion {
       }
     }
     if (!grounded) { this.slopeDeg = 0; this.groundNormal.set(0, 1, 0); }
-    // Re-arm the step budget only from a planted stance. Refilling while perched mid-climb would
-    // let a patient player walk up a cliff a few centimetres at a time.
-    if (!stepped && planted && !this._moveOut.blocked) this.stepBudget = T.stepHeight + 0.02;
+    // Re-arm the step budget from a planted stance that gained no height this frame. Both
+    // halves matter. "Planted" alone is not enough: mid-climb the capsule rests on the lip of
+    // the tread and reports a plant every frame, which refilled the allowance while the ledge
+    // was still being climbed and let a patient player walk up a cliff a few centimetres at a
+    // time. And refusing to re-arm while *blocked* — which is what this used to do — deadlocks
+    // a staircase: standing on tread one you are blocked by tread two, so the allowance the
+    // climb needs can never come back and the flight stops dead halfway up.
+    if (!stepped && planted && solverRise <= 0.004) {
+      this.stepBudget = this.stepAssist + 0.02;
+      // Standing clear of whatever you were pushing on re-arms the attempt as well.
+      if (!this._moveOut.blocked) this._stepLocked = false;
+      if (this._ledgeRise > 0) {
+        // The climb is paid for at the top, not during — charging it per frame bled the speed
+        // the solver needs to carry the body over the lip and turned a staircase into a
+        // treadmill. A ledge at the limit costs `stepSpeedCost` of whatever you had left; a
+        // kerb costs almost nothing.
+        const bite = clamp(T.stepSpeedCost * this._ledgeRise / Math.max(T.stepHeight, 0.01), 0, 0.6);
+        this.velocity.x *= 1 - bite;
+        this.velocity.z *= 1 - bite;
+        signals.emit("player:traverse", { verb: "step", phase: "end", height: r4(this._ledgeRise) });
+        if (this._ledgeRise > T.stepHeight * 0.45) {
+          signals.emit("audio:cue", { id: "step-up", params: { height: r4(this._ledgeRise) } });
+        }
+        this._ledgeRise = 0;
+      }
+    }
 
     // ---- landing
     if (grounded && !wasGrounded) {
@@ -869,6 +1056,7 @@ export class Locomotion {
     else this.takeoffDir.copy(this.heading);
   }
 
+  /** Rotate the heading toward (tx, tz) by at most `maxRad`. Returns the angle actually used. */
   _steer(tx, tz, maxRad) {
     const hx = this.heading.x, hz = this.heading.y;
     const dot = clamp(hx * tx + hz * tz, -1, 1);
@@ -880,6 +1068,7 @@ export class Locomotion {
     const nz = hx * s + hz * c;
     const l = Math.hypot(nx, nz) || 1;
     this.heading.set(nx / l, nz / l);
+    return Math.abs(turn);
   }
 
   _land(impact) {
@@ -918,10 +1107,17 @@ export class Locomotion {
   _resolveState(planar) {
     if (!this.grounded) return "airborne";
     if (this.landLock > 0) return "landing";
-    // `skid` is an addition to the idle/walk/run/sprint/airborne/landing set, not a
-    // replacement: a listener that does not know it simply never sees it, and one that does
-    // gets the plant-and-slide beat it needs to animate.
+    // `skid` and `blocked` are additions to the idle/walk/run/sprint/airborne/landing set, not
+    // replacements: a listener that does not know them simply never sees them, and one that
+    // does gets the plant-and-slide beat and the shove-against-a-wall beat it needs to animate.
     if (this.braking) return "skid";
+    // Holding full forward into something solid is not idling. `blockTimer` covers the impact
+    // itself; the second clause covers standing on the throttle afterwards, which is the state
+    // a player is actually in for as long as they keep pushing.
+    if (this.blockTimer > 0) return "blocked";
+    if (this._moveOut.blocked && Math.hypot(this.moveX, this.moveY) > 0.35 && planar < 0.6) {
+      return "blocked";
+    }
     const T = this.tune;
     if (planar < 0.35) return "idle";
     if (planar < T.walkSpeed * 1.25) return "walk";
@@ -1042,6 +1238,10 @@ export class Locomotion {
       sliding: this.sliding,
       braking: this.braking,
       pivotRemaining: r4(this.pivot),
+      turnUsed: r4(this.turnUsed),
+      blocked: Boolean(this._moveOut.blocked),
+      blockTimer: r4(this.blockTimer),
+      lastBlock: this.lastBlock,
       state: this.state,
       lean: r4(this.lean),
       push: r4(this.push),
@@ -1053,6 +1253,7 @@ export class Locomotion {
       groundNormal: [r4(this.groundNormal.x), r4(this.groundNormal.y), r4(this.groundNormal.z)],
       coyoteRemaining: r4(this.coyote),
       stepBudget: r4(this.stepBudget),
+      ledgeRise: r4(this._ledgeRise),
       bufferRemaining: r4(this.jumpBuffer),
       airtime: r4(this.airtime),
       squash: r4(this.squash),

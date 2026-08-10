@@ -1,0 +1,115 @@
+(node:47872) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      1. before blur: {"held":["moveForward","jump"],"moveMag":1,"yaw":1.159,"pos":[5.7118,1.0325,14.1233]}
+PASS  1a. pad is driving before the blur: got "pad"
+PASS  1b. pad actions held before the blur: got true
+PASS  1c. move zeroed on the blur step itself: got 0
+PASS  1d. move source cleared on the blur step: got "none"
+PASS  1e. held empty on the blur step: got []
+PASS  1f. focused flag false: got false
+PASS  1g. left stick view zeroed: got 0
+PASS  1h. right stick view zeroed: got 0
+PASS  1i. calibrated axes zeroed: got [0,0,0,0]
+PASS  1j. pad latches cleared: got []
+      1. the 3 s blurred window: {"maxMoveMag":0,"lookIntent":0,"pitchIntent":0,"edges":0,"samples":0,"held":[],"maxSpeed":3.946,"distance":0.372}
+PASS  1k. zero move intent at every one of 180 steps: got 0
+PASS  1l. zero look intent across the window: got 0
+PASS  1m. zero pitch intent across the window: got 0
+PASS  1n. no pad edge was born: got 0
+PASS  1o. the pad sweep never ran at all: got 0
+PASS  1p. nothing held at the end: got []
+PASS  1q. camera yaw is where the blur left it: got 0
+      1. total displacement over the whole blur (momentum + terrain settle, no input): {"travelled":0.5227,"yawed":0}
+PASS  2a. focus restored: got true
+PASS  2b. still-held stick re-observed as move: got true
+PASS  2c. still-held A re-latched exactly once: got ["A"]
+PASS  2d. jump held again: got true
+      2. edges spent on the return: 3
+      2. device switches on the return: 0
+      2. the 0.8 s after the return: {"maxMoveMag":1,"lookIntent":4.074454,"pitchIntent":0,"edges":0,"samples":96,"held":["moveForward","jump"],"maxSpeed":4.0574,"distance":1.346}
+PASS  2e. move intent is back at full deflection: got true
+PASS  2f. the avatar is under power again: got true
+PASS  2g. and is covering ground: got true
+PASS  3a. pad driving again before hide: got true
+PASS  3b. hidden: held empty: got []
+PASS  3c. hidden: move zero: got 0
+      3. the 3 s hidden window: {"maxMoveMag":0,"lookIntent":0,"pitchIntent":0,"edges":0,"samples":0,"held":[],"maxSpeed":4.7127,"distance":0.5227}
+PASS  3d. hidden: zero move intent at every step: got 0
+PASS  3e. hidden: zero look intent: got 0
+PASS  3f. hidden: no pad edge was born: got 0
+PASS  3g. hidden: the pad sweep never ran: got 0
+PASS  3h. hidden: nothing held at the end: got []
+PASS  3i. hidden: camera yaw is where the hide left it: got 0
+PASS  3j. visible again restores the pad: got true
+PASS  4a. keyboard held before blur: got true
+      4. the 3 s blurred window, keyboard: {"maxMoveMag":0,"lookIntent":0,"pitchIntent":0,"edges":0,"samples":0,"held":[],"maxSpeed":4.8333,"distance":0.5489}
+PASS  4b. keyboard released by blur and stays released: got []
+PASS  4c. keyboard move zero: got 0
+PASS  4d. keyboard: zero move intent at every step: got 0
+PASS  4e. keyboard: zero look intent: got 0
+      4. keyboard total displacement over the same blur: 0.7292
+      4. pad total displacement, for comparison: 0.5227
+PASS  4f. pad and keyboard blur behave alike: got true
+PASS  5a. locked mouse turns the camera: got true
+PASS  5b. blurred mouse move is ignored: got 0
+      6. dash after three binds: ["KeyF","KeyJ","KeyK"]
+PASS  6a. 4th chord refused: got false
+PASS  6b. refusal names the reason: got "slots-full"
+PASS  6c. refusal reports the slot count: got 3
+PASS  6d. refusal changed nothing: got false
+PASS  6e. explicit evict succeeds: got true
+PASS  6f. evict dropped the oldest and kept 3: got 3
+PASS  6g. slot replace succeeds: got true
+PASS  7a. factory table has no unbound action: got []
+PASS  7b. force-bind reports what it stranded: got ["jump"]
+PASS  7c. probe surfaces the stranded action: got true
+PASS  7d. and says it is not stranded on both devices: got false
+PASS  7e. conflicts is still empty (this is the other failure): got []
+      7. jump on kbm after the force-bind: {"chords":[],"glyph":"—"}
+PASS  8a. direction preserved at every angle (deg error): got 0.004599999999982174
+PASS  8b. magnitude constant across angles: got 0.00009999999999998899
+      8. constant magnitude at R=0.75: 0.6731
+PASS  8c. deadzone is silent below the inner band: got true
+PASS  8d. no step discontinuity at the band edge: got true
+      8. first live sample: {"r":0.245,"mag":0.0021}
+PASS  8e. trigger latches at 0.35: got true
+PASS  8f. trigger holds at 0.30 (hysteresis): got true
+PASS  8g. trigger releases below 0.28: got false
+      8. trigger analog pass-through: [0,0.35,0.3,0,0]
+PASS  9a. tap produced a press: got true
+      9. buffer last true / first false: {"lastBuffered":{"t":0.1833,"buffered":true},"firstNot":{"t":0.2,"buffered":false}}
+PASS  9b. buffer expires at 0.20 s (+/- one fixed step): got true
+PASS  9b'. and is still live just before it: got true
+PASS  9c. consume() returns true exactly once: got [true,false]
+PASS  10a. no device strobe under a held stick (180 polls): got 0
+      10. device after the hold: {"delta":0,"device":"pad","style":"playstation"}
+PASS  11a. held before disconnect: got true
+PASS  11b. disconnect releases everything: got []
+PASS  11c. disconnect zeroes move: got 0
+      12. device events / glyphs: {"events":1,"last":{"kind":"pad","style":"playstation","id":"DualSense Wireless Controller (STANDARD GAMEPAD)"},"glyphs":{"jump":"✕","interact":"▢","menu":"Options"}}
+PASS  12a. pad claims the prompts: got "pad"
+PASS  12b. PlayStation glyphs: got {"jump":"✕","interact":"▢","menu":"Options"}
+PASS  12c. stick auto-repeats in a menu: got true
+      12. navUp downs in 1.33 s: 9
+PASS  12d. southpaw permutes the axis map: got [2,3,0,1]
+PASS  12e. per-stick invert applies: got true
+PASS  13a. rebind survived a real page reload: got ["KeyF","KeyG"]
+PASS  13b. the persisted chord actually drives the action: got true
+      14. before / after the alt-tab: {"before":{"device":"kbm","switches":2,"glyph":"Space"},"blurred":{"focused":false,"samples":180},"forcedSamples":0,"forced":{"samples":180,"edges":0,"pending":0},"after":{"device":"kbm","switches":2,"glyph":"Space"},"axesRaw":[0.3,0,0,0]}
+PASS  14a. keyboard owned the prompts before: got "kbm"
+PASS  14b. a forced poll while blurred samples nothing: got 0
+PASS  14c. a drifting pad does not steal the prompts on return: got "kbm"
+PASS  14d. and no switch was spent: got 0
+PASS  14e. prompts still read as keyboard: got "Space"
+PASS  15a. input:focus emits once per real transition: got 2
+PASS  15b. and names the direction: got [false,true]
+      15. input:focus payloads: [{"focused":false,"reason":"blur"},{"focused":true,"reason":"focus"}]
+PASS  16a. pad driving before the blur: got true
+      16. across ~120 real task boundaries: {"samples":0,"edges":0,"held":[],"move":{"x":0,"y":0,"mag":0,"source":"none"}}
+PASS  16b. the timer's own sweeps are gated too: got 0
+PASS  16c. no edge across real task boundaries: got 0
+PASS  16d. still nothing held: got []
+PASS  16e. still no move: got 0
+PASS  17. clean console and no failed requests: got []
+
+ALL PASS

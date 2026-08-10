@@ -25,6 +25,7 @@ const gate = c => {
   const bits = [];
   if (c.minS !== undefined) bits.push(`S ≥ ${c.minS}`);
   if (c.maxS !== undefined) bits.push(`S < ${c.maxS}`);
+  if (c.minV !== undefined) bits.push(`V > ${c.minV}`);
   if (c.minY !== undefined) bits.push(`Y > ${c.minY}`);
   return bits.length ? bits.join(', ') : '—';
 };
@@ -44,7 +45,17 @@ const block = [
   '',
   '**The order matters.** ' + arcs.note.split('Classification is in ')[1].replace(/^PRIORITY ORDER/, 'Classification is in priority order'),
   '',
+  `**The substance gate.** ${arcs.substanceGate.rule}`,
+  '',
+  `*Why:* ${arcs.substanceGate.why}`,
+  '',
+  `*Symmetry:* ${arcs.substanceGate.symmetry}`,
+  '',
+  `*Grey:* ${arcs.greyNote}`,
+  '',
   `${arcs.emptyArcs}`,
+  '',
+  `${arcs.roundTwoShares}`,
   '',
   END
 ].join('\n');

@@ -1,0 +1,113 @@
+{
+  "errors": [],
+  "rows": [
+    {
+      "band": "walk",
+      "deg": 45,
+      "v0": 2.4,
+      "timeToFaceNew": 0.1333,
+      "speedAtArrive": 2.184,
+      "minSpeed": 2.184,
+      "speedKeptPct": 91,
+      "recoverSeconds": 0.0167,
+      "stateAtArrive": "walk",
+      "arcLength": 0.3278
+    },
+    {
+      "band": "walk",
+      "deg": 90,
+      "v0": 2.4,
+      "timeToFaceNew": 0.2833,
+      "speedAtArrive": 2.3371,
+      "minSpeed": 2.184,
+      "speedKeptPct": 97.3772,
+      "recoverSeconds": 0.0167,
+      "stateAtArrive": "walk",
+      "arcLength": 0.5928
+    },
+    {
+      "band": "walk",
+      "deg": 135,
+      "v0": 2.4,
+      "timeToFaceNew": 0.4167,
+      "speedAtArrive": 2.3109,
+      "minSpeed": 2.184,
+      "speedKeptPct": 96.2885,
+      "recoverSeconds": 0.0167,
+      "stateAtArrive": "walk",
+      "arcLength": 0.7325
+    },
+    {
+      "band": "run",
+      "deg": 45,
+      "v0": 5.6,
+      "timeToFaceNew": 0.2,
+      "speedAtArrive": 5.3338,
+      "minSpeed": 5.096,
+      "speedKeptPct": 95.2465,
+      "recoverSeconds": 0.0167,
+      "stateAtArrive": "run",
+      "arcLength": 1.1205
+    },
+    {
+      "band": "run",
+      "deg": 90,
+      "v0": 5.6,
+      "timeToFaceNew": 0.3833,
+      "speedAtArrive": 5.2316,
+      "minSpeed": 5.096,
+      "speedKeptPct": 93.4206,
+      "recoverSeconds": 0.0167,
+      "stateAtArrive": "run",
+      "arcLength": 1.8641
+    },
+    {
+      "band": "run",
+      "deg": 135,
+      "v0": 5.6,
+      "timeToFaceNew": 0.45,
+      "speedAtArrive": 5.2197,
+      "minSpeed": 2.8267,
+      "speedKeptPct": 93.2082,
+      "recoverSeconds": 0.0333,
+      "stateAtArrive": "run",
+      "arcLength": 1.4293
+    },
+    {
+      "band": "sprint",
+      "deg": 45,
+      "v0": 8.3,
+      "timeToFaceNew": 0.3,
+      "speedAtArrive": 7.8093,
+      "minSpeed": 7.553,
+      "speedKeptPct": 94.0882,
+      "recoverSeconds": 0.0333,
+      "stateAtArrive": "sprint",
+      "arcLength": 2.5441
+    },
+    {
+      "band": "sprint",
+      "deg": 90,
+      "v0": 8.3,
+      "timeToFaceNew": 0.5667,
+      "speedAtArrive": 7.571,
+      "minSpeed": 7.553,
+      "speedKeptPct": 91.2174,
+      "recoverSeconds": 0.05,
+      "stateAtArrive": "sprint",
+      "arcLength": 4.213
+    },
+    {
+      "band": "sprint",
+      "deg": 135,
+      "v0": 8.3,
+      "timeToFaceNew": 0.55,
+      "speedAtArrive": 7.801,
+      "minSpeed": 2.7533,
+      "speedKeptPct": 93.9885,
+      "recoverSeconds": 0.0333,
+      "stateAtArrive": "sprint",
+      "arcLength": 1.9181
+    }
+  ]
+}

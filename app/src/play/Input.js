@@ -31,6 +31,11 @@ import {
 } from "./bindings.js";
 
 const BIND_STORE = "variable-star/bindings/1";
+/**
+ * Chords one action may hold on one device. A fourth is *refused* rather than silently truncated —
+ * see `bind()` — because a settings screen that is told a write succeeded will repaint itself
+ * around a binding that does not exist. Surfaced to that screen as `tuning.maxSlots` in the probe.
+ */
 const MAX_SLOTS = 3;
 /**
  * Pending transitions held for one action. One is applied per fixed step, so this is the depth of
@@ -118,9 +123,16 @@ function freshState() {
  *    help with it: `navigator.getGamepads()` hands back a *level*, so a naive implementation is
  *    only as reliable as the render rate and as honest as the pad's resting voltage. Here:
  *
- *      · the pad is sampled on its own 250 Hz timer *and* at the top of every fixed step *and*
- *        once per rendered frame, so a burst of eight fixed steps inside one slow frame is eight
- *        chances to see an edge rather than one;
+ *      · the pad is sampled on its own **250 Hz timer**, and that timer alone is what buys the
+ *        sub-frame resolution. `fixed` and `frame` call the same sweep, but for real hardware it
+ *        is wall-clock gated at 4 ms, so eight simulation steps inside one JS task produce *one*
+ *        sample, not eight — `navigator.getGamepads()` does not update mid-task, so there is
+ *        nothing there to see. Those two extra call sites exist to cover a timer that a throttled
+ *        or starved tab has stopped delivering, not to multiply the sample rate;
+ *      · **no pad edge is born while the game does not have focus.** `_focused` gates the sweep,
+ *        so alt-tabbing with a thumb on the stick cannot have the still-held button re-observed
+ *        as a fresh press on the next step — and `releaseAll` zeroes the analog vectors too,
+ *        because move and look read the axes directly and would otherwise never see the release;
  *      · every observed edge is **latched** — the comparison is against the last phase this
  *        module actually emitted, never against the last raw poll — so a button that goes down
  *        and back up before the simulation catches up still delivers a `down` and *then* an `up`,
@@ -161,6 +173,22 @@ export class Input {
     this.simTime = 0;
     this.context = "play";
     this._menuDepth = 0;
+
+    /**
+     * Does this window still have the player's hands? The keyboard answers this for free — a
+     * blurred window simply stops receiving `keydown` — but the pad does not: `getGamepads()`
+     * keeps reporting the physically-held button of a player who is now typing in Discord. So the
+     * focus state is tracked explicitly and gates the whole pad sweep (`_samplePad`).
+     *
+     * Two independent facts, because they can disagree: a window can be blurred while its tab is
+     * still visible (click the URL bar), and a tab can be hidden while its window still holds
+     * focus (switch tabs). Either one means "not playing". Both start true rather than being read
+     * from `document.hasFocus()`, which reports false in some headless review runs and would
+     * silently disable the pad in exactly the harness that has to prove it works.
+     */
+    this._windowFocused = true;
+    this._pageVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    this._focused = true;
 
     this.device = KBM;
     this.padStyle = "xbox";
@@ -234,14 +262,7 @@ export class Input {
     this._rampT = 0;
     // `hw` is the untouched gamepad axis, `mapped` is after the axis binding's inversion,
     // `out` is after the radial deadzone and response curve. A reviewer can check every stage.
-    const zeroStick = () => ({
-      hw: { x: 0, y: 0 },
-      zero: { x: 0, y: 0 },
-      mapped: { x: 0, y: 0 },
-      out: { x: 0, y: 0 },
-      mag: 0,
-    });
-    this.sticks = { left: zeroStick(), right: zeroStick() };
+    this.sticks = { left: zeroStickView(), right: zeroStickView() };
 
     this._capture = null;
     this._lastEmittedMove = { x: 0, y: 0 };
@@ -403,10 +424,17 @@ export class Input {
   }
 
   /**
-   * The pad is also sampled once per rendered frame. `fixed` can run eight times inside a single
-   * slow frame, and every one of those steps would otherwise be looking at the same stale
-   * snapshot; sampling here as well means a hitching machine still gets a fresh reading between
-   * frames rather than one reading per hitch.
+   * A third call site for the sweep, and worth being precise about what it does and does not buy.
+   *
+   * It does **not** multiply the sample rate. `_samplePad` is wall-clock gated at 4 ms for real
+   * hardware, so this call and the eight `fixed` calls inside one slow frame collapse to at most
+   * one actual read of `navigator.getGamepads()` — which is correct, because the browser does not
+   * refresh the gamepad snapshot in the middle of a JS task anyway.
+   *
+   * What it buys is coverage when the 250 Hz timer is not running: a background or throttled tab
+   * clamps `setInterval`, and some browsers coalesce timers hard under load. Two independent
+   * paths into the same rate-gated sweep means the pad keeps being read whenever *anything* in
+   * the app is still ticking.
    */
   frame() {
     this._samplePad();
@@ -547,21 +575,112 @@ export class Input {
     if (st.active) this._setActive(name, st, false, this.simTime);
   }
 
-  /** Alt-tab, focus loss or a context change must never leave the avatar sprinting into a wall. */
+  /**
+   * Alt-tab, focus loss or a context change must never leave the avatar sprinting into a wall.
+   *
+   * The action state machine is only half of that, and on a pad it is the *smaller* half. Move and
+   * look do not go through `held()` at all — `_updateMove` and `_updateLook` call `_readStick`,
+   * which reads `_padAxes` straight out of the last sample — so clearing every action latch still
+   * leaves a player who tabbed away mid-stride walking at `mag = 1` and yawing at full stick rate,
+   * for as long as they are gone. Both halves have to be zeroed, and `_focused` has to stop the
+   * next sweep from putting the axes straight back (see `_samplePad`).
+   *
+   * The zero move is *emitted*, not just stored. A listener that latched on `input:move` and has
+   * been told nothing since is a listener that is still moving; suppressing the one signal that
+   * says "stop" because the value happens to be zero is exactly the wrong economy.
+   */
   releaseAll() {
     for (const [name, st] of this.actions) this._forceRelease(name, st);
     this._events.length = 0;
     this._mouse.dx = 0;
     this._mouse.dy = 0;
+    this._mouseTravel = 0;
     this._lastClient = null;
+
     // The latches go too: whatever is still physically held will be re-observed — and therefore
-    // re-emitted as a fresh edge — by the next sample after focus returns.
+    // re-emitted as exactly one fresh edge — by the first sample after focus returns.
     this._padLatch = Object.create(null);
     this._padStick = Object.create(null);
+    this._padVal = Object.create(null);
+    // The analog picture. `_padAxes` is what `_readStick` reads, `_padAxesRaw` is what the next
+    // `_applyZero` would rebuild it from, so both have to go or the vector comes back.
+    for (let i = 0; i < 4; i++) {
+      this._padAxesRaw[i] = 0;
+      this._padAxes[i] = 0;
+    }
+    this._padAxisWoke = false;
+
+    // The derived vectors, so a probe taken on the very step of the blur is already honest rather
+    // than honest one step later.
+    const wasMoving = this._lastEmittedMove.x !== 0 || this._lastEmittedMove.y !== 0;
+    this.move.x = 0;
+    this.move.y = 0;
+    this.moveMag = 0;
+    this.moveSource = "none";
+    this.look.dx = 0;
+    this.look.dy = 0;
+    this.lookSource = "none";
+    this._lastEmittedMove.x = 0;
+    this._lastEmittedMove.y = 0;
     this._rampT = 0;
+    this.lookBoost = 1;
+    this.sticks.left = zeroStickView();
+    this.sticks.right = zeroStickView();
+    if (wasMoving) this.signals.emit("input:move", { x: 0, y: 0, mag: 0, device: "none" });
+
     // Nothing is held any more, so a claim parked behind the dwell describes a hand that is no
     // longer on the hardware. Whatever the player picks up next will ask again.
     this._pendingDevice = null;
+  }
+
+  /**
+   * Focus lost — a real `blur`, or a tab that went to the background. Everything stops, and
+   * `_focused` keeps it stopped: without that gate the very next `_samplePad` (which `fixed` calls
+   * at the top of every step) re-observes the still-held button against a cleared latch, calls it
+   * a fresh `down`, and hands back every action the release just took away.
+   */
+  _loseFocus(reason) {
+    const was = this._focused;
+    this._focused = this._windowFocused && this._pageVisible;
+    if (this._focused || !was) return;
+    this.releaseAll();
+    this.signals.emit("input:focus", { focused: false, reason });
+  }
+
+  /**
+   * A real user gesture arrived, so the document has focus whatever the event stream claimed.
+   * Belt and braces for browsers that skip the `focus` event on a restore; a no-op in the normal
+   * case, which is why it is safe to call from a hot path.
+   */
+  _proveFocus(reason) {
+    if (this._focused) return;
+    this._windowFocused = true;
+    this._pageVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+    this._gainFocus(reason);
+  }
+
+  /**
+   * Focus regained. The pad is re-baselined rather than resumed.
+   *
+   * `_padRefInit = false` makes the first sample after the return re-freeze `_padWakeRef` and
+   * `_padRestRef` at wherever the sticks actually are, so a stick that is merely *drifting* — a
+   * worn pad on the desk at 0.30, above both `padWakeAxisDelta` and the calibration rail — is not
+   * read as a fresh "the pad woke up" claim and does not take the prompt glyphs off the keyboard
+   * the player just alt-tabbed with. The latches are already clear from `releaseAll`, so a button
+   * or a stick somebody is genuinely still holding produces exactly one `down` edge, which is
+   * right: it *is* down, and the game has to know.
+   */
+  _gainFocus(reason) {
+    const was = this._focused;
+    this._focused = this._windowFocused && this._pageVisible;
+    if (!this._focused || was) return;
+    this._padLatch = Object.create(null);
+    this._padStick = Object.create(null);
+    this._padRefInit = false;
+    this._padAxisWoke = false;
+    this._padStill = 0;
+    this._padPollAt = -1e9; // the first sweep after the return should not wait out the rate gate
+    this.signals.emit("input:focus", { focused: true, reason });
   }
 
   // ----------------------------------------------------------------- move
@@ -781,6 +900,14 @@ export class Input {
    * `padIdlePollMs` (200 ms) before one ever has — the keyboard-only majority pays nothing.
    */
   _samplePad(force = false) {
+    // Before the rate gate, before `force`, before anything. This is the line that makes
+    // `releaseAll` actually hold on a pad: `fixed` calls this at the top of every step, and a
+    // single unguarded sweep would re-observe the still-held button against the cleared latch and
+    // re-latch every action the blur just released. `force` deliberately does not override it —
+    // an explicit poll from the test hook while the window is blurred must see the same silence a
+    // player does, or the guarantee is only true when nobody is looking.
+    if (!this._focused) return;
+
     if (!this._virtual) {
       const now = nowMs();
       const gate = this._padSeen ? TUNING.padPollMs : TUNING.padIdlePollMs;
@@ -971,6 +1098,9 @@ export class Input {
    * `maxOffset` rail means a genuinely deflected stick is never mistaken for rest.
    */
   _updateRest(step) {
+    // A blurred window is not measuring anything: the axes it would calibrate against are the
+    // zeroes `releaseAll` wrote, not the pad.
+    if (!this._focused) return;
     if (!this.padConnected || !this._padRefInit) {
       this._padStill = 0;
       return;
@@ -1111,6 +1241,11 @@ export class Input {
   /**
    * Hand the prompts to whoever the dwell turned away, as soon as the dwell allows it. Runs once
    * per fixed step so the timing is on the simulation clock and a reviewer can reproduce it.
+   *
+   * A parked claim is up to a dwell old, and a lot can happen in 0.35 s — so it is honoured only
+   * if its owner is still the device that spoke most recently. Otherwise one stray keystroke while
+   * a player is steering with the stick would take the prompts a third of a second later, when the
+   * hands that made the claim have already gone back to the pad.
    */
   _settleDevice() {
     const kind = this._pendingDevice;
@@ -1121,6 +1256,7 @@ export class Input {
     }
     if (this.simTime - this._deviceAt < TUNING.deviceDwell) return;
     this._pendingDevice = null;
+    if (this._activityAt[kind] < this._activityAt[this.device]) return;
     this._wake(kind);
   }
 
@@ -1145,6 +1281,10 @@ export class Input {
       (e) => {
         if (isEditable(e.target)) return;
         if (e.repeat) return;
+        // A key event is proof of focus. Some window managers restore a tab without ever firing
+        // `focus`, and without this the pad would stay gated for the rest of the session while the
+        // keyboard carried on working — a bug that only a pad player would ever hit.
+        this._proveFocus("keydown");
         this._wake(KBM);
         if (this._pushChord(e.code, "down", 1)) e.preventDefault();
       },
@@ -1160,6 +1300,7 @@ export class Input {
       "mousedown",
       (e) => {
         if (isEditable(e.target)) return;
+        this._proveFocus("mousedown");
         this._wake(KBM);
         if (this._pushChord(`Mouse${e.button}`, "down", 1)) e.preventDefault();
         // Only a click on the world itself grabs the pointer. The overlay is pointer-transparent
@@ -1201,9 +1342,22 @@ export class Input {
       if (this.context === "menu" || isEditable(e.target)) return;
       e.preventDefault();
     });
-    on(window, "blur", () => this.releaseAll());
+    // Focus is tracked as two independent facts and collapsed to one gate, because the browser
+    // can give you either one without the other: clicking the URL bar blurs the window while the
+    // tab stays visible, and switching tabs hides the page while the window keeps focus. Either
+    // one means the player's hands are somewhere else.
+    on(window, "blur", () => {
+      this._windowFocused = false;
+      this._loseFocus("blur");
+    });
+    on(window, "focus", () => {
+      this._windowFocused = true;
+      this._gainFocus("focus");
+    });
     on(document, "visibilitychange", () => {
-      if (document.visibilityState !== "visible") this.releaseAll();
+      this._pageVisible = document.visibilityState === "visible";
+      if (this._pageVisible) this._gainFocus("visible");
+      else this._loseFocus("hidden");
     });
     on(document, "pointerlockchange", () => {
       if (document.pointerLockElement) this._everLocked = true;
@@ -1235,6 +1389,10 @@ export class Input {
   }
 
   _onMouseMove(e) {
+    // The mouse's version of the pad gate. A blurred window still receives `mousemove` whenever
+    // the pointer crosses it — click the URL bar, sweep the cursor back over the game, and an
+    // ungated handler would turn the camera for a player who is typing somewhere else.
+    if (!this._focused) return;
     const locked = this._isLocked();
     let dx = 0;
     let dy = 0;
@@ -1379,31 +1537,89 @@ export class Input {
   }
 
   /**
-   * Bind a chord to an action.
-   * Returns `{ ok, conflicts, chords }`. Without `force` a conflict is refused and nothing
-   * changes, so a settings screen can show the clash and let the player decide.
+   * Every action that has no chord at all on a device — the opposite failure to a conflict, and
+   * the one the rebinding layer used to be blind to. `bind("dash","Space",{force:true})` strips
+   * Space from `jump`, and if Space was jump's only chord the player now owns a jump they cannot
+   * perform: `allConflicts()` is empty, the table is internally consistent, and the prompt renders
+   * "—". A settings screen has to be able to see that, so it is reported here and in the probe.
+   *
+   * Returned per device rather than per action, because an action bound on the pad and stranded on
+   * the keyboard is a real and different problem from one stranded on both — which is what
+   * `both` tells you without a second call.
    */
-  bind(action, chord, { slot = null, force = false, save = true } = {}) {
+  unboundActions(device = null) {
+    const devices = device ? [device] : [KBM, PAD];
+    const empty = (d, a) => (this.bindings[d]?.[a] ?? []).length === 0;
+    const out = [];
+    for (const d of devices) {
+      for (const action of ACTION_LIST) {
+        if (!empty(d, action)) continue;
+        out.push({
+          device: d,
+          action,
+          ctx: [...ACTIONS[action].ctx],
+          both: empty(KBM, action) && empty(PAD, action),
+        });
+      }
+    }
+    return out;
+  }
+
+  /**
+   * Bind a chord to an action.
+   *
+   * Returns `{ ok, reason, conflicts, chords }`, and every refusal leaves the table byte-identical
+   * — including the capacity refusal, which is why the slot check runs *before* the conflicting
+   * chords are stripped off their old owners. There are exactly three ways to be told no:
+   *
+   *   `unknown-action` / `unknown-chord`  the argument is not part of the vocabulary
+   *   `conflict`                          another live action already owns this chord; pass
+   *                                       `{force:true}` to take it, and the loser is reported
+   *                                       back in `replaced` (and in `stranded` if that was its
+   *                                       last chord on the device)
+   *   `slots-full`                        the action already holds `MAX_SLOTS` chords. Previously
+   *                                       this path pushed the chord, truncated the list back to
+   *                                       three, threw the new chord away and still answered
+   *                                       `ok:true` — a lie a settings screen would repaint
+   *                                       itself around. Pass `{slot:n}` to replace a specific
+   *                                       one, or `{evict:true}` to drop the oldest.
+   */
+  bind(action, chord, { slot = null, force = false, evict = false, save = true } = {}) {
     if (!ACTIONS[action]) return { ok: false, reason: "unknown-action", conflicts: [] };
     if (!isKnownChord(chord)) return { ok: false, reason: "unknown-chord", conflicts: [] };
     const device = chordDevice(chord);
     const conflicts = this.conflictsFor(action, chord);
     if (conflicts.length && !force) return { ok: false, reason: "conflict", conflicts };
 
+    const list = this.bindings[device][action] ?? (this.bindings[device][action] = []);
+    const existing = list.indexOf(chord);
+    const wantSlot = Number.isInteger(slot) && slot >= 0 ? slot : null;
+    // A slot index inside the list replaces and cannot grow it. Anything else appends — and an
+    // append into a full list is the case that has to be refused, because it is the only one that
+    // would need a truncation to stay legal.
+    if ((wantSlot === null || wantSlot >= list.length) && existing < 0 && list.length >= MAX_SLOTS) {
+      if (!evict) {
+        return { ok: false, reason: "slots-full", conflicts, chords: [...list], slots: MAX_SLOTS };
+      }
+      list.shift(); // explicit, requested eviction of the oldest chord
+    }
+
     for (const other of conflicts) {
       this.bindings[device][other] = (this.bindings[device][other] ?? []).filter((c) => c !== chord);
     }
-    const list = this.bindings[device][action] ?? (this.bindings[device][action] = []);
-    const existing = list.indexOf(chord);
     if (existing >= 0) list.splice(existing, 1);
-    if (slot === null || slot >= list.length) list.push(chord);
-    else list[slot] = chord;
-    if (list.length > MAX_SLOTS) list.length = MAX_SLOTS;
+    const at = wantSlot !== null && wantSlot < list.length ? wantSlot : null;
+    if (at === null) list.push(chord);
+    else list[at] = chord;
 
     this._rebuildIndex();
     if (save) this.saveBindings();
-    this.signals.emit("input:rebind", { action, device, chord, slot, replaced: conflicts });
-    return { ok: true, conflicts, chords: [...list] };
+    // Which of the actions this bind took a chord from is now unreachable on this device? The
+    // caller asked for one change and may have caused two; it should not have to diff the table
+    // to find out.
+    const stranded = conflicts.filter((other) => (this.bindings[device][other] ?? []).length === 0);
+    this.signals.emit("input:rebind", { action, device, chord, slot: at, replaced: conflicts, stranded });
+    return { ok: true, conflicts, stranded, chords: [...list] };
   }
 
   unbind(action, chord, { save = true } = {}) {
@@ -1679,6 +1895,11 @@ export class Input {
         pending: this._events.length,
       },
       context: this.context,
+      // Focus is a *gameplay* state on a pad, not housekeeping: while `focused` is false the pad
+      // sweep does not run at all, so a reviewer reading a silent probe can tell "nothing is
+      // happening because the window is blurred" apart from "nothing is happening because input
+      // is broken".
+      focus: { focused: this._focused, window: this._windowFocused, page: this._pageVisible },
       step: this.stepIndex,
       move: { x: round4(this.move.x), y: round4(this.move.y), mag: round4(this.moveMag), source: this.moveSource },
       look: {
@@ -1698,6 +1919,9 @@ export class Input {
       held,
       actions,
       conflicts: this.allConflicts(),
+      // The other half of "is this control scheme playable": a chord two actions share, and an
+      // action no chord reaches. Both have to be visible to a rebinding screen.
+      unbound: this.unboundActions(),
       bindings: this.listBindings(),
       axes: this.listAxes(),
       sticksSwapped: this.sticksSwapped(),
@@ -1713,6 +1937,11 @@ export class Input {
         padWakeAxisDelta: TUNING.padWakeAxisDelta,
         padRest: { ...TUNING.padRest },
         padPollHz: TUNING.padPollHz,
+        trigger: { ...TUNING.trigger },
+        stickButton: { ...TUNING.stickButton },
+        // How many chords one action may hold on one device. A settings screen needs this to know
+        // when to offer "replace which one?" instead of an add button that will be refused.
+        maxSlots: MAX_SLOTS,
         sensitivity: {
           look: this._cfg("lookSensitivity", 1),
           mouse: this._cfg("lookSensitivityMouse", 1),
@@ -1764,6 +1993,10 @@ export class Input {
    *   __vsInput.setAxis("look","y",{invert:true})   __vsInput.swapSticks(true)
    *   __vsInput.pointerLock(true)   // exercise the locked mouse-look branch
    *   __vsInput.lookMode("always")  __vsInput.context("menu")   __vsInput.probe()
+   *   __vsInput.blur()  __vsInput.focus()  __vsInput.hidden(true|false)
+   *                                 // alt-tab, both routes, through the real DOM events
+   *   __vsInput.unbound()           // actions with no chord on a device
+   *   __vsInput.conflicts()         // chords two live actions share
    */
   _installTestHook() {
     const self = this;
@@ -1920,6 +2153,40 @@ export class Input {
       device() {
         return self.device;
       },
+      /**
+       * Alt-tab, simulated. These dispatch the **genuine** DOM events rather than poking the flag,
+       * so what is under test is the real listener chain: `blur` → `_loseFocus` → `releaseAll` →
+       * `_samplePad` gated. `focus()` is the return trip. `hidden(true|false)` does the same for
+       * the tab-switch path, which reaches the same place by a different route.
+       */
+      blur() {
+        window.dispatchEvent(new Event("blur"));
+        return { focused: self._focused, held: self.probeState().held };
+      },
+      focus() {
+        window.dispatchEvent(new Event("focus"));
+        return { focused: self._focused, held: self.probeState().held };
+      },
+      hidden(on = true) {
+        // Override the getter and fire the real event, so the module's own listener does the
+        // reading. Poking `_pageVisible` would test the hook rather than the handler.
+        try {
+          Object.defineProperty(document, "visibilityState", {
+            configurable: true,
+            get: () => (on ? "hidden" : "visible"),
+          });
+        } catch {
+          /* a browser that refuses the override still gets the event below */
+        }
+        document.dispatchEvent(new Event("visibilitychange"));
+        return { focused: self._focused, held: self.probeState().held };
+      },
+      unbound() {
+        return self.unboundActions();
+      },
+      conflicts() {
+        return self.allConflicts();
+      },
       bind(action, chord, opts) {
         return self.bind(action, chord, opts);
       },
@@ -1974,6 +2241,17 @@ function round4(v) {
 
 function round6(v) {
   return Math.round(v * 1e6) / 1e6;
+}
+
+/** A centred stick, in the same four-stage shape `_readStick` reports. */
+function zeroStickView() {
+  return {
+    hw: { x: 0, y: 0 },
+    zero: { x: 0, y: 0 },
+    mapped: { x: 0, y: 0 },
+    out: { x: 0, y: 0 },
+    mag: 0,
+  };
 }
 
 /** Probes must be JSON-safe and honest, which means a value, not a window onto live state. */

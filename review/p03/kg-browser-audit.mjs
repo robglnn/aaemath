@@ -7,6 +7,11 @@
  * Round 2 adds the form-gate columns, because "the JSON parses" was never the interesting claim —
  * the interesting claim is that the fields P16 will read to refuse a judge2 item are actually
  * present in the bytes the browser loads.
+ *
+ * Round 3 adds the concept-closure columns and the gate fields, for the same reason: the ordering
+ * error this round fixes was invisible to every count on the previous capture. The browser now
+ * recomputes the transitive ancestor closure itself and reports which nodes serve an item carrying
+ * a power on a letter, and whether every one of them has `oo-structure` upstream.
  */
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -56,6 +61,29 @@ const pageScript = `
     }
     const same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
 
+    // Round 3: transitive ancestor closure, recomputed here rather than trusted. A node whose
+    // misconception text serves an item carrying a power on a letter must have oo-structure
+    // upstream, or the learner meets x-squared for the first time inside a scored item.
+    const anc = new Map();
+    const walk = (id) => {
+      if (anc.has(id)) return anc.get(id);
+      const s = new Set(); anc.set(id, s);
+      for (const p of (byId.get(id) ? byId.get(id).prerequisites : [])) {
+        if (!byId.has(p)) continue;
+        s.add(p);
+        for (const u of walk(p)) s.add(u);
+      }
+      return s;
+    };
+    for (const n of kg.nodes) walk(n.id);
+    const expo = /([a-z]\\s*[²³]|[a-z]\\s*\\^\\s*[2-9]|exponent|squared|cubed|raised to|same power)/i;
+    const expoNodes = [], expoGaps = [];
+    for (const n of kg.nodes) {
+      if (!n.misconceptions.some(m => expo.test(m.description + ' ' + m.diagnosticSignature))) continue;
+      expoNodes.push(n.id);
+      if (n.id !== 'oo-structure' && !anc.get(n.id).has('oo-structure')) expoGaps.push(n.id);
+    }
+
     const rows = [
       ['nodes', kg.nodes.length],
       ['prerequisiteEdges', edges],
@@ -82,6 +110,15 @@ const pageScript = `
       ['relearn cap / requiresPriorMastery', M.spacing.relearnLearnRateCap + ' / ' + String(M.spacing.relearnRequiresPriorMastery)],
       ['scorable set derived in-browser', derived.join(', ')],
       ['derivation matches shipped arrays', String(same(derived, M.forms.scored) && same(derived, M.bkt.formsEligibleForMastery))],
+      ['SEP', ''],
+      ['consolidation items / passAtLeast', M.spacing.consolidation.items + ' / ' + M.spacing.consolidation.passAtLeast],
+      ['retention passAtLeast / thresholdRecheck', M.spacing.retentionCheck.passAtLeast + ' / ' + String(M.spacing.retentionCheck.requiresThresholdAtCheck)],
+      ['forms.cycleIndexedOn', String(M.forms.cycleIndexedOn)],
+      ['SEP', ''],
+      ['like-terms-id prerequisites', byId.get('like-terms-id').prerequisites.join(', ')],
+      ['like-terms-id ancestor closure', [...anc.get('like-terms-id')].join(', ')],
+      ['nodes serving an item with x-power', expoNodes.join(', ')],
+      ['of those, missing oo-structure upstream', expoGaps.length ? expoGaps.join(', ') : '0  <- concept closure holds'],
     ];
 
     const el = document.createElement('div');
@@ -89,7 +126,7 @@ const pageScript = `
       'border:1px solid #6fb2ff;border-radius:10px;padding:22px 28px;color:#dceaff;' +
       "font:13px/1.55 ui-monospace,Menlo,Consolas,monospace;white-space:pre;box-shadow:0 12px 40px rgba(0,0,0,.5)";
     el.textContent = 'P03 content audit  -  parsed by the real app, in the real browser\\n\\n' +
-      rows.map(([k, v]) => (k === 'SEP' ? '' : k.padEnd(38) + String(v))).join('\\n');
+      rows.map(([k, v]) => (k === 'SEP' ? '' : k.padEnd(44) + String(v))).join('\\n');
     document.body.appendChild(el);
   })();
   return done;
@@ -105,8 +142,8 @@ const r = spawnSync(
     "tools/review.mjs",
     "shot",
     outPath,
-    "--width=1400",
-    "--height=900",
+    "--width=1600",
+    "--height=1000",
     `--script=eval:return (new Function(atob("${b64}")))();`,
   ],
   { cwd: root, encoding: "utf8" }

@@ -1,25 +1,39 @@
-Worked trace — "eq-two-step" (Two-step equations), difficulty band 3
+Worked trace - "eq-two-step" (Two-step equations), difficulty band 3
   band parameters:  prior 0.18   learn 0.2   slip 0.12   guess 0.07   difficulty centre 0 logit
   gate: P >= 0.95, >= 6 scored, >= 3 at band, >= 2 forms
+  M2/M3 count phases [solo] only; phases [model, guided-2, guided-3] are inert in both directions
 
-  learner enters with theta = -0.30 and P(known) = 0.1800 (the band prior)
+  learner enters with theta = -0.30 and P(known) = 0.1800 (the band prior), K = 0.35
 
-  #  phase   item b   P(correct|theta)  resp  P(known) after   theta after   scored/atBand/forms
-  1  model    -0.60           0.5744   wrong          0.2220         -0.50   1/0/1   [construct]
-       error matches misconception "divide-before-clearing-constant" — Divides by the coefficient while the constant is still attached, and divides only part of the side.
-  2  guided   -0.60           0.5247    ok           0.8256         -0.33   2/0/1   [construct]
-       after the modelled example, repeats the method on a scaffolded item
-  3  solo     -0.60           0.5659    ok           0.9920         -0.18   3/0/2   [generate]
-       same method, scaffold reduced one level
-  4  solo      0.30           0.3816   wrong          0.9530         -0.32   4/1/2   [construct]
-       first item at the certification pitch; error matches "inverse-order-inverted" — Undoes the addition and then multiplies instead of dividing.
-  5  guided    0.30           0.3506    ok           0.9969         -0.09   5/2/3   [repair]
-       recovers on a same-trap item drawn from that misconception's variant pool
-  6  solo      0.30           0.4039    ok           0.9999          0.12   6/3/3   [generate]
-       clean, unscaffolded, at band
+   #  phase     item b  P(correct)  resp    guess   P(known) after   theta after   scored/atBand/forms  form
+   1  model     -0.60      0.5744   ok          -          0.1800         -0.30    0/0/0                construct
+      watches the machine do it, then makes the last move itself   [inert: a scaffold the director chose - no posterior, no counters, either way]
+   2  guided-1  -0.60      0.5744   ok     0.1400          0.6638         -0.15    0/0/0                construct
+      the first step is already placed; repeats the method on the rest   [scored, NOT mastery-eligible: guided-1 moves P(known) and never fills M2 or M3]
+   3  guided-2  -0.60      0.6104   ok          -          0.6638         -0.15    0/0/0                construct
+      answer space constrained to legal moves; builds it   [inert: a scaffold the director chose - no posterior, no counters, either way]
+   4  guided-3  -0.60      0.6104   ok          -          0.6638         -0.15    0/0/0                construct
+      hint surface available but not needed; promotes itself to solo   [inert: a scaffold the director chose - no posterior, no counters, either way]
+   5  solo      -0.60      0.6104  wrong   0.0700          0.3625         -0.36    1/0/1                construct
+      first unaided item; error matches "divide-before-clearing-constant" - Divides by the coefficient while the constant is still attached, and divides only part of the side.
+   6  guided-3  -0.60      0.5586   ok          -          0.3625         -0.36    1/0/1                construct
+      same-trap item drawn from that misconception's variant pool   [inert: a scaffold the director chose - no posterior, no counters, either way]
+   7  solo      -0.60      0.5586   ok     0.0700          0.9018         -0.21    2/0/1                construct
+      clean
+   8  solo       0.30      0.3751  wrong   0.0700          0.6339         -0.34    3/1/2                generate
+      certification pitch has fired; error matches "inverse-order-inverted" - Undoes the addition and then multiplies instead of dividing.
+   9  guided-3  -0.60      0.5643   ok          -          0.6339         -0.34    3/1/2                construct
+      recovers, still at the certification pitch   [inert: a scaffold the director chose - no posterior, no counters, either way]
+  10  solo      -0.60      0.5643   ok     0.0700          0.9649         -0.19    4/1/2                construct
+      at band, unscaffolded, clean
+  11  solo       0.30      0.3801   ok     0.0700          0.9977          0.03    5/2/3                repair
+      at band, unscaffolded, clean
+  12  solo       0.30      0.4324   ok     0.0700          0.9999          0.23    6/3/3                generate
+      at band, unscaffolded, clean
 
-  after 6 scored opportunities: P(known) = 0.9999, scored 6, at band 3, forms 3
-  mastery gate M1-M3: OPEN -> status becomes `provisional`
+  after 12 acquisition items: P(known) = 0.9999, scored 6, at band 3, forms 3
+  mastery gate M1-M3: OPEN at item 12 -> status becomes provisional
+  acquisition cost: 12 items, 8.5 min of item time (model 22s, guided-1 34s, guided-2 40s, guided-3 46s, solo 46s)
   next: consolidation pass (+20 min, 2 items), then a retention check no sooner than +12 h
 
 Retention check: 3 of 4, sampled uniformly over the variant pool, never hinted, forms ["construct","repair","generate"]
@@ -64,3 +78,22 @@ Why a guesser cannot get there (band 3 numbers)
   so the relearn boost is capped at 0.32 and withheld until a node has genuinely been
   mastered once (spacing.relearnRequiresPriorMastery), or the floor rises far enough that a single
   lucky answer clears M1 on its own.
+
+The second axis, in closed form: what the SCAFFOLD is worth at band 3
+  phase       modelled    true   scored?    M2/M3?   3-of-4 retention pass rate at that phase's blind rate
+  model         0.9800  0.7000        NO        NO   6.52e-1
+  guided-1      0.1400  0.0800       yes        NO   1.93e-3
+  guided-2      0.2380  0.1700        NO        NO   1.71e-2
+  guided-3      1.1900  0.8500        NO        NO   8.90e-1
+  solo          0.0700  0.0000       yes       yes   1.06e-4
+  Read the guided-3 row against the construct row of the form table above. A responder who
+  idles 12 s and reads the hint is right 0.8500 of the time, against a modelled 0.0700 if the
+  engine prices the item by form alone - which is what round 3 did. That is a factor of
+  12.1 of unearned credit per correct response, on the path every learner walks.
+  Priced honestly the phase is not scorable at all, so the response is worth nothing instead:
+  no posterior, no M2, no M3. The retention column is unchanged either way, because the check
+  is pinned to phase "solo" with hinted false - which is why a blind bot still failed L5
+  under the round-3 rules even while its P(known) was climbing on hint-reads. The defect was
+  never that a bot could certify; it was that M1, M2 and M3 filled on evidence worth nothing,
+  the certification pitch fired early, and the learner was told they had it.
+

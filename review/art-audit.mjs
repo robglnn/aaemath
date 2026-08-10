@@ -4,32 +4,61 @@
  *
  *   node review/art-audit.mjs <image.png> [--hero=x0,y0,x1,y1] [--json] [--quiet]
  *   node review/art-audit.mjs reference/brief-hero.png
+ *   node review/art-audit.mjs --seq=review/shots/p02/motion-static --hero=...
+ *   node review/art-audit.mjs f00.png f01.png f02.png --motion=static --hero=...
  *
  * Measures a PNG against the targets in design/palette.json and prints one line
  * per check. Every threshold in this file comes from that JSON — the numbers live
  * in one place. Exits 1 if any check fails.
  *
- * This is the measuring stick for design/art-direction.md §10 "How to tell if we
+ * Three sections:
+ *   CENSUS  — frame-wide statistics of one still frame
+ *   SOLVED  — constants recovered from a fit on one still frame
+ *   MOTION  — differences BETWEEN frames one fixed step apart. A still frame
+ *             cannot show dither fizz, specular shimmer, ink crawl, bloom pop or
+ *             exposure pumping; every one of those is a per-frame difference, and
+ *             quality-bar.md §1 ranks readability under motion above detail at
+ *             rest. The motion section runs whenever more than one frame is given.
+ *
+ * This is the measuring stick for design/art-direction.md §13 "How to tell if we
  * lost". A claim about how the render looks that is not one of these numbers, or a
  * pixel someone actually looked at, is not a claim.
  *
  * Boxes are normalised (0..1) fractions of the frame.
  */
 import { chromium } from 'playwright';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { readPNG, lum as pxLum, hsv as pxHsv } from './p02-png.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const flag = (n, d = null) => { const a = args.find(s => s.startsWith(`--${n}=`)); return a ? a.split('=').slice(1).join('=') : d; };
 const has = (n) => args.includes(`--${n}`);
-const imgArg = args.find(a => !a.startsWith('--'));
-if (!imgArg) { console.error('usage: node review/art-audit.mjs <image.png> [--hero=x0,y0,x1,y1] [--json]'); process.exit(2); }
-const imgPath = path.resolve(ROOT, imgArg);
-if (!existsSync(imgPath)) { console.error('no such image: ' + imgPath); process.exit(2); }
 
 const palette = JSON.parse(readFileSync(path.join(ROOT, 'design', 'palette.json'), 'utf8'));
+
+// ── the frame, and (optionally) the sequence it belongs to ──────────────────
+let seqFiles = args.filter(a => !a.startsWith('--')).map(a => path.resolve(ROOT, a));
+let seqMode = flag('motion', null);
+const seqDir = flag('seq', null);
+if (seqDir) {
+  const dir = path.resolve(ROOT, seqDir);
+  const metaFile = path.join(dir, 'sequence.json');
+  if (existsSync(metaFile)) {
+    const meta = JSON.parse(readFileSync(metaFile, 'utf8'));
+    seqFiles = meta.files.map(f => path.resolve(ROOT, f));
+    if (!seqMode) seqMode = meta.mode;
+    if (meta.problems?.length) { console.error('sequence reports problems — not reviewable:\n  ' + meta.problems.join('\n  ')); process.exit(2); }
+  } else {
+    seqFiles = readdirSync(dir).filter(f => /\.png$/i.test(f)).sort().map(f => path.join(dir, f));
+  }
+}
+if (!seqFiles.length) { console.error('usage: node review/art-audit.mjs <image.png> [more.png ...] [--seq=dir] [--hero=x0,y0,x1,y1] [--json]'); process.exit(2); }
+for (const f of seqFiles) if (!existsSync(f)) { console.error('no such image: ' + f); process.exit(2); }
+const imgPath = seqFiles[0];
+
 const heroBox = flag('hero') ? flag('hero').split(',').map(Number) : null;
 const boxes = palette.depthCues.acutanceBoxes;
 const depthBoxes = {
@@ -42,15 +71,23 @@ const solvedCfg = {
   litBox: flag('lit') ? flag('lit').split(',').map(Number) : SC.keyToFill.litBox,
   shadowBox: flag('shadow') ? flag('shadow').split(',').map(Number) : SC.keyToFill.shadowBox,
   holoBox: flag('holo') ? flag('holo').split(',').map(Number) : SC.veilCompression.searchBox,
+  emitterBox: flag('emitter') ? flag('emitter').split(',').map(Number) : SC.emitterPeak.searchBox,
   scrimSearch: flag('scrim') ? flag('scrim').split(',').map(Number) : [0.55, 0.995],
   inkThreshold: SC.inkWidth.threshold
+};
+const SUB = palette.colourBudget.hueArcs.substanceGate;
+const GREY = palette.colourBudget.hueArcs.classes.grey;
+const LM = palette.depthCues.landmarkContrast;
+const landmarkCfg = {
+  landmark: flag('landmark') ? flag('landmark').split(',').map(Number) : LM.measured.cityMass.box,
+  skyBehind: flag('skybehind') ? flag('skybehind').split(',').map(Number) : LM.measured.skyBehindCity.box
 };
 
 const b64 = readFileSync(imgPath).toString('base64');
 const browser = await chromium.launch();
 const page = await browser.newPage();
 await page.setContent('<canvas id=c></canvas>');
-const m = await page.evaluate(async ({ b64, heroBox, depthBoxes, shadowCfg, solvedCfg }) => {
+const m = await page.evaluate(async ({ b64, heroBox, depthBoxes, shadowCfg, solvedCfg, SUB, GREY, landmarkCfg }) => {
   const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode();
   const W = img.naturalWidth, H = img.naturalHeight;
   const c = document.getElementById('c'); c.width = W; c.height = H;
@@ -62,9 +99,9 @@ const m = await page.evaluate(async ({ b64, heroBox, depthBoxes, shadowCfg, solv
   const lum = (r, g, b) => 0.2126 * LUT[r] + 0.7152 * LUT[g] + 0.0722 * LUT[b];
   const hue = (r, g, b) => {
     const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
-    if (d === 0) return [0, 0];
+    if (d === 0) return [0, 0, mx / 255];
     let h; if (mx === r) h = 60 * (((g - b) / d) % 6); else if (mx === g) h = 60 * ((b - r) / d + 2); else h = 60 * ((r - g) / d + 4);
-    return [h < 0 ? h + 360 : h, d / mx];
+    return [h < 0 ? h + 360 : h, d / mx, mx / 255];
   };
   const at = (x, y) => { const i = ((y | 0) * W + (x | 0)) * 4; return [D[i], D[i + 1], D[i + 2]]; };
 
@@ -83,9 +120,30 @@ const m = await page.evaluate(async ({ b64, heroBox, depthBoxes, shadowCfg, solv
   const inSuccess = h => (h >= 95 && h < 125);
   const S_DANGER = 0.55, S_SUCCESS = 0.45;
 
+  // ── the substance gate ────────────────────────────────────────────────────
+  // A pale, bright pixel is ATMOSPHERE, not substance, whatever hue arc it sits
+  // in. Without this the identity-colour budget is a coin flip on sky
+  // saturation: 47.96% of the reference's sky sits inside the resonance hue arc
+  // and its zenith is 0.05 of saturation away from the S>=0.30 gate, so a render
+  // whose sky is slightly more saturated than the painting would report a
+  // resonance share and a warm:resonance ratio that both fail, with no art fault
+  // at all. Applied symmetrically to warm and resonance — §9 already says "the
+  // sky carries hue, not saturation", and the reference's own horizon
+  // (#F1C9A6, S 0.311) is atmosphere that used to be scored as warm rock.
+  const substance = (s, v) => !(v > SUB.maxValueForPale && s < SUB.minSaturationForBright);
+
+  // ── the grey class ────────────────────────────────────────────────────────
+  // world.md Law 5: a claim shut with a supplied value works, sags and never
+  // sets. Grey is this world's THIRD material class and until round 4 the
+  // partition scored it as anonymous `muted`. The class is a strict subset of
+  // what `muted` already held (hue 20-80 at S < 0.14 is inside S < 0.30), so
+  // adding it moves nothing except muted, and `quiet` still counts
+  // atmosphere + muted + grey.
+  const inGrey = (h, s) => h >= GREY.hue[0][0] && h < GREY.hue[0][1] && s < GREY.maxS;
+
   let n = 0, sumY = 0, sumS = 0;
-  const counts = { muted: 0, warm: 0, res: 0, bridge: 0, other: 0, hot: 0, hotRes: 0, hotWarm: 0, danger: 0, success: 0 };
-  const thirds = [{ muted: 0, res: 0, n: 0 }, { muted: 0, res: 0, n: 0 }, { muted: 0, res: 0, n: 0 }];
+  const counts = { atmosphere: 0, grey: 0, muted: 0, quiet: 0, warm: 0, res: 0, bridge: 0, other: 0, hot: 0, hotRes: 0, hotWarm: 0, danger: 0, success: 0 };
+  const thirds = [{ quiet: 0, res: 0, n: 0 }, { quiet: 0, res: 0, n: 0 }, { quiet: 0, res: 0, n: 0 }];
   const Ys = [];
   // shadow-chroma census, over mid-shadow pixels only
   let shN = 0, shCool = 0, shWarm = 0;
@@ -93,7 +151,7 @@ const m = await page.evaluate(async ({ b64, heroBox, depthBoxes, shadowCfg, solv
     const t = y / H < 1 / 3 ? 0 : (y / H < 2 / 3 ? 1 : 2);
     for (let x = 0; x < W; x += 2) {
       const [r, g, b] = at(x, y);
-      const Y = lum(r, g, b); const [h, s] = hue(r, g, b);
+      const Y = lum(r, g, b); const [h, s, v] = hue(r, g, b);
       n++; sumY += Y; sumS += s; Ys.push(Y);
       thirds[t].n++;
       if (Y >= shadowCfg.yLo && Y <= shadowCfg.yHi && s >= shadowCfg.sMin) {
@@ -103,7 +161,9 @@ const m = await page.evaluate(async ({ b64, heroBox, depthBoxes, shadowCfg, solv
       }
       if (s >= S_DANGER && inDanger(h) && Y > 0.10) { counts.danger++; counts.hot++; }
       else if (s >= S_SUCCESS && inSuccess(h) && Y > 0.45) { counts.success++; counts.hot++; }
-      else if (s < 0.30) { counts.muted++; thirds[t].muted++; }
+      else if (!substance(s, v)) { counts.atmosphere++; counts.quiet++; thirds[t].quiet++; }
+      else if (inGrey(h, s)) { counts.grey++; counts.quiet++; thirds[t].quiet++; }
+      else if (s < 0.30) { counts.muted++; counts.quiet++; thirds[t].quiet++; }
       else {
         if (inWarm(h)) counts.warm++;
         else if (inRes(h)) { counts.res++; thirds[t].res++; }
@@ -352,22 +412,82 @@ const m = await page.evaluate(async ({ b64, heroBox, depthBoxes, shadowCfg, solv
     }
   }
 
-  // ── B1 · emitter peak inside the emissive mask ──────────────────────────
-  let peakY = 0, blown = 0, maskN = 0, totN = 0;
-  for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 2) {
-    totN++;
-    const [r, g, b] = at(x, y); const [h, s] = hue(r, g, b);
-    if (!(h >= 150 && h <= 215 && s >= 0.06)) continue;
-    maskN++; const Y2 = lum(r, g, b);
-    if (Y2 > peakY) peakY = Y2;
-    if (Y2 >= 0.90) blown++;
+  // ── B1 · emitter peak inside a DECLARED emitter box ─────────────────────
+  // Round 2's version masked hue 150-215 at S>=0.06 over the WHOLE frame. On the
+  // reference that mask is 34.8% of the frame — the sky is inside it — and the
+  // peak it reported (0.9684) was at x=0.9993, the extreme right edge of frame,
+  // not the socket; only 2 of the mask's 200 brightest pixels fell inside the
+  // socket at all. It PASSED on the negative control, a frame that has no blown
+  // emitter core anywhere. It was a null check.
+  //
+  // Two independent fixes, both required:
+  //   (a) the peak is searched inside a box the caller declares, exactly the way
+  //       K1 already requires --lit / --shadow. Default: palette.json
+  //       solvedConstants.emitterPeak.searchBox. Override with --emitter=.
+  //   (b) the peak must be part of a CONNECTED COMPONENT of blown emitter pixels
+  //       no larger than maxCoreAreaShare of the frame. A blown sky is not an
+  //       emitter core, and a component test says so without any box at all.
+  const eb = solvedCfg.emitterBox;
+  const EX0 = NX(eb[0]), EY0 = NY(eb[1]), EX1 = NX(eb[2]), EY1 = NY(eb[3]);
+  const isEmissive = (r, g, b) => { const [h, s] = hue(r, g, b); return (h >= 150 && h <= 215) || (s <= 0.12 && lum(r, g, b) > 0.60); };
+  let peakY = 0, peakAt = null, boxMaskN = 0;
+  for (let y = EY0; y <= EY1; y++) for (let x = EX0; x <= EX1; x++) {
+    const [r, g, b] = at(x, y);
+    if (!isEmissive(r, g, b)) continue;
+    boxMaskN++;
+    const Y2 = lum(r, g, b);
+    if (Y2 > peakY) { peakY = Y2; peakAt = [+(x / W).toFixed(4), +(y / H).toFixed(4)]; }
   }
-  const emitter = { peakY: +peakY.toFixed(4), maskPixels: maskN, blownShareOfFrame: +(blown / totN).toFixed(5) };
+  // blown share of frame: Y >= 0.90 AND hue 150-215. ONE definition, the one
+  // design/art-direction.md §5 and palette.json state. Round 2's code also
+  // applied S >= 0.06, which excluded the near-white core pixels the rule is
+  // about and reported 0.0008 while the documents said 0.0018.
+  let blown = 0, totN = 0;
+  const core = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    totN++;
+    const [r, g, b] = at(x, y); const [h] = hue(r, g, b);
+    if (lum(r, g, b) >= 0.90 && h >= 150 && h <= 215) { blown++; core[y * W + x] = 1; }
+  }
+  // the component the peak belongs to (4-connected flood fill over `core`)
+  let peakComponentArea = null;
+  if (peakAt) {
+    let px0 = Math.round(peakAt[0] * W), py0 = Math.round(peakAt[1] * H);
+    if (!core[py0 * W + px0]) {           // peak may be neutral-white, not cyan
+      outer: for (let r = 1; r <= 6; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+        const nx = px0 + dx, ny = py0 + dy;
+        if (nx >= 0 && ny >= 0 && nx < W && ny < H && core[ny * W + nx]) { px0 = nx; py0 = ny; break outer; }
+      }
+    }
+    if (core[py0 * W + px0]) {
+      const seen = new Uint8Array(W * H); const st = [py0 * W + px0]; seen[st[0]] = 1; let area = 0;
+      while (st.length) {
+        const j = st.pop(); const jx = j % W, jy = (j / W) | 0; area++;
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nx = jx + dx, ny = jy + dy;
+          if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+          const k = ny * W + nx;
+          if (!seen[k] && core[k]) { seen[k] = 1; st.push(k); }
+        }
+      }
+      peakComponentArea = +(area / (W * H)).toFixed(6);
+    }
+  }
+  const emitter = {
+    peakY: +peakY.toFixed(4), peakAt, box: eb, maskPixelsInBox: boxMaskN,
+    blownShareOfFrame: +(blown / totN).toFixed(5), peakComponentAreaShare: peakComponentArea
+  };
 
   // ── K1 · key : fill on the two marked rock boxes ─────────────────────────
   const meanBox = b => { let s = 0, k = 0; for (let y = NY(b[1]); y <= NY(b[3]); y++) for (let x = NX(b[0]); x <= NX(b[2]); x++) { s += lum(...at(x, y)); k++; } return k ? s / k : 0; };
   const litY = meanBox(solvedCfg.litBox), shY = meanBox(solvedCfg.shadowBox);
   const keyFill = { litY: +litY.toFixed(4), shadowY: +shY.toFixed(4), ratio: shY > 0.0005 ? +(litY / shY).toFixed(3) : null };
+
+  // ── D5 · a silhouetted landmark against the sky behind it ────────────────
+  // §7 said "value contrast against sky is what makes a landmark read" and gave
+  // no number. Two declared boxes: the landmark mass, and the sky beside it.
+  const lmY = meanBox(landmarkCfg.landmark), lmSky = meanBox(landmarkCfg.skyBehind);
+  const landmark = { landmarkY: +lmY.toFixed(4), skyY: +lmSky.toFixed(4), ratio: lmSky > 0.0005 ? +(lmY / lmSky).toFixed(3) : null };
 
   // ── I1 · ink width percentiles inside the hero box ──────────────────────
   let ink = null;
@@ -389,14 +509,15 @@ const m = await page.evaluate(async ({ b64, heroBox, depthBoxes, shadowCfg, solv
 
   return {
     solved: { scrim, veil, veilWhy, emitter, keyFill, ink },
+    landmark,
     size: [W, H], sampled: n,
     meanY: +(sumY / n).toFixed(4), meanS: +(sumS / n).toFixed(4),
     percentiles: { p01: P(0.01), p05: P(0.05), p10: P(0.10), p25: P(0.25), p50: P(0.50), p75: P(0.75), p90: P(0.90), p95: P(0.95), p99: P(0.99) },
     aboveY099: +(Ys.filter(v => v >= 0.99).length / n).toFixed(4),
     belowY001: +(Ys.filter(v => v <= 0.01).length / n).toFixed(4),
-    share: { muted: frac('muted'), warm: frac('warm'), resonance: frac('res'), bridge: frac('bridge'), other: frac('other'), hot: frac('hot'), hotResonance: frac('hotRes'), danger: frac('danger'), success: frac('success') },
+    share: { quiet: frac('quiet'), atmosphere: frac('atmosphere'), grey: frac('grey'), muted: frac('muted'), warm: frac('warm'), resonance: frac('res'), bridge: frac('bridge'), other: frac('other'), hot: frac('hot'), hotResonance: frac('hotRes'), danger: frac('danger'), success: frac('success') },
     warmToResonance: counts.res ? +(counts.warm / counts.res).toFixed(3) : Infinity,
-    skyThirdMuted: +(thirds[0].muted / thirds[0].n).toFixed(4),
+    skyThirdQuiet: +(thirds[0].quiet / thirds[0].n).toFixed(4),
     bottomThirdResonance: +(thirds[2].res / thirds[2].n).toFixed(4),
     acutance: bands,
     satThird,
@@ -405,7 +526,7 @@ const m = await page.evaluate(async ({ b64, heroBox, depthBoxes, shadowCfg, solv
     shadowChroma: { samples: shN, coolShare: shN ? +(shCool / shN).toFixed(4) : 0, warmShare: shN ? +(shWarm / shN).toFixed(4) : 0 },
     heroSeparation: sep
   };
-}, { b64, heroBox, depthBoxes, solvedCfg, shadowCfg: { yLo: 0.02, yHi: 0.12, sMin: 0.10, cool: palette.shadowChroma.coolIsHue } });
+}, { b64, heroBox, depthBoxes, solvedCfg, SUB, GREY, landmarkCfg, shadowCfg: { yLo: 0.02, yHi: 0.12, sMin: 0.10, cool: palette.shadowChroma.coolIsHue } });
 await browser.close();
 
 // ───────────────────────── checks ─────────────────────────
@@ -424,17 +545,21 @@ range('L5', 'mean saturation', m.meanS, [h.meanSaturation.target - h.meanSaturat
 atMost('L6', 'clipped highlights (Y>=0.99)', m.aboveY099, palette.exposure.clipping.maxFractionAbove_Y099, 'only emitters, sun, glyphs');
 atMost('L7', 'crushed blacks (Y<=0.01)', m.belowY001, palette.exposure.clipping.maxFractionBelow_Y001, '');
 
-range('C1', 'muted share', m.share.muted, t.mutedShareOfFrame, 'S<0.30');
-range('C2', 'warm share', m.share.warm, t.warmShareOfFrame, 'hue 0-60/320-360, S>=0.30');
-range('C3', 'resonance share', m.share.resonance, t.resonanceShareOfFrame, 'hue 150-215, S>=0.30');
+const subNote = `pale-bright (V>${SUB.maxValueForPale} & S<${SUB.minSaturationForBright}) scores as atmosphere, not substance`;
+range('C1', 'quiet share (muted+atmosphere)', m.share.quiet, t.quietShareOfFrame, subNote);
+range('C1b', 'atmosphere share', m.share.atmosphere, t.atmosphereShareOfFrame, 'sky, haze, aerial wash, bloom halo');
+range('C2', 'warm SUBSTANCE share', m.share.warm, t.warmShareOfFrame, 'hue 0-60/320-360, S>=0.30, not atmosphere');
+range('C3', 'resonance SUBSTANCE share', m.share.resonance, t.resonanceShareOfFrame, 'hue 150-215, S>=0.30, not atmosphere');
 range('C4', 'hot share', m.share.hot, t.hotShareOfFrame, 'S>=0.55');
 range('C5', 'HOT RESONANCE share', m.share.hotResonance, t.hotResonanceShareOfFrame, 'the cyan budget');
 range('C6', 'warm : resonance ratio', m.warmToResonance, t.warmToResonanceRatio, 'warm rock must dominate');
-range('C7', 'sky third muted share', m.skyThirdMuted, t.skyThirdMutedShare, 'the sky carries hue, not saturation');
+range('C7', 'sky third quiet share', m.skyThirdQuiet, t.skyThirdQuietShare, 'the sky carries hue, not saturation');
 range('C8', 'bottom third resonance share', m.bottomThirdResonance, t.bottomThirdResonanceShare, '');
 atMost('C9', 'danger share', m.share.danger, t.dangerShareOfFrame[1], 'transient only');
 atMost('C10', 'success share', m.share.success, t.successShareOfFrame[1], 'transient only');
 atMost('C11', 'off-language hue share', m.share.other, 0.02, 'hue 60-90 / 215-320 must stay empty');
+range('C12', 'GREY substance share', m.share.grey, t.greyShareOfFrame,
+  `hue ${GREY.hue[0].join('-')} at S < ${GREY.maxS} — world.md's third material. reference/brief-hero.png scores ${palette.colourBudget.measured.greyShareOfFrame} and FAILS: it is a hero vista of a world with no grey in it`);
 
 range('X1', 'shadow cool share', m.shadowChroma.coolShare, palette.shadowChroma.coolShareTarget,
   `hue ${palette.shadowChroma.coolIsHue.join('-')} among 0.02<=Y<=0.12, S>=0.10 (n=${m.shadowChroma.samples}); warm ${m.shadowChroma.warmShare}`);
@@ -449,6 +574,9 @@ if (m.acutance.hero !== null) {
   const rHM = +(m.acutance.hero / m.acutance.midground).toFixed(3);
   range('D4', 'acutance hero/midground', rHM, dc.acutanceRatioTargets.heroOverMidground, 'hero is the focus plane');
 }
+
+atMost('D5', 'landmark : sky behind it', m.landmark.ratio === null ? 99 : m.landmark.ratio, LM.maxRatio,
+  `landmark ${m.landmark.landmarkY} on ${JSON.stringify(landmarkCfg.landmark)} vs sky ${m.landmark.skyY} on ${JSON.stringify(landmarkCfg.skyBehind)} (--landmark= / --skybehind=); ONE mass per frame is a silhouette, the rest recede by haze`);
 
 atLeast('F1', 'dark framing mass in border', m.borderDarkShare, 0.06, 'the frame is anchored by geometry, not a vignette');
 atLeast('S1', 'sky gradient distinct codes', Math.min(...m.sky.distinctCodes), 8, `codes ${m.sky.distinctCodes.join('/')} over span ΔY ${m.sky.spanY}`);
@@ -493,10 +621,18 @@ if (sc.veil) {
   for (const id of ['V1a', 'V1b', 'V1c']) sAdd(id, 'veil compression', null, () => false, `no hologram quad resolved in ${JSON.stringify(solvedCfg.holoBox)} — ${sc.veilWhy}`, '');
 }
 
-sAdd('B1a', 'emitter peak in emissive mask', sc.emitter.peakY,
-  v => v >= SC.emitterPeak.minPeakY, `mask hue ${SC.emitterPeak.maskHue.join('–')}, S≥0.06, ${sc.emitter.maskPixels} px`, `>= ${SC.emitterPeak.minPeakY}`);
+sAdd('B1a', 'emitter peak in declared box', sc.emitter.maskPixelsInBox ? sc.emitter.peakY : null,
+  v => v >= SC.emitterPeak.minPeakY,
+  `box ${JSON.stringify(sc.emitter.box)} (--emitter=), peak at ${JSON.stringify(sc.emitter.peakAt)}, ${sc.emitter.maskPixelsInBox} emissive px in box`,
+  `>= ${SC.emitterPeak.minPeakY}`);
 sAdd('B1b', 'blown emitter cores in frame', sc.emitter.blownShareOfFrame,
-  v => v >= 0.0002 && v <= 0.006, 'an emissive with no white-hot core reads as a painted decal', '[0.0002 .. 0.006]');
+  v => v >= SC.emitterPeak.blownShareOfFrame[0] && v <= SC.emitterPeak.blownShareOfFrame[1],
+  'Y>=0.90 AND hue 150-215 — ONE definition, the one §5 and palette.json state',
+  `[${SC.emitterPeak.blownShareOfFrame.join(' .. ')}]`);
+sAdd('B1c', 'peak core is a COMPONENT, not a field', sc.emitter.peakComponentAreaShare,
+  v => v !== null && v > 0 && v <= SC.emitterPeak.maxCoreAreaShare,
+  'the blown region the peak belongs to must be a compact core; a blown sky is not an emitter',
+  `(0 .. ${SC.emitterPeak.maxCoreAreaShare}]`);
 
 sAdd('K1', 'key : fill on marked rock', sc.keyFill.ratio,
   v => v !== null && Math.abs(v - SC.keyToFill.target) <= SC.keyToFill.tolerance,
@@ -516,15 +652,241 @@ const solvedFailed = solvedRan.filter(c => !c.pass);
 const solvedNA = solved.filter(c => c.value === null);
 const requireSolved = has('require-solved');
 
+// ═══════════════════════════ MOTION ═══════════════════════════════════════
+// Everything above judges one instant. quality-bar.md §1 puts "Readability
+// under motion beats detail at rest" at the top of the art bar, and none of it
+// is visible in a still: dither fizz, specular shimmer, ink crawl, bloom pop
+// and exposure pumping are all DIFFERENCES BETWEEN FRAMES. These checks read a
+// sequence captured one fixed simulation step apart by
+// review/p02-motion-capture.mjs. Decoded here in pure Node (review/p02-png.mjs)
+// so a temporal number and a census number never share a decoder.
+const MO = palette.motion;
+const motion = [];
+const mAdd = (id, label, v, test, note, target) => {
+  const value = (v === null || v === undefined) ? null : +Number(v).toFixed(5);
+  motion.push({ id, label, value, pass: value === null ? null : test(v), note, target });
+};
+let motionSummary = null;
+
+if (seqFiles.length >= 2) {
+  const mode = seqMode || 'static';
+  const skyBox = flag('sky') ? flag('sky').split(',').map(Number) : MO.skyProbeBox;
+  const frames = seqFiles.map(f => readPNG(f));
+  const W0 = frames[0].width, H0 = frames[0].height;
+  if (frames.some(f => f.width !== W0 || f.height !== H0)) { console.error('motion: frames differ in size'); process.exit(2); }
+  const NPX = W0 * H0;
+  const SCALE = 1600 / W0;             // ink widths are quoted at 1600x900
+  const planes = frames.map(f => {
+    const { width: W, height: H, bpp, data } = f;
+    const Y = new Float32Array(W * H);
+    for (let i = 0, j = 0; i < W * H; i++, j += bpp) Y[i] = pxLum(data[j], data[j + 1], data[j + 2]);
+    return Y;
+  });
+
+  const medOf = a => { const s = [...a].sort((p, q) => p - q); const k = s.length >> 1; return s.length ? (s.length % 2 ? s[k] : (s[k - 1] + s[k]) / 2) : 0; };
+
+  // ── whole-frame per-step luminance difference ────────────────────────────
+  const diffs = [];
+  for (let i = 1; i < planes.length; i++) {
+    const a = planes[i - 1], b = planes[i];
+    let sum = 0, big = 0;
+    const sampled = [];
+    for (let k = 0; k < NPX; k++) {
+      const d = Math.abs(b[k] - a[k]);
+      sum += d; if (d > MO.staticFrame.bigDeltaY) big++;
+      if ((k & 7) === 0) sampled.push(d);
+    }
+    sampled.sort((p, q) => p - q);
+    diffs.push({
+      mean: sum / NPX,
+      p99: sampled[Math.floor(sampled.length * 0.99)],
+      bigShare: big / NPX
+    });
+  }
+  const maxMean = Math.max(...diffs.map(d => d.mean));
+  const maxP99 = Math.max(...diffs.map(d => d.p99));
+  const maxBig = Math.max(...diffs.map(d => d.bigShare));
+
+  // A "pan" sequence whose frames do not actually differ is a static sequence
+  // wearing a label, and would pass every pan check for the wrong reason.
+  const moving = maxMean > 1e-4;
+  const modeOK = mode !== 'static' ? moving : true;
+
+  // ── silhouette area and hero separation, per frame ───────────────────────
+  const areas = [], seps = [];
+  if (heroBox) {
+    const [hx0, hy0, hx1, hy1] = heroBox;
+    const X0 = Math.round(hx0 * W0), X1 = Math.round(hx1 * W0), Y0 = Math.round(hy0 * H0), Y1 = Math.round(hy1 * H0);
+    const pad = 0.04;
+    const PX0 = Math.max(0, Math.round((hx0 - pad) * W0)), PX1 = Math.min(W0, Math.round((hx1 + pad) * W0));
+    const PY0 = Math.max(0, Math.round((hy0 - pad) * H0)), PY1 = Math.min(H0, Math.round((hy1 + pad) * H0));
+    for (const Y of planes) {
+      let inS = 0, inN = 0, outS = 0, outN = 0;
+      for (let y = PY0; y < PY1; y++) for (let x = PX0; x < PX1; x++) {
+        const v = Y[y * W0 + x];
+        if (x >= X0 && x < X1 && y >= Y0 && y < Y1) { inS += v; inN++; } else { outS += v; outN++; }
+      }
+      const inM = inS / inN, outM = outS / outN;
+      seps.push(Math.abs(inM - outM));
+      // Segment the hero against its own surround — threshold at the midpoint of
+      // the two means, polarity whichever way the hero actually is — then take
+      // the LARGEST CONNECTED COMPONENT inside the padded box. Counting a fixed
+      // rectangle would measure the hero walking across the box as if it were
+      // his silhouette changing size; a component is translation-independent,
+      // which is what "silhouette area" means.
+      const thr = (inM + outM) / 2, dark = inM < outM;
+      const bw = PX1 - PX0, bh = PY1 - PY0;
+      const mask = new Uint8Array(bw * bh);
+      for (let y = PY0; y < PY1; y++) for (let x = PX0; x < PX1; x++) {
+        const v = Y[y * W0 + x];
+        if (dark ? v < thr : v > thr) mask[(y - PY0) * bw + (x - PX0)] = 1;
+      }
+      const seen = new Uint8Array(bw * bh);
+      let best = 0;
+      for (let k = 0; k < mask.length; k++) {
+        if (seen[k] || !mask[k]) { seen[k] = 1; continue; }
+        const st = [k]; seen[k] = 1; let a = 0;
+        while (st.length) {
+          const j = st.pop(); const jx = j % bw, jy = (j / bw) | 0; a++;
+          for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const nx = jx + dx, ny = jy + dy;
+            if (nx < 0 || ny < 0 || nx >= bw || ny >= bh) continue;
+            const q = ny * bw + nx;
+            if (!seen[q] && mask[q]) { seen[q] = 1; st.push(q); }
+          }
+        }
+        if (a > best) best = a;
+      }
+      areas.push(best / (bw * bh));
+    }
+  }
+  const areaMean = areas.length ? areas.reduce((a, b) => a + b, 0) / areas.length : 0;
+  const areaSteps = areas.slice(1).map((v, i) => Math.abs(v - areas[i]) / (areaMean || 1));
+  const maxAreaStep = areaSteps.length ? Math.max(...areaSteps) : null;
+  const minSep = seps.length ? Math.min(...seps) : null;
+
+  // ── ink width per frame, at 1600x900 ─────────────────────────────────────
+  const inkP50 = [], inkP90 = [];
+  if (heroBox) {
+    const [hx0, hy0, hx1, hy1] = heroBox;
+    const X0 = Math.round(hx0 * W0), X1 = Math.round(hx1 * W0), Y0 = Math.round(hy0 * H0), Y1 = Math.round(hy1 * H0);
+    for (const Y of planes) {
+      const runs = [];
+      for (let y = Y0; y < Y1; y++) {
+        let run = 0;
+        for (let x = X0; x < X1; x++) {
+          if (Y[y * W0 + x] <= solvedCfg.inkThreshold) run++;
+          else { if (run > 0 && run <= 40) runs.push(run * SCALE); run = 0; }
+        }
+      }
+      runs.sort((a, b) => a - b);
+      inkP50.push(runs.length >= 100 ? runs[Math.floor(runs.length * 0.50)] : null);
+      inkP90.push(runs.length >= 100 ? runs[Math.floor(runs.length * 0.90)] : null);
+    }
+  }
+  const stepMax = arr => {
+    if (!arr.length || arr.some(v => v === null)) return null;
+    return Math.max(...arr.slice(1).map((v, i) => Math.abs(v - arr[i])));
+  };
+  const inkP50Step = stepMax(inkP50), inkP90Step = stepMax(inkP90);
+
+  // ── sky code churn: is the dither pattern FIXED in screen space? ─────────
+  // Per-frame white noise passes S1/S2 on any single frame and fizzes on every
+  // one. This is the only check that can see it: with the camera still, the
+  // 8-bit codes in a sky box must be IDENTICAL between frames.
+  let churn = null;
+  {
+    const [sx0, sy0, sx1, sy1] = skyBox;
+    const X0 = Math.round(sx0 * W0), X1 = Math.round(sx1 * W0), Y0 = Math.round(sy0 * H0), Y1 = Math.round(sy1 * H0);
+    const n = Math.max(1, (X1 - X0) * (Y1 - Y0));
+    let worst = 0;
+    for (let i = 1; i < frames.length; i++) {
+      const A = frames[i - 1], B = frames[i];
+      let changed = 0;
+      for (let y = Y0; y < Y1; y++) for (let x = X0; x < X1; x++) {
+        const ia = (y * A.width + x) * A.bpp, ib = (y * B.width + x) * B.bpp;
+        if (A.data[ia] !== B.data[ib] || A.data[ia + 1] !== B.data[ib + 1] || A.data[ia + 2] !== B.data[ib + 2]) changed++;
+      }
+      worst = Math.max(worst, changed / n);
+    }
+    churn = worst;
+  }
+
+  // ── emissive energy per frame: bloom pop and strobing emitters ───────────
+  const energy = frames.map(f => {
+    const { width: W, height: H, bpp, data } = f;
+    let e = 0;
+    for (let y = 0, j = 0; y < H; y++) for (let x = 0; x < W; x++, j += bpp) {
+      const r = data[j], g = data[j + 1], b = data[j + 2];
+      const [hh, ss] = pxHsv(r, g, b); const Y = pxLum(r, g, b);
+      if ((hh >= 150 && hh <= 215) || (ss <= 0.12 && Y > 0.60)) e += Y;
+    }
+    return e / (W * H);
+  });
+  const eMax = Math.max(...energy);
+  const eStep = eMax > 1e-6 ? Math.max(...energy.slice(1).map((v, i) => Math.abs(v - energy[i]))) / eMax : 0;
+
+  // ── exposure stability ───────────────────────────────────────────────────
+  const medians = planes.map(Y => { const s = []; for (let k = 0; k < NPX; k += 7) s.push(Y[k]); s.sort((a, b) => a - b); return s[s.length >> 1]; });
+  const medStep = Math.max(...medians.slice(1).map((v, i) => Math.abs(v - medians[i])));
+
+  const r4 = v => v === null ? null : +v.toFixed(5);
+  motionSummary = {
+    mode, frames: seqFiles.length, size: [W0, H0], moving,
+    meanDeltaY: r4(maxMean), p99DeltaY: r4(maxP99), bigDeltaShare: r4(maxBig),
+    heroAreaStep: r4(maxAreaStep), heroSeparationMin: r4(minSep),
+    inkP50: inkP50.map(v => v === null ? null : +v.toFixed(2)), inkP50Step: r4(inkP50Step),
+    inkP90: inkP90.map(v => v === null ? null : +v.toFixed(2)), inkP90Step: r4(inkP90Step),
+    skyCodeChurn: r4(churn), emissiveEnergyStep: r4(eStep), medianYStep: r4(medStep)
+  };
+
+  const staticOnly = mode === 'static';
+  const S = MO.staticFrame, P = MO.underMotion;
+  if (staticOnly) {
+    mAdd('M1a', 'mean |ΔY| per fixed step', maxMean, v => v <= S.meanDeltaY, 'camera still, sim advanced one step; catches fizz, shimmer and pop in one number', `<= ${S.meanDeltaY}`);
+    mAdd('M1b', 'p99 |ΔY| per fixed step', maxP99, v => v <= S.p99DeltaY, 'the noisiest 1% of the frame', `<= ${S.p99DeltaY}`);
+    mAdd('M1c', `share of pixels moving > ${S.bigDeltaY} Y`, maxBig, v => v <= S.bigDeltaShare, 'specular sparkle count — a mean can hide this', `<= ${S.bigDeltaShare}`);
+    mAdd('M4', 'sky 8-bit code churn', churn, v => v <= S.skyCodeChurn, `box ${JSON.stringify(skyBox)} (--sky=); dither must be a FIXED screen-space pattern, not per-frame random`, `<= ${S.skyCodeChurn}`);
+  } else {
+    for (const [id, label] of [['M1a', 'mean |ΔY| per fixed step'], ['M1b', 'p99 |ΔY| per fixed step'], ['M1c', 'share of pixels moving'], ['M4', 'sky 8-bit code churn']])
+      mAdd(id, label, null, () => false, `only meaningful with the camera static — this sequence is "${mode}"`, '');
+  }
+  if (!modeOK) {
+    mAdd('M0', 'sequence actually moves', 0, () => false, `mode "${mode}" but mean |ΔY| is ${maxMean.toExponential(2)} — the camera did not move, so every motion check below is vacuous`, '> 1e-4');
+  }
+  mAdd('M2', 'hero silhouette area step', maxAreaStep, v => modeOK && v <= (staticOnly ? S.heroAreaStep : P.heroAreaStep),
+    heroBox ? `area ${areas.map(a => a.toFixed(4)).join(' → ')}` : 'needs --hero=x0,y0,x1,y1', `<= ${staticOnly ? S.heroAreaStep : P.heroAreaStep}`);
+  mAdd('M3a', 'ink median width step (px @1600)', inkP50Step, v => modeOK && v <= MO.ink.p50StepPx,
+    heroBox ? `p50 ${inkP50.map(v => v === null ? '—' : v.toFixed(1)).join(' → ')} — I1b measures taper on ONE frame and cannot see crawl` : 'needs --hero=', `<= ${MO.ink.p50StepPx}`);
+  mAdd('M3b', 'ink p90 width step (px @1600)', inkP90Step, v => modeOK && v <= MO.ink.p90StepPx,
+    heroBox ? `p90 ${inkP90.map(v => v === null ? '—' : v.toFixed(1)).join(' → ')}` : 'needs --hero=', `<= ${MO.ink.p90StepPx}`);
+  mAdd('M5', 'emissive energy step (rel.)', eStep, v => modeOK && v <= MO.emitter.energyStep,
+    'bloom pop and strobing emitters; an authored pulse changes far less than this per step', `<= ${MO.emitter.energyStep}`);
+  mAdd('M6', 'median Y step (exposure)', medStep, v => modeOK && v <= (staticOnly ? S.medianYStep : P.medianYStep),
+    'auto-exposure hunting or an unstable tonemap', `<= ${staticOnly ? S.medianYStep : P.medianYStep}`);
+  mAdd('M7', 'hero/surround separation, worst frame', minSep, v => modeOK && v >= MO.heroSeparationFloor,
+    heroBox ? `H1 must hold on EVERY frame, not the lucky one: ${seps.map(s => s.toFixed(3)).join(' ')}` : 'needs --hero=', `>= ${MO.heroSeparationFloor}`);
+}
+const motionRan = motion.filter(c => c.value !== null);
+const motionFailed = motionRan.filter(c => !c.pass);
+const motionNA = motion.filter(c => c.value === null);
+const requireMotion = has('require-motion');
+
 const failed = checks.filter(c => !c.pass);
 if (has('json')) {
   console.log(JSON.stringify({
-    image: path.relative(ROOT, imgPath), metrics: m,
+    image: path.relative(ROOT, imgPath), metrics: m, motionMetrics: motionSummary,
     census: { checks, failed: failed.length },
-    solvedConstants: { checks: solved, ran: solvedRan.length, failed: solvedFailed.length, notApplicable: solvedNA.length }
+    solvedConstants: { checks: solved, ran: solvedRan.length, failed: solvedFailed.length, notApplicable: solvedNA.length },
+    motion: { checks: motion, ran: motionRan.length, failed: motionFailed.length, notApplicable: motionNA.length }
   }, null, 2));
 } else {
   console.log(`\nart-audit  ${path.relative(ROOT, imgPath)}  ${m.size[0]}x${m.size[1]}`);
+  // Boxes are arguments; arguments get recorded. A saved audit whose invocation
+  // is not in the file is not reproducible, and this file has lost a round to
+  // that twice — the negative control in round 2 and the motion controls in
+  // round 3. The header now carries its own argv.
+  console.log(`invocation node review/art-audit.mjs ${args.join(' ')}`);
   console.log('─'.repeat(112));
   console.log('CENSUS — frame-wide statistics');
   for (const c of checks) {
@@ -537,15 +899,29 @@ if (has('json')) {
     const tag = c.value === null ? 'n/a ' : (c.pass ? ' ok ' : 'FAIL');
     console.log(`${tag}  ${c.id.padEnd(4)} ${c.label.padEnd(34)} ${String(c.value === null ? '—' : c.value).padStart(9)}  ${String(c.target || '').padEnd(18)} ${c.note}`);
   }
+  if (motion.length) {
+    console.log('─'.repeat(112));
+    console.log(`MOTION — differences between ${seqFiles.length} frames one fixed step apart (mode "${motionSummary.mode}")`);
+    for (const c of motion) {
+      const tag = c.value === null ? 'n/a ' : (c.pass ? ' ok ' : 'FAIL');
+      console.log(`${tag}  ${c.id.padEnd(4)} ${c.label.padEnd(34)} ${String(c.value === null ? '—' : c.value).padStart(9)}  ${String(c.target || '').padEnd(18)} ${c.note}`);
+    }
+  }
   console.log('─'.repeat(112));
   console.log(`${checks.length - failed.length}/${checks.length} census · ${solvedRan.length - solvedFailed.length}/${solvedRan.length} solved` +
-    (solvedNA.length ? ` · ${solvedNA.length} solved check${solvedNA.length > 1 ? 's' : ''} could not run` : ''));
+    (solvedNA.length ? ` · ${solvedNA.length} solved check${solvedNA.length > 1 ? 's' : ''} could not run` : '') +
+    (motion.length ? ` · ${motionRan.length - motionFailed.length}/${motionRan.length} motion${motionNA.length ? ` · ${motionNA.length} motion n/a` : ''}` : ' · NO MOTION SEQUENCE GIVEN'));
   if (solvedNA.length && !requireSolved) console.log('  (pass --require-solved to make an unrunnable solved check a failure — UI and hologram pieces must)');
+  if (!motion.length) console.log('  (this frame was judged at rest only. quality-bar.md §1: readability under motion beats detail at rest.\n   capture a sequence with review/p02-motion-capture.mjs and pass --seq=<dir>; --require-motion makes its absence a failure)');
   if (!has('quiet')) {
     console.log('\npercentiles ', JSON.stringify(m.percentiles));
     console.log('share       ', JSON.stringify(m.share));
     console.log('acutance    ', JSON.stringify(m.acutance), ' satByThird', JSON.stringify(m.satThird));
     if (m.solved.scrim) console.log('scrim       ', JSON.stringify(m.solved.scrim.profile));
+    if (motionSummary) console.log('motion      ', JSON.stringify(motionSummary));
   }
 }
-process.exit(failed.length || solvedFailed.length || (requireSolved && solvedNA.length) ? 1 : 0);
+process.exit(
+  failed.length || solvedFailed.length || motionFailed.length ||
+    (requireSolved && solvedNA.length) ||
+    (requireMotion && (!motion.length || motionNA.length)) ? 1 : 0);

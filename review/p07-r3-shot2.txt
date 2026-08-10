@@ -1,16 +1,16 @@
-(node:22992) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(node:44896) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
 (Use `node --trace-deprecation ...` to show where the warning was created)
 {
   "image": "review/shots/p07/r3-device-flip-to-keyboard.png",
-  "bytes": 76307,
+  "bytes": 80717,
   "lang": "en",
   "ready": true,
   "stats": {
-    "fps": 6,
-    "frameMs": 168.28,
-    "simTime": 7.483,
-    "frames": 192,
-    "steps": 449,
+    "fps": 5,
+    "frameMs": 202.31,
+    "simTime": 5.667,
+    "frames": 187,
+    "steps": 340,
     "drawCalls": 9,
     "triangles": 5096,
     "programs": 3,
@@ -28,8 +28,8 @@
   },
   "probes": {
     "scaffold": {
-      "markerY": 0.9829,
-      "markerSpin": 4.1158,
+      "markerY": 1.0921,
+      "markerSpin": 3.1167,
       "temporary": true
     },
     "input": {
@@ -41,17 +41,17 @@
         "padVirtual": true,
         "everPad": true,
         "switches": 2,
-        "switchedAt": 3.4667,
+        "switchedAt": 3.4,
         "dwell": 0.35,
         "pending": null,
         "usedAt": {
-          "kbm": 7.4833,
-          "pad": 3.0667
+          "kbm": 5.6667,
+          "pad": 2.8667
         }
       },
       "pad": {
         "connected": true,
-        "samples": 2746,
+        "samples": 579,
         "edges": 6,
         "axesRaw": [
           0,
@@ -71,15 +71,15 @@
           0,
           0
         ],
-        "zeroAt": 3.4,
+        "zeroAt": 3.2167,
         "zeroCount": 1,
-        "still": 1.05,
+        "still": 0.9333,
         "latched": [],
         "sticksDown": [],
         "pending": 0
       },
       "context": "play",
-      "step": 449,
+      "step": 340,
       "move": {
         "x": 0,
         "y": 1,
@@ -146,7 +146,7 @@
           "released": false,
           "buffered": false,
           "value": 1,
-          "hold": 4,
+          "hold": 2.25,
           "chords": [
             "KeyW"
           ]
@@ -474,15 +474,15 @@
       "fallbackGround": true,
       "counters": {
         "depenetrations": 0,
-        "rays": 2246,
-        "triTests": 19276
+        "rays": 1701,
+        "triTests": 14600
       }
     },
     "locomotion": {
       "position": [
-        14.1871,
+        13.9873,
         1.035,
-        -17.694
+        -7.7026
       ],
       "velocity": [
         0,
@@ -533,7 +533,7 @@
         "airtime": 0,
         "at": -1
       },
-      "simTime": 7.4833,
+      "simTime": 5.6667,
       "spawnPoint": [
         4,
         0.12,
@@ -607,29 +607,29 @@
       "framing": "follow",
       "targetSource": "object",
       "position": [
-        15.3371,
-        2.4333,
-        -12.2395
+        15.1373,
+        2.419,
+        -2.3018
       ],
       "target": [
-        15.3371,
+        15.1373,
         1.885,
-        -17.2046
+        -7.137
       ],
       "player": [
-        14.1871,
+        13.9873,
         1.035,
-        -17.6938
+        -7.6092
       ],
       "yaw": 0,
       "pitch": -0.11,
-      "distance": 4.9952,
-      "desiredDistance": 4.9952,
-      "freeDistance": 5.3152,
-      "allowedDistance": 4.9952,
+      "distance": 4.8646,
+      "desiredDistance": 4.8646,
+      "freeDistance": 5.1846,
+      "allowedDistance": 4.8646,
       "penetrating": false,
       "avatarOpacity": 1,
-      "fov": 67.5401,
+      "fov": 64.4461,
       "occluded": false,
       "occlusionDepth": 0,
       "trauma": 0,
@@ -640,11 +640,11 @@
       "airTime": 0,
       "pivotLift": 0,
       "pivotDip": 0,
-      "speed": 5.9391,
-      "speedMeasured": 5.9391,
+      "speed": 5.6103,
+      "speedMeasured": 5.6103,
       "speedSignal": 3.0394,
-      "speedSignalAge": 3.9167,
-      "followError": 0.4892,
+      "speedSignalAge": 2.1667,
+      "followError": 0.4722,
       "focus": {
         "active": false,
         "weight": 0,

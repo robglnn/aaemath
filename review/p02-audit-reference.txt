@@ -1,5 +1,6 @@
 
 art-audit  reference\brief-hero.png  2752x1536
+invocation node review/art-audit.mjs reference/brief-hero.png --hero=0.276,0.276,0.425,0.960 --require-solved
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 CENSUS — frame-wide statistics
  ok   L1   median luminance (p50)                0.3506  [0.3 .. 0.4]       exposure
@@ -9,22 +10,25 @@ CENSUS — frame-wide statistics
  ok   L5   mean saturation                       0.3133  [0.263 .. 0.363]   
  ok   L6   clipped highlights (Y>=0.99)          0.0012  <= 0.02            only emitters, sun, glyphs
  ok   L7   crushed blacks (Y<=0.01)               0.015  <= 0.04            
- ok   C1   muted share                           0.5353  [0.46 .. 0.62]     S<0.30
- ok   C2   warm share                            0.3093  [0.26 .. 0.36]     hue 0-60/320-360, S>=0.30
- ok   C3   resonance share                       0.1374  [0.1 .. 0.18]      hue 150-215, S>=0.30
+ ok   C1   quiet share (muted+atmosphere)        0.6384  [0.56 .. 0.72]     pale-bright (V>0.7 & S<0.45) scores as atmosphere, not substance
+ ok   C1b  atmosphere share                      0.3905  [0.15 .. 0.55]     sky, haze, aerial wash, bloom halo
+ ok   C2   warm SUBSTANCE share                  0.2296  [0.18 .. 0.29]     hue 0-60/320-360, S>=0.30, not atmosphere
+ ok   C3   resonance SUBSTANCE share             0.1226  [0.09 .. 0.17]     hue 150-215, S>=0.30, not atmosphere
  ok   C4   hot share                             0.1168  [0.08 .. 0.16]     S>=0.55
  ok   C5   HOT RESONANCE share                   0.0311  [0.02 .. 0.05]     the cyan budget
- ok   C6   warm : resonance ratio                 2.251  [1.8 .. 2.6]       warm rock must dominate
- ok   C7   sky third muted share                 0.8905  [0.85 .. 1]        the sky carries hue, not saturation
- ok   C8   bottom third resonance share          0.2815  [0.18 .. 0.36]     
+ ok   C6   warm : resonance ratio                 1.872  [1.4 .. 2.4]       warm rock must dominate
+ ok   C7   sky third quiet share                 0.9722  [0.9 .. 1]         the sky carries hue, not saturation
+ ok   C8   bottom third resonance share          0.2682  [0.18 .. 0.36]     
  ok   C9   danger share                               0  <= 0.005           transient only
  ok   C10  success share                              0  <= 0.005           transient only
- ok   C11  off-language hue share                0.0033  <= 0.02            hue 60-90 / 215-320 must stay empty
+ ok   C11  off-language hue share                0.0025  <= 0.02            hue 60-90 / 215-320 must stay empty
+FAIL  C12  GREY substance share                  0.0123  [0.02 .. 0.08]     hue 20-80 at S < 0.14 — world.md's third material. reference/brief-hero.png scores 0.0123 and FAILS: it is a hero vista of a world with no grey in it
  ok   X1   shadow cool share                     0.5062  [0.38 .. 0.8]      hue 185-320 among 0.02<=Y<=0.12, S>=0.10 (n=157602); warm 0.2343
  ok   D1   acutance foreground/distance           3.565  [1.8 .. 6]         depth of field must exist
  ok   D2   acutance foreground/midground          2.066  [1.5 .. 5]         focus plane is near
  ok   D3   saturation rises with depth           0.2765  >= 0.15            top 0.1734 -> bottom 0.4499
  ok   D4   acutance hero/midground                4.301  [2.5 .. 8]         hero is the focus plane
+ ok   D5   landmark : sky behind it               0.592  <= 0.7             landmark 0.3398 on [0.7,0.12,0.86,0.3] vs sky 0.5738 on [0.86,0.12,0.96,0.3] (--landmark= / --skybehind=); ONE mass per frame is a silhouette, the rest recede by haze
  ok   F1   dark framing mass in border           0.1778  >= 0.06            the frame is anchored by geometry, not a vignette
  ok   S1   sky gradient distinct codes               21  >= 8               codes 45/21/21 over span ΔY 0.0534
  ok   S2   longest flat run in sky column             4  <= 8               banding detector — dither the ramp
@@ -36,15 +40,18 @@ SOLVED CONSTANTS — the numbers a builder types
  ok   V1a  veil compression slope                0.6022  [0.3 .. 0.72]      n=117 pairs over 4 edges, background spread 0.7396, r² 0.4592
  ok   V1b  veil fixed point                       0.417  [0.4 .. 0.5]       Y_in = 0.6022·Y_bg + 0.1659; additive ⇒ slope≈1, flat plate ⇒ slope≈0
  ok   V1c  veil fit is identifiable              0.7396  >= 0.2             needs ≥10 pairs over ≥2 edges spanning ≥0.2 of luminance
- ok   B1a  emitter peak in emissive mask         0.9684  >= 0.9             mask hue 150–215, S≥0.06, 735103 px
- ok   B1b  blown emitter cores in frame          0.0008  [0.0002 .. 0.006]  an emissive with no white-hot core reads as a painted decal
+ ok   B1a  emitter peak in declared box          0.9496  >= 0.9             box [0.54,0.62,0.74,0.82] (--emitter=), peak at [0.6344,0.7038], 70756 emissive px in box
+ ok   B1b  blown emitter cores in frame         0.00179  [0.0002 .. 0.006]  Y>=0.90 AND hue 150-215 — ONE definition, the one §5 and palette.json state
+ ok   B1c  peak core is a COMPONENT, not a field   0.00002  (0 .. 0.004]       the blown region the peak belongs to must be a compact core; a blown sky is not an emitter
  ok   K1   key : fill on marked rock              6.182  6.2 ± 1.6          lit 0.6592 / shadow 0.1066 on boxes [0.87,0.481,0.91,0.489] , [0.872,0.598,0.902,0.612]
  ok   I1a  ink median width (px @2752)                3  [2 .. 6]           Y ≤ 0.012, n=8255; p25 2, p75 4
  ok   I1b  ink tapers (p90 > p50)                     4  > 0                p90 7 vs p50 3; a uniform outline scores 0
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-27/27 census · 10/10 solved
+29/30 census · 11/11 solved · NO MOTION SEQUENCE GIVEN
+  (this frame was judged at rest only. quality-bar.md §1: readability under motion beats detail at rest.
+   capture a sequence with review/p02-motion-capture.mjs and pass --seq=<dir>; --require-motion makes its absence a failure)
 
 percentiles  {"p01":0.0059,"p05":0.0208,"p10":0.0434,"p25":0.1474,"p50":0.3506,"p75":0.5414,"p90":0.6658,"p95":0.759,"p99":0.9556}
-share        {"muted":0.5353,"warm":0.3093,"resonance":0.1374,"bridge":0.0147,"other":0.0033,"hot":0.1168,"hotResonance":0.0311,"danger":0,"success":0}
+share        {"quiet":0.6384,"atmosphere":0.3905,"grey":0.0123,"muted":0.2356,"warm":0.2296,"resonance":0.1226,"bridge":0.0069,"other":0.0025,"hot":0.1168,"hotResonance":0.0311,"danger":0,"success":0}
 acutance     {"foreground":0.04617,"midground":0.02235,"distance":0.01295,"hero":0.09612,"heroCoreBox":[0.29835,0.41280000000000006,0.40265,0.8231999999999999]}  satByThird [0.1734,0.3165,0.4499]
 scrim        [[0.005,0.762],[0.0325,0.908],[0.0575,1.105],[0.0825,1.074],[0.1025,1.095],[0.2025,0.363],[0.2225,1.01],[0.2425,1.018],[0.2625,0.96],[0.2825,0.731],[0.3025,0.571],[0.3225,0.36],[0.3475,0.232],[0.3725,0.057],[0.3925,0.102],[0.4125,0.112],[0.4325,0.11],[0.4525,0.106],[0.4725,0.108],[0.4925,0.107],[0.5125,0.107],[0.5325,0.109],[0.5525,0.108],[0.5725,0.116],[0.5925,0.12],[0.6175,0.123],[0.6375,0.142],[0.6575,0.156],[0.6875,0.417],[0.71,0.402],[0.8025,0.958],[0.8225,1.002],[0.8425,1.01],[0.8625,1.018],[0.8825,1.022],[0.9975,0.77]]

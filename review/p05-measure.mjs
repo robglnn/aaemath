@@ -433,7 +433,95 @@ async function framing() {
   }
 }
 
-const table = { framerate, speed, corner, backin, settle, reduce, framing };
+/** Airborne pivot lift and the landing dip, sampled every frame through a real jump. */
+async function air() {
+  await openGame({ width: 1280, height: 720 }, async (d) => {
+    await d.play(1.0);
+    await d.run(() => window.__vs.kernel.halt());
+    await d.page.keyboard.down("ShiftLeft");
+    await d.page.keyboard.down("KeyW");
+    await d.run(() => {
+      for (let i = 0; i < 120; i++) window.__vs.advance(1 / 60);
+    });
+    await d.page.keyboard.down("Space");
+    const rise = await d.run(() => {
+      const rows = [];
+      for (let i = 0; i < 24; i++) {
+        window.__vs.advance(1 / 60);
+        const c = window.__vs.probe("camera");
+        rows.push({ t: (i + 1) / 60, g: c.grounded, air: c.airTime, lift: c.pivotLift });
+      }
+      return rows;
+    });
+    await d.page.keyboard.up("Space");
+    const rest = await d.run(() => {
+      const rows = [];
+      for (let i = 0; i < 90; i++) {
+        window.__vs.advance(1 / 60);
+        const c = window.__vs.probe("camera");
+        rows.push({
+          t: Number((0.4 + (i + 1) / 60).toFixed(3)),
+          g: c.grounded,
+          air: c.airTime,
+          lift: c.pivotLift,
+          dip: c.pivotDip,
+          trauma: c.trauma,
+        });
+      }
+      return rows;
+    });
+    await d.page.keyboard.up("KeyW");
+    await d.page.keyboard.up("ShiftLeft");
+    const all = [...rise.map((r) => ({ ...r, dip: 0, trauma: 0 })), ...rest];
+    out("AIR", {
+      airborneFrames: all.filter((r) => !r.g).length,
+      peakLift: Math.max(...all.map((r) => r.lift)),
+      peakDip: Math.min(...all.map((r) => r.dip)),
+      peakAirTime: Math.max(...all.map((r) => r.air)),
+      peakTrauma: Math.max(...all.map((r) => r.trauma)),
+      sample: all.filter((_, i) => i % 6 === 0),
+    });
+  });
+}
+
+/** Sweep pitch on open deck and check the lens never goes under the floor. */
+async function ground() {
+  await openGame({ width: 1280, height: 720 }, async (d) => {
+    await d.play(1.0);
+    const r = await d.run(() => {
+      const k = window.__vs.kernel;
+      k.halt();
+      const rig = k.get("camera");
+      const col = k.get("collision");
+      const cam = k.camera;
+      const rows = [];
+      for (let i = 0; i <= 24; i++) {
+        rig.pitch = -1.16 + (i / 24) * (1.02 + 1.16);
+        for (let s = 0; s < 30; s++) window.__vs.advance(1 / 60);
+        const g = col.groundAt(cam.position.x, cam.position.z, 200);
+        const half = Math.tan((cam.fov * Math.PI) / 360) * cam.near;
+        const nearR = Math.hypot(half, half * cam.aspect);
+        rows.push({
+          pitch: Number(rig.pitch.toFixed(3)),
+          camY: Number(cam.position.y.toFixed(4)),
+          aboveGround: Number((cam.position.y - g.y).toFixed(4)),
+          boom: Number(window.__vs.probe("camera").distance.toFixed(3)),
+          nearBlocked: col._sphereOverlaps(cam.position.x, cam.position.y, cam.position.z, nearR),
+          nearR: Number(nearR.toFixed(4)),
+        });
+      }
+      return {
+        minAboveGround: Math.min(...rows.map((r) => r.aboveGround)),
+        anyBelowGround: rows.some((r) => r.aboveGround <= 0),
+        anyNearBlocked: rows.some((r) => r.nearBlocked),
+        rows,
+      };
+    });
+    out("GROUND", r);
+  });
+}
+
+const table = { framerate, speed, corner, backin, settle, reduce, framing, air, ground };
 if (which === "all") {
   for (const fn of Object.values(table)) await fn();
 } else if (table[which]) {

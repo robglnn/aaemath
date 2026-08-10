@@ -1,6 +1,6 @@
 Variable Star — Level 1 learning architecture, reference simulation
 graph: 32 knowledge points
-budget: 18 sessions x 25 min = 576 scored opportunities at 46s each
+budget: 22 sessions x 25 min. A session is a TIME box, not an item count: model 22s, guided-1 34s, guided-2 40s, guided-3 46s, solo 46s, everything else 46s
 gate: P(known) >= 0.95, >= 6 scored opportunities, >= 3 at band, >= 2 forms, then 3/4 on a uniform, unhinted retention check >= 12 h later
 
 forms: scored [construct, repair, generate]   unscored [select4, judge2]
@@ -8,44 +8,57 @@ true blind-success rates the bots actually draw from: construct 0.03, repair 0.0
 model's own guess belief, for contrast: construct 0.070, repair 0.070, generate 0.042, select4 0.238, judge2 0.420 (band 3)
 
 --- mixed-ability population  (n = 3000) ---
-  mastered %:   p10 65.6   p25 78.1   median 93.8   p75 100.0   p90 100.0
-  >= 80% mastery: 74.9% of learners
-  >= 90% mastery: 58.9% of learners
-  mean KPs certified: 28.0627 of 32
-  mean KPs unlocked:  31.66 of 32
-  scored opportunities used (median): 585
-  retention checks: 95797 attempted, 84309 passed (88.01%)
+  mastered %:   p10 81.3   p25 93.8   median 100.0   p75 100.0   p90 100.0
+  >= 80% mastery: 90.2% of learners
+  >= 90% mastery: 82.3% of learners
+  mean KPs certified: 30.3313 of 32
+  mean KPs unlocked:  31.85 of 32
+  scored opportunities used (median): 794
+  retention checks: 105250 attempted, 91051 passed (86.51%)
+  item mix per run: model 51.8  guided-1 98.4  solo 211.1  guided-3 46.4  cert-consolidate 71.8  guided-2 28.6  cert-retention 140.3  cert-review 146.0
+  median theta at end: 2.08
   peak KPs ever certified by a single run: 32   (runs that ever certified anything: 3000/3000)
+  items that bought no credit (unscored form, or a scaffold the director chose): 127 per run
 
 --- median learner (ability = 1.00)  (n = 1500) ---
-  mastered %:   p10 81.3   p25 87.5   median 93.8   p75 96.9   p90 100.0
-  >= 80% mastery: 92.2% of learners
-  >= 90% mastery: 66.5% of learners
-  mean KPs certified: 29.0947 of 32
+  mastered %:   p10 93.8   p25 96.9   median 100.0   p75 100.0   p90 100.0
+  >= 80% mastery: 99.7% of learners
+  >= 90% mastery: 96.7% of learners
+  mean KPs certified: 31.2600 of 32
   mean KPs unlocked:  32.00 of 32
-  scored opportunities used (median): 585
-  retention checks: 50126 attempted, 43691 passed (87.16%)
+  scored opportunities used (median): 794
+  retention checks: 54378 attempted, 46902 passed (86.25%)
+  item mix per run: model 51.7  guided-1 96.7  solo 211.5  cert-consolidate 73.1  guided-2 28.3  guided-3 45.1  cert-retention 145.0  cert-review 142.9
+  median theta at end: 2.13
   peak KPs ever certified by a single run: 32   (runs that ever certified anything: 1500/1500)
+  items that bought no credit (unscored form, or a scaffold the director chose): 125 per run
 
---- patient guessing bot (waits out the latency floor)  (n = 3000) ---
+--- patient guessing bot (waits out the latency floor; takes whatever the scaffold gives)  (n = 3000) ---
   mastered %:   p10 0.0   p25 0.0   median 0.0   p75 0.0   p90 0.0
   >= 80% mastery: 0.0% of learners
   >= 90% mastery: 0.0% of learners
   mean KPs certified: 0.0000 of 32
-  mean KPs unlocked:  0.78 of 32
-  scored opportunities used (median): 576
-  retention checks: 2090 attempted, 0 passed (0.00%)
+  mean KPs unlocked:  1.60 of 32
+  scored opportunities used (median): 869
+  retention checks: 4687 attempted, 0 passed (0.00%)
+  item mix per run: model 47.1  guided-1 440.1  solo 178.6  guided-3 169.9  guided-2 24.1  cert-consolidate 3.3  cert-retention 6.2
+  median theta at end: -4.82
   peak KPs ever certified by a single run: 0   (runs that ever certified anything: 0/3000)
+  items that bought no credit (unscored form, or a scaffold the director chose): 241 per run
 
 --- mashing bot (50% of responses under the latency floor)  (n = 3000) ---
   mastered %:   p10 0.0   p25 0.0   median 0.0   p75 0.0   p90 0.0
   >= 80% mastery: 0.0% of learners
   >= 90% mastery: 0.0% of learners
   mean KPs certified: 0.0000 of 32
-  mean KPs unlocked:  0.22 of 32
-  scored opportunities used (median): 576
-  retention checks: 582 attempted, 0 passed (0.00%)
+  mean KPs unlocked:  0.50 of 32
+  scored opportunities used (median): 892
+  retention checks: 1378 attempted, 0 passed (0.00%)
+  item mix per run: model 44.9  guided-1 518.2  solo 134.6  guided-3 136.9  guided-2 55.1  cert-consolidate 1.0  cert-retention 1.8
+  median theta at end: -5.48
   peak KPs ever certified by a single run: 0   (runs that ever certified anything: 0/3000)
+  items that bought no credit (unscored form, or a scaffold the director chose): 237 per run
+  correct responses refused upward (under the latency floor, or after reading a hint): 22.8 per run
 
 --- form-hunting bot (served judge2/select4 on every item by a broken item bank)  (n = 3000) ---
   mastered %:   p10 0.0   p25 0.0   median 0.0   p75 0.0   p90 0.0
@@ -53,68 +66,124 @@ model's own guess belief, for contrast: construct 0.070, repair 0.070, generate 
   >= 90% mastery: 0.0% of learners
   mean KPs certified: 0.0000 of 32
   mean KPs unlocked:  0.00 of 32
-  scored opportunities used (median): 576
+  scored opportunities used (median): 769
   retention checks: 0 attempted, 0 passed (—%)
+  item mix per run: model 20.6  guided-1 79.6  guided-2 79.3  guided-3 318.8  solo 270.5
+  median theta at end: -0.80
   peak KPs ever certified by a single run: 0   (runs that ever certified anything: 0/3000)
-  items the engine refused to score (wrong form): 576 per run — time spent, nothing bought
+  items that bought no credit (unscored form, or a scaffold the director chose): 769 per run
+
+--- hint-abusing bot (idles past hintSurfaceMs on every acquisition item, blind on retention)  (n = 3000) ---
+  mastered %:   p10 0.0   p25 0.0   median 0.0   p75 0.0   p90 0.0
+  >= 80% mastery: 0.0% of learners
+  >= 90% mastery: 0.0% of learners
+  mean KPs certified: 0.0003 of 32
+  mean KPs unlocked:  1.61 of 32
+  scored opportunities used (median): 869
+  retention checks: 4669 attempted, 1 passed (0.02%)
+  item mix per run: model 47.1  guided-1 440.8  solo 178.4  guided-3 169.7  guided-2 24.1  cert-consolidate 3.3  cert-retention 6.2  cert-review 0.0
+  median theta at end: -4.81
+  peak KPs ever certified by a single run: 1   (runs that ever certified anything: 1/3000)
+  items that bought no credit (unscored form, or a scaffold the director chose): 241 per run
+
+--- hint-leak bot (as above, PLUS P18 leaks the hint surface into solo — an implementation bug arm)  (n = 3000) ---
+  mastered %:   p10 0.0   p25 0.0   median 0.0   p75 0.0   p90 0.0
+  >= 80% mastery: 0.0% of learners
+  >= 90% mastery: 0.0% of learners
+  mean KPs certified: 0.0000 of 32
+  mean KPs unlocked:  0.00 of 32
+  scored opportunities used (median): 767
+  retention checks: 0 attempted, 0 passed (—%)
+  item mix per run: model 39.7  guided-1 26.5  guided-2 38.0  guided-3 362.5  solo 299.5
+  median theta at end: -5.12
+  peak KPs ever certified by a single run: 0   (runs that ever certified anything: 0/3000)
+  items that bought no credit (unscored form, or a scaffold the director chose): 440 per run
+  correct responses refused upward (under the latency floor, or after reading a hint): 277.2 per run
 
 --- time to 80% mastery, mixed-ability population, no time box (n = 1200, run out to 34 sessions) ---
   80% of Level 1 = 26 of 32 knowledge points certified
   by session 12 (5.0 h of play): 0.0% of learners have >= 80% mastery
-  by session 16 (6.7 h of play): 45.9% of learners have >= 80% mastery
-  by session 18 (7.5 h of play): 71.9% of learners have >= 80% mastery
-  by session 20 (8.3 h of play): 86.3% of learners have >= 80% mastery
-  by session 24 (10.0 h of play): 98.0% of learners have >= 80% mastery
+  by session 16 (6.7 h of play): 1.2% of learners have >= 80% mastery
+  by session 18 (7.5 h of play): 24.3% of learners have >= 80% mastery
+  by session 20 (8.3 h of play): 67.2% of learners have >= 80% mastery
+  by session 24 (10.0 h of play): 97.3% of learners have >= 80% mastery
   by session 28 (11.7 h of play): 99.8% of learners have >= 80% mastery
   by session 34 (14.2 h of play): 100.0% of learners have >= 80% mastery
   learners who reach 80% at all within 34 sessions: 100.0%
-  sessions to 80%: p25 15   median 17   p75 19   p90 21
+  sessions to 80%: p25 19   median 20   p75 21   p90 22
 
 --- section 4.1: which review-scheduling rule is load-bearing? (n = 800, identical seeds) ---
-  both rules on (shipped)                median learner certifies 29 of 32
-  rate-limit lift OFF, pull-forward on   median learner certifies 29 of 32
-  rate-limit lift on, pull-forward OFF   median learner certifies 29 of 32
-  both rules OFF                         median learner certifies 17 of 32
+  both rules on (shipped)                median learner certifies 32 of 32
+  rate-limit lift OFF, pull-forward on   median learner certifies 32 of 32
+  rate-limit lift on, pull-forward OFF   median learner certifies 31 of 32
+  both rules OFF                         median learner certifies 21 of 32
   Certification capacity, not teaching capacity, is what rations Level 1.
 
 --- L5 isolated: the mastery gate alone, one knowledge point ("like-terms-id", band 2), n = 20000 bots per cell ---
     bot patience: up to 200 acquisition items per retention attempt, retried as many times as shown
 
-  arm                                            1 try    2 try    5 try   11 try   survives +1d
-  LEGACY rules, bot served judge2+select4       13.84%   25.88%   51.78%   79.96%   69.52%
-  LEGACY rules, bot served judge2 only           0.00%    0.00%    0.00%    0.00%   0.00%
-  CURRENT rules, bot served judge2+select4       0.00%    0.00%    0.00%    0.00%   0.00%
-  CURRENT rules, bot served the scored forms     0.00%    0.01%    0.01%    0.03%   0.03%
+  arm                                                        1 try    2 try    5 try   11 try   survives +1d   gate opened
+  LEGACY rules, bot served judge2+select4                   13.90%   25.93%   52.04%   80.47%   69.82%         100.00%
+  LEGACY rules, bot served judge2 only                       0.00%    0.00%    0.00%    0.00%   0.00%         0.00%
+  CURRENT rules, bot served judge2+select4                   0.00%    0.00%    0.00%    0.00%   0.00%         0.00%
+  CURRENT rules, bot served the scored forms                 0.00%    0.00%    0.01%    0.02%   0.02%         89.50%
+  ROUND-3 rules, hint-abusing bot                            0.01%    0.01%    0.04%    0.09%   0.09%         100.00%
+  CURRENT rules, hint-abusing bot                            0.00%    0.00%    0.01%    0.02%   0.02%         89.50%
+  CURRENT rules, hint-abusing bot + leaked hint in solo      0.01%    0.01%    0.04%    0.10%   0.10%         100.00%
 
-  the leak, measured: 79.96% of coin-flipping bots certified a knowledge point under the round-1 rules.
+  at the design's own Freshness cutoff (12 acquisition items, 1 retention try) — the patience a bot
+  inside the real session loop gets:
+  arm                                                     gate opened   certified
+  ROUND-3 rules, hint-abusing bot                              34.92%      0.000%
+  CURRENT rules, hint-abusing bot                               0.01%      0.000%
+  CURRENT rules, hint-abusing bot + leaked hint in solo        98.72%      0.010%
+  CURRENT rules, patient guessing bot                           0.01%      0.000%
+
+  Under the current rules the hint-abusing bot and the patient guessing bot produce the SAME
+  numbers, and that identity is the fix: waiting for the hint buys exactly nothing, so the
+  two strategies are the same strategy.
+
+  the SECOND door, measured. A bot that idles 12 s on every acquisition item and
+  answers blind on the retention check:
+    under ROUND-3 rules  it opened the mastery gate on 100.00% of runs (M1+M2+M3 satisfied on hint-reads)
+                         and certified 0.085%;
+    under CURRENT rules  it opens the gate on 89.50% and certifies 0.020%;
+    if P18 ALSO leaks the hint surface into solo, 100.00% / 0.095% — which is why phases.hinted
+                         is a per-response fact and not a phase name.
+
+  the leak, measured: 80.47% of coin-flipping bots certified a knowledge point under the round-1 rules.
   the leak, closed:   0.00% under the current rules with the same hostile item server,
                       because the engine refuses to score a form outside model.forms.scored — the bot
                       never accumulates an M2 opportunity, so the gate is never even opened
                       (gate ever opened: 0.00% of bots).
-  honest L5 number:   0.025% of bots certified when served the legitimate scored forms
+  honest L5 number:   0.020% of bots certified when served the legitimate scored forms
                       at their true blind rates (construct 0.03, repair 0.03, generate 0.02),
                       with 11 retention attempts and 200 acquisition items of patience each.
 
   patience sensitivity, CURRENT rules with the scored forms (the honest arm):
   acquisition items per retry     hours on one KP   certified
   12                                          1.7    < 0.015%
-  40                                          5.6      0.005%
-  100                                        14.1      0.015%
-  200                                        28.1      0.035%
-  400                                        56.2      0.035%
+  40                                          5.6    < 0.015%
+  100                                        14.1      0.005%
+  200                                        28.1      0.015%
+  400                                        56.2      0.030%
   (12 is the design's own Freshness cutoff in section 4 — past 12 attempts the selector pushes
    the learner off the node, so 12 is the patience a bot inside the real session loop actually gets.
    Zero certifications there is why the full-session guessing cohort above certifies nothing at all.)
 
 == gates ==
   L4  median learner reaches >= 80% mastery ................. PASS
-  L4  median of the mixed-ability population >= 80% ......... PASS  (74.9% clear 80% inside the 18-session budget)
+  L4  median of the mixed-ability population >= 80% ......... PASS  (90.2% clear 80% inside the 22-session budget)
   L4  >= 95% of learners reach 80% given unbounded sessions .. PASS  (100.0%)
   L5  patient guessing bot stays under 10% of Level 1 ....... PASS  (peak ever certified: 0 of 32)
   L5  mashing bot stays under 10% of Level 1 ................ PASS  (peak ever certified: 0 of 32)
   L5  form-hunting bot stays under 10% of Level 1 ........... PASS  (peak ever certified: 0 of 32)
   L5  isolated gate, hostile forms, 11 retries ............. PASS  (0.000% certified, must be < 0.05%)
-  L5  isolated gate, scored forms, 11 retries .............. PASS  (0.025% certified, must be < 0.05%)
-  L5* harness can actually detect a leak .................... PASS  (legacy rules leak 79.96%, must be > 5% or this file is measuring nothing)
+  L5  isolated gate, scored forms, 11 retries .............. PASS  (0.020% certified, must be < 0.05%)
+  L5  hint-abusing bot stays under 10% of Level 1 ........... PASS  (peak ever certified: 1 of 32)
+  L5  hint-LEAK bot (P18 bug arm) stays under 10% ........... PASS  (peak ever certified: 0 of 32)
+  L5  hint-abusing bot never OPENS the gate at real patience  FAIL  (0.01% of bots reached provisional, must be 0)
+  L5* harness can actually detect a leak .................... PASS  (legacy rules leak 80.47%, must be > 5% or this file is measuring nothing)
+  L5* harness can see the ROUND-3 hint hole ................. PASS  (round-3 rules let the hint-abuser open the gate on 34.92% of runs at the same patience, must be > 5%)
 
-RESULT: PASS
+RESULT: FAIL

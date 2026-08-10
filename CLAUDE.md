@@ -48,9 +48,19 @@ headless capture is a measurement artefact until proven otherwise with `simTime`
 
 ## Quality bar
 
-`design/quality-bar.md` is binding. `reference/brief-hero.png` is the art-direction reference from
-the brief. Critics compare our real render against it side by side, blind, and name the single
-biggest gap when we lose.
+`design/quality-bar.md` is binding.
+
+**`reference/target-lowpoly.png` is the render target.** Flat-shaded low-poly: faceted rock, hard
+edges, per-face flat shading, banded dusk sky, warm rock against desaturated shadow, cyan crystal and
+water as the only saturated accents, hard-edged blocky UI, and bare white KaTeX floating unframed in
+world space. No normal maps, no smooth organic surfaces, no glass panels.
+
+`reference/brief-hero.png` is mood only — colour feeling and sense of wonder. Where the two conflict,
+the low-poly target wins.
+
+Critics compare our real render against the target side by side, blind, and name the single biggest
+gap when we lose. Because this target is achievable in real time, "the reference is a painting" is
+not an available excuse.
 
 ## Learning is not a layer on top
 

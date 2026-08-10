@@ -1,0 +1,67 @@
+PAIRWISE-SEPARATED — exhaustive misconception-collision scan
+
+Rule (4) of conventions.misconceptions[].diagnosticSignature: on a generated instance no two
+misconceptions on the same node may evaluate to the same response. Rules (1) and (2) do not
+imply it — every stem counted in the `all 3 valid` column below already passes rule (2).
+
+  node                  stems in space  all sigs valid   collide   rejected
+  eq-two-step                     1776             820        12      1.46%
+  eq-both-sides                  17036           13128       444      3.38%
+  eq-combine-side                17036           11384       996      8.75%
+  eq-distribute                   1748            1054        74      7.02%
+  eq-one-add                       361             324        18      5.56%
+  eq-one-mult                       92              55         0      0.00%
+  distribute-variable             2736            2375         0      0.00%
+  distribute-numeric              4332            3716        54      1.45%
+
+  eq-two-step: a·x + b = c, integer solution
+      space: a in [-6,6]\{0}, b in [-9,9], c in [-9,9], (c-b) divisible by a
+           8 stems  divide-before-clearing-constant == inverse-order-inverted
+           4 stems  inverse-order-inverted == constant-sign-flipped
+      example: {"a":-3,"b":-6,"c":-9} -> both signatures produce 9
+
+  eq-both-sides: a·x + b = c·x + d, integer solution
+      space: a,c in [-6,6]\{0}, a != c, b,d in [-9,9], (d-b) divisible by (a-c)
+         228 stems  removed-from-one-side-only == constants-collected-wrong-side
+         216 stems  moved-without-inverting == constants-collected-wrong-side
+      example: {"a":-6,"b":-5,"c":-5,"d":6} -> both signatures produce -1
+
+  eq-combine-side: a·x + b·x + c = d, integer solution
+      space: a,b in [-6,6]\{0}, a+b != 0, c,d in [-9,9], (d-c) divisible by (a+b)
+         698 stems  combine-across-the-equals == constant-absorbed-into-coefficient
+         200 stems  combine-across-the-equals == one-like-term-dropped
+          98 stems  one-like-term-dropped == constant-absorbed-into-coefficient
+      example: {"a":-6,"b":2,"c":-4,"d":8} -> both signatures produce -1
+
+  eq-distribute: p(x + q) = r, integer solution
+      space: p in [-6,6]\{0}, q in [-9,9], r in [-9,9], r divisible by p
+          62 stems  distribute-partially-in-equation == divide-bracket-only
+          12 stems  distribute-partially-in-equation == coefficient-never-undone
+      example: {"p":-6,"q":-6,"r":-6} -> both signatures produce 0
+
+  eq-one-add: x + p = q  (2 of 3 misconceptions share this stem; minus-inverted-wrongly uses x − p = q)
+      space: p,q in [-9,9]
+          18 stems  same-operation-not-inverse == subtraction-order-reversed
+      example: {"p":-9,"q":0} -> both signatures produce -9
+
+  eq-one-mult: a·x = b, integer solution  (2 of 3 share this stem; fraction-form-inverted uses x / a = b)
+      space: a in [-6,6]\{0}, b in [-9,9], b divisible by a
+      no collision anywhere in the space — the rule costs this family nothing
+
+  distribute-variable: a(b·x + c), response compared as the triple (x² coefficient, x coefficient, constant)
+      space: a,b in [-6,6]\{0}, c in [-9,9]
+      no collision anywhere in the space — the rule costs this family nothing
+
+  distribute-numeric: a(b + c)  (2 of 3 misconceptions share this stem; distribute-over-a-product uses a(b·c))
+      space: a in [-6,6]\{0}, b,c in [-9,9]
+          54 stems  distribute-to-first-term-only == distribute-by-adding
+      example: {"a":-1,"b":1,"c":-9} -> both signatures produce -10
+
+  control arm (two signatures that are algebraically identical, b+a vs a+b):
+      227 of 227 stems flagged (100.00%) — the scan can see a collision, PASS
+
+  worst family: eq-combine-side at 8.75% of its valid stems rejected.
+  build threshold is 25%: past that the misconceptions are not distinguishable and the node
+  needs different ones rather than a filter. P17 implements rule (4) as a stem filter.
+
+RESULT: PASS

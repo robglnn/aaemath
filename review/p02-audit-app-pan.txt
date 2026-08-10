@@ -1,0 +1,67 @@
+
+art-audit  review\shots\p02\motion-pan\f00.png  1600x900
+invocation node review/art-audit.mjs --seq=review/shots/p02/motion-pan --hero=0.343,0.415,0.422,0.825 --require-motion
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+CENSUS — frame-wide statistics
+FAIL  L1   median luminance (p50)                0.1131  [0.3 .. 0.4]       exposure
+FAIL  L2   shadow shoulder (p25)                 0.0152  [0.11 .. 0.19]     toe must not crush
+FAIL  L3   highlight shoulder (p90)              0.2013  [0.6 .. 0.72]      
+FAIL  L4   mean luminance                        0.1069  [0.304 .. 0.40399999999999997] 
+FAIL  L5   mean saturation                       0.4972  [0.263 .. 0.363]   
+ ok   L6   clipped highlights (Y>=0.99)               0  <= 0.02            only emitters, sun, glyphs
+FAIL  L7   crushed blacks (Y<=0.01)              0.0487  <= 0.04            
+FAIL  C1   quiet share (muted+atmosphere)        0.0206  [0.56 .. 0.72]     pale-bright (V>0.7 & S<0.45) scores as atmosphere, not substance
+FAIL  C1b  atmosphere share                      0.0008  [0.15 .. 0.55]     sky, haze, aerial wash, bloom halo
+FAIL  C2   warm SUBSTANCE share                  0.5023  [0.18 .. 0.29]     hue 0-60/320-360, S>=0.30, not atmosphere
+FAIL  C3   resonance SUBSTANCE share             0.4771  [0.09 .. 0.17]     hue 150-215, S>=0.30, not atmosphere
+FAIL  C4   hot share                               0.07  [0.08 .. 0.16]     S>=0.55
+FAIL  C5   HOT RESONANCE share                   0.0696  [0.02 .. 0.05]     the cyan budget
+FAIL  C6   warm : resonance ratio                 1.053  [1.4 .. 2.4]       warm rock must dominate
+FAIL  C7   sky third quiet share                      0  [0.9 .. 1]         the sky carries hue, not saturation
+FAIL  C8   bottom third resonance share          0.0294  [0.18 .. 0.36]     
+ ok   C9   danger share                               0  <= 0.005           transient only
+ ok   C10  success share                              0  <= 0.005           transient only
+ ok   C11  off-language hue share                     0  <= 0.02            hue 60-90 / 215-320 must stay empty
+FAIL  C12  GREY substance share                   0.004  [0.02 .. 0.08]     hue 20-80 at S < 0.14 — world.md's third material. reference/brief-hero.png scores 0.0123 and FAILS: it is a hero vista of a world with no grey in it
+ ok   X1   shadow cool share                     0.6168  [0.38 .. 0.8]      hue 185-320 among 0.02<=Y<=0.12, S>=0.10 (n=11286); warm 0.3364
+FAIL  D1   acutance foreground/distance            0.01  [1.8 .. 6]         depth of field must exist
+FAIL  D2   acutance foreground/midground          0.064  [1.5 .. 5]         focus plane is near
+FAIL  D3   saturation rises with depth          -0.0829  >= 0.15            top 0.5319 -> bottom 0.449
+FAIL  D4   acutance hero/midground                 1.08  [2.5 .. 8]         hero is the focus plane
+FAIL  D5   landmark : sky behind it                   1  <= 0.7             landmark 0.0152 on [0.7,0.12,0.86,0.3] vs sky 0.0152 on [0.86,0.12,0.96,0.3] (--landmark= / --skybehind=); ONE mass per frame is a silhouette, the rest recede by haze
+ ok   F1   dark framing mass in border           0.5035  >= 0.06            the frame is anchored by geometry, not a vignette
+FAIL  S1   sky gradient distinct codes                1  >= 8               codes 1/1/1 over span ΔY 0
+FAIL  H1   hero/surround luminance separation    0.0273  >= 0.1             hero 0.1149 vs surround 0.1422
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+SOLVED CONSTANTS — the numbers a builder types
+n/a   U1a  scrim plateau transmission                 —                     no full-width text plate detected — pass --scrim=y0,y1 if one is present
+n/a   U1b  scrim ends ramp out (frame widths)         —                     not applicable without a detected plate
+FAIL  V1a  veil compression slope                0.0252  [0.3 .. 0.72]      n=67 pairs over 3 edges, background spread 0.3048, r² 0.0002
+FAIL  V1b  veil fixed point                      0.0873  [0.4 .. 0.5]       Y_in = 0.0252·Y_bg + 0.0851; additive ⇒ slope≈1, flat plate ⇒ slope≈0
+ ok   V1c  veil fit is identifiable              0.3048  >= 0.2             needs ≥10 pairs over ≥2 edges spanning ≥0.2 of luminance
+n/a   B1a  emitter peak in declared box               —  >= 0.9             box [0.54,0.62,0.74,0.82] (--emitter=), peak at null, 0 emissive px in box
+FAIL  B1b  blown emitter cores in frame               0  [0.0002 .. 0.006]  Y>=0.90 AND hue 150-215 — ONE definition, the one §5 and palette.json state
+n/a   B1c  peak core is a COMPONENT, not a field         —  (0 .. 0.004]       the blown region the peak belongs to must be a compact core; a blown sky is not an emitter
+FAIL  K1   key : fill on marked rock              0.988  6.2 ± 1.6          lit 0.1955 / shadow 0.1978 on boxes [0.87,0.481,0.91,0.489] , [0.872,0.598,0.902,0.612]
+n/a   I1a  ink width                                  —                     too few ink runs inside --hero to measure
+n/a   I1b  ink width                                  —                     too few ink runs inside --hero to measure
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+MOTION — differences between 6 frames one fixed step apart (mode "pan")
+n/a   M1a  mean |ΔY| per fixed step                   —                     only meaningful with the camera static — this sequence is "pan"
+n/a   M1b  p99 |ΔY| per fixed step                    —                     only meaningful with the camera static — this sequence is "pan"
+n/a   M1c  share of pixels moving                     —                     only meaningful with the camera static — this sequence is "pan"
+n/a   M4   sky 8-bit code churn                       —                     only meaningful with the camera static — this sequence is "pan"
+ ok   M2   hero silhouette area step            0.00242  <= 0.03            area 0.2557 → 0.2555 → 0.2549 → 0.2546 → 0.2545 → 0.2542
+n/a   M3a  ink median width step (px @1600)           —  <= 1               p50 — → — → — → — → — → — — I1b measures taper on ONE frame and cannot see crawl
+n/a   M3b  ink p90 width step (px @1600)              —  <= 2               p90 — → — → — → — → — → —
+ ok   M5   emissive energy step (rel.)           0.0012  <= 0.03            bloom pop and strobing emitters; an authored pulse changes far less than this per step
+ ok   M6   median Y step (exposure)             0.00494  <= 0.02            auto-exposure hunting or an unstable tonemap
+FAIL  M7   hero/surround separation, worst frame   0.02451  >= 0.1             H1 must hold on EVERY frame, not the lucky one: 0.028 0.028 0.027 0.026 0.025 0.025
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+6/29 census · 1/5 solved · 6 solved checks could not run · 3/4 motion · 6 motion n/a
+  (pass --require-solved to make an unrunnable solved check a failure — UI and hologram pieces must)
+
+percentiles  {"p01":0.0066,"p05":0.0152,"p10":0.0152,"p25":0.0152,"p50":0.1131,"p75":0.1901,"p90":0.2013,"p95":0.2225,"p99":0.2444}
+share        {"quiet":0.0206,"atmosphere":0.0008,"grey":0.004,"muted":0.0158,"warm":0.5023,"resonance":0.4771,"bridge":0,"other":0,"hot":0.07,"hotResonance":0.0696,"danger":0,"success":0}
+acutance     {"foreground":0.00031,"midground":0.00486,"distance":0.03067,"hero":0.00525,"heroCoreBox":[0.35485,0.497,0.41015,0.743]}  satByThird [0.5319,0.5112,0.449]
+motion       {"mode":"pan","frames":6,"size":[1600,900],"moving":true,"meanDeltaY":0.00218,"p99DeltaY":0.04647,"bigDeltaShare":0.00932,"heroAreaStep":0.00242,"heroSeparationMin":0.02451,"inkP50":[null,null,null,null,null,null],"inkP50Step":null,"inkP90":[null,null,null,null,null,null],"inkP90Step":null,"skyCodeChurn":0,"emissiveEnergyStep":0.0012,"medianYStep":0.00494}

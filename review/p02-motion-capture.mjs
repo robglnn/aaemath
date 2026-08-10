@@ -37,6 +37,14 @@ const meta = { mode, frames, step: STEP, width, height, files: [], yaw: [], simT
 await openGame({ width, height, tier: arg('tier', null) }, async (d) => {
   await d.play(1.2); // settle
 
+  // Stop the wall-clock animation loop. A screenshot costs seconds of real time
+  // under software GL, and a running realtime loop would advance the simulation
+  // by all of it between two captures — the frames would be seconds apart while
+  // claiming to be one step apart, which is the exact measurement artefact
+  // CLAUDE.md warns about. With the loop halted, simTime moves only when this
+  // script advances it, and the interval between captures is exactly one step.
+  await d.page.evaluate(() => window.__vs.kernel.halt());
+
   const camYaw = async () => (await d.probe('camera'))?.yaw ?? null;
 
   let pxPerStep = 0;
@@ -64,6 +72,16 @@ await openGame({ width, height, tier: arg('tier', null) }, async (d) => {
   if (mode === 'run') {
     await d.page.keyboard.down('KeyW');
     await d.play(0.9); // reach steady-state speed before the first capture
+  }
+  if (mode === 'settle') {
+    // Pan hard, then stop dead and capture a STATIC pair. §15's dither rule says
+    // the pattern must not be re-seeded on camera motion; a pattern that reseeds
+    // when the camera moves looks perfectly stable in a cold static capture and
+    // fizzes for a few frames every time the player turns. This is the capture
+    // that catches it: the frames are static, but the camera stopped one step ago.
+    const box0 = d.page.viewportSize();
+    await d.page.mouse.move(box0.width / 2, box0.height / 2);
+    for (let i = 0; i < 30; i++) { await d.page.mouse.move(box0.width / 2 + (i + 1) * 8, box0.height / 2); await d.advance(STEP); }
   }
 
   const box = d.page.viewportSize();
@@ -103,6 +121,10 @@ await openGame({ width, height, tier: arg('tier', null) }, async (d) => {
   for (const f of d.failedRequests) meta.problems.push('request failed: ' + f);
 });
 
+// `settle` frames are captured with the camera at rest, so they are scored by the
+// static budgets — the only difference is that the camera stopped one step before
+// frame 0, which is exactly what makes a motion-reseeded dither visible.
+if (meta.mode === 'settle') meta.mode = 'static';
 fs.writeFileSync(path.resolve(ROOT, outDir, 'sequence.json'), JSON.stringify(meta, null, 2));
 console.log(JSON.stringify(meta, null, 2));
 if (meta.problems.length) { console.error('\nSEQUENCE IS NOT REVIEWABLE — fix the problems above first.'); process.exit(1); }

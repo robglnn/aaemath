@@ -1,0 +1,496 @@
+{
+  "errors": [],
+  "out": {
+    "tune": {
+      "capsuleRadius": 0.36,
+      "capsuleHeight": 1.82,
+      "walkSpeed": 2.4,
+      "runSpeed": 5.6,
+      "sprintSpeed": 8.3,
+      "groundAccel": 16,
+      "launchBoost": 0.9,
+      "groundBrake": 26,
+      "reverseBoost": 1.6,
+      "idleFriction": 23,
+      "lateralGrip": 19,
+      "brakeAngleDeg": 110,
+      "brakeHeadingDeg": 100,
+      "brakeHoldDeg": 99,
+      "brakeHeadingHoldDeg": 90,
+      "pivotSpeed": 3.3,
+      "pivotTime": 0.14,
+      "pivotAccel": 0.4,
+      "airAccel": 9,
+      "airDrag": 0.05,
+      "airAlongKeep": 0.55,
+      "airAlongFloor": 2.6,
+      "airLateralK": 0.55,
+      "airLateralMin": 2.6,
+      "turnRateSlow": 7,
+      "turnRateFast": 2.45,
+      "turnRateAir": 2.6,
+      "pivotTurnBoost": 1.75,
+      "carveScrub": 0.09,
+      "carveScrubDecel": 3.4,
+      "leanReference": 26,
+      "jumpSpeed": 7.45,
+      "gravityRise": 22,
+      "gravityFall": 33,
+      "apexSpeed": 1.2,
+      "apexGravityScale": 0.55,
+      "apexAirControl": 1.2,
+      "jumpCut": 0.42,
+      "minJumpHold": 0.055,
+      "terminalSpeed": 45,
+      "coyoteTime": 0.16,
+      "jumpBuffer": 0.19,
+      "jumpCooldown": 0.09,
+      "slopeLimitDeg": 47,
+      "slideAccel": 16,
+      "slideControl": 0.22,
+      "uphillK": 0.85,
+      "downhillK": 0.18,
+      "stepHeight": 0.55,
+      "stepAssist": 0.35,
+      "stepSpeedCost": 0.28,
+      "stepGraceSteps": 3,
+      "snapDistance": 0.38,
+      "snapSuppress": 0.09,
+      "groundEpsilon": 0.05,
+      "landSoftSpeed": 10.2,
+      "landHardSpeed": 24,
+      "landLockMin": 0.06,
+      "landLockMax": 0.26,
+      "landControlMin": 0.35,
+      "landSpeedKeep": 0.55,
+      "squashDecay": 0.22,
+      "blockImpactSpeed": 4,
+      "blockStateTime": 0.25,
+      "voidDrop": 30,
+      "strideLength": 2.1
+    },
+    "straight": [
+      {
+        "band": "walk",
+        "vmax": 2.4,
+        "to50": 0.05,
+        "to90": 0.1,
+        "to99": 0.117,
+        "distTo90": 0.1506,
+        "stopSeconds": 0.117,
+        "stopDistance": 0.1058
+      },
+      {
+        "band": "run",
+        "vmax": 5.6,
+        "to50": 0.117,
+        "to90": 0.217,
+        "to99": 0.25,
+        "distTo90": 0.651,
+        "stopSeconds": 0.25,
+        "stopDistance": 0.6358
+      },
+      {
+        "band": "sprint",
+        "vmax": 8.3,
+        "to50": 0.167,
+        "to90": 0.317,
+        "to99": 0.367,
+        "distTo90": 1.3573,
+        "stopSeconds": 0.367,
+        "stopDistance": 1.4292
+      }
+    ],
+    "circles": [
+      {
+        "band": "walk",
+        "entrySpeed": 2.4,
+        "seconds360": 1.1,
+        "radius": 0.37,
+        "radiusSpread": 0.1111,
+        "sustained": 2.1887,
+        "minSpeed": 2.184,
+        "maxSpeed": 2.3433,
+        "keptPct": 91.2,
+        "meanLagDeg": 9.99,
+        "brakeSteps": 0,
+        "states": "walk"
+      },
+      {
+        "band": "run",
+        "entrySpeed": 5.6,
+        "seconds360": 1.5,
+        "radius": 1.1861,
+        "radiusSpread": 0.3951,
+        "sustained": 5.1181,
+        "minSpeed": 5.096,
+        "maxSpeed": 5.5433,
+        "keptPct": 91.4,
+        "meanLagDeg": 8.87,
+        "brakeSteps": 0,
+        "states": "run"
+      },
+      {
+        "band": "sprint",
+        "entrySpeed": 8.3,
+        "seconds360": 2.217,
+        "radius": 2.5927,
+        "radiusSpread": 0.8112,
+        "sustained": 7.5872,
+        "minSpeed": 7.553,
+        "maxSpeed": 8.2433,
+        "keptPct": 91.4,
+        "meanLagDeg": 6.35,
+        "brakeSteps": 0,
+        "states": "sprint"
+      }
+    ],
+    "corners": [
+      {
+        "band": "walk",
+        "deg": 45,
+        "v0": 2.4,
+        "faceSeconds": 0.133,
+        "minSpeed": 2.184,
+        "minPct": 91,
+        "recoverSeconds": 0.15,
+        "skidSteps": 0
+      },
+      {
+        "band": "walk",
+        "deg": 90,
+        "v0": 2.4,
+        "faceSeconds": 0.283,
+        "minSpeed": 2.184,
+        "minPct": 91,
+        "recoverSeconds": 0.3,
+        "skidSteps": 0
+      },
+      {
+        "band": "walk",
+        "deg": 135,
+        "v0": 2.4,
+        "faceSeconds": 0.417,
+        "minSpeed": 2.184,
+        "minPct": 91,
+        "recoverSeconds": 0.433,
+        "skidSteps": 0
+      },
+      {
+        "band": "walk",
+        "deg": 180,
+        "v0": 2.4,
+        "faceSeconds": 0.55,
+        "minSpeed": 2.184,
+        "minPct": 91,
+        "recoverSeconds": 0.567,
+        "skidSteps": 0
+      },
+      {
+        "band": "run",
+        "deg": 45,
+        "v0": 5.6,
+        "faceSeconds": 0.2,
+        "minSpeed": 5.096,
+        "minPct": 91,
+        "recoverSeconds": 0.217,
+        "skidSteps": 0
+      },
+      {
+        "band": "run",
+        "deg": 90,
+        "v0": 5.6,
+        "faceSeconds": 0.383,
+        "minSpeed": 5.096,
+        "minPct": 91,
+        "recoverSeconds": 0.4,
+        "skidSteps": 0
+      },
+      {
+        "band": "run",
+        "deg": 135,
+        "v0": 5.6,
+        "faceSeconds": 0.45,
+        "minSpeed": 2.8267,
+        "minPct": 50.5,
+        "recoverSeconds": 0.483,
+        "skidSteps": 4
+      },
+      {
+        "band": "run",
+        "deg": 180,
+        "v0": 5.6,
+        "faceSeconds": 0.467,
+        "minSpeed": 2.5725,
+        "minPct": 45.9,
+        "recoverSeconds": 0.55,
+        "skidSteps": 5
+      },
+      {
+        "band": "sprint",
+        "deg": 45,
+        "v0": 8.3,
+        "faceSeconds": 0.3,
+        "minSpeed": 7.553,
+        "minPct": 91,
+        "recoverSeconds": 0.333,
+        "skidSteps": 0
+      },
+      {
+        "band": "sprint",
+        "deg": 90,
+        "v0": 8.3,
+        "faceSeconds": 0.567,
+        "minSpeed": 7.553,
+        "minPct": 91,
+        "recoverSeconds": 0.617,
+        "skidSteps": 0
+      },
+      {
+        "band": "sprint",
+        "deg": 135,
+        "v0": 8.3,
+        "faceSeconds": 0.55,
+        "minSpeed": 2.7533,
+        "minPct": 33.2,
+        "recoverSeconds": 0.583,
+        "skidSteps": 8
+      },
+      {
+        "band": "sprint",
+        "deg": 180,
+        "v0": 8.3,
+        "faceSeconds": 0.55,
+        "minSpeed": 2.7401,
+        "minPct": 33,
+        "recoverSeconds": 0.733,
+        "skidSteps": 9
+      }
+    ],
+    "reversal": {
+      "v0": 8.3,
+      "skidSteps": 9,
+      "skidSeconds": 0.15,
+      "overshootMetres": 1.1414,
+      "secondsToReverse": 0.367,
+      "secondsToFullSpeed": 0.733
+    },
+    "jumpHold": {
+      "height": 1.3372,
+      "airtime": 0.6833,
+      "hangSteps": 9,
+      "airborneSteps": 41,
+      "travel": 0,
+      "landingSpeed": 0
+    },
+    "jumpTap": {
+      "height": 0.3736,
+      "airtime": 0.4667
+    },
+    "jumpSprint": {
+      "takeoff": 8.3,
+      "travel": 5.8053,
+      "landingSpeed": 8.2931
+    },
+    "jumpAirFence": {
+      "travel": 3.5814,
+      "landingSpeed": 4.1802,
+      "landingVz": -4.1802
+    },
+    "coyoteSweep": "1111111110000000000",
+    "coyoteSteps": 9,
+    "coyoteSeconds": 0.15,
+    "coyoteMonotonic": true,
+    "bufferSweep": "1111111111100000000",
+    "bufferSteps": 11,
+    "bufferSeconds": 0.1833,
+    "bufferMonotonic": true,
+    "fallSteps": 29,
+    "landings": [
+      {
+        "drop": 1,
+        "impact": 9.46,
+        "severity": 0,
+        "hard": false,
+        "lockSeconds": 0.06,
+        "launchFromLanding": 7.45,
+        "escapeHeight": 1.3372,
+        "secondsToTopStayingDown": 0.367,
+        "secondsToTopViaJump": 0.983
+      },
+      {
+        "drop": 3,
+        "impact": 14.96,
+        "severity": 0.3449,
+        "hard": false,
+        "lockSeconds": 0.129,
+        "launchFromLanding": 7.45,
+        "escapeHeight": 1.3372,
+        "secondsToTopStayingDown": 0.383,
+        "secondsToTopViaJump": 0.983
+      },
+      {
+        "drop": 6,
+        "impact": 20.46,
+        "severity": 0.7435,
+        "hard": true,
+        "lockSeconds": 0.2087,
+        "launchFromLanding": 4.1372,
+        "escapeHeight": 0.4367,
+        "secondsToTopStayingDown": 0.417,
+        "secondsToTopViaJump": 0.7
+      },
+      {
+        "drop": 12,
+        "impact": 28.71,
+        "severity": 1,
+        "hard": true,
+        "lockSeconds": 0.26,
+        "launchFromLanding": 2.9179,
+        "escapeHeight": 0.2401,
+        "secondsToTopStayingDown": 0.45,
+        "secondsToTopViaJump": 0.617
+      },
+      {
+        "drop": 25,
+        "impact": 40.81,
+        "severity": 1,
+        "hard": true,
+        "lockSeconds": 0.26,
+        "launchFromLanding": 2.9179,
+        "escapeHeight": 0.2401,
+        "secondsToTopStayingDown": 0.45,
+        "secondsToTopViaJump": 0.617
+      }
+    ],
+    "walls": [
+      {
+        "test": "head-on",
+        "stoppedAtZ": 23.6375,
+        "expected": 23.64,
+        "penetrated": false,
+        "jitterSteps": 0,
+        "speedAfter": 0,
+        "shakes": 1,
+        "impactCues": 1,
+        "blockedStateSteps": 207,
+        "state": "blocked"
+      },
+      {
+        "test": "graze 20 deg off the surface",
+        "contactSteps": 46,
+        "meanSpeed": 8.3,
+        "minSpeed": 8.3,
+        "maxSpeed": 8.3,
+        "fractionOfSprint": 1,
+        "blockedSteps": 0,
+        "shakes": 1
+      },
+      {
+        "test": "inside corner",
+        "nan": false,
+        "penetrated": false,
+        "contactStep": 76,
+        "jitterSteps": 0,
+        "restX": -38.4375,
+        "restZ": 25.5625,
+        "cornerX": -38.8,
+        "cornerZ": 25.2,
+        "speedAfter": 2.3857,
+        "state": "walk"
+      }
+    ],
+    "slopes": [
+      {
+        "deg": 10,
+        "climbed": 3,
+        "expected": 3,
+        "slidSteps": 0,
+        "speedOnSlope": 7.232,
+        "endSlopeDeg": 0
+      },
+      {
+        "deg": 20,
+        "climbed": 3,
+        "expected": 3,
+        "slidSteps": 0,
+        "speedOnSlope": 6.41,
+        "endSlopeDeg": 0
+      },
+      {
+        "deg": 30,
+        "climbed": 3,
+        "expected": 3,
+        "slidSteps": 0,
+        "speedOnSlope": 5.7533,
+        "endSlopeDeg": 0
+      },
+      {
+        "deg": 40,
+        "climbed": 2.9987,
+        "expected": 3,
+        "slidSteps": 0,
+        "speedOnSlope": 5.2229,
+        "endSlopeDeg": 0
+      },
+      {
+        "deg": 52,
+        "climbed": 0.2912,
+        "expected": 3,
+        "slidSteps": 173,
+        "speedOnSlope": 0.5839,
+        "endSlopeDeg": 52
+      }
+    ],
+    "cone": {
+      "maxY": 5.4601,
+      "slidSteps": 166,
+      "crownY": 10.72,
+      "apronTopY": 4.12
+    },
+    "frameRate": {
+      "marks": [
+        [
+          0,
+          1.0325,
+          -0.889652,
+          0,
+          0,
+          -8.3,
+          "sprint"
+        ],
+        [
+          5.208159,
+          2.367083,
+          -4.292263,
+          7.518896,
+          -0.158333,
+          -0.647309,
+          "airborne"
+        ],
+        [
+          8.492578,
+          1.0325,
+          0.63349,
+          0.000976,
+          0,
+          8.3,
+          "sprint"
+        ],
+        [
+          9.299067,
+          1.0325,
+          -1.629118,
+          0.000474,
+          0,
+          -8.3,
+          "sprint"
+        ]
+      ],
+      "1vs2": true,
+      "1vs4": true,
+      "1vs8": true
+    },
+    "determinism": true
+  }
+}

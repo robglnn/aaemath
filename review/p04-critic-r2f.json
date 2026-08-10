@@ -1,0 +1,71 @@
+{
+  "errors": [],
+  "out": {
+    "skidNoJump": {
+      "jumpAfterSkidSteps": null,
+      "v0": 8.3,
+      "skidSteps": 8,
+      "overshoot": 1.0746,
+      "timeToReverse": 0.3333,
+      "timeToFullSpeedBack": 0.6333
+    },
+    "skidJump1": {
+      "jumpAfterSkidSteps": 1,
+      "v0": 8.3,
+      "skidSteps": 2,
+      "overshoot": 3.4699,
+      "timeToReverse": 0.8333,
+      "timeToFullSpeedBack": 1.15
+    },
+    "skidJump3": {
+      "jumpAfterSkidSteps": 3,
+      "v0": 8.3,
+      "skidSteps": 3,
+      "overshoot": 2.9031,
+      "timeToReverse": 0.8333,
+      "timeToFullSpeedBack": 1.15
+    },
+    "landNoJump": {
+      "impact": 28.71,
+      "severity": 1,
+      "landLock": 0.26,
+      "speedAfterLand": 4.5612,
+      "jumpHeightOutOfLanding": null,
+      "recoverSeconds": 0.2667,
+      "finalSpeed": 8.194
+    },
+    "landJump": {
+      "impact": 28.71,
+      "severity": 1,
+      "landLock": 0.26,
+      "speedAfterLand": 4.5612,
+      "jumpHeightOutOfLanding": 1.3372,
+      "recoverSeconds": 0.1833,
+      "finalSpeed": 8.24
+    },
+    "jumpDuringLandLock": {
+      "landLockWas": 0.26,
+      "vyAfterPress": 7.45,
+      "jumpSpeedTuned": 7.45,
+      "fired": true
+    },
+    "jumpDuringSkid": {
+      "wasBraking": true,
+      "speedBefore": 6.9133,
+      "vyAfter": 7.45,
+      "fired": true,
+      "speedAfter": 6.22
+    },
+    "bunnyHop": {
+      "hops": 15,
+      "groundedStepsOf600": 14,
+      "minSpeedAfterSettle": 3.4431,
+      "finalSpeed": 7.571,
+      "sprintSpeed": 8.3
+    },
+    "stepLimit": {
+      "note": "measured on the proving ground stair flights only",
+      "tuned": 0.5
+    }
+  }
+}

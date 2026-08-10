@@ -1,0 +1,18 @@
+{
+  "mode": "static",
+  "frames": 6,
+  "step": 0.016666666666666666,
+  "width": 1600,
+  "height": 900,
+  "synthetic": true,
+  "kind": "bad",
+  "files": [
+    "review/p02-crops/motion-bad/f00.png",
+    "review/p02-crops/motion-bad/f01.png",
+    "review/p02-crops/motion-bad/f02.png",
+    "review/p02-crops/motion-bad/f03.png",
+    "review/p02-crops/motion-bad/f04.png",
+    "review/p02-crops/motion-bad/f05.png"
+  ],
+  "problems": []
+}

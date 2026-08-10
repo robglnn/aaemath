@@ -1,9 +1,9 @@
 {
   "id": "P03",
   "state": "building",
-  "round": 3,
-  "gap": "like-terms-id (band 2) is unlocked by expr-anatomy alone; its ancestor closure never teaches what x^2 means, yet its own description and its exponent-ignored-in-matching misconception serve an item sorting a*x, b*x^2, c*x, d*x^2, e. distribute-variable correctly requires oo-structure for identical reasoning, so the graph contradicts itself.",
-  "note": "Round 3: fixing like-terms-id prerequisite to oo-structure, adding exponent-closure lint, gate fields, cycle-index rule, TEKS count correction",
+  "round": 4,
+  "gap": "Scaffolded acquisition items (guided-1/-2/-3) are scored at the same guess parameter as unconstrained construct items, so hint-abuse buys M1/M2/M3 credit that the doc's own conservatism rule would reject",
+  "note": "Round 4: pricing scaffolded acquisition items honestly (phase-aware guess), gating M2/M3 on solo phase, hint-abuse policy + bot, pairwise-separated signatures, dropping 3 over-tags",
   "evidence": [],
-  "updated": "2026-08-09T21:14:43.791Z"
+  "updated": "2026-08-09T21:59:21.353Z"
 }

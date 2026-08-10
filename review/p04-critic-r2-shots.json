@@ -1,0 +1,122 @@
+[
+  {
+    "name": "a-sprint-run",
+    "state": {
+      "y": 1.032499997317791,
+      "sp": 8.3,
+      "vy": 0,
+      "grounded": true,
+      "state": "sprint",
+      "airtime": 0,
+      "lean": 0,
+      "push": 0,
+      "squash": 0,
+      "slope": 0
+    }
+  },
+  {
+    "name": "b-midair-rise",
+    "state": {
+      "y": 2.119166663984458,
+      "sp": 8.293086214477405,
+      "vy": 3.4166666666666705,
+      "grounded": false,
+      "state": "airborne",
+      "airtime": 0.18333333333333332,
+      "lean": 0,
+      "push": 0,
+      "squash": 0,
+      "slope": 0
+    }
+  },
+  {
+    "name": "c-midair-apex",
+    "state": {
+      "y": 2.368999997317792,
+      "sp": 8.293086214477405,
+      "vy": 0.24500000000000363,
+      "grounded": false,
+      "state": "airborne",
+      "airtime": 0.35,
+      "lean": 0,
+      "push": 0,
+      "squash": 0,
+      "slope": 0
+    }
+  },
+  {
+    "name": "d-skid",
+    "state": {
+      "y": 1.032499997317791,
+      "sp": 4.833333333333334,
+      "vy": 0,
+      "grounded": true,
+      "state": "skid",
+      "airtime": 0,
+      "lean": 0,
+      "push": -1,
+      "squash": 0,
+      "slope": 0
+    }
+  },
+  {
+    "name": "e-carve",
+    "state": {
+      "y": 1.032499997317791,
+      "sp": 8.300000000000002,
+      "vy": 0,
+      "grounded": true,
+      "state": "sprint",
+      "airtime": 0,
+      "lean": 0.7570195887148393,
+      "push": 0.18304700374977587,
+      "squash": 0,
+      "slope": 0
+    }
+  },
+  {
+    "name": "f-landing",
+    "state": {
+      "y": 1.032499997317791,
+      "sp": 2.8117972223647343e-14,
+      "vy": 4.766311306095151e-16,
+      "grounded": true,
+      "state": "idle",
+      "airtime": 0,
+      "lean": -2.7714900537010516e-17,
+      "push": 0,
+      "squash": 0,
+      "slope": 0
+    }
+  },
+  {
+    "name": "g-slope",
+    "state": {
+      "y": 4.98494552579821,
+      "sp": 0.281420806605255,
+      "vy": -0.18017219791525857,
+      "grounded": true,
+      "state": "idle",
+      "airtime": 0,
+      "lean": 0.09120548543886789,
+      "push": 0.7732909680185626,
+      "squash": 0,
+      "slope": 45.13827683599915
+    }
+  },
+  {
+    "name": "h-runband-turn",
+    "state": {
+      "y": 1.032499997317791,
+      "sp": 5.6,
+      "vy": 0,
+      "grounded": true,
+      "state": "run",
+      "airtime": 0,
+      "lean": 0.6462680849966302,
+      "push": 0.30192916756965893,
+      "squash": 0,
+      "slope": 0
+    }
+  }
+]

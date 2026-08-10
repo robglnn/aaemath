@@ -1,9 +1,9 @@
 {
   "id": "P05",
   "state": "building",
-  "round": 2,
-  "gap": "Camera clips through walls: CameraRig.js:688 clamps the boom to distanceMin 1.15 m as a LOWER bound, overriding the collision result. Walking into an inside corner puts the camera 0.59 m inside solid geometry and the frame goes black (review/shots/p05-critic/73-walked-into-corner.png).",
-  "note": "Round 2: fixing camera wall clipping (min-distance floor overriding collision), honest probe, speed source, frame-rate-independent spring, shoulder framing",
+  "round": 3,
+  "gap": "Collision response has one degree of freedom: the boom only shortens, all the way to 0.16 m, so backing into any wall ends the third-person shot (measured: dist 0.162 m / avatarOpacity 0.00 against a flat rock face, 0.197 m in an inside corner). It never clips - worst lens clearance 0.2007 m by my own AABB math, 0/144 penetrating samples - but it also never reframes: no lateral orbit, no pitch lift over the obstruction, unlike BotW which slides the lens up a cliff face and keeps the hero in shot.",
+  "note": "Round 3: adding lateral/pitch escape orbit so framing survives occlusion, plus 6 tuning fixes",
   "evidence": [],
-  "updated": "2026-08-09T20:50:35.584Z"
+  "updated": "2026-08-09T22:37:10.396Z"
 }

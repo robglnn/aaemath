@@ -1,4 +1,4 @@
-(node:49328) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(node:7980) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
 (Use `node --trace-deprecation ...` to show where the warning was created)
 
 ### 1a_KEY_INSIDE_DWELL
@@ -8,12 +8,12 @@
   "style": "xbox",
   "pending": null,
   "switches": 1,
-  "switchedAt": 0.85,
+  "switchedAt": 0.5667,
   "usedAt": {
    "kbm": -1,
-   "pad": 0.95
+   "pad": 0.6667
   },
-  "simTime": 1,
+  "simTime": 0.7167,
   "glyphJump": "A"
  },
  "atKey": {
@@ -21,12 +21,12 @@
   "style": "xbox",
   "pending": "kbm",
   "switches": 1,
-  "switchedAt": 0.85,
+  "switchedAt": 0.5667,
   "usedAt": {
-   "kbm": 1,
-   "pad": 0.95
+   "kbm": 0.7167,
+   "pad": 0.6667
   },
-  "simTime": 1,
+  "simTime": 0.7167,
   "glyphJump": "A"
  },
  "nextStep": {
@@ -34,12 +34,12 @@
   "style": "xbox",
   "pending": "kbm",
   "switches": 1,
-  "switchedAt": 0.85,
+  "switchedAt": 0.5667,
   "usedAt": {
-   "kbm": 1.0167,
-   "pad": 0.95
+   "kbm": 0.7333,
+   "pad": 0.6667
   },
-  "simTime": 1.0167,
+  "simTime": 0.7333,
   "glyphJump": "A"
  },
  "afterDwell": {
@@ -47,12 +47,12 @@
   "style": "kbm",
   "pending": null,
   "switches": 2,
-  "switchedAt": 1.2167,
+  "switchedAt": 0.9167,
   "usedAt": {
-   "kbm": 1.4167,
-   "pad": 0.95
+   "kbm": 1.1333,
+   "pad": 0.6667
   },
-  "simTime": 1.4167,
+  "simTime": 1.1333,
   "glyphJump": "Space"
  }
 }
@@ -61,7 +61,7 @@ PASS  1a the keystroke really was inside the dwell  0.15
 PASS  1a a refused claim is parked, not dropped  "kbm"
 PASS  1a parked claim applies once the dwell is over  "kbm"
 PASS  1a glyph follows the device  "Space"
-PASS  1a the switch is late by at most one dwell  0.2167
+PASS  1a the switch is late by at most one dwell  0.2
 
 ### 1a2_REAL_KEYSTROKE
 {
@@ -69,12 +69,12 @@ PASS  1a the switch is late by at most one dwell  0.2167
  "style": "kbm",
  "pending": null,
  "switches": 4,
- "switchedAt": 2.2667,
+ "switchedAt": 1.8167,
  "usedAt": {
-  "kbm": 2.7667,
-  "pad": 2.05
+  "kbm": 2.3167,
+  "pad": 1.7667
  },
- "simTime": 2.7667,
+ "simTime": 2.3167,
  "glyphJump": "Space"
 }
 PASS  1a2 a real trusted keydown takes the prompts  "kbm"
@@ -85,12 +85,12 @@ PASS  1a2 a real trusted keydown takes the prompts  "kbm"
  "style": "xbox",
  "pending": null,
  "switches": 5,
- "switchedAt": 2.7833,
+ "switchedAt": 2.3167,
  "usedAt": {
-  "kbm": 3.3833,
-  "pad": 3.3
+  "kbm": 2.9167,
+  "pad": 2.8333
  },
- "simTime": 3.3833,
+ "simTime": 2.9167,
  "glyphJump": "A"
 }
 PASS  1b pad reclaims on a button edge  "pad"
@@ -102,12 +102,12 @@ PASS  1b glyph is the Xbox face button  "A"
  "style": "kbm",
  "pending": null,
  "switches": 6,
- "switchedAt": 3.6667,
+ "switchedAt": 3.2,
  "usedAt": {
-  "kbm": 4,
-  "pad": 3.3
+  "kbm": 3.5333,
+  "pad": 2.8333
  },
- "simTime": 4,
+ "simTime": 3.5333,
  "glyphJump": "Space"
 }
 PASS  1c a key that was already held reclaims the prompts  "kbm"
@@ -120,12 +120,12 @@ PASS  1c a key that was already held reclaims the prompts  "kbm"
   "style": "xbox",
   "pending": null,
   "switches": 7,
-  "switchedAt": 4.0333,
+  "switchedAt": 3.5667,
   "usedAt": {
-   "kbm": 4.4,
-   "pad": 4.4
+   "kbm": 3.9333,
+   "pad": 3.9333
   },
-  "simTime": 4.4,
+  "simTime": 3.9333,
   "glyphJump": "A"
  },
  "end": {
@@ -133,12 +133,12 @@ PASS  1c a key that was already held reclaims the prompts  "kbm"
   "style": "xbox",
   "pending": null,
   "switches": 7,
-  "switchedAt": 4.0333,
+  "switchedAt": 3.5667,
   "usedAt": {
-   "kbm": 7.4,
-   "pad": 7.4
+   "kbm": 6.9333,
+   "pad": 6.9333
   },
-  "simTime": 7.4,
+  "simTime": 6.9333,
   "glyphJump": "A"
  }
 }
@@ -152,12 +152,12 @@ PASS  1d device is stable at the end  "pad"
  "style": "kbm",
  "pending": null,
  "switches": 8,
- "switchedAt": 7.9667,
+ "switchedAt": 7.3333,
  "usedAt": {
-  "kbm": 8.4,
-  "pad": 7.6
+  "kbm": 7.7667,
+  "pad": 6.9667
  },
- "simTime": 8.4,
+ "simTime": 7.7667,
  "glyphJump": "Space"
 }
 PASS  1e held key reclaims once the stick centres  "kbm"
@@ -170,16 +170,76 @@ PASS  1e held key reclaims once the stick centres  "kbm"
   "style": "kbm",
   "pending": null,
   "switches": 8,
-  "switchedAt": 7.9667,
+  "switchedAt": 7.3333,
   "usedAt": {
-   "kbm": 8.4,
-   "pad": 7.6
+   "kbm": 7.7667,
+   "pad": 6.9667
   },
-  "simTime": 11.4,
+  "simTime": 10.7667,
   "glyphJump": "Space"
  }
 }
 PASS  1f idle pad + idle keyboard causes no switches  0
+
+### 1h_STRAY_KEY_DOES_NOT_STEAL
+{
+ "start": {
+  "device": "kbm",
+  "style": "kbm",
+  "pending": null,
+  "switches": 8,
+  "switchedAt": 7.3333,
+  "usedAt": {
+   "kbm": 11.8833,
+   "pad": 6.9667
+  },
+  "simTime": 12.0833,
+  "glyphJump": "Space"
+ },
+ "padOwns": {
+  "device": "pad",
+  "style": "xbox",
+  "pending": null,
+  "switches": 9,
+  "switchedAt": 12.0833,
+  "usedAt": {
+   "kbm": 11.8833,
+   "pad": 12.1
+  },
+  "simTime": 12.1,
+  "glyphJump": "A"
+ },
+ "parked": {
+  "device": "pad",
+  "style": "xbox",
+  "pending": "kbm",
+  "switches": 9,
+  "switchedAt": 12.0833,
+  "usedAt": {
+   "kbm": 12.1167,
+   "pad": 12.1
+  },
+  "simTime": 12.2167,
+  "glyphJump": "A"
+ },
+ "end": {
+  "device": "pad",
+  "style": "xbox",
+  "pending": null,
+  "switches": 9,
+  "switchedAt": 12.0833,
+  "usedAt": {
+   "kbm": 12.1167,
+   "pad": 12.8167
+  },
+  "simTime": 12.8167,
+  "glyphJump": "A"
+ }
+}
+PASS  1h keyboard owns the prompts at the start  "kbm"
+PASS  1h the pad claims on its button edge  "pad"
+PASS  1h the stray tap parks a claim  "kbm"
+PASS  1h the stale claim is dropped, not applied  {"device":"pad","pending":null}
 
 ### 1g_PLAYSTATION
 {
@@ -194,55 +254,61 @@ PASS  1g jump prints ✕  "✕"
 ### 1_DEVICE_SIGNALS
 [
  {
-  "t": 0.85,
+  "t": 0.5667,
   "kind": "pad",
   "style": "xbox",
   "id": "Xbox Wireless Controller (STANDARD GAMEPAD)"
  },
  {
-  "t": 1.2167,
+  "t": 0.9167,
   "kind": "kbm",
   "style": "kbm",
   "id": null
  },
  {
-  "t": 1.5833,
+  "t": 1.2833,
   "kind": "pad",
   "style": "xbox",
   "id": "Xbox Wireless Controller (STANDARD GAMEPAD)"
  },
  {
-  "t": 2.2667,
+  "t": 1.8167,
   "kind": "kbm",
   "style": "kbm",
   "id": null
  },
  {
-  "t": 2.7833,
+  "t": 2.3167,
   "kind": "pad",
   "style": "xbox",
   "id": "Xbox Wireless Controller (STANDARD GAMEPAD)"
  },
  {
-  "t": 3.6667,
+  "t": 3.2,
   "kind": "kbm",
   "style": "kbm",
   "id": null
  },
  {
-  "t": 4.0333,
+  "t": 3.5667,
   "kind": "pad",
   "style": "xbox",
   "id": "Xbox Wireless Controller (STANDARD GAMEPAD)"
  },
  {
-  "t": 7.9667,
+  "t": 7.3333,
   "kind": "kbm",
   "style": "kbm",
   "id": null
  },
  {
-  "t": 11.9167,
+  "t": 12.0833,
+  "kind": "pad",
+  "style": "xbox",
+  "id": "Xbox Wireless Controller (STANDARD GAMEPAD)"
+ },
+ {
+  "t": 13.4333,
   "kind": "pad",
   "style": "playstation",
   "id": "DualSense Wireless Controller (STANDARD GAMEPAD)"

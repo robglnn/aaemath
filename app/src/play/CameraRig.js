@@ -23,25 +23,44 @@ import { publish } from "../core/Introspect.js";
  *     against a moving target, which is 71% frame-rate spread between 15 and 240 fps on a
  *     body running at 8 m/s. So the follow springs are given the target's velocity and
  *     integrate the *ramp* response, whose steady-state trail is 2v/w with no dt term in
- *     it at all. Springs whose targets are genuinely piecewise-constant commands (boom
- *     length, fov, lift, dip, focus weight) keep the zero-order hold, because for them it
- *     is not an approximation — it is the truth. `response` is quoted as the time to close
- *     95% of a step (w = 4.744 / response), so every number in `CAMERA_TUNING` is a
- *     measurable claim rather than a magic constant.
+ *     it at all. The boom-length spring is fed the exact backward difference of its own
+ *     command whenever that command is the smooth one (`distanceBase + sprint gain + focus
+ *     blend` ramps every frame), and zero while a collision allowance is binding, because
+ *     *that* target really is a held, piecewise-constant value. Only fov, lift, dip, focus
+ *     weight and the collision-escape offsets keep a pure zero-order hold, and for them it
+ *     is not an approximation — their targets are commands, not trajectories. `response` is
+ *     quoted as the time to close 95% of a step (w = 4.744 / response), so every number in
+ *     `CAMERA_TUNING` is a measurable claim rather than a magic constant.
  *
- *  2. **It never clips.** The camera boom is a swept cast run against whichever collision
- *     source exists: a `camera:probe` request signal first, then a mounted collision world
- *     exposing `sphereCast`, then a fan of five parallel rays against the scene. The cast
- *     result is the *only* upper bound on the boom — there is deliberately no minimum
- *     distance that can override it, because a minimum distance that outranks a collision
- *     result is just a licence to stand inside a wall. When a corner leaves less room than
- *     the resting boom needs, the boom collapses toward the pivot and the rig emits
- *     `camera:mode {id:"tight", opacity}` so the avatar can fade — which is what *BotW* and
- *     *Fortnite* both do, and neither of them ever puts the lens inside geometry.
+ *  2. **It never clips, and it never surrenders the shot to avoid clipping.** The camera
+ *     boom is a swept cast run against whichever collision source exists: a `camera:probe`
+ *     request signal first, then a mounted collision world exposing `sphereCast`, then a fan
+ *     of five parallel rays against the scene. The cast result is the *only* upper bound on
+ *     the boom — there is deliberately no minimum distance that can override it, because a
+ *     minimum distance that outranks a collision result is just a licence to stand inside a
+ *     wall.
+ *
+ *     But "make the boom shorter" is not the only move available, and a rig that owns only
+ *     that one move answers *every* occluder by becoming a first-person camera with the lens
+ *     inside the player's own body. Backing into rock is not an edge case in a world made of
+ *     rock. So the boom has two more degrees of freedom: it may **pitch up over** an
+ *     obstruction and **swing laterally around** it. When the straight boom cannot hold
+ *     `framingFloor`, §7 re-casts a short ladder of candidate directions, cheapest-first in
+ *     terms of what it costs the player's aim, and rotates the whole orbit onto the first one
+ *     that clears. Rotating the orbit rather than sliding the lens is what keeps the body in
+ *     the same place in the frame: what changes is which way the shot looks, not whether you
+ *     can see yourself. It is carried on springs and it decays the moment the straight boom
+ *     has room again, so it reads as a camera move, never a cut. Collapsing the boom below
+ *     the framing floor is the last resort, not the first, and only then does the rig emit
+ *     `camera:mode {id:"tight", opacity}` so the avatar can fade.
+ *
  *     Tightening is near-instant; loosening is slow and gated behind a dead-band plus a
- *     hold timer, so grazing an edge cannot start an in/out oscillation. The probe reports
- *     the raw cast result and a `penetrating` flag next to the applied one, so this class
- *     of bug is reviewable from outside rather than on trust.
+ *     hold timer, so grazing an edge cannot start an in/out oscillation. The escape's
+ *     engage/release test is run along the *un-escaped* direction on purpose: testing the
+ *     escaped direction would report "plenty of room", stand the escape down, and oscillate.
+ *     The probe reports the raw cast result, the un-escaped probe, the chosen candidate and
+ *     a `penetrating` flag next to the applied boom, so this whole class of bug is
+ *     reviewable from outside rather than on trust.
  *
  *  3. **It reads final transforms.** All camera work happens in `after(dt)`, once every
  *     `frame()` hook has written its visual state, so the rig never frames last frame's pose.
@@ -90,6 +109,17 @@ export const CAMERA_TUNING = Object.freeze({
 
   followResponse: 0.2, // grounded body-follow
   followResponseAir: 0.3, // looser in the air so jump arcs float instead of snapping
+
+  // A critically damped follow trails a target moving at v by exactly 2v/w — which is the
+  // weight you want at running speed (0.67 m at 8.3 m/s) and a disaster at falling speed:
+  // a 5 m drop lands at 18 m/s and would put the body 2.3 m below the pivot, i.e. off the
+  // bottom of a 900 px frame. So the response tightens as the lag grows. Nothing below
+  // `followLeashKnee` is touched at all — a sprint (0.67 m) and a sprinting jump (1.41 m)
+  // both sit under it, so ordinary play keeps exactly the trail it was tuned for — and the
+  // curve is a smoothstep, so the stiffening has no corner in it.
+  followLeashKnee: 1.5,
+  followLeashMax: 2.2,
+  followLeashGain: 0.85,
   distanceTightenResponse: 0.09, // pulling in past an obstacle: fast, near-instant
   distanceLoosenResponse: 0.5, // easing back out: slow, so nothing pops
   fovResponse: 0.36,
@@ -158,7 +188,11 @@ export const CAMERA_TUNING = Object.freeze({
   focusSwing: 0.33,
   focusBias: 0.38,
   focusLift: 0.1,
-  focusShoulderGain: 0.35, // extra over-shoulder push while focusing
+  // Multiplier on the shoulder offset at full focus weight. A learning moment wants the thing
+  // being taught on the frame's centre axis, and a 1.15 m shoulder would shove it 14% of the
+  // frame off centre. Pulling the offset in to 0.70× puts the target back at screen x 0.487
+  // while still leaving the player readable at 0.29 — measured, not guessed.
+  focusShoulderScale: 0.7,
 });
 
 /**
@@ -363,6 +397,7 @@ export class CameraRig {
     this._pivotWorld = new THREE.Vector3();
     this._camWorld = new THREE.Vector3();
     this._followError = 0;
+    this._followLag = 0;
     this._primed = false;
 
     this._off = [];
@@ -722,7 +757,24 @@ export class CameraRig {
 
     // ---- 3. framing targets
     const reduce = !!config.get("reduceMotion");
-    const liftTarget = this.grounded ? 0 : Math.min(t.airLift, this.airTime * t.airLiftRate);
+
+    // The leash: one scale for all three axes, computed from the 3-D lag, so tightening
+    // shortens the lag without bending its direction. Per-axis scaling would swing the camera
+    // sideways during a fall, which is worse than the lag it fixes.
+    const lagX = this.follow[0].value - (this._targetPos.x + this.pivotOffset.x);
+    const lagY = this.follow[1].value - (this._targetPos.y + this.pivotOffset.y);
+    const lagZ = this.follow[2].value - (this._targetPos.z + this.pivotOffset.z);
+    this._followLag = Math.hypot(lagX, lagY, lagZ);
+    const leash =
+      1 - t.followLeashGain * smoothstep(t.followLeashKnee, t.followLeashMax, this._followLag);
+    const followResponse = (this.grounded ? t.followResponse : t.followResponseAir) * leash;
+
+    // The airborne lift and the follow lag push the body down the frame in exactly the same
+    // way, so on a long fall they compound and the legs leave the picture. The lift rides the
+    // same leash: a hop (leash 1) gets every centimetre of the float it was tuned for, and a
+    // fall that is already holding the camera high above the body does not ask for more.
+    const liftTarget =
+      this.grounded ? 0 : Math.min(t.airLift, this.airTime * t.airLiftRate) * leash;
     this.liftSpring.step(liftTarget, step, t.airLiftResponse);
     this.dipSpring.step(0, step, t.landDipResponse);
 
@@ -730,14 +782,13 @@ export class CameraRig {
     // smoothed result, not folded into its target — a 0.2 s follow response would otherwise
     // low-pass a 0.19 s landing dip down to nothing, which is exactly how landings stop
     // reading. Both effects carry their own spring, so they stay smooth on their own terms.
-    const followResponse = this.grounded ? t.followResponse : t.followResponseAir;
-
     if (!this._primed) {
       this.follow[0].snap(this._targetPos.x + this.pivotOffset.x);
       this.follow[1].snap(this._targetPos.y + this.pivotOffset.y);
       this.follow[2].snap(this._targetPos.z + this.pivotOffset.z);
       this.speedMeasured = 0;
       this._targetVel.set(0, 0, 0);
+      this._freeTracked = this.distanceBase;
       this.liftSpring.snap(0);
       this.dipSpring.snap(0);
       this._primed = true;
@@ -800,7 +851,8 @@ export class CameraRig {
       t.shoulderTightFloor +
       (1 - t.shoulderTightFloor) *
         smoothstep(t.shoulderTightLo, t.shoulderTightHi, this.distSpring.value);
-    const shoulderWant = this.shoulder * shoulderScale * (1 + t.focusShoulderGain * w);
+    const shoulderWant =
+      this.shoulder * shoulderScale * (1 + (t.focusShoulderScale - 1) * w);
     let shoulderApplied = 0;
     if (Math.abs(shoulderWant) > 1e-4) {
       const sign = Math.sign(shoulderWant);
@@ -878,24 +930,6 @@ export class CameraRig {
     this.occluded = allowed < desired - 0.05;
     this.occlusionDepth = Math.max(0, desired - allowed);
 
-    // ---- 7b. tight framing: tell whoever owns the avatar to get out of the way.
-    // The rig does not own the body and will not reach into it; it states the framing it has
-    // been forced into and lets P08 answer. Emitted only on a real change, so a level with no
-    // tight corners never sees this signal at all.
-    const opacity = smoothstep(t.avatarFadeEnd, t.avatarFadeStart, dist);
-    this.avatarOpacity = opacity;
-    const framing = opacity < 0.999 ? "tight" : "follow";
-    if (framing !== this._emittedFraming || Math.abs(opacity - this._emittedOpacity) > 0.02) {
-      this._emittedFraming = framing;
-      this._emittedOpacity = opacity;
-      this.framing = framing;
-      signals.emit("camera:mode", {
-        id: framing,
-        opacity: Number(opacity.toFixed(3)),
-        source: "camera",
-      });
-    }
-
     // ---- 8. field of view
     const fovBase = Number(config.get("fovBase")) || 62;
     const gain = reduce ? 0.3 : 1;
@@ -945,6 +979,32 @@ export class CameraRig {
     }
     // Anything else running later in after() (culling, LOD, post) reads a fresh matrix.
     cam.updateMatrixWorld(true);
+
+    // ---- 11. tight framing: tell whoever owns the avatar to get out of the way.
+    //
+    // Measured *after* the lens is placed, and against the body rather than only against the
+    // boom, because there are two different ways to end up with a character filling the lens:
+    // a corner collapses the boom, or a steep look-up swings a full-length boom underneath the
+    // body. The second one is invisible to a boom-length test — at pitchMax the boom is 1.72 m
+    // and the lens is 1.24 m from the body — so the fade reads whichever is closer.
+    //
+    // The rig does not own the avatar and will not reach into it: it states the framing it has
+    // been forced into and lets P08 answer. Emitted only on a real change, so a session that
+    // never presses the camera never sees this signal at all.
+    const bodyDist = this._camWorld.distanceTo(this._targetPos);
+    const opacity = smoothstep(t.avatarFadeEnd, t.avatarFadeStart, Math.min(dist, bodyDist));
+    this.avatarOpacity = opacity;
+    const framing = opacity < 0.999 ? "tight" : "follow";
+    if (framing !== this._emittedFraming || Math.abs(opacity - this._emittedOpacity) > 0.02) {
+      this._emittedFraming = framing;
+      this._emittedOpacity = opacity;
+      this.framing = framing;
+      signals.emit("camera:mode", {
+        id: framing,
+        opacity: Number(opacity.toFixed(3)),
+        source: "camera",
+      });
+    }
   }
 
   /** Frames a learning moment: the target readable, the player still in shot. */
@@ -1036,6 +1096,7 @@ export class CameraRig {
       speedSignal: this.speedSignal == null ? null : r(this.speedSignal),
       speedSignalAge: Number.isFinite(this.speedSignalAge) ? r(this.speedSignalAge) : null,
       followError: r(this._followError),
+      followLag: r(this._followLag),
       focus: {
         active: this.focus.active,
         weight: r(this.focusWeight.value),

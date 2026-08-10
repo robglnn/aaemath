@@ -60,79 +60,163 @@ function pickVariant(target) {
   }
   return best;
 }
-function phase(p, lastWrong, firstEncounter, easiestGap) {
-  if (firstEncounter && p < 0.4) return "model";
-  if (easiestGap) return "model";
-  if (lastWrong || p < 0.75) return "guided";
-  return "solo";
+/**
+ * The teaching-phase state machine of section 6.1, implemented exactly as
+ * review/p03/mastery-sim.mjs implements it and read entirely out of model.phases.
+ * Round 3's trace had a `phase` column that was decoration: it never changed what was scored.
+ */
+const PH = M.phases;
+const FADE = PH.fadeOrder;
+function nextPhase(st, theta) {
+  const firstEncounter = st.attempts === 0;
+  const easiestOutOfReach =
+    band.logit + Math.min(...M.ability.variantOffsets) > theta + M.ability.modelPhaseTriggerGap &&
+    st.p < PH.modelPhaseThreshold;
+  const wantModel = (firstEncounter && st.p < PH.modelPhaseThreshold) || easiestOutOfReach || st.pendingModel;
+  if (wantModel && st.modelEvents < PH.modelEventsPerNodePerSession) {
+    st.modelEvents++;
+    st.pendingModel = false;
+    st.fadeIdx = 0;
+    return "model";
+  }
+  st.pendingModel = false;
+  if (st.lastPhase === "model") {
+    st.fadeIdx = 0;
+    return FADE[0];
+  }
+  if (st.lastCorrect === null) {
+    st.fadeIdx = 0;
+    return st.p >= PH.soloThreshold ? "solo" : FADE[0];
+  }
+  if (st.p >= PH.soloThreshold && st.lastCorrect) return "solo";
+  const retreat = st.consecutiveWrong >= PH.retreatAfterConsecutiveErrors;
+  if (st.lastPhase === "solo") {
+    if (!retreat && st.p >= PH.soloThreshold) return "solo";
+    st.fadeIdx = FADE.length - 1;
+    return FADE[st.fadeIdx];
+  }
+  if (st.lastCorrect) {
+    st.fadeIdx++;
+    if (st.fadeIdx >= FADE.length) return "solo";
+    return FADE[st.fadeIdx];
+  }
+  if (!retreat) return FADE[st.fadeIdx];
+  st.fadeIdx--;
+  if (st.fadeIdx < 0) {
+    st.fadeIdx = 0;
+    if (st.modelEvents < PH.modelEventsPerNodePerSession) {
+      st.modelEvents++;
+      return "model";
+    }
+    return FADE[0];
+  }
+  return FADE[st.fadeIdx];
 }
+const scorablePhase = (ph) => PH.scored.includes(ph);
+const masteryPhase = (ph) => M.bkt.phasesEligibleForMastery.includes(ph);
+const composedGuess = (form, ph) => band.guess * Math.max(M.guessByForm[form] ?? 1, M.guessByPhase[ph] ?? 0);
 
 const out = [];
 const say = (s = "") => out.push(s);
 
-say(`Worked trace — "${node.id}" (${node.shortTitle}), difficulty band ${node.difficulty}`);
+say(`Worked trace - "${node.id}" (${node.shortTitle}), difficulty band ${node.difficulty}`);
 say(`  band parameters:  prior ${band.prior}   learn ${band.learn}   slip ${band.slip}   guess ${band.guess}   difficulty centre ${band.logit} logit`);
 say(`  gate: P >= ${M.bkt.masteryThreshold}, >= ${M.bkt.minScoredOpportunities} scored, >= ${M.bkt.minAtBandOpportunities} at band, >= ${M.bkt.minDistinctItemForms} forms`);
+say(`  M2/M3 count phases [${M.bkt.phasesEligibleForMastery.join(", ")}] only; phases [${PH.unscored.join(", ")}] are inert in both directions`);
 say("");
 
 // ---------------------------------------------------------------- learner ---
 const mc = node.misconceptions;
 const script = [
-  { correct: false, why: `error matches misconception "${mc[0].id}" — ${mc[0].description}` },
-  { correct: true, why: "after the modelled example, repeats the method on a scaffolded item" },
-  { correct: true, why: "same method, scaffold reduced one level" },
-  {
-    correct: false,
-    why: `first item at the certification pitch; error matches "${(mc[1] ?? mc[0]).id}" — ${(mc[1] ?? mc[0]).description}`,
-  },
-  { correct: true, why: "recovers on a same-trap item drawn from that misconception's variant pool" },
-  { correct: true, why: "clean, unscaffolded, at band" },
+  { correct: true, why: "watches the machine do it, then makes the last move itself" },
+  { correct: true, why: "the first step is already placed; repeats the method on the rest" },
+  { correct: true, why: "answer space constrained to legal moves; builds it" },
+  { correct: true, why: "hint surface available but not needed; promotes itself to solo" },
+  { correct: false, why: `first unaided item; error matches "${mc[0].id}" - ${mc[0].description}` },
+  { correct: true, why: "same-trap item drawn from that misconception's variant pool" },
+  { correct: true, why: "clean" },
+  { correct: false, why: `certification pitch has fired; error matches "${(mc[1] ?? mc[0]).id}" - ${(mc[1] ?? mc[0]).description}` },
+  { correct: true, why: "recovers, still at the certification pitch" },
+  { correct: true, why: "at band, unscaffolded, clean" },
+  { correct: true, why: "at band, unscaffolded, clean" },
+  { correct: true, why: "at band, unscaffolded, clean" },
 ];
 
-let p = band.prior;
-let theta = -0.30; // this learner arrives at the KP mid-Level-1, not at spawn
+const st = {
+  p: band.prior,
+  attempts: 0,
+  lastPhase: null,
+  lastCorrect: null,
+  consecutiveWrong: 0,
+  fadeIdx: 0,
+  modelEvents: 0,
+  pendingModel: false,
+};
+let theta = -0.3; // this learner arrives at the KP mid-Level-1, not at spawn
 let responses = 24; // 24 responses already logged elsewhere in the graph -> K = 0.35
 let scored = 0;
 let atBand = 0;
+let seconds = 0;
 const forms = new Set();
-let lastWrong = false;
 
-say(`  learner enters with theta = ${f2(theta)} and P(known) = ${f4(p)} (the band prior)`);
+say(`  learner enters with theta = ${f2(theta)} and P(known) = ${f4(st.p)} (the band prior), K = ${kFor(responses)}`);
 say("");
-say(`  #  phase   item b   P(correct|theta)  resp  P(known) after   theta after   scored/atBand/forms`);
+say(`   #  phase     item b  P(correct)  resp    guess   P(known) after   theta after   scored/atBand/forms  form`);
 
-script.forEach((step, i) => {
-  const certPitch = p >= M.ability.certificationPitchThreshold;
+let gateOpenedAt = null;
+for (let i = 0; i < script.length; i++) {
+  const step = script[i];
+  const ph = nextPhase(st, theta);
+  const certPitch = st.p >= M.ability.certificationPitchThreshold;
   const target = certPitch ? band.logit + M.ability.certificationOffset : theta + M.ability.acquisitionTargetOffset;
   const b = pickVariant(target);
-  const easiestGap = band.logit + Math.min(...M.ability.variantOffsets) > theta + M.ability.modelPhaseTriggerGap;
-  const ph = phase(p, lastWrong, i === 0, i === 0 && easiestGap);
   const pc = logistic(theta - b);
+  const form = st.p < M.forms.cycleAbove ? M.forms.beforeThreshold : M.forms.order[scored % M.forms.order.length];
+  const g = composedGuess(form, ph);
+  seconds += PH.secondsPerItemByPhase[ph] ?? 46;
+  st.attempts++;
 
-  const form = p < M.forms.cycleAbove ? M.forms.beforeThreshold : M.forms.order[scored % M.forms.order.length];
-  const post = posterior(p, step.correct, band.slip, band.guess * (M.guessByForm[form] ?? 1));
-  p = withLearning(post, band.learn);
-  theta += kFor(responses) * ((step.correct ? 1 : 0) - pc);
-  responses++;
-  scored++;
-  if (b >= band.logit) atBand++;
-  forms.add(form);
-  lastWrong = !step.correct;
+  let note = "";
+  if (!scorablePhase(ph)) {
+    // Inert in both directions. The response happens in the world; the engine records nothing.
+    note = "   [inert: a scaffold the director chose - no posterior, no counters, either way]";
+  } else {
+    const post = posterior(st.p, step.correct, band.slip, g);
+    st.p = withLearning(post, band.learn);
+    theta += kFor(responses) * ((step.correct ? 1 : 0) - pc);
+    responses++;
+    if (masteryPhase(ph)) {
+      scored++;
+      if (b >= band.logit) atBand++;
+      forms.add(form);
+    } else {
+      note = "   [scored, NOT mastery-eligible: guided-1 moves P(known) and never fills M2 or M3]";
+    }
+  }
+  st.lastPhase = ph;
+  st.lastCorrect = step.correct;
+  st.consecutiveWrong = step.correct ? 0 : st.consecutiveWrong + 1;
 
   say(
-    `  ${i + 1}  ${ph.padEnd(7)} ${f2(b).padStart(6)}   ${f4(pc).padStart(14)}   ${step.correct ? " ok " : "wrong"}  ${f4(p).padStart(14)}   ${f2(theta).padStart(11)}   ${scored}/${atBand}/${forms.size}   [${form}]`
+    `  ${String(i + 1).padStart(2)}  ${ph.padEnd(8)} ${f2(b).padStart(6)}  ${f4(pc).padStart(10)}  ${step.correct ? " ok  " : "wrong"}  ${scorablePhase(ph) ? f4(g).padStart(7) : "      -"}  ${f4(st.p).padStart(14)}   ${f2(theta).padStart(11)}   ${String(scored).padStart(2)}/${atBand}/${forms.size}                ${form}`
   );
-  say(`       ${step.why}`);
-});
+  say(`      ${step.why}${note}`);
 
-const gate =
-  p >= M.bkt.masteryThreshold &&
-  scored >= M.bkt.minScoredOpportunities &&
-  atBand >= M.bkt.minAtBandOpportunities &&
-  forms.size >= M.bkt.minDistinctItemForms;
+  const gate =
+    st.p >= M.bkt.masteryThreshold &&
+    scored >= M.bkt.minScoredOpportunities &&
+    atBand >= M.bkt.minAtBandOpportunities &&
+    forms.size >= M.bkt.minDistinctItemForms;
+  if (gate && gateOpenedAt === null) gateOpenedAt = i + 1;
+}
+
+const p = st.p;
 say("");
-say(`  after ${script.length} scored opportunities: P(known) = ${f4(p)}, scored ${scored}, at band ${atBand}, forms ${forms.size}`);
-say(`  mastery gate M1-M3: ${gate ? "OPEN -> status becomes `provisional`" : "still closed"}`);
+say(`  after ${script.length} acquisition items: P(known) = ${f4(p)}, scored ${scored}, at band ${atBand}, forms ${forms.size}`);
+say(`  mastery gate M1-M3: ${gateOpenedAt ? "OPEN at item " + gateOpenedAt + " -> status becomes provisional" : "still closed"}`);
+say(
+  `  acquisition cost: ${script.length} items, ${(seconds / 60).toFixed(1)} min of item time (${Object.entries(PH.secondsPerItemByPhase).map(([k, v]) => k + " " + v + "s").join(", ")})`
+);
 say(`  next: consolidation pass (+${M.spacing.consolidationMinutes} min, 2 items), then a retention check no sooner than +${M.spacing.retentionCheck.minHours} h`);
 say("");
 
@@ -223,5 +307,29 @@ say(`  And the learn rate is the other half of the floor: at ${f4(t)} the all-wr
 say(`  so the relearn boost is capped at ${M.spacing.relearnLearnRateCap} and withheld until a node has genuinely been`);
 say(`  mastered once (spacing.relearnRequiresPriorMastery), or the floor rises far enough that a single`);
 say(`  lucky answer clears M1 on its own.`);
+
+say("");
+say(`The second axis, in closed form: what the SCAFFOLD is worth at band ${node.difficulty}`);
+say(`  ${"phase".padEnd(10)} ${"modelled".padStart(9)} ${"true".padStart(7)} ${"scored?".padStart(9)}  ${"M2/M3?".padStart(8)}   3-of-4 retention pass rate at that phase's blind rate`);
+for (const ph of M.phases.order) {
+  const modelledP = g * (M.guessByPhase[ph] ?? 0);
+  const tgP = Math.max(M.trueGuessByPhase[ph] ?? 0, M.trueGuessByForm.construct);
+  const sc = M.phases.scored.includes(ph);
+  const me = M.bkt.phasesEligibleForMastery.includes(ph);
+  say(
+    `  ${ph.padEnd(10)} ${f4(modelledP).padStart(9)} ${f4(M.trueGuessByPhase[ph]).padStart(7)} ${(sc ? "yes" : "NO").padStart(9)}  ${(me ? "yes" : "NO").padStart(8)}   ${atLeast(RN, RK, tgP).toExponential(2)}`
+  );
+}
+say(`  Read the guided-3 row against the construct row of the form table above. A responder who`);
+say(`  idles ${M.antiGuessing.hintSurfaceMs / 1000} s and reads the hint is right ${f4(M.trueGuessByPhase["guided-3"])} of the time, against a modelled ${f4(g)} if the`);
+say(`  engine prices the item by form alone - which is what round 3 did. That is a factor of`);
+say(`  ${(M.trueGuessByPhase["guided-3"] / g).toFixed(1)} of unearned credit per correct response, on the path every learner walks.`);
+say(`  Priced honestly the phase is not scorable at all, so the response is worth nothing instead:`);
+say(`  no posterior, no M2, no M3. The retention column is unchanged either way, because the check`);
+say(`  is pinned to phase "${M.spacing.retentionCheck.phase}" with hinted ${M.spacing.retentionCheck.hinted} - which is why a blind bot still failed L5`);
+say(`  under the round-3 rules even while its P(known) was climbing on hint-reads. The defect was`);
+say(`  never that a bot could certify; it was that M1, M2 and M3 filled on evidence worth nothing,`);
+say(`  the certification pitch fired early, and the learner was told they had it.`);
+say("");
 
 console.log(out.join("\n"));

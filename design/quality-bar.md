@@ -25,13 +25,33 @@ hostile reviewer, looking at real pixels and real state, cannot name a gap that 
 - *Hitchhiker's*: dry wit, gleeful absurdity, the universe as a slightly badly-run institution.
 - The blend is *hopeful*. No grimdark, no lecture, no cynicism about learning.
 
-**Art — `reference/brief-hero.png`.** Stylized, painterly, saturated. Warm rock against cool
-resonance light, an aurora sky doing real work, silhouettes readable at thumbnail size,
-holographic mathematics that looks like the most beautiful object in the frame.
+**Art — `reference/target-lowpoly.png`. This is THE target and it is binding.**
 
-Honest framing: that reference is a painted illustration. A real-time browser render beating it
-outright is a stretch target. The *gap list* a blind comparison produces is the real deliverable —
-but do not let that become an excuse. Close the gaps.
+Flat-shaded low-poly, in the lineage of PS1-era geometry rendered with modern lighting. Read the
+image before you touch a shader. What it actually specifies:
+
+- **Faceted everything.** Rock, terrain and props are low-triangle solids with visible flat facets
+  and hard edges. No smooth-shaded organic blobs, no normal maps, no high-frequency surface detail.
+  Geometry carries the form; shading only reveals it.
+- **Per-face flat shading**, not smooth vertex normals. A cliff should read as a handful of distinct
+  planes each holding one value.
+- **Banded, painterly sky** — a warm dusk gradient with hard-edged stylised cloud slabs, not
+  volumetric cloud. Big, simple, confident shapes.
+- **Two-value palette discipline**: warm ochre/sand rock in light, desaturated blue-grey in shadow.
+  Cyan crystal and cyan water are the only saturated accents and they carry all the eye-attention.
+- **Silhouette over detail.** Spires, floating islands and distant city towers read as clean
+  cut-outs against the sky. Distance is carried by value and haze, not by more polygons.
+- **Hard-edged UI**: chunky bars, a pixel/blocky typeface, a compass disc, an item bar. Confident
+  and game-like, never a web dashboard.
+- **The mathematics floats unadorned in world space** — clean white KaTeX and a simple plotted axis
+  hovering in air, no panel chrome, no glass frame. It is legible because it is bright and simple.
+
+This target is *achievable in real time*, which means the excuse of "the reference is a painting"
+is gone. We are expected to match it and then beat it. Beating it looks like: better composition,
+better light, motion and life the still cannot have.
+
+`reference/brief-hero.png` is retained only as a **mood/tone** artefact — colour feeling and sense of
+wonder. It is NOT the render target. Where the two conflict, `target-lowpoly.png` wins.
 
 ## 2. Testable minimums
 

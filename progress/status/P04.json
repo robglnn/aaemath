@@ -1,21 +1,9 @@
 {
   "id": "P04",
-  "state": "passed",
-  "round": 2,
-  "gap": null,
-  "note": "Round 2: adding real brake/commitment cost to momentum, fixing groundAt arg order, capping turn speed, cutting air authority, shortening apex hang",
-  "evidence": [
-    "review/shots/p04/feel.txt",
-    "review/shots/p04/feel.json",
-    "review/shots/p04/c01-sprint.png",
-    "review/shots/p04/c02-skid.png",
-    "review/shots/p04/c02b-skid-side.png",
-    "review/shots/p04/c03-pivot.png",
-    "review/shots/p04/c04-carve.png",
-    "review/shots/p04/c05-apex.png",
-    "review/shots/p04/c06-land.png",
-    "review/p04-feel.mjs",
-    "review/p04-shots.mjs"
-  ],
-  "updated": "2026-08-09T21:21:52.607Z"
+  "state": "building",
+  "round": 3,
+  "gap": "The reversal skid misfires on an ordinary sustained turn in the default run band: a 90-degree stick reads as 111.6-128.7 degrees against the lagging velocity, so brakeAngleDeg=110 plants the feet, the state flickers run-skid-walk-run and speed collapses 5.6 to 3.11 m/s and never recovers while the turn is held. At sprint the lag is only 12.1 degrees so the same input carves free at 8.3 m/s -- the model is non-monotonic across its own speed bands.",
+  "note": "Round 3: fixing sustained-turn brake misfire in run band, turn rate ladder, carve cost, landing-lock jump gate, step height truth, blocked state",
+  "evidence": [],
+  "updated": "2026-08-09T21:48:00.812Z"
 }

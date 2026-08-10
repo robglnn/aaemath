@@ -1,0 +1,454 @@
+{
+  "image": "reference/brief-hero.png",
+  "size": [
+    2752,
+    1536
+  ],
+  "grey": {
+    "sampledPixels": 1056768,
+    "mutedShare": 0.2479,
+    "candidates": [
+      {
+        "name": "hue20-80 S<0.14",
+        "hue": [
+          20,
+          80
+        ],
+        "maxS": 0.14,
+        "yLo": 0.02,
+        "yHi": 0.55,
+        "share": 0.0122
+      },
+      {
+        "name": "hue20-80 S<0.12",
+        "hue": [
+          20,
+          80
+        ],
+        "maxS": 0.12,
+        "yLo": 0.02,
+        "yHi": 0.55,
+        "share": 0.0098
+      },
+      {
+        "name": "hue20-80 S<0.16",
+        "hue": [
+          20,
+          80
+        ],
+        "maxS": 0.16,
+        "yLo": 0.02,
+        "yHi": 0.55,
+        "share": 0.0144
+      },
+      {
+        "name": "hue0-90  S<0.14",
+        "hue": [
+          0,
+          90
+        ],
+        "maxS": 0.14,
+        "yLo": 0.02,
+        "yHi": 0.55,
+        "share": 0.0233
+      },
+      {
+        "name": "hue20-80 S<0.14 noY",
+        "hue": [
+          20,
+          80
+        ],
+        "maxS": 0.14,
+        "yLo": 0,
+        "yHi": 1,
+        "share": 0.0123
+      }
+    ]
+  },
+  "landmark": {
+    "cityMass": {
+      "box": [
+        0.7,
+        0.12,
+        0.86,
+        0.3
+      ],
+      "mean": 0.3388,
+      "px": 122157
+    },
+    "skyBehindCity": {
+      "box": [
+        0.86,
+        0.12,
+        0.96,
+        0.3
+      ],
+      "mean": 0.5734,
+      "px": 76175
+    },
+    "skyAboveCity": {
+      "box": [
+        0.7,
+        0.03,
+        0.86,
+        0.1
+      ],
+      "mean": 0.4889,
+      "px": 47628
+    },
+    "ruinLeft": {
+      "box": [
+        0.135,
+        0.15,
+        0.245,
+        0.29
+      ],
+      "mean": 0.4872,
+      "px": 64930
+    },
+    "skyBehindRuinLeft": {
+      "box": [
+        0.26,
+        0.15,
+        0.36,
+        0.29
+      ],
+      "mean": 0.6234,
+      "px": 59125
+    },
+    "mesaMid": {
+      "box": [
+        0.03,
+        0.33,
+        0.2,
+        0.4
+      ],
+      "mean": 0.3989,
+      "px": 49969
+    },
+    "skyAboveMesaMid": {
+      "box": [
+        0.03,
+        0.25,
+        0.2,
+        0.3
+      ],
+      "mean": 0.5234,
+      "px": 35959
+    },
+    "ratios": {
+      "cityOverSkyBehind": 0.5909,
+      "cityOverSkyAbove": 0.693,
+      "ruinOverSkyBehind": 0.7815,
+      "mesaOverSkyAbove": 0.7621
+    }
+  },
+  "cct": {
+    "key": {
+      "hex": "#FFE8A0",
+      "xy": [
+        0.3767,
+        0.4017
+      ],
+      "n": -0.2071,
+      "cctK": 4254,
+      "cctK_altMatrix": 4254,
+      "Y": 0.8151
+    },
+    "fill": {
+      "hex": "#8DACBC",
+      "xy": [
+        0.2745,
+        0.3059
+      ],
+      "n": 0.479,
+      "cctK": 9647,
+      "cctK_altMatrix": 9648,
+      "Y": 0.388
+    },
+    "bounce": {
+      "hex": "#8A5B3E",
+      "xy": [
+        0.4357,
+        0.382
+      ],
+      "n": -0.5283,
+      "cctK": 2833,
+      "cctK_altMatrix": 2833,
+      "Y": 0.1323
+    },
+    "kick": {
+      "hex": "#2FE3D6",
+      "xy": [
+        0.234,
+        0.3465
+      ],
+      "n": 0.61,
+      "cctK": 11096,
+      "cctK_altMatrix": 11097,
+      "Y": 0.6039
+    },
+    "note": "McCamy 1992 cubic on CIE 1931 xy from the linear sRGB triplet. The kick is not a blackbody and its number is meaningless; it is printed only to show that.",
+    "helperOutput": {
+      "at3000K": "#FFB16E",
+      "at4247K": "#FFD4B1",
+      "at2200K": "#FF9227",
+      "at2833K": "#FFAC62"
+    }
+  },
+  "roles": {
+    "#7C7A72": {
+      "hex": "#7C7A72",
+      "rgb": [
+        124,
+        122,
+        114
+      ],
+      "linear": [
+        0.2016,
+        0.1946,
+        0.1683
+      ],
+      "hsv": [
+        48,
+        0.081,
+        0.486
+      ],
+      "luminance": 0.1942
+    },
+    "#4A4945": {
+      "hex": "#4A4945",
+      "rgb": [
+        74,
+        73,
+        69
+      ],
+      "linear": [
+        0.0685,
+        0.0666,
+        0.0595
+      ],
+      "hsv": [
+        48,
+        0.068,
+        0.29
+      ],
+      "luminance": 0.0665
+    },
+    "#AA9087": {
+      "hex": "#AA9087",
+      "rgb": [
+        170,
+        144,
+        135
+      ],
+      "linear": [
+        0.402,
+        0.2789,
+        0.2423
+      ],
+      "hsv": [
+        15,
+        0.206,
+        0.667
+      ],
+      "luminance": 0.3024
+    },
+    "#55505E": {
+      "hex": "#55505E",
+      "rgb": [
+        85,
+        80,
+        94
+      ],
+      "linear": [
+        0.0908,
+        0.0802,
+        0.1119
+      ],
+      "hsv": [
+        261,
+        0.149,
+        0.369
+      ],
+      "luminance": 0.0847
+    },
+    "#8FE8DF": {
+      "hex": "#8FE8DF",
+      "rgb": [
+        143,
+        232,
+        223
+      ],
+      "linear": [
+        0.2747,
+        0.807,
+        0.7379
+      ],
+      "hsv": [
+        174,
+        0.384,
+        0.91
+      ],
+      "luminance": 0.6888
+    },
+    "#D8FBF4": {
+      "hex": "#D8FBF4",
+      "rgb": [
+        216,
+        251,
+        244
+      ],
+      "linear": [
+        0.6867,
+        0.9647,
+        0.9047
+      ],
+      "hsv": [
+        168,
+        0.139,
+        0.984
+      ],
+      "luminance": 0.9013
+    },
+    "#2FE3D6": {
+      "hex": "#2FE3D6",
+      "rgb": [
+        47,
+        227,
+        214
+      ],
+      "linear": [
+        0.0284,
+        0.7682,
+        0.6724
+      ],
+      "hsv": [
+        176,
+        0.793,
+        0.89
+      ],
+      "luminance": 0.604
+    },
+    "#3FCFA0": {
+      "hex": "#3FCFA0",
+      "rgb": [
+        63,
+        207,
+        160
+      ],
+      "linear": [
+        0.0497,
+        0.624,
+        0.3515
+      ],
+      "hsv": [
+        160,
+        0.696,
+        0.812
+      ],
+      "luminance": 0.4822
+    },
+    "#1D6E6A": {
+      "hex": "#1D6E6A",
+      "rgb": [
+        29,
+        110,
+        106
+      ],
+      "linear": [
+        0.0123,
+        0.1559,
+        0.1441
+      ],
+      "hsv": [
+        177,
+        0.736,
+        0.431
+      ],
+      "luminance": 0.1245
+    }
+  },
+  "greySeparation": {
+    "vsRockBone": {
+      "dHue": 33,
+      "dS": 0.125,
+      "dY": 0.1082
+    },
+    "vsRockShadow": {
+      "dHue": 147,
+      "dS": 0.068,
+      "dY": -0.1095
+    }
+  },
+  "acutance": {
+    "heroCore": {
+      "box": [
+        0.2984,
+        0.4128,
+        0.4027,
+        0.8232
+      ],
+      "value": 0.09612
+    },
+    "foreground": {
+      "box": [
+        0.44,
+        0.7,
+        0.72,
+        0.92
+      ],
+      "value": 0.04617
+    },
+    "midground": {
+      "box": [
+        0.06,
+        0.52,
+        0.3,
+        0.68
+      ],
+      "value": 0.02235
+    },
+    "distance": {
+      "box": [
+        0.1,
+        0.36,
+        0.3,
+        0.46
+      ],
+      "value": 0.01295
+    },
+    "midCrystals": {
+      "box": [
+        0.84,
+        0.62,
+        0.98,
+        0.78
+      ],
+      "value": 0.01452
+    },
+    "cityFar": {
+      "box": [
+        0.7,
+        0.12,
+        0.86,
+        0.3
+      ],
+      "value": 0.024
+    },
+    "skyFlat": {
+      "box": [
+        0.36,
+        0.02,
+        0.56,
+        0.08
+      ],
+      "value": 0.01315
+    },
+    "ratios": {
+      "heroOverMidground": 4.301,
+      "foregroundOverDistance": 3.565,
+      "foregroundOverMidground": 2.066
+    }
+  }
+}

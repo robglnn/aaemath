@@ -176,6 +176,37 @@ export default {
       followFrontier("session-signal");
     });
 
+    /**
+     * P34, route (c): the two signals that say where the learner IS, rather than where the model
+     * thinks they are.
+     *
+     * `learn:unlock` had no listener at all — a gate crossing opens the node after it, and the node
+     * after it is very often the first of the next lesson, so this is the earliest possible moment
+     * the loader can know. `learn:present` had no EMITTER until this wave, which is why "the loader
+     * follows the learner" could only ever be argued from `frontier()`: the frontier is a model
+     * belief, and a review item, a retention check or a pulled-forward node is served somewhere else
+     * entirely. The presented knowledge point is the only unarguable statement of where the learner
+     * actually is.
+     *
+     * Both routes are cheap and idempotent. `prefetchLesson` filters out everything resident,
+     * in-flight or failed before it queues anything, and the lesson comparison means a signal that
+     * fires once per item starts a request only when the answer changed — so this cannot become the
+     * retry storm the header warns about.
+     */
+    let lastPresentedLesson = null;
+    signals.on("learn:present", (e) => {
+      if (!e?.kpId) return;
+      const lesson = itemBank.lessonFor(e.kpId)?.id ?? null;
+      if (!lesson || lesson === lastPresentedLesson) return;
+      lastPresentedLesson = lesson;
+      if (lesson !== lastWarmedLesson) itemBank.prefetchLesson(lesson);
+      followFrontier("present-signal");
+    });
+    signals.on("learn:unlock", (e) => {
+      if (e?.kpId) itemBank.prefetchAround(e.kpId, { ahead: 2 });
+      followFrontier("unlock-signal");
+    });
+
     // Route (b): the backstop. One `frontier()` pass every RECHECK_MS, in idle time.
     let recheck = null;
     const scheduleRecheck = () => {

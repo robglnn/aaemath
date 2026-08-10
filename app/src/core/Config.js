@@ -154,13 +154,23 @@ export class Config {
   }
 
   set(key, value) {
-    if (this.values[key] === value) return;
+    /**
+     * A tier arriving through the public setter is a *player* choice — a settings screen, the
+     * console, a debug key. Auto-tiering stands down for good the moment one exists, and it is
+     * recorded in storage so it survives the next boot. `AutoTier` never lands here: its own
+     * choices go through `applyTier()` below.
+     *
+     * The second clause of the guard is not decoration. `applyTier()` moves `values.tier` without
+     * touching `autoTier`, so by the time a player opens the settings screen the runtime tier is
+     * routinely *already* the one they are about to pick. With a bare equality guard that choice
+     * early-returns, `autoTier` stays true, and auto-tiering keeps moving the picture under a
+     * player who just told it to stop — the setting silently does nothing precisely when the
+     * player agrees with the measurement. Found by `review/measure/P35.mjs` B6.
+     */
+    const tierChoice = key === "tier" && !!TIERS[value];
+    if (this.values[key] === value && !(tierChoice && this.values.autoTier !== false)) return;
     this.values[key] = value;
-    // A tier arriving through the public setter is a *player* choice — a settings screen, the
-    // console, a debug key. Auto-tiering stands down for good the moment one exists, and it is
-    // recorded in storage so it survives the next boot. `AutoTier` never lands here: its own
-    // choices go through `applyTier()` below.
-    if (key === "tier" && TIERS[value]) this.values.autoTier = false;
+    if (tierChoice) this.values.autoTier = false;
     write(this.values);
   }
 

@@ -1,0 +1,9 @@
+{
+  "id": "P34",
+  "state": "building",
+  "round": 1,
+  "gap": null,
+  "note": "Closing the learning round trip: Session->Scheduler.serve->math:show->learn:present->learn:respond->Mastery",
+  "evidence": [],
+  "updated": "2026-08-10T20:13:59.762Z"
+}

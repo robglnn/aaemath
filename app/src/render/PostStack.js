@@ -44,7 +44,10 @@ import { DISPLAY_MODE, displayModeForToneMapping } from "./passes/glsl.js";
  *
  * ## Tiers
  *
- * `config.tier.postStack` is read literally.
+ * `config.tier.postStack` is read literally at construction, and **followed at runtime through the
+ * `quality:tier` signal** — see `applyTierStack`. That subscription is new this round: the signal
+ * had no listener at all, so a measured tier decision reached the post stack only through a private
+ * bridge inside `core/AutoTier.js`.
  *
  * | tier | asks for | what is built |
  * |---|---|---|
@@ -185,6 +188,20 @@ export class PostStack {
     this.sunDir = new THREE.Vector3(0.35, 0.16, -0.92).normalize();
     this.sunSource = "default";
     this._offSun = signals.on("world:sun", (p) => this._adoptSun(p));
+    /**
+     * The tier wire.
+     *
+     * `core/AutoTier.js` decides the tier from measured frame cost and announces it on
+     * `quality:tier`. Until this round **nothing listened** — `tools/seams.mjs --signals` listed it
+     * among the signals emitted into the void — and the post response ran through a private bridge
+     * inside `AutoTier` that reached in through `kernel.get("post")`. The decision was real and the
+     * wire was not, which is this project's dominant failure mode (RESUME §6b).
+     *
+     * This is the seam closed. The tier's `postStack` is the *only* thing read from the payload,
+     * because it is the only part of a tier this piece owns.
+     */
+    this._offTier = signals.on("quality:tier", (p) => this.applyTierStack(p));
+    this.tierApplied = null;
     this._frames = 0;
     this._glowDrawn = null;
     this._lastDraws = 0;
@@ -399,6 +416,56 @@ export class PostStack {
     return this.installed;
   }
 
+  /**
+   * Follow a `quality:tier` decision. The listener half of the seam described in the constructor.
+   *
+   * Three properties this has to have, all of which a naive `setEnabled(tier !== "low")` gets wrong:
+   *
+   *  * **A query override still wins.** `?post=off` is the A/B control every claim in
+   *    `review/measure/P12.mjs` rests on and `?post=bare` is the transparency proof; a tier arriving
+   *    mid-session must not quietly re-install a composer either of them turned off. `?post=on`
+   *    likewise keeps the composer installed on a tier that asks for nothing, which is what makes a
+   *    potato-tier capture inspectable at all.
+   *  * **Effects first, then the composer.** Setting `installed` before the flags leaves them
+   *    describing the *previous* tier — the composer is genuinely uninstalled but `effects` still
+   *    claims bloom and vignette, and a later `setEnabled(true)` rebuilds the chain to the old
+   *    tier's shape. P30 C5 caught exactly that.
+   *  * **The declined list is recomputed.** A tier that asks for `ca` must be refused loudly at
+   *    whatever moment it arrives, not only at boot.
+   */
+  applyTierStack(payload) {
+    const stack = Array.isArray(payload?.postStack) ? payload.postStack : config.tier.postStack;
+    const requested = Array.isArray(stack) ? [...stack] : [];
+    this.requested = requested;
+    this.unknown = requested.filter((id) => !KNOWN_PASSES.has(id));
+    const want = new Set(requested.filter((id) => KNOWN_PASSES.has(id)));
+    this.declined = [];
+    for (const id of Object.keys(DECLINED_PASSES)) {
+      if (want.delete(id)) this.declined.push({ id, why: DECLINED_PASSES[id] });
+    }
+
+    this.tierApplied = {
+      tier: payload?.tier ?? config.tier.id,
+      direction: payload?.direction ?? "tier",
+      source: payload?.source ?? "signal",
+      why: payload?.why ?? null,
+      honoured: this.mode === "tier" || this.mode === "on",
+    };
+
+    // ?post=off / ?post=bare pin the chain for the whole session; a tier may not move them.
+    if (this.mode === "off" || this.mode === "bare") return this.installed;
+
+    this.setEffect("bloom", want.has("bloom"));
+    this.setEffect("sunGlow", want.has("godrays"));
+    this.setEffect("grain", want.has("grain"));
+    this.setEffect("vignette", want.has("vignette"));
+    const anyEffect = Object.values(this.effects).some(Boolean);
+    this.setEnabled(this.mode === "on" ? true : anyEffect);
+    this.tierApplied.installed = this.installed;
+    this.tierApplied.effects = { ...this.effects };
+    return this.installed;
+  }
+
   /** Turn one effect on or off. Recompiles the grade shader; rare enough not to matter. */
   setEffect(name, on) {
     if (!(name in this.effects)) return false;
@@ -593,6 +660,16 @@ export class PostStack {
       declined: this.declined,
       unknown: this.unknown,
       effects: { ...this.effects },
+      /**
+       * The `quality:tier` wire, reported rather than implied. `subscribed` is true because this
+       * class subscribes in its constructor; `tierApplied` is the last decision that actually came
+       * down it, so a critic can tell a tier that was *announced* from a tier that was *applied*.
+       */
+      tierSignal: {
+        name: "quality:tier",
+        subscribed: true,
+        applied: this.tierApplied,
+      },
       display: {
         mode: this.displayMode,
         name: ["none", "linear", "aces", "vs"][this.displayMode] ?? "?",
@@ -646,6 +723,7 @@ export class PostStack {
 
   dispose() {
     this._offSun?.();
+    this._offTier?.();
     if (this.kernel.composer === this) this.kernel.composer = null;
     this.sceneTarget?.dispose();
     this.sunGlowTarget?.dispose();

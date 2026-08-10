@@ -47,3 +47,4 @@ Claim your slot here so ordering stays predictable. Lower runs first.
 | 74 | menus | P22 | |
 | 80 | audio | P25 | last of the systems |
 | 90 | flow | P33 (+P23/P27) | title, onboarding, session — drives the rest. `90-flow.js` mounts P33's `flow/Session.js` + `flow/Save.js` (the Pomodoro arc); title/onboarding land alongside |
+| 92 | teaching | P34 | the presenter. Must be after 90: it drives `flow.session`, and after 62/63 so `next()` already draws through `Scheduler.serve()`. Turns a request into `math:show` + `learn:present`, takes a constructed response, and hands it back through `session.submit()` |

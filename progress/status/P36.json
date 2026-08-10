@@ -1,0 +1,9 @@
+{
+  "id": "P36",
+  "state": "building",
+  "round": 2,
+  "gap": "world:resonance is a live listener (world/Lighting.js:624) with zero emitters anywhere in the repo, gating addAccent/removeAccent which have no other caller, and it appears nowhere in design/architecture.md - one signal silently left in the same state, and the whole resonance-accent lighting feature is unreachable",
+  "note": "Round 2: closing world:resonance seam, adding accent probe, fixing architecture.md errors, making seams.mjs gate on pending markers",
+  "evidence": [],
+  "updated": "2026-08-10T20:40:38.130Z"
+}

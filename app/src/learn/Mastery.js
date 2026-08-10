@@ -1942,6 +1942,12 @@ export class Mastery {
       // reviewer must be able to see the probe was pitched above the band centre from outside.
       difficulty: b,
       testOut: !!r.testOut,
+      /**
+       * P34. The family, carried on the verdict rather than only inside the pricing decision, so
+       * `_emitRespond` can put it on the wire and a listener never has to re-derive it from
+       * `reason`. `UNREPORTED_FAMILY` here is not an absence — it is the caller declining to say.
+       */
+      family,
       scored: false,
       masteryEligible: false,
       // The engine's verdict, not the caller's: `correct` is what the world reported, `credited`
@@ -2339,6 +2345,24 @@ export class Mastery {
       // count toward mastery. Round 1's defect was invisible precisely because nothing published
       // the difference.
       credited: out.credited,
+      /**
+       * P34. The two axes a listener needs to tell "the learner got it wrong" apart from "the
+       * engine would not price it", and they were both missing from the wire.
+       *
+       * `family` is the generator family the item came from, or `UNREPORTED_FAMILY` when nobody
+       * said — the single fact that decides whether the 24 cells holding a refused family can be
+       * scored at all. It is the first thing a delivery bug shows up in, and until now the only
+       * way to see it was to read `reason` and parse the string.
+       *
+       * `difficulty` is the band the item was actually served at and `mode` is what it was served
+       * for; together with `phase` and `hinted` they are the whole scaffold level of the response,
+       * which is what `design/architecture.md` §Learning promises this signal carries.
+       */
+      family: out.family ?? null,
+      difficulty: out.difficulty,
+      mode: out.mode,
+      testOut: out.testOut === true,
+      reason: out.reason ?? null,
       ...(out.misconception ? { misconception: out.misconception } : {}),
     });
   }

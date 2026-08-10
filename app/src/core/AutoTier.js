@@ -17,152 +17,143 @@ import { publish } from "./Introspect.js";
  * ## What a tier step actually costs, as shipped — not as the table claims
  *
  * The tier table asks `high` for 3072² x3 shadow cascades. It does not get them: `world/Lighting.js`
- * builds `cascades = min(2, tier.shadowCascades)` (line 322) and `res = clamp(tier.shadowResolution,
- * 1024, 2048)` (line 337), so **`ultra`, `high` and `medium` all build the same 2048² x2 rig** and
- * only `low`/`potato` differ. Quoting the table's numbers as the price of a tier — which the first
- * two rounds of this file did — is fiction, and the measured version (P30 C10) is:
+ * builds `cascades = min(2, tier.shadowCascades)` and `res = clamp(tier.shadowResolution, 1024,
+ * 2048)`, so **`ultra`, `high` and `medium` all build the same 2048² x2 rig** and only `low`/`potato`
+ * differ. The three surfaces a tier step really moves are:
  *
  * | high → medium, as shipped | before | after |
  * |---|---|---|
  * | pixel ratio (drawing-buffer px per screen px) | 1.5 (2.25x) | 1.25 (1.5625x) — 31 % fewer pixels |
  * | post passes | 5 | 3 |
  * | shadow map | 2048² x2 | 1024² x2 — *this module's* ratio ladder, not the lighting rig's |
- * | `grassDensity` / `drawDistance` / `particleBudget` | emitted on `quality:tier` and, today, consumed by nobody |
  *
- * That last row is why `report().signal` names its own unconsumed fields instead of letting a
- * probe imply they did something: the pixel ratio, the shadow maps and the post stack are the
- * three surfaces this module actually moves, and they are the three it measures moving.
+ * Those three are what `rendererState()` reads back, and they are what a critic should check. The
+ * pixel ratio and the shadow maps are moved here; the post stack is moved by **`quality:tier`**,
+ * which `render/PostStack.js` subscribes to. Until this round that signal had no listener at all and
+ * the post response ran through a private bridge — the decision was real and the wire was not.
  *
  * ## The asymmetry that sets every default in this file
  *
  * Being one tier too low costs a student some bloom and some shadow resolution for a few seconds.
- * Being one tier too high costs them the frame rate, which is the whole feel of the game. The two
- * errors are not the same size, so the defaults are not symmetric:
+ * Being one tier too high costs them the frame rate, which is the whole feel of the game. So the
+ * heuristic starts at **medium unless there is positive evidence of strength** — not at `high`
+ * unless there is positive evidence of weakness. Hardware signals are routinely *illegible*
+ * (Firefox with `resistFingerprinting`, Safari, a legacy "WebKit WebGL" mask, any browser without
+ * `deviceMemory`, Chrome once `WEBGL_debug_renderer_info` finishes going away), and "I could not
+ * tell" must not mean "assume a gaming desktop".
  *
- *  * The heuristic starts at **medium unless there is positive evidence of strength** — not at
- *    `high` unless there is positive evidence of weakness. Hardware signals are routinely
- *    *illegible* (Firefox with `resistFingerprinting`, Safari, a legacy "WebKit WebGL" mask, any
- *    browser without `deviceMemory`, Chrome once `WEBGL_debug_renderer_info` finishes going away),
- *    and "I could not tell" must not mean "assume a gaming desktop".
- *  * Relief is urgent; promotion never is. The *first* decision window is deliberately small
- *    (30 warm-up / 45 scored frames, and smaller still in wall-clock terms on a slow machine), and
- *    the first down-step may **leap more than one rung** when the median is catastrophically over
- *    budget *and the hardware corroborates it*. A promotion, by contrast, always waits for the full
- *    steady-state window.
+ * ## Corroboration is a *relation*, not a fact about the GPU string
  *
- * The price of the conservative default is bounded and known: a vsync-locked 60 Hz desktop is
- * promoted medium → high about 3 s in, through the up-path below. The price of the optimistic
- * default was not bounded — it was "the slower the machine, the longer it sits at the tier it
- * cannot afford".
+ * This is the round-2 bug, named exactly by its critic and fixed here.
  *
- * ## Why a boot storm must not decide the session
+ * Round 2 read "a GPU family was named" as corroboration. But the heuristic's cap **at medium** is a
+ * *positive prediction that medium is affordable*. A UHD 600 that then measures a 120 ms median
+ * **at medium** has therefore **falsified** that prediction, not confirmed it — and round 2 treated
+ * exactly that as hardware evidence, leapt medium → potato in one 3-rung step, and then refused
+ * every recovery for the rest of the session because `provisional` was false. Three minutes of
+ * flawless 16.6 ms frames restored nothing. The two machines that recovered were the RTX 4070 and a
+ * masked browser: the two that never needed help.
  *
- * The first window is measured 1.5-4 s after the first render, which is also when thirty
- * Chromebooks on one classroom access point are finishing their asset downloads, when Chrome is
- * applying an update in the background, and when the compositor is still uploading textures. Those
- * frames are real, they are slow, and they are *not this machine*. The round-2 policy read that
- * window as steady render cost: 120 ms frames for 4 s bought `high → potato` in a single 3-rung
- * leap, and because `downSteps > 0` blocked every promotion for the rest of the session, three
- * minutes of flawless 60 Hz afterwards still ended at `potato`. Measured, on the shipped policy.
+ * So corroboration is evaluated **per decision, against the tier the miss was measured at**:
  *
- * A short window taken during the boot storm therefore buys a **provisional** decision, and
- * "provisional" is a specific, bounded thing:
+ *  * the heuristic predicts a tier — "this machine can afford `predictedTier`";
+ *  * a miss measured **above** that tier is the predicted outcome → **corroborated**, and the
+ *    descent is final;
+ *  * a miss measured **at or below** it contradicts the prediction → **falsified**, and the descent
+ *    is revocable.
  *
- *  * It moves **one rung**, not three (`firstMaxLeap`) — a small window buys a small commitment.
- *  * It is only taken when the *tail* of the window is still over budget too, so a storm that has
- *    already decayed by the time the window fills costs nothing at all.
- *  * It can be **revoked exactly once**, and only on evidence that the original reading could not
- *    have been render cost (below).
+ * Because the heuristic's answer is also what gets applied at boot, the ordinary first descent is a
+ * falsification and is therefore always revocable — which is the whole point. Corroboration still
+ * has real work to do: when the heuristic said `medium` and the *up-path* promoted to `high`, a
+ * subsequent miss at `high` is the prediction coming true, the descent is final, and the
+ * promote/demote loop cannot start.
  *
- * A decision the hardware *corroborates* is not provisional: when the heuristic capped the tier on
- * a renderer string or a capability number, a catastrophic median is exactly what that machine was
- * predicted to do. It leaps immediately and it never revokes. Corroboration is the whole difference
- * between "a Gemini Lake Chromebook is slow" and "an RTX 4070 was slow for four seconds".
+ * ## A stall is not slow rendering
  *
- * ## Why revoking a descent is not the oscillation it looks like
+ * A boot storm, a network hitch on classroom Wi-Fi, a GC pause and a tab switch are all real
+ * elapsed time and none of them is evidence about the GPU. Three separate mechanisms keep them out
+ * of the answer, and they are deliberately different mechanisms because they catch different things:
  *
- * "Holding vsync at the lower tier" is *not* evidence the higher tier is affordable — that argument
- * is what promoted a correctly-capped Chromebook back into a tier it could not afford, and it is
- * still rejected here. Recovery rests on a different and much narrower observation: **the machine
- * improved by more than a tier step can explain.** A rung is worth at most about 2x
- * (`recoveryRungGain`), so a genuine 120 ms at `high` predicts *at best* 60 ms at `medium`. Measuring
- * 16.6 ms there does not mean the machine is fast; it means the 120 ms was never render cost. That
- * inconsistency, and nothing else, arms the revocation — and it must then hold continuous headroom
- * for a further `recoveryQuietMs` (20 s) before it fires. Every one of these must be true:
+ *  1. **An isolated over-long period is discarded entirely** — no score, no window time. A single
+ *     4 s frame is a tab switch. It still advances `clock` (a cooldown that ignored it would be
+ *     lying about how long ago the last decision was) but it contributes nothing to the window.
+ *  2. **A *run* of over-long periods is a machine at 2 fps, not a stall.** After `stallRun`
+ *     consecutive over-long frames the period is winsorised to `sampleMaxMs` and scored: the exact
+ *     number stops mattering far below 4 fps, the sign does not.
+ *  3. **The window is judged by a median over `windowMs` of *rendered* time.** Not a mean — an
+ *     outlier cannot move a median at all. And not a frame count: 120 frames is 2 s at 60 Hz and
+ *     60 s at 2 fps, so a frame count is a different instrument on every machine.
  *
- *  1. the descent was **provisional** (no hardware corroboration), and
- *  2. every down-step happened inside the first `recoveryArmMs` — one early drop, not a descent, and
- *  3. the measured cost is below `recoveryInconsistency` x the most generous model of the old
- *     reading, and
- *  4. headroom has held *continuously* for `recoveryQuietMs`, and
- *  5. `maxRecoveries` (1) is unspent and no revocation has already failed.
+ * Mechanism 3 is the one that answers the round-2 finding directly. A 4.8 s boot storm can no longer
+ * decide a session because the first window is **six seconds of rendered time** and slow frames are
+ * inherently under-represented in it: 3.3 s of 120 ms frames is 27 samples, and the 2.7 s of
+ * flawless frames that follow are 162. The median is 16.6 ms and nothing happens. The round-2 cliff
+ * was one second wide (≤3.6 s storm → nothing, ≥4.8 s storm → `potato` for the session); a storm now
+ * has to run for the whole window *and* still be running at the end of it to buy anything, and what
+ * it buys is one rung that can be handed back.
  *
- * A borderline machine — 30 ms at `high`, 16.6 ms at `medium` — fails gate 3 (16.6 is not below
- * 0.6 x 15) and is never probed. A revocation that turns out to be wrong is caught by the ordinary
- * down path, costs one further change, and **locks the ratchet permanently**: worst case is three
- * picture changes, which is the budget that already bound.
+ * ## Step, observe, step
  *
- * ## Two mechanisms, deliberately separate
+ * `maxLeap` is **1**. There is no multi-rung leap in either direction, ever — not on the first
+ * decision, not on a corroborated one, not on a recovery. A 3-rung leap is the biggest visual cliff
+ * in the ladder (shadows off, post down to one pass) and no single window is worth it. Reaching
+ * `potato` from `medium` costs two decisions and two windows, which is the point: the second window
+ * is a fresh observation of the machine at the tier the first one chose.
  *
- * 1. **A first-frame heuristic** (`startingTier`) runs before the world is built, at boot order 02.
- *    It reads the GL renderer string, `MAX_TEXTURE_SIZE`, WebGL2 availability, core count, device
- *    memory and the pixel count of the panel, and picks a *conservative starting tier*. Its whole
- *    job is that the first few seconds are not miserable — it is allowed to be wrong, because:
+ * ## Recovery must be reachable on the hardware that needed help
  *
- * 2. **Measurement** (`TierPolicy`) then corrects it from real frame periods. Sustained misses step
- *    the tier down; comfortable headroom buys back at most one step up.
+ * "Holding vsync at the lower tier" is *not* evidence the higher tier is affordable, and that
+ * argument is still rejected. Recovery rests on a narrower observation: **the machine improved by
+ * more than a tier step can explain.** A rung is worth at most about 2x (`recoveryRungGain`), so a
+ * genuine 120 ms at `medium` predicts *at best* 60 ms at `low`. Measuring 16.6 ms there does not
+ * mean the machine is fast; it means the 120 ms was never render cost. A borderline machine —
+ * 38 ms at `medium`, 23 ms at `low` — fails that test (23 is not below 0.6 x 19) and is never
+ * probed, so a genuinely weak machine settles down and stays down.
  *
- * The split matters because neither half is trustworthy alone. A renderer string is a guess (a
- * "UHD Graphics 620" in a fanless tablet and in a desktop are different machines), and measurement
- * cannot help you for the first few seconds — which are exactly the seconds a student decides in.
+ * Every gate, in order:
  *
- * **The heuristic's cap is the measurement's ceiling.** When the heuristic lowered the tier on
- * hardware evidence, that evidence does not expire the moment the machine holds vsync at the lower
- * tier: holding 60 Hz at `medium` is not evidence that `high` is affordable. Promoting past a
- * hardware cap is how a correctly-capped Chromebook ends a session two tiers *below* the cap with
- * three visible picture changes on the way — measured, and the reason `ceiling` below is the
- * heuristic's answer whenever the heuristic had one.
+ *  1. a descent exists, and no down-step in it was **corroborated**, and
+ *  2. every down-step landed inside `recoveryArmMs` — one early episode, not a machine walking
+ *     itself down over minutes, and
+ *  3. the window is full and the measurement is below `recoveryInconsistency` x the most generous
+ *     model of the old reading, and
+ *  4. headroom has held *continuously* for `recoveryQuietMs` (20 s), and
+ *  5. `maxRecoveries` is unspent and no revocation has already failed.
+ *
+ * Each revocation is **one rung**, and each one needs its own fresh 20 s of continuous headroom. A
+ * revocation that turns out to be wrong is caught by the ordinary down path and **locks the ratchet
+ * permanently**.
  *
  * ## Why it cannot oscillate
  *
- * Oscillation — the picture visibly shifting under a student every few seconds — would be worse
- * than any tier being wrong. Four independent locks, any one of which is sufficient:
- *
  *  * **A dead band.** Step down above `downMs` (21 ms ≈ 47 fps). Step up only with real headroom,
- *    which on a vsync-locked display means *hitting the display's own cadence with tiny jitter*.
+ *    which on a vsync-locked display means hitting the display's own cadence with tiny jitter.
  *    Nothing at all happens between those two states.
  *  * **A cooldown plus a window flush.** After any change the sample window is emptied and the next
- *    `warmupFrames` frames are discarded, so the cost of the change itself (a shader recompile, a
- *    render-target reallocation) can never be read as evidence for the next one.
- *  * **Up is not the inverse of down.** Once the policy has stepped down even once, it will never
- *    step up again for the rest of the session. A machine that has already failed a window does not
- *    get re-promoted on a quiet stretch — that is precisely the loop that produces oscillation. The
- *    one revocation described above is not this loop: it is not bought by a quiet stretch, it is
- *    bought by an improvement the tier step cannot explain, it fires at most once, and failing it
- *    locks the ratchet for the session.
- *  * **A hard budget.** `maxChanges` total per session, `maxUpSteps` of them upward, `maxRecoveries`
- *    revocations, and the ceiling is the heuristic's cap (or the configured tier when the heuristic
- *    found nothing) — auto-tiering hands work back, it never promotes past what the hardware or the
- *    config asked for.
+ *    `warmupFrames`/`warmupMs` are discarded, so the cost of the change itself (a shader recompile,
+ *    a render-target reallocation) can never be read as evidence for the next one.
+ *  * **Up is not the inverse of down.** Once the policy has stepped down even once, the ordinary
+ *    up-path is closed for the session. The revocation path is not that loop: it is not bought by a
+ *    quiet stretch, it is bought by an improvement the tier step cannot explain, and a down-step
+ *    after one locks it for good.
+ *  * **A budget.** `maxChanges` total, `maxDownSteps` of them downward, `maxUpSteps` upward,
+ *    `maxRecoveries` revocations, and the ceiling is the heuristic's cap (or the configured tier
+ *    when the heuristic found nothing).
  *
  * ## Why an explicit choice wins completely
  *
  * `config.get("autoTier")` is the switch, and `Config.set("tier", …)` turns it off — so a settings
- * screen, `?tier=low`, or a console poke all stand this module down for the session with no further
- * cooperation required. That switch is re-read **every frame**, not captured at boot: a settings
- * screen opened ten minutes in is exactly as binding as `?tier=` on the URL, and standing down also
- * pushes the player's choice into the renderer, because a setting that does not change the picture
- * is not a setting. Auto choices go through `config.applyTier()`, which is runtime-only and never
- * persisted, so a bad afternoon on a loaded machine cannot become a permanent setting.
+ * screen, `?tier=low`, or a console poke all stand this module down for the session. That switch is
+ * re-read **every frame**, not captured at boot, and standing down also pushes the player's choice
+ * into the renderer and out on `quality:tier`, because a setting that does not change the picture is
+ * not a setting.
  *
  * ## Why a software rasteriser is not a device class
  *
- * The review harness renders through SwiftShader at a few frames per second. That is a measurement
- * environment, not a student's laptop, and a module that quietly dropped every review capture to
- * `potato` would silently change the picture every other piece in this project is judged on.
- * On a software rasteriser this module therefore measures and reports but **applies nothing** —
- * the probe still shows what it would have chosen, so the logic is inspectable. `?autotier=force`
- * opts back in, and `review/measure/P30.mjs` uses it to prove the apply path on real frames.
+ * The review harness renders through SwiftShader at a few frames per second. On a software
+ * rasteriser this module measures and reports but **applies nothing** — the probe still shows what
+ * it would have chosen. `?autotier=force` opts back in, and `review/measure/P35.mjs` uses it to
+ * prove the apply path on real frames.
  *
  * ## Review knobs (query string)
  *
@@ -172,8 +163,8 @@ import { publish } from "./Introspect.js";
  * | `?autotier=force` | measure *and apply* even on a software rasteriser |
  * | `?autotierWarmup=N` | frames discarded after boot and after each change |
  * | `?autotierWarmupMs=MS` | wall-clock cap on that discard window |
- * | `?autotierWindow=N` | samples in the decision window |
- * | `?autotierWindowMs=MS` | wall-clock size at which a short window may decide anyway |
+ * | `?autotierWindow=N` | retention cap on window samples (also a fullness fallback) |
+ * | `?autotierWindowMs=MS` | **rendered time** the window must cover before it may decide |
  * | `?autotierCooldown=MS` | minimum ms between decisions |
  * | `?autotierDown=MS` | median frame period above which the tier steps down |
  * | `?autotierQuiet=MS` | how long headroom must hold before a provisional descent is revoked |
@@ -181,7 +172,7 @@ import { publish } from "./Introspect.js";
 
 /** Every threshold, in one table, so a critic can read the policy without reading the code. */
 export const POLICY = {
-  // -- the steady-state decision shape ------------------------------------------------------------
+  // -- what is discarded after a change ------------------------------------------------------------
   /**
    * Frames thrown away after every applied change.
    *
@@ -190,42 +181,57 @@ export const POLICY = {
    */
   warmupFrames: 90,
   /**
-   * …and the wall-clock cap on that discard window.
-   *
-   * The frame count alone is the wrong instrument on exactly the hardware this module exists for.
-   * Recompiles and reallocations cost roughly a fixed amount of *time*, so on a 2 fps machine
-   * "90 frames" is 45 s of penance for a 3 s event. Whichever bound is reached first ends the
-   * warm-up: frames bind above ~30 fps, time binds below it.
+   * …and the wall-clock cap on that discard window. Recompiles cost roughly a fixed amount of
+   * *time*, so on a 2 fps machine "90 frames" is 45 s of penance for a 3 s event. Whichever bound
+   * is reached first ends the warm-up: frames bind above ~35 fps, time binds below it.
    */
-  warmupMs: 3000,
-  /** Samples the decision window holds. 120 frames is 2 s at 60 Hz, 4 s at 30 Hz. */
-  windowFrames: 120,
-  /**
-   * …and the wall-clock size at which a *short* window is allowed to decide anyway (down only).
-   * 120 frames is 6 s at 20 fps and 60 s at 2 fps; below ~20 fps the frame count stops being
-   * evidence and starts being a delay. See `minFrames` for the floor that keeps it honest.
-   */
-  windowMs: 5000,
-  /** Never decide on fewer than this many scored frames, however long they took. */
-  minFrames: 24,
-
-  // -- the first decision, which is a different problem ------------------------------------------
-  /**
-   * The first window is smaller than the rest, because it is the only one whose latency a student
-   * experiences as "this game is broken" rather than as "the picture changed once".
-   *
-   * With the shipped steady-state numbers the first down-step could not fire until 210 scored
-   * frames had elapsed — 21 s at 10 fps, 42 s at 5 fps, 107 s at 2 fps. The slower the machine, the
-   * longer it sat at the tier it could not afford, which is the exact failure this module exists to
-   * prevent. These four numbers cut that to ~4 s at 10 fps, ~4 s at 5 fps and ~9 s at 2 fps.
-   */
+  warmupMs: 2500,
+  /** The boot warm-up is shorter: the first seconds are the ones a student judges the game in. */
   firstWarmupFrames: 30,
   firstWarmupMs: 1500,
-  firstWindowFrames: 45,
-  firstWindowMs: 2500,
-  firstMinFrames: 12,
 
-  // -- the thresholds themselves -----------------------------------------------------------------
+  // -- the window ----------------------------------------------------------------------------------
+  /**
+   * **The window is a duration, not a frame count.** 120 frames is 2 s at 60 Hz and 60 s at 2 fps;
+   * a frame count is therefore a different instrument on every machine, and it was the instrument
+   * that let 4.8 s of classroom Wi-Fi decide a session. `windowMs` is *rendered* time — an isolated
+   * stall contributes none of it (see `sampleMaxMs`).
+   *
+   * 12 s steady state. A boot storm is a minority of that even at its worst, and slow frames are
+   * under-represented in a count-based median by construction: 4 s of 120 ms frames is 33 samples
+   * and 8 s of 60 Hz frames is 480.
+   */
+  windowMs: 12000,
+  /**
+   * …and the *first* window, taken while the boot storm may still be running. Six seconds: long
+   * enough that a 4.8 s storm cannot fill it, short enough that a genuinely miserable machine gets
+   * relief inside eight seconds of the first frame. It buys one rung, and that rung is revocable.
+   */
+  firstWindowMs: 6000,
+  /** Never decide on fewer than this many scored frames, however long they took. */
+  minFrames: 24,
+  firstMinFrames: 15,
+  /**
+   * Retention cap on window samples, and a fullness fallback: a machine producing this many frames
+   * inside `windowMs` is running above ~75 fps, and 900 frames is evidence enough on its own. The
+   * cap also bounds the per-decision sort on the hardware this module exists for.
+   */
+  windowFrames: 900,
+
+  // -- a down-step must be true *now*, not just on average ------------------------------------------
+  /**
+   * The most recent `tailMs` of rendered time has to miss the budget too.
+   *
+   * The median is a statement about the window; a tier change is a statement about the machine from
+   * here on. A storm that decayed while the window was filling leaves a median over budget and a
+   * tail already inside it — stepping down then is fixing a problem that has stopped happening.
+   * Measured in time, not in samples: 25 % of the *samples* of a storm-contaminated window can be
+   * most of its wall clock.
+   */
+  tailMs: 2500,
+  tailMinFrames: 8,
+
+  // -- the thresholds themselves --------------------------------------------------------------------
   /** Median frame period above which the tier steps down. 21 ms ≈ 47.6 fps sustained. */
   downMs: 21,
   /** Median frame period below which headroom is unambiguous even without a cadence estimate. */
@@ -234,137 +240,122 @@ export const POLICY = {
   cadenceTolerance: 1.06,
   /**
    * …and how tight the *99th* percentile must be against the observed cadence. A hitchy 60 fps is
-   * not headroom. This gate is p99 and not p95 because p95 does not see it: over a 120-frame window
-   * a stutter arriving every 40 frames is 3 samples, and the 95th percentile sits at sample 113 —
-   * `review/measure/P30.mjs` A3 caught exactly that and it bought a step up it had not earned.
-   * At p99 the line lands at "more than 1 % of frames hitching is not headroom".
+   * not headroom, and p95 does not see it: over a long window a stutter arriving every 40 frames is
+   * 2.5 % of samples. At p99 the line lands at "more than 1 % of frames hitching is not headroom".
    */
   cadenceJitter: 1.3,
   /** Above this the observed cadence is not a ≥57 Hz display and the cadence path does not apply. */
   cadenceMaxMs: 17.5,
   /** Minimum ms of measured time between two decisions. */
-  cooldownMs: 3000,
+  cooldownMs: 4000,
+
+  // -- how far a decision may travel, and how many there may be ------------------------------------
+  /**
+   * **One rung. Always.** Step, observe, step.
+   *
+   * A rung is worth *roughly* a factor of two as this module ships it — the drawing buffer (2.25 →
+   * 1.5625 → 1 screen-pixels² at high → medium → low), this module's shadow ladder, and the post
+   * stack (5 → 3 → 1 passes). Round 2 let one window buy three of those at once and the result was
+   * the biggest visual cliff in the ladder bought by four seconds of Wi-Fi. No single window is
+   * worth that, because the *next* window is a fresh observation of the machine at the tier this
+   * one chose — which is the only way to find out whether one rung was enough.
+   */
+  maxLeap: 1,
   /** Hard cap on tier changes per session. The picture must stop moving. */
-  maxChanges: 3,
-  /** Of those, how many may be upward. */
+  maxChanges: 5,
+  /** Of those, how many may be downward — four rungs is the whole ladder, ultra to potato. */
+  maxDownSteps: 4,
+  /** …how many may be an ordinary promotion. */
   maxUpSteps: 1,
+  /**
+   * …and how many may revoke a falsified descent. Two, because a descent may be two rungs deep and
+   * a revocation is one rung, and each one costs its own fresh `recoveryQuietMs` of headroom.
+   */
+  maxRecoveries: 2,
 
-  // -- how far a single down-step may travel -----------------------------------------------------
+  // -- revoking a falsified descent -----------------------------------------------------------------
   /**
-   * How far one down-step may travel: `ceil(log2(median / downMs))`, capped here.
-   *
-   * A rung is worth *roughly* a factor of two — **as this module ships it**, not as the tier table
-   * reads. `Lighting.js` clamps every tier's cascades into 1024-2048² x≤2, so `ultra`, `high` and
-   * `medium` are handed the *same* rig by the lighting piece and the table's "3072² x3" is not a
-   * thing any machine renders. What a rung actually moves is: the drawing buffer (2.25 → 1.5625 → 1
-   * screen-pixels² at high → medium → low), this module's own shadow ladder (a real halving of
-   * whatever size the lighting rig built, applied in `_applyShadows`), and the post stack (5 → 3 →
-   * 1 passes). Call it 1.6-2x per rung, which is why the log is rounded *up*: under-stepping costs
-   * another whole window to discover, and the round-1 policy that stepped exactly one rung per
-   * decision could not carry `ultra` to `potato` inside `maxChanges` at all.
-   *
-   * Leaps are down-only and, like every other change, cost exactly one unit of `maxChanges`.
+   * A descent is only revocable while every down-step in it landed inside this much measured time.
+   * Generous on purpose: with a 6 s first window and a 12 s steady one, a two-rung descent bought by
+   * a long storm lands around 8 s and 27 s, and the gate has to separate "one early episode" from
+   * "this machine has been missing for a minute" without punishing the longer windows that make the
+   * first decision trustworthy.
    */
-  maxLeap: 3,
-  /**
-   * …but the *first* decision, taken on the short window while the boot storm is still running, may
-   * move only this far unless the hardware corroborates it (see `provisional`). A 3-rung leap bought
-   * on 45 frames measured 1.5-4 s after the first render is how four seconds of classroom Wi-Fi put
-   * a student on `potato` for the session.
-   */
-  firstMaxLeap: 1,
-
-  // -- a down-step must be true *now*, not just on average ----------------------------------------
-  /**
-   * The last quarter of the window (at least `tailMinFrames` samples) has to miss the budget too.
-   *
-   * The median is a statement about the window; a tier change is a statement about the machine from
-   * here on. A boot storm that decayed while the window was filling leaves a median over budget and
-   * a tail already inside it — and stepping down then is fixing a problem that has already stopped
-   * happening. Costs nothing when the load is real: on a flat stream the tail *is* the median, and
-   * `decide()` re-runs on the very next sample, so a deferred decision is deferred by one frame.
-   */
-  tailFraction: 0.25,
-  tailMinFrames: 8,
-
-  // -- revoking a provisional descent -------------------------------------------------------------
-  /** Revocations of a provisional descent, per session. See the class docs for the five gates. */
-  maxRecoveries: 1,
-  /**
-   * A descent is only revocable while every down-step in it landed inside this much measured time —
-   * one early drop during the boot storm, not a machine walking itself down. Measured: on a flat
-   * 40 ms stream the down-steps land at 3.0 s, 10.8 s and 18.6 s, so this cleanly separates "the
-   * first window caught a storm" from "this machine keeps missing".
-   */
-  recoveryArmMs: 8000,
-  /** …and headroom must then hold *continuously* for this long before the revocation fires. */
+  recoveryArmMs: 45000,
+  /** …and headroom must then hold *continuously* for this long before each revocation fires. */
   recoveryQuietMs: 20000,
   /**
    * The most generous estimate of what one rung buys, used *against* revocation: predicted cost at
-   * the new tier is `preMedian / recoveryRungGain^rungs`. Generous on purpose — the test is only
-   * allowed to fire when even the best case for the tier step cannot explain the improvement.
+   * the current tier is `descent.medianMs / recoveryRungGain^rungsBelowDescentStart`.
    */
   recoveryRungGain: 2,
   /**
    * How far below that prediction the measurement must sit before the old reading is judged not to
-   * have been render cost at all. 120 ms at `high` predicts ≤ 60 ms at `medium`; measuring 16.6 ms
-   * (0.28x) is inconsistent, and a borderline 30 ms → 16.6 ms (1.11x) is not.
+   * have been render cost at all. 120 ms at `medium` predicts ≤ 60 ms at `low`; measuring 16.6 ms
+   * (0.28x) is inconsistent, and a borderline 38 ms → 23 ms (1.21x) is not.
    */
   recoveryInconsistency: 0.6,
 
-  // -- what counts as a frame at all -------------------------------------------------------------
+  // -- what counts as a frame at all ----------------------------------------------------------------
   /**
-   * Periods outside this range are not frames: a stall/tab switch/GC above, and below —
-   *
-   * **a render loop with no compositor behind it.** `renderer.render()` submits GL commands and
-   * returns; the machine's real cost only shows up as backpressure at presentation time. A reviewer
-   * driving `__vs.advance()` in a tight loop therefore produces 0.5 ms "frames" no matter how slow
-   * the hardware is, and scoring those would let a headless harness — or any non-presenting loop —
-   * buy a tier promotion nothing earned. 2 ms is 500 fps; no display presents that fast, so nothing
-   * real is lost. P30 C2 found this by measuring 0.5 ms on a rasteriser that runs at 5 fps.
+   * Below this a "frame" is not a frame at all: `renderer.render()` submits GL commands and returns,
+   * and the machine's real cost only shows up as backpressure at presentation time. A reviewer
+   * driving `__vs.advance()` in a tight loop produces 0.5 ms "frames" no matter how slow the
+   * hardware is. 2 ms is 500 fps; no display presents that fast, so nothing real is lost.
    */
   sampleMinMs: 2,
+  /**
+   * Above this a period is an **excursion**, and an isolated excursion is a stall: a tab switch, a
+   * GC pause, a network hitch while the asset fetch finishes. It is discarded entirely — no score,
+   * no window time — because it is elapsed time that says nothing about the GPU.
+   */
   sampleMaxMs: 250,
   /**
-   * …unless they keep coming. A single four-second frame is a tab switch or a GC and must never be
-   * scored as load. *Five consecutive* frames slower than `sampleMaxMs` is not a stall, it is a
-   * machine at 2 fps — and rejecting those outright meant the worst hardware in the range was the
-   * one hardware auto-tiering could never help. P30 A13. Once the run trips, over-long periods are
-   * scored at `sampleMaxMs`: the exact number stops mattering far below 4 fps, the sign does not.
+   * …unless they keep coming. *Five consecutive* excursions is not a stall, it is a machine at
+   * 2 fps, and rejecting those outright meant the worst hardware in the range was the one hardware
+   * auto-tiering could never help. Once the run trips, the period is winsorised to `sampleMaxMs`
+   * for scoring while its **real** duration still fills the window.
    */
   stallRun: 5,
 };
 
 const clampIndex = (i) => Math.max(0, Math.min(TIER_ORDER.length - 1, i));
+const tierIndex = (t) => TIER_ORDER.indexOf(t);
 
 /**
  * The measurement half. Pure: no DOM, no THREE, no clock of its own — it advances a clock from the
- * samples it is fed. That is what lets `review/measure/P30.mjs` prove the hysteresis, the budget and
- * the no-oscillation property offline, deterministically, without booting a browser at all.
+ * samples it is fed. That is what lets `review/measure/P35.mjs` prove the corroboration model, the
+ * hysteresis, the budget and the no-oscillation property offline, deterministically, without
+ * booting a browser at all.
  */
 export class TierPolicy {
   constructor(startTier, opts = {}) {
     this.p = { ...POLICY, ...opts };
-    // Keep the first window inside the steady-state one however the knobs were overridden, so a
-    // review run that shrinks `windowFrames` can never ask for a first window it will never fill.
-    this.p.windowFrames = Math.max(1, this.p.windowFrames);
-    this.p.firstWindowFrames = Math.min(this.p.firstWindowFrames, this.p.windowFrames);
+    this.p.windowFrames = Math.max(8, this.p.windowFrames);
     this.p.minFrames = Math.min(this.p.minFrames, this.p.windowFrames);
-    this.p.firstMinFrames = Math.min(this.p.firstMinFrames, this.p.firstWindowFrames);
+    this.p.firstMinFrames = Math.min(this.p.firstMinFrames, this.p.minFrames);
+    this.p.firstWindowMs = Math.min(this.p.firstWindowMs, this.p.windowMs);
     this.p.firstWarmupFrames = Math.min(this.p.firstWarmupFrames, this.p.warmupFrames);
+    this.p.maxLeap = Math.max(1, this.p.maxLeap | 0);
 
     this.tier = TIERS[startTier] ? startTier : "high";
     this.ceiling = TIERS[this.p.ceiling] ? this.p.ceiling : this.tier;
+
     /**
-     * Is the first descent provisional — small, and revocable?
+     * The tier the first-frame heuristic *predicted this machine can afford*.
      *
-     * True when nothing about the hardware corroborates a bad reading, which is the default because
-     * "the hardware said nothing" is the common case (see `startingTier`). `AutoTier` sets it false
-     * when the heuristic capped the tier on real evidence: on that machine a catastrophic median is
-     * the predicted outcome, not a surprise, and it should leap at once and never look back.
+     * This is the whole corroboration model. A miss measured **above** this tier is the prediction
+     * coming true; a miss measured **at or below** it falsifies the prediction and is therefore not
+     * hardware evidence about anything. `null` when no heuristic ran, which is treated as "no
+     * prediction was made" and so nothing can corroborate.
      */
-    this.provisional = this.p.provisional !== false;
+    this.predictedTier = TIERS[this.p.predictedTier] ? this.p.predictedTier : null;
+    /** Escape hatch, for a caller that wants every descent treated as final. Default: relational. */
+    this.forceCorroborated = this.p.provisional === false;
+
+    /** Window entries: `{ score, real }`. `score` is winsorised; `real` is elapsed time. */
     this.samples = [];
+    this._span = 0;
     this.clock = 0;
     this.lastChangeAt = 0;
     this.changes = [];
@@ -374,12 +365,16 @@ export class TierPolicy {
     this.rejected = 0;
     this.accepted = 0;
     this.overrun = 0;
+    this.excursions = 0;
+    this.stalledMs = 0;
     this.lastStats = null;
-    /** The provisional descent, if one is still revocable. Cleared for good by `locked`. */
+    /** The descent, if one is still revocable. Cleared for good by `locked`. */
     this.descent = null;
     this.locked = false;
     /** Clock time at which the current unbroken run of headroom began; null when it is broken. */
     this.quietSince = null;
+    this._buf = null;
+    this._sinceEval = 0;
 
     const s = this.shape(true);
     this.discard = s.warmFrames;
@@ -393,14 +388,12 @@ export class TierPolicy {
       ? {
           warmFrames: this.p.firstWarmupFrames,
           warmMs: this.p.firstWarmupMs,
-          frames: this.p.firstWindowFrames,
           ms: this.p.firstWindowMs,
           min: this.p.firstMinFrames,
         }
       : {
           warmFrames: this.p.warmupFrames,
           warmMs: this.p.warmupMs,
-          frames: this.p.windowFrames,
           ms: this.p.windowMs,
           min: this.p.minFrames,
         };
@@ -409,45 +402,85 @@ export class TierPolicy {
   /**
    * Feed one frame period in milliseconds. Returns a change record when this sample tipped a
    * decision, otherwise null.
+   *
+   * The three-way classification of a period — not a frame / a stall / rendered time — happens
+   * here, and it is the difference between "this machine is slow" and "something else happened".
    */
   sample(ms) {
     if (!Number.isFinite(ms) || ms < 0) return null;
     // The clock counts *all* elapsed time, including the stalls we refuse to score. A five-second
-    // tab switch really did happen; it just is not evidence about frame cost.
+    // tab switch really did happen; it just is not evidence about frame cost, and a cooldown that
+    // pretended it had not elapsed would be lying about how long ago the last decision was.
     this.clock += ms;
-    let scored = ms;
+
     if (ms < this.p.sampleMinMs) {
+      // Not a presented frame: a non-presenting render loop, or a reviewer's tight advance() loop.
       this.rejected++;
       return null;
     }
+
+    let score = ms;
     if (ms > this.p.sampleMaxMs) {
+      this.excursions++;
       this.overrun++;
       if (this.overrun < this.p.stallRun) {
+        // An isolated excursion is a stall. Discarded whole — no score, no window time.
+        this.stalledMs += ms;
         this.rejected++;
         return null;
       }
-      scored = this.p.sampleMaxMs; // sustained, not a stall — see POLICY.stallRun
+      // Sustained: not a stall, a machine at 2 fps. Winsorise the magnitude, keep the duration.
+      score = this.p.sampleMaxMs;
     } else {
       this.overrun = 0;
     }
+
     if (this.discard > 0) {
       this.discard--;
-      // …or the wall clock ends it first. See POLICY.warmupMs.
       if (this.clock - this._warmStart >= this._warmMs) this.discard = 0;
       return null;
     }
+
     this.accepted++;
-    this.samples.push(scored);
-    if (this.samples.length > this.p.windowFrames) this.samples.shift();
+    this.samples.push({ score, real: ms });
+    this._span += ms;
+    // Evict from the front until the window is the *smallest suffix* covering `windowMs` of rendered
+    // time. Rendered time, not clock: a stall consumes none of the window.
+    while (
+      this.samples.length > this.p.minFrames &&
+      (this._span - this.samples[0].real >= this.p.windowMs ||
+        this.samples.length > this.p.windowFrames)
+    ) {
+      this._span -= this.samples.shift().real;
+    }
+
+    // Sorting the window on every frame is 6 kB of garbage per frame on the hardware this module
+    // exists for. Once the window is large the answer cannot change materially in four frames, and
+    // a decision arriving four frames late is not a decision anyone can perceive.
+    this._sinceEval++;
+    const stride = this.samples.length >= 120 ? 4 : 1;
+    if (this._sinceEval < stride) return null;
+    this._sinceEval = 0;
     return this.decide();
+  }
+
+  /** Window scores, sorted, in a reused buffer. */
+  _sorted() {
+    const n = this.samples.length;
+    if (!this._buf || this._buf.length < n) this._buf = new Float64Array(Math.max(128, n * 2));
+    const b = this._buf.subarray(0, n);
+    for (let i = 0; i < n; i++) b[i] = this.samples[i].score;
+    b.sort();
+    return b;
   }
 
   stats() {
     const n = this.samples.length;
     if (!n) return null;
-    const s = [...this.samples].sort((a, b) => a - b);
+    const s = this._sorted();
     const q = (f) => s[Math.min(n - 1, Math.floor(f * (n - 1)))];
-    const sum = s.reduce((a, b) => a + b, 0);
+    let sum = 0;
+    for (let i = 0; i < n; i++) sum += s[i];
     const median = q(0.5);
     return {
       n,
@@ -457,9 +490,16 @@ export class TierPolicy {
       p99: q(0.99),
       max: s[n - 1],
       meanMs: sum / n,
-      spanMs: sum,
+      /** *Rendered* time the window covers. Stalls are not in here; that is the point. */
+      spanMs: this._span,
       fps: median > 0 ? 1000 / median : 0,
     };
+  }
+
+  /** True when the window covers enough rendered time (or enough frames) to be an answer. */
+  isFull(st, w = this.shape()) {
+    if (!st) return false;
+    return (st.spanMs >= w.ms || st.n >= this.p.windowFrames) && st.n >= w.min;
   }
 
   /** True when the window says there is real room to spend. See the class docs for the two paths. */
@@ -473,34 +513,48 @@ export class TierPolicy {
   }
 
   /**
-   * How many rungs a single down-step may travel. See POLICY.maxLeap for the model, and
-   * POLICY.firstMaxLeap for why the first one is smaller when nothing corroborates it.
+   * Does a miss measured at the current tier corroborate the heuristic's prediction?
+   *
+   * The round-2 bug in one line: this used to be `heuristic.caps.length > 0`, evaluated once at
+   * boot, which is "a GPU family was named" and not "the measurement agrees with the prediction".
    */
-  rungsFor(median) {
-    const over = median / this.p.downMs;
-    const cap =
-      this.provisional && this.changes.length === 0 ? this.p.firstMaxLeap : this.p.maxLeap;
-    return Math.max(1, Math.min(cap, Math.ceil(Math.log2(over))));
+  corroboratesAt(tier = this.tier) {
+    if (this.forceCorroborated) return true;
+    if (!this.predictedTier) return false;
+    return tierIndex(tier) > tierIndex(this.predictedTier);
   }
 
-  /** The median of the most recent slice of the window. See POLICY.tailFraction. */
+  /** How far one down-step may travel. One rung. See POLICY.maxLeap. */
+  rungsFor() {
+    return Math.max(1, Math.min(this.p.maxLeap, 1));
+  }
+
+  /** The median of the most recent `tailMs` of rendered time. See POLICY.tailMs. */
   tailMedian() {
     const n = this.samples.length;
     if (!n) return Infinity;
-    const k = Math.min(n, Math.max(this.p.tailMinFrames, Math.ceil(n * this.p.tailFraction)));
-    const s = this.samples.slice(n - k).sort((a, b) => a - b);
-    return s[Math.floor(0.5 * (s.length - 1))];
+    let k = 0;
+    let acc = 0;
+    while (k < n && (acc < this.p.tailMs || k < this.p.tailMinFrames)) {
+      acc += this.samples[n - 1 - k].real;
+      k++;
+    }
+    const t = [];
+    for (let i = n - k; i < n; i++) t.push(this.samples[i].score);
+    t.sort((a, b) => a - b);
+    return t[Math.floor(0.5 * (t.length - 1))];
   }
 
   /**
    * Track the unbroken run of headroom that gate 4 of a revocation needs.
    *
-   * Runs on every sample, *before* any of `decide()`'s early returns, so the run keeps accumulating
-   * through the cooldown and through a spent change budget. A single window without headroom breaks
-   * it and it starts again from zero.
+   * Runs on every evaluation, *before* any of `decide()`'s early returns, so the run keeps
+   * accumulating through the cooldown and through a spent change budget. A single window without
+   * headroom breaks it and it starts again from zero.
    */
   _trackQuiet(st) {
-    if (st.n >= this.p.windowFrames && this.headroom(st)) {
+    const steady = this.shape(false);
+    if (this.isFull(st, steady) && this.headroom(st)) {
       if (this.quietSince === null) this.quietSince = this.clock;
     } else {
       this.quietSince = null;
@@ -508,28 +562,38 @@ export class TierPolicy {
   }
 
   /**
-   * Could the provisional descent be revoked right now? Every gate in the class docs, in order, and
-   * each returns the name of the gate that stopped it so the probe can say *why* not.
+   * Could the descent be revoked right now? Every gate in the class docs, in order, and each returns
+   * the name of the gate that stopped it so the probe can say *why* not.
    */
   recoveryState(st) {
     const d = this.descent;
-    if (!this.provisional) return { armed: false, gate: "corroborated by hardware evidence" };
     if (this.locked) return { armed: false, gate: "a revocation already failed — locked" };
-    if (this.recoveries >= this.p.maxRecoveries) return { armed: false, gate: "revocation budget spent" };
+    if (this.recoveries >= this.p.maxRecoveries)
+      return { armed: false, gate: "revocation budget spent" };
     if (!d) return { armed: false, gate: "no descent to revoke" };
-    if (d.late) return { armed: false, gate: "the descent continued past the boot window" };
-    if (!st || st.n < this.p.windowFrames) return { armed: false, gate: "window not full" };
+    if (d.corroborated)
+      return {
+        armed: false,
+        gate: `the descent corroborated the heuristic (measured at ${d.from}, above the predicted ${this.predictedTier})`,
+      };
+    if (d.late) return { armed: false, gate: "the descent continued past the arming window" };
+    const back = Math.min(tierIndex(d.from), tierIndex(this.tier) + 1, tierIndex(this.ceiling));
+    if (!(back > tierIndex(this.tier)))
+      return { armed: false, gate: "already back at the tier the descent started from" };
+    if (!this.isFull(st, this.shape(false))) return { armed: false, gate: "window not full" };
     // Gate 3: the improvement is larger than the tier step can account for, so the earlier reading
     // was not render cost. The most generous model of the step is used, against the revocation.
-    const predicted = d.medianMs / this.p.recoveryRungGain ** d.rungs;
+    const rungsBelow = Math.max(1, tierIndex(d.from) - tierIndex(this.tier));
+    const predicted = d.medianMs / this.p.recoveryRungGain ** rungsBelow;
     const ratio = st.median / predicted;
     if (!(ratio <= this.p.recoveryInconsistency))
       return {
         armed: false,
-        gate: `improvement is consistent with the tier step (${st.median.toFixed(1)} ms is ${ratio.toFixed(2)}x the ${predicted.toFixed(1)} ms a ${d.rungs}-rung step predicts)`,
+        gate: `improvement is consistent with the tier step (${st.median.toFixed(1)} ms is ${ratio.toFixed(2)}x the ${predicted.toFixed(1)} ms a ${rungsBelow}-rung step predicts)`,
         ratio: Number(ratio.toFixed(3)),
       };
-    if (this.quietSince === null) return { armed: false, gate: "headroom is not currently held", ratio: Number(ratio.toFixed(3)) };
+    if (this.quietSince === null)
+      return { armed: false, gate: "headroom is not currently held", ratio: Number(ratio.toFixed(3)) };
     const heldMs = this.clock - this.quietSince;
     if (heldMs < this.p.recoveryQuietMs)
       return {
@@ -538,7 +602,14 @@ export class TierPolicy {
         ratio: Number(ratio.toFixed(3)),
         heldMs: Number(heldMs.toFixed(0)),
       };
-    return { armed: true, gate: null, ratio: Number(ratio.toFixed(3)), heldMs: Number(heldMs.toFixed(0)), predictedMs: Number(predicted.toFixed(1)) };
+    return {
+      armed: true,
+      gate: null,
+      to: TIER_ORDER[back],
+      ratio: Number(ratio.toFixed(3)),
+      heldMs: Number(heldMs.toFixed(0)),
+      predictedMs: Number(predicted.toFixed(1)),
+    };
   }
 
   decide() {
@@ -549,56 +620,50 @@ export class TierPolicy {
     if (this.changes.length >= this.p.maxChanges) return null;
 
     const w = this.shape();
-    const full = st.n >= w.frames;
-    // A window short on frames but long in wall-clock is a machine so slow that waiting for the
-    // frame count *is* the harm. It may step down; it may never step up (below).
-    const early = !full && st.n >= w.min && st.spanMs >= w.ms;
-    if (!full && !early) return null;
+    if (!this.isFull(st, w)) return null;
     if (this.clock - this.lastChangeAt < this.p.cooldownMs) return null;
 
-    const i = TIER_ORDER.indexOf(this.tier);
-    const ceil = TIER_ORDER.indexOf(this.ceiling);
+    const i = tierIndex(this.tier);
+    const ceil = tierIndex(this.ceiling);
 
     // A down-step needs the window *and* its tail to miss the budget: the median describes the
-    // window, but the change describes the rest of the session. See POLICY.tailFraction.
-    const tail = this.tailMedian();
-    if (st.median > this.p.downMs && i > 0) {
+    // window, but the change describes the rest of the session. See POLICY.tailMs.
+    if (st.median > this.p.downMs && i > 0 && this.downSteps < this.p.maxDownSteps) {
+      const tail = this.tailMedian();
       if (tail <= this.p.downMs) return null; // a storm that has already passed
-      const rungs = this.rungsFor(st.median);
+      const rungs = this.rungsFor();
+      const corroborated = this.corroboratesAt(this.tier);
       return this._change(
         TIER_ORDER[clampIndex(i - rungs)],
         "down",
         st,
-        `median frame ${st.median.toFixed(1)} ms (${st.fps.toFixed(1)} fps) over ${st.n} frames / ${(st.spanMs / 1000).toFixed(1)} s is ${(st.median / this.p.downMs).toFixed(1)}x the ${this.p.downMs} ms floor, tail ${tail.toFixed(1)} ms — ${rungs} rung(s)`,
-        rungs
+        `median frame ${st.median.toFixed(1)} ms (${st.fps.toFixed(1)} fps) over ${st.n} frames / ${(st.spanMs / 1000).toFixed(1)} s of rendered time is ${(st.median / this.p.downMs).toFixed(1)}x the ${this.p.downMs} ms floor, tail ${tail.toFixed(1)} ms — one rung, ${corroborated ? `corroborated (measured at ${this.tier}, above the predicted ${this.predictedTier})` : `falsifies the predicted ${this.predictedTier ?? "nothing"} and is revocable`}`,
+        rungs,
+        { corroborated }
       );
     }
 
     /**
-     * Revoking a provisional descent. Deliberately checked *before* the ordinary up path and
+     * Revoking a falsified descent. Deliberately checked *before* the ordinary up path and
      * deliberately not gated on `downSteps === 0`: this is the one promotion that exists precisely
-     * because a down-step happened, and the five gates in `recoveryState` are what keep it from
-     * being the oscillation loop the `downSteps` lock exists to prevent.
+     * because a down-step happened, and the gates in `recoveryState` are what keep it from being the
+     * oscillation loop the `downSteps` lock exists to prevent.
      */
     const rec = this.recoveryState(st);
     if (rec.armed) {
-      const back = Math.min(TIER_ORDER.indexOf(this.descent.from), ceil);
-      if (back > i) {
-        return this._change(
-          TIER_ORDER[clampIndex(back)],
-          "recover",
-          st,
-          `the ${this.descent.medianMs} ms that bought ${this.descent.from}→${this.descent.to} at ${(this.descent.at / 1000).toFixed(1)} s cannot have been render cost: a ${this.descent.rungs}-rung step predicts ${rec.predictedMs} ms at best and this machine measures ${st.median.toFixed(1)} ms (${rec.ratio}x), with headroom held for ${(rec.heldMs / 1000).toFixed(0)} s — restoring ${TIER_ORDER[back]}`,
-          back - i
-        );
-      }
+      return this._change(
+        rec.to,
+        "recover",
+        st,
+        `the ${this.descent.medianMs} ms that bought ${this.descent.from}→${this.descent.to} at ${(this.descent.at / 1000).toFixed(1)} s cannot have been render cost: the tier steps taken since predict ${rec.predictedMs} ms at best and this machine measures ${st.median.toFixed(1)} ms (${rec.ratio}x), with headroom held for ${(rec.heldMs / 1000).toFixed(0)} s — restoring ${rec.to}`,
+        1
+      );
     }
 
     // Promotion always waits for the full steady-state window. Relief is urgent and promotion is
-    // not, and the p99 jitter gate is only meaningful over a long window: in 45 frames a 1-in-40
-    // stutter is a single sample and p99 cannot see it, which buys a step up nothing earned.
+    // not, and the p99 jitter gate is only meaningful over a long window.
     if (
-      st.n >= this.p.windowFrames &&
+      this.isFull(st, this.shape(false)) &&
       i < ceil &&
       this.downSteps === 0 &&
       this.upSteps < this.p.maxUpSteps &&
@@ -615,7 +680,7 @@ export class TierPolicy {
     return null;
   }
 
-  _change(to, direction, st, why, rungs = 1) {
+  _change(to, direction, st, why, rungs = 1, extra = {}) {
     const rec = {
       at: Number(this.clock.toFixed(1)),
       from: this.tier,
@@ -630,6 +695,7 @@ export class TierPolicy {
       p99Ms: Number(st.p99.toFixed(2)),
       frames: st.n,
       spanMs: Number(st.spanMs.toFixed(1)),
+      ...extra,
     };
     this.tier = to;
     this.changes.push(rec);
@@ -638,10 +704,16 @@ export class TierPolicy {
     else this.downSteps++;
 
     if (direction === "down") {
-      // The first down-step is the one that might be revocable; every later one is a machine
-      // walking itself down, which is not a boot storm and must disarm the revocation for good.
-      if (!this.descent) this.descent = { ...rec, late: rec.at > this.p.recoveryArmMs };
-      else this.descent.late = true;
+      if (!this.descent) {
+        this.descent = { ...rec, late: rec.at > this.p.recoveryArmMs };
+      } else {
+        // A later down-step joins the same descent: it deepens it, and it can only *remove*
+        // revocability — a corroborated step anywhere in the descent makes the whole thing final,
+        // and a step outside the arming window makes it a machine walking itself down.
+        this.descent.to = to;
+        this.descent.corroborated = this.descent.corroborated || !!rec.corroborated;
+        if (rec.at > this.p.recoveryArmMs) this.descent.late = true;
+      }
       // …and a down-step *after* a revocation means the revocation was wrong. Never again.
       if (this.recoveries > 0) this.locked = true;
     }
@@ -649,6 +721,8 @@ export class TierPolicy {
     // Flush: the change itself costs a shader recompile and a render-target reallocation, and those
     // frames must never become evidence for the next decision.
     this.samples.length = 0;
+    this._span = 0;
+    this._sinceEval = 0;
     const s = this.shape(false);
     this.discard = s.warmFrames;
     this._warmMs = s.warmMs;
@@ -658,14 +732,18 @@ export class TierPolicy {
   }
 
   budget() {
+    const d = this.descent;
     return {
       changesLeft: Math.max(0, this.p.maxChanges - this.changes.length),
+      downStepsLeft: Math.max(0, this.p.maxDownSteps - this.downSteps),
       upStepsLeft: this.downSteps > 0 ? 0 : Math.max(0, this.p.maxUpSteps - this.upSteps),
-      // Not just the count: a descent that outgrew the boot window, or hardware that corroborated
-      // it, has no revocation available however much of the budget is unspent. Reported as 0 so the
-      // budget line cannot imply an option that `recoveryState()` has already ruled out.
+      /**
+       * Not just the count: a descent that corroborated the heuristic, or one that outgrew the
+       * arming window, has no revocation available however much of the budget is unspent. Reported
+       * as spendable-now so the budget line cannot imply an option `recoveryState()` has ruled out.
+       */
       recoveriesLeft:
-        this.locked || !this.provisional || this.descent?.late
+        this.locked || !d || d.corroborated || d.late
           ? 0
           : Math.max(0, this.p.maxRecoveries - this.recoveries),
       ceiling: this.ceiling,
@@ -681,6 +759,10 @@ export const NEUTRAL_START = "medium";
 /**
  * Renderer-string families that are known-weak, with the reason each is capped where it is.
  * Ordered narrow → broad; the first match wins.
+ *
+ * Read these as *predictions of affordability*, because that is exactly how the policy above uses
+ * them: "≤ medium" says medium is affordable on this part. When the machine then misses at medium,
+ * the rule was wrong about this machine and the policy treats it that way.
  */
 const GPU_RULES = [
   // Raspberry Pi / VideoCore-class parts: no meaningful fill rate at all.
@@ -730,12 +812,9 @@ const GPU_RULES = [
  *
  * **Only the renderer string may promote.** The obvious alternative — "MAX_TEXTURE_SIZE ≥ 16384
  * with ≥ 8 cores" — sounds like a capability check and is really a calendar check: every Iris Xe,
- * every Ryzen APU and every Mali-G610 shipped since about 2018 reports exactly those numbers. I
- * tried it and it put a privacy-masked Firefox, a legacy "WebKit WebGL" mask and every browser
- * without `deviceMemory` straight back into `high`, which is the bug this round exists to kill.
- * Capability numbers cap; they never promote. A machine behind a mask starts at `NEUTRAL_START` and
- * buys `high` back in about three seconds through the up-path, which is the cheap side of the
- * asymmetry.
+ * every Ryzen APU and every Mali-G610 shipped since about 2018 reports exactly those numbers. It put
+ * a privacy-masked Firefox, a legacy "WebKit WebGL" mask and every browser without `deviceMemory`
+ * straight back into `high`. Capability numbers cap; they never promote.
  */
 const STRENGTH_RULES = [
   // Brand words, not the vendor word: "NVIDIA" also appears on Tegra, which is not this machine.
@@ -785,14 +864,13 @@ export function inspectDevice(renderer) {
 }
 
 /**
- * Pick the tier to *start* at.
+ * Pick the tier to *start* at — which is to say, predict the tier this machine can afford.
  *
- * The shape of the answer, and the thing that changed in round 2: the baseline is
- * `NEUTRAL_START`, and only *positive evidence of strength* raises it to the configured `ceiling`.
- * Weak-hardware rules then cap it further. The old shape — start at the ceiling, lower on evidence
- * of weakness — meant every machine whose signals were illegible booted into a 2.25x drawing
- * buffer, a 2048² x2 shadow rig and a 5-pass post stack, and "illegible" describes a large and
- * *growing* share of real browsers.
+ * The baseline is `NEUTRAL_START`, and only *positive evidence of strength* raises it to the
+ * configured `ceiling`. Weak-hardware rules then cap it further. The old shape — start at the
+ * ceiling, lower on evidence of weakness — meant every machine whose signals were illegible booted
+ * into a 2.25x drawing buffer, a 2048² x2 shadow rig and a 5-pass post stack, and "illegible"
+ * describes a large and *growing* share of real browsers.
  *
  * @param {object} env  from `inspectDevice`
  * @param {string} ceiling  the configured tier — the heuristic may lower, never raise
@@ -852,8 +930,8 @@ export function startingTier(env, ceiling = "high") {
       break;
     }
   }
-  const ceilIdx = TIER_ORDER.indexOf(TIERS[ceiling] ? ceiling : "high");
-  const neutralIdx = Math.min(ceilIdx, TIER_ORDER.indexOf(NEUTRAL_START));
+  const ceilIdx = tierIndex(TIERS[ceiling] ? ceiling : "high");
+  const neutralIdx = Math.min(ceilIdx, tierIndex(NEUTRAL_START));
   const baseIdx = strengths.length ? ceilIdx : neutralIdx;
   notes.unshift(
     strengths.length
@@ -861,7 +939,7 @@ export function startingTier(env, ceiling = "high") {
       : `no evidence of strength → start at ${TIER_ORDER[baseIdx]} and let measurement earn the rest`
   );
 
-  const idx = caps.reduce((lo, t) => Math.min(lo, TIER_ORDER.indexOf(t)), baseIdx);
+  const idx = caps.reduce((lo, t) => Math.min(lo, tierIndex(t)), baseIdx);
   const tier = TIER_ORDER[clampIndex(idx)];
   return { tier, standDown: false, notes, caps, strengths };
 }
@@ -909,35 +987,26 @@ export class AutoTier {
      *
      * When the heuristic capped the tier on hardware evidence, *that cap is the ceiling* — not the
      * configured tier. Holding vsync at `medium` is not evidence that `high` is affordable, and
-     * treating it as such is how a correctly-capped Chromebook goes medium → high → medium → low
-     * and ends two tiers below the heuristic's own answer with its whole change budget spent.
-     * When the heuristic found nothing to cap, the configured tier is the ceiling as before, which
-     * is what lets a machine with illegible hardware signals earn its way back up from
-     * `NEUTRAL_START`.
+     * treating it as such is how a correctly-capped Chromebook goes medium → high → medium → low.
+     * When the heuristic found nothing to cap, the configured tier is the ceiling, which is what
+     * lets a machine with illegible hardware signals earn its way back up from `NEUTRAL_START`.
      */
     this.ceilingSource = this.heuristic.caps.length ? "heuristic cap" : "configured tier";
     this.ceiling = this.heuristic.caps.length ? this.heuristic.tier : this.bootTier;
 
-    /**
-     * Does the hardware corroborate a bad reading?
-     *
-     * The same evidence that sets the ceiling also decides whether the first descent is provisional.
-     * When the heuristic capped the tier — a named integrated GPU, no WebGL2, 4 GB, a 4K buffer —
-     * a catastrophic first window is that machine behaving as predicted: leap at once, never revoke.
-     * When it found nothing (or found *strength*), a catastrophic first window is a surprise, and a
-     * surprise measured 1.5-4 s after the first render is more often a boot storm than a machine.
-     */
-    this.corroborated = this.heuristic.caps.length > 0;
-
     this.policy = new TierPolicy(this.enabled ? this.heuristic.tier : this.bootTier, {
       ceiling: this.enabled ? this.ceiling : this.bootTier,
-      provisional: !this.corroborated,
+      /**
+       * The heuristic's *prediction* — the tier it says this machine can afford. Corroboration is
+       * then decided per decision, against the tier the miss was actually measured at, rather than
+       * once at boot on "was a GPU family named". See `TierPolicy.corroboratesAt`.
+       */
+      predictedTier: this.heuristic.tier,
       warmupFrames: num("autotierWarmup", POLICY.warmupFrames),
       firstWarmupFrames: num("autotierWarmup", POLICY.firstWarmupFrames),
       warmupMs: num("autotierWarmupMs", POLICY.warmupMs),
       firstWarmupMs: num("autotierWarmupMs", POLICY.firstWarmupMs),
       windowFrames: num("autotierWindow", POLICY.windowFrames),
-      firstWindowFrames: num("autotierWindow", POLICY.firstWindowFrames),
       windowMs: num("autotierWindowMs", POLICY.windowMs),
       firstWindowMs: num("autotierWindowMs", POLICY.firstWindowMs),
       cooldownMs: num("autotierCooldown", POLICY.cooldownMs),
@@ -970,8 +1039,13 @@ export class AutoTier {
         direction: "heuristic",
         why: this.heuristic.notes.join("; "),
         applied: true,
-        // No post system exists at boot order 02; the signal above is the whole contract here.
-        post: "signal",
+        /**
+         * Not "signal": no post system exists at boot order 02, so this emit reaches nobody and
+         * saying otherwise would be the exact kind of probe that lies by omission. `PostStack`
+         * mounts at 52 and reads `config.tier.postStack` in its own constructor, which is already
+         * this tier — the heuristic is honoured, it just is not honoured over the wire.
+         */
+        post: "pre-mount",
       });
     }
 
@@ -988,9 +1062,7 @@ export class AutoTier {
 
     // Re-read the switch every frame, not once at boot. `Config.set("tier", …)` flips `autoTier`
     // to false, and a settings screen opened ten minutes into a session is exactly as binding as
-    // `?tier=` on the URL. Captured at construction, this check was true only of the boot instant:
-    // the player picked `low`, and 2000 frames later auto-tiering had walked the picture down to
-    // `potato` underneath them.
+    // `?tier=` on the URL.
     if (config.get("autoTier") === false) {
       this._standDown();
       return;
@@ -998,9 +1070,9 @@ export class AutoTier {
 
     // The lighting rig builds its cascades at boot order 14, so the baseline can only be read once
     // the first frames are running. Bounded on both axes: every 15th frame, and abandoned after
-    // 300. A machine that starts at `potato` has `castShadow` false on every light and would
-    // otherwise pay a full scene traverse every frame, for ever, looking for something that is
-    // never going to be there — on precisely the hardware that can least afford it.
+    // 300 — a machine that starts at `potato` has `castShadow` false on every light and would
+    // otherwise pay a full scene traverse every frame, for ever, on the hardware that can least
+    // afford it.
     if (this._shadowBase === null && this._frames <= 300 && !this.dry) {
       if (this._frames % 15 === 1) this._captureShadowBaseline();
       if (this._frames === 300 && this._shadowBase === null) this._shadowBase = 0;
@@ -1131,10 +1203,14 @@ export class AutoTier {
   }
 
   /**
-   * Post is P12's. The contract is the `quality:tier` signal; the direct call is a bridge that
-   * retires itself the moment `PostStack` subscribes, and it uses only the two methods P12
-   * documents as its runtime control surface (`setEnabled` / `setEffect`), reached through the
-   * kernel's system registry rather than an import.
+   * Post is P12's, and the contract is the `quality:tier` signal — which `render/PostStack.js` now
+   * subscribes to. Until this round it did not, so the signal was emitted into nothing and the post
+   * response ran entirely through the private bridge below.
+   *
+   * The bridge is kept, and it is not dead weight: `AutoTier` mounts at boot order 02 and `PostStack`
+   * at 52, so on a machine where the post module fails to mount at all the tier still reaches
+   * whatever `kernel.get("post")` exposes. `_postRoute` records which path ran, and a critic should
+   * see `"signal"` on every decision in a healthy boot.
    */
   _applyPost(why, direction = "tier") {
     const listening = signals.names().includes("quality:tier");
@@ -1205,6 +1281,7 @@ export class AutoTier {
 
   report() {
     const st = this.policy.lastStats;
+    const p = this.policy;
     return {
       enabled: this.enabled,
       dry: !!this.dry,
@@ -1215,43 +1292,51 @@ export class AutoTier {
       bootTier: this.bootTier,
       startTier: this.startTier,
       tier: config.tier.id,
-      policyTier: this.policy.tier,
-      ceiling: this.policy.ceiling,
+      policyTier: p.tier,
+      ceiling: p.ceiling,
       ceilingSource: this.ceilingSource,
       autoTierSetting: config.get("autoTier"),
       /**
-       * The provisional-descent machinery, in full, so a reviewer can see *why* a revocation has or
-       * has not fired without re-deriving it. `gate` names the first condition that is not met.
+       * The corroboration model, in full. `predictedTier` is what the heuristic said this machine
+       * can afford; `corroboratesHere` is whether a miss measured *at the current tier* would agree
+       * with that prediction. Round 2 answered this question once, at boot, from the GPU string.
        */
+      prediction: {
+        predictedTier: p.predictedTier,
+        evidence: this.heuristic.caps,
+        measuringAt: p.tier,
+        corroboratesHere: p.corroboratesAt(),
+        forceCorroborated: p.forceCorroborated,
+      },
+      /** The revocation machinery, so a reviewer can see *why* one has or has not fired. */
       provisional: {
-        corroborated: !!this.corroborated,
-        enabled: this.policy.provisional,
-        descent: this.policy.descent
+        descent: p.descent
           ? {
-              from: this.policy.descent.from,
-              to: this.policy.descent.to,
-              rungs: this.policy.descent.rungs,
-              atMs: this.policy.descent.at,
-              medianMs: this.policy.descent.medianMs,
-              late: this.policy.descent.late,
+              from: p.descent.from,
+              to: p.descent.to,
+              rungs: p.descent.rungs,
+              atMs: p.descent.at,
+              medianMs: p.descent.medianMs,
+              corroborated: !!p.descent.corroborated,
+              late: !!p.descent.late,
             }
           : null,
-        locked: this.policy.locked,
-        recoveries: this.policy.recoveries,
-        quietForMs:
-          this.policy.quietSince === null ? 0 : Math.round(this.policy.clock - this.policy.quietSince),
-        ...this.policy.recoveryState(this.policy.lastStats),
+        locked: p.locked,
+        recoveries: p.recoveries,
+        quietForMs: p.quietSince === null ? 0 : Math.round(p.clock - p.quietSince),
+        ...p.recoveryState(p.lastStats),
       },
       /**
-       * What the `quality:tier` signal actually reaches. `postStack` is consumed (by P12's subscriber
-       * or, until it has one, by the bridge in `_applyPost`); the rest is advisory and, as of this
-       * round, has no subscriber at all. Reported rather than implied, because a probe that lists
-       * `grassDensity` without saying nobody reads it is a probe that lies by omission.
+       * What the `quality:tier` signal actually reaches. `subscribed` is the seam this round closed:
+       * `render/PostStack.js` listens, so `postStack` is consumed by its owner rather than by a
+       * private bridge. `maxPixelRatio`, `shadows` and `shadowResolution` are applied here, against
+       * the live renderer, and read back on `renderer` below.
        */
       signal: {
         name: "quality:tier",
         subscribed: signals.names().includes("quality:tier"),
-        applied: ["maxPixelRatio", "shadowResolution", "shadows", "postStack"],
+        appliedHere: ["maxPixelRatio", "shadowResolution", "shadows"],
+        appliedByListener: ["postStack"],
         advisory: ["drawDistance", "grassDensity", "particleBudget"],
       },
       heuristic: {
@@ -1272,40 +1357,48 @@ export class AutoTier {
             maxMs: Number(st.max.toFixed(2)),
             frames: st.n,
             spanMs: Number(st.spanMs.toFixed(1)),
+            windowFull: p.isFull(st, p.shape()),
+            // Infinity while the window is empty (the flush after a change); reported as null
+            // rather than as a number, because "no tail yet" is not a measurement.
+            tailMedianMs: p.samples.length ? Number(p.tailMedian().toFixed(2)) : null,
           }
         : null,
       samples: {
-        accepted: this.policy.accepted,
-        rejected: this.policy.rejected,
-        clockMs: Math.round(this.policy.clock),
+        accepted: p.accepted,
+        rejected: p.rejected,
+        /** Periods over `sampleMaxMs`, and the elapsed time of the isolated ones we threw away. */
+        excursions: p.excursions,
+        stalledMs: Math.round(p.stalledMs),
+        clockMs: Math.round(p.clock),
       },
       thresholds: {
-        downMs: this.policy.p.downMs,
-        upMs: this.policy.p.upMs,
-        windowFrames: this.policy.p.windowFrames,
-        windowMs: this.policy.p.windowMs,
-        minFrames: this.policy.p.minFrames,
-        firstWindowFrames: this.policy.p.firstWindowFrames,
-        firstWindowMs: this.policy.p.firstWindowMs,
-        firstMinFrames: this.policy.p.firstMinFrames,
-        warmupFrames: this.policy.p.warmupFrames,
-        warmupMs: this.policy.p.warmupMs,
-        firstWarmupFrames: this.policy.p.firstWarmupFrames,
-        firstWarmupMs: this.policy.p.firstWarmupMs,
-        cooldownMs: this.policy.p.cooldownMs,
-        maxChanges: this.policy.p.maxChanges,
-        maxUpSteps: this.policy.p.maxUpSteps,
-        maxLeap: this.policy.p.maxLeap,
-        firstMaxLeap: this.policy.p.firstMaxLeap,
-        tailFraction: this.policy.p.tailFraction,
-        maxRecoveries: this.policy.p.maxRecoveries,
-        recoveryArmMs: this.policy.p.recoveryArmMs,
-        recoveryQuietMs: this.policy.p.recoveryQuietMs,
-        recoveryInconsistency: this.policy.p.recoveryInconsistency,
-        sampleMinMs: this.policy.p.sampleMinMs,
-        sampleMaxMs: this.policy.p.sampleMaxMs,
+        downMs: p.p.downMs,
+        upMs: p.p.upMs,
+        windowMs: p.p.windowMs,
+        firstWindowMs: p.p.firstWindowMs,
+        windowFrames: p.p.windowFrames,
+        minFrames: p.p.minFrames,
+        firstMinFrames: p.p.firstMinFrames,
+        warmupFrames: p.p.warmupFrames,
+        warmupMs: p.p.warmupMs,
+        firstWarmupFrames: p.p.firstWarmupFrames,
+        firstWarmupMs: p.p.firstWarmupMs,
+        tailMs: p.p.tailMs,
+        tailMinFrames: p.p.tailMinFrames,
+        cooldownMs: p.p.cooldownMs,
+        maxChanges: p.p.maxChanges,
+        maxDownSteps: p.p.maxDownSteps,
+        maxUpSteps: p.p.maxUpSteps,
+        maxLeap: p.p.maxLeap,
+        maxRecoveries: p.p.maxRecoveries,
+        recoveryArmMs: p.p.recoveryArmMs,
+        recoveryQuietMs: p.p.recoveryQuietMs,
+        recoveryInconsistency: p.p.recoveryInconsistency,
+        sampleMinMs: p.p.sampleMinMs,
+        sampleMaxMs: p.p.sampleMaxMs,
+        stallRun: p.p.stallRun,
       },
-      budget: this.policy.budget(),
+      budget: p.budget(),
       changes: this.history,
       renderer: this.rendererState(),
       postRoute: this._postRoute,

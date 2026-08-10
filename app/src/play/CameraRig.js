@@ -393,6 +393,8 @@ export class CameraRig {
       hit: false,
       distance: 0,
     };
+    /** Which of the three authorities in `_castFree` answered the last boom cast. */
+    this._collisionSource = "none";
 
     this._pivotWorld = new THREE.Vector3();
     this._camWorld = new THREE.Vector3();
@@ -635,6 +637,13 @@ export class CameraRig {
   /**
    * How far the boom's centre may travel from `origin` along `dir` before a sphere of
    * `radius` would touch something. Three sources, in order of authority.
+   *
+   * Which one answered is recorded and reported. For a year this file emitted `camera:probe`
+   * more often than any other signal in the game and no listener existed, so the boom was
+   * really being held out of the rock by the duck-typed `kernel.get("collision")` line below —
+   * and no probe, pixel or test could tell the two apart. `collisionSource` in `report()` is
+   * how a reviewer now sees which authority is actually load-bearing without reading this
+   * method.
    */
   _castFree(origin, dir, maxDist, radius, rays) {
     if (maxDist <= 0) return 0;
@@ -648,15 +657,25 @@ export class CameraRig {
     req.hit = false;
     req.distance = maxDist;
     signals.emit("camera:probe", req);
-    if (req.handled) return req.hit ? clamp(req.distance, 0, maxDist) : maxDist;
+    if (req.handled) {
+      this._collisionSource = "signal";
+      return req.hit ? clamp(req.distance, 0, maxDist) : maxDist;
+    }
 
     const world = this.kernel.get?.("collision") ?? this.kernel.get?.("collisionWorld");
     if (world && typeof world.sphereCast === "function") {
       const r = world.sphereCast(origin, dir, radius, maxDist);
-      if (typeof r === "number") return clamp(r, 0, maxDist);
-      if (r && typeof r.distance === "number") return clamp(r.hit === false ? maxDist : r.distance, 0, maxDist);
+      if (typeof r === "number") {
+        this._collisionSource = "system";
+        return clamp(r, 0, maxDist);
+      }
+      if (r && typeof r.distance === "number") {
+        this._collisionSource = "system";
+        return clamp(r.hit === false ? maxDist : r.distance, 0, maxDist);
+      }
     }
 
+    this._collisionSource = "scene";
     return this._castScene(origin, dir, maxDist, radius, rays);
   }
 
@@ -1076,6 +1095,12 @@ export class CameraRig {
       // `penetrating` is ever true the camera is inside something and that is a bug, full stop.
       freeDistance: r(this._freeDistance),
       allowedDistance: r(this._allowedDistance),
+      // Which authority answered the last boom cast: "signal" (`camera:probe`), "system"
+      // (a duck-typed `kernel.get("collision")`), "scene" (this rig raycasting every mesh it
+      // can see) or "none". `freeDistance` alone cannot tell them apart, and they are not
+      // equally trustworthy — "scene" in particular means the accurate collision source was
+      // missing and the camera is running on a five-ray approximation.
+      collisionSource: this._collisionSource,
       penetrating: this._penetrating,
       avatarOpacity: r(this.avatarOpacity),
       fov: r(this.camera.fov),

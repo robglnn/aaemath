@@ -1,0 +1,23 @@
+=== MY OWN COHORT (3PL learner model, real Graph/Mastery/Scheduler/ItemBank), n=40 per cell, 26 sessions ===
+
+archetype    arm       med min→80%  med items→80%  med sess→80%  reached 80%  med final mastery  probes off/pass  probe unlocks
+strong       shipped   279          368            11            100.0%        96.9%             31/25            20
+strong       baseline  381          525            15            100.0%        96.9%             0/0              0
+median       shipped   405          565            16            100.0%        96.9%             30/4             4
+median       baseline  431          612            17            100.0%        96.9%             0/0              0
+struggler    shipped   637          927            25             52.5%        81.3%             23/0             0
+struggler    baseline  659          957            26             47.5%        78.1%             0/0              0
+advancedOnly shipped   379          523            15            100.0%        96.9%             29/7             6
+advancedOnly baseline  430          603            17            100.0%        96.9%             0/0              0
+
+L5 CHECK — median learner, shipped arm: median final mastery 96.9%; 100.0% of runs reach >=80%.
+TEST-OUT SAVING — strong learner minutes to 80%: shipped 279 vs baseline 381 (26.8% less). Items: 368 vs 525.
+2-MINUTE CLAIM — probes at or under 2 min: {"nodes":28,"min":2.3,"median":3.833333,"max":4.6,"atOrUnder2":0,"secondsPerItem":46}
+
+=== PROPAGATION ATTACK — adversarial orderings against respond() directly ===
+
+declare every node on every response                 unearned=4    certified=0   over-ceiling=0   counters-moved=0   maxP=0.3108 offConeSeeds=81000
+declare descendants only                             unearned=4    certified=0   over-ceiling=0   counters-moved=0   maxP=0.3500 offConeSeeds=24375
+declare self                                         unearned=4    certified=0   over-ceiling=0   counters-moved=0   maxP=0.3500 offConeSeeds=0
+declare the deepest node                             unearned=4    certified=0   over-ceiling=0   counters-moved=0   maxP=0.3500 offConeSeeds=3375
+declare direct prerequisites (the engine default)    unearned=4    certified=0   over-ceiling=0   counters-moved=0   maxP=0.3500 offConeSeeds=0

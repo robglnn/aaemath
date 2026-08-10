@@ -119,69 +119,21 @@ for (const [f, names] of exportsBy) {
 
 // ---------------------------------------------------------------- signals
 
-/**
- * Round 1 of this audit reported `camera:shake`, `camera:target` and `input:look` as emitted into
- * the void. All three had a live subscriber, and P36 proved it by driving the shipped app: the
- * camera really shakes, really follows the body, really turns with the mouse. The audit had missed
- * them because both `play/CameraRig.js` and `world/Lighting.js` register through a one-line alias —
- *
- *     const on = (name, fn) => this._off.push(signals.on(name, fn));
- *
- * — so the call site reads `on("camera:shake", ...)`, with no receiver for `/\.on\(/` to match.
- * Three of the eighteen headline orphans were the tool's own blind spot, which is the worst thing a
- * gate can be: confidently wrong in the direction of extra work. The receiver is now optional, which
- * also picks up the injected `this.emit(...)` used by `flow/Session.js` and `learn/Mastery.js`.
- *
- * Making the receiver optional would match unrelated event APIs (`server.on("error")`,
- * `page.on("console")`), so a name must look like a signal: this project's vocabulary is
- * `domain:event` throughout and `design/architecture.md` is written that way. Requiring the colon
- * costs nothing real and removes the whole class.
- *
- * Sites are reported with file:line. The previous shape gave a bare list of names, and every agent
- * reading it burned its first tool call re-deriving where they were.
- */
-const EMIT_SITE_RE = /(?<![\w$])(?:[\w$]+\s*\.\s*)?emit\(\s*["'`]([^"'`]+)["'`]/g;
-const LISTEN_SITE_RE = /(?<![\w$])(?:[\w$]+\s*\.\s*)?on\(\s*["'`]([^"'`]+)["'`]/g;
-const SIGNAL_NAME_RE = /^[a-z][\w-]*:[\w:-]+$/;
-
 let signalReport = null;
 if (has("signals")) {
   const emits = new Map();
   const listens = new Map();
-  const add = (map, name, f, line) => {
+  const add = (map, name, f) => {
     if (!map.has(name)) map.set(name, new Set());
-    map.get(name).add(`${rel(f)}:${line}`);
+    map.get(name).add(rel(f));
   };
   for (const [f, src] of source) {
-    const lines = src.split("\n");
-    for (let i = 0; i < lines.length; i++) {
-      for (const m of lines[i].matchAll(EMIT_SITE_RE)) {
-        if (SIGNAL_NAME_RE.test(m[1])) add(emits, m[1], f, i + 1);
-      }
-      for (const m of lines[i].matchAll(LISTEN_SITE_RE)) {
-        if (SIGNAL_NAME_RE.test(m[1])) add(listens, m[1], f, i + 1);
-      }
-    }
+    for (const m of src.matchAll(/\.emit\(\s*["'`]([^"'`]+)["'`]/g)) add(emits, m[1], f);
+    for (const m of src.matchAll(/\.on\(\s*["'`]([^"'`]+)["'`]/g)) add(listens, m[1], f);
   }
-  // Sorted by file then by line NUMBER — a lexical sort puts 1031 above 651 and reads as noise.
-  const lineOf = (s) => Number(s.slice(s.lastIndexOf(":") + 1));
-  const fileOf = (s) => s.slice(0, s.lastIndexOf(":"));
-  const sites = (map, name) =>
-    [...(map.get(name) ?? [])].sort(
-      (a, b) => fileOf(a).localeCompare(fileOf(b)) || lineOf(a) - lineOf(b)
-    );
-  const orphanEmits = [...emits.keys()].filter((n) => !listens.has(n)).sort();
-  const orphanListens = [...listens.keys()].filter((n) => !emits.has(n)).sort();
   signalReport = {
-    // Kept as plain sorted name lists: earlier rounds saved these as snapshots to diff against,
-    // and a gate whose output shape moves under its callers is a gate nobody re-runs.
-    emittedWithNoListener: orphanEmits,
-    listenedWithNoEmitter: orphanListens,
-    // Where each orphan lives, so the next agent's first tool call is a fix and not a grep.
-    orphanSites: Object.fromEntries([
-      ...orphanEmits.map((n) => [n, { emittedAt: sites(emits, n) }]),
-      ...orphanListens.map((n) => [n, { listenedAt: sites(listens, n) }]),
-    ]),
+    emittedWithNoListener: [...emits.keys()].filter((n) => !listens.has(n)).sort(),
+    listenedWithNoEmitter: [...listens.keys()].filter((n) => !emits.has(n)).sort(),
   };
 }
 

@@ -927,6 +927,24 @@ export class Lighting {
     const r = this.kernel.renderer;
     return {
       sun: this.sun(),
+      /**
+       * §5.4's accents, at the top level and stated three ways on purpose.
+       *
+       * `registered` is what `world:resonance` put in the map, `active` is what `_assignAccents`
+       * chose out of it this frame, and `lit` is read straight off the `PointLight.intensity`
+       * values the renderer will actually use. A reviewer must be able to tell a live accent from
+       * a dead one without emitting anything itself — and must be able to see the raw number
+       * beside the derived one, because a derived number that never moves is exactly how a whole
+       * unreachable feature went unnoticed here for a year.
+       */
+      accents: {
+        registered: this._accents.size,
+        active: this._activeAccents ?? 0,
+        pool: this.accentPool.length,
+        lit: this.accentPool.filter((l) => l.intensity > 0).length,
+        peakIntensity: r4(Math.max(0, ...this.accentPool.map((l) => l.intensity))),
+        ids: [...this._accents.keys()].slice(0, 16),
+      },
       lights: {
         key: { hex: hexOfColor(this.key.color), intensity: r4(this.key.intensity) },
         fill: {

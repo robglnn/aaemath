@@ -160,6 +160,90 @@ export default {
     // A learning engine driving the surface owns it outright.
     signals.on("learn:present", standDown);
 
+    // ------------------------------------------------------------------ world:resonance
+    /**
+     * **A standing claim is an emitter, so it has to spill.**
+     *
+     * `art-direction.md` §5.4 lists KaTeX in the accent class and states the rule in one line:
+     * "Every emitter carries a real `PointLight` so it spills onto the ground, and the spill is
+     * the proof it is a light rather than a painted decal." `world/Lighting.js` implements the
+     * receiving half in full — `addAccent(id, position, {radius, strength})` puts a claim into a
+     * fixed-size pool that is re-assigned by distance every frame, so the point-light count never
+     * changes and no program is ever recompiled. It listens on `world:resonance`.
+     *
+     * Nothing in the repository emitted that name. The rule was in the bible, the light rig was
+     * built, the pool was allocated at boot — and every accent light in the game sat at intensity
+     * 0 forever, because the one string that reaches them was never written. This is the emitter.
+     *
+     * It reconciles off `field.panels` rather than off the `math:show` payload, for two reasons
+     * that are the same reason: **only the panel knows where the claim really stands.** The four
+     * claims standing at spawn arrive with a view-relative `anchor` and no world position at all —
+     * `TexField._resolveAnchors` turns that into a world point a quarter of a simulated second
+     * later, against the settled camera — and the field evicts a claim on its own when the
+     * thirty-second one arrives. Mirroring the payload would light a claim that stood somewhere
+     * else, and would keep lighting one that had already stood down.
+     *
+     * Reconciled in `after()`, after every `frame()` hook, so the transform read is the one that
+     * was rendered. Emits only on a change: appear, move more than 5 cm, or disappear.
+     */
+    const RESONANCE = {
+      // §5.4 caps accent radius at 6 m; a claim is ink, not a crystal core, so it stands under
+      // that. `strength` is a 0..1 fraction of the cap `Lighting._assignAccents` already applies
+      // (`intensity = strength * 0.58`, set so a rock facet one metre away cannot pass Y 0.10).
+      radius: 5,
+      strength: 0.6,
+      // Below this, a re-emit is noise: `math:show` is idempotent and a claim that has resolved
+      // its anchor does not move again.
+      moveEpsilon: 0.05,
+    };
+    const litClaims = new Map(); // panel id -> last announced [x, y, z]
+    const claimPosition = (panel) => {
+      const mesh = panel?.mesh;
+      if (!mesh) return null;
+      // The world transform, not the local one: the field's root is at the origin today and
+      // reading `mesh.position` would agree, but a claim parented to anything that moves would
+      // then light the wrong rock and nothing would say so.
+      mesh.updateWorldMatrix(true, false);
+      const e = mesh.matrixWorld.elements;
+      return [e[12], e[13], e[14]];
+    };
+    kernel.mount("mathresonance", {
+      after() {
+        const standing = new Set();
+        for (const [id, panel] of field.panels) {
+          const at = claimPosition(panel);
+          if (!at) continue;
+          standing.add(id);
+          const was = litClaims.get(id);
+          if (
+            was &&
+            Math.abs(was[0] - at[0]) < RESONANCE.moveEpsilon &&
+            Math.abs(was[1] - at[1]) < RESONANCE.moveEpsilon &&
+            Math.abs(was[2] - at[2]) < RESONANCE.moveEpsilon
+          ) {
+            continue;
+          }
+          litClaims.set(id, at);
+          signals.emit("world:resonance", {
+            id,
+            position: at,
+            radius: RESONANCE.radius,
+            strength: RESONANCE.strength,
+            active: true,
+          });
+        }
+        for (const id of [...litClaims.keys()]) {
+          if (standing.has(id)) continue;
+          litClaims.delete(id);
+          signals.emit("world:resonance", { id, active: false });
+        }
+      },
+      dispose() {
+        for (const id of [...litClaims.keys()]) signals.emit("world:resonance", { id, active: false });
+        litClaims.clear();
+      },
+    });
+
     publish("mathtex", () => field.probe());
     // Deliberately a probe of its own, and deliberately not folded into `mathtex`. It fires
     // one camera-to-ink ray per sample against every depth-writing mesh in the scene, which is

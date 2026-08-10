@@ -341,6 +341,23 @@ export class Session {
       /** The smallest supply seen at any boundary this sitting. 1 means a single-node sitting. */
       minSupply: Infinity,
     };
+    /**
+     * P34 — WHAT THE ENGINE ACTUALLY HANDED OVER, recorded at the moment it handed it over.
+     *
+     * Round 3's `next()` returned the request and looked at `kpId`, `mode` and `phase` only, so a
+     * sitting could report forty items served while every one of them arrived with no item attached,
+     * no family reported and the catalogue never consulted — which is exactly the state the seam
+     * audit found. These are the three facts that tell a live delivery from a dead one:
+     *
+     *   `withItem`     the request carried an item drawn through `Scheduler.serve()`;
+     *   `withFamily`   ...and the generator family was reported, which is what lets `Mastery` price
+     *                  the 24 (kp x form) cells that hold a family the bank audit refuses;
+     *   `byRelaxation` how far the bank had to relax to find it — `exact`, `nearest-band`, or one of
+     *                  the `generated-group-*` values that mean the catalogue chunk never arrived.
+     *
+     * `unserved` counts requests `serve()` came back empty on. It must stay 0.
+     */
+    this.delivery = { requests: 0, withItem: 0, withFamily: 0, unserved: 0, bySource: {}, byRelaxation: {} };
     /** Items served per knowledge point this sitting — the breadth measurement, and the starve gate. */
     this._reps = new Map();
     /** The head of the live plan, checked against the beat the engine actually opens next. */
@@ -1200,6 +1217,7 @@ export class Session {
 
     this.beat.served += 1;
     this.beat.phases.push(req.phase);
+    this._noteDelivery(req);
     // Breadth, counted per item rather than per beat: forty-six repetitions of one node is a fact
     // about items, and a beat list can hide it behind sixteen entries. See `replan()`.
     this._reps.set(req.kpId, (this._reps.get(req.kpId) ?? 0) + 1);
@@ -1303,6 +1321,26 @@ export class Session {
         : this.beat.served >= this.beat.items || this.mastery.status(this.beat.kpId) !== "learning";
     if (done) this._closeBeat("complete");
     return result;
+  }
+
+  /**
+   * P34 — record the provenance of one served item. See `this.delivery`.
+   *
+   * Deliberately reads the request rather than asking the bank anything: `Scheduler.next()` has
+   * already drawn the item through `serve()` and published what it drew, and a session layer that
+   * went back to the bank to check would be a second selection path — the class of thing this wave
+   * exists to remove, not to add.
+   */
+  _noteDelivery(req) {
+    const d = this.delivery;
+    d.requests += 1;
+    if (req.unserved === true) d.unserved += 1;
+    if (req.item) d.withItem += 1;
+    if (req.family) d.withFamily += 1;
+    const source = req.itemSource ?? (req.item ? "unknown" : "none");
+    const relax = req.itemRelaxation ?? (req.item ? "none" : "no-item");
+    d.bySource[source] = (d.bySource[source] ?? 0) + 1;
+    d.byRelaxation[relax] = (d.byRelaxation[relax] ?? 0) + 1;
   }
 
   /**
@@ -1792,6 +1830,10 @@ export class Session {
         note: "item selection is P16's (§4); this layer forecasts §4's own order and sizes the sitting",
       },
       tally: { ...this.tally },
+      /**
+       * P34 — DELIVERY. Whether the items this sitting counted were items at all. See `_noteDelivery`.
+       */
+      delivery: { ...this.delivery, bySource: { ...this.delivery.bySource }, byRelaxation: { ...this.delivery.byRelaxation } },
       /**
        * The start guarantee, and what it cost. `startsOutsideCeiling` must be 0: no item is ever
        * served that is not expected to finish inside the ceiling. `beatsClosedAtItem` is how often

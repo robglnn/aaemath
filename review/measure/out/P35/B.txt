@@ -1,0 +1,35 @@
+PASS  B1  corroboration is a relation: a miss AT the predicted tier falsifies it, a miss ABOVE it confirms
+        predicted "medium" → corroboratesAt(medium)=false, (low)=false, (high)=true
+        round 2 answered this once at boot from the GPU string and got "true" for all three
+PASS  B2  the same part: a miss at the capped tier is revocable, a miss above it is final
+        falsified: medium→low corroborated=false, recoveries used 1
+        promoted: medium→high→medium, descent corroborated=true, recoveriesLeft 0
+        promoted gate: the descent corroborated the heuristic (measured at high, above the predicted medium)
+PASS  B3  400 hostile streams: every change is exactly one rung, inside budget, under the ceiling
+        814 changes across 400 sessions, all single-rung
+PASS  B4  400 streams: no up-step ever follows a down-step, and a failed revocation locks the ratchet
+        no oscillation in 400 sessions
+PASS  B5  the first-frame heuristic predicts the tier for the fleet this game is for
+        ok  ANGLE (Intel, Intel(R) UHD Graphics 600 Direct   → medium (want medium, 2 cap(s))
+        ok  ANGLE (Intel, Intel(R) Iris(R) Xe Graphics Dir   → medium (want medium, 1 cap(s))
+        ok  ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Direct3   → high (want high, 0 cap(s))
+        ok  WebKit WebGL                                     → medium (want medium, 0 cap(s))
+        ok  Mali-G57 MC2                                     → medium (want medium, 3 cap(s))
+        ok  Mali-T860                                        → low (want low, 5 cap(s))
+        ok  Mali-T860                                        → potato (want potato, 5 cap(s))
+PASS  B6  an explicit ?tier= stands auto-tiering down, at boot and mid-session
+        boot: enabled=false, "explicit: a tier was chosen (settings or ?tier=), autoTier stood down", 2000 frames, 0 changes
+        mid: player chose "low", the tier the heuristic had already applied — enabled true → false at frame 41, player tier low, renderer re-applied=true, autoTier now false
+PASS  B7  after a falsified descent the revocation budget is spendable, not decorative
+        after the storm: tier medium, {"changesLeft":3,"downStepsLeft":3,"upStepsLeft":0,"recoveriesLeft":1,"ceiling":"medium"}
+        round 2 reported recoveriesLeft 0 here because "provisional" was false on any capped machine
+PASS  B8  the heuristic's cap is the ceiling, and a descent past the arming window loses its revocation
+        (a) capped at medium: 10 min of vsync → medium (1 change(s), ups 0); then heavy → low, ceiling medium
+        (b) walking down: undefineds ultra→high(down,1r,130.02ms) · undefineds high→medium(down,1r,83.97ms) · undefineds medium→low(down,1r,52ms) · undefineds low→potato(down,1r,30.99ms)
+            last down-step at 51401.4 ms vs arm window 45000 ms → late=true; after 5 min of flawless frames: 0 recoveries, gate "the descent continued past the arming window"
+PASS  B9  a wrong revocation is caught, locks the ratchet, and is never repeated
+        undefineds medium→low(down,1r,119.62ms) · undefineds low→medium(recover,1r,14ms) · undefineds medium→low(down,1r,39.56ms)
+        after the wrong revocation: locked=true, recoveries 1/2, final low
+        gate now: a revocation already failed — locked
+
+9/9 claims pass

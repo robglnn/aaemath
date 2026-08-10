@@ -32,19 +32,19 @@ slow          44.7 46.2 49.6 57.0 41.6 43.0 46.5 46.0 42.3 46.7   | 41.57 46.18 
 erratic       18.2 19.0 18.6 20.7 14.5 18.2 23.2 16.4 16.8 19.5   | 14.48 18.63 23.24   9/10      2
 bimodal       53.7 45.1 62.0 48.0 32.2 38.5 42.2 56.6 66.9 47.2   | 32.21 47.98 66.87   0/10      2
 
-C3  THE CORPUS — 7 archetypes x 4 absence profiles x 6 seeds x 10 sittings = 1680 sittings
+C3  THE CORPUS — 7 archetypes x 4 absence profiles x 8 seeds x 10 sittings = 2240 sittings
 
 archetype     sittings   min    p10    med    p90    max   in 15-25    kept   mid-claim  carried  items  rho
 ----------------------------------------------------------------------------------------------------------------------
-sprinter         240  15.04  16.78  19.63  20.11  20.91     240/240  240/240          0        0     71  0.26
-quick            240  15.03  17.32  18.87  19.85  21.44     240/240  240/240          0        0     44  0.47
-steady           240  15.09  16.52  17.89  19.27  22.87     240/240  240/240          0        1     30  0.69
-deliberate       240  15.01  15.32  16.45  18.92  21.84     240/240  240/240          0        1     19   1.1
-slow             240     15   15.3  16.81   20.2  22.26     240/240  240/240          0        4     14  1.62
-erratic          240  15.24  16.84  18.25  20.33  25.36     238/240  240/240          0        3     32  0.56
-bimodal          240  15.05  15.51   18.3  22.73  29.52     231/240  240/240          0       22     14  0.65
+sprinter         320  15.04   16.9  19.64  20.13  20.83     320/320  320/320          0        0     71  0.27
+quick            320  15.03  17.34  18.88  19.87  21.44     320/320  320/320          0        0     45  0.47
+steady           320  15.09  16.54  17.88  19.23  22.87     320/320  320/320          0        1     30  0.69
+deliberate       320  15.01  15.34  16.46  19.08  21.84     320/320  320/320          0        2     19   1.1
+slow             320     15   15.3  17.08   20.2  24.27     320/320  320/320          0        5     14  1.62
+erratic          320  15.24  16.83  18.28  20.54  25.36     318/320  320/320          0        5     33  0.55
+bimodal          320  15.05  15.42  18.16  22.73  29.52     308/320  320/320          0       24     14  0.61
 ----------------------------------------------------------------------------------------------------------------------
-ALL             1680     15  15.66  18.19  20.13  29.52     1669/1680   1680/1680
+ALL             2240     15  15.69  18.18  20.14  29.52     2226/2240   2240/2240
 
 C4  SAME TWENTY MINUTES, DIFFERENT AMOUNT OF WORK — items served per sitting, session arm
     (this is the requirement: a student who works fast gets MORE done, not cut off earlier)
@@ -67,32 +67,30 @@ C5  IS THERE ANY LEARNING IN THIS CORPUS AT ALL?
     the outside. A session layer whose currency is the mastery event has to count its currency.
     Every number below is a gate, not a report: they FAIL, they do not print and move on.
 
-  beats in corpus            21418 across 1680 sittings
-  beat kinds                 acquire=13011  consolidate=2981  review=2915  retention=2511
-  certification beats        8407  (consolidate + retention + review)
-  certifications             2058
+  beats in corpus            28779 across 2240 sittings
+  beat kinds                 acquire=17485  review=4003  consolidate=3939  retention=3352
+  certification beats        11294  (consolidate + retention + review)
+  certifications             2766
   distinct kps per sitting   min 1  p10 3  median 6  p90 13  max 31
-  single-knowledge-point sittings   8 of 1680
+  single-knowledge-point sittings   10 of 2240
   ...of which >= 18 items on that one node   0
-  sittings that fired 'starved'     5 of 1680
-  starve alarms on the full graph    5
+  sittings that fired 'starved'     3 of 2240
+  starve alarms on the full graph    3
       ineq-two-step        reps= 18 beats= 6 at   5.79min  supply=1  descendants-ahead=0
       eq-model-context     reps= 21 beats= 7 at   7.01min  supply=1  descendants-ahead=0
-      eq-model-context     reps= 19 beats= 9 at   15.5min  supply=1  descendants-ahead=0
-      eq-model-context     reps= 18 beats= 7 at  12.45min  supply=1  descendants-ahead=0
-      ineq-two-step        reps= 28 beats=10 at  19.37min  supply=1  descendants-ahead=0
+      ineq-two-step        reps= 29 beats=11 at  19.85min  supply=1  descendants-ahead=0
 
   BY ARCHETYPE — a struggling learner and a talented one must not get the same sitting
 
   archetype     distinct kps (min/med/max)   certifications   L1% after 10   beat kinds
   ----------------------------------------------------------------------------------------------------------
-  sprinter                 6 / 16 / 31              734          96.88   acquire=2932 review=2026 consolidate=938 retention=889
-  quick                     5 / 9 / 17              398           62.5   acquire=2952 consolidate=596 retention=472 review=178
-  steady                    3 / 6 / 10              265          34.38   acquire=1943 consolidate=400 retention=310 review=163
-  deliberate                 2 / 4 / 7              144          15.63   acquire=1169 consolidate=245 retention=196 review=134
-  slow                       1 / 3 / 6              107          15.63   acquire=871 consolidate=167 retention=146 review=130
-  erratic                   3 / 7 / 12              279          43.75   acquire=2147 consolidate=433 retention=336 review=169
-  bimodal                    1 / 4 / 7              131          15.63   acquire=997 consolidate=202 retention=162 review=115
+  sprinter                 5 / 16 / 31              976          96.88   acquire=3956 review=2779 consolidate=1231 retention=1177
+  quick                     4 / 9 / 17              535           62.5   acquire=3953 consolidate=794 retention=633 review=240
+  steady                    3 / 6 / 10              360          34.38   acquire=2596 consolidate=527 retention=413 review=227
+  deliberate                 2 / 4 / 7              193          15.63   acquire=1596 consolidate=322 retention=262 review=187
+  slow                       1 / 3 / 6              141          15.63   acquire=1164 consolidate=219 retention=194 review=176
+  erratic                   3 / 7 / 12              382          43.75   acquire=2889 consolidate=580 retention=453 review=230
+  bimodal                    1 / 4 / 7              179          15.63   acquire=1331 consolidate=266 retention=220 review=164
 
 C5b THE STARVED CONTROL — a graph whose whole legal supply is ONE knowledge point
     A gate that can never fail is measuring nothing (C2's rule, applied to the session arm).
@@ -105,7 +103,7 @@ C5b THE STARVED CONTROL — a graph whose whole legal supply is ONE knowledge po
   beat kinds                 review=3976  acquire=52  consolidate=22  retention=22
   distinct kps per sitting   min 1  median 1  max 1
   single-kp sittings         210 of 210
-  'starved' signals emitted  151  (session arm: 5)
+  'starved' signals emitted  151  (session arm: 3)
   first three                var-meaning reps=18 beats=8 at 3.57min supply=1 | var-meaning reps=18 beats=9 at 3.25min supply=1 | var-meaning reps=18 beats=9 at 3.78min supply=1
 
 C5d ROUND 2's WIRING — the same engine with the bank DETACHED — for the record
@@ -116,13 +114,13 @@ C5d ROUND 2's WIRING — the same engine with the bank DETACHED — for the reco
     cells it cannot report a family for, at a cost in coverage rather than a deadlock.
 
   no-bank arm: 140 sittings, 28 certifications, 2526 certification beats, distinct kps median 2
-  bank attached: 1680 sittings, 2058 certifications, 8407 certification beats, distinct kps median 6
+  bank attached: 2240 sittings, 2766 certifications, 11294 certification beats, distinct kps median 6
 
 C5c HOW A SITTING ENDS — every close reason, every last-beat outcome, whole corpus
 
-close reason        arc-complete=1456  break=211  no-closing-win=13
-last beat kind/end  acquire/complete=974  retention/complete=304  consolidate/complete=186  review/complete=164  acquire/closed-at-item=21  acquire/carried=16  retention/carried=10  consolidate/carried=4  review/carried=1
-closing win         certified=977  set=579  stood=110  stopped=11  held=3
+close reason        arc-complete=1948  break=275  no-closing-win=17
+last beat kind/end  acquire/complete=1305  retention/complete=408  consolidate/complete=236  review/complete=224  acquire/closed-at-item=30  acquire/carried=18  retention/carried=11  consolidate/carried=7  review/carried=1
+closing win         certified=1319  set=759  stood=146  stopped=13  held=3
 
     The brief: ALWAYS END ON A COMPLETED BEAT. Three endings are legal and they are not the
     same thing, so they are counted apart rather than added up:
@@ -134,7 +132,7 @@ closing win         certified=977  set=579  stood=110  stopped=11  held=3
                         (§4 step 2), not a unit, so there is nothing to complete.
     `stopped` and `preempted` are the endings that WOULD be cuts, and they must not occur.
 
-last beat END       complete=1628  carried=31  closed-at-item=21
+last beat END       complete=2173  carried=37  closed-at-item=30
 
 C10 ABSENCE AND THE BREAK — the same corpus, split by absence profile
     The band is on ATTENDED minutes, because away time is not session time; the wall-clock
@@ -147,17 +145,17 @@ C10 ABSENCE AND THE BREAK — the same corpus, split by absence profile
 
 profile      sittings    min    med    max   in 15-25     kept   mid-claim   attended  wall  away  sittings/page
 ----------------------------------------------------------------------------------------------------------------------
-attentive         420  15.01   18.4  25.69     417/420  420/420           0       18.4  18.4     0          1 / 1
-alt-tab           420  15.03  18.37  28.12     419/420  420/420           0      18.37 22.33  3.92          1 / 1
-churn             420  15.02  17.81  28.65     416/420  420/420           0      17.81 31.96 14.03          1 / 5
-break             420     15  18.01  29.52     417/420  420/420           0      18.01  26.6  8.84          1 / 5
+attentive         560  15.01  18.42  25.69     557/560  560/560           0      18.42 18.42     0          1 / 1
+alt-tab           560  15.03  18.37  28.12     558/560  560/560           0      18.37 22.22   3.8          1 / 1
+churn             560  15.02  17.88  28.65     556/560  560/560           0      17.88 31.35 13.05          1 / 6
+break             560     15  17.99  29.52     555/560  560/560           0      17.99 26.34  8.65          1 / 5
 
 C10b CLOSE REASONS, PER PROFILE — 'break' is the sitting ending because the learner took one
 
-  attentive  arc-complete=420
-  alt-tab    arc-complete=417  no-closing-win=3
-  churn      arc-complete=290  break=126  no-closing-win=4
-  break      arc-complete=329  break=85  no-closing-win=6
+  attentive  arc-complete=558  no-closing-win=2
+  alt-tab    arc-complete=557  no-closing-win=3
+  churn      arc-complete=394  break=162  no-closing-win=4
+  break      arc-complete=439  break=113  no-closing-win=8
 
 C10c THE CYCLE — work -> break -> work, per page load. A break must not be a terminus.
 
@@ -165,8 +163,8 @@ profile      break closes   break signals   resumed sittings   sittings per page
 --------------------------------------------------------------------------------------------------------
 attentive               0               0                  0                              1 / 1
 alt-tab                 0               0                  0                              1 / 1
-churn                 126             126                118                              1 / 5
-break                  85              85                 74                              1 / 5
+churn                 162             162                147                              1 / 6
+break                 113             113                 99                              1 / 5
 
 C11 DOES THE FORECAST DESCRIBE WHAT THE ENGINE SERVES?
     `candidates()` is a model of §4's own order: the due-time queue, then the frontier score
@@ -178,15 +176,15 @@ C11 DOES THE FORECAST DESCRIBE WHAT THE ENGINE SERVES?
 
 archetype     next-beat hits   next-beat rate   whole-sitting match   planned min   actual min   size err
 --------------------------------------------------------------------------------------------------------------
-sprinter          6717/6784             0.99                  0.51         19.79        19.63       0.88
-quick             4141/4187             0.99                   0.5         19.39        18.87       0.94
-steady            2790/2808             0.99                  0.53         18.59        17.89       1.22
-deliberate        1711/1717                1                  0.55         17.43        16.45       1.38
-slow              1177/1182                1                  0.52         16.17        16.81       1.69
-erratic           3051/3073             0.99                  0.53         18.55        18.25       1.03
-bimodal           1406/1420             0.99                  0.63         16.58         18.3       2.21
+sprinter          9056/9140             0.99                  0.51         19.81        19.64       0.86
+quick             5544/5605             0.99                  0.49         19.34        18.88       0.94
+steady            3730/3756             0.99                  0.53         18.62        17.88       1.27
+deliberate        2322/2331                1                  0.54         17.32        16.46       1.38
+slow              1566/1572                1                  0.52         16.04        17.08       1.82
+erratic           4103/4134             0.99                  0.53         18.58        18.28       1.01
+bimodal           1896/1911             0.99                  0.64          16.6        18.16       2.18
 --------------------------------------------------------------------------------------------------------------
-ALL             20993/21171             0.99                  0.53                                  1.27
+ALL             28217/28449             0.99                  0.52                                  1.29
 
 C12 LEVERAGE — 'time spent where leverage on mastery is highest', and who decides it
     Session.leverage() ranks the acquirable frontier in CERTIFICATIONS BOUGHT PER ITEM SPENT:
@@ -201,18 +199,18 @@ C12 LEVERAGE — 'time spent where leverage on mastery is highest', and who deci
 
 archetype     focus requests   answered by a block   landed on the asked node   rate   affordance
 --------------------------------------------------------------------------------------------------------------
-sprinter               4032                  2932                       1774   0.61        false
-quick                  4415                  2952                       1465    0.5        false
-steady                 3056                  1943                        925   0.48        false
-deliberate             1984                  1169                        496   0.42        false
-slow                   1554                   871                        500   0.57        false
-erratic                3325                  2147                        995   0.46        false
-bimodal                1716                   997                        463   0.46        false
+sprinter               5446                  3956                       2339   0.59        false
+quick                  5917                  3953                       1865   0.47        false
+steady                 4083                  2596                       1196   0.46        false
+deliberate             2687                  1596                        703   0.44        false
+slow                   2073                  1164                        661   0.57        false
+erratic                4472                  2889                       1328   0.46        false
+bimodal                2301                  1331                        645   0.48        false
 --------------------------------------------------------------------------------------------------------------
-ALL                   20082                 13011                       6618   0.51        false
+ALL                   26979                 17485                       8737    0.5        false
 
     distinct nodes this layer asked for across the corpus: 31
-    learn:session{phase:"focus"} signals emitted: 5354
+    learn:session{phase:"focus"} signals emitted: 7037
     HANDOFF TO P16 — `learn/Scheduler.js` is P16's file and this piece may not edit it
     (CLAUDE.md rule 5). The ask is one method: `focus(kpId)`, a soft preference read by
     `_choose()` step 2 as a tie-break on the frontier score, cleared when the block ends.
@@ -286,28 +284,28 @@ C8  WHAT THE SITTING SAYS  (EN source for keys P20 has not been handed yet)
   14 lines; over 7 words: 0; over 44 chars: 0; second person: 0; exclamations: 0; banned vocabulary: 0
 
 ==============================================================================================================
-PASS  C5     the corpus CONTAINS mastery events — all three certification kinds occur   (8407 certification beats of 21418: acquire=13011 consolidate=2981 review=2915 retention=2511)
-PASS  C5     the corpus CONTAINS certifications   (2058 across 1680 sittings)
-PASS  C5     a sitting is not one knowledge point on repeat   (distinct kps/sitting min 1, p10 3, median 6, max 31; 8 single-kp sittings, of which 0 served >= 18 items on that one node)
+PASS  C5     the corpus CONTAINS mastery events — all three certification kinds occur   (11294 certification beats of 28779: acquire=17485 review=4003 consolidate=3939 retention=3352)
+PASS  C5     the corpus CONTAINS certifications   (2766 across 2240 sittings)
+PASS  C5     a sitting is not one knowledge point on repeat   (distinct kps/sitting min 1, p10 3, median 6, max 31; 10 single-kp sittings, of which 0 served >= 18 items on that one node)
 PASS  C5     a struggling learner and a talented one do NOT get the same sitting   (sprinter 96.875%, quick 62.5%, steady 34.375%, deliberate 15.625%, slow 15.625%, erratic 43.75%, bimodal 15.625%)
 PASS  C5b    the starved CONTROL fails the breadth gate — the failure mode is still reachable   (one-node graph: 210/210 single-kp sittings, 151 of them past 18 items on that node)
-PASS  C5b    Session SAYS SO when the engine starves it — and the alarm is never noise   (151 learn:session{phase:"starved"} on the one-node control, 0 repetition sittings it stayed silent about; 5/1680 = 0.3% on the full graph, all with supply=1 and reps >= 18, on ineq-two-step/eq-model-context)
-PASS  C1/C3/C10  no sitting EVER ends below the fifteen-minute floor   (0 of 1680 sittings across all four absence profiles)
-PASS  C1/C3/C10  the arc lands in 15-25 minutes PLUS AT MOST ONE RESPONSE   (1669/1680 strictly inside the band; 1680/1680 kept once one long response is allowed for; 11 overruns)
-PASS  C1/C3/C10  nothing is STARTED that is not expected to finish inside 25   (0 of 1680 sittings served an item outside the ceiling estimate)
-PASS  C1/C3/C10  the residual is a single long response, never the layer   (11 overrun(s) of 1680; 0 the layer cannot account for; 25.31min = +0.31 with one response +6.39 over its promise; 25.36min = +0.36 with one response +2.06 over its promise; 25.69min = +0.69 with one response +5.04 over its promise; 28.12min = +3.12 with one response +5.22 over its promise; 28.65min = +3.65 with one response +3.85 over its promise; 26.08min = +1.08 with one response +5.86 over its promise)
-PASS  C1/C3  no sitting ends mid-problem   (0 of 1680)
-PASS  C5c    the last beat is completed, carried or a block that ran out — never cut   (complete=1628 carried=31 closed-at-item=21)
-PASS  C1/C3/C10  a certification event is CARRIED across every boundary, including a break   (31 carried across 1680 sittings; 0 faults)
+PASS  C5b    Session SAYS SO when the engine starves it — and the alarm is never noise   (151 learn:session{phase:"starved"} on the one-node control, 0 repetition sittings it stayed silent about; 3/2240 = 0.13% on the full graph, all with supply=1 and reps >= 18, on ineq-two-step/eq-model-context)
+PASS  C1/C3/C10  no sitting EVER ends below the fifteen-minute floor   (0 of 2240 sittings across all four absence profiles)
+PASS  C1/C3/C10  the arc lands in 15-25 minutes PLUS AT MOST ONE RESPONSE   (2226/2240 strictly inside the band; 2240/2240 kept once one long response is allowed for; 14 overruns)
+PASS  C1/C3/C10  nothing is STARTED that is not expected to finish inside 25   (0 of 2240 sittings served an item outside the ceiling estimate)
+PASS  C1/C3/C10  the residual is a single long response, never the layer   (14 overrun(s) of 2240; 0 the layer cannot account for; 25.31min = +0.31 with one response +6.39 over its promise; 25.36min = +0.36 with one response +2.06 over its promise; 25.69min = +0.69 with one response +5.04 over its promise; 28.12min = +3.12 with one response +5.22 over its promise; 26.74min = +1.74 with one response +6.12 over its promise; 28.65min = +3.65 with one response +3.85 over its promise)
+PASS  C1/C3  no sitting ends mid-problem   (0 of 2240)
+PASS  C5c    the last beat is completed, carried or a block that ran out — never cut   (complete=2173 carried=37 closed-at-item=30)
+PASS  C1/C3/C10  a certification event is CARRIED across every boundary, including a break   (37 carried across 2240 sittings; 0 faults)
 PASS  C2     the baseline it replaces does NOT hold the band   (a control that never fails is measuring nothing)
-PASS  C10    the band holds when the learner LOOKS AWAY, every profile   (attentive 420/420; alt-tab 420/420; churn 420/420; break 420/420)
-PASS  C10    no sitting ends mid-problem WITH absences, including mid-item ones   (0 of 1680 across all profiles)
-PASS  C10    a break ENDS a sitting — and only at or past the fifteen-minute floor   (break closes: churn 126, break 85; earliest 15.03 min)
-PASS  C10c   a break is a HINGE — the next sitting opens on the same page load   (74 resumed sittings; 85 learn:session{phase:"break"} signals; max sittings per page load 5)
-PASS  C11    the live forecast names the beat the engine serves next   (99.16% of beat boundaries; whole-sitting multiset 52.53% (reported, never used); median size error 1.27 min)
-PASS  C12    leverage is COMPUTED and REQUESTED, over more than one node   (20082 requests over 31 distinct nodes; 5354 focus signals; 6618/13011 = 0.51 of acquisition beats already land there; Scheduler.focus() affordance present: false)
+PASS  C10    the band holds when the learner LOOKS AWAY, every profile   (attentive 560/560; alt-tab 560/560; churn 560/560; break 560/560)
+PASS  C10    no sitting ends mid-problem WITH absences, including mid-item ones   (0 of 2240 across all profiles)
+PASS  C10    a break ENDS a sitting — and only at or past the fifteen-minute floor   (break closes: churn 162, break 113; earliest 15.03 min)
+PASS  C10c   a break is a HINGE — the next sitting opens on the same page load   (99 resumed sittings; 113 learn:session{phase:"break"} signals; max sittings per page load 5)
+PASS  C11    the live forecast names the beat the engine serves next   (99.18% of beat boundaries; whole-sitting multiset 52.35% (reported, never used); median size error 1.29 min)
+PASS  C12    leverage is COMPUTED and REQUESTED, over more than one node   (26979 requests over 31 distinct nodes; 7037 focus signals; 8737/17485 = 0.5 of acquisition beats already land there; Scheduler.focus() affordance present: false)
 PASS  C7b    the pace survives an UNCLEAN exit, with its provenance   (sprinter killed-open/carried/recovered; quick killed-open/carried/recovered; steady killed-open/carried/recovered; deliberate killed-open/carried/recovered)
 PASS  C7b    the interrupted re-entry SAYS something, and says the right thing   (sprinter "The last working was left standing."; quick "The last working was left standing."; steady "The last working was left standing."; deliberate "The last working was left standing.")
 PASS  C6     a bad save is reported, never silently reset
-      out-of-band sittings: 25.31min close=arc-complete lastBeat=acquire/complete items=29; 25.36min close=arc-complete lastBeat=acquire/complete items=38; 25.69min close=arc-complete lastBeat=acquire/closed-at-item items=12; 28.12min close=arc-complete lastBeat=retention/carried items=13; 28.65min close=arc-complete lastBeat=acquire/carried items=19; 26.08min close=arc-complete lastBeat=acquire/complete items=17; 25.31min close=arc-complete lastBeat=acquire/complete items=12; 25.69min close=arc-complete lastBeat=retention/complete items=22; 29.52min close=arc-complete lastBeat=retention/complete items=28; 28.02min close=arc-complete lastBeat=acquire/complete items=11; 26.21min close=arc-complete lastBeat=acquire/complete items=11
+      out-of-band sittings: 25.31min close=arc-complete lastBeat=acquire/complete items=29; 25.36min close=arc-complete lastBeat=acquire/complete items=38; 25.69min close=arc-complete lastBeat=acquire/closed-at-item items=12; 28.12min close=arc-complete lastBeat=retention/carried items=13; 26.74min close=arc-complete lastBeat=acquire/closed-at-item items=12; 28.65min close=arc-complete lastBeat=acquire/carried items=19; 26.08min close=arc-complete lastBeat=acquire/complete items=17; 25.31min close=arc-complete lastBeat=acquire/complete items=12; 25.69min close=arc-complete lastBeat=retention/complete items=22; 25.1min close=arc-complete lastBeat=acquire/complete items=15; 29.52min close=arc-complete lastBeat=retention/complete items=28; 28.02min close=arc-complete lastBeat=acquire/complete items=11; 26.21min close=arc-complete lastBeat=acquire/complete items=11; 25.42min close=arc-complete lastBeat=acquire/complete items=12
 ==============================================================================================================

@@ -107,6 +107,17 @@ export class Scheduler {
     this._servableCells = new Map();
     /** Requests where `serve()` came back empty at draw time. Must stay 0; P32 asserts it. */
     this.serveMisses = 0;
+    /**
+     * P34. How many items this Scheduler has actually HANDED OVER through `serve()`, and where they
+     * came from. Round 3 could say `bank: true` and `serveMisses: 0` on a page where nothing ever
+     * asked for an item, which is the exact state the seam audit found — a wire that is connected at
+     * one end reads identically to a wire that carries current. A non-zero `served` is the difference,
+     * and `servedByRelaxation` is `itemRelaxation` recorded rather than merely published on a request
+     * nobody read.
+     */
+    this.served = 0;
+    this.servedBySource = Object.create(null);
+    this.servedByRelaxation = Object.create(null);
 
     // Mastery reads the same clock, so `provisionalAt` and `nextEventAt` share one time base.
     this.mastery.now = () => this.clock.minutes();
@@ -241,12 +252,29 @@ export class Scheduler {
   noteServed({ itemId, kpId, form } = {}) {
     if (!itemId) return;
     const cap = this.M.antiGuessing.noRepeatWithinItems ?? 40;
-    this.recentItemIds.push(itemId);
-    while (this.recentItemIds.length > cap) this.recentItemIds.shift();
+    /**
+     * IDEMPOTENT ON CONSECUTIVE ANNOUNCEMENTS OF THE SAME ITEM, and that is not tidiness.
+     *
+     * One item is announced here up to three times in a row and always by different code that is
+     * right to announce it: `serve()` when it draws it, the `learn:present` listener in
+     * `boot/62-learning.js` when the world stands it up, and `submit()` when it is scored. Counting
+     * each of them separately does not make the rule stricter, it makes it WEAKER — the ring is
+     * capped at `antiGuessing.noRepeatWithinItems`, so three entries per item turn a 40-item
+     * no-repeat window into a 13-item one, and it does it silently. Only a genuinely different item
+     * moves the window on.
+     *
+     * P34 is where this became reachable: until this wave nothing emitted `learn:present`, so the
+     * listener that has always been here had nothing to hear and the ring only ever saw two.
+     */
+    if (this.recentItemIds[this.recentItemIds.length - 1] !== itemId) {
+      this.recentItemIds.push(itemId);
+      while (this.recentItemIds.length > cap) this.recentItemIds.shift();
+    }
     if (!kpId || !form) return;
     const key = `${kpId}|${form}`;
     let ring = this.recentByCell.get(key);
     if (!ring) this.recentByCell.set(key, (ring = []));
+    if (ring[ring.length - 1] === itemId) return;
     ring.push(itemId);
     while (ring.length > cap) ring.shift();
   }
@@ -846,6 +874,12 @@ export class Scheduler {
       if (!dry) {
         this.noteServed({ itemId: sel.item.id, kpId: req.kpId, form: req.form });
         this._servedFamily.set(req.seq, family);
+        // P34 — the delivery counter. See the field's note in the constructor.
+        this.served += 1;
+        const src = sel.source ?? "unknown";
+        const relax = sel.relaxation ?? "none";
+        this.servedBySource[src] = (this.servedBySource[src] ?? 0) + 1;
+        this.servedByRelaxation[relax] = (this.servedByRelaxation[relax] ?? 0) + 1;
         // A cap, so one long-lived session cannot grow this without bound. Only the open request
         // and its immediate predecessors can still be submitted.
         if (this._servedFamily.size > 64) this._servedFamily.delete(this._servedFamily.keys().next().value);
@@ -1129,6 +1163,13 @@ export class Scheduler {
        * names the three knowledge points it makes uncertifiable.
        */
       bank: !!this.bank,
+      /**
+       * P34. `bank: true` says the wire is attached; these say current flowed through it. A page
+       * where `served` is 0 has a learning engine nobody ever asked for an item.
+       */
+      served: this.served,
+      servedBySource: { ...this.servedBySource },
+      servedByRelaxation: { ...this.servedByRelaxation },
       serveMisses: this.serveMisses,
       cellsProbedForServability: this._servableCells.size,
       unservableCells: [...this._servableCells].filter(([, v]) => !v).map(([k]) => k),

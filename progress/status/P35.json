@@ -1,0 +1,9 @@
+{
+  "id": "P35",
+  "state": "building",
+  "round": 1,
+  "gap": null,
+  "note": "Rebuilding AutoTier corroboration model: measurement must agree with prediction; robust window statistic; single-rung steps; wiring quality:tier to renderer/shadows/post",
+  "evidence": [],
+  "updated": "2026-08-10T20:13:55.782Z"
+}

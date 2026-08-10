@@ -1,0 +1,349 @@
+{
+  "scanned": 57,
+  "filesImportedByNothing": [
+    {
+      "file": "app/src/core/paletteCompat.js",
+      "exports": [
+        "section",
+        "pick"
+      ]
+    }
+  ],
+  "exportsNeverImported": [
+    {
+      "file": "app/src/learn/ItemBank.js",
+      "importedBy": 3,
+      "neverImported": [
+        "ItemBank",
+        "__evictGroup",
+        "__evictAllGroups",
+        "__loadStats",
+        "__resetLoadStats",
+        "__setSpeculationRecent",
+        "__faultGroup",
+        "__ageFailure",
+        "__groupBytesLoaded",
+        "__FAULT",
+        "generateForKp",
+        "BANK_INDEX"
+      ]
+    },
+    {
+      "file": "app/src/math/Tex.js",
+      "importedBy": 2,
+      "neverImported": [
+        "LOCALES",
+        "MAX_TEX_LENGTH",
+        "MAX_TEX_DEPTH",
+        "normalizeLocale",
+        "conventions",
+        "words",
+        "localizeTex",
+        "localizeNumber",
+        "validate",
+        "lintTexBank",
+        "renderInto",
+        "resetTex"
+      ]
+    },
+    {
+      "file": "app/src/world/Terrain.js",
+      "importedBy": 2,
+      "neverImported": [
+        "valueNoise",
+        "acesToneMap",
+        "SCENE_FIT_TOLERANCE",
+        "paletteMisses",
+        "sceneColor",
+        "sceneColorError",
+        "flatShared",
+        "flatMaterialCount",
+        "SHOULDER_MIN_HEIGHT",
+        "SHOULDER_MIN_SEPARATION_DEG",
+        "shoulderAudit",
+        "worstBandSeparationDeg"
+      ]
+    },
+    {
+      "file": "app/src/i18n/index.js",
+      "importedBy": 1,
+      "neverImported": [
+        "ready",
+        "t",
+        "n",
+        "tex",
+        "percent",
+        "list",
+        "plural",
+        "locale",
+        "I18n",
+        "LOCALES",
+        "REFERENCE_LOCALE"
+      ]
+    },
+    {
+      "file": "app/src/learn/Mastery.js",
+      "importedBy": 2,
+      "neverImported": [
+        "PROPAGATION",
+        "TEST_OUT",
+        "logistic",
+        "bktUpdate",
+        "BANK_AUDIT_EPISODES",
+        "BANK_AUDIT_TAIL",
+        "BANK_AUDIT_ITEMS_PER_EPISODE",
+        "wilsonUpper",
+        "catalogueSelect",
+        "canonicalKey",
+        "UNREPORTED_FAMILY"
+      ]
+    },
+    {
+      "file": "app/src/world/Sky.js",
+      "importedBy": 2,
+      "neverImported": [
+        "CLOUD",
+        "linearToHex",
+        "acesFilmic",
+        "lethisAt",
+        "lethisMaxRatePerSecond",
+        "sunDirection",
+        "bandGradient",
+        "GLSL_NOISE",
+        "GLSL_BAYER",
+        "GLSL_GRADIENT"
+      ]
+    },
+    {
+      "file": "app/src/math/TexPanel.js",
+      "importedBy": 1,
+      "neverImported": [
+        "mathFontState",
+        "RASTER_CAPS",
+        "LEGIBILITY",
+        "rasterStatistics",
+        "rasterizeTex",
+        "resolveRecord",
+        "rasterizeWorking",
+        "TexPanel",
+        "MAX_PANELS"
+      ]
+    },
+    {
+      "file": "app/src/world/Materials.js",
+      "importedBy": 5,
+      "neverImported": [
+        "missingRoleNames",
+        "albedoFrom",
+        "fill",
+        "flattenAll",
+        "ARCHETYPES",
+        "LADDER",
+        "TINT",
+        "KNEE"
+      ]
+    },
+    {
+      "file": "app/src/flow/Save.js",
+      "importedBy": 2,
+      "neverImported": [
+        "SAVE_KEY",
+        "SAVE_VERSION",
+        "HISTORY_CAP",
+        "safeStorage",
+        "PACE_SOURCES",
+        "freshSave",
+        "repairPace"
+      ]
+    },
+    {
+      "file": "app/src/core/AutoTier.js",
+      "importedBy": 1,
+      "neverImported": [
+        "POLICY",
+        "TierPolicy",
+        "NEUTRAL_START",
+        "isSoftwareRaster",
+        "inspectDevice",
+        "startingTier"
+      ]
+    },
+    {
+      "file": "app/src/i18n/I18n.js",
+      "importedBy": 1,
+      "neverImported": [
+        "CONVENTIONS",
+        "PLURAL_KEYS",
+        "REQUIRED_CATEGORIES",
+        "pluralCategory",
+        "isPluralBundle"
+      ]
+    },
+    {
+      "file": "app/src/world/Level01.js",
+      "importedBy": 1,
+      "neverImported": [
+        "CARRIES",
+        "carryMaxWidth",
+        "leafToWorld",
+        "worldToLeaf",
+        "leafBaseHeight"
+      ]
+    },
+    {
+      "file": "app/src/play/bindings.js",
+      "importedBy": 1,
+      "neverImported": [
+        "CONTEXTS",
+        "PAD_GLYPHS",
+        "AXIS_VECTORS",
+        "AXIS_COMPONENTS"
+      ]
+    },
+    {
+      "file": "app/src/flow/Session.js",
+      "importedBy": 1,
+      "neverImported": [
+        "ARC",
+        "STARVE_REPS",
+        "VOICE"
+      ]
+    },
+    {
+      "file": "app/src/core/Kernel.js",
+      "importedBy": 1,
+      "neverImported": [
+        "SIM_HZ",
+        "SIM_STEP"
+      ]
+    },
+    {
+      "file": "app/src/play/CameraRig.js",
+      "importedBy": 1,
+      "neverImported": [
+        "CAMERA_TUNING",
+        "Spring"
+      ]
+    },
+    {
+      "file": "app/src/render/passes/glsl.js",
+      "importedBy": 5,
+      "neverImported": [
+        "displayTransformCPU",
+        "encodeSRGBCPU"
+      ]
+    },
+    {
+      "file": "app/src/core/Config.js",
+      "importedBy": 13,
+      "neverImported": [
+        "Config"
+      ]
+    },
+    {
+      "file": "app/src/core/Signals.js",
+      "importedBy": 24,
+      "neverImported": [
+        "Signals"
+      ]
+    },
+    {
+      "file": "app/src/i18n/LocaleProof.js",
+      "importedBy": 1,
+      "neverImported": [
+        "BOXES"
+      ]
+    },
+    {
+      "file": "app/src/i18n/numbers.js",
+      "importedBy": 1,
+      "neverImported": [
+        "REFERENCE_LOCALE"
+      ]
+    },
+    {
+      "file": "app/src/learn/Graph.js",
+      "importedBy": 2,
+      "neverImported": [
+        "GraphError"
+      ]
+    },
+    {
+      "file": "app/src/play/Avatar.js",
+      "importedBy": 1,
+      "neverImported": [
+        "AVATAR_HEIGHT"
+      ]
+    },
+    {
+      "file": "app/src/play/CollisionWorld.js",
+      "importedBy": 1,
+      "neverImported": [
+        "PROVING_GROUND"
+      ]
+    },
+    {
+      "file": "app/src/play/Locomotion.js",
+      "importedBy": 1,
+      "neverImported": [
+        "LOCOMOTION_TUNING"
+      ]
+    },
+    {
+      "file": "app/src/render/passes/BloomPass.js",
+      "importedBy": 1,
+      "neverImported": [
+        "bloomLevels"
+      ]
+    },
+    {
+      "file": "app/src/render/passes/FullScreenPass.js",
+      "importedBy": 5,
+      "neverImported": [
+        "makeCopyMaterial"
+      ]
+    },
+    {
+      "file": "app/src/render/passes/GradePass.js",
+      "importedBy": 1,
+      "neverImported": [
+        "DISPLAY_MODE"
+      ]
+    },
+    {
+      "file": "app/src/world/Scatter.js",
+      "importedBy": 1,
+      "neverImported": [
+        "SCATTER_TILE"
+      ]
+    }
+  ],
+  "signals": {
+    "emittedWithNoListener": [
+      "audio:cue",
+      "camera:probe",
+      "camera:shake",
+      "camera:target",
+      "input:calibrate",
+      "input:capture",
+      "input:context",
+      "input:device",
+      "input:focus",
+      "input:look",
+      "input:rebind",
+      "kernel:frame",
+      "kernel:resize",
+      "learn:respond",
+      "learn:teach",
+      "learn:unlock",
+      "player:traverse",
+      "quality:tier"
+    ],
+    "listenedWithNoEmitter": [
+      "learn:present",
+      "math:hide",
+      "math:show",
+      "ui:menu"
+    ]
+  }
+}

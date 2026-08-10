@@ -1,33 +1,32 @@
 {
-  "when": "2026-08-10T18:50:05.145Z",
+  "when": "2026-08-10T20:35:21.731Z",
   "ran": [
-    "C"
+    "A"
   ],
   "policy": {
     "warmupFrames": 90,
-    "warmupMs": 3000,
-    "windowFrames": 120,
-    "windowMs": 5000,
-    "minFrames": 24,
+    "warmupMs": 2500,
     "firstWarmupFrames": 30,
     "firstWarmupMs": 1500,
-    "firstWindowFrames": 45,
-    "firstWindowMs": 2500,
-    "firstMinFrames": 12,
+    "windowMs": 12000,
+    "firstWindowMs": 6000,
+    "minFrames": 24,
+    "firstMinFrames": 15,
+    "windowFrames": 900,
+    "tailMs": 2500,
+    "tailMinFrames": 8,
     "downMs": 21,
     "upMs": 13.5,
     "cadenceTolerance": 1.06,
     "cadenceJitter": 1.3,
     "cadenceMaxMs": 17.5,
-    "cooldownMs": 3000,
-    "maxChanges": 3,
+    "cooldownMs": 4000,
+    "maxLeap": 1,
+    "maxChanges": 5,
+    "maxDownSteps": 4,
     "maxUpSteps": 1,
-    "maxLeap": 3,
-    "firstMaxLeap": 1,
-    "tailFraction": 0.25,
-    "tailMinFrames": 8,
-    "maxRecoveries": 1,
-    "recoveryArmMs": 8000,
+    "maxRecoveries": 2,
+    "recoveryArmMs": 45000,
     "recoveryQuietMs": 20000,
     "recoveryRungGain": 2,
     "recoveryInconsistency": 0.6,
@@ -80,15 +79,15 @@
     },
     {
       "id": "A8",
-      "title": "at most 3 tier changes per session",
-      "pass": true,
-      "detail": "100 000 frames at 40 ms (1.9x the floor — one rung each) → 3 change(s), ultra → low; budget {\"changesLeft\":0,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"ultra\"}"
+      "title": "at most 5 tier changes per session",
+      "pass": false,
+      "detail": "100 000 frames at 40 ms (1.9x the floor — one rung each) → 4 change(s), ultra → potato; budget {\"changesLeft\":1,\"downStepsLeft\":0,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"ultra\"}"
     },
     {
       "id": "A9",
-      "title": "consecutive decisions are ≥ 3000 ms of measured time apart",
+      "title": "consecutive decisions are ≥ 4000 ms of measured time apart",
       "pass": true,
-      "detail": "gaps: 7800 ms, 7800 ms"
+      "detail": "gaps: 14640 ms, 14640 ms, 14640 ms"
     },
     {
       "id": "A10",
@@ -105,50 +104,50 @@
     {
       "id": "A12",
       "title": "potato is the floor — no change is attempted below it",
-      "pass": true,
-      "detail": "medium → potato in 1 change(s) of 3 rung(s) (a 3-rung leap clamped at the floor), then 100 000 further frames at 200 ms produced none"
+      "pass": false,
+      "detail": "medium → potato in 2 change(s) of 1 rung(s) (a 3-rung leap clamped at the floor), then 100 000 further frames at 200 ms produced none"
     },
     {
       "id": "A13",
       "title": "a sustained 2 fps machine is tiered down; an isolated 4 s stall (A10) still is not",
       "pass": true,
-      "detail": "4 000 frames at 500 ms → 2 change(s), high → potato; 4 rejected before the 5-frame run tripped"
+      "detail": "4 000 frames at 500 ms → 3 change(s), high → potato; 4 rejected before the 5-frame run tripped"
     },
     {
       "id": "A14",
       "title": "a corroborated, catastrophically over-budget median leaps more than one rung, in one change",
-      "pass": true,
-      "detail": "30 ms (1.4x floor) → 1 rung(s) ultra→high, uncorroborated 1; 45 ms (2.1x floor) → 2 rung(s) ultra→medium, uncorroborated 1; 100 ms (4.8x floor) → 3 rung(s) ultra→low, uncorroborated 1; 250 ms (11.9x floor) → 3 rung(s) ultra→low, uncorroborated 1"
+      "pass": false,
+      "detail": "30 ms (1.4x floor) → 1 rung(s) ultra→high, uncorroborated 1; 45 ms (2.1x floor) → 1 rung(s) ultra→high, uncorroborated 1; 100 ms (4.8x floor) → 1 rung(s) ultra→high, uncorroborated 1; 250 ms (11.9x floor) → 1 rung(s) ultra→high, uncorroborated 1"
     },
     {
       "id": "A15",
       "title": "first relief inside 10 s at 10, 5 and 2 fps (round 1: 21 s / 42 s / 107 s)",
       "pass": true,
-      "detail": "10 fps → first step at 4.0 s, potato at 12.0 s in 2 change(s); 5 fps → first step at 4.2 s, potato at 12.2 s in 2 change(s); 2 fps → first step at 8.5 s, potato at 23.5 s in 2 change(s)"
+      "detail": "10 fps → first step at 7.5 s, potato at 37.1 s in 3 change(s); 5 fps → first step at 7.6 s, potato at 36.8 s in 3 change(s); 2 fps → first step at 10.0 s, potato at 39.0 s in 3 change(s)"
     },
     {
       "id": "A16",
       "title": "a display-locked machine is promoted medium → high inside 4 s",
-      "pass": true,
-      "detail": "60 Hz → medium→high at 3.0 s (1 change total); 144 Hz → medium→high at 3.0 s (1 change total)"
+      "pass": false,
+      "detail": "60 Hz → medium→high at 12.5 s (1 change total); 144 Hz → medium→high at 6.6 s (1 change total)"
     },
     {
       "id": "A17",
       "title": "no up-step is ever taken on the short first window",
-      "pass": true,
-      "detail": "the one promotion was decided on 120 frames (steady window 120, first window 45)"
+      "pass": false,
+      "detail": "the one promotion was decided on 900 frames (steady window 900, first window undefined)"
     },
     {
       "id": "A18",
       "title": "a 4 s boot storm costs one rung for 24 s, not the session (round 2: potato, for ever)",
-      "pass": true,
-      "detail": "high→medium(down,1r) at 4.1 s; medium→high(recover,1r) at 27.6 s; final high, budget {\"changesLeft\":1,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"high\"}. Round 2 on this exact stream: high→potato (3 rungs) at 4.1 s and no way back."
+      "pass": false,
+      "detail": "; final high, budget {\"changesLeft\":5,\"downStepsLeft\":4,\"upStepsLeft\":1,\"recoveriesLeft\":0,\"ceiling\":\"high\"}. Round 2 on this exact stream: high→potato (3 rungs) at 4.1 s and no way back."
     },
     {
       "id": "A19",
       "title": "a storm already over when the window fills produces no change (the tail gate)",
-      "pass": true,
-      "detail": "40 ms until 2.6 s then vsync: with the tail gate 0 change(s), tier high; with the tail disabled (tail = median, the round-2 rule) 1 change(s), tier medium"
+      "pass": false,
+      "detail": "40 ms until 2.6 s then vsync: with the tail gate 0 change(s), tier high; with the tail disabled (tail = median, the round-2 rule) 0 change(s), tier high"
     },
     {
       "id": "A20",
@@ -159,20 +158,20 @@
     {
       "id": "A21",
       "title": "a real 8 fps machine descends and stays down — the second down-step disarms the revocation",
-      "pass": true,
-      "detail": "high→medium(1r) at 4.1 s, median 120 ms; medium→potato(2r) at 12.1 s, median 66.67 ms; recoveries 0, descent marked late=true (arm window 8000 ms)"
+      "pass": false,
+      "detail": "high→medium(1r) at 7.6 s, median 120 ms; medium→low(1r) at 22.3 s, median 66.67 ms; low→potato(1r) at 36.9 s, median 37.04 ms; recoveries 0, descent marked late=false (arm window 45000 ms)"
     },
     {
       "id": "A22",
       "title": "a wrong revocation is caught once, costs one change, and locks the ratchet",
-      "pass": true,
-      "detail": "high→medium(down); medium→high(recover); high→low(down); then 60 000 further vsync frames → 0 change(s); locked true, budget {\"changesLeft\":0,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"high\"}"
+      "pass": false,
+      "detail": "high→medium(down); medium→low(down); low→potato(down); then 60 000 further vsync frames → 0 change(s); locked false, budget {\"changesLeft\":2,\"downStepsLeft\":1,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"high\"}"
     },
     {
       "id": "A23",
       "title": "corroborated hardware still settles in one leap inside 10 s, and never revokes",
-      "pass": true,
-      "detail": "10 fps → potato at 4.0 s in 1 change(s), revocations available 0; 5 fps → potato at 4.2 s in 1 change(s), revocations available 0; 2 fps → potato at 8.5 s in 1 change(s), revocations available 0"
+      "pass": false,
+      "detail": "10 fps → potato at 22.3 s in 2 change(s), revocations available 0; 5 fps → potato at 22.2 s in 2 change(s), revocations available 0; 2 fps → potato at 24.5 s in 2 change(s), revocations available 0"
     },
     {
       "id": "B1",
@@ -297,8 +296,8 @@
     {
       "id": "D1",
       "title": "measurement never promotes past the heuristic's hardware cap",
-      "pass": true,
-      "detail": "heuristic medium (caps [\"medium\",\"medium\"]) → policy ceiling \"medium\" from the heuristic cap; boot medium, after 5 000 vsync frames still medium, after 12 000 loaded frames low; changes [\"high→medium(heuristic)\",\"medium→low(down)\"]; budget {\"changesLeft\":2,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"medium\"}. Round 1 on this exact stream: medium→high(up), high→medium, medium→low — 3 changes, budget spent, two tiers below the cap."
+      "pass": false,
+      "detail": "heuristic medium (caps [\"medium\",\"medium\"]) → policy ceiling \"medium\" from the heuristic cap; boot medium, after 5 000 vsync frames still medium, after 12 000 loaded frames low; changes [\"high→medium(heuristic)\",\"medium→low(down)\"]; budget {\"changesLeft\":4,\"downStepsLeft\":3,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"medium\"}. Round 1 on this exact stream: medium→high(up), high→medium, medium→low — 3 changes, budget spent, two tiers below the cap."
     },
     {
       "id": "D2",
@@ -309,8 +308,8 @@
     {
       "id": "D3",
       "title": "a boot storm is revoked in the real renderer when nothing corroborates it, and kept when something does",
-      "pass": true,
-      "detail": "RTX 4070 (uncorroborated): tier high → medium → high, pixelRatio 1.5 → 1.25 → 1.5, changes high→medium(down,applied=true), medium→high(recover,applied=true). UHD 600 Chromebook (corroborated by \"2\" caps): medium → potato in 1 change of 3 rungs, pixelRatio 1.25 → 1, revocations available 0"
+      "pass": false,
+      "detail": "RTX 4070 (uncorroborated): tier high → high → high, pixelRatio 1.5 → 1.5 → 1.5, changes . UHD 600 Chromebook (corroborated by \"2\" caps): medium → medium in 0 change of undefined rungs, pixelRatio 1.25 → 1.25, revocations available 0"
     }
   ]
 }

@@ -1,0 +1,16 @@
+import { readFileSync } from "node:fs";
+import { Graph } from "../../app/src/learn/Graph.js";
+import { Mastery } from "../../app/src/learn/Mastery.js";
+import { virtualClock } from "../../app/src/learn/Scheduler.js";
+const R="C:/dev/math/aaemath/";
+const GRAPH=new Graph(JSON.parse(readFileSync(R+"content/knowledge-graph.json","utf8")));
+const AUDIT=JSON.parse(readFileSync(R+"app/src/learn/bank-audit.json","utf8"));
+const clock=virtualClock(0);
+const m=new Mastery(GRAPH,{bankAudit:AUDIT,storage:null,now:()=>clock.minutes()});
+const src="eq-both-sides";
+const fam="eq-both-sides.core";
+clock.set(3);
+const out=m.respond({kpId:src,form:"construct",phase:"solo",difficulty:GRAPH.centre(src)+0.3,mode:"acquire"},{correct:true,latencyMs:6000,hinted:false,family:fam});
+console.log(JSON.stringify(out,null,1));
+console.log("state:",JSON.stringify(m.stateOf(src)));
+console.log("frontier includes?",m.frontier().includes(src));

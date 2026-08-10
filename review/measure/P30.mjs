@@ -234,15 +234,15 @@ if (ONLY.includes("A")) {
     );
   }
 
-  // A12 — potato is the floor.
+  // A12 — potato is the floor. Corroborated hardware (`provisional: false`), so the leap is on.
   {
-    const p = new TierPolicy("medium", { ceiling: "medium", maxChanges: 99 });
+    const p = new TierPolicy("medium", { ceiling: "medium", maxChanges: 99, provisional: false });
     const ch = drive(p, 100000, () => 200);
     claim(
       "A12",
       "potato is the floor — no change is attempted below it",
       p.tier === "potato" && ch.length === 1 && ch[0].rungs === 3,
-      `medium → ${p.tier} in ${ch.length} change(s) of ${ch[0]?.rungs} rung(s), then 100 000 further frames at 200 ms produced none`
+      `medium → ${p.tier} in ${ch.length} change(s) of ${ch[0]?.rungs} rung(s) (a 3-rung leap clamped at the floor), then 100 000 further frames at 200 ms produced none`
     );
   }
 
@@ -260,9 +260,14 @@ if (ONLY.includes("A")) {
   }
 
   /**
-   * A14 — the leap. Round 1 stepped exactly one rung per decision and then waited a whole window to
-   * learn what the median already said, so `maxChanges: 3` could not carry `ultra` to `potato` at
-   * all. At 100 ms the policy knows `medium` will not save this machine.
+   * A14 — the leap, on hardware that corroborates it. Round 1 stepped exactly one rung per decision
+   * and then waited a whole window to learn what the median already said, so `maxChanges: 3` could
+   * not carry `ultra` to `potato` at all. At 100 ms the policy knows `medium` will not save this
+   * machine.
+   *
+   * `provisional: false` is what `AutoTier` passes when the heuristic capped the tier on a renderer
+   * string or a capability number: on that machine a catastrophic median is the *predicted* result,
+   * so it is acted on at full size and immediately.
    */
   {
     const rows = [
@@ -272,15 +277,28 @@ if (ONLY.includes("A")) {
       { ms: 250, want: 3 },
     ];
     const got = rows.map((r) => {
-      const p = new TierPolicy("ultra", { ceiling: "ultra" });
+      const p = new TierPolicy("ultra", { ceiling: "ultra", provisional: false });
       const ch = drive(p, 3000, () => r.ms);
-      return { ...r, rungs: ch[0]?.rungs ?? 0, first: ch[0] ? `${ch[0].from}→${ch[0].to}` : "none" };
+      const q = new TierPolicy("ultra", { ceiling: "ultra" }); // uncorroborated: the same stream
+      const qch = drive(q, 3000, () => r.ms);
+      return {
+        ...r,
+        rungs: ch[0]?.rungs ?? 0,
+        first: ch[0] ? `${ch[0].from}→${ch[0].to}` : "none",
+        provisionalRungs: qch[0]?.rungs ?? 0,
+      };
     });
     claim(
       "A14",
-      "a catastrophically over-budget median leaps more than one rung, in one change",
-      got.every((g) => g.rungs === g.want),
-      got.map((g) => `${g.ms} ms (${(g.ms / POLICY.downMs).toFixed(1)}x floor) → ${g.rungs} rung(s) ${g.first}`).join("; ")
+      "a corroborated, catastrophically over-budget median leaps more than one rung, in one change",
+      got.every((g) => g.rungs === g.want) &&
+        got.every((g) => g.provisionalRungs === POLICY.firstMaxLeap),
+      got
+        .map(
+          (g) =>
+            `${g.ms} ms (${(g.ms / POLICY.downMs).toFixed(1)}x floor) → ${g.rungs} rung(s) ${g.first}, uncorroborated ${g.provisionalRungs}`
+        )
+        .join("; ")
     );
   }
 
@@ -354,6 +372,153 @@ if (ONLY.includes("A")) {
       "no up-step is ever taken on the short first window",
       ch.length === 1 && ch[0].frames === POLICY.windowFrames && ch[0].frames > POLICY.firstWindowFrames,
       `the one promotion was decided on ${ch[0]?.frames} frames (steady window ${POLICY.windowFrames}, first window ${POLICY.firstWindowFrames})`
+    );
+  }
+
+  /* ------------------------------------------------------ the boot storm, and revoking a descent
+   *
+   * A18-A23 are this round's group. The failure they exist for, measured on the round-2 policy:
+   * four seconds of 120 ms frames at boot — thirty Chromebooks finishing their downloads on one
+   * classroom access point — bought a single 3-rung leap to `potato` at 4.1 s, and because
+   * `downSteps > 0` blocks every promotion, three minutes of flawless 60 Hz afterwards still ended
+   * the session at `potato`. No claim in the round-2 script drove a transient at all.
+   */
+
+  /** The exact stream from the verdict: 120 ms for 4 s, then 60 Hz for three minutes. */
+  {
+    const p = new TierPolicy("high", { ceiling: "high" });
+    const ch = [];
+    for (let t = 0; t < 4000; t += 120) {
+      const c = p.sample(120);
+      if (c) ch.push(c);
+    }
+    ch.push(...drive(p, 12000, (i) => 16.6 + (i % 7) * 0.05)); // ~3.4 minutes of vsync
+    const down = ch.find((c) => c.direction === "down");
+    const back = ch.find((c) => c.direction === "recover");
+    claim(
+      "A18",
+      "a 4 s boot storm costs one rung for 24 s, not the session (round 2: potato, for ever)",
+      ch.length === 2 &&
+        down?.rungs === 1 &&
+        down?.to === "medium" &&
+        back?.to === "high" &&
+        p.tier === "high" &&
+        p.budget().changesLeft === 1,
+      `${ch.map((c) => `${c.from}→${c.to}(${c.direction},${c.rungs}r) at ${(c.at / 1000).toFixed(1)} s`).join("; ")}; ` +
+        `final ${p.tier}, budget ${JSON.stringify(p.budget())}. Round 2 on this exact stream: high→potato (3 rungs) at 4.1 s and no way back.`
+    );
+    note(`the revocation's own reason: ${back?.why ?? "—"}`);
+  }
+
+  /**
+   * A19 — the storm that decays before the window fills costs nothing at all. The control is the
+   * same stream with `tailFraction: 1`, which makes the tail *be* the median — i.e. the round-2
+   * policy — and it steps down.
+   */
+  {
+    const stormy = (endMs, opts) => {
+      const p = new TierPolicy("high", { ceiling: "high", ...opts });
+      const ch = [];
+      let t = 0;
+      for (let i = 0; i < 20000; i++) {
+        const ms = t < endMs ? 40 : 16.6 + (i % 7) * 0.05;
+        t += ms;
+        const c = p.sample(ms);
+        if (c) ch.push(c);
+      }
+      return { tier: p.tier, n: ch.length };
+    };
+    const gated = stormy(2600, {});
+    const control = stormy(2600, { tailFraction: 1, tailMinFrames: 1 });
+    claim(
+      "A19",
+      "a storm already over when the window fills produces no change (the tail gate)",
+      gated.n === 0 && gated.tier === "high" && control.n === 1 && control.tier === "medium",
+      `40 ms until 2.6 s then vsync: with the tail gate ${gated.n} change(s), tier ${gated.tier}; with the tail disabled (tail = median, the round-2 rule) ${control.n} change(s), tier ${control.tier}`
+    );
+  }
+
+  /**
+   * A20 — the discriminator, stated as the case it must *refuse*. A machine that genuinely costs
+   * 30 ms at `high` and hits vsync at `medium` improved by exactly as much as a rung is worth. It is
+   * not a storm, and it must never be probed back up — that would be the oscillation loop.
+   */
+  {
+    const p = new TierPolicy("high", { ceiling: "high" });
+    const ch = drive(p, 60000, () => (p.tier === "high" ? 30 : 16.6 + (p.accepted % 7) * 0.05));
+    const state = p.recoveryState(p.lastStats);
+    claim(
+      "A20",
+      "a borderline machine is never probed back up — the improvement is what a rung is worth",
+      ch.length === 1 && ch[0].direction === "down" && p.recoveries === 0 && p.tier === "medium",
+      `${ch.length} change(s) in 60 000 frames, ending ${p.tier}; revocation refused: ${state.gate}`
+    );
+  }
+
+  /** A21 — a machine that keeps missing is a machine, not a storm: the descent disarms the revocation. */
+  {
+    const ORDER = ["potato", "low", "medium", "high", "ultra"];
+    const p = new TierPolicy("high", { ceiling: "high" });
+    // Closed loop: each rung really buys 1.8x, and this machine costs 120 ms at high.
+    const ch = drive(p, 40000, () => 120 / 1.8 ** (3 - ORDER.indexOf(p.tier)));
+    claim(
+      "A21",
+      "a real 8 fps machine descends and stays down — the second down-step disarms the revocation",
+      ch.length === 2 &&
+        ch.every((c) => c.direction === "down") &&
+        p.tier === "potato" &&
+        p.recoveries === 0 &&
+        p.descent.late === true,
+      `${ch.map((c) => `${c.from}→${c.to}(${c.rungs}r) at ${(c.at / 1000).toFixed(1)} s, median ${c.medianMs} ms`).join("; ")}; ` +
+        `recoveries ${p.recoveries}, descent marked late=${p.descent.late} (arm window ${POLICY.recoveryArmMs} ms)`
+    );
+  }
+
+  /** A22 — and when a revocation is wrong, it costs one change and locks the ratchet for good. */
+  {
+    const p = new TierPolicy("high", { ceiling: "high" });
+    const ch = [];
+    for (let t = 0; t < 4000; t += 120) {
+      const c = p.sample(120);
+      if (c) ch.push(c);
+    }
+    ch.push(...drive(p, 3000, (i) => 16.6 + (i % 7) * 0.05)); // quiet: buys the revocation
+    ch.push(...drive(p, 60000, () => 60)); // …and then the machine is genuinely slow, for ever
+    const after = drive(p, 60000, (i) => 16.6 + (i % 7) * 0.05); // a second quiet stretch buys nothing
+    claim(
+      "A22",
+      "a wrong revocation is caught once, costs one change, and locks the ratchet",
+      p.recoveries === 1 &&
+        p.locked === true &&
+        ch.length === 3 &&
+        after.length === 0 &&
+        ch.length <= POLICY.maxChanges &&
+        p.budget().recoveriesLeft === 0,
+      `${ch.map((c) => `${c.from}→${c.to}(${c.direction})`).join("; ")}; then 60 000 further vsync frames → ${after.length} change(s); ` +
+        `locked ${p.locked}, budget ${JSON.stringify(p.budget())}`
+    );
+  }
+
+  /**
+   * A23 — the other side of the trade, and the reason corroboration is tied to *both* the leap and
+   * the revocation. Hardware that predicted the slowness leaps at once and never looks back: a
+   * multi-rung leap explains a large improvement, so the inconsistency test could not discriminate
+   * after one anyway. Time to a settled tier for the machine this game is for is unchanged.
+   */
+  {
+    const rows = [10, 5, 2].map((fps) => {
+      const p = new TierPolicy("medium", { ceiling: "medium", provisional: false });
+      let at = null;
+      for (let i = 0; i < 200000 && p.tier !== "potato"; i++) if (p.sample(1000 / fps)) at = p.clock;
+      return { fps, at, tier: p.tier, n: p.changes.length, rec: p.budget().recoveriesLeft };
+    });
+    claim(
+      "A23",
+      "corroborated hardware still settles in one leap inside 10 s, and never revokes",
+      rows.every((r) => r.tier === "potato" && r.n === 1 && r.at <= 10000 && r.rec === 0),
+      rows
+        .map((r) => `${r.fps} fps → ${r.tier} at ${(r.at / 1000).toFixed(1)} s in ${r.n} change(s), revocations available ${r.rec}`)
+        .join("; ")
     );
   }
 }
@@ -522,9 +687,13 @@ if (ONLY.includes("B")) {
     );
     const t = TIERS[got[0].r.tier];
     const h = TIERS.high;
+    // The shipped surfaces only. `Lighting.js` clamps every tier's cascades into 1024-2048² x≤2, so
+    // quoting the tier table's shadow numbers here would be quoting a rig no machine builds; the
+    // real shadow movement is this module's own ratio ladder and C3 measures it (2048² → 512²).
     note(
-      `round 1 gave these machines ${h.shadowResolution}² x${h.shadowCascades} shadows, dpr ${h.maxPixelRatio}, ${h.postStack.length}-pass post; ` +
-        `round 2 gives ${t.shadowResolution}² x${t.shadowCascades}, dpr ${t.maxPixelRatio}, ${t.postStack.length}-pass`
+      `what the default is worth per frame: dpr ${h.maxPixelRatio} (${(h.maxPixelRatio ** 2).toFixed(2)}x screen pixels) and ` +
+        `${h.postStack.length}-pass post → dpr ${t.maxPixelRatio} (${(t.maxPixelRatio ** 2).toFixed(2)}x) and ${t.postStack.length}-pass, ` +
+        `i.e. ${(100 * (1 - t.maxPixelRatio ** 2 / h.maxPixelRatio ** 2)).toFixed(0)} % fewer pixels shaded before post`
     );
   }
 
@@ -688,6 +857,61 @@ if (ONLY.includes("D")) {
       `enabled ${enabledBefore} → ${at.enabled} at frame ${at.standDown?.atFrame}; auto changes ${at.history.length} across ${probe.frames} frames; ` +
         `config.tier "${config.tier.id}"; pixelRatio ${bootPixelRatio} → ${k.pixelRatio}; reason "${at.reason}". ` +
         `Round 1 on this exact stream: 3 changes, high→medium→low→potato, ending at "potato" while the player had asked for "low".`
+    );
+    config.reset();
+  }
+
+  /**
+   * D3 — the boot storm, through the *whole* module: heuristic → corroboration → policy → renderer.
+   *
+   * A18 proves the policy revokes; this proves the revocation is not an entry in a JavaScript array.
+   * The drawing buffer really shrinks and really comes back, and the module reports which of the two
+   * hardware stories it believed. Same storm on a Chromebook string is D3's control: corroborated,
+   * so it leaps and stays down, and nothing about "it later held vsync" is allowed to undo it.
+   */
+  {
+    const storm = (rendererString, maxTex) => {
+      config.reset();
+      const k = stubKernel(rendererString, maxTex);
+      const at = new AutoTier(k);
+      const boot = { tier: config.tier.id, pixelRatio: k.pixelRatio };
+      // ~4.8 s of a classroom access point finishing thirty downloads. `AutoTier.frame()` scores the
+      // *interval* between calls, so it needs one more frame than the policy needs samples.
+      driveFrames(at, 40, 120);
+      const stormed = { tier: config.tier.id, pixelRatio: k.pixelRatio };
+      driveFrames(at, 4000, 16.6); // …and then the machine is exactly what it always was
+      return {
+        at,
+        boot,
+        stormed,
+        settled: { tier: config.tier.id, pixelRatio: k.pixelRatio },
+        auto: at.history.filter((c) => c.direction !== "heuristic"),
+      };
+    };
+
+    const desktop = storm("ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Direct3D11 vs_5_0 ps_5_0, D3D11)", 16384);
+    const chromebook = storm("ANGLE (Intel, Intel(R) UHD Graphics 600 Direct3D11 vs_5_0 ps_5_0, D3D11)", 8192);
+
+    claim(
+      "D3",
+      "a boot storm is revoked in the real renderer when nothing corroborates it, and kept when something does",
+      desktop.at.corroborated === false &&
+        desktop.auto.length === 2 &&
+        desktop.auto[1].direction === "recover" &&
+        desktop.auto[1].applied === true &&
+        desktop.stormed.pixelRatio < desktop.boot.pixelRatio &&
+        desktop.settled.pixelRatio === desktop.boot.pixelRatio &&
+        desktop.settled.tier === "high" &&
+        chromebook.at.corroborated === true &&
+        chromebook.auto.length === 1 &&
+        chromebook.auto[0].rungs > 1 &&
+        chromebook.settled.tier === "potato" &&
+        chromebook.at.policy.budget().recoveriesLeft === 0,
+      `RTX 4070 (uncorroborated): tier ${desktop.boot.tier} → ${desktop.stormed.tier} → ${desktop.settled.tier}, ` +
+        `pixelRatio ${desktop.boot.pixelRatio} → ${desktop.stormed.pixelRatio} → ${desktop.settled.pixelRatio}, ` +
+        `changes ${desktop.auto.map((c) => `${c.from}→${c.to}(${c.direction},applied=${c.applied})`).join(", ")}. ` +
+        `UHD 600 Chromebook (corroborated by "${chromebook.at.heuristic.caps.length}" caps): ${chromebook.boot.tier} → ${chromebook.settled.tier} ` +
+        `in ${chromebook.auto.length} change of ${chromebook.auto[0]?.rungs} rungs, pixelRatio ${chromebook.boot.pixelRatio} → ${chromebook.settled.pixelRatio}, revocations available ${chromebook.at.policy.budget().recoveriesLeft}`
     );
     config.reset();
   }

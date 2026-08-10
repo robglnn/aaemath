@@ -1,0 +1,40 @@
+(node:40136) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+ "drove": {
+  "items": 600,
+  "sessions": 19
+ },
+ "frontierAtBoot": [
+  "var-meaning",
+  "oo-numeric"
+ ],
+ "lessonAtBoot": "expressions-1",
+ "frontierAfterDrive": [
+  "var-meaning",
+  "oo-numeric"
+ ],
+ "lessonAfterDrive": "expressions-1",
+ "groupChunksBefore": [
+  "var-meaning-Ct12kn0-.js",
+  "oo-numeric-BjsVHueV.js",
+  "expr-anatomy-WYJhDm_0.js",
+  "oo-structure-Bges-2rk.js"
+ ],
+ "groupChunksPulledAfterFrontierMoved": [],
+ "probeWarm": {
+  "at": 1786388109229,
+  "kpId": "var-meaning",
+  "lesson": "expressions-1",
+  "groups": 3,
+  "failed": [],
+  "ms": 8.8,
+  "reason": "ok"
+ },
+ "residentGroups": [
+  "expr-anatomy",
+  "oo-numeric",
+  "var-meaning",
+  "oo-structure"
+ ]
+}

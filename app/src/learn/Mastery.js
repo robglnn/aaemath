@@ -980,6 +980,59 @@ export class Mastery {
      * The only caller is `review/measure/P32.mjs`'s control arm. See `UNREPORTED_FAMILY`.
      */
     this.priceUnreportedFamilies = opts.priceUnreportedFamilies === true;
+    /**
+     * ------------------------------------------------------------------------------------------
+     * THE DELIVERY DECLARATION. Round 2's headline defect was not that the engine priced an
+     * unreported family wrongly — it priced it exactly right and refused it. The defect was that
+     * NOTHING ON THE SHIPPED PATH REPORTED ONE, so 24 of 96 cells were silently unscored forever
+     * and the curriculum deadlocked on its first node while `stats.unreportedFamilyItems` counted
+     * up and nobody read it.
+     *
+     * So the delivery is no longer an assumption stated in a comment. It is a declared, inspectable
+     * fact with a default of "assume nothing":
+     *
+     *   false (default) — no one has promised to report `family`. Every question the engine is
+     *                     asked about what to SERVE is then answered with `UNREPORTED_FAMILY`, the
+     *                     same value `respond()` will substitute when the answer arrives. Selector
+     *                     and scorer therefore agree by construction, and a form whose response
+     *                     would be refused is never offered.
+     *   true            — the picker reports the family on every response.
+     *                     `Scheduler.attachBank()` sets this, because a Scheduler holding the bank
+     *                     draws every item through `serve()` itself and cannot forget.
+     *
+     * `declareFamilyReporting()` is the only way to change it, it re-derives every plan that
+     * depends on it, and it refuses to run once responses have been scored — a mid-run change
+     * would silently re-price evidence already on the books.
+     * ------------------------------------------------------------------------------------------
+     */
+    this.familyReporting = opts.familyReporting === true;
+    /**
+     * Has anyone actually SAID which it is? Distinct from the value, because the value has to have
+     * a safe default (restrictive) from the first line of the constructor while the answer is
+     * genuinely not known yet — `Scheduler` is constructed after `Mastery` and the bank after that.
+     * Nothing conditional on the delivery is REPORTED until it is declared, so a warning channel
+     * can never carry a line that a later boot module has already made false.
+     */
+    this.familyReportingDeclared = opts.familyReporting !== undefined;
+    this.familyReportingSource = this.familyReportingDeclared
+      ? (opts.familyReportingSource ?? (opts.familyReporting === true ? "declared-at-construction" : "declared-none"))
+      : "undeclared";
+    /**
+     * Make an unreported family FATAL rather than merely loud. Off in the shipped game — a thrown
+     * error inside a response handler would take the session down, and the shipped path cannot
+     * produce one anyway now that the Scheduler serves. `review/measure/P32.mjs` turns it on to
+     * prove that a silent unscored run is impossible rather than merely unobserved.
+     */
+    this.strictFamilyReport = opts.strictFamilyReport === true;
+    /** Called with `(detail, message)` the FIRST time each (kp x form) is refused for this. */
+    this.onDeliveryDefect = opts.onDeliveryDefect ?? null;
+    /**
+     * Called with every issue raised AFTER construction — a delivery declaration, an off-cone
+     * `exercises` tag, a refused response. `boot/62-learning.js` warns the constructor's issues
+     * once and then stops listening; without this hook everything the engine learns later is
+     * written to an array nobody re-reads, which is the shape of the defect this round closes.
+     */
+    this.onIssue = opts.onIssue ?? null;
     this._storage = opts.storage === undefined ? safeStorage() : opts.storage;
 
     /** Non-fatal content problems found at load. Surfaced in the probe so they cannot hide. */
@@ -989,6 +1042,12 @@ export class Mastery {
     /** Third pricing axis: what the SHIPPED bank actually gives away, per (kp x form). */
     this.bankAudit = opts.bankAudit ?? null;
     this.cellPricing = deriveCellPricing(this.graph, this.M, this.pricing, this.bankAudit, this.issues);
+    /**
+     * Everything above is a fact about the CONTENT and never changes. Everything `_deriveDelivery()`
+     * appends is a fact about the content AND the delivery, and is re-derived when the delivery is
+     * declared. The split is what lets `declareFamilyReporting` re-run without duplicating a line.
+     */
+    this._staticIssues = this.issues.length;
 
     this.theta = this.M.ability.theta0;
     this.responses = 0;
@@ -1010,6 +1069,14 @@ export class Mastery {
        * `price.avoidFamilies` or without reporting `family` on `submit`. See `UNREPORTED_FAMILY`.
        */
       unreportedFamilyItems: 0,
+      /**
+       * Seeds a caller declared in `exercises` that are NOT on this knowledge point's ancestor
+       * cone, and were therefore dropped instead of paid. Round 2 read `r.exercises` verbatim at
+       * distance 1, so `exercises: ["eq-two-step"]` submitted on `var-meaning` — a DESCENDANT —
+       * lifted `eq-two-step` to the propagation ceiling. Nothing in `app/` sets `exercises` today,
+       * which is exactly why it had to be enforced rather than assumed. See `propagate()`.
+       */
+      offConeSeeds: 0,
       refusedUpward: 0,
       prerequisiteCredits: 0,
       /** Propagated updates by graph distance, so a reviewer can see how far inference reached. */
@@ -1053,14 +1120,161 @@ export class Mastery {
      * happens to reach it.
      */
     this.testOutPlans = new Map();
-    for (const id of this.graph.ids) this.testOutPlans.set(id, this._deriveTestOutPlan(id));
-    const noProbe = this.graph.ids.filter((id) => !this.testOutPlans.get(id).eligible);
-    for (const id of noProbe)
-      this.issues.push(
-        `TEST-OUT: "${id}" is NOT eligible for a test-out — ${this.testOutPlans.get(id).reason}. A learner ` +
-          `who already knows it must walk the full teaching sequence. The fix is content: more distinct ` +
-          `answers in that node's committed pools, never a looser maxBlindPass.`
+    /**
+     * Cells whose response the engine has actually refused for a missing family report, first
+     * occurrence kept. `probe().delivery.defects` publishes it, so a run like round 2's — 1961
+     * unscored items and a deadlocked curriculum — is one probe read away instead of invisible.
+     */
+    this.deliveryDefects = new Map();
+    this._deriveDelivery();
+  }
+
+  // ------------------------------------------------------------------ delivery
+
+  /** `null` when the picker reports the family; the sentinel `respond()` will use when it does not. */
+  deliveryFamily() {
+    return this.familyReporting ? null : UNREPORTED_FAMILY;
+  }
+
+  /**
+   * The mastery-eligible forms this node has THAT THIS DELIVERY CAN ACTUALLY EARN.
+   *
+   * This is the single question the selector and the scorer both have to ask, and asking it two
+   * different ways is precisely round 2's deadlock: `Scheduler._scorableForms` asked
+   * `isScorable(kp, form, "solo", null)` — a permissive question about the CELL — while `respond`
+   * answered with `UNREPORTED_FAMILY`, a restrictive question about the ITEM. The selector served
+   * `var-meaning|construct` 228 times and the scorer refused all 228.
+   */
+  deliverableMasteryForms(kpId) {
+    return this.masteryFormsFor(kpId, this.deliveryFamily());
+  }
+
+  /**
+   * Declare whether the picker reports `family` on every response, and re-derive everything that
+   * depends on it. Refused once evidence exists: re-pricing scored responses after the fact is a
+   * quieter version of the clamping the identifiability caps forbid.
+   *
+   * @returns {boolean} what the flag now is
+   */
+  declareFamilyReporting(reported, source = "unknown") {
+    const next = reported === true;
+    if (next === this.familyReporting && this.familyReportingDeclared) {
+      this.familyReportingSource = source;
+      return this.familyReporting;
+    }
+    if (this.stats.items > 0) {
+      this._pushIssue(
+        `DELIVERY: refused to change familyReporting to ${next} from "${source}" after ${this.stats.items} ` +
+          `response(s) had already been priced. Declare the delivery before the first item, not during the run.`
       );
+      return this.familyReporting;
+    }
+    this.familyReporting = next;
+    this.familyReportingDeclared = true;
+    this.familyReportingSource = source;
+    this._deriveDelivery();
+    return this.familyReporting;
+  }
+
+  /**
+   * Raise an issue and tell whoever is listening. Issues raised inside the constructor are read by
+   * `boot/62-learning.js`'s loop; everything after it needs a live channel or it is written to an
+   * array nobody re-reads. `_deriveDelivery` truncates back to `_staticIssues`, so it only ever
+   * re-pushes lines it computed itself.
+   */
+  _pushIssue(message) {
+    this.issues.push(message);
+    if (this.onIssue) this.onIssue(message);
+    return message;
+  }
+
+  /**
+   * Derive, from the content AND the declared delivery: every test-out plan, the probe family
+   * risk, the content deficits, and the issue lines for all three. Idempotent — it truncates the
+   * issue list back to the static (content-only) prefix first, so declaring the delivery twice
+   * does not print anything twice.
+   */
+  _deriveDelivery() {
+    this.issues.length = this._staticIssues;
+    this.testOutPlans.clear();
+    for (const id of this.graph.ids) this.testOutPlans.set(id, this._deriveTestOutPlan(id));
+    /**
+     * Report the delivery-CONDITIONAL lines only once the delivery has been declared. Before that
+     * the engine behaves restrictively (safe) but says nothing about it, because the honest answer
+     * to "is the family reported" is not yet known — `boot/62-learning.js` constructs the engine,
+     * `boot/63-learnserve.js` attaches the bank one module later, and a warning raised in between
+     * would be a line the reviewer's own log contradicts three lines further down. Facts about the
+     * CONTENT are unconditional and are reported either way.
+     */
+    const sayIfDeclared = this.familyReportingDeclared ? (m) => this._pushIssue(m) : () => {};
+
+    /**
+     * ------------------------------------------------------------------------------------------
+     * THE CONTENT QUESTION, ANSWERED BY THE ENGINE RATHER THAN LEFT TO A HANDOFF NOTE.
+     *
+     * Two different failures used to collapse into one sentence, and the difference decides who
+     * fixes it:
+     *
+     *   "dead"     — the node has NO mastery-eligible form even when the picker honours the refusal
+     *                list perfectly. Every generator family of every form is above the caps. No
+     *                delivery change rescues it; only new content does. On the shipped bank that is
+     *                `eq-special-cases`, and it has been open since round 3 of P16.
+     *   "delivery" — the node has forms that work, but only if the family is reported. Under an
+     *                unreporting picker it is uncertifiable and looks identical to "dead" from the
+     *                outside. On the shipped bank that is `expr-anatomy`, `eval-signed` and
+     *                `props-operations` — three band-1/2 nodes that were silently uncertifiable and
+     *                of which only `eq-special-cases` was ever named.
+     *
+     * Each deficit carries the refused families, their measured blind rate and the one string that
+     * answers them, because that is the granularity a content fix happens at.
+     * ------------------------------------------------------------------------------------------
+     */
+    this.contentDeficits = [];
+    for (const id of this.graph.ids) {
+      const best = this.masteryFormsFor(id, null);
+      const now = this.deliverableMasteryForms(id);
+      if (best.length && now.length) continue;
+      const kind = best.length === 0 ? "dead" : "delivery";
+      const refused = [];
+      for (const form of this.pricing.masteryForms) {
+        const cell = this.cell(id, form);
+        if (!cell) continue;
+        for (const [family, rec] of Object.entries(cell.families ?? {}))
+          if (!rec.priceable)
+            refused.push({ form, family, blind: rec.blind, n: rec.n, modalAnswer: rec.modalAnswer, reason: rec.reason });
+      }
+      const deficit = { kpId: id, kind, band: this.graph.difficulty(id), bestCaseForms: best, deliverableForms: now, refused };
+      this.contentDeficits.push(deficit);
+      if (kind === "dead")
+        this._pushIssue(
+          `CONTENT: "${id}" (band ${deficit.band}) has NO mastery-eligible form on ANY delivery — every generator ` +
+            `family of every scored form is above the caps [${refused
+              .map((x) => `${x.form}:${x.family}@${x.blind} answers "${x.modalAnswer}"`)
+              .join(", ")}]. It can never be certified and it has no test-out. The fix is a new low-guess ` +
+            `construct/repair pool with more distinct answers, never a looser threshold.`
+        );
+      else
+        sayIfDeclared(
+          `DELIVERY: "${id}" (band ${deficit.band}) is certifiable on [${best.join(",")}] only when the picker ` +
+            `REPORTS the generator family it served. This delivery ("${this.familyReportingSource}") does not, so the ` +
+            `node has 0 earnable forms and the scheduler will not spend session time on it. Attach the bank to the ` +
+            `Scheduler (Scheduler.attachBank) so every item is drawn through serve().`
+        );
+    }
+
+    const noProbe = this.graph.ids.filter((id) => !this.testOutPlans.get(id).eligible);
+    for (const id of noProbe) {
+      // Ineligible because of the CONTENT, or ineligible because of this delivery? The first is a
+      // permanent fact and is always reported; the second is conditional and waits for a
+      // declaration, for the same reason the deficits above do.
+      const permanent = this.masteryFormsFor(id, null).length === 0 || this.familyReporting;
+      const line =
+        `TEST-OUT: "${id}" is NOT eligible for a test-out — ${this.testOutPlans.get(id).reason}. A learner ` +
+        `who already knows it must walk the full teaching sequence. The fix is content: more distinct ` +
+        `answers in that node's committed pools, never a looser maxBlindPass.`;
+      if (permanent) this._pushIssue(line);
+      else sayIfDeclared(line);
+    }
 
     /**
      * ------------------------------------------------------------------------------------------
@@ -1077,6 +1291,12 @@ export class Mastery {
      * unreported family on a filtered cell is refused rather than credited, which converts the free
      * pass into a REFUSAL. But a refusal is not free either — it fails the probe of a learner who
      * answered correctly — so this is a delivery bug either way and it is named as one.
+     *
+     * ROUND 3: the conditional is now DISCHARGEABLE rather than only announced. When the delivery
+     * declares that it reports the family — which `Scheduler.attachBank()` does, because such a
+     * Scheduler draws every item through `serve()` and `serve()` filters `avoidFamilies` — the risk
+     * record is kept (a reviewer must still be able to see the size of what is being relied on) and
+     * marked `closed`, and no warning is raised. When it does not, the warning stands.
      * ------------------------------------------------------------------------------------------
      */
     this.probeFamilyRisk = [];
@@ -1102,9 +1322,13 @@ export class Mastery {
         unfilteredBlindPass: round6(mixture),
         worstCaseBlindPass: round6(worst),
         overBoundBy: round6(mixture / this.testOutRule.maxBlindPass),
+        /** Discharged by a picker that filters `avoidFamilies` and reports what it served. */
+        closed: this.familyReporting,
+        closedBy: this.familyReporting ? this.familyReportingSource : null,
       };
       this.probeFamilyRisk.push(risk);
-      this.issues.push(
+      if (this.familyReporting) continue;
+      sayIfDeclared(
         `TEST-OUT: "${id}" is probe-eligible on ${forms.length} cell(s) that have ${refusedCount} REFUSED ` +
           `generator famil(ies) [${risk.refusedFamilies.join(", ")}]. Its ${plan.items}-item probe is priced at ` +
           `${plan.blindPass.toExponential(2)} on the SURVIVING families only. If whoever serves the item does not ` +
@@ -1259,8 +1483,10 @@ export class Mastery {
    * this rather than the global `formsEligibleForMastery`, because a node whose `construct` and
    * `repair` pools are both blind-guessable has two forms on paper and one in reality.
    */
-  masteryFormsFor(kpId) {
-    return [...this.pricing.masteryForms].filter((form) => this.isCellPriceable(kpId, form));
+  masteryFormsFor(kpId, family = null) {
+    return [...this.pricing.masteryForms].filter(
+      (form) => this.isCellPriceable(kpId, form) && this.isFamilyPriceable(kpId, form, family)
+    );
   }
 
   /**
@@ -1269,7 +1495,7 @@ export class Mastery {
    * directly rather than by arithmetic on an empty list.
    */
   requiredDistinctForms(kpId) {
-    const have = this.masteryFormsFor(kpId).length;
+    const have = this.deliverableMasteryForms(kpId).length;
     return Math.min(this.M.bkt.minDistinctItemForms, Math.max(1, have));
   }
 
@@ -1345,9 +1571,23 @@ export class Mastery {
    * critics have already caught versions of in this project.
    */
   _deriveTestOutPlan(kpId) {
-    const forms = this.masteryFormsFor(kpId);
+    // The forms this DELIVERY can earn, not the forms the content has. A probe whose third item
+    // lands on a cell the scorer will refuse fails an honest learner on delivery, which is what
+    // round 2 measured: `var-meaning`'s probe died at "item 3 not credited (unreported-family)".
+    const forms = this.deliverableMasteryForms(kpId);
     if (!forms.length)
-      return { kpId, eligible: false, items: 0, forms: [], blindPass: 1, reason: "no mastery-eligible form survives the bank audit" };
+      return {
+        kpId,
+        eligible: false,
+        items: 0,
+        forms: [],
+        blindPass: 1,
+        reason: this.masteryFormsFor(kpId, null).length
+          ? `no mastery-eligible form is earnable under this delivery ("${this.familyReportingSource}") — the picker ` +
+            `does not report which generator family it served, and ${this.masteryFormsFor(kpId, null).join(",")} all ` +
+            `stand on cells with refused families`
+          : "no mastery-eligible form survives the bank audit",
+      };
 
     const R = this.testOutRule;
     // Cheapest first, then declaration order of `forms.order` as a deterministic tie-break.
@@ -1728,7 +1968,12 @@ export class Mastery {
                   Object.keys(this.cell(kpId, form)?.families ?? {}).length
                 }`
               : `unscored-family:${String(family)}:blind-${(this.cell(kpId, form)?.families?.[family]?.blind ?? 1).toFixed(3)}`;
-      if (out.reason.startsWith("unscored-unreported-family")) this.stats.unreportedFamilyItems += 1;
+      if (out.reason.startsWith("unscored-unreported-family")) {
+        this.stats.unreportedFamilyItems += 1;
+        // Loud, at the source, the first time each cell does it. Round 2 incremented the counter
+        // above and nothing read it, so 1961 unscored items looked exactly like a quiet session.
+        this._noteDeliveryDefect(kpId, form, out);
+      }
       if (out.reason.startsWith("unscored-cell") || out.reason.startsWith("unscored-family") || out.reason.startsWith("unscored-unreported"))
         this.stats.unpriceableCellItems += 1;
       this._bookkeep(s, out);
@@ -1805,6 +2050,61 @@ export class Mastery {
   }
 
   /**
+   * ------------------------------------------------------------------------------------------
+   * THE PRECONDITION, ENFORCED AT THE SOURCE INSTEAD OF ASSUMED.
+   *
+   * `requiresFamilyReport(kp, form)` is a hard requirement, not a hint: on a cell with refused
+   * families an unreported family cannot be told apart from a refused one, so the response is not
+   * scored. Round 2 stated that requirement in a doc comment on `Scheduler.submit`, counted the
+   * refusals in `stats.unreportedFamilyItems`, and shipped a path where nothing read either. The
+   * result was a curriculum that deadlocked on its first knowledge point in total silence.
+   *
+   * So the refusal now announces itself, once per (kp x form), through every channel there is:
+   *
+   *   - `this.issues`, which `boot/62-learning.js` already turns into `warn()` lines that
+   *     `tools/review.mjs verify` reads (a CONTENT/DELIVERY warning is a hard gate there);
+   *   - a `learn:session { phase: "defect" }` signal, so a live surface can say it out loud;
+   *   - `onDeliveryDefect`, the direct hook a boot module subscribes to;
+   *   - `probe().delivery.defects`, so it is readable from outside the page without a listener;
+   *   - and, when `strictFamilyReport` is on, a THROW. `review/measure/P32.mjs` runs with it on:
+   *     a harness that cannot make the defect fatal cannot prove the defect is gone.
+   *
+   * The shipped path can no longer produce one at all — `Scheduler.attachBank()` draws every item
+   * through `serve()`, and a Scheduler with no bank refuses to OFFER the cell in the first place.
+   * This is the belt for that pair of braces.
+   * ------------------------------------------------------------------------------------------
+   */
+  _noteDeliveryDefect(kpId, form, out) {
+    const key = `${kpId}|${form}`;
+    const seen = this.deliveryDefects.get(key);
+    if (seen) {
+      seen.items += 1;
+      return;
+    }
+    const cell = this.cell(kpId, form);
+    const detail = {
+      kpId,
+      form,
+      items: 1,
+      firstItemId: out?.itemId ?? null,
+      refusedFamilies: [...(cell?.refusedFamilies ?? [])],
+      familiesInCell: Object.keys(cell?.families ?? {}).length,
+      atResponse: this.stats.items,
+    };
+    this.deliveryDefects.set(key, detail);
+    const message =
+      `DELIVERY: a response on "${kpId}|${form}" arrived with NO generator family reported, on a cell that ` +
+      `refuses ${detail.refusedFamilies.length} of ${detail.familiesInCell} families ` +
+      `[${detail.refusedFamilies.join(", ")}]. The engine cannot tell it apart from a refused one, so it is ` +
+      `UNSCORED — and a run of these is how a knowledge point silently stops being masterable. Draw the item ` +
+      `through Scheduler.serve() (Scheduler.attachBank(bank) does it for you) or report outcome.family on submit.`;
+    this._pushIssue(message);
+    this.emit("learn:session", { phase: "defect", summary: { kind: "unreported-family", ...detail, message } });
+    if (this.onDeliveryDefect) this.onDeliveryDefect(detail, message);
+    if (this.strictFamilyReport) throw new Error(message);
+  }
+
+  /**
    * PREREQUISITE CREDIT PROPAGATION. Evidence flows **backwards** along the prerequisite DAG and
    * only backwards, at `w(d) = prerequisiteCreditWeight ** d`, capped by `ceiling`. The argument
    * for every one of those words is at `PROPAGATION`, above.
@@ -1832,11 +2132,42 @@ export class Mastery {
     const sourceTrue = this.trueGuess(kpId, out.form, out.phase, r.family ?? UNREPORTED_FAMILY);
     const paid = [];
 
-    // Distance 1 is the shipped §1.2 rule, unchanged: whatever the item says it exercised, or the
-    // A3 stand-in until P17 tags items. Deeper distances are reached FROM those seeds, so a caller
-    // that declares a narrow `exercises` list narrows the whole cone rather than only its first ring.
-    const seeds = this._exercised(r, node).filter((pid) => pid !== kpId && this.graph.has(pid));
-    const distance = new Map(seeds.map((pid) => [pid, 1]));
+    /**
+     * ------------------------------------------------------------------------------------------
+     * SEEDS ARE FILTERED THROUGH THE ANCESTOR CONE, AND PRICED AT THEIR REAL GRAPH DISTANCE.
+     *
+     * Round 2 read `_exercised(r, node)` verbatim and stamped every entry at distance 1. Two things
+     * were wrong with that and both were caller-data bugs waiting to happen:
+     *
+     *   DIRECTION. `exercises: ["eq-two-step"]` submitted on `var-meaning` — a DESCENDANT, not a
+     *   prerequisite — lifted `eq-two-step` from 0.180 straight to the 0.900 ceiling, and declaring
+     *   all 31 other nodes lifted all 31 and manufactured 30 test-out offers. The class comment
+     *   above says "ancestors only, always, by construction"; it was true of the distance >= 2 walk
+     *   and false of the seeds. It is true of both now: a declared node that is not in
+     *   `graph.ancestorDistances(kpId)` is DROPPED and counted in `stats.offConeSeeds`.
+     *
+     *   DISTANCE. A declared ancestor three edges out was paid `w(1) = 0.5`, which breaks the path
+     *   consistency that chose the geometric discount in the first place. Weight is now a function
+     *   of graph distance for every seed, so `w(d1+d2) = w(d1)·w(d2)` holds for declared credit too.
+     *
+     * Neither change touches the shipped behaviour: `_exercised`'s A3 stand-in returns
+     * `node.prerequisites`, every one of which is on the cone at distance exactly 1.
+     * ------------------------------------------------------------------------------------------
+     */
+    const cone = this.graph.ancestorDistances(kpId);
+    const declared = this._exercised(r, node).filter((pid) => pid !== kpId && this.graph.has(pid));
+    const seeds = [];
+    const distance = new Map();
+    for (const pid of declared) {
+      const d = cone.get(pid);
+      if (d == null) {
+        this.stats.offConeSeeds += 1;
+        this._noteOffConeSeed(kpId, pid);
+        continue;
+      }
+      seeds.push(pid);
+      if (!distance.has(pid) || d < distance.get(pid)) distance.set(pid, d);
+    }
     if (R.maxDistance > 1) {
       // ------------------------------------------------------------------------------------------
       // THE ONE PLACE THIS FUNCTION COULD LEAK, AND WHY IT DOES NOT
@@ -1916,6 +2247,25 @@ export class Mastery {
       });
     }
     return paid;
+  }
+
+  /**
+   * A caller declared an `exercises` entry that is not a prerequisite of the item's own knowledge
+   * point. Named once per (kp -> claimed) pair: it is a content-tagging bug in whoever built the
+   * item, and silently dropping it would be the same species of quiet as round 2's.
+   */
+  _noteOffConeSeed(kpId, claimed) {
+    this._offCone ??= new Set();
+    const key = `${kpId}->${claimed}`;
+    if (this._offCone.has(key)) return;
+    this._offCone.add(key);
+    const backwards = this.graph.ancestorDistances(claimed)?.has(kpId);
+    this._pushIssue(
+      `CONTENT: an item on "${kpId}" declared exercises:["${claimed}"], which is ${
+        backwards ? "a DESCENDANT of" : "not on the prerequisite cone of"
+      } "${kpId}". Prerequisite credit flows to ancestors only, so the claim was dropped rather than paid. ` +
+        `Fix the item's tag; propagation will not launder it.`
+    );
   }
 
   /**
@@ -1999,7 +2349,7 @@ export class Mastery {
     // M3 reads the forms this node HAS, not the forms the content file wishes it had. A node whose
     // whole honest supply is one form can still be mastered on that one form — it cannot be
     // mastered on none, and it is never let through on fewer than it has.
-    const honestForms = this.masteryFormsFor(kpId).length;
+    const honestForms = this.deliverableMasteryForms(kpId).length;
     return {
       m1: s.p >= B.masteryThreshold,
       m2: s.scored >= B.minScoredOpportunities && s.atBand >= B.minAtBandOpportunities,
@@ -2218,6 +2568,38 @@ export class Mastery {
       stats: { ...this.stats },
       scorablePairs: this.pricing.description,
       bankPricing: this.cellPricing.description,
+      /**
+       * ------------------------------------------------------------------------------------------
+       * THE DELIVERY, READABLE FROM OUTSIDE THE PAGE.
+       *
+       * Round 2's headline defect was invisible from every surface a reviewer looks at: the engine
+       * counted 1961 refusals in `stats.unreportedFamilyItems` and nothing published, warned about
+       * or read it. This block is the fix, and it is four numbers a reviewer can check in one
+       * glance: is the family being reported, by whom, how many responses were refused for want of
+       * one, and which cells did it.
+       *
+       * `earnableFormsPerKp` and `uncertifiable` are the consequence of the first line. If the
+       * delivery does not report families, three band-1/2 knowledge points have zero earnable forms
+       * and the scheduler will refuse to spend session time on them — which is the right behaviour
+       * and the wrong situation, so it is stated as a number rather than left to be inferred.
+       * ------------------------------------------------------------------------------------------
+       */
+      delivery: {
+        familyReporting: this.familyReporting,
+        source: this.familyReportingSource,
+        strict: this.strictFamilyReport,
+        unreportedFamilyItems: this.stats.unreportedFamilyItems,
+        defects: [...this.deliveryDefects.values()],
+        offConeSeeds: this.stats.offConeSeeds,
+        cellsRequiringFamilyReport: this.graph.ids.reduce(
+          (a, id) => a + [...this.pricing.masteryForms].filter((f) => this.requiresFamilyReport(id, f)).length,
+          0
+        ),
+        earnableFormsPerKp: Object.fromEntries(this.graph.ids.map((id) => [id, this.deliverableMasteryForms(id)])),
+        uncertifiable: this.graph.ids.filter((id) => this.deliverableMasteryForms(id).length === 0),
+        /** Named at the granularity a fix happens at: "dead" needs content, "delivery" needs wiring. */
+        contentDeficits: this.contentDeficits,
+      },
       // §8's `unscoredItems` exists so a reviewer can see the form gate firing from outside the
       // engine. These two exist for the same reason, one axis further out: a reviewer must be able
       // to read the propagation cap and the test-out eligibility decision without answering an item.

@@ -1,0 +1,400 @@
+{
+ "generated": "2026-08-10T18:36:49.634Z",
+ "distAssets": 118,
+ "clean": {
+  "readyMs": 268,
+  "warmWaitMs": 77,
+  "ready": true,
+  "fatal": null,
+  "consoleErrors": [],
+  "aborted": [],
+  "warnings": [
+   "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+   "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+   "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
+   "learning: TEST-OUT: \"var-meaning\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:var-meaning.seat]. Its 5-item probe is priced at 5.88e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 3.56e-4 at audit-proportion mixing (0.36x of the 0.001 bound; 6.40e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"oo-numeric\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:oo-numeric.divmul]. Its 5-item probe is priced at 2.22e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 2.81e-4 at audit-proportion mixing (0.28x of the 0.001 bound; 8.89e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"expr-anatomy\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [construct:expr-anatomy.count, construct:expr-anatomy.coefficient]. Its 5-item probe is priced at 3.38e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 8.55e-1 at audit-proportion mixing (855x OVER the 0.001 bound; 1.00e+0 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"oo-structure\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [repair:oo-structure.coefsq, repair:oo-structure.juxt]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 8.86e-4 at audit-proportion mixing (0.89x of the 0.001 bound; 1.74e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eval-substitute\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [generate:eval-substitute.twice, generate:eval-substitute.concat]. Its 6-item probe is priced at 2.59e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 9.90e-4 at audit-proportion mixing (0.99x of the 0.001 bound; 3.91e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eval-signed\" is probe-eligible on 2 cell(s) that have 2 REFUSED generator famil(ies) [construct:eval-signed.square, repair:eval-signed.sumneg]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 1.48e-3 at audit-proportion mixing (1.48x OVER the 0.001 bound; 9.26e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"props-operations\" is probe-eligible on 3 cell(s) that have 4 REFUSED generator famil(ies) [construct:props-operations.identity, repair:props-operations.regroup, repair:props-operations.identity, generate:props-operations.identity]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.25e-2 at audit-proportion mixing (42.5x OVER the 0.001 bound; 1.00e+0 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"props-equality\" is probe-eligible on 2 cell(s) that have 2 REFUSED generator famil(ies) [construct:props-equality.zero, repair:props-equality.zero]. Its 5-item probe is priced at 3.19e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.20e-3 at audit-proportion mixing (4.20x OVER the 0.001 bound; 2.04e-2 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eq-model-context\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:eq-model-context.members]. Its 6-item probe is priced at 4.16e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.16e-4 at audit-proportion mixing (0.42x of the 0.001 bound; 7.17e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "math: claim \"leaf9-span\" reads 26.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.17 px, so the mark stands until the player is closer",
+   "math: claim \"leaf9-share\" reads 26.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.17 px, so the mark stands until the player is closer",
+   "math: claim \"leaf9-mark\" reads 3.4 device px per em, under the 33 px legibility floor — its thinnest stroke would be 0.15 px, so the mark stands until the player is closer"
+  ],
+  "warningsAtReady": [
+   "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+   "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+   "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
+   "learning: TEST-OUT: \"var-meaning\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:var-meaning.seat]. Its 5-item probe is priced at 5.88e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 3.56e-4 at audit-proportion mixing (0.36x of the 0.001 bound; 6.40e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"oo-numeric\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:oo-numeric.divmul]. Its 5-item probe is priced at 2.22e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 2.81e-4 at audit-proportion mixing (0.28x of the 0.001 bound; 8.89e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"expr-anatomy\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [construct:expr-anatomy.count, construct:expr-anatomy.coefficient]. Its 5-item probe is priced at 3.38e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 8.55e-1 at audit-proportion mixing (855x OVER the 0.001 bound; 1.00e+0 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"oo-structure\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [repair:oo-structure.coefsq, repair:oo-structure.juxt]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 8.86e-4 at audit-proportion mixing (0.89x of the 0.001 bound; 1.74e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eval-substitute\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [generate:eval-substitute.twice, generate:eval-substitute.concat]. Its 6-item probe is priced at 2.59e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 9.90e-4 at audit-proportion mixing (0.99x of the 0.001 bound; 3.91e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eval-signed\" is probe-eligible on 2 cell(s) that have 2 REFUSED generator famil(ies) [construct:eval-signed.square, repair:eval-signed.sumneg]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 1.48e-3 at audit-proportion mixing (1.48x OVER the 0.001 bound; 9.26e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"props-operations\" is probe-eligible on 3 cell(s) that have 4 REFUSED generator famil(ies) [construct:props-operations.identity, repair:props-operations.regroup, repair:props-operations.identity, generate:props-operations.identity]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.25e-2 at audit-proportion mixing (42.5x OVER the 0.001 bound; 1.00e+0 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"props-equality\" is probe-eligible on 2 cell(s) that have 2 REFUSED generator famil(ies) [construct:props-equality.zero, repair:props-equality.zero]. Its 5-item probe is priced at 3.19e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.20e-3 at audit-proportion mixing (4.20x OVER the 0.001 bound; 2.04e-2 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eq-model-context\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:eq-model-context.members]. Its 6-item probe is priced at 4.16e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.16e-4 at audit-proportion mixing (0.42x of the 0.001 bound; 7.17e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "math: claim \"leaf9-span\" reads 26.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.17 px, so the mark stands until the player is closer",
+   "math: claim \"leaf9-share\" reads 26.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.17 px, so the mark stands until the player is closer"
+  ],
+  "warm": {
+   "at": 1786386998136,
+   "kpId": "var-meaning",
+   "lesson": "expressions-1",
+   "groups": 3,
+   "failed": [],
+   "ms": 8.2,
+   "reason": "ok"
+  },
+  "frontier": [
+   "var-meaning",
+   "oo-numeric"
+  ],
+  "probe": {
+   "knowledgePoints": 32,
+   "items": 144,
+   "catalogueItems": 1152,
+   "generatedThisSession": 0,
+   "locale": "en",
+   "minItemsPerKp": 36,
+   "minItemsPerMisconception": 3,
+   "groups": "4/32 resident, 0 loading",
+   "lessons": 22,
+   "residentGroups": [
+    "oo-numeric",
+    "var-meaning",
+    "expr-anatomy",
+    "oo-structure"
+   ],
+   "degraded": [],
+   "issues": 0,
+   "lastIssue": null,
+   "warm": {
+    "at": 1786386998136,
+    "kpId": "var-meaning",
+    "lesson": "expressions-1",
+    "groups": 3,
+    "failed": [],
+    "ms": 8.2,
+    "reason": "ok"
+   },
+   "itemLocale": "en",
+   "localesResident": [
+    "en"
+   ],
+   "formsPerKp": {
+    "var-meaning": "14/17/5",
+    "oo-numeric": "15/16/5",
+    "expr-anatomy": "16/15/5",
+    "oo-structure": "14/10/12",
+    "eval-substitute": "13/12/11",
+    "eval-signed": "12/13/11",
+    "eval-formula": "13/13/10",
+    "translate-phrase": "13/16/7",
+    "translate-order": "17/14/5",
+    "props-operations": "12/12/12",
+    "like-terms-id": "12/12/12",
+    "like-terms-combine": "12/12/12",
+    "distribute-numeric": "15/14/7",
+    "distribute-variable": "12/12/12",
+    "distribute-negative": "16/13/7",
+    "simplify-expression": "12/13/11",
+    "equivalent-expressions": "11/13/12",
+    "eq-meaning": "12/12/12",
+    "props-equality": "15/14/7",
+    "eq-one-add": "13/16/7",
+    "eq-one-mult": "15/14/7",
+    "eq-two-step": "11/13/12",
+    "eq-combine-side": "10/12/14",
+    "eq-distribute": "12/12/12",
+    "eq-both-sides": "10/14/12",
+    "eq-special-cases": "16/7/13",
+    "translate-sentence": "12/11/13",
+    "eq-model-context": "15/14/7",
+    "ineq-meaning": "14/12/10",
+    "ineq-one-step": "16/13/7",
+    "ineq-negative-flip": "15/14/7",
+    "ineq-two-step": "15/14/7"
+   }
+  },
+  "bankAudit": {
+   "source": "committed",
+   "fingerprintSource": "build-time",
+   "setupMs": 0.1,
+   "fingerprint": "c01e9128",
+   "version": 3,
+   "sampled": 54796,
+   "catalogueShare": 0.3473
+  },
+  "criticalPath": {
+   "requests": 30,
+   "groupChunks": [],
+   "spineChunks": [],
+   "itemLocaleChunks": [
+    "items-en-BvtiMYOY.js"
+   ],
+   "enc": 583846
+  },
+  "warmPulled": {
+   "requests": 3,
+   "groupChunks": [
+    "var-meaning-Ct12kn0-.js",
+    "oo-numeric-BjsVHueV.js",
+    "expr-anatomy-WYJhDm_0.js"
+   ],
+   "spineChunks": [],
+   "itemLocaleChunks": [],
+   "enc": 7895
+  },
+  "idlePrefetched": {
+   "requests": 1,
+   "groupChunks": [
+    "oo-structure-Bges-2rk.js"
+   ],
+   "spineChunks": [],
+   "itemLocaleChunks": [],
+   "enc": 2619
+  },
+  "encodedAtReady": {
+   "js": 446339,
+   "css": 8803,
+   "font": 128704
+  },
+  "chunkIdentity": {
+   "jsAtReady": [
+    "index-soTL0dHU.js",
+    "02-autotier-B2Aaqszb.js",
+    "05-i18n-EVQnPTvM.js",
+    "10-world-BH9CudDC.js",
+    "Materials-DYIbVXkX.js",
+    "12-sky-C0cJnNaH.js",
+    "14-lighting-4zH2HM9w.js",
+    "16-scatter-DUkx-5KE.js",
+    "20-input-CqGxrG1B.js",
+    "30-locomotion-DZUEEoQ-.js",
+    "32-avatar-DuMT-S17.js",
+    "40-camera-CNhQUxwU.js",
+    "52-post-DYlm3RaR.js",
+    "60-mathtex-Do-OJ8RD.js",
+    "62-itembank-R54tyuCR.js",
+    "ItemBank-BxODixIG.js",
+    "62-learning-D-_cSOCZ.js",
+    "90-flow-BHwC0zsM.js",
+    "en-DiJtJ4AS.js",
+    "items-en-BvtiMYOY.js"
+   ],
+   "notInDist": []
+  }
+ },
+ "victim": "oo-numeric-BjsVHueV.js",
+ "broken": {
+  "readyMs": 287,
+  "warmWaitMs": 2693,
+  "ready": true,
+  "fatal": null,
+  "consoleErrors": [
+   "Failed to load resource: net::ERR_FAILED"
+  ],
+  "aborted": [
+   "oo-numeric-BjsVHueV.js"
+  ],
+  "warnings": [
+   "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+   "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+   "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
+   "learning: TEST-OUT: \"var-meaning\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:var-meaning.seat]. Its 5-item probe is priced at 5.88e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 3.56e-4 at audit-proportion mixing (0.36x of the 0.001 bound; 6.40e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"oo-numeric\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:oo-numeric.divmul]. Its 5-item probe is priced at 2.22e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 2.81e-4 at audit-proportion mixing (0.28x of the 0.001 bound; 8.89e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"expr-anatomy\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [construct:expr-anatomy.count, construct:expr-anatomy.coefficient]. Its 5-item probe is priced at 3.38e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 8.55e-1 at audit-proportion mixing (855x OVER the 0.001 bound; 1.00e+0 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"oo-structure\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [repair:oo-structure.coefsq, repair:oo-structure.juxt]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 8.86e-4 at audit-proportion mixing (0.89x of the 0.001 bound; 1.74e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eval-substitute\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [generate:eval-substitute.twice, generate:eval-substitute.concat]. Its 6-item probe is priced at 2.59e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 9.90e-4 at audit-proportion mixing (0.99x of the 0.001 bound; 3.91e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eval-signed\" is probe-eligible on 2 cell(s) that have 2 REFUSED generator famil(ies) [construct:eval-signed.square, repair:eval-signed.sumneg]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 1.48e-3 at audit-proportion mixing (1.48x OVER the 0.001 bound; 9.26e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"props-operations\" is probe-eligible on 3 cell(s) that have 4 REFUSED generator famil(ies) [construct:props-operations.identity, repair:props-operations.regroup, repair:props-operations.identity, generate:props-operations.identity]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.25e-2 at audit-proportion mixing (42.5x OVER the 0.001 bound; 1.00e+0 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"props-equality\" is probe-eligible on 2 cell(s) that have 2 REFUSED generator famil(ies) [construct:props-equality.zero, repair:props-equality.zero]. Its 5-item probe is priced at 3.19e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.20e-3 at audit-proportion mixing (4.20x OVER the 0.001 bound; 2.04e-2 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eq-model-context\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:eq-model-context.members]. Its 6-item probe is priced at 4.16e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.16e-4 at audit-proportion mixing (0.42x of the 0.001 bound; 7.17e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "math: claim \"leaf9-span\" reads 26.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.17 px, so the mark stands until the player is closer",
+   "math: claim \"leaf9-share\" reads 26.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.17 px, so the mark stands until the player is closer",
+   "math: claim \"leaf9-mark\" reads 3.4 device px per em, under the 33 px legibility floor — its thinnest stroke would be 0.15 px, so the mark stands until the player is closer",
+   "itembank: group-load-failed on \"oo-numeric\" — Failed to fetch dynamically imported module: http://127.0.0.1:49264/assets/oo-numeric-BjsVHueV.js"
+  ],
+  "warningsAtReady": [
+   "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+   "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+   "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
+   "learning: TEST-OUT: \"var-meaning\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:var-meaning.seat]. Its 5-item probe is priced at 5.88e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 3.56e-4 at audit-proportion mixing (0.36x of the 0.001 bound; 6.40e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"oo-numeric\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:oo-numeric.divmul]. Its 5-item probe is priced at 2.22e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 2.81e-4 at audit-proportion mixing (0.28x of the 0.001 bound; 8.89e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"expr-anatomy\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [construct:expr-anatomy.count, construct:expr-anatomy.coefficient]. Its 5-item probe is priced at 3.38e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 8.55e-1 at audit-proportion mixing (855x OVER the 0.001 bound; 1.00e+0 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"oo-structure\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [repair:oo-structure.coefsq, repair:oo-structure.juxt]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 8.86e-4 at audit-proportion mixing (0.89x of the 0.001 bound; 1.74e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eval-substitute\" is probe-eligible on 1 cell(s) that have 2 REFUSED generator famil(ies) [generate:eval-substitute.twice, generate:eval-substitute.concat]. Its 6-item probe is priced at 2.59e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 9.90e-4 at audit-proportion mixing (0.99x of the 0.001 bound; 3.91e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eval-signed\" is probe-eligible on 2 cell(s) that have 2 REFUSED generator famil(ies) [construct:eval-signed.square, repair:eval-signed.sumneg]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 1.48e-3 at audit-proportion mixing (1.48x OVER the 0.001 bound; 9.26e-3 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"props-operations\" is probe-eligible on 3 cell(s) that have 4 REFUSED generator famil(ies) [construct:props-operations.identity, repair:props-operations.regroup, repair:props-operations.identity, generate:props-operations.identity]. Its 5-item probe is priced at 9.77e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.25e-2 at audit-proportion mixing (42.5x OVER the 0.001 bound; 1.00e+0 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"props-equality\" is probe-eligible on 2 cell(s) that have 2 REFUSED generator famil(ies) [construct:props-equality.zero, repair:props-equality.zero]. Its 5-item probe is priced at 3.19e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.20e-3 at audit-proportion mixing (4.20x OVER the 0.001 bound; 2.04e-2 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "learning: TEST-OUT: \"eq-model-context\" is probe-eligible on 1 cell(s) that have 1 REFUSED generator famil(ies) [construct:eq-model-context.members]. Its 6-item probe is priced at 4.16e-4 on the SURVIVING families only. If whoever serves the item does not honour price.avoidFamilies, a blind responder passes it with probability 4.16e-4 at audit-proportion mixing (0.42x of the 0.001 bound; 7.17e-4 if handed the softest family every time). The engine refuses to score an item whose family is unreported on these cells, so the leak lands as a REFUSAL and not as a free pass — which also means an honest learner served a refused item FAILS a probe they should have passed. Use Scheduler.serve(), which honours the list and reports the family.",
+   "math: claim \"leaf9-span\" reads 26.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.17 px, so the mark stands until the player is closer",
+   "math: claim \"leaf9-share\" reads 26.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.17 px, so the mark stands until the player is closer"
+  ],
+  "warm": {
+   "at": 1786387002831,
+   "kpId": "var-meaning",
+   "lesson": "expressions-1",
+   "groups": 2,
+   "failed": [
+    "oo-numeric"
+   ],
+   "ms": 2598.8,
+   "reason": "partial"
+  },
+  "frontier": [
+   "var-meaning",
+   "oo-numeric"
+  ],
+  "probe": {
+   "knowledgePoints": 32,
+   "items": 108,
+   "catalogueItems": 1152,
+   "generatedThisSession": 0,
+   "locale": "en",
+   "minItemsPerKp": 36,
+   "minItemsPerMisconception": 3,
+   "groups": "3/32 resident, 0 loading",
+   "lessons": 22,
+   "residentGroups": [
+    "var-meaning",
+    "expr-anatomy",
+    "oo-structure"
+   ],
+   "degraded": [
+    "oo-numeric: Failed to fetch dynamically imported module: http://127.0.0.1:49264/assets/oo-numeric-BjsVHueV.js (3 attempts, retry in 29s)"
+   ],
+   "issues": 1,
+   "lastIssue": {
+    "kind": "group-load-failed",
+    "kpId": "oo-numeric",
+    "lesson": "expressions-1",
+    "error": "Failed to fetch dynamically imported module: http://127.0.0.1:49264/assets/oo-numeric-BjsVHueV.js",
+    "attempts": 3,
+    "retryAfterMs": 30000
+   },
+   "warm": {
+    "at": 1786387002831,
+    "kpId": "var-meaning",
+    "lesson": "expressions-1",
+    "groups": 2,
+    "failed": [
+     "oo-numeric"
+    ],
+    "ms": 2598.8,
+    "reason": "partial"
+   },
+   "itemLocale": "en",
+   "localesResident": [
+    "en"
+   ],
+   "formsPerKp": {
+    "var-meaning": "14/17/5",
+    "oo-numeric": "15/16/5",
+    "expr-anatomy": "16/15/5",
+    "oo-structure": "14/10/12",
+    "eval-substitute": "13/12/11",
+    "eval-signed": "12/13/11",
+    "eval-formula": "13/13/10",
+    "translate-phrase": "13/16/7",
+    "translate-order": "17/14/5",
+    "props-operations": "12/12/12",
+    "like-terms-id": "12/12/12",
+    "like-terms-combine": "12/12/12",
+    "distribute-numeric": "15/14/7",
+    "distribute-variable": "12/12/12",
+    "distribute-negative": "16/13/7",
+    "simplify-expression": "12/13/11",
+    "equivalent-expressions": "11/13/12",
+    "eq-meaning": "12/12/12",
+    "props-equality": "15/14/7",
+    "eq-one-add": "13/16/7",
+    "eq-one-mult": "15/14/7",
+    "eq-two-step": "11/13/12",
+    "eq-combine-side": "10/12/14",
+    "eq-distribute": "12/12/12",
+    "eq-both-sides": "10/14/12",
+    "eq-special-cases": "16/7/13",
+    "translate-sentence": "12/11/13",
+    "eq-model-context": "15/14/7",
+    "ineq-meaning": "14/12/10",
+    "ineq-one-step": "16/13/7",
+    "ineq-negative-flip": "15/14/7",
+    "ineq-two-step": "15/14/7"
+   }
+  },
+  "bankAudit": {
+   "source": "committed",
+   "fingerprintSource": "build-time",
+   "setupMs": 0.1,
+   "fingerprint": "c01e9128",
+   "version": 3,
+   "sampled": 54796,
+   "catalogueShare": 0.3473
+  },
+  "criticalPath": {
+   "requests": 30,
+   "groupChunks": [],
+   "spineChunks": [],
+   "itemLocaleChunks": [
+    "items-en-BvtiMYOY.js"
+   ],
+   "enc": 583846
+  },
+  "warmPulled": {
+   "requests": 3,
+   "groupChunks": [
+    "oo-numeric-BjsVHueV.js",
+    "var-meaning-Ct12kn0-.js",
+    "expr-anatomy-WYJhDm_0.js"
+   ],
+   "spineChunks": [],
+   "itemLocaleChunks": [],
+   "enc": 5073
+  },
+  "idlePrefetched": {
+   "requests": 1,
+   "groupChunks": [
+    "oo-structure-Bges-2rk.js"
+   ],
+   "spineChunks": [],
+   "itemLocaleChunks": [],
+   "enc": 2619
+  },
+  "encodedAtReady": {
+   "js": 446339,
+   "css": 8803,
+   "font": 128704
+  },
+  "chunkIdentity": {
+   "jsAtReady": [
+    "index-soTL0dHU.js",
+    "02-autotier-B2Aaqszb.js",
+    "05-i18n-EVQnPTvM.js",
+    "10-world-BH9CudDC.js",
+    "Materials-DYIbVXkX.js",
+    "12-sky-C0cJnNaH.js",
+    "14-lighting-4zH2HM9w.js",
+    "16-scatter-DUkx-5KE.js",
+    "20-input-CqGxrG1B.js",
+    "30-locomotion-DZUEEoQ-.js",
+    "32-avatar-DuMT-S17.js",
+    "40-camera-CNhQUxwU.js",
+    "52-post-DYlm3RaR.js",
+    "60-mathtex-Do-OJ8RD.js",
+    "62-itembank-R54tyuCR.js",
+    "ItemBank-BxODixIG.js",
+    "62-learning-D-_cSOCZ.js",
+    "90-flow-BHwC0zsM.js",
+    "en-DiJtJ4AS.js",
+    "items-en-BvtiMYOY.js"
+   ],
+   "notInDist": []
+  }
+ }
+}

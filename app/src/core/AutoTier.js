@@ -47,12 +47,60 @@ import { publish } from "./Introspect.js";
  *  * Relief is urgent; promotion never is. The *first* decision window is deliberately small
  *    (30 warm-up / 45 scored frames, and smaller still in wall-clock terms on a slow machine), and
  *    the first down-step may **leap more than one rung** when the median is catastrophically over
- *    budget. A promotion, by contrast, always waits for the full steady-state window.
+ *    budget *and the hardware corroborates it*. A promotion, by contrast, always waits for the full
+ *    steady-state window.
  *
  * The price of the conservative default is bounded and known: a vsync-locked 60 Hz desktop is
  * promoted medium → high about 3 s in, through the up-path below. The price of the optimistic
  * default was not bounded — it was "the slower the machine, the longer it sits at the tier it
  * cannot afford".
+ *
+ * ## Why a boot storm must not decide the session
+ *
+ * The first window is measured 1.5-4 s after the first render, which is also when thirty
+ * Chromebooks on one classroom access point are finishing their asset downloads, when Chrome is
+ * applying an update in the background, and when the compositor is still uploading textures. Those
+ * frames are real, they are slow, and they are *not this machine*. The round-2 policy read that
+ * window as steady render cost: 120 ms frames for 4 s bought `high → potato` in a single 3-rung
+ * leap, and because `downSteps > 0` blocked every promotion for the rest of the session, three
+ * minutes of flawless 60 Hz afterwards still ended at `potato`. Measured, on the shipped policy.
+ *
+ * A short window taken during the boot storm therefore buys a **provisional** decision, and
+ * "provisional" is a specific, bounded thing:
+ *
+ *  * It moves **one rung**, not three (`firstMaxLeap`) — a small window buys a small commitment.
+ *  * It is only taken when the *tail* of the window is still over budget too, so a storm that has
+ *    already decayed by the time the window fills costs nothing at all.
+ *  * It can be **revoked exactly once**, and only on evidence that the original reading could not
+ *    have been render cost (below).
+ *
+ * A decision the hardware *corroborates* is not provisional: when the heuristic capped the tier on
+ * a renderer string or a capability number, a catastrophic median is exactly what that machine was
+ * predicted to do. It leaps immediately and it never revokes. Corroboration is the whole difference
+ * between "a Gemini Lake Chromebook is slow" and "an RTX 4070 was slow for four seconds".
+ *
+ * ## Why revoking a descent is not the oscillation it looks like
+ *
+ * "Holding vsync at the lower tier" is *not* evidence the higher tier is affordable — that argument
+ * is what promoted a correctly-capped Chromebook back into a tier it could not afford, and it is
+ * still rejected here. Recovery rests on a different and much narrower observation: **the machine
+ * improved by more than a tier step can explain.** A rung is worth at most about 2x
+ * (`recoveryRungGain`), so a genuine 120 ms at `high` predicts *at best* 60 ms at `medium`. Measuring
+ * 16.6 ms there does not mean the machine is fast; it means the 120 ms was never render cost. That
+ * inconsistency, and nothing else, arms the revocation — and it must then hold continuous headroom
+ * for a further `recoveryQuietMs` (20 s) before it fires. Every one of these must be true:
+ *
+ *  1. the descent was **provisional** (no hardware corroboration), and
+ *  2. every down-step happened inside the first `recoveryArmMs` — one early drop, not a descent, and
+ *  3. the measured cost is below `recoveryInconsistency` x the most generous model of the old
+ *     reading, and
+ *  4. headroom has held *continuously* for `recoveryQuietMs`, and
+ *  5. `maxRecoveries` (1) is unspent and no revocation has already failed.
+ *
+ * A borderline machine — 30 ms at `high`, 16.6 ms at `medium` — fails gate 3 (16.6 is not below
+ * 0.6 x 15) and is never probed. A revocation that turns out to be wrong is caught by the ordinary
+ * down path, costs one further change, and **locks the ratchet permanently**: worst case is three
+ * picture changes, which is the budget that already bound.
  *
  * ## Two mechanisms, deliberately separate
  *
@@ -88,10 +136,14 @@ import { publish } from "./Introspect.js";
  *    render-target reallocation) can never be read as evidence for the next one.
  *  * **Up is not the inverse of down.** Once the policy has stepped down even once, it will never
  *    step up again for the rest of the session. A machine that has already failed a window does not
- *    get re-promoted on a quiet stretch — that is precisely the loop that produces oscillation.
- *  * **A hard budget.** `maxChanges` total per session, `maxUpSteps` of them upward, and the ceiling
- *    is the heuristic's cap (or the configured tier when the heuristic found nothing) — auto-tiering
- *    hands work back, it never promotes past what the hardware or the config asked for.
+ *    get re-promoted on a quiet stretch — that is precisely the loop that produces oscillation. The
+ *    one revocation described above is not this loop: it is not bought by a quiet stretch, it is
+ *    bought by an improvement the tier step cannot explain, it fires at most once, and failing it
+ *    locks the ratchet for the session.
+ *  * **A hard budget.** `maxChanges` total per session, `maxUpSteps` of them upward, `maxRecoveries`
+ *    revocations, and the ceiling is the heuristic's cap (or the configured tier when the heuristic
+ *    found nothing) — auto-tiering hands work back, it never promotes past what the hardware or the
+ *    config asked for.
  *
  * ## Why an explicit choice wins completely
  *
@@ -124,6 +176,7 @@ import { publish } from "./Introspect.js";
  * | `?autotierWindowMs=MS` | wall-clock size at which a short window may decide anyway |
  * | `?autotierCooldown=MS` | minimum ms between decisions |
  * | `?autotierDown=MS` | median frame period above which the tier steps down |
+ * | `?autotierQuiet=MS` | how long headroom must hold before a provisional descent is revoked |
  */
 
 /** Every threshold, in one table, so a critic can read the policy without reading the code. */
@@ -200,17 +253,64 @@ export const POLICY = {
   /**
    * How far one down-step may travel: `ceil(log2(median / downMs))`, capped here.
    *
-   * A rung is worth *roughly* a factor of two. high → medium is 2.25 → 1.5625 drawing-buffer pixels
-   * per screen pixel, 3x3072² → 2x2048² shadow texels and 5 → 3 post passes; medium → low is
-   * 1.5625 → 1, 2x2048² → 1x1024², 3 → 1. Call it 1.6-2x each, which is why the log is rounded
-   * *up*: under-stepping costs another whole window to discover, and the round-1 policy that
-   * stepped exactly one rung per decision could not carry `ultra` to `potato` inside `maxChanges`
-   * at all. At a 100 ms median the policy already knows `medium` will not save this machine; making
-   * it re-learn that over another 120 frames is the delay, not the caution.
+   * A rung is worth *roughly* a factor of two — **as this module ships it**, not as the tier table
+   * reads. `Lighting.js` clamps every tier's cascades into 1024-2048² x≤2, so `ultra`, `high` and
+   * `medium` are handed the *same* rig by the lighting piece and the table's "3072² x3" is not a
+   * thing any machine renders. What a rung actually moves is: the drawing buffer (2.25 → 1.5625 → 1
+   * screen-pixels² at high → medium → low), this module's own shadow ladder (a real halving of
+   * whatever size the lighting rig built, applied in `_applyShadows`), and the post stack (5 → 3 →
+   * 1 passes). Call it 1.6-2x per rung, which is why the log is rounded *up*: under-stepping costs
+   * another whole window to discover, and the round-1 policy that stepped exactly one rung per
+   * decision could not carry `ultra` to `potato` inside `maxChanges` at all.
    *
    * Leaps are down-only and, like every other change, cost exactly one unit of `maxChanges`.
    */
   maxLeap: 3,
+  /**
+   * …but the *first* decision, taken on the short window while the boot storm is still running, may
+   * move only this far unless the hardware corroborates it (see `provisional`). A 3-rung leap bought
+   * on 45 frames measured 1.5-4 s after the first render is how four seconds of classroom Wi-Fi put
+   * a student on `potato` for the session.
+   */
+  firstMaxLeap: 1,
+
+  // -- a down-step must be true *now*, not just on average ----------------------------------------
+  /**
+   * The last quarter of the window (at least `tailMinFrames` samples) has to miss the budget too.
+   *
+   * The median is a statement about the window; a tier change is a statement about the machine from
+   * here on. A boot storm that decayed while the window was filling leaves a median over budget and
+   * a tail already inside it — and stepping down then is fixing a problem that has already stopped
+   * happening. Costs nothing when the load is real: on a flat stream the tail *is* the median, and
+   * `decide()` re-runs on the very next sample, so a deferred decision is deferred by one frame.
+   */
+  tailFraction: 0.25,
+  tailMinFrames: 8,
+
+  // -- revoking a provisional descent -------------------------------------------------------------
+  /** Revocations of a provisional descent, per session. See the class docs for the five gates. */
+  maxRecoveries: 1,
+  /**
+   * A descent is only revocable while every down-step in it landed inside this much measured time —
+   * one early drop during the boot storm, not a machine walking itself down. Measured: on a flat
+   * 40 ms stream the down-steps land at 3.0 s, 10.8 s and 18.6 s, so this cleanly separates "the
+   * first window caught a storm" from "this machine keeps missing".
+   */
+  recoveryArmMs: 8000,
+  /** …and headroom must then hold *continuously* for this long before the revocation fires. */
+  recoveryQuietMs: 20000,
+  /**
+   * The most generous estimate of what one rung buys, used *against* revocation: predicted cost at
+   * the new tier is `preMedian / recoveryRungGain^rungs`. Generous on purpose — the test is only
+   * allowed to fire when even the best case for the tier step cannot explain the improvement.
+   */
+  recoveryRungGain: 2,
+  /**
+   * How far below that prediction the measurement must sit before the old reading is judged not to
+   * have been render cost at all. 120 ms at `high` predicts ≤ 60 ms at `medium`; measuring 16.6 ms
+   * (0.28x) is inconsistent, and a borderline 30 ms → 16.6 ms (1.11x) is not.
+   */
+  recoveryInconsistency: 0.6,
 
   // -- what counts as a frame at all -------------------------------------------------------------
   /**
@@ -255,16 +355,31 @@ export class TierPolicy {
 
     this.tier = TIERS[startTier] ? startTier : "high";
     this.ceiling = TIERS[this.p.ceiling] ? this.p.ceiling : this.tier;
+    /**
+     * Is the first descent provisional — small, and revocable?
+     *
+     * True when nothing about the hardware corroborates a bad reading, which is the default because
+     * "the hardware said nothing" is the common case (see `startingTier`). `AutoTier` sets it false
+     * when the heuristic capped the tier on real evidence: on that machine a catastrophic median is
+     * the predicted outcome, not a surprise, and it should leap at once and never look back.
+     */
+    this.provisional = this.p.provisional !== false;
     this.samples = [];
     this.clock = 0;
     this.lastChangeAt = 0;
     this.changes = [];
     this.upSteps = 0;
     this.downSteps = 0;
+    this.recoveries = 0;
     this.rejected = 0;
     this.accepted = 0;
     this.overrun = 0;
     this.lastStats = null;
+    /** The provisional descent, if one is still revocable. Cleared for good by `locked`. */
+    this.descent = null;
+    this.locked = false;
+    /** Clock time at which the current unbroken run of headroom began; null when it is broken. */
+    this.quietSince = null;
 
     const s = this.shape(true);
     this.discard = s.warmFrames;
@@ -357,16 +472,80 @@ export class TierPolicy {
     return cadence <= this.p.cadenceMaxMs && st.median <= cadence * this.p.cadenceTolerance;
   }
 
-  /** How many rungs a single down-step may travel. See POLICY.maxLeap for the model. */
+  /**
+   * How many rungs a single down-step may travel. See POLICY.maxLeap for the model, and
+   * POLICY.firstMaxLeap for why the first one is smaller when nothing corroborates it.
+   */
   rungsFor(median) {
     const over = median / this.p.downMs;
-    return Math.max(1, Math.min(this.p.maxLeap, Math.ceil(Math.log2(over))));
+    const cap =
+      this.provisional && this.changes.length === 0 ? this.p.firstMaxLeap : this.p.maxLeap;
+    return Math.max(1, Math.min(cap, Math.ceil(Math.log2(over))));
+  }
+
+  /** The median of the most recent slice of the window. See POLICY.tailFraction. */
+  tailMedian() {
+    const n = this.samples.length;
+    if (!n) return Infinity;
+    const k = Math.min(n, Math.max(this.p.tailMinFrames, Math.ceil(n * this.p.tailFraction)));
+    const s = this.samples.slice(n - k).sort((a, b) => a - b);
+    return s[Math.floor(0.5 * (s.length - 1))];
+  }
+
+  /**
+   * Track the unbroken run of headroom that gate 4 of a revocation needs.
+   *
+   * Runs on every sample, *before* any of `decide()`'s early returns, so the run keeps accumulating
+   * through the cooldown and through a spent change budget. A single window without headroom breaks
+   * it and it starts again from zero.
+   */
+  _trackQuiet(st) {
+    if (st.n >= this.p.windowFrames && this.headroom(st)) {
+      if (this.quietSince === null) this.quietSince = this.clock;
+    } else {
+      this.quietSince = null;
+    }
+  }
+
+  /**
+   * Could the provisional descent be revoked right now? Every gate in the class docs, in order, and
+   * each returns the name of the gate that stopped it so the probe can say *why* not.
+   */
+  recoveryState(st) {
+    const d = this.descent;
+    if (!this.provisional) return { armed: false, gate: "corroborated by hardware evidence" };
+    if (this.locked) return { armed: false, gate: "a revocation already failed — locked" };
+    if (this.recoveries >= this.p.maxRecoveries) return { armed: false, gate: "revocation budget spent" };
+    if (!d) return { armed: false, gate: "no descent to revoke" };
+    if (d.late) return { armed: false, gate: "the descent continued past the boot window" };
+    if (!st || st.n < this.p.windowFrames) return { armed: false, gate: "window not full" };
+    // Gate 3: the improvement is larger than the tier step can account for, so the earlier reading
+    // was not render cost. The most generous model of the step is used, against the revocation.
+    const predicted = d.medianMs / this.p.recoveryRungGain ** d.rungs;
+    const ratio = st.median / predicted;
+    if (!(ratio <= this.p.recoveryInconsistency))
+      return {
+        armed: false,
+        gate: `improvement is consistent with the tier step (${st.median.toFixed(1)} ms is ${ratio.toFixed(2)}x the ${predicted.toFixed(1)} ms a ${d.rungs}-rung step predicts)`,
+        ratio: Number(ratio.toFixed(3)),
+      };
+    if (this.quietSince === null) return { armed: false, gate: "headroom is not currently held", ratio: Number(ratio.toFixed(3)) };
+    const heldMs = this.clock - this.quietSince;
+    if (heldMs < this.p.recoveryQuietMs)
+      return {
+        armed: false,
+        gate: `headroom held for ${(heldMs / 1000).toFixed(1)} s of ${(this.p.recoveryQuietMs / 1000).toFixed(0)} s`,
+        ratio: Number(ratio.toFixed(3)),
+        heldMs: Number(heldMs.toFixed(0)),
+      };
+    return { armed: true, gate: null, ratio: Number(ratio.toFixed(3)), heldMs: Number(heldMs.toFixed(0)), predictedMs: Number(predicted.toFixed(1)) };
   }
 
   decide() {
     const st = this.stats();
     this.lastStats = st;
     if (!st) return null;
+    this._trackQuiet(st);
     if (this.changes.length >= this.p.maxChanges) return null;
 
     const w = this.shape();
@@ -380,15 +559,39 @@ export class TierPolicy {
     const i = TIER_ORDER.indexOf(this.tier);
     const ceil = TIER_ORDER.indexOf(this.ceiling);
 
+    // A down-step needs the window *and* its tail to miss the budget: the median describes the
+    // window, but the change describes the rest of the session. See POLICY.tailFraction.
+    const tail = this.tailMedian();
     if (st.median > this.p.downMs && i > 0) {
+      if (tail <= this.p.downMs) return null; // a storm that has already passed
       const rungs = this.rungsFor(st.median);
       return this._change(
         TIER_ORDER[clampIndex(i - rungs)],
         "down",
         st,
-        `median frame ${st.median.toFixed(1)} ms (${st.fps.toFixed(1)} fps) over ${st.n} frames / ${(st.spanMs / 1000).toFixed(1)} s is ${(st.median / this.p.downMs).toFixed(1)}x the ${this.p.downMs} ms floor — ${rungs} rung(s)`,
+        `median frame ${st.median.toFixed(1)} ms (${st.fps.toFixed(1)} fps) over ${st.n} frames / ${(st.spanMs / 1000).toFixed(1)} s is ${(st.median / this.p.downMs).toFixed(1)}x the ${this.p.downMs} ms floor, tail ${tail.toFixed(1)} ms — ${rungs} rung(s)`,
         rungs
       );
+    }
+
+    /**
+     * Revoking a provisional descent. Deliberately checked *before* the ordinary up path and
+     * deliberately not gated on `downSteps === 0`: this is the one promotion that exists precisely
+     * because a down-step happened, and the five gates in `recoveryState` are what keep it from
+     * being the oscillation loop the `downSteps` lock exists to prevent.
+     */
+    const rec = this.recoveryState(st);
+    if (rec.armed) {
+      const back = Math.min(TIER_ORDER.indexOf(this.descent.from), ceil);
+      if (back > i) {
+        return this._change(
+          TIER_ORDER[clampIndex(back)],
+          "recover",
+          st,
+          `the ${this.descent.medianMs} ms that bought ${this.descent.from}→${this.descent.to} at ${(this.descent.at / 1000).toFixed(1)} s cannot have been render cost: a ${this.descent.rungs}-rung step predicts ${rec.predictedMs} ms at best and this machine measures ${st.median.toFixed(1)} ms (${rec.ratio}x), with headroom held for ${(rec.heldMs / 1000).toFixed(0)} s — restoring ${TIER_ORDER[back]}`,
+          back - i
+        );
+      }
     }
 
     // Promotion always waits for the full steady-state window. Relief is urgent and promotion is
@@ -431,7 +634,18 @@ export class TierPolicy {
     this.tier = to;
     this.changes.push(rec);
     if (direction === "up") this.upSteps++;
+    else if (direction === "recover") this.recoveries++;
     else this.downSteps++;
+
+    if (direction === "down") {
+      // The first down-step is the one that might be revocable; every later one is a machine
+      // walking itself down, which is not a boot storm and must disarm the revocation for good.
+      if (!this.descent) this.descent = { ...rec, late: rec.at > this.p.recoveryArmMs };
+      else this.descent.late = true;
+      // …and a down-step *after* a revocation means the revocation was wrong. Never again.
+      if (this.recoveries > 0) this.locked = true;
+    }
+    this.quietSince = null;
     // Flush: the change itself costs a shader recompile and a render-target reallocation, and those
     // frames must never become evidence for the next decision.
     this.samples.length = 0;
@@ -447,6 +661,13 @@ export class TierPolicy {
     return {
       changesLeft: Math.max(0, this.p.maxChanges - this.changes.length),
       upStepsLeft: this.downSteps > 0 ? 0 : Math.max(0, this.p.maxUpSteps - this.upSteps),
+      // Not just the count: a descent that outgrew the boot window, or hardware that corroborated
+      // it, has no revocation available however much of the budget is unspent. Reported as 0 so the
+      // budget line cannot imply an option that `recoveryState()` has already ruled out.
+      recoveriesLeft:
+        this.locked || !this.provisional || this.descent?.late
+          ? 0
+          : Math.max(0, this.p.maxRecoveries - this.recoveries),
       ceiling: this.ceiling,
     };
   }
@@ -476,11 +697,12 @@ const GPU_RULES = [
   // Intel integrated. HD 3000/4000-era parts predate a usable WebGL2 driver on most machines.
   { re: /intel.*(gma|hd graphics (2000|3000|4000))/, tier: "low", why: "pre-Haswell Intel integrated" },
   // UHD 600/605 (Gemini Lake) is *the* school-Chromebook GPU. Capped at medium: it can hold 60 Hz
-  // with one shadow cascade and a bloom, and cannot with three cascades at a 1.5x pixel ratio.
+  // with a 1024² shadow rig and a bloom, and cannot with 2048² x2 at a 1.5x pixel ratio and
+  // five post passes. (The rig sizes are the ones `Lighting.js` really builds, not the table's.)
   { re: /intel.*\b(hd|uhd) graphics\b/, tier: "medium", why: "Intel HD/UHD integrated graphics" },
   // Iris / Xe / Arc integrated: the *current* Chromebook Plus and thin-laptop part. Far better than
   // UHD 600 and still integrated — it shares system memory bandwidth with the CPU, which is what
-  // three shadow cascades at a 1.5x pixel ratio actually run out of. It reports MAX_TEXTURE_SIZE
+  // a 2.25x drawing buffer and a five-pass post stack actually run out of. It reports MAX_TEXTURE_SIZE
   // 16384 and ships with 8 cores and 8 GB, so *every* capability cap below misses it: without this
   // rule an Iris Xe Chromebook Plus booted straight into `high`.
   {
@@ -568,8 +790,8 @@ export function inspectDevice(renderer) {
  * The shape of the answer, and the thing that changed in round 2: the baseline is
  * `NEUTRAL_START`, and only *positive evidence of strength* raises it to the configured `ceiling`.
  * Weak-hardware rules then cap it further. The old shape — start at the ceiling, lower on evidence
- * of weakness — meant every machine whose signals were illegible booted into 3072² x3 shadow
- * cascades at a 1.5x pixel ratio with a 5-pass post stack, and "illegible" describes a large and
+ * of weakness — meant every machine whose signals were illegible booted into a 2.25x drawing
+ * buffer, a 2048² x2 shadow rig and a 5-pass post stack, and "illegible" describes a large and
  * *growing* share of real browsers.
  *
  * @param {object} env  from `inspectDevice`
@@ -696,8 +918,20 @@ export class AutoTier {
     this.ceilingSource = this.heuristic.caps.length ? "heuristic cap" : "configured tier";
     this.ceiling = this.heuristic.caps.length ? this.heuristic.tier : this.bootTier;
 
+    /**
+     * Does the hardware corroborate a bad reading?
+     *
+     * The same evidence that sets the ceiling also decides whether the first descent is provisional.
+     * When the heuristic capped the tier — a named integrated GPU, no WebGL2, 4 GB, a 4K buffer —
+     * a catastrophic first window is that machine behaving as predicted: leap at once, never revoke.
+     * When it found nothing (or found *strength*), a catastrophic first window is a surprise, and a
+     * surprise measured 1.5-4 s after the first render is more often a boot storm than a machine.
+     */
+    this.corroborated = this.heuristic.caps.length > 0;
+
     this.policy = new TierPolicy(this.enabled ? this.heuristic.tier : this.bootTier, {
       ceiling: this.enabled ? this.ceiling : this.bootTier,
+      provisional: !this.corroborated,
       warmupFrames: num("autotierWarmup", POLICY.warmupFrames),
       firstWarmupFrames: num("autotierWarmup", POLICY.firstWarmupFrames),
       warmupMs: num("autotierWarmupMs", POLICY.warmupMs),
@@ -708,6 +942,7 @@ export class AutoTier {
       firstWindowMs: num("autotierWindowMs", POLICY.firstWindowMs),
       cooldownMs: num("autotierCooldown", POLICY.cooldownMs),
       downMs: num("autotierDown", POLICY.downMs),
+      recoveryQuietMs: num("autotierQuiet", POLICY.recoveryQuietMs),
     });
 
     this.history = [];
@@ -984,6 +1219,41 @@ export class AutoTier {
       ceiling: this.policy.ceiling,
       ceilingSource: this.ceilingSource,
       autoTierSetting: config.get("autoTier"),
+      /**
+       * The provisional-descent machinery, in full, so a reviewer can see *why* a revocation has or
+       * has not fired without re-deriving it. `gate` names the first condition that is not met.
+       */
+      provisional: {
+        corroborated: !!this.corroborated,
+        enabled: this.policy.provisional,
+        descent: this.policy.descent
+          ? {
+              from: this.policy.descent.from,
+              to: this.policy.descent.to,
+              rungs: this.policy.descent.rungs,
+              atMs: this.policy.descent.at,
+              medianMs: this.policy.descent.medianMs,
+              late: this.policy.descent.late,
+            }
+          : null,
+        locked: this.policy.locked,
+        recoveries: this.policy.recoveries,
+        quietForMs:
+          this.policy.quietSince === null ? 0 : Math.round(this.policy.clock - this.policy.quietSince),
+        ...this.policy.recoveryState(this.policy.lastStats),
+      },
+      /**
+       * What the `quality:tier` signal actually reaches. `postStack` is consumed (by P12's subscriber
+       * or, until it has one, by the bridge in `_applyPost`); the rest is advisory and, as of this
+       * round, has no subscriber at all. Reported rather than implied, because a probe that lists
+       * `grassDensity` without saying nobody reads it is a probe that lies by omission.
+       */
+      signal: {
+        name: "quality:tier",
+        subscribed: signals.names().includes("quality:tier"),
+        applied: ["maxPixelRatio", "shadowResolution", "shadows", "postStack"],
+        advisory: ["drawDistance", "grassDensity", "particleBudget"],
+      },
       heuristic: {
         tier: this.heuristic.tier,
         standDown: this.heuristic.standDown,
@@ -1026,6 +1296,12 @@ export class AutoTier {
         maxChanges: this.policy.p.maxChanges,
         maxUpSteps: this.policy.p.maxUpSteps,
         maxLeap: this.policy.p.maxLeap,
+        firstMaxLeap: this.policy.p.firstMaxLeap,
+        tailFraction: this.policy.p.tailFraction,
+        maxRecoveries: this.policy.p.maxRecoveries,
+        recoveryArmMs: this.policy.p.recoveryArmMs,
+        recoveryQuietMs: this.policy.p.recoveryQuietMs,
+        recoveryInconsistency: this.policy.p.recoveryInconsistency,
         sampleMinMs: this.policy.p.sampleMinMs,
         sampleMaxMs: this.policy.p.sampleMaxMs,
       },

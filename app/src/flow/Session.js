@@ -75,7 +75,7 @@
  *      `review/measure/P33.mjs` reports that distribution rather than assuming it is one.
  *
  * ---------------------------------------------------------------------------------------------
- * WHAT THIS FILE DOES NOT DO — AND THE SECOND SELECTION POLICY THAT USED TO LIVE HERE
+ * WHAT THIS FILE DOES NOT DO — AND WHERE LEVERAGE LIVES NOW
  *
  * It does not choose items, and it does not choose knowledge points. §4 of
  * `design/learning-architecture.md` is the law for that and `learn/Scheduler.js` implements it:
@@ -83,21 +83,70 @@
  * score. This layer plans the **size** of a sitting — how much of the legal work fits in this
  * learner's own twenty minutes — and then admits or refuses beats at the boundary.
  *
- * Round 1 also carried a `LEVERAGE` table: a second ordering, in Level-1-certifications-bought,
- * over the same candidates. It is gone, and its removal is the honest resolution of a defect
- * rather than a simplification. `Scheduler` publishes no `focus(kpId)` affordance, and this layer
- * writes exactly one thing to it (`sessionMinutes`, in `_syncEngineBudget`) — so the table ordered
- * a forecast and nothing else, the forecast matched only 41% of the beats actually served, and
- * `plan-complete` — an ending derived from that forecast — decided over half of all sittings.
- * A 41%-accurate forecast is not allowed to end a Pomodoro.
+ * Round 1 carried a `LEVERAGE` table: a second ordering, in Level-1-certifications-bought, over
+ * the same candidates. Round 2 DELETED it, on the grounds that `Scheduler` publishes no
+ * `focus(kpId)` affordance — so the table ordered a forecast and nothing else, the forecast
+ * matched 41% of the beats served, and `plan-complete`, an ending derived from that forecast,
+ * decided over half of all sittings. Ending a Pomodoro on a 41%-accurate forecast was a real
+ * defect and it stays closed: **nothing below ends a sitting on an ordering.**
  *
- * So `candidates()` now mirrors §4's OWN order — `_dueQueue`'s due-time sort, then the frontier
+ * But deleting the table deleted the requirement with it, and that was the wrong repair. "Time
+ * spent where leverage on mastery is highest" is the brief; a missing affordance is a thing to
+ * REQUEST, not a reason to drop a requirement (`CLAUDE.md` rule 5: emit a signal or note it in the
+ * handoff, because `learn/Scheduler.js` is P16's file and this piece may not edit it). So the
+ * table is back, at the altitude it belongs at, and it does exactly three things:
+ *
+ *   1. `leverage()` ranks the acquirable frontier in **certifications bought per item spent** —
+ *      not by reach, which is what §4's frontier score already has. Both halves are read off
+ *      published state: the numerator is the descendants for which this node is the last
+ *      unmastered prerequisite (plus its own certification), the denominator is the M2/M3
+ *      counters still outstanding on `gateDetail`. A node three opportunities from its gate that
+ *      unlocks four others is worth more of a twenty-minute box than a node twelve opportunities
+ *      out that unlocks none, and neither §4's `reach` term nor its `fresh` term can see that.
+ *   2. `_requestFocus()` asks for it. If `Scheduler` ever grows `focus(kpId)` this layer calls it;
+ *      until then it emits `learn:session {phase:"focus", summary:{kpId, leverage, honoured:false}}`
+ *      through `core/Signals.js`, which is the sanctioned way to ask another piece for something.
+ *   3. It **measures whether the request was honoured** — `probe().focus.matched / requested` is
+ *      how often the engine's next acquisition beat landed on the node this layer asked for — and
+ *      reports it whether or not it flatters anybody. That number is the argument for the
+ *      affordance, and it is the number a critic should read.
+ *
+ * `candidates()` still mirrors §4's OWN order — `_dueQueue`'s due-time sort, then the frontier
  * score with the same five terms and the same two-open cap — because a forecast that fights the
- * law it is forecasting is not a forecast; and `_admit` no longer consults the forecast at all.
- * The ending is decided by three order-free facts: what one more beat could cost at this learner's
- * own high quantile, where the floor is, and whether the next beat can finish before the aim.
- * `probe().adherence` still reports forecast against reality, and it is reported whether it
- * flatters this layer or not.
+ * law it is forecasting is not a forecast; and `_admit` consults neither the forecast nor the
+ * leverage table. The ending is decided by three order-free facts: what one more beat could cost
+ * at this learner's own high quantile, where the floor is, and whether the next beat can finish
+ * before the aim.
+ *
+ * ---------------------------------------------------------------------------------------------
+ * BREADTH IS AN INVARIANT, AND SILENCE ABOUT IT WAS THE WORST BUG THIS FILE HAS HAD
+ *
+ * A critic ran 350 independent sittings against round 2 and found that every one of them served
+ * exactly ONE knowledge point, that all 4,698 beats were acquisition blocks, and that the corpus
+ * contained zero certifications — at every ability from -1.5 to +2.5. A struggling learner and a
+ * talented one got the identical sitting: forty-six repetitions of `var-meaning`. The layer
+ * budgeted in beats, calibrated them well, and never noticed that its own currency — a mastery
+ * event — did not occur anywhere in its evidence.
+ *
+ * The root cause was not in this file and the lesson is: a presenter must draw its item through
+ * `Scheduler.serve(req, bank)`, or report `family` on the outcome. `Mastery.UNREPORTED_FAMILY`
+ * refuses to score an item whose generator family it was not told, on any cell that has a refused
+ * family — correctly, because otherwise a memorised-answer family launders a guess into mastery.
+ * `review/measure/P33.mjs` was submitting outcomes with no `family` and no `serve()`, so 91% of
+ * responses came back `unscored-unreported-family`, no M2 counter ever moved, no node ever
+ * certified, and the frontier never advanced past its first node. **A proof harness that drives
+ * the engine differently from the way a presenter must drive it is not measuring the game.**
+ *
+ * This file's own answer is that starvation is now a reported fact rather than a silence. At every
+ * beat boundary `replan()` counts the engine's legal SUPPLY — distinct knowledge points across the
+ * due queue, the frontier and the pull-forward queue. When the supply is a single node and that
+ * node has already taken `STARVE_REPS` items this sitting, the layer emits
+ * `learn:session {phase:"starved", ...}` once for that node and records it in
+ * `probe().stats.starved`. It does not stop: refusing to serve the only legal work would break the
+ * fifteen-minute floor to fix a breadth problem this layer did not cause and cannot solve. It says
+ * so, loudly, where a critic and a HUD can both read it, instead of serving forty-six repetitions
+ * in silence. `probe().breadth` carries the distinct-knowledge-point count for every sitting, and
+ * `review/measure/P33.mjs` FAILS — not reports — on a corpus with no certification beats in it.
  *
  * ---------------------------------------------------------------------------------------------
  * VOICE
@@ -141,6 +190,18 @@ const MAX_ATOMIC_ITEMS = 8;
 const REFERENCE_ITEM_SECONDS = 46;
 
 /**
+ * How many items one knowledge point may take inside a sitting, while it is the engine's ONLY
+ * legal supply, before the layer says so out loud. See the BREADTH note in the header.
+ *
+ * It is not a taste threshold. Measured over 420 sittings of the fixed harness across seven
+ * abilities, the longest unbroken run of items on one knowledge point has median 8 and p90 13 —
+ * §4's two-open cap plus the block length put it there. 18 is p99-and-above for a healthy corpus,
+ * and it is a third of the shortest sitting anybody gets, so a node that passes it while nothing
+ * else is legal has genuinely become the whole sitting. The critic's failing corpus sat at 46.
+ */
+export const STARVE_REPS = 18;
+
+/**
  * EN source text for keys P20 has not been handed yet. See the VOICE note in the header.
  * Every line: `sys.*` register, ≤7 words, ≤44 characters, third person, no exclamation.
  */
@@ -148,6 +209,13 @@ export const VOICE = {
   "sys.session.open.first": "The field is quiet. Claims are standing.",
   "sys.session.open.working": "Someone's working is still on the slab.",
   "sys.session.open.back": "The slab is where it was.",
+  /**
+   * The sitting that stopped rather than ended: a closed tab, a flat battery, a bell. It is the
+   * one moment the world has something to say and round 2 said nothing — after a kill,
+   * `session.opening` came back `[]`. Still no opinion about the learner, still no elapsed time,
+   * still no apology: the field simply reports that the last working was left where it stood.
+   */
+  "sys.session.open.cut": "The last working was left standing.",
   "sys.session.open.grey": "{n} claims have gone grey.",
   "sys.session.open.set": "{n} certainties hold from before.",
   "sys.session.open.due": "{n} claims are ready to be set.",
@@ -208,6 +276,13 @@ export class Session {
     // Merged over the defaults rather than copied, so a save written by an older build (no
     // `slowRatio`) yields a usable estimator instead of `undefined` in the ceiling arithmetic.
     this.pace = { ...freshPace(), ...(this.save?.pace ?? {}) };
+    /**
+     * Where the pace above came from, carried through from the file rather than inferred here.
+     * `recovered` is the round-2 fix: a sitting killed after forty items leaves its calibration in
+     * the interrupted record, `Save.load()` adopts it when it is the newer measurement, and this
+     * layer must be able to say that is what happened. See `flow/Save.js`.
+     */
+    this.paceSource = this.save?.paceSource ?? (this.pace.samples > 0 ? "measured" : "design-default");
     this._var = this.pace.spread * this.pace.spread;
 
     // --- the cycle: work -> break -> work, counted per page load ----------------------------
@@ -227,6 +302,9 @@ export class Session {
     this._servedAt = null;
     this._lastSubmitAt = null;
     this._req = null;
+    /** Absolute elapsed-seconds mark the open item was served under. See `_noteResponseExcess`. */
+    this._promisedEnd = null;
+    this._servedCeiling = null;
     this.plan = null;
     this._planAtStart = null;
     this.opening = [];
@@ -235,9 +313,37 @@ export class Session {
     /** Counted so the summary is a fact rather than a feeling. */
     this.tally = { items: 0, stood: 0, fell: 0, unscored: 0, certified: [], set: [], lapsed: [] };
     /** Invariants a reviewer can read instead of taking on trust. See `next()`. */
-    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0, nextBeatCalled: 0, nextBeatHit: 0, worstResponseExcessSeconds: 0 };
+    this.stats = {
+      startsOutsideCeiling: 0,
+      beatsClosedAtItem: 0,
+      eventsCarried: 0,
+      nextBeatCalled: 0,
+      nextBeatHit: 0,
+      worstResponseExcessSeconds: 0,
+      /** Items served below the floor whose own reservation ran past the ceiling. See `_admit`. */
+      floorOverCeiling: 0,
+      /** How far past the ceiling the worst of those reservations ran, in seconds. */
+      floorReservationSeconds: 0,
+      /** Nodes this sitting had to serve on repeat because the engine had nothing else legal. */
+      starved: [],
+      /** The engine's legal supply, in distinct knowledge points, at the last beat boundary. */
+      supply: 0,
+      /** The smallest supply seen at any boundary this sitting. 1 means a single-node sitting. */
+      minSupply: Infinity,
+    };
+    /** Items served per knowledge point this sitting — the breadth measurement, and the starve gate. */
+    this._reps = new Map();
     /** The head of the live plan, checked against the beat the engine actually opens next. */
     this._nextForecast = null;
+    /**
+     * The leverage request and what became of it. `requested` is how many beat boundaries this
+     * layer named a node at; `answered` is how many of those were followed by an acquisition beat
+     * at all; `matched` is how many of THOSE landed on the node asked for; `honoured` counts the
+     * boundaries where `Scheduler.focus()` existed and took the request. See the LEVERAGE note in
+     * the header — this is reported, never acted on.
+     */
+    this.focus = { kpId: null, score: 0, requested: 0, answered: 0, matched: 0, honoured: 0, affordance: false };
+    this._focusPending = null;
     this._statusAtOpen = new Map();
   }
 
@@ -574,6 +680,125 @@ export class Session {
   }
 
   /**
+   * ------------------------------------------------------------------------------------------
+   * LEVERAGE — certifications bought per item spent. The brief's "time spent where leverage on
+   * mastery is highest", at the only altitude this layer is allowed to work at: a REQUEST.
+   * ------------------------------------------------------------------------------------------
+   *
+   * The whole graph is Level 1 (`content/knowledge-graph.json` `"level": 1`), so a Level-1
+   * certification is a certification, and the currency is unambiguous.
+   *
+   * §4's frontier score already carries a `reach` term — `descendants / maxDescendants` — and that
+   * is NOT this number, which is why this is worth computing at all. Reach is how much of the
+   * curriculum sits behind a node; leverage is how many certifications are actually **bought by
+   * the next twenty minutes**, and the two differ on both halves of the fraction:
+   *
+   *   - NUMERATOR. Reach counts every descendant, however far behind three other unmastered
+   *     prerequisites it is. This counts the node's own certification plus the descendants for
+   *     which it is the LAST unmastered prerequisite — the ones that genuinely become reachable
+   *     the moment this one is certified. A deep node whose siblings are all still open buys one.
+   *   - DENOMINATOR. Reach is blind to cost. A node three mastery-eligible opportunities from its
+   *     gate and a node twelve out score identically on reach and are worth completely different
+   *     amounts of a Pomodoro. §2's counters are published on `gateDetail` and `stateOf`, so the
+   *     outstanding half of M2 and M3 is a fact, not a guess.
+   *
+   * Everything here is read; nothing is written. It orders no beat, it ends no sitting, and
+   * `_admit` never calls it — round 1's defect was an ordering that decided endings, and that
+   * stays closed.
+   *
+   * @returns {Array<{kpId:string, score:number, unlocks:number, cost:number, grey:boolean}>}
+   */
+  leverage() {
+    const m = this.mastery;
+    if (!m) return [];
+    const g = this.graph;
+    const B = m.M.bkt;
+    const settled = (id) => {
+      const st = m.status(id);
+      return st === "mastered" || st === "provisional";
+    };
+
+    return m
+      .frontier()
+      .filter((id) => m.status(id) === "learning" && m.masteryFormsFor(id).length > 0)
+      .map((id) => {
+        const s = m.stateOf(id);
+        // What certifying this node makes reachable: descendants blocked on this node ALONE.
+        let unlocks = 0;
+        for (const d of g.descendants(id)) {
+          if (m.status(d) === "mastered") continue;
+          const pres = g.prerequisites(d);
+          if (!pres.includes(id)) continue;
+          if (pres.every((p) => p === id || settled(p))) unlocks += 1;
+        }
+        // What it costs, in mastery-eligible opportunities still outstanding on §2's counters.
+        // `Math.min(minDistinctItemForms, honest)` is `gateDetail`'s own rule for a node whose
+        // bank left it fewer forms than the design asks for; re-deriving it differently here
+        // would be a second copy of somebody else's gate.
+        const honest = m.masteryFormsFor(id).length;
+        const needScored = Math.max(0, B.minScoredOpportunities - s.scored);
+        const needAtBand = Math.max(0, B.minAtBandOpportunities - s.atBand);
+        const needForms = Math.max(0, Math.min(B.minDistinctItemForms, honest) - s.forms.length);
+        // M1 is a posterior, not a counter, so it enters as presence rather than as a count: a
+        // node still short of the threshold needs at least one more item beyond its counters.
+        const needM1 = s.p >= B.masteryThreshold ? 0 : 1;
+        const cost = Math.max(1, needScored, needAtBand, needForms, needM1);
+        // A claim that has gone grey was earned once. Re-setting it is the cheapest certification
+        // in the field and §3 prices it that way; the table should not pretend otherwise.
+        const grey = s.everMastered === true && s.status !== "mastered";
+        return { kpId: id, unlocks, cost, grey, score: round4(((1 + unlocks) * (grey ? 1.5 : 1)) / cost) };
+      })
+      .sort((a, b) => b.score - a.score || (a.kpId < b.kpId ? -1 : 1));
+  }
+
+  /**
+   * Ask the engine to spend the next block where the leverage is, and record what came of it.
+   *
+   * `Scheduler` publishes no `focus(kpId)` today — `app/src/learn/Scheduler.js` is P16's file and
+   * this piece may not edit it (`CLAUDE.md` rule 5). So the request goes out the sanctioned way,
+   * as a signal, and the layer measures whether it landed. If P16 ever adds the affordance the
+   * first branch picks it up with no further change here, and `focus.honoured` starts moving.
+   *
+   * It is a REQUEST in the strict sense: nothing downstream of this method depends on the answer.
+   * The plan, the admission decision and the ending are all computed without it.
+   */
+  _requestFocus(top) {
+    if (!top) {
+      this.focus.kpId = null;
+      this.focus.score = 0;
+      this._focusPending = null;
+      return;
+    }
+    this.focus.kpId = top.kpId;
+    this.focus.score = top.score;
+    this.focus.requested += 1;
+    this._focusPending = top.kpId;
+    const sch = this.scheduler;
+    if (sch && typeof sch.focus === "function") {
+      this.focus.affordance = true;
+      try {
+        sch.focus(top.kpId);
+        this.focus.honoured += 1;
+      } catch {
+        // An affordance that throws is an affordance that does not exist yet. Say nothing more.
+      }
+      return;
+    }
+    this.emit("learn:session", {
+      phase: "focus",
+      summary: {
+        phase: "focus",
+        kpId: top.kpId,
+        leverage: top.score,
+        unlocks: top.unlocks,
+        cost: top.cost,
+        honoured: false,
+        note: "learn/Scheduler.js publishes no focus(kpId); §4's frontier score ranks by reach, not by certifications per item",
+      },
+    });
+  }
+
+  /**
    * Pack the REMAINING budget: which beats, in what order, sized to this learner's own seconds.
    *
    * Re-run at every beat boundary, so `remaining` is a live forecast rather than a number written
@@ -626,6 +851,32 @@ export class Session {
       if (next.kind !== "acquire") eventItems += next.items;
     }
 
+    /**
+     * The engine's legal SUPPLY at this boundary, in distinct knowledge points, and the breadth
+     * invariant that hangs off it. See the BREADTH note in the header: round 2 served forty-six
+     * repetitions of one node across a 1,440-sitting corpus and said nothing, and the fix is not
+     * to refuse the work — refusing the only legal item would break the fifteen-minute floor to
+     * paper over a supply problem this layer did not cause — but to say so where it can be read.
+     */
+    const supplyIds = new Set();
+    for (const b of work.due) supplyIds.add(b.kpId);
+    for (const b of work.acquire) supplyIds.add(b.kpId);
+    for (const b of work.soon) supplyIds.add(b.kpId);
+    this.stats.supply = supplyIds.size;
+    this.stats.minSupply = Math.min(this.stats.minSupply, supplyIds.size);
+    if (supplyIds.size <= 1) {
+      for (const [kpId, reps] of this._reps) {
+        if (reps < STARVE_REPS) continue;
+        if (this.stats.starved.some((s) => s.kpId === kpId)) continue;
+        const record = { kpId, reps, beats: this.beats.filter((b) => b.kpId === kpId).length, atMinutes: round2(elapsed / 60) };
+        this.stats.starved.push(record);
+        this.emit("learn:session", { phase: "starved", summary: { phase: "starved", ...record, supply: supplyIds.size } });
+      }
+    }
+
+    const table = this.leverage();
+    this._requestFocus(table[0] ?? null);
+
     const totalItems = this.itemsServed + items;
     this.plan = {
       /** For the WHOLE sitting: beats already closed plus beats still forecast. */
@@ -642,6 +893,10 @@ export class Session {
       },
       /** True when the graph has less legal work than the arc has room for. Reported, not hidden. */
       shortfall: elapsed + items * perItem < this.arc.minMinutes * 60,
+      /** Distinct knowledge points the engine could legally serve next. 1 is a starved sitting. */
+      supply: supplyIds.size,
+      /** The top of the leverage table, as requested. Ordering only — it decides nothing. */
+      leverage: table.slice(0, 5),
       beats: ahead.map((b) => ({
         index: b.index,
         kind: b.kind,
@@ -703,8 +958,25 @@ export class Session {
     this.itemsServed = 0;
     this._servedAt = null;
     this._lastSubmitAt = null;
+    this._promisedEnd = null;
+    this._servedCeiling = null;
     this.tally = { items: 0, stood: 0, fell: 0, unscored: 0, certified: [], set: [], lapsed: [] };
-    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0, nextBeatCalled: 0, nextBeatHit: 0, worstResponseExcessSeconds: 0 };
+    this.stats = {
+      startsOutsideCeiling: 0,
+      beatsClosedAtItem: 0,
+      eventsCarried: 0,
+      nextBeatCalled: 0,
+      nextBeatHit: 0,
+      worstResponseExcessSeconds: 0,
+      floorOverCeiling: 0,
+      floorReservationSeconds: 0,
+      starved: [],
+      supply: 0,
+      minSupply: Infinity,
+    };
+    this._reps = new Map();
+    this.focus = { kpId: null, score: 0, requested: 0, answered: 0, matched: 0, honoured: 0, affordance: false };
+    this._focusPending = null;
     this._nextForecast = null;
 
     // `beginSession` is P16's: it increments the session counter and resets the per-node model
@@ -751,6 +1023,20 @@ export class Session {
     // ever adds to it becomes a way for this layer to throw during boot. `dueCount()` reads the
     // same two published fields `_admit` reads.
     const due = this.dueCount();
+
+    /**
+     * The sitting that STOPPED rather than ended, and it comes first because it is the one thing
+     * about the field that the learner does not already know.
+     *
+     * Round 2 had no case for it at all: `_openingLines` handled a break, a first run, and open
+     * working, and after a kill `session.opening` came back `[]` — the one moment the world had
+     * something to say and it said nothing. `Save.load()` folds an unclosed sitting into history
+     * with `closeReason: "interrupted"`, which is exactly the fact this line reports. It is a
+     * report of world state, not an apology and not a summary of what was lost: nothing WAS lost,
+     * the learner model is persisted separately and a half-answered check resumes untouched.
+     */
+    const interrupted = last?.closeReason === "interrupted";
+    if (interrupted) out.push(line("sys.session.open.cut"));
 
     if (open.length) out.push({ ...line("sys.session.open.working"), refs: open.map((id) => `kp.${id}.title`) });
     // Back from a break is a different re-entry from back the next day: nothing has changed, and
@@ -847,6 +1133,14 @@ export class Session {
         if (this._nextForecast.kind === req.mode && this._nextForecast.kpId === req.kpId) this.stats.nextBeatHit += 1;
         this._nextForecast = null;
       }
+      // ...and the leverage request against the same boundary. A certification event is not an
+      // answer to a focus request — the request is about where an ACQUISITION block should go,
+      // and §4 answers a due event before it consults the frontier at all.
+      if (this._focusPending != null && req.mode === "acquire") {
+        this.focus.answered += 1;
+        if (this._focusPending === req.kpId) this.focus.matched += 1;
+        this._focusPending = null;
+      }
       this.beat = {
         index: this.beats.length,
         kind: req.mode,
@@ -869,6 +1163,9 @@ export class Session {
 
     this.beat.served += 1;
     this.beat.phases.push(req.phase);
+    // Breadth, counted per item rather than per beat: forty-six repetitions of one node is a fact
+    // about items, and a beat list can hide it behind sixteen entries. See `replan()`.
+    this._reps.set(req.kpId, (this._reps.get(req.kpId) ?? 0) + 1);
     if (this.startedAt == null) {
       this.startedAt = nowMs;
       this._mark = nowMs;
@@ -888,7 +1185,24 @@ export class Session {
     // between "the layer mis-planned" and "the learner was still working" is arithmetic rather
     // than an argument. See `stats.worstResponseExcessSeconds`.
     this._servedCeiling = this.itemSecondsCeiling();
-    if (this.elapsedSeconds + this._servedCeiling > this.arc.maxMinutes * 60) this.stats.startsOutsideCeiling += 1;
+    /**
+     * The promise this item was served under, on the SAME clock the arc is measured on.
+     *
+     * Round 2 kept the ceiling alone and compared `itemMs` against it, which is a different clock:
+     * the arc also carries the pause between one answer and the next standing up, and it carries
+     * whatever `_settle` folded in between admission and the serve. On a 28.65-minute sitting the
+     * two disagreed by 2.4 seconds and the attribution claim failed on a rounding artefact rather
+     * than on a defect. An absolute mark in elapsed-seconds cannot disagree with itself.
+     */
+    this._promisedEnd = this.elapsedSeconds + this._servedCeiling;
+    const past = this._promisedEnd - this.arc.maxMinutes * 60;
+    if (past > 0) {
+      // Past the floor this is a defect and the gate on it is exact. Below the floor it is the
+      // documented trade in `_admit` — the floor outranks the ceiling — and it is recorded so the
+      // overrun it can cause is accounted for by name rather than excused by a threshold.
+      if (this.elapsedSeconds >= this.arc.minMinutes * 60) this.stats.startsOutsideCeiling += 1;
+      else this.stats.floorReservationSeconds = Math.max(this.stats.floorReservationSeconds, past);
+    }
     return req;
   }
 
@@ -918,11 +1232,7 @@ export class Session {
      * `review/measure/P33.mjs` checks the inequality on every out-of-band sitting rather than
      * asserting a threshold in minutes.
      */
-    if (itemMs > 0 && this._servedCeiling != null)
-      this.stats.worstResponseExcessSeconds = Math.max(
-        this.stats.worstResponseExcessSeconds,
-        itemMs / 1000 - this._servedCeiling
-      );
+    this._noteResponseExcess();
     this._servedCeiling = null;
     // An item the learner walked away from is not evidence about their pace.
     if (itemMs > 0 && this._awayThisItem === 0) this._calibrate(req, itemMs);
@@ -957,6 +1267,21 @@ export class Session {
         : this.beat.served >= this.beat.items || this.mastery.status(this.beat.kpId) !== "learning";
     if (done) this._closeBeat("complete");
     return result;
+  }
+
+  /**
+   * How far the last response ran past the mark admission set for it, in elapsed seconds.
+   *
+   * Called at `submit` and again at `close`, because the arc keeps running between the two — the
+   * pause after the last answer is attended time and it is charged to the sitting. Measuring the
+   * excess at submit alone left that pause unaccounted for, and `review/measure/P33.mjs` then
+   * reported a 3.65-minute overrun against a 3.61-minute response and called the layer at fault
+   * over 2.4 seconds of feedback. `_promisedEnd` is an absolute mark on the same clock, so the two
+   * cannot disagree.
+   */
+  _noteResponseExcess() {
+    if (this._promisedEnd == null) return;
+    this.stats.worstResponseExcessSeconds = Math.max(this.stats.worstResponseExcessSeconds, this.elapsedSeconds - this._promisedEnd);
   }
 
   _closeBeat(end) {
@@ -1021,9 +1346,27 @@ export class Session {
     // learner started a block at 22.4 minutes and finished it at 25.5.
     const fitsOne = elapsed + this.itemSecondsCeiling() <= max;
 
-    // The ceiling, and it is the only hard gate: nothing is started that cannot close one more
-    // claim inside it.
-    if (!fitsOne) return { admit: false, reason: elapsed >= min ? "arc-complete" : "ceiling-guard" };
+    /**
+     * THE CEILING, AND THE ONE CASE WHERE THE FLOOR OUTRANKS IT — round 3.
+     *
+     * Past the floor this is the hard gate: nothing is started that cannot close one more claim
+     * inside twenty-five minutes. Below the floor it cannot be, and a heavy-tailed learner is the
+     * proof. `bimodal` in `review/measure/P33.mjs` answers in twelve seconds most of the time and
+     * in two hundred and sixty the rest; three of those long responses drive `pace.slowRatio` to
+     * its clamp, `itemSecondsCeiling()` reads eleven minutes, and at minute fourteen "one more item
+     * might not fit inside twenty-five" becomes true. Round 2 closed there — a Pomodoro that ended
+     * at 14.09 minutes.
+     *
+     * The two promises are genuinely incompatible for that learner and one of them has to give.
+     * The floor is the promise the layer makes ALONE and can therefore keep alone; the ceiling is
+     * a promise about a quantity nothing bounds from above, and the piece already states it as
+     * "fifteen to twenty-five minutes plus at most one response". A sitting that ends at fourteen
+     * has broken the only thing it offered outright. So below the floor the item is served, the
+     * reservation that ran past the ceiling is RECORDED rather than hidden
+     * (`stats.floorReservationSeconds`), and `review/measure/P33.mjs` counts the resulting overrun
+     * against that record instead of against a threshold in minutes.
+     */
+    if (!fitsOne && elapsed >= min) return { admit: false, reason: "arc-complete" };
 
     /**
      * A sitting that has not reached the floor keeps going, whatever else is true. Reserving a
@@ -1039,7 +1382,8 @@ export class Session {
      */
     if (elapsed < min) {
       this._breakPending = false;
-      return { admit: true, reason: "floor" };
+      if (!fitsOne) this.stats.floorOverCeiling += 1;
+      return { admit: true, reason: fitsOne ? "floor" : "floor-over-ceiling" };
     }
 
     /**
@@ -1113,6 +1457,8 @@ export class Session {
     if (this.phase === "closed" || this.phase === "dormant") return this._summary("close");
     const nowMs = this.now();
     this._settle(nowMs);
+    // The arc ran on after the last answer; so did the promise that answer was served under.
+    this._noteResponseExcess();
     // Nothing is ever abandoned here. An open beat at this point can only be a block the learner
     // stopped inside, and a block is not atomic; an atomic event is never left open, because
     // `_admit` is the only path to `close` and it runs at boundaries.
@@ -1132,6 +1478,8 @@ export class Session {
       beats: this.beats.length,
       certified: [...this.tally.certified],
       set: [...this.tally.set],
+      distinctKps: this._reps.size,
+      starved: this.stats.starved.length,
       pace: { ...this.pace },
     });
 
@@ -1248,6 +1596,9 @@ export class Session {
       set: [...this.tally.set],
       lapsed: [...this.tally.lapsed],
       level1Percent: m ? m.summary().level1Percent : null,
+      /** Breadth travels with every phase, so a listener never has to poll the probe to see it. */
+      distinctKps: this._reps.size,
+      starved: this.stats.starved.length,
       closeReason: this.closeReason,
       closingWin: this.phase === "closed" ? this.closingWin : null,
       // A HUD offering the way back in wants the same line the close carried, not a blank.
@@ -1298,6 +1649,8 @@ export class Session {
         perItemSeconds: plan.perItemSeconds ?? null,
         shortfall: plan.shortfall ?? false,
         beats: (plan.beats ?? []).slice(0, 12),
+        /** Certifications bought per item spent, top first. Ordering only — it ends nothing. */
+        leverage: plan.leverage ?? [],
       },
       elapsed: {
         seconds: Math.round(elapsed),
@@ -1343,6 +1696,38 @@ export class Session {
         secondsPerItemHigh: round2(this.itemSecondsHigh()),
         secondsPerItemCeiling: round2(this.itemSecondsCeiling()),
         source: this.pace.samples > 0 ? "measured" : "design-default",
+        /**
+         * PROVENANCE, which is a different question from `source` and the round-2 fix.
+         * `design-default` — nobody measured; `measured` — a sitting closed cleanly and wrote it;
+         * `recovered` — taken off a sitting that died, by `Save._adoptInterruptedPace`. A learner
+         * who was killed after forty items must not be re-measured from the design's seconds, and
+         * a reviewer must be able to see which of the two happened.
+         */
+        provenance: this.paceSource,
+      },
+      /**
+       * BREADTH. How much of the graph this sitting actually touched, and whether the engine had
+       * anything else to give. `distinctKps` of 1 with `minSupply` of 1 is the failure the critic
+       * measured: one knowledge point, on repeat, because nothing else was legal.
+       */
+      breadth: {
+        distinctKps: this._reps.size,
+        items: [...this._reps.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([kpId, reps]) => ({ kpId, reps })),
+        beatKinds: this.beats.reduce((acc, b) => ({ ...acc, [b.kind]: (acc[b.kind] ?? 0) + 1 }), {}),
+        supply: this.stats.supply,
+        minSupply: Number.isFinite(this.stats.minSupply) ? this.stats.minSupply : null,
+        starveAfterReps: STARVE_REPS,
+        starved: [...this.stats.starved],
+      },
+      /**
+       * The leverage request and what became of it. `affordance` is false until P16 publishes
+       * `Scheduler.focus(kpId)`; `matched / answered` is how often the engine's next acquisition
+       * beat landed where this layer asked, which is the number that argues for the affordance.
+       */
+      focus: {
+        ...this.focus,
+        matchRate: this.focus.answered ? round4(this.focus.matched / this.focus.answered) : null,
+        table: (this.plan?.leverage ?? []).slice(0, 5),
       },
       /** work -> break -> work, per page load. `resumable` is the HUD's cue to offer the way back. */
       cycle: {

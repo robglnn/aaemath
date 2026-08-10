@@ -46,6 +46,24 @@
  * `storage-unavailable` / `storage-denied` are their own answer: private browsing and locked-down
  * school Chromebooks both do this, and neither is a gameplay failure. Everything still runs; it
  * just runs without memory, and says so.
+ *
+ * ---------------------------------------------------------------------------------------------
+ * THE PACE SURVIVES AN UNCLEAN EXIT — round 2, and it was measured wrong before
+ *
+ * The sitting does not survive a crash and should not. The **calibration** is a different object
+ * entirely: it is a fact about the learner, not about the sitting, and losing it means the next
+ * arc is planned at the design's seconds for a person the file has already measured for forty
+ * items. Round 2 shipped exactly that hole. `checkpoint()` writes `pace` into `live` at every beat
+ * boundary, so a sitting killed after forty items left `live.pace = {ratio: 0.304, samples: 39}`
+ * on disk — and `Session` reads `save.pace`, which is `state.pace`, which ONLY `savePace()` writes
+ * and `savePace()` only runs inside `close()`. So the recovered number sat in `interrupted.pace`
+ * where nothing read it, and the reload planned at ρ = 1.0 / 0 samples.
+ *
+ * `load()` now ADOPTS the interrupted record's pace when it is the newer measurement — strictly
+ * more samples than the cleanly stored one — puts it through the same field-by-field validation a
+ * stored pace gets, and marks `paceSource = "recovered"` so the provenance travels with it instead
+ * of being indistinguishable from a clean close. It is deliberately not unconditional: a clean
+ * close from yesterday with 200 samples outranks a crash today with 3.
  */
 
 export const SAVE_KEY = "vs.flow.save.v1";
@@ -97,12 +115,25 @@ export function freshPace() {
   };
 }
 
+/**
+ * Where the pace in this file came from. Persisted, because the provenance of a measurement is
+ * part of the measurement: a reviewer looking at ρ = 0.3 needs to know whether the learner was
+ * measured and the sitting closed cleanly, or whether it was scraped off a sitting that died.
+ *
+ *   - `design-default` — nobody has been measured. The numbers are `freshPace()`.
+ *   - `measured`       — written by `savePace()` at the end of a sitting that closed.
+ *   - `recovered`      — adopted from an interrupted sitting's last checkpoint. See the header.
+ */
+export const PACE_SOURCES = ["design-default", "measured", "recovered"];
+
 export function freshSave() {
   return {
     version: SAVE_VERSION,
     createdAt: null,
     updatedAt: null,
     pace: freshPace(),
+    /** One of {@link PACE_SOURCES}. Travels with the pace so provenance is never inferred. */
+    paceSource: "design-default",
     /** Closed sittings, oldest first, capped at {@link HISTORY_CAP}. */
     sessions: [],
     /** The sitting currently under way, or null. See the header. */
@@ -113,6 +144,42 @@ export function freshSave() {
 
 const isObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
 const num = (v, fallback) => (typeof v === "number" && Number.isFinite(v) ? v : fallback);
+const finite = (v) => typeof v === "number" && Number.isFinite(v);
+
+/**
+ * Validate a pace blob field by field, whatever it came from.
+ *
+ * Extracted in round 2 because there are now TWO places a pace enters the file — the stored
+ * `pace` and an interrupted sitting's checkpoint — and a checkpoint written by a build with a
+ * different idea of the fields is exactly as capable of carrying a bad number as a stored one. Two
+ * copies of a validation rule is one copy that will drift.
+ *
+ * `bad(name)` is called with each field that was PRESENT AND WRONG; absent fields are defaulted
+ * quietly, because a save written by an older build legitimately has fewer of them.
+ *
+ * @returns {ReturnType<typeof freshPace>|null} null when `p` is not an object at all.
+ */
+export function repairPace(p, bad = () => {}, prefix = "pace") {
+  if (!isObject(p)) return null;
+  const d = freshPace();
+  const out = { ...d };
+  const field = (name, value, ok, dflt) => {
+    if (value === undefined) return dflt;
+    if (ok(value)) return value;
+    bad(`${prefix}.${name}`);
+    return dflt;
+  };
+  // A ratio outside this range is not a fast learner, it is a corrupted number. The range is
+  // deliberately generous: 0.1 is four seconds on a 46-second item and 6 is four and a half
+  // minutes, and a human being can honestly be at either end.
+  out.ratio = field("ratio", p.ratio, (v) => finite(v) && v >= 0.1 && v <= 6, d.ratio);
+  out.spread = field("spread", p.spread, (v) => finite(v) && v >= 0 && v <= 6, d.spread);
+  // Absent is an older build and is defaulted quietly; present-and-wrong is damage and is named.
+  out.slowRatio = field("slowRatio", p.slowRatio, (v) => finite(v) && v >= 0.1 && v <= 12, d.slowRatio);
+  out.gapSeconds = field("gapSeconds", p.gapSeconds, (v) => finite(v) && v >= 0 && v <= 120, d.gapSeconds);
+  out.samples = Math.floor(field("samples", p.samples, (v) => finite(v) && v >= 0, d.samples));
+  return out;
+}
 
 export class Save {
   /**
@@ -138,6 +205,8 @@ export class Save {
     this.quarantined = null;
     /** The interrupted sitting found on load, if any — what the re-entry line has to work with. */
     this.interrupted = null;
+    /** Set when `load()` took the pace off an interrupted sitting. See `_adoptInterruptedPace`. */
+    this.recoveredPace = null;
     this.loaded = false;
     this.writes = 0;
     this.writeFailures = 0;
@@ -153,6 +222,7 @@ export class Save {
     this.repaired = [];
     this.quarantined = null;
     this.interrupted = null;
+    this.recoveredPace = null;
     this.loaded = true;
 
     if (!this.storage) {
@@ -200,10 +270,31 @@ export class Save {
       while (this.state.sessions.length > HISTORY_CAP) this.state.sessions.shift();
       this.state.live = null;
       this.state.counters.interrupted += 1;
+      this._adoptInterruptedPace(rec);
       this.write();
     }
 
     return this.result();
+  }
+
+  /**
+   * Take the pace off a sitting that died, when it is the newer measurement. See the header.
+   *
+   * "Newer" is `samples`, not a timestamp, and that is the whole of the rule: samples only ever
+   * increase within one learner's history, a clean close writes the samples it ended on, and a
+   * checkpoint writes the samples it had reached — so more samples IS later, and a clean close
+   * from yesterday with two hundred items behind it is not thrown away for a crash today with
+   * three. The recovered blob goes through `repairPace` exactly as a stored one does; a checkpoint
+   * written by a build with different fields is no more trustworthy than a stored blob.
+   */
+  _adoptInterruptedPace(rec) {
+    const fixed = repairPace(rec?.pace, (f) => this.repaired.push(f), "interrupted.pace");
+    if (!fixed) return false;
+    if (fixed.samples <= (this.state.pace?.samples ?? 0)) return false;
+    this.state.pace = fixed;
+    this.state.paceSource = "recovered";
+    this.recoveredPace = { ...fixed };
+    return true;
   }
 
   _reject(raw, fault) {
@@ -251,20 +342,11 @@ export class Save {
     out.createdAt = num(raw.createdAt, null);
     out.updatedAt = num(raw.updatedAt, null);
 
-    if (isObject(raw.pace)) {
-      const p = raw.pace;
-      const d = freshPace();
-      const finite = (v) => typeof v === "number" && Number.isFinite(v);
-      // A ratio outside this range is not a fast learner, it is a corrupted number. The range is
-      // deliberately generous: 0.1 is four seconds on a 46-second item and 6 is four and a half
-      // minutes, and a human being can honestly be at either end.
-      out.pace.ratio = field("pace.ratio", p.ratio, (v) => finite(v) && v >= 0.1 && v <= 6, d.ratio);
-      out.pace.spread = field("pace.spread", p.spread, (v) => finite(v) && v >= 0 && v <= 6, d.spread);
-      // Absent is an older build and is defaulted quietly; present-and-wrong is damage and is named.
-      out.pace.slowRatio = field("pace.slowRatio", p.slowRatio, (v) => finite(v) && v >= 0.1 && v <= 12, d.slowRatio);
-      out.pace.gapSeconds = field("pace.gapSeconds", p.gapSeconds, (v) => finite(v) && v >= 0 && v <= 120, d.gapSeconds);
-      out.pace.samples = Math.floor(field("pace.samples", p.samples, (v) => finite(v) && v >= 0, d.samples));
-    } else if (raw.pace !== undefined) bad("pace");
+    const repairedPace = repairPace(raw.pace, bad, "pace");
+    if (repairedPace) out.pace = repairedPace;
+    else if (raw.pace !== undefined) bad("pace");
+
+    out.paceSource = field("paceSource", raw.paceSource, (v) => PACE_SOURCES.includes(v), "design-default");
 
     if (Array.isArray(raw.sessions)) {
       out.sessions = raw.sessions.filter(isObject).slice(-HISTORY_CAP);
@@ -335,15 +417,21 @@ export class Save {
     return closed;
   }
 
-  /** The pace calibration the next sitting starts from. */
+  /** The pace calibration the next sitting starts from. Written by a CLEAN close only. */
   savePace(pace) {
     this.state.pace = { ...freshPace(), ...pace };
+    this.state.paceSource = this.state.pace.samples > 0 ? "measured" : "design-default";
     this.write();
     return this.state.pace;
   }
 
   get pace() {
     return this.state.pace;
+  }
+
+  /** Where {@link pace} came from — one of {@link PACE_SOURCES}. Provenance, never inferred. */
+  get paceSource() {
+    return this.state.paceSource ?? "design-default";
   }
 
   /** The most recent CLOSED sitting — what the re-entry line describes. */
@@ -371,6 +459,8 @@ export class Save {
       interrupted: this.interrupted,
       sessions: this.state.sessions.length,
       pace: { ...this.state.pace },
+      paceSource: this.paceSource,
+      recoveredPace: this.recoveredPace ? { ...this.recoveredPace } : null,
     };
   }
 
@@ -387,6 +477,9 @@ export class Save {
       writes: this.writes,
       writeFailures: this.writeFailures,
       pace: { ...this.state.pace },
+      /** `design-default` | `measured` | `recovered`. See {@link PACE_SOURCES}. */
+      paceSource: this.paceSource,
+      recoveredPace: this.recoveredPace ? { ...this.recoveredPace } : null,
       lastCloseReason: this.lastSession()?.closeReason ?? null,
     };
   }

@@ -1,9 +1,9 @@
 {
   "id": "P31",
-  "state": "critique",
+  "state": "building",
   "round": 2,
-  "gap": "Section B measures the session in Node, where ItemBank eagerly loads every group at module init (ItemBank.js:377) and a chunk costs one already-resolved microtask -- so it reports 1 generated item in 36; driving the SAME shipped Scheduler + ItemBank singleton inside the real built page gives 4 generated-group-absent in 34 warmed and 10 in 34 cold. No claim measures or bounds the split's own side effect: the first 1-2 items on every knowledge point the boot warm did not cover come from the generator, not from the 36 authored items, and nothing marks that on submit.",
-  "note": "Round 3 build: boot/62-itembank.js now warms the frontier lesson via ensureLesson in requestIdleCallback (live: 3 chunks/7,895 B after ready, 0 before); item locale table split per language; bank fingerprint precomputed so the 1152-item spine is lazy; failed groups retried after 30 s with backoff; bankIssues.onIssue subscribed. First load 548.0 -> 454.6 kB gz. P31 22/22.",
+  "gap": "The warm is a one-shot inside boot setup() and nothing on the gameplay path ever asks the bank for an item, so per-lesson loading covers exactly the first lesson of a page load: driving the shipped engine through 600 scored items over 19 sessions pulled ZERO additional group chunks beyond the 4 the boot warm and its prefetch had already fetched. Scheduler.serve() -- the only API that pairs a request with a bank item and reports source/relaxation -- has zero callers under app/; itemBank.select() appears in app/ only inside 62-learning.js:136's stale-bank-audit fallback; app/src/flow/Session.js drives scheduler.next() and never touches the bank. So touch(), generated-group-absent and the 30s retry -- claims B1/B2/C1/C2/C3, 6 of 22 -- run only inside P31.mjs's own harness. Separately, P31.mjs's five 'REAL built game' claims read a cached evidence file with no build-identity check: all 18 JS chunk names in P31-live-probe.json (index-XRRBCBzJ, ItemBank-Bkv3MSq0, 62-learning-hIc_9Lz7...) were absent from dist/assets, so it printed 22/22 PASS against a build that no longer existed. The byte win itself is real and independently reproduced: 548.0 -> 456.4 kB gz first load (-91.7, -16.7%).",
+  "note": "Round 2 revision: re-warm on frontier movement, next-lesson prefetch, wire Scheduler.serve into Session, self-invoking live probe, browser cold-select bound, stale-audit cliff",
   "evidence": [],
-  "updated": "2026-08-10T17:33:59.719Z"
+  "updated": "2026-08-10T18:56:57.175Z"
 }

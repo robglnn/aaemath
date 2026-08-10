@@ -10,11 +10,18 @@
  * populations of simulated learners and hostile bots, and prints PASS/FAIL against thresholds
  * declared at the top. If it prints FAIL, P32 is wrong.
  *
- * It deliberately does NOT import `app/src/learn/ItemBank.js`. At the time of writing that file is
- * mid-edit by its own owner and does not parse under Node, which is why `review/measure/P16.mjs`
- * cannot currently run at all. Every rate used below comes from `app/src/learn/bank-audit.json` —
- * the measured audit of the shipped bank that the engine itself prices against — so this script
- * measures the same population the game serves without depending on a file it does not own.
+ * ROUND 3: IT NOW IMPORTS THE REAL ITEM BANK, AND THAT IS THE MOST IMPORTANT LINE IN THE FILE.
+ *
+ * Round 2 did not, on the grounds that `ItemBank.js` was mid-edit. The consequence was a proof that
+ * measured a delivery nobody ships: the harness drove `Scheduler.next()` -> `submit()` with no
+ * picker in between, which is exactly the shipped loop's defect, and then priced the result as if
+ * the picker had honoured `avoidFamilies`. A critic re-ran it and got 21 of 29 claims failing with
+ * every archetype at 0.0% mastery, against a committed table that said 29 of 29 and 96.6%.
+ *
+ * So the cohort simulations now run through a `Scheduler` HOLDING the real `itemBank`, which is the
+ * shipped configuration after `boot/63-learnserve.js`: every item is drawn through `serve()`, the
+ * refusal list is honoured, and the generator family is reported on every response. Rates still come
+ * from `app/src/learn/bank-audit.json`, which is what the engine itself prices against.
  *
  * =============================================================================================
  * RULE 1 — WHERE A BOT'S SUCCESS RATE COMES FROM
@@ -58,13 +65,14 @@
  *      who cannot be wrong.
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
 import { Graph } from "../../app/src/learn/Graph.js";
-import { Mastery, bktUpdate, PROPAGATION, TEST_OUT, REVIEW_LAPSE_BELOW } from "../../app/src/learn/Mastery.js";
+import { Mastery, bktUpdate, PROPAGATION, TEST_OUT, REVIEW_LAPSE_BELOW, UNREPORTED_FAMILY } from "../../app/src/learn/Mastery.js";
 import { Scheduler, virtualClock, mulberry32 } from "../../app/src/learn/Scheduler.js";
+import { itemBank } from "../../app/src/learn/ItemBank.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const argOf = (k, d) => {
@@ -95,11 +103,46 @@ const M = GRAPH.model;
 const TOTAL = GRAPH.ids.length;
 const NEED80 = Math.ceil(0.8 * TOTAL);
 
-const mk = (opts = {}) => new Mastery(GRAPH, { bankAudit: AUDIT, storage: null, emit: () => {}, ...opts });
+/**
+ * ---------------------------------------------------------------------------------------------
+ * THE SHIPPED DELIVERY, DECLARED ONCE AND USED EVERYWHERE.
+ *
+ * `familyReporting: true` is not an optimistic default — it is the fact that both paths in this
+ * file report the generator family on every response: the cohort runs because their Scheduler
+ * holds `itemBank` and draws through `serve()`, and the direct-`respond()` claims because they
+ * pass `family: famOf(...)`, the worst SURVIVING family of the cell. `strictFamilyReport: true`
+ * makes any lapse from that fatal instead of merely unscored, so this harness cannot repeat round
+ * 2's 1961-item silent run even by accident. PART E proves the negative arm as well.
+ * ---------------------------------------------------------------------------------------------
+ */
+const mk = (opts = {}) =>
+  new Mastery(GRAPH, {
+    bankAudit: AUDIT,
+    storage: null,
+    emit: () => {},
+    familyReporting: true,
+    familyReportingSource: "P32-harness",
+    strictFamilyReport: true,
+    ...opts,
+  });
+/** The shipped picker. Attached to every Scheduler the cohorts run, exactly as boot/63 attaches it. */
+const BANK = itemBank;
+/**
+ * The worst SURVIVING generator family of a cell — the one `probeItemBlindRate` prices against, so
+ * pricing a direct `respond()` at it is the conservative choice everywhere it is used. `null` when
+ * the cell has no surviving family, which is the same thing the engine refuses.
+ */
+const famOf = (m, kpId, form) => {
+  const fams = Object.entries(m.cell(kpId, form)?.families ?? {}).filter(([, r]) => r.priceable);
+  if (!fams.length) return null;
+  return fams.sort((a, b) => (b[1].blind ?? 0) - (a[1].blind ?? 0) || (a[0] < b[0] ? -1 : 1))[0][0];
+};
+/** One direct response, priced at the family the shipped picker would have had to report. */
+const say = (m, r) => m.respond({ family: famOf(m, r.kpId, r.form), ...r });
 /** The reference engine, shipped configuration, used for every static claim in PART A and B. */
 const REF = mk();
 /** How many knowledge points can be certified AT ALL on the shipped bank. `eq-special-cases` cannot. */
-const CERTIFIABLE = GRAPH.ids.filter((id) => REF.masteryFormsFor(id).length > 0).length;
+const CERTIFIABLE = GRAPH.ids.filter((id) => REF.deliverableMasteryForms(id).length > 0).length;
 
 // ---------------------------------------------------------------------------------------------
 // claim plumbing
@@ -223,9 +266,9 @@ claim(
   for (const id of GRAPH.ids) {
     const m = mk();
     const before = new Map(GRAPH.ids.map((x) => [x, m.p(x)]));
-    const form = m.masteryFormsFor(id)[0];
+    const form = m.deliverableMasteryForms(id)[0];
     if (!form) continue;
-    m.respond({ kpId: id, form, phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(id) });
+    say(m, { kpId: id, form, phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(id) });
     const anc = GRAPH.ancestors(id);
     const desc = GRAPH.descendants(id);
     for (const x of GRAPH.ids) {
@@ -253,13 +296,13 @@ claim(
  * leaf, and everything the ancestors get is inference.
  */
 const LEAF = GRAPH.leaves()
-  .filter((id) => REF.masteryFormsFor(id).length)
+  .filter((id) => REF.deliverableMasteryForms(id).length)
   .sort((a, b) => GRAPH.depth(b) - GRAPH.depth(a))[0];
 function leafOnlyRun(opts, items = 400) {
   const m = mk(opts);
-  const form = m.masteryFormsFor(LEAF)[0];
+  const form = m.deliverableMasteryForms(LEAF)[0];
   for (let i = 0; i < items; i++)
-    m.respond({ kpId: LEAF, form, phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(LEAF) + 0.3 });
+    say(m, { kpId: LEAF, form, phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(LEAF) + 0.3 });
   const anc = [...GRAPH.ancestors(LEAF)];
   return {
     m,
@@ -299,9 +342,9 @@ function leafOnlyRun(opts, items = 400) {
  */
 {
   const m = mk();
-  const form = m.masteryFormsFor(LEAF)[0];
+  const form = m.deliverableMasteryForms(LEAF)[0];
   for (let i = 0; i < 60; i++)
-    m.respond({ kpId: LEAF, form, phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(LEAF) });
+    say(m, { kpId: LEAF, form, phase: "solo", mode: "acquire", correct: true, latencyMs: 9000, difficulty: GRAPH.centre(LEAF) });
   const dirty = [...GRAPH.ancestors(LEAF)].filter((id) => {
     const s = m.stateOf(id);
     return s.scored > 0 || s.atBand > 0 || s.forms.length > 0;
@@ -328,8 +371,8 @@ table(
   PLANS.map(({ id, plan }) => ({
     "knowledge point": id,
     band: GRAPH.difficulty(id),
-    "honest forms": REF.masteryFormsFor(id).join(",") || "—",
-    "worst measured blind/item": (REF.masteryFormsFor(id).map((f) => REF.probeItemBlindRate(id, f)).sort((a, b) => a - b)[0] ?? 1).toFixed(3),
+    "honest forms": REF.deliverableMasteryForms(id).join(",") || "—",
+    "worst measured blind/item": (REF.deliverableMasteryForms(id).map((f) => REF.probeItemBlindRate(id, f)).sort((a, b) => a - b)[0] ?? 1).toFixed(3),
     "probe items": plan.eligible ? plan.items : "—",
     "probe minutes": plan.eligible ? ((plan.items * 46) / 60).toFixed(1) : "—",
     "blind pass": plan.eligible ? plan.blindPass.toExponential(2) : "—",
@@ -371,7 +414,7 @@ claim(
     return { id, items: plan.items, measured: plan.blindPass, modelled, ratio: plan.blindPass / modelled };
   }).sort((a, b) => b.ratio - a.ratio);
   const worst = rows[0];
-  const perItem = Math.max(...GRAPH.ids.flatMap((id) => REF.masteryFormsFor(id).map((f) => REF.probeItemBlindRate(id, f) / (M.trueGuessByForm[f] ?? 0.03))));
+  const perItem = Math.max(...GRAPH.ids.flatMap((id) => REF.deliverableMasteryForms(id).map((f) => REF.probeItemBlindRate(id, f) / (M.trueGuessByForm[f] ?? 0.03))));
   table(
     rows.slice(0, 8).map((r) => ({
       "knowledge point": r.id,
@@ -401,7 +444,7 @@ claim(
  */
 function ordinaryGateBlind(id, attempts, trials, rng, rateOf) {
   const band = GRAPH.band(id);
-  const forms = REF.masteryFormsFor(id);
+  const forms = REF.deliverableMasteryForms(id);
   if (!forms.length) return null;
   const need = Math.min(M.bkt.minDistinctItemForms, forms.length);
   let hits = 0;
@@ -494,7 +537,7 @@ function ordinaryGateBlind(id, attempts, trials, rng, rateOf) {
    */
   const FALLBACK_ITEMS = 4 + M.bkt.minScoredOpportunities; // model + 3 guided, then six solo
   const oneMissRows = ELIGIBLE.map(({ id }) => {
-    const forms = REF.masteryFormsFor(id);
+    const forms = REF.deliverableMasteryForms(id);
     const rated = forms.map((f) => REF.probeItemBlindRate(id, f)).sort((a, b) => a - b);
     const slip = GRAPH.band(id).slip;
     let n = 0;
@@ -667,7 +710,7 @@ function runLearner({ seed, kind, arm, sessions = SESSIONS }) {
   const rng = mulberry32(seed);
   const clock = virtualClock(0);
   const mastery = mk({ now: () => clock.minutes(), ...ARMS[arm] });
-  const sched = new Scheduler(mastery, { clock, rng: mulberry32(seed ^ 0x9e3779b9), sessionMinutes: SESSION_MINUTES });
+  const sched = new Scheduler(mastery, { clock, rng: mulberry32(seed ^ 0x9e3779b9), sessionMinutes: SESSION_MINUTES, bank: BANK });
   const responder = makeResponder(kind, rng);
 
   let seconds = 0;
@@ -1166,7 +1209,7 @@ table(
 {
   const clock = virtualClock(0);
   const mastery = mk({ now: () => clock.minutes() });
-  const sched = new Scheduler(mastery, { clock, rng: mulberry32(5), sessionMinutes: SESSION_MINUTES });
+  const sched = new Scheduler(mastery, { clock, rng: mulberry32(5), sessionMinutes: SESSION_MINUTES, bank: BANK });
   sched.beginSession();
   const first = sched.next();
   const kp = first.kpId;
@@ -1177,7 +1220,7 @@ table(
   // round-trip the whole engine and ask again
   const snap = JSON.parse(JSON.stringify(mastery.snapshot()));
   const m2 = mk({ now: () => clock.minutes() });
-  new Scheduler(m2, { clock, rng: mulberry32(5), sessionMinutes: SESSION_MINUTES });
+  new Scheduler(m2, { clock, rng: mulberry32(5), sessionMinutes: SESSION_MINUTES, bank: BANK });
   m2.restore(snap);
   claim(
     "D5",

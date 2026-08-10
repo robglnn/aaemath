@@ -1,0 +1,22 @@
+(node:39240) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS  C1  the game boots with auto-tiering mounted and no errors of its own
+        fatal=null, errors mine=0 foreign=0, HMR reloads survived=0, probe enabled=true, reason="measuring", start tier high, ceiling high (configured tier), GPU "WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+PASS  C2  real measured frame cost steps the tier down in the real game
+        high→medium (1 rung(s)) at 111.8 ms median (8.9 fps) over 30 frames; medium→potato (3 rung(s)) at 97.8 ms median (10.2 fps) over 30 frames
+PASS  C3  the renderer really changed: pixel ratio and shadow map size
+        pixelRatio 1.5 → 1; shadow map 2048² → 512² across 2 caster(s); drawing buffer 720x405 → 480x270; shadowMap.enabled turned off: true
+PASS  C4  every change is monotone downward and inside the session budget
+        2 change(s): high→medium(down,post=bridge), medium→potato(down,post=bridge:off); budget left {"changesLeft":1,"upStepsLeft":0,"recoveriesLeft":0,"ceiling":"high"}; final tier potato; cap 3
+PASS  C5  the post stack really followed the tier down
+        installed true → false; effects {"bloom":true,"sunGlow":true,"grain":true,"vignette":true} → {"bloom":false,"sunGlow":false,"grain":false,"vignette":false}; targets 6 → 0, 4.21 MB → 1.87 MB
+PASS  C6  nothing moves once it has settled (8 s of further frames)
+        changes 2 → 2; own errors 0; final measured {"fps":17.2,"medianMs":58,"p10Ms":41,"p95Ms":66,"p99Ms":111.9,"maxMs":112.3,"frames":30,"spanMs":1747.6}
+PASS  C7  tiering actually bought frame time on a machine that could not hold the tier
+        median frame cost across the last step medium → potato: 97.8 ms (10.2 fps) → 58 ms (17.2 fps), 41 % cheaper per frame
+PASS  C8  ?tier=low at boot stands auto-tiering down completely
+        enabled=false, tier=low, autoTier=false, changes=0, reason="explicit: a tier was chosen (settings or ?tier=), autoTier stood down"
+PASS  C9  a settings-screen choice mid-session stands auto-tiering down and reaches the renderer
+        booted measuring (enabled=true, tier high, pixelRatio 1.5) → config.set("tier","low") → enabled=false after 3 frames, 224 real frames rendered in total, auto changes 0, tier "low", pixelRatio 1, shadow 512², reason "explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down"
+
+9/9 claims pass

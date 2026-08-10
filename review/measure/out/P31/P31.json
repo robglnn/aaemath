@@ -1,39 +1,39 @@
 {
  "piece": "P31",
- "pass": false,
- "passed": 18,
+ "pass": true,
+ "passed": 22,
  "of": 22,
  "results": [
   {
    "id": "A1",
    "claim": "the eager item-bank chunk shrank on the real build (npm run build, gzipped at vite's own level)",
-   "pass": false,
-   "measured": "after build missing — run npm run build (looked in C:\\dev\\math\\aaemath\\review\\measure\\out\\critic-dist)",
+   "pass": true,
+   "measured": "ItemBank-B5q9etEn.js 1616.3 kB / 147.0 kB gz  ->  ItemBank-BxODixIG.js 121.5 kB / 29.2 kB gz  (-117.8 kB gz)",
    "threshold": "> 60 kB gzipped removed from the eager chunk"
   },
   {
    "id": "A2",
    "claim": "FIRST LOAD — every chunk the page pulls before the first item, one locale, gzipped",
-   "pass": false,
-   "measured": "after build missing",
+   "pass": true,
+   "measured": "548.0 kB gz -> 455.3 kB gz  (-92.8 kB gz, -16.9%). Raw 2974.7 kB -> 1561.4 kB.",
    "threshold": "> 55 kB gzipped off first load",
    "notes": [
-    "The after-tree carries 0 chunks that did not exist at the baseline commit (none), costing 0.0 kB gz — other pieces building in parallel. They ADD to the after number; the reduction is measured against that handicap.",
-    "Like for like — first load minus those new chunks — is 0.0 kB gz, a reduction of 548.0 kB gz."
+    "The after-tree carries 2 chunks that did not exist at the baseline commit (02-autotier, 90-flow), costing 13.4 kB gz — other pieces building in parallel. They ADD to the after number; the reduction is measured against that handicap.",
+    "Like for like — first load minus those new chunks — is 441.9 kB gz, a reduction of 106.2 kB gz."
    ]
   },
   {
    "id": "A3",
    "claim": "the catalogue built as one chunk per knowledge point, none of them on the first-load path",
-   "pass": false,
-   "measured": "0 group chunks totalling 0.0 kB / 0.0 kB gz, mean 0.0 kB gz each",
+   "pass": true,
+   "measured": "32 group chunks totalling 907.9 kB / 93.0 kB gz, mean 2.9 kB gz each",
    "threshold": "32 chunks"
   },
   {
    "id": "A4",
    "claim": "a single-lesson session's catalogue cost, measured on the SHIPPED chunks",
-   "pass": false,
-   "measured": "22 lessons, 0–0 B gz (median 0 B), each 10–22 min of scored-item time — against 0.0 kB gz for the whole course",
+   "pass": true,
+   "measured": "22 lessons, 2342–7895 B gz (median 3438 B), each 10–22 min of scored-item time — against 93.0 kB gz for the whole course",
    "threshold": "every lesson under 12 kB gzipped"
   },
   {
@@ -54,7 +54,7 @@
    "id": "B2",
    "claim": "the session pulled ONLY the groups it needed — not the course",
    "pass": true,
-   "measured": "4/32 groups resident (var-meaning, oo-numeric, expr-anatomy, oo-structure); 0.0 kB gz of shipped catalogue for the whole session, against 0.0 kB gz for all thirty-two",
+   "measured": "4/32 groups resident (var-meaning, oo-numeric, expr-anatomy, oo-structure); 10.5 kB gz of shipped catalogue for the whole session, against 93.0 kB gz for all thirty-two",
    "threshold": "groups touched + at most 4 prefetched, and strictly fewer than 32"
   },
   {
@@ -170,26 +170,39 @@
     "raw": 1616309,
     "gzip": 147035
    },
-   "after": null
+   "after": {
+    "file": "ItemBank-BxODixIG.js",
+    "raw": 121500,
+    "gzip": 29237
+   }
   },
   "firstLoad": {
    "before": {
     "raw": 2974694,
     "gzip": 548050
    },
-   "after": null,
-   "afterWholeBuild": null,
-   "chunksNotInBaseline": {
-    "files": [],
-    "raw": 0,
-    "gzip": 0
+   "after": {
+    "raw": 1561444,
+    "gzip": 455272
    },
-   "likeForLikeAfterGzip": 0
+   "afterWholeBuild": {
+    "raw": 2622816,
+    "gzip": 596722
+   },
+   "chunksNotInBaseline": {
+    "files": [
+     "02-autotier-B2Aaqszb.js",
+     "90-flow-BHwC0zsM.js"
+    ],
+    "raw": 40836,
+    "gzip": 13372
+   },
+   "likeForLikeAfterGzip": 441900
   },
   "groupChunks": {
-   "count": 0,
-   "raw": 0,
-   "gzip": 0
+   "count": 32,
+   "raw": 907921,
+   "gzip": 93048
   },
   "lessons": [
    {
@@ -201,7 +214,7 @@
     ],
     "estMinutes": 22,
     "items": 108,
-    "shippedGzip": 0,
+    "shippedGzip": 7895,
     "sourceGzip": 8288
    },
    {
@@ -212,7 +225,7 @@
     ],
     "estMinutes": 20,
     "items": 72,
-    "shippedGzip": 0,
+    "shippedGzip": 5210,
     "sourceGzip": 5508
    },
    {
@@ -223,7 +236,7 @@
     ],
     "estMinutes": 22,
     "items": 72,
-    "shippedGzip": 0,
+    "shippedGzip": 5912,
     "sourceGzip": 6199
    },
    {
@@ -234,7 +247,7 @@
     ],
     "estMinutes": 20,
     "items": 72,
-    "shippedGzip": 0,
+    "shippedGzip": 4747,
     "sourceGzip": 5000
    },
    {
@@ -244,7 +257,7 @@
     ],
     "estMinutes": 10,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3169,
     "sourceGzip": 3303
    },
    {
@@ -255,7 +268,7 @@
     ],
     "estMinutes": 16,
     "items": 72,
-    "shippedGzip": 0,
+    "shippedGzip": 6361,
     "sourceGzip": 6626
    },
    {
@@ -266,7 +279,7 @@
     ],
     "estMinutes": 22,
     "items": 72,
-    "shippedGzip": 0,
+    "shippedGzip": 6445,
     "sourceGzip": 6717
    },
    {
@@ -276,7 +289,7 @@
     ],
     "estMinutes": 12,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3337,
     "sourceGzip": 3476
    },
    {
@@ -286,7 +299,7 @@
     ],
     "estMinutes": 14,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3170,
     "sourceGzip": 3289
    },
    {
@@ -296,7 +309,7 @@
     ],
     "estMinutes": 14,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3231,
     "sourceGzip": 3358
    },
    {
@@ -306,7 +319,7 @@
     ],
     "estMinutes": 12,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 2816,
     "sourceGzip": 2937
    },
    {
@@ -317,7 +330,7 @@
     ],
     "estMinutes": 18,
     "items": 72,
-    "shippedGzip": 0,
+    "shippedGzip": 5848,
     "sourceGzip": 6072
    },
    {
@@ -328,7 +341,7 @@
     ],
     "estMinutes": 20,
     "items": 72,
-    "shippedGzip": 0,
+    "shippedGzip": 4925,
     "sourceGzip": 5171
    },
    {
@@ -338,7 +351,7 @@
     ],
     "estMinutes": 14,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3102,
     "sourceGzip": 3235
    },
    {
@@ -348,7 +361,7 @@
     ],
     "estMinutes": 12,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3438,
     "sourceGzip": 3569
    },
    {
@@ -358,7 +371,7 @@
     ],
     "estMinutes": 14,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3070,
     "sourceGzip": 3189
    },
    {
@@ -368,7 +381,7 @@
     ],
     "estMinutes": 16,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3329,
     "sourceGzip": 3459
    },
    {
@@ -378,7 +391,7 @@
     ],
     "estMinutes": 12,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 2342,
     "sourceGzip": 2469
    },
    {
@@ -388,7 +401,7 @@
     ],
     "estMinutes": 18,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3462,
     "sourceGzip": 3600
    },
    {
@@ -399,7 +412,7 @@
     ],
     "estMinutes": 20,
     "items": 72,
-    "shippedGzip": 0,
+    "shippedGzip": 5231,
     "sourceGzip": 5502
    },
    {
@@ -409,7 +422,7 @@
     ],
     "estMinutes": 12,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 2840,
     "sourceGzip": 2979
    },
    {
@@ -419,7 +432,7 @@
     ],
     "estMinutes": 14,
     "items": 36,
-    "shippedGzip": 0,
+    "shippedGzip": 3168,
     "sourceGzip": 3315
    }
   ],
@@ -569,8 +582,8 @@
    "degradedSelects": 0,
    "blanks": 0,
    "shippedBytes": {
-    "raw": 0,
-    "gzip": 0
+    "raw": 95587,
+    "gzip": 10514
    }
   },
   "prefetch": {
@@ -853,7 +866,7 @@
     "prefetchAround": 1
    },
    "spyWarm": {
-    "at": 1786384458205,
+    "at": 1786386741318,
     "kpId": "var-meaning",
     "lesson": "expressions-1",
     "groups": 3,

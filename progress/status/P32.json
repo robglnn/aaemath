@@ -2,8 +2,8 @@
   "id": "P32",
   "state": "building",
   "round": 2,
-  "gap": "Test-out's 1e-3 blind bound is unenforceable: it rests on never serving a refused generator family, but ItemBank.js has 0 occurrences of 'family' so Scheduler's avoidFamilies is ignored and outcome.family is never set; Mastery.respond treats family:null as priceable. Measured: a pure guesser passes expr-anatomy's 5-item probe at p=0.728 (728x the bound) if families are served in audit proportion; 5 of 31 nodes go over. P32.mjs cannot see this because it declines to import ItemBank on a premise ('does not parse under Node') that is false - it imports fine.",
-  "note": "Round 2: closing the family-filter leak (family==null must fail when refusedFamilies non-empty), ItemBank-importing proof claim, upper-bound max-over-sources, and shortening the probe",
+  "gap": "Shipped path never reports item family, so Mastery.respond refuses every response on the 24 cells with refused families: an omniscient learner answering 1981 items correctly through Scheduler.next/submit masters 0 of 32 KPs (1961 unscored), deadlocking on var-meaning for 1947 items. P32.mjs itself now returns 21/29 with C3 median mastery 0.0% and both RULE 2 controls (D1c, D1d) dead; the committed P32.txt showing 29/29 and 96.6% does not describe this code.",
+  "note": "Round 2: enforcing family-report precondition at source, aligning selector/scorer scorability question, regenerating P32 table",
   "evidence": [],
-  "updated": "2026-08-10T17:18:29.617Z"
+  "updated": "2026-08-10T18:39:56.162Z"
 }

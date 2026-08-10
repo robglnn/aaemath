@@ -238,6 +238,26 @@ in isolation:
 A builder's work being correct is not the same as it being connected. In this project the second has
 failed far more often than the first.
 
+## 6c. Product-fit wave (P30-P33) — open findings
+
+**P33 Pomodoro — the time-box trap, and the most important open finding.** A critic simulated 350
+sessions: *"a sitting is ~20 min of ONE knowledge point and contains zero mastery events: 0 of 4,698
+beats."* The session layer hits 15-25 minutes exactly and teaches nothing. **A session must be judged
+on mastery events delivered, not on wall-clock length.** Any future session work is failed by a
+length distribution alone; require a mastery-events-per-session distribution beside it.
+
+**P30 auto-tier.** Two rounds of findings: (1) masked or unmatched GPU strings fell through to the
+*optimistic* branch, and managed school Chromebooks are the fleet most likely to mask; (2) *"a
+legible school Chromebook still has its whole session decided by four seconds of classroom Wi-Fi"* —
+the measurement window is short enough that a network stall misclassifies the machine and locks a bad
+tier in for the session. Needs a longer/re-entrant window and a distinction between "slow frames" and
+"stalled frames".
+
+**P31 per-lesson loading** and **P32 test-out** both hit §6b again: the split and the guard exist but
+nothing on the gameplay path reaches them — *"the warm is a one-shot inside boot setup() and nothing
+on the gameplay path ever asks the bank for an item"*, and *"the shipped path never reports item
+family, so Mastery.respond refuses every response on the 24 cells with refused families."*
+
 ## 7. Learning-integrity findings that must not regress
 
 Critics found three separate routes by which scaffolded practice could be laundered into unearned

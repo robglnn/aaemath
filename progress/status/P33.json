@@ -1,9 +1,9 @@
 {
   "id": "P33",
-  "state": "critique",
-  "round": 1,
-  "gap": "The layer's headline 'ends on a win' never once happens: across my own 960 sittings and the builder's own 5760, closingWin is always the weakest token, 0 certifications, 0 provisional sets, L1 mastered 0% — so 11 of 13 VOICE lines are dead code, sittings 2-10 open with an EMPTY string, and every sitting closes with the identical two sentences. C9 printed certs=0/mastered=0% and no claim gates on it.",
-  "note": "Round 2: fixing break-latch ordering, making break a cycle, adding away arm to measure, heavy-tail reservation, resolving LEVERAGE",
+  "state": "building",
+  "round": 2,
+  "gap": "A P33 sitting is ~20 min of ONE knowledge point and contains zero mastery events: 0 of 4,698 beats across 350 critic sittings were certification events, so 'budget in mastery events' and 'ends on a win' are both unfalsified — closingWin is 'stood' (the last of 46 reps of var-meaning was correct) 350/350 times.",
+  "note": "Round 2: fix zero-mastery-event corpus (beat-kind histogram + distinct-KP gates that FAIL), breadth invariant with starved signal, leverage selection re-opened via scheduler:focus request, pace carry across unclean exit, interrupted re-entry line, heavy-tailed archetype",
   "evidence": [],
-  "updated": "2026-08-10T17:59:23.164Z"
+  "updated": "2026-08-10T18:39:57.889Z"
 }

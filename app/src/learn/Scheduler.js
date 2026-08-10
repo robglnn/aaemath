@@ -78,6 +78,35 @@ export class Scheduler {
     this.reviewCapLift = opts.reviewCapLift !== false;
     this.pullForward = opts.pullForward !== false;
     this.blockLength = opts.blockLength ?? 3;
+    /**
+     * ------------------------------------------------------------------------------------------
+     * THE BANK, AND WHY HOLDING IT IS THE WHOLE ROUND-3 FIX.
+     *
+     * `serve()` has existed since round 2 and had ZERO callers anywhere in `app/`. It honours
+     * `avoidFamilies` and remembers which generator family it handed out, which is the only way the
+     * engine can price 24 of the bank's 96 cells at all — and the shipped loop
+     * (`boot/62-learning.js` -> `flow/Session.js`) went straight from `next()` to `submit()` with no
+     * picker in between and no `outcome.family`. Every response on those 24 cells was therefore
+     * silently unscored, the selector re-served the same refused form forever, and the curriculum
+     * deadlocked on `var-meaning` after 228 items.
+     *
+     * The fix is not a doc comment telling a presenter to call `serve()`. It is that the Scheduler
+     * DRAWS THE ITEM ITSELF whenever it holds a bank, and publishes it on the request as
+     * `req.item` / `req.family`. A presenter cannot forget to do something the selector already
+     * did, and `submit()`'s existing `_servedFamily` fallback means the family is reported whether
+     * or not the caller passes one through.
+     *
+     * When there is NO bank — an offline harness, a unit test — the Scheduler tells `Mastery` so,
+     * and every "is this form worth serving" question is then asked with the same
+     * `UNREPORTED_FAMILY` the scorer will use. The selector and the scorer cannot disagree, so a
+     * missing bank costs coverage (visibly, in `probe().delivery`) and never a deadlock.
+     * ------------------------------------------------------------------------------------------
+     */
+    this.bank = null;
+    /** Memoised `(kp x form) -> can the bank actually produce a non-refused item here?` */
+    this._servableCells = new Map();
+    /** Requests where `serve()` came back empty at draw time. Must stay 0; P32 asserts it. */
+    this.serveMisses = 0;
 
     // Mastery reads the same clock, so `provisionalAt` and `nextEventAt` share one time base.
     this.mastery.now = () => this.clock.minutes();
@@ -130,6 +159,65 @@ export class Scheduler {
     this._probe = null;
     this._seq = 0;
     this._syncInFlight();
+    // Declared here only when the answer is already known. A Scheduler built WITHOUT a bank does
+    // not yet know whether one is coming — on the shipped path `boot/62-learning.js` constructs it
+    // and `boot/63-learnserve.js` attaches the bank one module later — so the declaration is
+    // deferred to the first `_select()`, which is the moment it becomes a fact about an item that
+    // is about to be served. Behaviour is restrictive throughout; only the REPORTING waits.
+    if (opts.bank) this.attachBank(opts.bank);
+  }
+
+  /**
+   * Give the Scheduler the item bank, so it draws every item through `serve()` itself.
+   *
+   * This is the one line that puts `serve()` on the shipped path, and it is called from
+   * `app/src/boot/63-learnserve.js`. Injected rather than imported: `app/src/learn/ItemBank.js`
+   * belongs to P17/P31 and a feature module never imports a sibling.
+   *
+   * @param {{select:Function, forKp?:Function}|null} bank
+   */
+  attachBank(bank) {
+    const ok = !!bank && typeof bank.select === "function";
+    this.bank = ok ? bank : null;
+    this._servableCells.clear();
+    // The declaration and the picker are the same decision, so they are made in the same place.
+    this.mastery.declareFamilyReporting(ok, ok ? "scheduler-serve" : "scheduler-bank-rejected");
+    return this.bank;
+  }
+
+  /**
+   * Can the bank actually hand out a non-refused item for this cell?
+   *
+   * `mastery.isScorable(...)` answers "would the engine price this if it arrived"; this answers
+   * "can it arrive at all". Both have to be true before a form is offered, because the second
+   * failure mode is the same deadlock as the first wearing different clothes: a cell whose entire
+   * pool is refused families would be selected forever and served never.
+   *
+   * Memoised per cell and drawn DRY — no `noteServed`, no `_servedFamily` — so probing servability
+   * cannot pollute the no-repeat window it is asking about.
+   */
+  _servable(kpId, form) {
+    if (!this.bank) return true;
+    const key = `${kpId}|${form}`;
+    const hit = this._servableCells.get(key);
+    if (hit !== undefined) return hit;
+    const probe = {
+      seq: -1,
+      kpId,
+      form,
+      difficulty: this.graph.centre(kpId),
+      avoidFamilies: this.mastery.refusedFamilies(kpId, form),
+      avoidItemIds: [],
+      targetMisconception: null,
+    };
+    const ok = this.serve(probe, this.bank, { dry: true }) != null;
+    this._servableCells.set(key, ok);
+    return ok;
+  }
+
+  /** The mastery-eligible forms this node can both EARN and BE SERVED. One question, one answer. */
+  _earnableForms(kpId) {
+    return this.mastery.deliverableMasteryForms(kpId).filter((form) => this._servable(kpId, form));
   }
 
   /** The no-repeat window a request publishes: this cell's last N, plus the global last N. */
@@ -205,7 +293,41 @@ export class Scheduler {
    *
    * §4, in order: due reviews (rate-limited) -> continuity block -> frontier score -> variant.
    */
+  /**
+   * The next learning opportunity, WITH THE ITEM ALREADY DRAWN when this Scheduler holds a bank.
+   *
+   * `_select()` decides what should happen; this decides what the learner is handed. Keeping the
+   * draw here rather than in a presenter is what makes `serve()`'s guarantees unforgettable: the
+   * refusal list is honoured and the generator family is recorded on every single request, so
+   * `submit()` always has a family to price with even when the caller reports nothing.
+   */
   next() {
+    const req = this._select();
+    if (!req) return null;
+    if (!this.bank) return req;
+    const sel = this.serve(req, this.bank) ?? this.serve({ ...req, avoidItemIds: [] }, this.bank);
+    if (!sel) {
+      // Should be unreachable: `_scorableForms` pre-checks servability for every form it offers.
+      // If it ever happens, say so in a counter rather than hand out an item the engine will
+      // refuse, and never offer this cell again in this session.
+      this.serveMisses += 1;
+      this._servableCells.set(`${req.kpId}|${req.form}`, false);
+      req.unserved = true;
+      return req;
+    }
+    req.item = sel.item;
+    req.itemId = sel.item.id;
+    req.family = sel.family;
+    req.itemSource = sel.source;
+    req.itemRelaxation = sel.relaxation ?? null;
+    return req;
+  }
+
+  _select() {
+    // The last possible moment at which "does anyone report the family" is still a hypothetical.
+    // From here on an item is about to be chosen, so the answer is recorded and everything that
+    // depends on it — plans, deficits, warnings — is derived and said out loud exactly once.
+    if (!this.mastery.familyReportingDeclared) this.mastery.declareFamilyReporting(!!this.bank, this.bank ? "scheduler-serve" : "scheduler-without-bank");
     if (this.secondsSpent >= this.sessionMinutes * 60) return null;
 
     // A multi-item certification event is atomic: once a retention check starts, its four items
@@ -235,7 +357,10 @@ export class Scheduler {
       // `_acquisitionRequest` calls `phaseFor` — that call has side effects (it spends a `model`
       // budget and moves the fade ladder), and a learner who is about to test out must not be
       // charged for a demonstration they never saw.
-      if (this.mastery.testOutOffered(pick.kpId)) {
+      // ...and the probe is only offered if every form it plans to serve can actually be drawn.
+      // A probe that dies on item 3 because the bank had nothing servable in that cell fails an
+      // honest learner on delivery, which is exactly what round 2 measured on `var-meaning`.
+      if (this.mastery.testOutOffered(pick.kpId) && this._probeServable(pick.kpId)) {
         this.mastery.beginTestOut(pick.kpId);
         this._probe = { kpId: pick.kpId };
         this._syncInFlight();
@@ -260,6 +385,13 @@ export class Scheduler {
     return this._eventRequest();
   }
 
+  /** Every form the probe plan intends to serve can be drawn from the bank without a refused family. */
+  _probeServable(kpId) {
+    const plan = this.mastery.testOutPlan(kpId);
+    if (!plan.eligible) return false;
+    return plan.forms.every((form) => this._servable(kpId, form));
+  }
+
   _choose() {
     const now = this.clock.minutes();
     const frontier = this.mastery.frontier();
@@ -268,8 +400,11 @@ export class Scheduler {
     // `learning`. Mastery reports it as unmasterable; the Scheduler simply does not sink time
     // into it. (No node on the shipped bank is in this state; the guard is what keeps a future
     // content regression from eating the session budget instead of failing visibly.)
+    // `_earnableForms`, not `masteryFormsFor`: the question is not "does the content have a form"
+    // but "can THIS delivery earn one here". Round 2 asked the first and got a knowledge point that
+    // was selected forever and scored never.
     const acquirable = frontier.filter(
-      (id) => this.mastery.status(id) === "learning" && this.mastery.masteryFormsFor(id).length > 0
+      (id) => this.mastery.status(id) === "learning" && this._earnableForms(id).length > 0
     );
 
     // The 1-in-3 review cap exists to stop a session becoming all review WHILE THERE IS STILL NEW
@@ -515,9 +650,25 @@ export class Scheduler {
     return order[s.scored % order.length];
   }
 
-  /** `wanted`, in order, keeping only what this node's bank pool can be honestly priced at. */
+  /**
+   * `wanted`, in order, keeping only what this node's bank pool can be honestly priced at.
+   *
+   * ------------------------------------------------------------------------------------------
+   * THE THIRD ARGUMENT IS THE WHOLE ROUND-2 BUG, SO IT IS NOT A LITERAL ANY MORE.
+   *
+   * This used to pass `null` — "answer at the CELL" — while `Mastery.respond` answered the same
+   * question with `UNREPORTED_FAMILY`, which is restrictive on any cell that has a refused family.
+   * The selector said yes 228 times and the scorer said no 228 times, and neither of them was
+   * wrong on its own terms. `mastery.deliveryFamily()` is now the single source of that argument:
+   * `null` when the picker will report the family, the sentinel when it will not. Selector and
+   * scorer ask the same question with the same third argument, by construction.
+   *
+   * The servability filter is the same rule one step further out — see `_servable`.
+   * ------------------------------------------------------------------------------------------
+   */
   _scorableForms(kpId, wanted) {
-    return wanted.filter((form) => this.mastery.isScorable(kpId, form, "solo", null));
+    const family = this.mastery.deliveryFamily();
+    return wanted.filter((form) => this.mastery.isScorable(kpId, form, "solo", family) && this._servable(kpId, form));
   }
 
   /**
@@ -661,7 +812,7 @@ export class Scheduler {
    * @param {object} req a request from `next()`
    * @param {{select:Function, forKp?:Function}} bank the item bank (injected, never imported)
    */
-  serve(req, bank, { maxTries = 24 } = {}) {
+  serve(req, bank, { maxTries = 24, dry = false } = {}) {
     if (!req || !bank || typeof bank.select !== "function") return null;
     const avoid = new Set(req.avoidFamilies ?? []);
     const exclude = new Set(req.avoidItemIds ?? []);
@@ -690,11 +841,15 @@ export class Scheduler {
         exclude.add(sel.item.id); // never offer this one again inside this request
         continue;
       }
-      this.noteServed({ itemId: sel.item.id, kpId: req.kpId, form: req.form });
-      this._servedFamily.set(req.seq, family);
-      // A cap, so one long-lived session cannot grow this without bound. Only the open request and
-      // its immediate predecessors can still be submitted.
-      if (this._servedFamily.size > 64) this._servedFamily.delete(this._servedFamily.keys().next().value);
+      // A DRY draw is a question about the cell, not a service to the learner: it must not close
+      // the no-repeat window on an item nobody saw, and it must not claim a `seq` that is not real.
+      if (!dry) {
+        this.noteServed({ itemId: sel.item.id, kpId: req.kpId, form: req.form });
+        this._servedFamily.set(req.seq, family);
+        // A cap, so one long-lived session cannot grow this without bound. Only the open request
+        // and its immediate predecessors can still be submitted.
+        if (this._servedFamily.size > 64) this._servedFamily.delete(this._servedFamily.keys().next().value);
+      }
       return { item: sel.item, family, source: sel.source, relaxation: sel.relaxation ?? null, tries: tries + 1, filtered };
     }
     return null;
@@ -720,7 +875,10 @@ export class Scheduler {
       promptTokens: outcome.promptTokens ?? 0,
       // What the world ACTUALLY did on this item. `req.hinted` is only the default for the phase.
       hinted: typeof outcome.hinted === "boolean" ? outcome.hinted : req.hinted,
-      itemId: outcome.itemId ?? null,
+      // `req.itemId` is what `next()` actually drew through `serve()`. A caller that presented
+      // something else says so by passing its own; a caller that presented what it was given need
+      // not repeat itself.
+      itemId: outcome.itemId ?? req.itemId ?? null,
       /**
        * WHICH GENERATOR FAMILY WAS SERVED. Forty-odd of the bank's families answer to a single
        * memorised string and the audit refuses them by name; the engine will not score an item
@@ -746,7 +904,8 @@ export class Scheduler {
     if (req.mode !== "acquire") this.reviewItemsThisSession += 1;
     this.clock.advance(seconds / 60);
 
-    if (outcome.itemId) this.noteServed({ itemId: outcome.itemId, kpId: req.kpId, form: req.form });
+    const servedId = outcome.itemId ?? req.itemId ?? null;
+    if (servedId) this.noteServed({ itemId: servedId, kpId: req.kpId, form: req.form });
 
     if (req.mode === "acquire") {
       this.blockCount += 1;
@@ -964,6 +1123,15 @@ export class Scheduler {
         : null,
       reviewCapLift: this.reviewCapLift,
       pullForward: this.pullForward,
+      /**
+       * Whether `serve()` is on this Scheduler's path at all, and what it cost. `bank: false` is
+       * not a neutral configuration — it is the round-2 delivery, and `mastery.probe().delivery`
+       * names the three knowledge points it makes uncertifiable.
+       */
+      bank: !!this.bank,
+      serveMisses: this.serveMisses,
+      servableCells: Object.fromEntries([...this._servableCells].map(([k, v]) => [k, v])),
+      unservableCells: [...this._servableCells].filter(([, v]) => !v).map(([k]) => k),
     };
   }
 }

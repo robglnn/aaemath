@@ -1,9 +1,7 @@
 {
-  "when": "2026-08-10T17:08:55.103Z",
+  "when": "2026-08-10T18:50:05.145Z",
   "ran": [
-    "A",
-    "B",
-    "D"
+    "C"
   ],
   "policy": {
     "warmupFrames": 90,
@@ -25,6 +23,14 @@
     "maxChanges": 3,
     "maxUpSteps": 1,
     "maxLeap": 3,
+    "firstMaxLeap": 1,
+    "tailFraction": 0.25,
+    "tailMinFrames": 8,
+    "maxRecoveries": 1,
+    "recoveryArmMs": 8000,
+    "recoveryQuietMs": 20000,
+    "recoveryRungGain": 2,
+    "recoveryInconsistency": 0.6,
     "sampleMinMs": 2,
     "sampleMaxMs": 250,
     "stallRun": 5
@@ -76,7 +82,7 @@
       "id": "A8",
       "title": "at most 3 tier changes per session",
       "pass": true,
-      "detail": "100 000 frames at 40 ms (1.9x the floor — one rung each) → 3 change(s), ultra → low; budget {\"changesLeft\":0,\"upStepsLeft\":0,\"ceiling\":\"ultra\"}"
+      "detail": "100 000 frames at 40 ms (1.9x the floor — one rung each) → 3 change(s), ultra → low; budget {\"changesLeft\":0,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"ultra\"}"
     },
     {
       "id": "A9",
@@ -100,25 +106,25 @@
       "id": "A12",
       "title": "potato is the floor — no change is attempted below it",
       "pass": true,
-      "detail": "medium → potato in 1 change(s) of 3 rung(s), then 100 000 further frames at 200 ms produced none"
+      "detail": "medium → potato in 1 change(s) of 3 rung(s) (a 3-rung leap clamped at the floor), then 100 000 further frames at 200 ms produced none"
     },
     {
       "id": "A13",
       "title": "a sustained 2 fps machine is tiered down; an isolated 4 s stall (A10) still is not",
       "pass": true,
-      "detail": "4 000 frames at 500 ms → 1 change(s), high → potato; 4 rejected before the 5-frame run tripped"
+      "detail": "4 000 frames at 500 ms → 2 change(s), high → potato; 4 rejected before the 5-frame run tripped"
     },
     {
       "id": "A14",
-      "title": "a catastrophically over-budget median leaps more than one rung, in one change",
+      "title": "a corroborated, catastrophically over-budget median leaps more than one rung, in one change",
       "pass": true,
-      "detail": "30 ms (1.4x floor) → 1 rung(s) ultra→high; 45 ms (2.1x floor) → 2 rung(s) ultra→medium; 100 ms (4.8x floor) → 3 rung(s) ultra→low; 250 ms (11.9x floor) → 3 rung(s) ultra→low"
+      "detail": "30 ms (1.4x floor) → 1 rung(s) ultra→high, uncorroborated 1; 45 ms (2.1x floor) → 2 rung(s) ultra→medium, uncorroborated 1; 100 ms (4.8x floor) → 3 rung(s) ultra→low, uncorroborated 1; 250 ms (11.9x floor) → 3 rung(s) ultra→low, uncorroborated 1"
     },
     {
       "id": "A15",
       "title": "first relief inside 10 s at 10, 5 and 2 fps (round 1: 21 s / 42 s / 107 s)",
       "pass": true,
-      "detail": "10 fps → first step at 4.0 s, potato at 4.0 s in 1 change(s); 5 fps → first step at 4.2 s, potato at 4.2 s in 1 change(s); 2 fps → first step at 8.5 s, potato at 8.5 s in 1 change(s)"
+      "detail": "10 fps → first step at 4.0 s, potato at 12.0 s in 2 change(s); 5 fps → first step at 4.2 s, potato at 12.2 s in 2 change(s); 2 fps → first step at 8.5 s, potato at 23.5 s in 2 change(s)"
     },
     {
       "id": "A16",
@@ -131,6 +137,42 @@
       "title": "no up-step is ever taken on the short first window",
       "pass": true,
       "detail": "the one promotion was decided on 120 frames (steady window 120, first window 45)"
+    },
+    {
+      "id": "A18",
+      "title": "a 4 s boot storm costs one rung for 24 s, not the session (round 2: potato, for ever)",
+      "pass": true,
+      "detail": "high→medium(down,1r) at 4.1 s; medium→high(recover,1r) at 27.6 s; final high, budget {\"changesLeft\":1,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"high\"}. Round 2 on this exact stream: high→potato (3 rungs) at 4.1 s and no way back."
+    },
+    {
+      "id": "A19",
+      "title": "a storm already over when the window fills produces no change (the tail gate)",
+      "pass": true,
+      "detail": "40 ms until 2.6 s then vsync: with the tail gate 0 change(s), tier high; with the tail disabled (tail = median, the round-2 rule) 1 change(s), tier medium"
+    },
+    {
+      "id": "A20",
+      "title": "a borderline machine is never probed back up — the improvement is what a rung is worth",
+      "pass": true,
+      "detail": "1 change(s) in 60 000 frames, ending medium; revocation refused: improvement is consistent with the tier step (16.8 ms is 1.12x the 15.0 ms a 1-rung step predicts)"
+    },
+    {
+      "id": "A21",
+      "title": "a real 8 fps machine descends and stays down — the second down-step disarms the revocation",
+      "pass": true,
+      "detail": "high→medium(1r) at 4.1 s, median 120 ms; medium→potato(2r) at 12.1 s, median 66.67 ms; recoveries 0, descent marked late=true (arm window 8000 ms)"
+    },
+    {
+      "id": "A22",
+      "title": "a wrong revocation is caught once, costs one change, and locks the ratchet",
+      "pass": true,
+      "detail": "high→medium(down); medium→high(recover); high→low(down); then 60 000 further vsync frames → 0 change(s); locked true, budget {\"changesLeft\":0,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"high\"}"
+    },
+    {
+      "id": "A23",
+      "title": "corroborated hardware still settles in one leap inside 10 s, and never revokes",
+      "pass": true,
+      "detail": "10 fps → potato at 4.0 s in 1 change(s), revocations available 0; 5 fps → potato at 4.2 s in 1 change(s), revocations available 0; 2 fps → potato at 8.5 s in 1 change(s), revocations available 0"
     },
     {
       "id": "B1",
@@ -208,7 +250,7 @@
       "id": "C2",
       "title": "real measured frame cost steps the tier down in the real game",
       "pass": true,
-      "detail": "high→potato (3 rung(s)) at 111.9 ms median (8.9 fps) over 30 frames"
+      "detail": "high→medium (1 rung(s)) at 111.8 ms median (8.9 fps) over 30 frames; medium→potato (3 rung(s)) at 97.8 ms median (10.2 fps) over 30 frames"
     },
     {
       "id": "C3",
@@ -220,7 +262,7 @@
       "id": "C4",
       "title": "every change is monotone downward and inside the session budget",
       "pass": true,
-      "detail": "1 change(s): high→potato(down,post=bridge:off); budget left {\"changesLeft\":2,\"upStepsLeft\":0,\"ceiling\":\"high\"}; final tier potato; cap 3"
+      "detail": "2 change(s): high→medium(down,post=bridge), medium→potato(down,post=bridge:off); budget left {\"changesLeft\":1,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"high\"}; final tier potato; cap 3"
     },
     {
       "id": "C5",
@@ -232,13 +274,13 @@
       "id": "C6",
       "title": "nothing moves once it has settled (8 s of further frames)",
       "pass": true,
-      "detail": "changes 1 → 1; own errors 0; final measured {\"fps\":18.1,\"medianMs\":55.2,\"p10Ms\":53.9,\"p95Ms\":59.4,\"p99Ms\":66,\"maxMs\":111,\"frames\":30,\"spanMs\":1680.7}"
+      "detail": "changes 2 → 2; own errors 0; final measured {\"fps\":17.2,\"medianMs\":58,\"p10Ms\":41,\"p95Ms\":66,\"p99Ms\":111.9,\"maxMs\":112.3,\"frames\":30,\"spanMs\":1747.6}"
     },
     {
       "id": "C7",
       "title": "tiering actually bought frame time on a machine that could not hold the tier",
       "pass": true,
-      "detail": "median frame cost across the last step high → potato: 111.9 ms (8.9 fps) → 55.2 ms (18.1 fps), 51 % cheaper per frame"
+      "detail": "median frame cost across the last step medium → potato: 97.8 ms (10.2 fps) → 58 ms (17.2 fps), 41 % cheaper per frame"
     },
     {
       "id": "C8",
@@ -250,19 +292,25 @@
       "id": "C9",
       "title": "a settings-screen choice mid-session stands auto-tiering down and reaches the renderer",
       "pass": true,
-      "detail": "booted measuring (enabled=true, tier high, pixelRatio 1.5) → config.set(\"tier\",\"low\") → enabled=false after 3 frames, 222 real frames rendered in total, auto changes 0, tier \"low\", pixelRatio 1, shadow 512², reason \"explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down\""
+      "detail": "booted measuring (enabled=true, tier high, pixelRatio 1.5) → config.set(\"tier\",\"low\") → enabled=false after 3 frames, 224 real frames rendered in total, auto changes 0, tier \"low\", pixelRatio 1, shadow 512², reason \"explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down\""
     },
     {
       "id": "D1",
       "title": "measurement never promotes past the heuristic's hardware cap",
       "pass": true,
-      "detail": "heuristic medium (caps [\"medium\",\"medium\"]) → policy ceiling \"medium\" from the heuristic cap; boot medium, after 5 000 vsync frames still medium, after 12 000 loaded frames low; changes [\"high→medium(heuristic)\",\"medium→low(down)\"]; budget {\"changesLeft\":2,\"upStepsLeft\":0,\"ceiling\":\"medium\"}. Round 1 on this exact stream: medium→high(up), high→medium, medium→low — 3 changes, budget spent, two tiers below the cap."
+      "detail": "heuristic medium (caps [\"medium\",\"medium\"]) → policy ceiling \"medium\" from the heuristic cap; boot medium, after 5 000 vsync frames still medium, after 12 000 loaded frames low; changes [\"high→medium(heuristic)\",\"medium→low(down)\"]; budget {\"changesLeft\":2,\"upStepsLeft\":0,\"recoveriesLeft\":0,\"ceiling\":\"medium\"}. Round 1 on this exact stream: medium→high(up), high→medium, medium→low — 3 changes, budget spent, two tiers below the cap."
     },
     {
       "id": "D2",
       "title": "an explicit choice mid-session stands the module down and reaches the renderer",
       "pass": true,
       "detail": "enabled true → false at frame 41; auto changes 0 across 4040 frames; config.tier \"low\"; pixelRatio 1.5 → 1; reason \"explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down\". Round 1 on this exact stream: 3 changes, high→medium→low→potato, ending at \"potato\" while the player had asked for \"low\"."
+    },
+    {
+      "id": "D3",
+      "title": "a boot storm is revoked in the real renderer when nothing corroborates it, and kept when something does",
+      "pass": true,
+      "detail": "RTX 4070 (uncorroborated): tier high → medium → high, pixelRatio 1.5 → 1.25 → 1.5, changes high→medium(down,applied=true), medium→high(recover,applied=true). UHD 600 Chromebook (corroborated by \"2\" caps): medium → potato in 1 change of 3 rungs, pixelRatio 1.25 → 1, revocations available 0"
     }
   ]
 }

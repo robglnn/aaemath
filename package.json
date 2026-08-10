@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 4180 --strictPort",
+    "deploy": "vite build --outDir ../docs --emptyOutDir && node -e \"require('fs').writeFileSync('docs/.nojekyll','')\"",
     "review": "node tools/review.mjs",
     "shot": "node tools/review.mjs shot",
     "verify": "node tools/review.mjs verify"

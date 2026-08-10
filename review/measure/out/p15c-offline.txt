@@ -1,0 +1,14 @@
+
+P15 — strict KaTeX pipeline, DOM and in-world
+────────────────────────────────────────────────────────────────────────────────────────────────
+PASS  C1     every fixture expression typesets in en/es/pl                   0 failures             got 0
+PASS  C2a    malformed TeX is refused by validate()                          21 refusals            got 21
+PASS  C2b    a refused expression never returns its source, a katex-error n  0 leaks                got 0
+PASS  C3a    every expression has a spoken form in every locale              0 missing              got 0
+PASS  C3b    no spoken form contains TeX notation                            0 with \ { } ^ _       got 0
+PASS  C4     ES/PL take a decimal comma, a centre dot and (PL) a colon for   0 wrong                got 0
+PASS  C5     the plain comparison text is identical in every locale          0 divergent            got 0
+PASS  C6     no banned classroom vocabulary in any player-facing string thi  0 hits (relation readings declared) got 0
+PASS  C7     1000 renders of one expression typeset it exactly once          typesets == 1          got 1
+────────────────────────────────────────────────────────────────────────────────────────────────
+9/9 claims passed

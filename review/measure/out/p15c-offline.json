@@ -1,0 +1,253 @@
+{
+ "piece": "P15",
+ "when": "2026-08-10T05:41:52.915Z",
+ "langs": [
+  "en",
+  "es",
+  "pl"
+ ],
+ "sizes": [
+  "1600x900",
+  "3840x2160"
+ ],
+ "summary": {
+  "claims": 9,
+  "passed": 9,
+  "failed": 0
+ },
+ "claims": [
+  {
+   "id": "C1",
+   "claim": "every fixture expression typesets in en/es/pl",
+   "threshold": "0 failures",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C2a",
+   "claim": "malformed TeX is refused by validate()",
+   "threshold": "21 refusals",
+   "value": 21,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C2b",
+   "claim": "a refused expression never returns its source, a katex-error node, or raw TeX",
+   "threshold": "0 leaks",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C3a",
+   "claim": "every expression has a spoken form in every locale",
+   "threshold": "0 missing",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C3b",
+   "claim": "no spoken form contains TeX notation",
+   "threshold": "0 with \\ { } ^ _",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C4",
+   "claim": "ES/PL take a decimal comma, a centre dot and (PL) a colon for division",
+   "threshold": "0 wrong",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C5",
+   "claim": "the plain comparison text is identical in every locale",
+   "threshold": "0 divergent",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C6",
+   "claim": "no banned classroom vocabulary in any player-facing string this piece emits",
+   "threshold": "0 hits (relation readings declared)",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C7",
+   "claim": "1000 renders of one expression typeset it exactly once",
+   "threshold": "typesets == 1",
+   "value": 1,
+   "pass": true,
+   "note": "hits=999 misses=1"
+  }
+ ],
+ "data": {
+  "speechSamples": [
+   {
+    "id": "share-half",
+    "locale": "en",
+    "speech": "1 over 2 x equals 4"
+   },
+   {
+    "id": "share-half",
+    "locale": "es",
+    "speech": "1 sobre 2 x igual a 4"
+   },
+   {
+    "id": "share-half",
+    "locale": "pl",
+    "speech": "1 łamane przez 2 x równa się 4"
+   },
+   {
+    "id": "decimals",
+    "locale": "en",
+    "speech": "3 point 5 x equals 10 point 25"
+   },
+   {
+    "id": "decimals",
+    "locale": "es",
+    "speech": "3 coma 5 x igual a 10 coma 25"
+   },
+   {
+    "id": "decimals",
+    "locale": "pl",
+    "speech": "3 przecinek 5 x równa się 10 przecinek 25"
+   },
+   {
+    "id": "signed",
+    "locale": "en",
+    "speech": "negative 3 over 4 x plus 2 equals negative 7"
+   },
+   {
+    "id": "signed",
+    "locale": "es",
+    "speech": "menos 3 sobre 4 x más 2 igual a menos 7"
+   },
+   {
+    "id": "signed",
+    "locale": "pl",
+    "speech": "minus 3 łamane przez 4 x plus 2 równa się minus 7"
+   }
+  ],
+  "conventions": [
+   {
+    "id": "decimal-en",
+    "locale": "en",
+    "out": "3.5",
+    "ok": true
+   },
+   {
+    "id": "decimal-es",
+    "locale": "es",
+    "out": "3{,}5",
+    "ok": true
+   },
+   {
+    "id": "decimal-pl",
+    "locale": "pl",
+    "out": "3{,}5",
+    "ok": true
+   },
+   {
+    "id": "times-en",
+    "locale": "en",
+    "out": "5 \\times 4",
+    "ok": true
+   },
+   {
+    "id": "times-es",
+    "locale": "es",
+    "out": "5 \\cdot 4",
+    "ok": true
+   },
+   {
+    "id": "times-pl",
+    "locale": "pl",
+    "out": "5 \\cdot 4",
+    "ok": true
+   },
+   {
+    "id": "div-pl",
+    "locale": "pl",
+    "out": "6 \\mathbin{:} 2",
+    "ok": true
+   },
+   {
+    "id": "group-en",
+    "locale": "en",
+    "out": "16{,}000",
+    "ok": true
+   },
+   {
+    "id": "group-es",
+    "locale": "es",
+    "out": "16\\,000",
+    "ok": true
+   },
+   {
+    "id": "verbatim-text",
+    "locale": "es",
+    "out": "\\text{3.5 spans}",
+    "ok": true
+   }
+  ],
+  "declaredVocabularyExceptions": [
+   "is less than",
+   "is greater than",
+   "is less than or equal to",
+   "is greater than or equal to",
+   "menor que",
+   "mayor que",
+   "menor o igual que",
+   "mayor o igual que",
+   "mniejsze od",
+   "większe od",
+   "mniejsze lub równe",
+   "większe lub równe"
+  ],
+  "reference": {
+   "equation": {
+    "box": [
+     1100,
+     380,
+     1500,
+     680
+    ],
+    "inkCount": 4878,
+    "inkCoverage": 0.0406,
+    "inkLuminance": 254,
+    "nearBgLuminance": 188.6,
+    "farBgLuminance": 183.2,
+    "haloDelta": 5.3,
+    "perimeter": 2167,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 1.91
+   },
+   "working": {
+    "box": [
+     1500,
+     350,
+     1900,
+     690
+    ],
+    "inkCount": 5579,
+    "inkCoverage": 0.041,
+    "inkLuminance": 253.9,
+    "nearBgLuminance": 193.1,
+    "farBgLuminance": 189.8,
+    "haloDelta": 3.3,
+    "perimeter": 2616,
+    "edgeWidthPx": 0.58,
+    "contrastRatio": 1.77
+   }
+  }
+ }
+}

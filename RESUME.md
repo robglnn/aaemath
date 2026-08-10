@@ -4,6 +4,11 @@
 **Local:** `npm install && npm run dev` → http://127.0.0.1:5173/
 **Live progress board:** open `progress.html` in a browser (self-refreshes every 25 s).
 
+**Publishing:** `npm run deploy` builds into `docs/` and writes `.nojekyll`; commit and push and Pages
+serves it. Pages is configured legacy-style from `main` + `/docs`, so there is no Actions workflow to
+keep in sync. `vite.config.js` sets `base: "./"` precisely so the same bundle works from the dev
+server, a `file://` open and a Pages subdirectory without a rebuild.
+
 Paused 2026-08-10 ~00:15 ET because the session budget ran out, not because a stage finished.
 Two workflows were stopped mid-flight; nothing below is critic-passed unless it says so.
 

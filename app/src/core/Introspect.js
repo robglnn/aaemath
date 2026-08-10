@@ -17,6 +17,14 @@ export const introspect = {
   kernel: null,
 };
 
+// Publish immediately, at module-evaluation time, before anything that could throw.
+//
+// A reviewer's very first action is to wait for `window.__vs`. If that object only appeared once
+// the kernel had been constructed, then any failure earlier in startup would leave the harness
+// waiting on a symbol that never arrives — and it would time out with no diagnosis at all, which
+// is the least useful possible failure mode. The object exists first; the truth fills in after.
+if (typeof window !== "undefined") window.__vs = introspect;
+
 export function attach(kernel) {
   introspect.kernel = kernel;
 

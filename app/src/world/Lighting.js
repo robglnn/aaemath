@@ -4,6 +4,7 @@ import { config } from "../core/Config.js";
 import { signals } from "../core/Signals.js";
 import { materials, shared, roleColor, roleHex, MAX_RES, MAX_GROUND } from "./Materials.js";
 import palette from "../../../design/palette.json";
+import { section } from "../core/paletteCompat.js";
 
 /**
  * Lighting — the rig from `design/art-direction.md` §2, and the one job a renderer will not do
@@ -41,9 +42,9 @@ import palette from "../../../design/palette.json";
  * light can read it instead of guessing.
  */
 
-const TOD = palette.motion.timeOfDay;
+const TOD = section(palette, "motion").timeOfDay;
 const LETHIS = TOD.lethisVariability;
-const CONTACT = palette.materials.contactAO;
+const CONTACT = section(palette, "materials").contactAO;
 
 // The Lethis drive: mutually prime periods, none shorter than 40 s (§15.7). A single sine is the
 // one implementation the fiction forbids — a player with a stopwatch would pin the star's period

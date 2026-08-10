@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import palette from "../../../design/palette.json";
+import { section } from "../core/paletteCompat.js";
+import { warn } from "../core/Introspect.js";
 
 /**
  * Materials — one material language for every surface in the world.
@@ -34,11 +36,33 @@ import palette from "../../../design/palette.json";
 
 const ROLE = palette.roles;
 
-/** sRGB hex from a palette role, as a number. */
+const MISSING_ROLE = 0xff00ff; // the universal "this asset is wrong" magenta
+const missingRoles = new Set();
+
+/**
+ * sRGB hex from a palette role, as a number.
+ *
+ * An unknown role used to throw, which meant one renamed colour in `design/palette.json` took the
+ * entire lighting rig — and therefore the whole look of the game — off the air. The palette is
+ * owned by a different piece than this file and is re-authored independently, so that coupling is
+ * guaranteed to break again. Degrade loudly instead: debug magenta is impossible to miss in a
+ * capture and impossible to mistake for art direction, and the warning names the role.
+ */
 export function roleHex(name) {
   const r = ROLE[name];
-  if (!r) throw new Error(`Materials: unknown palette role "${name}"`);
+  if (!r) {
+    if (!missingRoles.has(name)) {
+      missingRoles.add(name);
+      warn(`Materials: palette role "${name}" no longer exists — rendering debug magenta`);
+    }
+    return MISSING_ROLE;
+  }
   return parseInt(r.hex.slice(1), 16);
+}
+
+/** Roles this session asked for and did not find. Reviewers read this through the probe. */
+export function missingRoleNames() {
+  return [...missingRoles];
 }
 
 /** A THREE.Color in the renderer's linear working space, decoded from the role's sRGB hex. */
@@ -416,7 +440,10 @@ const FAMILY = {
   greyBounce: V3(0.0, 0.84, 0.42),
 };
 
-const CONTACT = palette.materials.contactAO;
+// Read through the compat seam: the palette is owned by the art-direction piece and its shape
+// changes between revisions. See app/src/core/paletteCompat.js.
+const MATERIALS = section(palette, "materials");
+const CONTACT = MATERIALS.contactAO;
 
 /**
  * Every substance in the world, with the bands `design/art-direction.md` §5 gives it.
@@ -499,13 +526,13 @@ const ARCHETYPES = {
     metalness: 0.95, // §5: 0.90-1.0 — REQUIRES an environment map (anti-pattern 18)
     grade: { sky: FAMILY.metalSky, bounce: FAMILY.metalBounce, ramp: V4(0.42, -1, 0.24, 0.2) },
     twoLobe: V4(
-      palette.materials.plateMetal.specularTwoLobe.narrow.roughness,
-      palette.materials.plateMetal.specularTwoLobe.narrow.intensity,
+      MATERIALS.plateMetal.specularTwoLobe.narrow.roughness,
+      MATERIALS.plateMetal.specularTwoLobe.narrow.intensity,
       0.35,
-      palette.materials.plateMetal.specularTwoLobe.narrow.gateFeatherWidth
+      MATERIALS.plateMetal.specularTwoLobe.narrow.gateFeatherWidth
     ),
     rim: { color: "sky.sun", strength: 0.12, exponent: 4 },
-    roughFloor: palette.materials.plateMetal.roughnessFloorUnderMotion,
+    roughFloor: MATERIALS.plateMetal.roughnessFloorUnderMotion,
     specAA: true,
     contact: true,
     envMapIntensity: 1.4,

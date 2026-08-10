@@ -1,9 +1,9 @@
 {
   "id": "P00",
   "state": "passed",
-  "round": 1,
+  "round": 2,
   "gap": null,
-  "note": "review harness proven: real render, deterministic clock, machine-readable probes",
+  "note": "hardening: lazy boot glob, early __vs, palette compat seam, non-fatal missing roles",
   "evidence": [],
-  "updated": "2026-08-09T19:11:46.478Z"
+  "updated": "2026-08-10T01:25:56.293Z"
 }

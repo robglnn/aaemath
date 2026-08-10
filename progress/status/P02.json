@@ -1,9 +1,9 @@
 {
   "id": "P02",
   "state": "building",
-  "round": 4,
+  "round": 1,
   "gap": "art-direction.md is written against reference/brief-hero.png and never against design/world.md: it inherits none of world.md 11's four P02 canon hooks (Grey as a third material, diegetic stone-vs-teal, certainty-vs-live-claim hierarchy, the non-human-silhouette rule) and 15.7 forbids Lethis, the variable star the game is named after, from varying.",
-  "note": "Round 4: binding art-direction.md to world.md canon (new S0), then working the 10 concrete actions",
+  "note": "re-aiming art direction at low-poly target",
   "evidence": [],
-  "updated": "2026-08-09T22:14:47.167Z"
+  "updated": "2026-08-10T00:54:29.250Z"
 }

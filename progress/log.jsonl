@@ -68,3 +68,5 @@
 {"t":"2026-08-10T00:34:09.695Z","piece":"P11","msg":"building — Reading design docs, surveying existing world/scene code before building lighting rig"}
 {"t":"2026-08-10T00:34:09.695Z","piece":"P09","msg":"building — Reading design docs and existing scaffolding before authoring Terrain.js + Level01.js"}
 {"t":"2026-08-10T00:34:10.115Z","piece":"P10","msg":"building — Reading binding docs, surveying architecture before authoring Sky/Atmosphere"}
+{"t":"2026-08-10T00:54:29.250Z","piece":"P02","msg":"building — re-aiming art direction at low-poly target"}
+{"t":"2026-08-10T01:25:56.294Z","piece":"P00","msg":"passed — hardening: lazy boot glob, early __vs, palette compat seam, non-fatal missing roles"}

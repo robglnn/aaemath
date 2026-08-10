@@ -1,1028 +1,655 @@
 {
-  "$schema": "https://variable-star.local/palette-1",
+  "$schema": "https://variable-star.local/palette-2",
   "project": "Variable Star",
   "piece": "P02",
-  "colourSpace": {
-    "authoring": "sRGB IEC 61966-2-1 hex, D65",
-    "rendering": "linear-sRGB. `linear` on every entry is the exact sRGB→linear decode of `hex`. Feed `linear` to the shader; never feed `hex` to a linear pipeline.",
-    "luminance": "Rec.709 relative luminance of the linear triplet (0.2126 R + 0.7152 G + 0.0722 B). Every `luminance` field in this file is that number.",
-    "three": "THREE.ColorManagement.enabled = true; renderer.outputColorSpace = SRGBColorSpace; new Color().setHex(0xRRGGBB, SRGBColorSpace)."
-  },
-  "reference": {
-    "image": "reference/brief-hero.png",
+  "round": 5,
+  "target": {
+    "image": "reference/target-lowpoly.png",
     "size": [
       2752,
       1536
     ],
-    "aspect": 1.792,
-    "method": "Every `measured` field cites a region sampled from that file by review/p02-measure*.mjs. Sample boxes were placed against the labelled grids in review/p02-crops/grid-*.png, not guessed.",
-    "caveat": "The reference is a painted illustration. These are the values a real-time render must LAND ON, not values copied from a render.",
-    "roundFourNote": "Round 4 amends this file in place with review/p02-r4-palette.mjs from measurements in review/p02-r4-measurements.json. review/p02-make-palette.mjs is the round-1 seed generator and has been superseded since round 2 — do not run it, it does not know about the substance gate, the motion block or anything added since."
+    "look": "flat-shaded low-poly. Faceted solids, per-face flat shading, hard silhouette edges, banded warm dusk sky with hard-edged cloud slabs, warm rock in light against a chromatic blue-grey in shadow, cyan crystal and cyan water as the only saturated accents, hard-edged blocky UI, bare white KaTeX unframed in world space.",
+    "supersedes": "reference/brief-hero.png is retained as a MOOD artefact only (colour feeling, sense of wonder). Every constant in this file is measured from target-lowpoly.png. Where the two disagree, the low-poly target wins."
+  },
+  "howToRegenerate": {
+    "command": "node review/p02-r5-sample.mjs --write-palette",
+    "guarantee": "This file is machine-written. No colour in it was typed by hand. Every `measured` field names the exact box or predicate that produced it; re-run the command and the file is byte-identical.",
+    "samplingRules": [
+      "Coordinates are fractions of frame width/height.",
+      "A box sample is the per-channel MEDIAN of the box - median, because a flat-shaded facet is exactly one colour and the median ignores the 1-2 px of antialiasing at its border.",
+      "A mask sample is the per-channel median of every pixel passing a stated HSV/luminance predicate inside a stated box. The predicate is the evidence; a box would be a guess.",
+      "A sky-ramp sample is the per-row median across x 0.30-0.70, which rejects cloud slabs without having to locate them."
+    ]
+  },
+  "colourSpace": {
+    "authoring": "sRGB IEC 61966-2-1 hex, D65",
+    "rendering": "linear-sRGB. `linear` is the exact sRGB->linear decode of `hex`. Feed `linear` to a shader; never feed `hex` to a linear pipeline.",
+    "luminance": "Rec.709 relative luminance of the linear triplet (0.2126R + 0.7152G + 0.0722B).",
+    "three": "THREE.ColorManagement.enabled = true; renderer.outputColorSpace = SRGBColorSpace; new THREE.Color().setHex(0xRRGGBB, SRGBColorSpace)."
   },
   "roles": {
     "sky.zenith": {
-      "hex": "#8DACBC",
+      "hex": "#568885",
       "rgb": [
-        141,
-        172,
-        188
+        86,
+        136,
+        133
       ],
       "linear": [
-        0.2664,
-        0.4125,
-        0.5029
+        0.0931,
+        0.2462,
+        0.2346
       ],
       "hsv": [
-        200,
-        0.25,
-        0.737
+        176,
+        0.368,
+        0.533
       ],
-      "luminance": 0.388,
-      "measured": "reference y=0.00, x=0.245",
-      "allowed": "Top of the sky dome only, above y=0.06 of the frame. The hemisphere-fill light colour.",
-      "forbidden": "Never as an object albedo. Never as a UI surface — it is too close to sky.horizon in value and UI will vanish against it."
+      "luminance": 0.2128,
+      "measured": "per-row median over x [0.3,0.7] at y=0",
+      "allowed": "Top of the sky dome. Also the colour of the hemisphere fill light — this is the only light in the rig that touches a shadowed face.",
+      "forbidden": "Never an object albedo."
     },
-    "sky.upper": {
-      "hex": "#A9BAC7",
+    "sky.high": {
+      "hex": "#628C84",
       "rgb": [
-        169,
-        186,
-        199
+        98,
+        140,
+        132
       ],
       "linear": [
-        0.3968,
-        0.491,
-        0.5711
+        0.1221,
+        0.2623,
+        0.2307
       ],
       "hsv": [
-        206,
-        0.151,
-        0.78
+        169,
+        0.3,
+        0.549
       ],
-      "luminance": 0.4768,
-      "measured": "reference y=0.08",
-      "allowed": "Sky dome between y=0.06 and y=0.14."
+      "luminance": 0.2302,
+      "measured": "per-row median over x [0.3,0.7] at y=0.06",
+      "allowed": "Sky dome around y 0.06 of frame."
     },
     "sky.pivot": {
-      "hex": "#C7C3B8",
+      "hex": "#81947E",
       "rgb": [
-        199,
-        195,
-        184
+        129,
+        148,
+        126
       ],
       "linear": [
-        0.5711,
-        0.5457,
-        0.4793
+        0.2195,
+        0.2961,
+        0.2086
       ],
       "hsv": [
-        44,
-        0.075,
-        0.78
-      ],
-      "luminance": 0.5463,
-      "measured": "reference y≈0.21 (#CAC1B5, S=0.104 — the saturation minimum of the whole sky column)",
-      "allowed": "The neutral crossover band where the cool upper sky becomes the warm horizon. Must exist. It is the single feature that stops the sky reading as a two-colour lerp.",
-      "forbidden": "Never skip it. A zenith→horizon gradient that does not pass through S<0.14 looks like a shader default."
-    },
-    "sky.horizon": {
-      "hex": "#F1C9A6",
-      "rgb": [
-        241,
-        201,
-        166
-      ],
-      "linear": [
-        0.8796,
-        0.5841,
-        0.3813
-      ],
-      "hsv": [
-        28,
-        0.311,
-        0.945
-      ],
-      "luminance": 0.6323,
-      "measured": "reference y=0.30, x=0.245",
-      "allowed": "Sky within 0.06 of the horizon line; the aerial-perspective target colour for all distant geometry.",
-      "forbidden": "Never as a light colour — it is the *result* of the key through atmosphere, not the key."
-    },
-    "sky.sun": {
-      "hex": "#FFE8A0",
-      "rgb": [
-        255,
-        232,
-        160
-      ],
-      "linear": [
-        1,
-        0.807,
-        0.3515
-      ],
-      "hsv": [
-        45,
-        0.373,
-        1
-      ],
-      "luminance": 0.8151,
-      "measured": "reference (0.93, 0.335); measured peak Y 0.815, highlight sample #FFFFB4",
-      "allowed": "The sun disc/glow, off to camera-right at the horizon, and the key light colour. May exceed Y 0.95 in a region ≤0.6% of the frame.",
-      "forbidden": "Never a lens flare with visible ghosts."
-    },
-    "aurora.mint": {
-      "hex": "#C1EACA",
-      "rgb": [
-        193,
-        234,
-        202
-      ],
-      "linear": [
-        0.5333,
-        0.8228,
-        0.5906
-      ],
-      "hsv": [
-        133,
-        0.175,
-        0.918
-      ],
-      "luminance": 0.7445,
-      "measured": "reference y=0.18, x=0.245 (hue 133, S 0.175, Y 0.745)",
-      "allowed": "Primary aurora band. Additive over the sky, S must stay ≤0.22.",
-      "forbidden": "Never above S 0.30. A saturated green aurora is the fastest way to look like a screensaver."
-    },
-    "aurora.teal": {
-      "hex": "#B4D3C8",
-      "rgb": [
-        180,
-        211,
-        200
-      ],
-      "linear": [
-        0.4564,
-        0.6514,
-        0.5776
-      ],
-      "hsv": [
-        159,
-        0.147,
-        0.827
-      ],
-      "luminance": 0.6046,
-      "measured": "reference y=0.14 (hue 159, S 0.147)",
-      "allowed": "Secondary aurora band, lower and cooler than aurora.mint; the vertical curtain striations."
-    },
-    "aurora.violet": {
-      "hex": "#C6C2D4",
-      "rgb": [
-        198,
-        194,
-        212
-      ],
-      "linear": [
-        0.5647,
-        0.5395,
-        0.6584
-      ],
-      "hsv": [
-        253,
-        0.085,
-        0.831
-      ],
-      "luminance": 0.5534,
-      "measured": "NOT IN THE REFERENCE as an aurora. A magenta-cast hunt over the whole left sky found no rose band — the strongest \"cast\" sample was warm sky (#E3AB97). The reference's upper-left sky is a near-neutral cool blue-grey (#AFB1B4, hue 216, S 0.028). This colour is an authored third band at hue 253, S 0.085.",
-      "allowed": "A third, weakest aurora band, opposite the sun, S ≤0.12. It exists to give a long session some sky variety the single reference frame does not have to show.",
-      "forbidden": "Never strong enough for a viewer to name it. If somebody says \"the purple aurora\", it is too strong. Never near hue 346 — that arc belongs to `danger` and nothing else."
-    },
-    "rock.warm.lit": {
-      "hex": "#FFAF5C",
-      "rgb": [
-        255,
-        175,
-        92
-      ],
-      "linear": [
-        1,
-        0.4287,
-        0.107
-      ],
-      "hsv": [
-        31,
-        0.639,
-        1
-      ],
-      "luminance": 0.5269,
-      "measured": "plinth face #FF914B (Y 0.420) and terrace top #FFC47F (Y 0.623); this is their working mid",
-      "allowed": "Rock facets whose normal is within 35° of the key. The signature warm of the world."
-    },
-    "rock.warm.mid": {
-      "hex": "#D0844F",
-      "rgb": [
-        208,
-        132,
-        79
-      ],
-      "linear": [
-        0.6308,
-        0.2307,
-        0.0782
-      ],
-      "hsv": [
-        25,
-        0.62,
-        0.816
-      ],
-      "luminance": 0.3048,
-      "measured": "between #B27250 (Y 0.221, grazing) and #FF914B (Y 0.420, full key)",
-      "allowed": "The colour a player would name if asked \"what colour is the rock\". Terrain, cliffs, boulders, the plinth, mesa tops and faces at mid distance.",
-      "forbidden": "Never on the hero, never on UI, never on anything the player can interact with — interactables are cyan-marked."
-    },
-    "rock.warm.low": {
-      "hex": "#9E6244",
-      "rgb": [
-        158,
-        98,
-        68
-      ],
-      "linear": [
-        0.3419,
-        0.1221,
-        0.0578
-      ],
-      "hsv": [
-        20,
-        0.57,
-        0.62
-      ],
-      "luminance": 0.1642,
-      "measured": "grazing-angle lit rock",
-      "allowed": "Rock facets at grazing key incidence, and the warm bounce-shadow family (see art-direction.md §3 shadow family b)."
-    },
-    "rock.shadow": {
-      "hex": "#55505E",
-      "rgb": [
-        85,
-        80,
-        94
-      ],
-      "linear": [
-        0.0908,
-        0.0802,
-        0.1119
-      ],
-      "hsv": [
-        261,
+        112,
         0.149,
-        0.369
+        0.58
       ],
-      "luminance": 0.0847,
-      "measured": "terrace shadow at (0.872, 0.610) = #574F5C, hue 277, S 0.141, Y 0.085, against the same terrace lit at #FFC87F, hue 34, S 0.502, Y 0.641. Deep foreground shadow at (0.700, 0.860) = #1C151D, hue 293.",
-      "note": "This is the most important colour in the palette. Rock shadow is a desaturated VIOLET-SLATE, not a dark orange. Lit→shadow on a sky-facing surface is hue +240…+245° (equivalently −115…−120°, which is the way the ramp actually travels), saturation ×0.28, luminance ×0.13.",
-      "rampPath": "Verified by a vertical cut down the terrace face at x=0.885: hue 26 → 18 → 15 → 9 → 353 → 343 → 338 (mid shadow, S 0.29–0.32, Y 0.140) → 260 (deep shadow, S 0.13, Y 0.093). The hue rotates BACKWARDS through red and rose into violet. It does not pass through green. Metal does the opposite — see hero.armour.ramp.",
-      "allowed": "Sky-facing rock surfaces turned away from the key, with no warm bounce and no nearby emitter.",
-      "forbidden": "Never produced by multiplying the albedo. If your shadows are brown, the render is already losing."
+      "luminance": 0.2735,
+      "measured": "per-row median over x [0.3,0.7] at y=0.14",
+      "allowed": "The neutral crossover band where the cool upper sky becomes the warm horizon. It is the saturation minimum of the whole column and it MUST exist.",
+      "forbidden": "A zenith->horizon ramp that never drops below S 0.16 reads as a two-colour lerp."
     },
-    "rock.shadow.deep": {
-      "hex": "#221C28",
+    "sky.warm": {
+      "hex": "#A89A72",
       "rgb": [
-        34,
-        28,
-        40
-      ],
-      "linear": [
-        0.016,
-        0.0116,
-        0.0212
-      ],
-      "hsv": [
-        270,
-        0.3,
-        0.157
-      ],
-      "luminance": 0.0132,
-      "measured": "deepest foreground shadow #1C151D (hue 293, Y 0.0087)",
-      "allowed": "Occlusion cores, crevices, under-ledges, contact shadows. The darkest world value that is not ink."
-    },
-    "rock.bone": {
-      "hex": "#AA9087",
-      "rgb": [
-        170,
-        144,
-        135
-      ],
-      "linear": [
-        0.402,
-        0.2789,
-        0.2423
-      ],
-      "hsv": [
-        15,
-        0.206,
-        0.667
-      ],
-      "luminance": 0.3024,
-      "measured": "the ruin tower at x 0.175–0.215, y 0.230–0.290: shadow side #948382 / #968482 / #9D8984 / #978885 / #958A86 (hue 3–16, S 0.09–0.16), key-lit side #D1A38B / #C39B8D / #AA8F86 (hue 15–21, S 0.21–0.33). This role is the mid-tone of those two means.",
-      "note": "The bone stone of the ruins, and the material §5 of art-direction.md gives roughness and ink rules for but round 1 never gave a colour. It is a DESATURATED warm grey — not the orange of rock.warm.*, and that difference is what makes ruins read as built rather than eroded. The samples sit at mid distance and therefore already carry the aerial wash of §7: bone stone standing in the FOREGROUND should be authored ~15% more saturated and a few degrees warmer, near #B08872.",
-      "allowed": "Ruin masonry, fallen columns, the megacity's near towers, any cut stone. Cyan inlays on it are separate emissive strips, never a tint of this colour.",
-      "forbidden": "Never on terrain — terrain is rock.warm.*. If the player can walk on it as ground, it is not bone stone."
-    },
-    "world.foliage": {
-      "hex": "#A2D7A6",
-      "rgb": [
-        162,
-        215,
-        166
-      ],
-      "linear": [
-        0.3613,
-        0.6795,
-        0.3813
-      ],
-      "hsv": [
-        125,
-        0.247,
-        0.843
-      ],
-      "luminance": 0.5903,
-      "measured": "six ground-cover reads: #B7EDBA (0.170,0.440), #BBFBC6 (0.500,0.550), #BDF3BD (0.120,0.530), #ACE2A9 (0.165,0.575), #8CB592 (0.217,0.567), #8ACA82 (0.020,0.860). Hue 113–140, S 0.20–0.36, mean of the set hue 126 / S 0.25.",
-      "census": "Hue 70–119° at S ≥ 0.06 is 4.0% of the frame (n = 42 428 at half-res). Its saturation histogram: 28.5% below S 0.10, 42.8% in 0.10–0.20, 23.8% in 0.20–0.30, only 4.8% above S 0.30 and 0.5% above S 0.40.",
-      "note": "THE role that keeps `success` safe. World green and the success flash occupy the same hue arc — the reference carries ground cover at 117° and success is authored at 107° — so they are separated by SATURATION, exactly the way `danger` is separated from rose rock shadow. World green lives at S ≤ 0.30 (95% of it does); success is S 0.542 and is only ever counted above S 0.45.",
-      "allowed": "Ground cover, moss on the river banks, low scrub, the green skirt of a mesa. Always below S 0.30.",
-      "forbidden": "Never above S 0.35 — at that point it starts to be read as a success event. Never as an emissive; if it glows it is resonance.flow, not foliage."
-    },
-    "world.grey": {
-      "hex": "#7C7A72",
-      "rgb": [
-        124,
-        122,
+        168,
+        154,
         114
       ],
       "linear": [
-        0.2016,
-        0.1946,
+        0.3916,
+        0.3231,
         0.1683
       ],
       "hsv": [
-        48,
-        0.081,
-        0.486
+        44,
+        0.321,
+        0.659
       ],
-      "luminance": 0.1942,
-      "measured": "AUTHORED, not sampled. There is no grey material anywhere in reference/brief-hero.png — the reference is a hero vista of a world that has not been given world.md yet. This colour is placed by construction: a dead neutral carrying the residual warm bias of stone that used to be lit, positioned to be measurably distinct from the two roles it would otherwise be confused with.",
-      "separation": "vs rock.bone #AA9087: Δhue 33°, ΔS 0.125, ΔY 0.1082. vs rock.shadow #55505E: Δhue 147°, ΔS 0.068, ΔY -0.1095. Bone stone is warmer and twice as saturated; rock shadow is violet and half as bright. Grey is neither, and it is the only role in the file whose saturation is below 0.10.",
-      "note": "world.md Law 5: a claim shut with a supplied value works, sags, and never sets. Grey is the THIRD material class of this world, alongside warm stone (what cooled) and teal resonance (what has not resolved yet), and it is the antagonist rendered as a surface. It must read sad-but-functional: the thing still holds the roof up. Roughness 0.88–0.95, no specular lobe worth the name, no rim, no emissive, no bloom, and it is the one material that gets ink in the foreground *because* it is what the player is meant to notice.",
-      "allowed": "Any object emitted by a supplied value: a sagging span, a propped roof, an approximate wall, a greyed floor. The props and stacked certainties a sagsmith puts under them stay their own colours — the prop is not grey, the thing it is holding up is. Ink on foreground grey.",
-      "forbidden": "Never cyan-tinted, never bloomed, never emissive — a grey object has no live claim in it and therefore nothing to glow with. Never used as a neutral for anything that is merely dark or dusty: if it is not the result of an approximation, it is rock.shadow or rock.bone, and calling it grey spends the word."
+      "luminance": 0.3265,
+      "measured": "per-row median over x [0.3,0.7] at y=0.22",
+      "allowed": "Sky dome around y 0.22."
     },
-    "world.grey.deep": {
-      "hex": "#4A4945",
+    "sky.low": {
+      "hex": "#D1AB6C",
       "rgb": [
-        74,
-        73,
-        69
+        209,
+        171,
+        108
       ],
       "linear": [
-        0.0685,
-        0.0666,
-        0.0595
+        0.6376,
+        0.4072,
+        0.15
       ],
       "hsv": [
-        48,
-        0.068,
-        0.29
+        37,
+        0.483,
+        0.82
       ],
-      "luminance": 0.0665,
-      "measured": "AUTHORED. The shadow end of world.grey, held at the same hue and saturation so grey is the one material whose shadow does NOT rotate — see the note.",
-      "note": "Grey is the exception to §3. Warm rock rotates to violet in shadow, skin holds its hue, resonance pulls everything near it to teal — and grey does none of it, because a hue rotation is what a surface does when it is being lit by a coloured world, and grey reads as a surface the world has partly stopped talking to. Δhue 0°, saturation ×0.84, luminance ×0.34. A builder who gives grey a violet shadow has made it into rock.",
-      "allowed": "Unlit faces, undersides and contact shadows of grey objects."
+      "luminance": 0.4376,
+      "measured": "per-row median over x [0.3,0.7] at y=0.28",
+      "allowed": "Sky dome around y 0.28."
     },
-    "rock.albedo": {
-      "hex": "#B4744C",
+    "sky.horizon": {
+      "hex": "#FFB260",
       "rgb": [
-        180,
-        116,
-        76
-      ],
-      "linear": [
-        0.4564,
-        0.1746,
-        0.0723
-      ],
-      "hsv": [
-        23,
-        0.578,
-        0.706
-      ],
-      "luminance": 0.2271,
-      "allowed": "Material author input only — the diffuse albedo you type into Materials.js. It is never a pixel colour; it is what rock.warm.* and rock.shadow are rendered *from*.",
-      "note": "Calibration: this albedo facing the key at the specified exposure must render at Y 0.42 ±0.05; facing away under open sky, at Y 0.07 ±0.02. That 6.2:1 ratio is the key:fill target — see solvedConstants.keyToFill, which records the boxes it was measured on."
-    },
-    "resonance.core": {
-      "hex": "#2FE3D6",
-      "rgb": [
-        47,
-        227,
-        214
-      ],
-      "linear": [
-        0.0284,
-        0.7682,
-        0.6724
-      ],
-      "hsv": [
-        176,
-        0.793,
-        0.89
-      ],
-      "luminance": 0.604,
-      "measured": "hero accent slot #19D7D0 (hue 178, S 0.884 — the most saturated pixel family in the reference); emitter socket #73E6E7",
-      "note": "The identity colour of the project. It means exactly one thing: mathematics is live here.",
-      "allowed": "Emitter cores, hologram data lines, hero accent channels, interactable markers, resonance crystals, the HUD accent.",
-      "forbidden": "Never on rock, never on skin, never on terrain, never as a general \"sci-fi\" tint. Never on anything that is not either mathematics or the player's connection to it. Hard budget: pixels at S≥0.55 in hue 150–215 must be 2–5% of the frame."
-    },
-    "resonance.bloom": {
-      "hex": "#9EF3F0",
-      "rgb": [
-        158,
-        243,
-        240
-      ],
-      "linear": [
-        0.3419,
-        0.8963,
-        0.8714
-      ],
-      "hsv": [
-        178,
-        0.35,
-        0.953
-      ],
-      "luminance": 0.7766,
-      "measured": "socket highlight sample #9EF3F0 (Y 0.737); crystal highlight #CAFFFF",
-      "allowed": "The halo around any resonance emitter, the falloff of a light shaft, the Fresnel rim on crystal.",
-      "note": "The halo is AUTHORED, not measured. Annular means about the true socket centre (0.634, 0.704) are flat — 0.396 / 0.402 / 0.410 / 0.376 / 0.383 / 0.325 / 0.257 at r = 1/2/3/4.6/6.5/9/12% of frame height — because every annulus crosses lit rock, cast light and shadow as well as glow, so a radial profile through this frame cannot isolate the bloom kernel. Round 1 published a falloff table (0.74/0.69/0.45/0.29) that no annular sampling reproduces; it is withdrawn. Author two lobes instead: a tight core at σ ≈ 0.6% of frame height and a wide halo whose half-intensity radius is 6% of frame height."
-    },
-    "resonance.hot": {
-      "hex": "#E9FFFB",
-      "rgb": [
-        233,
         255,
-        251
+        178,
+        96
       ],
       "linear": [
-        0.8148,
         1,
-        0.9647
+        0.4452,
+        0.117
       ],
       "hsv": [
-        169,
-        0.086,
+        31,
+        0.624,
         1
       ],
-      "luminance": 0.9581,
-      "measured": "brightest pixel inside the socket's emissive mask (hue 150–215, or S ≤ 0.12 with Y > 0.60, searched over x 0.54–0.74, y 0.62–0.82): #E7FEFD, Y 0.9496, at (0.6344, 0.7038). Blown resonance (Y ≥ 0.90, hue 150–215) is 0.18% of the frame.",
-      "allowed": "The blown centre of an emitter, ≤0.4% of the frame. Every emitter must have one — an emissive with no white-hot core reads as a painted decal, not a light."
+      "luminance": 0.5395,
+      "measured": "per-row median over x [0.3,0.7] at y=0.34",
+      "allowed": "Sky at the horizon line away from the sun; also the aerial-perspective target colour that all distant geometry converges to.",
+      "forbidden": "Never a light colour — it is the result of the key through atmosphere, not the key."
     },
-    "resonance.flow": {
-      "hex": "#3FCFA0",
+    "sky.horizon.antisun": {
+      "hex": "#EF9F5B",
       "rgb": [
-        63,
-        207,
-        160
+        239,
+        159,
+        91
       ],
       "linear": [
-        0.0497,
-        0.624,
-        0.3515
+        0.8632,
+        0.3467,
+        0.1046
       ],
       "hsv": [
-        160,
-        0.696,
-        0.812
+        28,
+        0.619,
+        0.937
       ],
-      "luminance": 0.4822,
-      "measured": "river #399985 (hue 168, S 0.627) and #428164 under haze; the ribbon reads greener than the crystal",
-      "allowed": "Liquid resonance: the river, flowing channels, spill from a solved equation. Greener than resonance.core by ~14° of hue so the fluid and the solid read as different substances."
+      "luminance": 0.439,
+      "measured": "median of box [0.03,0.352,0.07,0.36] of frame",
+      "allowed": "The horizon on the side of frame away from the sun. The sky is 2x brighter at the sun end than at this end."
     },
-    "resonance.deep": {
-      "hex": "#0E5F63",
+    "sky.sun": {
+      "hex": "#FFF77D",
       "rgb": [
-        14,
-        95,
-        99
+        255,
+        247,
+        125
       ],
       "linear": [
-        0.0044,
-        0.1144,
-        0.1248
+        1,
+        0.9301,
+        0.2051
       ],
       "hsv": [
-        183,
-        0.859,
-        0.388
+        56,
+        0.51,
+        1
       ],
-      "luminance": 0.0918,
-      "allowed": "Dormant/unsolved resonance — crystal that has not been charged, a hologram that has not been engaged. Same hue family, one third the luminance, no bloom, no core."
+      "luminance": 0.8926,
+      "measured": "median of box [0.965,0.352,0.995,0.36] of frame",
+      "allowed": "The sun glow at the horizon, and the key light colour.",
+      "forbidden": "Never a lens flare with ghosts. Never a visible disc with a hard rim."
     },
-    "certainty.facet": {
-      "hex": "#5AA5A0",
+    "cloud.slab": {
+      "hex": "#F7CA84",
       "rgb": [
-        90,
-        165,
-        160
+        247,
+        202,
+        132
       ],
       "linear": [
-        0.1022,
-        0.3763,
-        0.3515
+        0.9301,
+        0.5906,
+        0.2307
       ],
       "hsv": [
-        176,
-        0.455,
-        0.647
+        37,
+        0.466,
+        0.969
       ],
-      "luminance": 0.3162,
-      "measured": "AUTHORED. reference/brief-hero.png carries crystal (the pale cyan clusters right of frame) but nothing in it is a certainty in world.md's sense, so this colour is placed by construction against two constraints: it must sit inside §9's resonance arc (hue 150–215, S ≥ 0.30) and it must NOT reach the hot gate at S 0.55.",
-      "note": "world.md §2.2 Law 4: a claim re-closed enough times, spaced far enough apart, SETS — it crystallises and drifts no more. That crystal is a certainty, and it is the second most beautiful object class in this world; the most beautiful is a live claim, and that ordering is a rule, not a preference (art-direction.md §0.4). A certainty is faceted crystal that REFRACTS: roughness 0.06–0.14, specular AA required, a Fresnel rim in certainty.rim, and NO emissive, NO blown core, NO bloom. It does not glow because it does not drift; it holds. That is the whole read, and it is what makes a certainty legible at a glance against a live claim two metres away.",
-      "allowed": "Set certainties: the certainty field, crystal along old claim lines, a cut certainty in the player's hands, the stacked certainties under a sagsmith's prop, the crystal a construction is stood on.",
-      "forbidden": "Never emissive. Never at S ≥ 0.55 — the hot-resonance budget (C5, 0.02–0.05 of frame) belongs to live claims and carries alone, and a field of certainties must move C4 without moving C5. Never grey-tinted: a certainty cannot be faked and must never look as though it could have been."
+      "luminance": 0.6368,
+      "measured": "median of {hue 20-60 & S>=0.35 & Y>=0.45} inside box [0,0,1,0.22]; n=174711 (4.1331% of frame)",
+      "allowed": "The hard-edged stylised cloud slabs. Warm, flat, roughly 2x the luminance of the sky at the same altitude, and 60-110 degrees of hue away from it.",
+      "forbidden": "Never volumetric. Never soft-edged. Never a noise texture."
     },
-    "certainty.rim": {
-      "hex": "#8FE8DF",
+    "rock.lit.a": {
+      "hex": "#F59E49",
       "rgb": [
-        143,
-        232,
-        223
+        245,
+        158,
+        73
       ],
       "linear": [
-        0.2747,
-        0.807,
-        0.7379
+        0.9131,
+        0.3419,
+        0.0666
       ],
       "hsv": [
-        174,
-        0.384,
-        0.91
+        30,
+        0.702,
+        0.961
       ],
-      "luminance": 0.6888,
-      "measured": "AUTHORED. Y 0.6888 — deliberately below the 0.72 ceiling that §0.4 sets for any non-live object, which is 0.18 under the 0.90 floor B1a puts on a live emitter core.",
-      "note": "The refracted edge and internal caustic of set crystal. This is the brightest a certainty is ever allowed to be, and the gap between it and an emitter core is the two-tier rule made measurable: a live claim always out-brightens every certainty in frame by at least 0.18 of luminance.",
-      "allowed": "Fresnel rim, facet edges and internal caustics on certainty geometry.",
-      "forbidden": "Never above Y 0.72. Never bloomed — bloom is an emitter's signature and a certainty is not one."
+      "luminance": 0.4435,
+      "measured": "median of box [0.302,0.653,0.312,0.662] of frame",
+      "allowed": "A rock facet whose normal is within ~15 degrees of the key. The brightest warm value on any solid."
     },
-    "certainty.deep": {
-      "hex": "#26514F",
+    "rock.lit.b": {
+      "hex": "#C88B4E",
       "rgb": [
-        38,
-        81,
-        79
+        200,
+        139,
+        78
       ],
       "linear": [
-        0.0194,
-        0.0823,
-        0.0782
+        0.5776,
+        0.2582,
+        0.0762
       ],
       "hsv": [
-        177,
-        0.531,
-        0.318
+        30,
+        0.61,
+        0.784
       ],
-      "luminance": 0.0686,
-      "measured": "AUTHORED. The unlit facet: same hue, S ×1.17, Y ×0.22 against certainty.facet.",
-      "note": "Crystal in shadow keeps its hue and GAINS saturation, which is the opposite of rock and is why a certainty reads as transmissive rather than as a painted stone.",
-      "allowed": "Unlit facets, crystal interiors, the underside of a certainty seam."
+      "luminance": 0.3129,
+      "measured": "median of box [0.15,0.205,0.166,0.26] of frame",
+      "allowed": "Rock facet at moderate key incidence."
     },
-    "hero.armour": {
-      "hex": "#B8874F",
+    "rock.lit.c": {
+      "hex": "#B8844B",
       "rgb": [
         184,
-        135,
-        79
+        132,
+        75
       ],
       "linear": [
         0.4793,
-        0.2423,
-        0.0782
+        0.2307,
+        0.0704
+      ],
+      "hsv": [
+        31,
+        0.592,
+        0.722
+      ],
+      "luminance": 0.272,
+      "measured": "median of box [0.1,0.235,0.14,0.262] of frame",
+      "allowed": "The value a player would name if asked what colour the rock is. The mass of the foreground."
+    },
+    "rock.lit.d": {
+      "hex": "#AF7C47",
+      "rgb": [
+        175,
+        124,
+        71
+      ],
+      "linear": [
+        0.4287,
+        0.2016,
+        0.063
+      ],
+      "hsv": [
+        31,
+        0.594,
+        0.686
+      ],
+      "luminance": 0.2398,
+      "measured": "median of box [0.196,0.44,0.216,0.48] of frame",
+      "allowed": "Rock facet turning away from the key."
+    },
+    "rock.lit.e": {
+      "hex": "#775C3E",
+      "rgb": [
+        119,
+        92,
+        62
+      ],
+      "linear": [
+        0.1845,
+        0.107,
+        0.0482
       ],
       "hsv": [
         32,
-        0.571,
-        0.722
+        0.479,
+        0.467
       ],
-      "luminance": 0.2808,
-      "measured": "perceptual mid of the measured five-stop ramp; see `ramp`",
-      "note": "Champagne-gold plate metal. Read at distance it is a warm mid; up close it is a five-stop ramp whose saturation PEAKS in the light band and DROPS in the specular.",
-      "ramp": [
-        {
-          "stop": "shadow",
-          "hex": "#34494C",
-          "rgb": [
-            52,
-            73,
-            76
-          ],
-          "linear": [
-            0.0343,
-            0.0666,
-            0.0723
-          ],
-          "hsv": [
-            188,
-            0.316,
-            0.298
-          ],
-          "luminance": 0.0601,
-          "measuredAt": "hero cut y=0.60, x=0.379 — hue 185, S 0.32"
-        },
-        {
-          "stop": "terminator",
-          "hex": "#68704F",
-          "rgb": [
-            104,
-            112,
-            79
-          ],
-          "linear": [
-            0.1384,
-            0.162,
-            0.0782
-          ],
-          "hsv": [
-            75,
-            0.295,
-            0.439
-          ],
-          "luminance": 0.1509,
-          "measuredAt": "x=0.388 — hue 75, S 0.295; the ramp travels through olive, it is not an RGB lerp"
-        },
-        {
-          "stop": "mid",
-          "hex": "#AB804F",
-          "rgb": [
-            171,
-            128,
-            79
-          ],
-          "linear": [
-            0.4072,
-            0.2159,
-            0.0782
-          ],
-          "hsv": [
-            32,
-            0.538,
-            0.671
-          ],
-          "luminance": 0.2466,
-          "measuredAt": "x=0.3935 — hue 32, S 0.54"
-        },
-        {
-          "stop": "light",
-          "hex": "#FDB755",
-          "rgb": [
-            253,
-            183,
-            85
-          ],
-          "linear": [
-            0.9823,
-            0.4735,
-            0.0908
-          ],
-          "hsv": [
-            35,
-            0.664,
-            0.992
-          ],
-          "luminance": 0.554,
-          "measuredAt": "x=0.3972 — hue 35, S 0.67 — saturation maximum"
-        },
-        {
-          "stop": "specular",
-          "hex": "#FFFCA0",
-          "rgb": [
-            255,
-            252,
-            160
-          ],
-          "linear": [
-            1,
-            0.9734,
-            0.3515
-          ],
-          "hsv": [
-            58,
-            0.373,
-            1
-          ],
-          "luminance": 0.9342,
-          "measuredAt": "x=0.4001 — hue 58, S 0.373 — desaturates and shifts yellow"
-        }
-      ],
-      "allowed": "Hero plate armour, ruin fittings, any crafted metal.",
-      "forbidden": "Never on rock. Never as a UI colour except reward.gold."
+      "luminance": 0.1192,
+      "measured": "median of box [0.15,0.34,0.166,0.4] of frame",
+      "allowed": "Rock facet at grazing key incidence — the last step before a face is in shadow."
     },
-    "hero.undersuit": {
-      "hex": "#2C4448",
+    "rock.shadow": {
+      "hex": "#1B2C33",
       "rgb": [
+        27,
         44,
-        68,
-        72
+        51
       ],
       "linear": [
+        0.011,
         0.0252,
-        0.0578,
-        0.0648
+        0.0331
       ],
       "hsv": [
-        189,
-        0.389,
-        0.282
+        198,
+        0.471,
+        0.2
       ],
-      "luminance": 0.0514,
-      "measured": "hero cut x=0.3783–0.3855: hue 180–189, S 0.18–0.32, Y 0.020–0.041",
-      "allowed": "The soft suit under the plates, the inside of joints, anything on the hero that must recede. This is the hero's shadow value and it is TEAL, because the hero stands in resonance light."
+      "luminance": 0.0227,
+      "measured": "median of box [0.082,0.24,0.094,0.3] of frame",
+      "allowed": "Any facet turned away from the key with sky above it. THE most important colour in this palette.",
+      "forbidden": "Never produced by multiplying the albedo. It is not a dark orange and it is not black: it is a chromatic blue at hue ~198 that a shadowed face of ANY albedo converges to."
     },
-    "hero.accent": {
-      "hex": "#1FD9D2",
+    "rock.shadow.far": {
+      "hex": "#202C30",
+      "rgb": [
+        32,
+        44,
+        48
+      ],
+      "linear": [
+        0.0144,
+        0.0252,
+        0.0296
+      ],
+      "hsv": [
+        195,
+        0.333,
+        0.188
+      ],
+      "luminance": 0.0232,
+      "measured": "median of box [0.885,0.578,0.905,0.596] of frame",
+      "allowed": "The same shadow family at mid distance — slightly lighter and less saturated, which is the whole of aerial perspective on a shadowed plane."
+    },
+    "ground.lit": {
+      "hex": "#78632C",
+      "rgb": [
+        120,
+        99,
+        44
+      ],
+      "linear": [
+        0.1878,
+        0.1248,
+        0.0252
+      ],
+      "hsv": [
+        43,
+        0.633,
+        0.471
+      ],
+      "luminance": 0.131,
+      "measured": "median of box [0.545,0.76,0.575,0.79] of frame",
+      "allowed": "The walkable ground plane in full key. Warmer and yellower than cliff rock (hue ~43 against ~30) so the floor and the walls are different materials."
+    },
+    "ground.bright": {
+      "hex": "#8A662A",
+      "rgb": [
+        138,
+        102,
+        42
+      ],
+      "linear": [
+        0.2542,
+        0.1329,
+        0.0232
+      ],
+      "hsv": [
+        38,
+        0.696,
+        0.541
+      ],
+      "luminance": 0.1507,
+      "measured": "median of box [0.29,0.93,0.32,0.96] of frame",
+      "allowed": "Ground plane closest to the key."
+    },
+    "ground.shadow": {
+      "hex": "#223522",
+      "rgb": [
+        34,
+        53,
+        34
+      ],
+      "linear": [
+        0.016,
+        0.0356,
+        0.016
+      ],
+      "hsv": [
+        120,
+        0.358,
+        0.208
+      ],
+      "luminance": 0.03,
+      "measured": "median of box [0.53,0.92,0.57,0.95] of frame",
+      "allowed": "The ground plane inside a cast shadow. It keeps its own albedo and rotates toward the fill: hue 43 -> ~123, not to the blue of a turned face.",
+      "forbidden": "Never the same colour as rock.shadow. An up-facing surface still sees the whole sky; a turned face does not. That difference is the only reason a cast shadow reads as a shadow rather than as a hole."
+    },
+    "world.foliage": {
+      "hex": "#203120",
+      "rgb": [
+        32,
+        49,
+        32
+      ],
+      "linear": [
+        0.0144,
+        0.0307,
+        0.0144
+      ],
+      "hsv": [
+        120,
+        0.347,
+        0.192
+      ],
+      "luminance": 0.0261,
+      "measured": "median of {hue 60-150 & S>=0.25 & Y<0.06} inside box [0.28,0.62,0.78,0.92]; n=113964 (2.6961% of frame)",
+      "allowed": "Ground cover, scrub, the green skirt of a shelf. Green in this world is a VALUE, not a colour.",
+      "forbidden": "Never above S 0.45 and never above Y 0.22. A bright green reads as a UI success state, not as a plant."
+    },
+    "world.foliage.lit": {
+      "hex": "#585939",
+      "rgb": [
+        88,
+        89,
+        57
+      ],
+      "linear": [
+        0.0976,
+        0.0999,
+        0.0409
+      ],
+      "hsv": [
+        62,
+        0.36,
+        0.349
+      ],
+      "luminance": 0.0951,
+      "measured": "median of {hue 50-150 & S>=0.25 & Y>=0.06} inside box [0,0.42,0.2,0.52]; n=2912 (0.0689% of frame)",
+      "allowed": "The brightest foliage in frame — a canopy or a shelf top catching the key."
+    },
+    "crystal.hot": {
+      "hex": "#96FDE1",
+      "rgb": [
+        150,
+        253,
+        225
+      ],
+      "linear": [
+        0.305,
+        0.9823,
+        0.7529
+      ],
+      "hsv": [
+        164,
+        0.407,
+        0.992
+      ],
+      "luminance": 0.8217,
+      "measured": "median of {hue 140-200 & S>=0.20 & V>=0.92} inside box [0,0.3,1,1]; n=40004 (0.9464% of frame)",
+      "allowed": "The bright facets of a certainty crystal. One of only two saturated cool materials in the world.",
+      "forbidden": "Never on rock, never on terrain, never as a general sci-fi tint."
+    },
+    "crystal.face": {
+      "hex": "#88D1C3",
+      "rgb": [
+        136,
+        209,
+        195
+      ],
+      "linear": [
+        0.2462,
+        0.6376,
+        0.5457
+      ],
+      "hsv": [
+        168,
+        0.349,
+        0.82
+      ],
+      "luminance": 0.5478,
+      "measured": "median of {hue 140-200 & S>=0.25 & 0.70<=V<0.92} inside box [0,0.3,1,1]; n=8356 (0.1977% of frame)",
+      "allowed": "The turned facets of the same crystal. A crystal shows two or three values, never a gradient."
+    },
+    "water.core": {
+      "hex": "#8FFDE5",
+      "rgb": [
+        143,
+        253,
+        229
+      ],
+      "linear": [
+        0.2747,
+        0.9823,
+        0.7835
+      ],
+      "hsv": [
+        167,
+        0.435,
+        0.992
+      ],
+      "luminance": 0.8175,
+      "measured": "median of {hue 150-195 & S>=0.20 & V>=0.78} inside box [0.55,0.5,0.8,0.72]; n=25619 (0.6061% of frame)",
+      "allowed": "The lit surface of a carry — the cyan river. Greener than crystal by ~3 degrees and slightly more saturated."
+    },
+    "water.body": {
+      "hex": "#7EB9A3",
+      "rgb": [
+        126,
+        185,
+        163
+      ],
+      "linear": [
+        0.2086,
+        0.4851,
+        0.3663
+      ],
+      "hsv": [
+        158,
+        0.319,
+        0.725
+      ],
+      "luminance": 0.4178,
+      "measured": "median of {hue 150-195 & S>=0.20 & 0.55<=V<0.78} inside box [0.55,0.5,0.8,0.72]; n=754 (0.0178% of frame)",
+      "allowed": "The shaded or deeper part of a carry, and its spill onto the bank."
+    },
+    "hero.shadow": {
+      "hex": "#1F323C",
       "rgb": [
         31,
-        217,
-        210
+        50,
+        60
       ],
       "linear": [
         0.0137,
-        0.6939,
-        0.6445
+        0.0319,
+        0.0452
       ],
       "hsv": [
-        178,
-        0.857,
-        0.851
+        201,
+        0.483,
+        0.235
       ],
-      "luminance": 0.5457,
-      "measured": "shoulder-blade slot #19D7D0 (hue 178, S 0.884, Y 0.534). Component census over the hero box at hue 150–215, S ≥ 0.45, V ≥ 0.62: 61 components, 21 of them ≥ 90 px on a 2752-wide frame, together 4.09% of the hero's silhouette area.",
-      "allowed": "The emissive channels on the hero, by zone: two SHOULDER-BLADE slots, five spine chevrons, one band per forearm, one strip per shin, one strip per boot cuff. Those are the zones legible on the reference, which is a BACK view — whether the chest carries a matching pair is an inference, not a measurement, and is not authorised here.",
-      "forbidden": "More than 4% of the hero's silhouette area (measured 4.09% at the threshold above, so 4% is the ceiling, not a target). The accents are punctuation, not a paint job.",
-      "note": "Round 1 published a total of \"eleven elements\" and called the shoulder slots chest slots. Both were wrong: the reference is a back view, and no single count survives a change of threshold — the component census moves from 61 to 21 between a 1 px and a 90 px minimum area. Author by ZONE and hold the AREA budget; never code to a count."
+      "luminance": 0.029,
+      "measured": "median of {hue 185-225 & S>=0.25 & Y<0.12} inside box [0.455,0.52,0.545,0.7]; n=18348 (0.4341% of frame)",
+      "allowed": "The character seen from the shadow side. The player is mostly THIS colour: hue ~201, the same family as rock.shadow.",
+      "forbidden": "Never desaturate the character to grey. The blue is what makes a low-poly figure read against warm ground."
     },
-    "hero.skin": {
-      "hex": "#E3A170",
+    "hero.rim": {
+      "hex": "#F3B16D",
       "rgb": [
-        227,
-        161,
-        112
+        243,
+        177,
+        109
       ],
       "linear": [
-        0.7682,
-        0.3564,
-        0.162
+        0.8963,
+        0.4397,
+        0.1529
       ],
       "hsv": [
-        26,
-        0.507,
-        0.89
+        30,
+        0.551,
+        0.953
       ],
-      "luminance": 0.4299,
-      "measured": "lit #FE964E (hue 25, S 0.69) / shadow #A4674B (hue 19, S 0.54, Y 0.181)",
-      "note": "Skin is the one material that does NOT take the violet shadow rotation. Skin shadow keeps its hue (Δ ≤8°), loses only 22% saturation, and only drops to 0.42× luminance — a 2.4:1 key:fill against rock's 6.2:1 (K1). That is why the face still reads when the body is in shadow.",
-      "ramp": [
-        {
-          "stop": "shadow",
-          "hex": "#A4674B",
-          "rgb": [
-            164,
-            103,
-            75
-          ],
-          "linear": [
-            0.3712,
-            0.1356,
-            0.0704
-          ],
-          "hsv": [
-            19,
-            0.543,
-            0.643
-          ],
-          "luminance": 0.181
-        },
-        {
-          "stop": "mid",
-          "hex": "#E3A170",
-          "rgb": [
-            227,
-            161,
-            112
-          ],
-          "linear": [
-            0.7682,
-            0.3564,
-            0.162
-          ],
-          "hsv": [
-            26,
-            0.507,
-            0.89
-          ],
-          "luminance": 0.4299
-        },
-        {
-          "stop": "rim",
-          "hex": "#FE964E",
-          "rgb": [
-            254,
-            150,
-            78
-          ],
-          "linear": [
-            0.9911,
-            0.305,
-            0.0762
-          ],
-          "hsv": [
-            25,
-            0.693,
-            0.996
-          ],
-          "luminance": 0.4343
-        }
-      ]
+      "luminance": 0.516,
+      "measured": "median of box [0.5275,0.573,0.5295,0.579] of frame",
+      "allowed": "The key-lit edge of the character — one or two facets on the sun side, warm and bright. This single strip is what separates the character from the ground."
     },
     "hero.hair": {
-      "hex": "#4A2E1E",
+      "hex": "#442611",
       "rgb": [
-        74,
-        46,
-        30
+        68,
+        38,
+        17
       ],
       "linear": [
-        0.0685,
-        0.0273,
-        0.013
+        0.0578,
+        0.0194,
+        0.0056
       ],
       "hsv": [
-        22,
-        0.595,
-        0.29
+        25,
+        0.75,
+        0.267
       ],
-      "luminance": 0.035,
-      "measured": "dark #201C16 (Y 0.012) / lit #66341A (hue 21, S 0.745)",
-      "ramp": [
-        {
-          "stop": "core",
-          "hex": "#201C16",
-          "rgb": [
-            32,
-            28,
-            22
-          ],
-          "linear": [
-            0.0144,
-            0.0116,
-            0.008
-          ],
-          "hsv": [
-            36,
-            0.313,
-            0.125
-          ],
-          "luminance": 0.0119
-        },
-        {
-          "stop": "mid",
-          "hex": "#4A2E1E",
-          "rgb": [
-            74,
-            46,
-            30
-          ],
-          "linear": [
-            0.0685,
-            0.0273,
-            0.013
-          ],
-          "hsv": [
-            22,
-            0.595,
-            0.29
-          ],
-          "luminance": 0.035
-        },
-        {
-          "stop": "lit",
-          "hex": "#8A4A22",
-          "rgb": [
-            138,
-            74,
-            34
-          ],
-          "linear": [
-            0.2542,
-            0.0685,
-            0.016
-          ],
-          "hsv": [
-            23,
-            0.754,
-            0.541
-          ],
-          "luminance": 0.1042
-        },
-        {
-          "stop": "rim",
-          "hex": "#E0A050",
-          "rgb": [
-            224,
-            160,
-            80
-          ],
-          "linear": [
-            0.7454,
-            0.3515,
-            0.0802
-          ],
-          "hsv": [
-            33,
-            0.643,
-            0.878
-          ],
-          "luminance": 0.4157
-        }
-      ],
-      "allowed": "Hair only. The near-black core is what carries the silhouette at thumbnail size."
+      "luminance": 0.0266,
+      "measured": "median of box [0.5045,0.494,0.5095,0.502] of frame",
+      "allowed": "Hair, leather, and any warm dark on the character."
     },
-    "hero.ink": {
-      "hex": "#140D0A",
+    "hero.dark": {
+      "hex": "#111416",
       "rgb": [
+        17,
         20,
-        13,
-        10
+        22
       ],
       "linear": [
+        0.0056,
         0.007,
-        0.004,
-        0.003
+        0.008
       ],
       "hsv": [
-        18,
-        0.5,
-        0.078
+        204,
+        0.227,
+        0.086
       ],
-      "luminance": 0.0046,
-      "measured": "silhouette outline sampled across the hero cut: #100402, #0C0F0E, #280500 — Y 0.0016–0.0056, warm, never neutral black",
-      "note": "Screen-space contour. Widths are THRESHOLD-DEPENDENT and are quoted with their threshold: horizontal runs at Y ≤ 0.012 inside the hero box on a 2752-wide frame give p25 = 2, median = 3, p75 = 4, p90 = 7 px (n = 8255); at Y ≤ 0.006, 2/3/4/6 (n = 6690); at Y ≤ 0.020, 2/4/5/10 (n = 8528). Median 3 px at 2752 = 0.11% of frame width ≈ 1.7 px at 1600×900. What survives every threshold is the TAPER — p90 is 2–2.5× the median — and that is what the auditor checks (I1).",
-      "allowed": "Hero silhouette and interior breaks; foreground interactables; foreground terrain silhouettes inside ~18 m.",
-      "forbidden": "Never beyond the foreground band — measured: no ink survives past the midground. Never uniform width. Never pure #000000."
+      "luminance": 0.0068,
+      "measured": "median of {Y<0.012} inside box [0.455,0.52,0.545,0.76]; n=11402 (0.2697% of frame)",
+      "allowed": "Straps, gloves, boot soles — the near-black accents that carry the silhouette at thumbnail size.",
+      "forbidden": "Never pure #000000; it is a cool near-black and it keeps a hue."
     },
-    "holo.veil": {
-      "hex": "#6BBFC2",
-      "rgb": [
-        107,
-        191,
-        194
-      ],
-      "linear": [
-        0.147,
-        0.521,
-        0.5395
-      ],
-      "hsv": [
-        182,
-        0.448,
-        0.761
-      ],
-      "luminance": 0.4428,
-      "measured": "n = 116 paired inside/outside samples taken normal to all four edges of the panel quad, over four different backgrounds (bright sky above, hazy mesas left, the dark city right, the valley below), background range Y 0.19–0.79. Background is extrapolated across the edge from a four-sample line outside it, so a sloped backdrop cannot masquerade as transmission. Best fit at an interior offset of 0.008 of frame width: Y_in = 0.462·Y_bg + 0.240, r² 0.896, fixed point Y 0.446.",
-      "note": "THE hologram rule: the panel is neither additive nor multiplicative. It COMPRESSES whatever is behind it toward a FIXED POINT. Measured deltas by side: over the bright sky above it darkens by 0.137, over the hazy mesas by 0.030; over the dark city it LIGHTENS by 0.062. That is why the panel never blows out and never goes muddy, on any background.",
-      "fixedPointY": 0.44,
-      "alpha": 0.5,
-      "solveConfidence": "The FIXED POINT is hard, the ALPHA is soft. Sweeping the interior sample offset from 0.008 to 0.018 of frame width moves the fitted slope from 0.462 to 0.335 (alpha 0.54→0.67) while the fixed point only moves 0.446→0.417. Three further independent estimators — a naive no-extrapolation fit (slope 0.558), the four-edge extrapolated fit at offset 0.012 (0.423), and an eleven-pair left-edge-only fit (0.672) — all land inside slope 0.34–0.67 and fixed point 0.42–0.45. Author alpha 0.50 ± 0.08 and fixedPointY 0.44 ± 0.02; the auditor (V1) checks the LAW, not the digit.",
-      "allowed": "The fill of any in-world mathematics panel.",
-      "forbidden": "Never an additive quad — additive dies against a bright sky. Never a flat dark quad — that reads as a menu, not a projection. Never a constant-alpha black plate: the fixed point must be a MID luminance (0.44), which is what makes the panel lighten dark backdrops as well as darken bright ones."
-    },
-    "holo.stroke": {
-      "hex": "#B4E1E0",
-      "rgb": [
-        180,
-        225,
-        224
-      ],
-      "linear": [
-        0.4564,
-        0.7529,
-        0.7454
-      ],
-      "hsv": [
-        179,
-        0.2,
-        0.882
-      ],
-      "luminance": 0.6893,
-      "measured": "corner bracket #B4E1E0 (hue 179, S 0.20, Y 0.689); border stroke #BFD4CE",
-      "allowed": "The 1px rounded-rect border of a panel and its four inset corner brackets. The brackets are thinner and sit ~4% of panel width in from each corner."
-    },
-    "holo.glyph": {
+    "math.glyph": {
       "hex": "#FFFFFF",
       "rgb": [
         255,
@@ -1040,1173 +667,796 @@
         1
       ],
       "luminance": 1,
-      "measured": "glyph interior sampled at #FFFFFF, Y = 1.000 — the mathematics is the brightest thing in the frame",
-      "note": "Non-negotiable: KaTeX glyphs render pure white. Chrome is cyan, mathematics is white. Contrast against the veil-compressed background is ≥2.2× luminance everywhere by construction.",
-      "allowed": "Rendered KaTeX glyphs and axis lines only.",
-      "forbidden": "Never tint the mathematics cyan. A cyan equation on a cyan panel is the single most common way this genre fails to be legible."
+      "measured": "median of {S<=0.02 & Y>=0.99} inside box [0.4,0.25,0.55,0.33]; n=1449 (0.0343% of frame)",
+      "allowed": "Rendered KaTeX glyphs, axis lines and plotted curves in world space. Pure white, Y 1.000, no outline, no panel, no glass.",
+      "forbidden": "Never tinted. Never on a plate. Never given a soft glow."
     },
-    "holo.data": {
-      "hex": "#41FEEA",
+    "math.backdrop": {
+      "hex": "#D7AA6B",
       "rgb": [
-        65,
-        254,
-        234
-      ],
-      "linear": [
-        0.0529,
-        0.9911,
-        0.8228
-      ],
-      "hsv": [
-        174,
-        0.744,
-        0.996
-      ],
-      "luminance": 0.7795,
-      "measured": "plotted line #41FEEA (hue 174, S 0.744, Y 0.780)",
-      "allowed": "Plotted functions, data curves, the moving parts of a graph — the things whose *value* the player is reading.",
-      "note": "White = the statement. Cyan = the answer. That split is the whole visual grammar of the hologram."
-    },
-    "ui.ink": {
-      "hex": "#E8F1F0",
-      "rgb": [
-        232,
-        241,
-        240
-      ],
-      "linear": [
-        0.807,
-        0.8796,
-        0.8714
-      ],
-      "hsv": [
-        173,
-        0.037,
-        0.945
-      ],
-      "luminance": 0.8636,
-      "allowed": "Primary UI text and iconography. Cool near-white so it never competes with hero.armour or rock.warm.*.",
-      "note": "Contrast floor: 4.5:1 against ui.surface at its composited alpha, at every viewport size in the gate list."
-    },
-    "ui.ink.dim": {
-      "hex": "#B5BEBD",
-      "rgb": [
-        181,
-        190,
-        189
-      ],
-      "linear": [
-        0.4621,
-        0.5149,
-        0.5089
-      ],
-      "hsv": [
-        173,
-        0.047,
-        0.745
-      ],
-      "luminance": 0.5032,
-      "measured": "the \"[Press E to Interact]\" secondary line",
-      "allowed": "Secondary text, keycap labels, disabled state."
-    },
-    "ui.ink.accent": {
-      "hex": "#9DEAF0",
-      "rgb": [
-        157,
-        234,
-        240
-      ],
-      "linear": [
-        0.3372,
-        0.8228,
-        0.8714
-      ],
-      "hsv": [
-        184,
-        0.346,
-        0.941
-      ],
-      "luminance": 0.7231,
-      "measured": "the \"ANALYZING DATA... (0%)\" heading",
-      "allowed": "One accented string per surface — the thing the player must read first. Never two."
-    },
-    "ui.surface": {
-      "hex": "#2A3134",
-      "rgb": [
-        42,
-        49,
-        52
-      ],
-      "linear": [
-        0.0232,
-        0.0307,
-        0.0343
-      ],
-      "hsv": [
-        198,
-        0.192,
-        0.204
-      ],
-      "luminance": 0.0294,
-      "measured": "minimap fill composites to #393D3F–#45494C over a sky of Y≈0.70; that solves to this plate at alpha ≈0.94. Bar track measures #3A4247.",
-      "alpha": 0.94,
-      "allowed": "Discrete UI panels: minimap, bar tracks, menu cards, tooltip bodies. Cool dark slate.",
-      "forbidden": "Never fully opaque — the 6% of world that shows through is what stops a panel looking pasted on. Never warm."
-    },
-    "ui.scrim": {
-      "hex": "#0B0B0B",
-      "rgb": [
-        11,
-        11,
-        11
-      ],
-      "linear": [
-        0.0033,
-        0.0033,
-        0.0033
-      ],
-      "hsv": [
-        0,
-        0,
-        0.043
-      ],
-      "luminance": 0.0033,
-      "measured": "The band spans y 0.8418–0.9577 (0.116 of frame height) with HARD top and bottom edges. Transmission was solved per column at both edges (samples 7 px either side, a second outside sample at 15 px vetoing columns where the facet is not locally smooth), then alpha and the plate colour recovered per column by regressing the three CHANNELS against each other — the three background channels differ by 4×, so that line is well conditioned where a regression across columns is not. Over x 0.40–0.60, n = 146 column solves: median alpha 0.908 (IQR 0.905–0.915), plate linear 0.0034 → #0B0B0B, median luminance transmission 0.110.",
-      "alphaPeak": 0.91,
-      "alphaProfile": {
-        "form": "horizontal linear ramp, flat middle",
-        "xExtent": [
-          0.24,
-          0.79
-        ],
-        "rampWidthFracOfFrameWidth": 0.16,
-        "note": "alpha(x) = alphaPeak clamped by a linear ramp from 0 at each end of xExtent to alphaPeak 0.16 of frame width inboard. Constant in y. Reproduce with: a = alphaPeak * clamp(min(x - x0, x1 - x)/rampWidth, 0, 1)."
-      },
-      "measuredProfile": "Transmission along the band, median-smoothed, at 0.01 steps of x: 1.00 up to x 0.26, then 0.90 / 0.78 / 0.69 / 0.63 / 0.53 / 0.41 / 0.34 / 0.24 / 0.20 / 0.11 across x 0.2675→0.3625, plateau 0.107–0.124 over x 0.40→0.63, then 0.15 / 0.27 / 0.44 / 0.45 / 0.52 / 0.95 across x 0.6425→0.795, and 1.00 from x 0.80. Both band edges give the same profile independently.",
-      "witness": "Two columns, the same rock facet, the same four rows, 0.17 of frame width apart. x = 0.30: above the band (y 0.836) #986448 Y 0.1626 → inside (y 0.848) #784D3B Y 0.0962 → inside (y 0.955) #764D3C Y 0.0949 → below (y 0.962) #936552 Y 0.1612. Transmission 0.59, alpha 0.41. x = 0.47: above #9D6549 Y 0.1696 → inside #32221A Y 0.0190 → inside #332018 Y 0.0180 → below #97654A Y 0.1638. Transmission 0.11, alpha 0.89. Both are correct; a single-alpha model of this surface is not.",
-      "note": "The reference's subtitle band LOOKS like a warm brown bar. It is neither warm nor a bar. It is a NEUTRAL near-black plate — inside it the rock reads #794E3C (hue 18, S 0.51) against #9A644C (hue 21, S 0.52) outside, i.e. the hue and saturation are unchanged and all the warmth is transmitted rock — and its alpha RAMPS TO ZERO at both ends. The ramp is the whole reason it does not read as a black bar: the plate has no vertical edge anywhere in frame. Round 1 published a single alpha of 0.87 (the plateau value, measured on a partly-unidentifiable region) and a later reading of 0.41 (the ramp value at x = 0.30); the file no longer carries a bare `alpha` field for this role, because a builder who types one number gets the failure both readings were warning about.",
-      "allowed": "Text bands over the world: subtitles, interaction prompts, the objective line.",
-      "forbidden": "Never a coloured plate. Never a constant alpha across the band — the ends must ramp to zero. Never alphaPeak above 0.92; at that point the world stops reading through the middle as well."
-    },
-    "ui.surface.raised": {
-      "hex": "#3A4247",
-      "rgb": [
-        58,
-        66,
-        71
-      ],
-      "linear": [
-        0.0423,
-        0.0545,
-        0.063
-      ],
-      "hsv": [
-        203,
-        0.183,
-        0.278
-      ],
-      "luminance": 0.0525,
-      "measured": "bar track, sampled directly",
-      "allowed": "Bar tracks, inset wells, the unfilled part of any meter."
-    },
-    "ui.stroke": {
-      "hex": "#A8E0EC",
-      "rgb": [
-        168,
-        224,
-        236
-      ],
-      "linear": [
-        0.3916,
-        0.7454,
-        0.8388
-      ],
-      "hsv": [
-        191,
-        0.288,
-        0.925
-      ],
-      "luminance": 0.6769,
-      "measured": "the pale-cyan 2px outline on the portrait ring and both bars, with a soft outer glow",
-      "allowed": "The outline on every UI plate. 2px at 1600×900, scaling with viewport height."
-    },
-    "reward.gold": {
-      "hex": "#F0BE45",
-      "rgb": [
-        240,
-        190,
-        69
-      ],
-      "linear": [
-        0.8714,
-        0.5149,
-        0.0595
-      ],
-      "hsv": [
-        42,
-        0.713,
-        0.941
-      ],
-      "luminance": 0.5578,
-      "measured": "the XP bar fill #EFBB42 (hue 42, S 0.724)",
-      "allowed": "Earned/permanent progress: XP, mastery marks, unlocks. Gold means \"you keep this\"; cyan means \"this is live\"."
-    },
-    "danger": {
-      "hex": "#FF3E6B",
-      "rgb": [
-        255,
-        62,
+        215,
+        170,
         107
       ],
       "linear": [
-        1,
-        0.0482,
+        0.6795,
+        0.402,
         0.147
       ],
       "hsv": [
-        346,
-        0.757,
-        1
+        35,
+        0.502,
+        0.843
       ],
-      "luminance": 0.2577,
-      "note": "Hue 346°. Chosen from the measured hue census: bins 250–349° contain 0.00% of the reference's saturated pixels and 350–359° contain 0.07%. Magenta-red is the one arc of the colour wheel this world never uses at strength.",
-      "caveat": "The census hides one thing, and it matters. Rock in MID shadow passes through hue 338–353 on its way to violet (measured down the terrace face at x=0.885: 353 → 343 → 338 at S 0.29–0.32, Y 0.140). So danger is separated from the world by SATURATION as much as by hue. World rose-shadow never exceeds S 0.35; danger is S 0.757. Any danger element must be drawn above S 0.55, or it will read as a shadow.",
-      "minSaturation": 0.55,
-      "allowed": "Failure, damage, an expiring timer, a wrong branch. Transient only.",
-      "forbidden": "Never more than 0.5% of frame pixels. Never static for more than 1.2 s. Never below S 0.55. Never the only cue — see `accessibility`."
+      "luminance": 0.4426,
+      "measured": "median of {everything that is not a glyph (NOT(S<=0.12 & Y>0.75))} inside box [0.4,0.25,0.55,0.33]; n=47680 (1.1280% of frame)",
+      "allowed": "Not a colour to author — the measured backdrop the reference chose to hang its equation against. It is the legibility budget: see laws.glyph."
     },
-    "danger.deep": {
-      "hex": "#8C1436",
+    "ui.ink": {
+      "hex": "#FCFCFB",
       "rgb": [
-        140,
-        20,
-        54
+        252,
+        252,
+        251
       ],
       "linear": [
-        0.2623,
-        0.007,
-        0.0369
+        0.9734,
+        0.9734,
+        0.9647
       ],
       "hsv": [
-        343,
-        0.857,
-        0.549
+        60,
+        0.004,
+        0.988
       ],
-      "luminance": 0.0634,
-      "allowed": "The dark half of a danger gradient, outlines and drop shadows on danger elements."
+      "luminance": 0.9728,
+      "measured": "median of {S<=0.12 & Y>=0.70} inside box [0.195,0.03,0.3,0.115]; n=1983 (0.0469% of frame)",
+      "allowed": "HUD numerals and labels. Near-white, carried by a hard dark outline rather than by a plate."
     },
-    "success": {
-      "hex": "#8AF06E",
+    "ui.outline": {
+      "hex": "#080E0B",
       "rgb": [
-        138,
-        240,
-        110
+        8,
+        14,
+        11
       ],
       "linear": [
-        0.2542,
-        0.8714,
-        0.1559
+        0.0024,
+        0.0044,
+        0.0033
+      ],
+      "hsv": [
+        150,
+        0.429,
+        0.055
+      ],
+      "luminance": 0.0039,
+      "measured": "median of {Y<=0.006} inside box [0.02,0.03,0.2,0.125]; n=3261 (0.0771% of frame)",
+      "allowed": "The outline on every UI plate, slot and glyph. Uniform width, hard, no glow, no rounding.",
+      "forbidden": "Never a soft shadow. Never a gradient stroke."
+    },
+    "ui.bar.health": {
+      "hex": "#B92D2C",
+      "rgb": [
+        185,
+        45,
+        44
+      ],
+      "linear": [
+        0.4851,
+        0.0262,
+        0.0252
+      ],
+      "hsv": [
+        0,
+        0.762,
+        0.725
+      ],
+      "luminance": 0.1237,
+      "measured": "median of box [0.08,0.048,0.11,0.062] of frame",
+      "allowed": "The health meter fill. Flat, square-ended, no gradient, no gloss."
+    },
+    "ui.bar.energy": {
+      "hex": "#3590B3",
+      "rgb": [
+        53,
+        144,
+        179
+      ],
+      "linear": [
+        0.0356,
+        0.2789,
+        0.4508
+      ],
+      "hsv": [
+        197,
+        0.704,
+        0.702
+      ],
+      "luminance": 0.2396,
+      "measured": "median of box [0.08,0.09,0.11,0.104] of frame",
+      "allowed": "The energy meter fill. Note it sits at hue ~197, the same family as rock.shadow — the HUD borrows the world palette rather than importing a UI blue."
+    },
+    "ui.plate.composite": {
+      "hex": "#37423A",
+      "rgb": [
+        55,
+        66,
+        58
+      ],
+      "linear": [
+        0.0382,
+        0.0545,
+        0.0423
+      ],
+      "hsv": [
+        136,
+        0.167,
+        0.259
+      ],
+      "luminance": 0.0501,
+      "measured": "median of box [0.13,0.087,0.18,0.093] of frame",
+      "allowed": "Not an authored colour: the measured RESULT of the plate over the world. Author the plate as black at the alpha in laws.uiPlate and this is what must come out."
+    },
+    "ui.slot.fill": {
+      "hex": "#382A10",
+      "rgb": [
+        56,
+        42,
+        16
+      ],
+      "linear": [
+        0.0395,
+        0.0232,
+        0.0052
+      ],
+      "hsv": [
+        39,
+        0.714,
+        0.22
+      ],
+      "luminance": 0.0253,
+      "measured": "median of box [0.035,0.92,0.048,0.935] of frame",
+      "allowed": "Item-slot interior. Warm near-black, translucent over the world."
+    },
+    "ui.slot.bevel": {
+      "hex": "#727270",
+      "rgb": [
+        114,
+        114,
+        112
+      ],
+      "linear": [
+        0.1683,
+        0.1683,
+        0.162
+      ],
+      "hsv": [
+        60,
+        0.018,
+        0.447
+      ],
+      "luminance": 0.1678,
+      "measured": "median of {S<=0.12 & 0.10<=Y<0.30} inside box [0.015,0.895,0.2,0.955]; n=4700 (0.1112% of frame)",
+      "allowed": "The chunky neutral bevel around an item slot. Neutral grey on purpose — the one place in the frame permitted to be uncoloured."
+    },
+    "ui.band.composite": {
+      "hex": "#2F240E",
+      "rgb": [
+        47,
+        36,
+        14
+      ],
+      "linear": [
+        0.0284,
+        0.0176,
+        0.0044
+      ],
+      "hsv": [
+        40,
+        0.702,
+        0.184
+      ],
+      "luminance": 0.019,
+      "measured": "median of box [0.325,0.86,0.35,0.872] of frame",
+      "allowed": "Not an authored colour: the measured RESULT of the subtitle band over lit ground. See laws.subtitleBand."
+    },
+    "ui.compass.composite": {
+      "hex": "#5C5843",
+      "rgb": [
+        92,
+        88,
+        67
+      ],
+      "linear": [
+        0.107,
+        0.0976,
+        0.0561
+      ],
+      "hsv": [
+        50,
+        0.272,
+        0.361
+      ],
+      "luminance": 0.0966,
+      "measured": "median of box [0.93,0.1,0.95,0.115] of frame",
+      "allowed": "Not an authored colour: the measured RESULT of the compass disc over the sky."
+    }
+  },
+  "constructedRoles": {
+    "world.grey": {
+      "hex": "#484743",
+      "rgb": [
+        72,
+        71,
+        67
+      ],
+      "linear": [
+        0.0648,
+        0.063,
+        0.0561
+      ],
+      "hsv": [
+        48,
+        0.069,
+        0.282
+      ],
+      "luminance": 0.0629,
+      "measured": "CONSTRUCTED. The target contains no grey material. hue = hue(ground.lit); S = 0.08; V solved so luminance = sqrt(Y(ground.lit) * Y(ground.shadow)) = 0.0627. It is the only role in this file below S 0.10.",
+      "allowed": "Anything emitted by a supplied value: a sagging span, a propped roof, an approximate wall (world.md Law 5). Flat-shaded like everything else, and it is the one material with nothing bright on it anywhere.",
+      "forbidden": "Never cyan-tinted, never bloomed, never emissive. And grey does NOT take the shadow rotation: a violet or blue shadow on grey turns it back into rock."
+    },
+    "world.grey.deep": {
+      "hex": "#292826",
+      "rgb": [
+        41,
+        40,
+        38
+      ],
+      "linear": [
+        0.0222,
+        0.0212,
+        0.0194
+      ],
+      "hsv": [
+        40,
+        0.073,
+        0.161
+      ],
+      "luminance": 0.0213,
+      "measured": "CONSTRUCTED. Same hue and S 0.068; V solved so luminance = 0.34 x Y(world.grey). Grey is the one material whose shadow does not rotate hue.",
+      "allowed": "Unlit faces, undersides and contact shadows of grey objects."
+    },
+    "ui.success": {
+      "hex": "#4BB92C",
+      "rgb": [
+        75,
+        185,
+        44
+      ],
+      "linear": [
+        0.0704,
+        0.4851,
+        0.0252
       ],
       "hsv": [
         107,
-        0.542,
-        0.941
+        0.762,
+        0.725
       ],
-      "luminance": 0.6885,
-      "note": "Hue 107°. Chosen the same way as danger: the measured hue census puts bins 70–119° at 0.78% of the reference's saturated pixels — the second empty arc. A first draft placed success at 146°, and the auditor caught it colliding with the river and crystals (which live at 140–168°) at 0.81% of frame — over the 0.5% budget. 107° is 60–70° clear of the resonance arc. Luminance 0.689 against danger's 0.258 is a 2.67:1 split, which survives every colour-vision deficiency.",
-      "allowed": "The EVENT of being right: a correct answer, a verb resolving, mastery gained. Transient only.",
-      "forbidden": "Never more than 0.5% of frame pixels. Never persistent. Never in the world — success is feedback, not a substance. The permanent record of an achievement is reward.gold, which IS world-native (it is the armour highlight and the XP bar). Event = green flash, record = gold. Do not merge them."
-    },
-    "success.deep": {
-      "hex": "#2A7A28",
-      "rgb": [
-        42,
-        122,
-        40
-      ],
-      "linear": [
-        0.0232,
-        0.1946,
-        0.0212
-      ],
-      "hsv": [
-        119,
-        0.672,
-        0.478
-      ],
-      "luminance": 0.1456,
-      "allowed": "The dark half of a success gradient, outlines and drop shadows on success elements."
+      "luminance": 0.3638,
+      "measured": "CONSTRUCTED. hue 107; S and V copied from ui.bar.health (the one saturated UI colour the target does contain), so success and danger carry equal weight on screen.",
+      "allowed": "A closure landing, a claim setting, a mastery mark. Transient only.",
+      "forbidden": "Never below S 0.45 — under that it is indistinguishable from world.foliage, which never exceeds S 0.45 in the target."
     }
   },
-  "exposure": {
-    "note": "Targets are measured on the reference and are checkable on any capture with `node review/art-audit.mjs <shot.png>`.",
-    "tonemap": "Filmic with a soft shoulder. Requirements, not a named curve: (a) the shoulder must desaturate as it compresses — the reference's hottest armour highlight sits at S 0.37 while its light band sits at S 0.67; (b) nothing may clip to pure white except emitter cores, the sun, and KaTeX glyphs; (c) the toe must not crush — 25% of the frame sits below Y 0.147 and still carries readable form.",
-    "forbidden": "Reinhard applied to the whole frame (it flattens the mid plateau), and raw linear→sRGB with a hard clamp (highlights skew hue instead of desaturating).",
-    "keyToFillRatio": {
-      "target": 6.2,
-      "tolerance": 1.6,
-      "measuredOn": "marked boxes — lit [0.870,0.481,0.910,0.489] Y 0.6592 (#FEC67D) vs sky-shadowed face [0.872,0.598,0.902,0.612] Y 0.1066 (#555661) = 6.18. See solvedConstants.keyToFill for the spread across other facet pairs on the same terrace (4.4–6.2)."
+  "laws": {
+    "keyToFill": {
+      "witness": "one ground plane, lit at [0.545,0.760,0.575,0.790] and inside its own cast shadow at [0.530,0.920,0.570,0.950]",
+      "lit": 0.131,
+      "shadow": 0.03,
+      "ratio": 4.36
     },
-    "skinKeyToFillRatio": {
-      "target": 2.4,
-      "tolerance": 0.5,
-      "note": "skin is lit much flatter than rock, on purpose"
+    "facetContrastForeground": {
+      "witness": "one rock mass: lit plane [0.100,0.235,0.140,0.262] vs plane turned from the key [0.082,0.240,0.094,0.300]",
+      "lit": 0.272,
+      "shadow": 0.0227,
+      "ratio": 11.96
     },
-    "clipping": {
-      "maxFractionAbove_Y099": 0.02,
-      "maxFractionBelow_Y001": 0.04,
-      "measured": "reference, at the auditor stride: 0.12% of pixels at Y >= 0.99 and 1.5% at Y <= 0.01"
-    },
-    "medianFrameLuminanceDisplayY": {
-      "value": 0.35,
-      "range": [
-        0.3,
-        0.4
+    "uiPlate": {
+      "witness": "bar plate at [0.130,0.087,0.180,0.093] against the same world seen in the gap between the two bars at [0.130,0.0755,0.180,0.0800]",
+      "transmissionRGB": [
+        0.227,
+        0.2045,
+        0.2136
       ],
-      "pipelineStage": "display-referred",
-      "note": "The median luminance of the FINISHED 8-bit sRGB frame, after the tonemap. Auditor L1. This key used to be called `middleGrey.linearY`, which named a scene-referred quantity — and conventional middle grey is 0.18 linear, so a builder reading the old name saw a number about twice as large as they expected and had every reason to type it into a shader. That is this file's own \"most expensive mistake available\" (art-direction.md, Which side of the tonemap). Set exposure by capturing a frame and measuring, never by feeding 0.35 to anything."
+      "alphaOverBlackPlate": 0.785
+    },
+    "subtitleBand": {
+      "witness": "band at [0.325,0.860,0.350,0.872] against the same ground plane just above it at [0.325,0.833,0.350,0.843]",
+      "transmissionRGB": [
+        0.1192,
+        0.1301,
+        0.207
+      ],
+      "alphaOverBlackPlate": 0.875
+    },
+    "lightRig": {
+      "status": "DERIVED, not sampled. Every number here is arithmetic on two measured colours; the arithmetic is printed so it can be redone.",
+      "fillOverKeyRGB": [
+        0.0852,
+        0.2853,
+        0.6351
+      ],
+      "fillOverKeyLuminance": 0.229,
+      "fillTintHex": "#66B3FF",
+      "fillTintDerivation": "linear(ground.shadow) / linear(ground.lit), normalised to its own maximum channel. One up-facing plane, lit and in its own cast shadow, so the albedo cancels and what is left is fill/(key+fill).",
+      "turnedFaceOverLitRGB": [
+        0.0229,
+        0.1092,
+        0.4705
+      ],
+      "turnedFaceOverLitLuminance": 0.084,
+      "turnedFaceDerivation": "linear(rock.shadow) / linear(rock.lit.c). Same shape as fillOverKey (B >> G >> R) at ~3.7x less energy, which is what a vertical, partly self-occluded face receives from the same hemisphere.",
+      "workedCalibration": {
+        "keyHex": "#FFE3B8",
+        "keyNote": "A warm white, deliberately less yellow than the sun GLOW (sky.sun) — the glow is the key seen through atmosphere, not the key.",
+        "rockAlbedoLinear": [
+          0.9131,
+          0.4451,
+          0.139
+        ],
+        "rockAlbedoHex": "#F5B268",
+        "groundAlbedoLinear": [
+          0.2542,
+          0.173,
+          0.0483
+        ],
+        "groundAlbedoHex": "#8A733E",
+        "derivation": "albedo = linear(brightest measured facet) / linear(key), i.e. the albedo that renders the measured facet at N.L = 1 under that key. Choose a different key and redo this division; do not copy the hex without the key it came from."
+      },
+      "valueLadder": [
+        {
+          "stop": "rockLitA",
+          "hex": "#F59E49",
+          "Y": 0.4435,
+          "impliedNdotL": 1
+        },
+        {
+          "stop": "rockLitB",
+          "hex": "#C88B4E",
+          "Y": 0.3129,
+          "impliedNdotL": 0.706
+        },
+        {
+          "stop": "rockLitC",
+          "hex": "#B8844B",
+          "Y": 0.272,
+          "impliedNdotL": 0.613
+        },
+        {
+          "stop": "rockLitD",
+          "hex": "#AF7C47",
+          "Y": 0.2398,
+          "impliedNdotL": 0.541
+        },
+        {
+          "stop": "rockLitE",
+          "hex": "#775C3E",
+          "Y": 0.1192,
+          "impliedNdotL": 0.269
+        },
+        {
+          "stop": "rockShadow",
+          "hex": "#1B2C33",
+          "Y": 0.0227,
+          "impliedNdotL": 0.051
+        }
+      ],
+      "valueLadderNote": "The value ladder IS the cosine ladder. Divide each facet luminance by the brightest facet and you have N.L. A render whose facets do not sit on a cosine has either smooth normals or a tonemap doing the shading."
+    },
+    "facetCensus": {
+      "region": "the foreground rock mass, box [0.055,0.120,0.270,0.600]",
+      "method": "4-connected flood fill, per-channel tolerance 2/255 against the seed pixel, regions of at least 0.02% of frame counted",
+      "countablePlanes": 61,
+      "planes": [
+        {
+          "area": 34589,
+          "hex": "#B8834C",
+          "Y": 0.2694
+        },
+        {
+          "area": 32939,
+          "hex": "#1A2B32",
+          "Y": 0.0218
+        },
+        {
+          "area": 25123,
+          "hex": "#C88B4E",
+          "Y": 0.3129
+        },
+        {
+          "area": 20218,
+          "hex": "#B27E48",
+          "Y": 0.2485
+        },
+        {
+          "area": 12099,
+          "hex": "#6C543B",
+          "Y": 0.0984
+        },
+        {
+          "area": 11718,
+          "hex": "#1C2A32",
+          "Y": 0.0213
+        },
+        {
+          "area": 10176,
+          "hex": "#B27E45",
+          "Y": 0.2482
+        },
+        {
+          "area": 8932,
+          "hex": "#C1864A",
+          "Y": 0.2888
+        },
+        {
+          "area": 7946,
+          "hex": "#FEAB5E",
+          "Y": 0.51
+        },
+        {
+          "area": 7439,
+          "hex": "#AC7A46",
+          "Y": 0.2313
+        },
+        {
+          "area": 6061,
+          "hex": "#775B3E",
+          "Y": 0.1175
+        },
+        {
+          "area": 4288,
+          "hex": "#71573C",
+          "Y": 0.1065
+        },
+        {
+          "area": 4133,
+          "hex": "#73583C",
+          "Y": 0.1095
+        },
+        {
+          "area": 3732,
+          "hex": "#A17647",
+          "Y": 0.2099
+        }
+      ],
+      "note": "A cliff resolves into a countable number of planes. That is the whole geometry law in one measurement."
+    },
+    "depthBands": [
+      {
+        "band": "far",
+        "y": [
+          0.36,
+          0.42
+        ],
+        "p05": 0.2352,
+        "p50": 0.5202,
+        "p95": 0.7248,
+        "contrast": 3.08,
+        "medianS": 0.592
+      },
+      {
+        "band": "midfar",
+        "y": [
+          0.42,
+          0.52
+        ],
+        "p05": 0.0693,
+        "p50": 0.4225,
+        "p95": 0.8352,
+        "contrast": 12.05,
+        "medianS": 0.547
+      },
+      {
+        "band": "mid",
+        "y": [
+          0.52,
+          0.64
+        ],
+        "p05": 0.0278,
+        "p50": 0.2314,
+        "p95": 0.7845,
+        "contrast": 28.19,
+        "medianS": 0.395
+      },
+      {
+        "band": "near",
+        "y": [
+          0.64,
+          0.78
+        ],
+        "p05": 0.0161,
+        "p50": 0.1346,
+        "p95": 0.3918,
+        "contrast": 24.27,
+        "medianS": 0.525
+      }
+    ],
+    "facetContrastByDepth": [
+      {
+        "depth": "foreground",
+        "ratio": 11.96
+      },
+      {
+        "depth": "mid",
+        "ratio": 2.12
+      },
+      {
+        "depth": "horizon",
+        "ratio": 0.94
+      }
+    ],
+    "facetEdgeWidthPx": {
+      "at2752": {
+        "n": 453,
+        "p25": 2,
+        "median": 2,
+        "p75": 5,
+        "p90": 6
+      },
+      "at1920Median": 1.4,
+      "method": "horizontal scans every 7 rows over x [0.05,0.30], y [0.20,0.60]; width of a monotone run that completes a >0.15 luminance step"
+    },
+    "acutanceByDepth": {
+      "method": "width in px (frame is 2752 wide) of a monotone run that completes a >0.12 luminance step, on horizontal scans inside each band",
+      "foreground": {
+        "box": [
+          0.05,
+          0.2,
+          0.3,
+          0.6
+        ],
+        "n": 555,
+        "p25": 2,
+        "median": 2,
+        "p90": 6
+      },
+      "near": {
+        "box": [
+          0.44,
+          0.62,
+          0.6,
+          0.8
+        ],
+        "n": 292,
+        "p25": 2,
+        "median": 2,
+        "p90": 5
+      },
+      "mid": {
+        "box": [
+          0.33,
+          0.44,
+          0.52,
+          0.6
+        ],
+        "n": 482,
+        "p25": 3,
+        "median": 5,
+        "p90": 7
+      },
+      "midFar": {
+        "box": [
+          0.55,
+          0.44,
+          0.85,
+          0.58
+        ],
+        "n": 259,
+        "p25": 5,
+        "median": 6,
+        "p90": 11
+      },
+      "far": {
+        "box": [
+          0.76,
+          0.3,
+          0.9,
+          0.4
+        ],
+        "n": 332,
+        "p25": 6,
+        "median": 7,
+        "p90": 10
+      },
+      "note": "The near field is sharp and the far field is soft: median edge width goes 2 -> 5 -> 6 -> 7 px across the depth range. That is a far-only depth of field, not a symmetric one."
+    },
+    "withinFacetFlatness": {
+      "horizontalScan": {
+        "scan": "y=0.24, x 0.1000->0.1400, inside one lit plane",
+        "n": 110,
+        "minY": 0.2678,
+        "maxY": 0.2774,
+        "spread": 0.0096
+      },
+      "verticalScan": {
+        "scan": "x=0.155, y 0.3410->0.3960, inside one grazing plane",
+        "n": 84,
+        "minY": 0.1134,
+        "maxY": 0.1243,
+        "spread": 0.0109
+      },
+      "note": "A facet is EXACTLY one colour. Any shading gradient across a single face is a bug, not a nicety."
+    },
+    "skySmoothness": {
+      "column": 0.63,
+      "rows": 461,
+      "distinctColours": 378,
+      "changes": 420,
+      "longestConstantRun": 4
+    },
+    "skyHorizontal": {
+      "antiSun": 0.439,
+      "sunSide": 0.8926,
+      "ratio": 2.03,
+      "method": "box [0.030,0.352,0.070,0.360] vs box [0.965,0.352,0.995,0.360]"
+    },
+    "glyph": {
+      "strokeRunsPx": {
+        "at2752": {
+          "n": 328,
+          "p25": 3,
+          "median": 6,
+          "p90": 9
+        },
+        "at1920Median": 4.19
+      },
+      "backdropY": {
+        "median": 0.4618,
+        "p99": 0.7938
+      },
+      "contrastMedian": 2.17,
+      "contrastWorst": 1.26,
+      "method": "pure-white horizontal runs and non-glyph backdrop luminance inside box [0.40,0.25,0.55,0.33]"
+    },
+    "uiGeometry": {
+      "barOutlineRows": [
+        [
+          0.0378,
+          0.0397
+        ],
+        [
+          0.0716,
+          0.0736
+        ],
+        [
+          0.084,
+          0.0859
+        ],
+        [
+          0.1178,
+          0.1204
+        ]
+      ],
+      "barHeightFracH": 0.0338,
+      "outlineThicknessFracH": 0.0019,
+      "gapBetweenBarsFracH": 0.0104,
+      "subtitleBandRows": [
+        [
+          0.847,
+          0.8991
+        ]
+      ],
+      "subtitleBandHeightFracH": 0.0521,
+      "method": "vertical luminance-threshold scans: bars at x=0.15 with Y<0.030, subtitle band at x=0.31 with Y<0.045"
     }
   },
-  "luminanceHistogram": {
-    "note": "Linear Rec.709 luminance of every pixel. This is the shape the frame must have; the auditor checks the percentiles, not the bins.",
-    "shape": "A broad, gently double-humped plateau. A dark lobe at Y 0.00–0.06 (14.2% — ink, deep shadow, the framing foreground mass), a dip at Y 0.22–0.30, a wide mid plateau Y 0.31–0.66 (the lit world and the sky), then a fast decay above Y 0.70 with a thin tail to 1.0 carrying only emitters, the sun and the glyphs. Neither end spikes.",
-    "percentileTargets": {
-      "p01": [
-        0,
-        0.02
+  "census": {
+    "warmLitSubstance": {
+      "n": 2103305,
+      "share": 0.4976,
+      "method": "frame-wide count of {hue 20-50 & S>=0.40 & Y>=0.08}"
+    },
+    "coolShadow": {
+      "n": 389254,
+      "share": 0.0921,
+      "method": "frame-wide count of {hue 170-220 & Y<=0.06}"
+    },
+    "coolAccent": {
+      "n": 39788,
+      "share": 0.0094,
+      "method": "frame-wide count of {hue 150-200 & V>=0.80 & S>=0.25}"
+    },
+    "coolAccentAboveHorizon": {
+      "n": 303,
+      "share": 0.0001,
+      "method": "frame-wide count of {hue 150-200 & V>=0.80 & S>=0.25 & y<0.30}"
+    },
+    "green": {
+      "n": 409896,
+      "share": 0.097,
+      "method": "frame-wide count of {hue 60-150 & S>=0.25}"
+    },
+    "nearNeutral": {
+      "n": 42640,
+      "share": 0.0101,
+      "method": "frame-wide count of {S<=0.08}"
+    },
+    "blown": {
+      "n": 29313,
+      "share": 0.0069,
+      "method": "frame-wide count of {Y>=0.90}"
+    },
+    "pureWhite": {
+      "n": 4561,
+      "share": 0.0011,
+      "method": "frame-wide count of {Y>=0.9999 (pure #FFFFFF)}"
+    },
+    "crushed": {
+      "n": 17856,
+      "share": 0.0042,
+      "method": "frame-wide count of {Y<=0.004}"
+    },
+    "luminancePercentiles": {
+      "p01": 0.0067,
+      "p05": 0.0197,
+      "p25": 0.1027,
+      "p50": 0.2321,
+      "p75": 0.3982,
+      "p95": 0.722,
+      "p99": 0.8797,
+      "method": "every 2nd pixel in x and y of the whole frame"
+    }
+  },
+  "budgets": {
+    "coolAccentShareOfFrame": {
+      "measured": 0.0094,
+      "allowed": [
+        0.004,
+        0.018
       ],
-      "p05": [
-        0.01,
-        0.04
-      ],
-      "p10": [
-        0.025,
-        0.07
-      ],
-      "p25": [
-        0.11,
-        0.19
-      ],
-      "p50": [
-        0.3,
-        0.4
-      ],
-      "p75": [
-        0.48,
+      "note": "Pixels at hue 150-200, V>=0.80, S>=0.25. The reference spends 0.94% of frame on saturated cyan and NOTHING ELSE in the frame is allowed into that gate. Below 0.4% the world stops having a subject; above 1.8% the accent stops being an accent."
+    },
+    "warmLitShareOfFrame": {
+      "measured": 0.4976,
+      "allowed": [
+        0.35,
         0.6
       ],
-      "p90": [
-        0.6,
-        0.72
-      ],
-      "p95": [
-        0.7,
-        0.81
-      ],
-      "p99": [
-        0.9,
-        0.99
-      ]
+      "note": "Pixels at hue 20-50, S>=0.40, Y>=0.08. Warm rock is the mass of the picture."
     },
-    "measured": {
-      "p01": 0.0058,
-      "p05": 0.0206,
-      "p10": 0.0431,
-      "p25": 0.1471,
-      "p50": 0.3504,
-      "p75": 0.5409,
-      "p90": 0.6649,
-      "p95": 0.7569,
-      "p99": 0.956
-    },
-    "meanLuminance": {
-      "target": 0.354,
-      "tolerance": 0.05
-    },
-    "meanSaturation": {
-      "target": 0.313,
-      "tolerance": 0.05
-    }
-  },
-  "colourBudget": {
-    "note": "Fractions of frame pixels. Measured on the reference at half-resolution sampling; the auditor reproduces them exactly.",
-    "pipelineStage": "display-referred. Every share in this object is counted on the FINAL 8-bit sRGB frame, after the tonemap of §10 and after every post pass. Do not compare these to material albedos, which are scene-referred inputs.",
-    "hueArcs": {
-      "note": "THE partition, and the only one. review/art-audit.mjs classifies every pixel with these arcs and design/art-direction.md §9 prints this table verbatim — the prose is generated from this object, so the two cannot drift. Classification is in PRIORITY ORDER (danger, success, atmosphere, grey, muted, then the hue arcs), because `success` at 107° sits inside the bridge arc and must not be scored against the bridge budget. Each class carries its own saturation gate.",
-      "substanceGate": {
-        "maxValueForPale": 0.7,
-        "minSaturationForBright": 0.45,
-        "rule": "A pixel counts as SUBSTANCE only if S >= minSaturationForBright OR V <= maxValueForPale. A pale, bright pixel is ATMOSPHERE — sky, haze, aerial wash, bloom halo — whatever hue arc it sits in, and is scored in `atmosphere`, never in `warm`, `resonance` or `bridge`.",
-        "why": "Without it the identity-colour budget is a coin flip on sky saturation. 36.37% of the reference sits inside the resonance hue arc and only 13.75% clears S >= 0.30; 7.75% of the frame is parked at S 0.20-0.30, and 47.96% of the sky is inside the resonance arc (sky.zenith #8DACBC is hue 200, S 0.25 — 0.05 from the gate). Measured: with no gate, pushing sky saturation +0.10 moves resonance share 0.1375 -> 0.1755 and warm:resonance 2.25 -> 1.92, failing C3 and C6 with no art fault whatsoever. With this gate the same push moves resonance share 0.1227 -> 0.1247 and warm:resonance 1.871 -> 1.925. A nineteenfold reduction in the drift.",
-        "symmetry": "Applied to `warm` as well as `resonance`, on the argument §9 already makes: the sky carries hue, not saturation. The reference's own horizon (#F1C9A6, hue 28, S 0.311, V 0.945) is atmosphere that round 2 scored as `warm rock — the mass of the world`. It is not rock.",
-        "sweep": "Measured on reference/brief-hero.png by review/p02-r3-sweep2.mjs over six candidate gates and five stress cases. V>0.70 & S<0.45 is the only one that both keeps every budget mid-band on the reference and holds resonance share to +-0.002 under a +0.10 sky-saturation push. A whole-FRAME +0.10 saturation push (a genuinely over-saturated render, which SHOULD fail) still fails C5 at hotResonance 0.0656."
-      },
-      "order": [
-        "danger",
-        "success",
-        "atmosphere",
-        "grey",
-        "muted",
-        "warm",
-        "resonance",
-        "bridge",
-        "offLanguage"
-      ],
-      "classes": {
-        "danger": {
-          "hue": [
-            [
-              330,
-              355
-            ]
-          ],
-          "minS": 0.55,
-          "minY": 0.1,
-          "label": "danger — reserved, transient only",
-          "referenceShare": 0
-        },
-        "success": {
-          "hue": [
-            [
-              95,
-              125
-            ]
-          ],
-          "minS": 0.45,
-          "minY": 0.45,
-          "label": "success — reserved, transient only",
-          "referenceShare": 0
-        },
-        "atmosphere": {
-          "hue": [
-            [
-              0,
-              360
-            ]
-          ],
-          "minV": 0.7,
-          "maxS": 0.45,
-          "label": "atmosphere — sky, haze, aerial wash, bloom halo",
-          "referenceShare": 0.3905
-        },
-        "grey": {
-          "hue": [
-            [
-              20,
-              80
-            ]
-          ],
-          "maxS": 0.14,
-          "label": "grey — a claim closed with a supplied value",
-          "referenceShare": 0.0123
-        },
-        "muted": {
-          "hue": [
-            [
-              0,
-              360
-            ]
-          ],
-          "maxS": 0.3,
-          "label": "muted — surfaces that are neither warm, resonant nor grey",
-          "referenceShare": 0.2356
-        },
-        "warm": {
-          "hue": [
-            [
-              0,
-              60
-            ],
-            [
-              320,
-              360
-            ]
-          ],
-          "minS": 0.3,
-          "label": "warm rock — the mass of the world",
-          "referenceShare": 0.2296
-        },
-        "resonance": {
-          "hue": [
-            [
-              150,
-              215
-            ]
-          ],
-          "minS": 0.3,
-          "label": "resonance cyan — mathematics is live here",
-          "referenceShare": 0.1226
-        },
-        "bridge": {
-          "hue": [
-            [
-              90,
-              150
-            ]
-          ],
-          "minS": 0.3,
-          "label": "green bridge — river, foliage, ground cover",
-          "referenceShare": 0.0069
-        },
-        "offLanguage": {
-          "hue": [
-            [
-              60,
-              90
-            ],
-            [
-              215,
-              320
-            ]
-          ],
-          "minS": 0.3,
-          "label": "off-language — must stay empty",
-          "referenceShare": 0.0025
-        }
-      },
-      "emptyArcs": "250–349° is 0.00% of the reference's saturated pixels; 70–119° is 0.78%. Those two emptinesses are what `danger` and `success` were placed in.",
-      "roundTwoShares": "For the record, because these reproduce and were verified: WITHOUT the substance gate the same partition gives muted 0.5355, warm 0.3092, resonance 0.1373, bridge 0.0147, offLanguage 0.0033, warm:resonance 2.25. The gate moves the warm sky and the pale bloom halo out of `warm` and `resonance` and into `atmosphere`; nothing about the frame changed.",
-      "greyNote": "Grey is a MATERIAL, not a tint, and until round 4 §9 scored it as anonymous `muted` — 24.79% of the frame described as \"the quiet majority of surfaces\" and given no direction at all. world.md Law 5 makes grey the visible surface of the antagonist, so it gets a class and a budget of its own. The class is a strict subset of what `muted` already held (hue 20–80° at S < 0.14 is inside S < 0.30), so nothing else in the partition moves and `quiet` still counts atmosphere + muted + grey. Reference share 0.0123 — BELOW the 0.02 floor, and that is the finding: the reference is a hero vista of a world with no grey in it. C12 is the first check in this file that reference/brief-hero.png fails, and it fails it for a reason that is about what the world is made of rather than how it is photographed."
-    },
-    "saturatedIsSGreaterEqual": 0.3,
-    "hotIsSGreaterEqual": 0.55,
-    "targets": {
-      "quietShareOfFrame": [
-        0.56,
-        0.72
-      ],
-      "atmosphereShareOfFrame": [
-        0.15,
-        0.55
-      ],
-      "warmShareOfFrame": [
-        0.18,
-        0.29
-      ],
-      "resonanceShareOfFrame": [
-        0.09,
-        0.17
-      ],
-      "bridgeShareOfFrame": [
-        0,
-        0.04
-      ],
-      "hotShareOfFrame": [
-        0.08,
+    "coolShadowShareOfFrame": {
+      "measured": 0.0921,
+      "allowed": [
+        0.05,
         0.16
       ],
-      "hotResonanceShareOfFrame": [
-        0.02,
-        0.05
+      "note": "Pixels at hue 170-220, Y<=0.06. If this is near zero the render has no shadow direction; if it is over 0.16 the frame has gone gloomy."
+    },
+    "blownShareOfFrame": {
+      "measured": 0.0069,
+      "allowed": [
+        0.002,
+        0.02
       ],
-      "warmToResonanceRatio": [
-        1.4,
-        2.4
-      ],
-      "skyThirdQuietShare": [
-        0.9,
-        1
-      ],
-      "bottomThirdResonanceShare": [
-        0.18,
-        0.36
-      ],
-      "dangerShareOfFrame": [
+      "note": "Y>=0.90. In the reference this is the sun glow plus the KaTeX plus crystal cores, and nothing else."
+    },
+    "crushedShareOfFrame": {
+      "measured": 0.0042,
+      "allowed": [
         0,
-        0.005
+        0.012
       ],
-      "successShareOfFrame": [
-        0,
-        0.005
-      ],
-      "greyShareOfFrame": [
-        0.02,
-        0.08
-      ]
+      "note": "Y<=0.004. Shadows are chromatic; a render that crushes more than 1.2% of frame to near-black has lost the palette."
     },
-    "measured": {
-      "quietShareOfFrame": 0.6384,
-      "atmosphereShareOfFrame": 0.3905,
-      "mutedShareOfFrame": 0.2356,
-      "warmShareOfFrame": 0.2296,
-      "resonanceShareOfFrame": 0.1226,
-      "bridgeShareOfFrame": 0.0069,
-      "hotShareOfFrame": 0.1167,
-      "hotResonanceShareOfFrame": 0.0311,
-      "warmToResonanceRatio": 1.872,
-      "skyThirdQuietShare": 0.9722,
-      "bottomThirdResonanceShare": 0.2682,
-      "greyShareOfFrame": 0.0123
+    "greenShareOfFrame": {
+      "measured": 0.097,
+      "allowed": [
+        0.04,
+        0.16
+      ],
+      "note": "hue 60-150, S>=0.25. Almost all of it is dark ground cover and cast shadow."
     }
-  },
-  "shadingRamps": {
-    "note": "Two ramps, two material classes. Both were sampled from the reference, not designed. Implementing either as an RGB lerp between a lit colour and a shadow colour produces the muddy grey midtone that reads as \"shader default\".",
-    "curvedMetalAndSkin": {
-      "appliesTo": "anything with a smooth normal: hero plate, gauntlets, helmet forms, skin, hair, crystal bodies",
-      "transition": "soft — a gradient roughly 0.004–0.006 of frame width wide at hero scale",
-      "pipelineStage": "display-referred — these are pixels off the finished frame. The albedo that produces them is roles.hero.armour, which is scene-referred.",
-      "huePath": "FORWARD through olive/green: 185° → 75° → 32° → 35° → 58°",
-      "measuredOn": "horizontal cut across the hero at y=0.60, x 0.372→0.415",
-      "stops": [
-        {
-          "at": "shadow",
-          "hex": "#34494C",
-          "hue": 185,
-          "S": 0.32,
-          "Y": 0.062
-        },
-        {
-          "at": "terminator",
-          "hex": "#68704F",
-          "hue": 75,
-          "S": 0.295,
-          "Y": 0.151,
-          "correction": "Round 2 typed hue 68 / S 0.26 / Y 0.132 here while roles.hero.armour.ramp already carried the right numbers for the same hex. #68704F is hue 74.5, S 0.295, V 0.439, Y 0.1509. The LAW (forward through olive) is unaffected; the typed number was not."
-        },
-        {
-          "at": "mid",
-          "hex": "#AB804F",
-          "hue": 32,
-          "S": 0.54,
-          "Y": 0.247
-        },
-        {
-          "at": "light",
-          "hex": "#FDB755",
-          "hue": 35,
-          "S": 0.67,
-          "Y": 0.556
-        },
-        {
-          "at": "specular",
-          "hex": "#FFFCA0",
-          "hue": 58,
-          "S": 0.373,
-          "Y": 0.953
-        }
-      ],
-      "law": "Saturation PEAKS in the light band (0.67) and DROPS in the specular (0.37) while value pins at 1.0. A highlight that gets more saturated as it gets brighter is the signature of an untonemapped render."
-    },
-    "facetedRock": {
-      "appliesTo": "terrain, cliffs, boulders, the plinth, ruin masonry — anything authored as flat facets",
-      "transition": "HARD. Rock has no terminator. Measured down the plinth at x=0.66: Y 0.223 → 0.293 → 0.424 in three samples spanning 0.006 of frame height (~9 px at 1536), with a separate ink break at y=0.757. The light/shadow boundary is a geometric edge, not a falloff.",
-      "huePath": "BACKWARD through red and rose into violet: 26° → 15° → 9° → 353° → 338° → 260°",
-      "measuredOn": "vertical cut down the terrace face at x=0.885, y 0.500→0.596",
-      "stops": [
-        {
-          "at": "lit",
-          "hex": "#FDA663",
-          "hue": 26,
-          "S": 0.61,
-          "Y": 0.491
-        },
-        {
-          "at": "turning",
-          "hex": "#A96F62",
-          "hue": 11,
-          "S": 0.42,
-          "Y": 0.207
-        },
-        {
-          "at": "midShadow",
-          "hex": "#865E6D",
-          "hue": 338,
-          "S": 0.3,
-          "Y": 0.14
-        },
-        {
-          "at": "deepShadow",
-          "hex": "#585460",
-          "hue": 260,
-          "S": 0.13,
-          "Y": 0.093
-        },
-        {
-          "at": "occlusion",
-          "hex": "#1C151D",
-          "hue": 293,
-          "S": 0.28,
-          "Y": 0.009
-        }
-      ],
-      "law": "Smooth forms and cut planes must not share a shading model. That contrast is most of why the hero reads as a character standing on a landscape rather than as another rock."
-    }
-  },
-  "shadowChroma": {
-    "note": "THE test for \"did we actually author shadow colour, or did we just multiply the albedo\". Census over mid-shadow pixels only: 0.02 ≤ Y ≤ 0.12 and S ≥ 0.10 (this excludes ink, which is below the floor, and excludes neutral gloom, which is below the saturation floor).",
-    "measured": {
-      "coolShare": 0.5062,
-      "warmShare": 0.2343,
-      "otherShare": 0.2594,
-      "peaks": "200° (13.2%), 180° (12.9%), 190° (10.7%), with a violet tail 220–280° carrying 13.6%"
-    },
-    "coolIsHue": [
-      185,
-      320
-    ],
-    "coolShareTarget": [
-      0.38,
-      0.8
-    ],
-    "note2": "A render that darkens the albedo instead of rotating it lands near 0.05–0.15 here and fails by a mile. More than half of this world's shadow pixels are COOL."
-  },
-  "depthCues": {
-    "note": "Acutance = mean |4·L(x,y) − L(x±2,y) − L(x,y±2)| over a region, sampling every 2nd pixel. Unitless; only ratios are meaningful, and only between boxes on COMPARABLE CONTENT. Full-width screen bands do not work — a first draft used them and the hero, the hologram and the HUD text contaminated every band (all three came out at 0.033). The boxes below are hand-placed on rock at three depths.",
-    "acutanceMeasured": {
-      "hero": 0.09612,
-      "foregroundRock": 0.04617,
-      "midgroundValley": 0.02235,
-      "midCrystals": 0.01452,
-      "distanceRuins": 0.01295,
-      "cityFar": 0.024,
-      "skyFlat": 0.01315,
-      "note": "Re-derived at FULL resolution by review/p02-r4-measure.mjs with the auditor's own algorithm, on the boxes recorded in acutanceBoxes — every one of them, which was not true before. Round 3 carried hero 0.1042 here, 0.0961 in the prose and 0.09612 from the live auditor: three values for one measurement, which is the rampWidth defect one object away. The auditor's value is the one that is checkable, so it is the one that is recorded. `skyFlat` was previously an unrecorded 0.0123; the obvious box for it (x 0.10–0.30, y 0.03–0.09) scores 0.082 because the HUD portrait and health bar sit inside it, so the box now used is clean sky right of the HUD."
-    },
-    "acutanceBoxes": {
-      "hero": [
-        0.2984,
-        0.4128,
-        0.4027,
-        0.8232
-      ],
-      "foreground": [
-        0.44,
-        0.7,
-        0.72,
-        0.92
-      ],
-      "midground": [
-        0.06,
-        0.52,
-        0.3,
-        0.68
-      ],
-      "distance": [
-        0.1,
-        0.36,
-        0.3,
-        0.46
-      ],
-      "midCrystals": [
-        0.84,
-        0.62,
-        0.98,
-        0.78
-      ],
-      "cityFar": [
-        0.7,
-        0.12,
-        0.86,
-        0.3
-      ],
-      "skyFlat": [
-        0.36,
-        0.02,
-        0.56,
-        0.08
-      ],
-      "note": "Normalised, calibrated to the Level-1 hero framing. Re-place them for any other framing; they are arguments to review/art-audit.mjs, not constants of nature. `hero` is the inset core the auditor derives from --hero=0.276,0.276,0.425,0.960 (15% in x, 20% in y) and is recorded here so the number can be reproduced without re-deriving the inset."
-    },
-    "acutanceRatioTargets": {
-      "heroOverMidground": [
-        2.5,
-        8
-      ],
-      "foregroundOverDistance": [
-        1.8,
-        6
-      ],
-      "foregroundOverMidground": [
-        1.5,
-        5
-      ]
-    },
-    "saturationByThird": {
-      "top": 0.1734,
-      "middle": 0.3165,
-      "bottom": 0.4499,
-      "note": "Measured row means at the auditor's own stride (every 3rd pixel). Saturation must rise monotonically from horizon to the bottom of frame; the auditor checks bottom − top ≥ 0.15 (reference 0.277). Round 1 recorded 0.15 / 0.32 / 0.47 here, which matched neither the auditor nor the reference; these are the reproduced numbers."
-    },
-    "aerialPerspective": {
-      "target": "sky.horizon",
-      "farPlaneMix": 0.75,
-      "note": "distant geometry lerps toward sky.horizon in LINEAR space, reaching 0.75 at the far plane; measured far ruins sit at 0.35× the saturation of the same rock in the foreground"
-    },
-    "landmarkContrast": {
-      "id": "D5",
-      "rule": "A distant landmark that is meant to READ AS A SILHOUETTE must have a mean luminance no more than 0.70× the sky directly behind it.",
-      "maxRatio": 0.7,
-      "measured": {
-        "cityMass": {
-          "box": [
-            0.7,
-            0.12,
-            0.86,
-            0.3
-          ],
-          "mean": 0.3388,
-          "px": 122157
-        },
-        "skyBehindCity": {
-          "box": [
-            0.86,
-            0.12,
-            0.96,
-            0.3
-          ],
-          "mean": 0.5734,
-          "px": 76175
-        },
-        "skyAboveCity": {
-          "box": [
-            0.7,
-            0.03,
-            0.86,
-            0.1
-          ],
-          "mean": 0.4889,
-          "px": 47628
-        },
-        "ratioCityOverSkyBehind": 0.5909,
-        "ratioCityOverSkyAbove": 0.693
-      },
-      "counterExamples": {
-        "ruinClusterLeft": {
-          "box": [
-            0.135,
-            0.15,
-            0.245,
-            0.29
-          ],
-          "mean": 0.4872,
-          "skyBehind": 0.6234,
-          "ratio": 0.7815
-        },
-        "midMesas": {
-          "box": [
-            0.03,
-            0.33,
-            0.2,
-            0.4
-          ],
-          "mean": 0.3989,
-          "skyAbove": 0.5234,
-          "ratio": 0.7621
-        },
-        "note": "Both sit at 0.76–0.78 and both FAIL the 0.70 rule, correctly. They are not silhouettes; they are haze, and they are supposed to be. The rule is not \"everything distant must be dark\" — it is that a frame gets ONE silhouetted landmark and everything else recedes by aerial perspective. In the reference that one is the city. In Level 1 it is Vantis, and Vantis is the horizon question."
-      },
-      "note": "§7 said \"Detail is not what makes a landmark read; value contrast against sky is\" and gave no number, which makes it advice rather than a rule. Boxes are arguments and are recorded. Pass --landmark=x0,y0,x1,y1 --skybehind=x0,y0,x1,y1 to re-place them."
-    }
-  },
-  "motion": {
-    "note": "Everything else in this file describes one instant. quality-bar.md §1 puts 'Readability under motion beats detail at rest. If it turns to noise while running, it is wrong' at the TOP of the art bar, against BotW and Fortnite — so these budgets outrank every still-frame number below them. They are checked by the MOTION section of review/art-audit.mjs against a sequence captured by review/p02-motion-capture.mjs, whose frames are exactly one 1/60 s fixed simulation step apart. Wall-clock spacing would measure nothing: a headless screenshot costs seconds of real time, so the capture halts the kernel's realtime loop and advances simTime by hand.",
-    "pipelineStage": "display-referred. Every threshold here is a difference between two FINAL 8-bit sRGB frames, after tonemap and after every post pass — which is the only place temporal noise is visible, because TAA, bloom, dither and the tonemap all live there.",
-    "fixedStepSeconds": 0.016666666666666666,
-    "staticFrame": {
-      "note": "Camera static, simulation advanced exactly one fixed step. Nothing the player is not looking at should be moving, so almost nothing should change.",
-      "meanDeltaY": 0.004,
-      "p99DeltaY": 0.02,
-      "bigDeltaY": 0.05,
-      "bigDeltaShare": 0.002,
-      "skyCodeChurn": 0.02,
-      "heroAreaStep": 0.01,
-      "medianYStep": 0.005,
-      "whyThreeNumbers": "The mean alone cannot see a fizzing sky. One 8-bit code step in the mid-tones is about 0.0075 of luminance; a per-frame-random dither over the 31% of frame the sky occupies produces a mean |dY| near 0.0023 — comfortably INSIDE the 0.004 budget while every sky pixel is crawling. That is why M1c counts pixels moving more than 0.05 and M4 checks the sky's 8-bit codes for exact equality."
-    },
-    "underMotion": {
-      "note": "Camera panning at 60 deg/s (one degree of yaw per fixed step). Most pixels change a great deal and a whole-frame difference means nothing; what must hold is that the READ does not change.",
-      "panDegPerSec": 60,
-      "heroAreaStep": 0.03,
-      "medianYStep": 0.02
-    },
-    "ink": {
-      "p50StepPx": 1,
-      "p90StepPx": 2,
-      "quotedAt": [
-        1600,
-        900
-      ],
-      "note": "The screen-space ink contour must not change width between adjacent frames. I1b measures the TAPER on one frozen frame (p90 7 vs p50 3 on the reference) and cannot see crawl at all: a contour that alternates 3 px / 6 px scores a perfect taper on every individual frame. Anti-pattern 11 names crawling ink; this is the number that catches it."
-    },
-    "emitter": {
-      "energyStep": 0.03,
-      "note": "Relative change per fixed step in the screen-summed luminance of the emissive mask, normalised by the sequence maximum. Catches bloom popping as an emitter crosses the frame edge, an emitter's kernel snapping between LODs, and strobing that outruns legibility. An authored 2 s pulse at 10% amplitude changes about 0.5% per step. 0.03 per step is 86% per second, which is also the fastest an emitter may flash before it reads as a strobe rather than a beat."
-    },
-    "heroSeparationFloor": 0.1,
-    "skyProbeBox": [
-      0.05,
-      0.02,
-      0.35,
-      0.14
-    ],
-    "dither": {
-      "pattern": "fixed screen-space 8x8 ordered Bayer, or a fixed screen-space blue-noise tile",
-      "forbidden": "per-frame random; any pattern re-seeded on camera motion, on frame index, or on time",
-      "amplitudeCodes": 1,
-      "note": "S1/S2 are single-frame checks and a builder who hits 21-45 distinct codes per channel with per-frame white noise passes both and ships a fizzing sky. M4 is the check that separates them: with the camera static the 8-bit codes in the sky must be IDENTICAL frame to frame."
-    },
-    "specularAA": {
-      "required": true,
-      "method": "normal-variance to roughness (Toksvig / geometric specular AA), computed per-pixel from the screen-space derivatives of the shading normal",
-      "plateMetalRoughnessFloorUnderMotion": 0.35,
-      "appliesTo": [
-        "rock / terrain",
-        "bone stone",
-        "plate metal",
-        "crystal"
-      ],
-      "why": "The document's own mandates are an aliasing factory and round 2 did not acknowledge it. §4 requires that rock have NO terminator — 'the light/shadow boundary is a geometric edge' — and §5 sets plate metal at metalness 0.90-1.0 with roughness 0.22-0.38. A hard-faceted surface plus a narrow specular lobe is exactly the case where one pixel of camera movement flips a highlight on and off. Without normal-variance-to-roughness the hero shimmers at 1600x900 and M1c fails."
-    },
-    "temporalAA": {
-      "policy": "optional, but if present it must be a fixed 8-sample halton jitter reset on camera cut, with a velocity-rejected history and a clamp to the 3x3 neighbourhood",
-      "forbiddenHistoryWeight": "> 0.95",
-      "note": "TAA is allowed to help M1, never to hide a fault: a history weight above 0.95 will pass every motion check by smearing the frame, and produces exactly the ghosting BotW and Fortnite do not have. If TAA is on, M2 and M7 still have to pass under a 60 deg/s pan, which is where a too-heavy history shows."
-    },
-    "timeOfDay": {
-      "policy": "one authored hour, held — with an aperiodic intensity swing, because the star is the title",
-      "keyBearingIsWorldFixed": true,
-      "keyAzimuthDegInReferenceFramingOnly": 62,
-      "keyElevationDeg": 8,
-      "elevationDriftDeg": 3,
-      "azimuthDriftDeg": 8,
-      "periodMinutes": 20,
-      "lethisVariability": {
-        "what": "world.md §3: \"Its output is an unsolved function: it swells and dims on a period nobody has pinned.\" world.md §9 puts the cosmic stake in \"the sky, every frame, doing real work\", and §11 hands P10 \"Lethis is a *character* — it swells and dims on no schedule and the sky must visibly not be on a loop.\" Round 3 forbade exactly that. This envelope is what replaces the ban: it is the only quantity in the light rig that is allowed to vary, and every constant measured in this file survives it.",
-        "varies": "key INTENSITY only",
-        "intensityMean": 1,
-        "intensitySwing": 0.12,
-        "maxRatePerFixedStep": 0.0015,
-        "drive": "a sum of at least four sinusoids whose periods are mutually prime and none shorter than 40 s (e.g. 41 s, 67 s, 113 s, 269 s, 617 s), normalised to unit peak. Aperiodic in practice: the sum does not repeat inside a session, which is the requirement — the sky must visibly not be on a loop. It runs in fixed(), from simTime, so it is deterministic and G4-safe.",
-        "held": "sky.sun #FFE8A0 exactly; key elevation +8° ± 3°; the key's world bearing; the sky gradient; every colour in this file.",
-        "clamps": "The envelope is clamped by two checks that already exist and were measured on the reference: K1 (key : fill on the marked rock boxes) must stay inside 6.2 ± 1.6, and L1 (median frame luminance) must stay inside 0.30–0.40. Those two are what make the swell MEASURABLE rather than a re-derivation of the document: a swing that pushes either of them out of band is too big, whatever the sky looks like.",
-        "whyThatRate": "±12% about 1.00 at ≤ 0.0015 per fixed step is 0.15% of full intensity per step, i.e. 9% per second at the fastest — a swell takes at least 1.6 s to cross its whole range and typically much longer. That is comfortably under M5 (emissive energy ≤ 3% per step) and under M6 (median frame Y ≤ 0.005 per step static), and it is far slower than the 3 Hz accessibility floor. The one thing it must never become is a flicker: this is a star breathing, not a lamp failing.",
-        "forbidden": "A day/night cycle, a colour-temperature ramp, a moving sun, a periodic loop, or any drive a player could time with a stopwatch. Lethis has been under review for eleven thousand four hundred years precisely because nobody has pinned its period; a sine wave with one period is the one implementation that contradicts the fiction."
-      },
-      "note": "The world is a long dusk and it stays one. The key holds ONE WORLD BEARING for the whole session — keyAzimuthDegInReferenceFramingOnly is a fact about the camera in reference/brief-hero.png (the shot looks 62° off that bearing, which is why the sun sits camera-right and just off frame) and is NOT a light offset from the camera. Round 2 wrote it as \"azimuth +62° (camera right)\", which read literally is a light bolted to the camera boom; round 3 fixed the prose and left this key unchanged, and this file is the authoritative half. The slow elevation/azimuth drift lets a returning player feel time pass without any frame pair being able to resolve it (8° over 20 min is 0.00011° per fixed step). What varies is Lethis's brightness, and only its brightness — see lethisVariability."
-    }
-  },
-  "accessibility": {
-    "stateColourPairing": "danger and success must differ by ≥2.5× in luminance. As authored: success #8AF06E Y 0.6885 against danger #FF3E6B Y 0.2577 = 2.67:1. They must ALSO always carry a second, non-colour cue — shape, motion or position. Colour alone never carries a learning outcome.",
-    "stateLuminanceRatio": 2.67,
-    "minTextContrast": 4.5,
-    "deuteranopiaNote": "danger (346°) and success (107°) are the classic confusable pair under deuteranopia. The 2.67:1 luminance split and the mandatory second cue are what make them safe. Do not \"fix\" this by moving danger toward orange — orange is 30% of the frame. (Round 1 left this note reading \"success (146°)\" and \"3.07:1\" after §9 had already moved success to 107°; both are corrected here and both are derived from roles.success.luminance / roles.danger.luminance, which is where the number now comes from.)"
-  },
-  "solvedConstants": {
-    "note": "The constants that came from a FIT rather than from reading a pixel. These govern the two surfaces a player looks through on every interaction, and they are the numbers a builder actually types. Round 1 shipped them unverified and the frame-wide census auditor could not see them; review/art-audit.mjs now checks each one directly (U1, V1, B1, K1, I1) and reports which ones could not run on a given frame.",
-    "scrimTransmission": {
-      "id": "U1",
-      "plateauTransmissionY": [
-        0.06,
-        0.2
-      ],
-      "plateauAlpha": [
-        0.8,
-        0.94
-      ],
-      "requireRamp": true,
-      "minRampWidth": 0.05,
-      "pipelineStage": "display-referred — alpha and transmission are properties of the COMPOSITED frame, measured after the tonemap. A builder who types alphaPeak into a pre-tonemap blend will not land here.",
-      "note": "The interior of the band must transmit; the ends must ramp. A frame whose scrim plateau transmits < 0.06 is a black bar. RAMP WIDTH is the distance in frame widths over which transmission climbs from plateau+0.10 to 0.85 at each end; a hard-edged rectangle scores ~0.005 and fails. review/art-audit.mjs measures the reference's two ramps at 0.0825 (left) and 0.1325 (right).",
-      "referenceValue": {
-        "plateauTransmissionY": 0.11,
-        "plateauAlpha": 0.908,
-        "rampWidth": [
-          0.0825,
-          0.1325
-        ]
-      }
-    },
-    "veilCompression": {
-      "id": "V1",
-      "slope": [
-        0.3,
-        0.72
-      ],
-      "fixedPointY": [
-        0.4,
-        0.5
-      ],
-      "minPairs": 10,
-      "minBackgroundSpread": 0.2,
-      "searchBox": [
-        0.45,
-        0.2,
-        0.81,
-        0.58
-      ],
-      "note": "Y_inside = slope·Y_behind + intercept, fitted over paired samples across at least two panel edges with different backdrops. An additive quad gives slope ≈ 1 with a large intercept; a flat plate gives slope ≈ 0. Both fail. The fixed point is intercept/(1−slope) and must land near holo.veil.luminance.",
-      "referenceValue": {
-        "slope": 0.462,
-        "intercept": 0.24,
-        "fixedPointY": 0.446,
-        "n": 116,
-        "r2": 0.896
-      }
-    },
-    "emitterPeak": {
-      "id": "B1",
-      "pipelineStage": "display-referred — measured on the final frame, after tonemap and bloom",
-      "minPeakY": 0.9,
-      "maskHue": [
-        150,
-        215
-      ],
-      "searchBox": [
-        0.54,
-        0.62,
-        0.74,
-        0.82
-      ],
-      "maxCoreAreaShare": 0.004,
-      "blownShareOfFrame": [
-        0.0002,
-        0.006
-      ],
-      "blownShareDefinition": "Y >= 0.90 AND hue 150-215. No saturation gate: the pixels this rule is ABOUT are the near-white core pixels, and an S >= 0.06 filter excludes exactly them. Reference 0.00179 at full resolution.",
-      "note": "The brightest pixel inside the DECLARED emitter box must be blown, and it must belong to a compact connected component. Round 2's check masked hue 150-215 at S >= 0.06 over the whole frame: on the reference that mask is 34.8% of the frame (the sky is inside it), the peak it reported was at x = 0.9993 — the extreme right edge of frame, not the socket — only 2 of its 200 brightest pixels fell inside the socket, and it PASSED at 0.9692 on review/p02-crops/negative-control.png, a frame with no blown emitter core anywhere. It was a null check. Pass --emitter=x0,y0,x1,y1 to re-place the box on our own framings, exactly the way K1 takes --lit / --shadow. B1c is the box-free backstop: the blown region containing the peak must be a core, not a field.",
-      "referenceValue": {
-        "peakY": 0.9496,
-        "hex": "#E7FEFD",
-        "at": [
-          0.6344,
-          0.7038
-        ],
-        "blownShareOfFrame": 0.00179,
-        "peakComponentAreaShare": 0.000058,
-        "blownComponentCount": 58,
-        "largestBlownComponentAreaShare": 0.000495
-      }
-    },
-    "keyToFill": {
-      "id": "K1",
-      "target": 6.2,
-      "tolerance": 1.6,
-      "litBox": [
-        0.87,
-        0.481,
-        0.91,
-        0.489
-      ],
-      "shadowBox": [
-        0.872,
-        0.598,
-        0.902,
-        0.612
-      ],
-      "note": "Two marked boxes on the same terrace: a top facing the key, and a vertical face turned away from it under open sky. Pass --lit / --shadow to art-audit.mjs to re-place them on our own framings. Round 1 stated 7.0 ± 1.5 in prose from a pair it did not record; on boxes that ARE recorded the reference gives 6.18 (lit Y 0.6592 #FEC67D, shadow Y 0.1066 #555661). The bounce-shadowed face of the same terrace gives 4.82 and the second lit band gives 4.38, which is the honest spread of this measurement.",
-      "referenceValue": {
-        "ratio": 6.18,
-        "litY": 0.6592,
-        "shadowY": 0.1066
-      }
-    },
-    "inkWidth": {
-      "id": "I1",
-      "threshold": 0.012,
-      "p50": [
-        2,
-        6
-      ],
-      "p90": [
-        4,
-        14
-      ],
-      "requireTaper": true,
-      "note": "Horizontal runs of pixels at or below Y 0.012 inside the hero box, normalised to a 2752-wide frame. Absolute widths are threshold-dependent — that is why the threshold is stated here and passed to the auditor rather than assumed. What is NOT threshold-dependent is the taper: p90 must exceed p50.",
-      "referenceValue": {
-        "atY0006": {
-          "p25": 2,
-          "p50": 3,
-          "p75": 4,
-          "p90": 6,
-          "n": 6690
-        },
-        "atY0012": {
-          "p25": 2,
-          "p50": 3,
-          "p75": 4,
-          "p90": 7,
-          "n": 8255
-        },
-        "atY0020": {
-          "p25": 2,
-          "p50": 4,
-          "p75": 5,
-          "p90": 10,
-          "n": 8528
-        }
-      },
-      "distanceGate": {
-        "foregroundBandDensity": 0.023,
-        "distantBandDensity": 0.0101,
-        "note": "density of pixels at Y ≤ 0.006 in a foreground band vs a distant band; ink must be denser in front"
-      }
-    }
-  },
-  "materials": {
-    "note": "Scene-referred material constants that art-direction.md §5 and §12 state as rules. AUTHORED — the reference is a painting and cannot be measured for a specular lobe width or an occlusion radius. They are here because a shader author cannot type prose.",
-    "plateMetal": {
-      "metalness": [
-        0.9,
-        1
-      ],
-      "roughness": [
-        0.22,
-        0.38
-      ],
-      "roughnessFloorUnderMotion": 0.35,
-      "specularTwoLobe": {
-        "broad": {
-          "roughness": 0.45,
-          "intensity": 0.25
-        },
-        "narrow": {
-          "roughness": 0.12,
-          "intensity": 1,
-          "gate": "N·V < 0.35",
-          "gateFeatherWidth": 0.1
-        },
-        "note": "The \"broad soft gradient plus a narrow hot streak on edges\" of §5, with numbers. The broad lobe is the form-reading one and is always on. The narrow lobe is the champagne-gold streak and is gated to grazing view angles — N·V < 0.35 is what \"edges\" means, feathered over 0.10 of N·V so the streak does not switch on across a threshold (anti-pattern 27). Both lobes obey the motion roughness floor: under motion the narrow lobe widens to 0.35 like everything else, which is the price §5 charges for hard facets."
-      }
-    },
-    "certainty": {
-      "metalness": 0,
-      "roughness": [
-        0.06,
-        0.14
-      ],
-      "emissive": false,
-      "bloom": false,
-      "rim": "certainty.rim, Fresnel, exponent 3–5",
-      "note": "A certainty refracts and never emits. See roles[\"certainty.facet\"]."
-    },
-    "grey": {
-      "metalness": 0,
-      "roughness": [
-        0.88,
-        0.95
-      ],
-      "emissive": false,
-      "bloom": false,
-      "rim": false,
-      "note": "Grey is the only material in the file with no highlight worth authoring. See roles[\"world.grey\"]."
-    },
-    "contactAO": {
-      "minDarkening": 0.45,
-      "radiusMetres": 0.35,
-      "falloff": "smoothstep, full strength at contact, zero at radiusMetres, applied in linear before the tonemap",
-      "maxRadiusMetres": 1.2,
-      "note": "Anti-pattern 4 said \"every object needs a dark contact where it meets ground\" and gave no darkness, no radius and no falloff, so it could not be built or checked. The number: at the contact line the surface must lose at least 45% of its unoccluded linear luminance, recovering to zero over 0.35 m for ordinary props (up to 1.2 m under something the size of a grounded barge). Below ~30% the object still floats; above ~70% it reads as a painted shadow decal. Verify by eye at the contact, never at the shadow's far end (anti-pattern 20)."
-    }
-  },
-  "screenSpace": {
-    "note": "Every screen-space width in this document, expressed the one way that survives a device pixel ratio. This block exists because §5 quotes ink as \"1.7 px at 1600×900\" and §11 quotes the UI stroke as \"2 px at 1600×900\": on a 2× DPR display the drawing buffer is 3200×1800, those constants silently double or halve depending on which side of the pixel-ratio boundary they are applied, and quality-bar.md G7 demands legibility at both 1280×720 and 3840×2160.",
-    "rule": "Author every screen-space width as a fraction of FRAME HEIGHT and multiply by the drawing buffer height at use. Never author in CSS pixels. Never author in device pixels.",
-    "inkMedianWidthFracOfFrameHeight": 0.00189,
-    "uiStrokeWidthFracOfFrameHeight": 0.00222,
-    "maxPixelRatio": 2,
-    "ditherAppliedIn": "device pixels — the Bayer tile indexes gl_FragCoord in the drawing buffer, so the pattern is one tile per device pixel at every DPR. A tile authored in CSS pixels resamples and stops being a fixed pattern, which is anti-pattern 23 arriving through the back door.",
-    "derivation": "ink: median 3 px on a 2752-wide reference = 1.7 px at 1600×900 = 1.7/900 = 0.00189 of frame height. ui stroke: 2 px at 1600×900 = 0.00222. At 3840×2160 those are 4.1 px and 4.8 px, which is what \"scales with viewport height\" has always meant and what §11 already says in words.",
-    "renderTarget": "half-float (RGBA16F) or better for every pass before the tonemap. §8 requires the hologram quad and the bloom to composite in LINEAR, before the curve; an 8-bit unorm target quantises linear values and clips everything above 1.0, which makes §8 impossible and makes the >1.0 glyph drive of \"Which side of the tonemap\" impossible as well."
   }
 }

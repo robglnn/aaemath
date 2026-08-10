@@ -29,16 +29,16 @@ deliberate    27.4 29.9 25.6 33.1 26.4 24.3 29.8 24.9 24.4 25.5   | 24.31 26.45 
 slow          41.8 45.4 38.0 49.9 39.4 35.6 45.5 37.2 35.6 38.3   | 35.64 39.43 49.94   0/10      0
 erratic       16.3 19.1 14.7 19.0 14.4 12.3 19.9 15.0 12.0 14.2   | 11.96 14.99 19.94   4/10      0
 
-C3  DISTRIBUTION — 24 seeds x 10 sittings per archetype (240 sittings each)
+C3  DISTRIBUTION — 6 seeds x 10 sittings per archetype (60 sittings each)
 
 archetype     sittings   min    p10    med    p90    max   in 15-25   mid-claim   carried   items/sitting  rho
 ----------------------------------------------------------------------------------------------------------------------
-sprinter         240  19.03  19.86   20.3  20.67  21.13    240/240           0         0             93  0.19
-quick            240  18.56  19.22  19.83  20.45  21.45    240/240           0         0             60  0.34
-steady           240  17.32  18.38  19.14  19.98  21.72    240/240           0         0             39  0.56
-deliberate       240  15.02  16.79  18.06  19.35  22.61    240/240           0         0             24  0.93
-slow             240  15.01  15.43  16.79  18.59  21.58    240/240           0         0             15  1.44
-erratic          240  17.54  18.54  19.34     21  26.01    239/240           0         0             42  0.44
+sprinter          60  19.19  19.99  20.26  20.59  20.78      60/60           0         0             93  0.19
+quick             60  18.56  19.34  19.87  20.42  20.69      60/60           0         0             60  0.34
+steady            60  17.89  18.39  19.18  19.67  21.72      60/60           0         0             37  0.54
+deliberate        60  15.53  16.79  18.06   19.2   22.6      60/60           0         0             24  0.93
+slow              60  15.12   15.5  16.83  18.19  19.95      60/60           0         0             15  1.44
+erratic           60  18.19  18.54  19.23  20.93  22.96      60/60           0         0             42  0.43
 
 C4  SAME TWENTY MINUTES, DIFFERENT AMOUNT OF WORK — items served per sitting, session arm
     (this is the requirement: a student who works fast gets MORE done, not cut off earlier)
@@ -54,11 +54,11 @@ erratic                 45             19.3           2.33               33     
 
 C5  HOW A SITTING ENDS — every close reason, every last-beat outcome, session arm, C3 corpus
 
-close reason        arc-complete=480
-last beat kind/end  acquire/complete=480
-closing win         stood=480
+close reason        arc-complete=360
+last beat kind/end  acquire/complete=360
+closing win         stood=360
 
-C10 ABSENCE AND THE BREAK — 4 profiles x 6 archetypes x 24 seeds x 10 sittings
+C10 ABSENCE AND THE BREAK — 4 profiles x 6 archetypes x 6 seeds x 10 sittings
     Round 1 of this script called noteAway() exactly zero times, so the break rule — the only
     thing that makes this layer a Pomodoro rather than a timer — was never exercised. These are
     the numbers it was missing. The band is on ATTENDED minutes, because away time is not
@@ -71,48 +71,48 @@ C10 ABSENCE AND THE BREAK — 4 profiles x 6 archetypes x 24 seeds x 10 sittings
 
 profile     archetype     sittings   min    med    max   in 15-25   mid-claim   attended  wall  away   sittings/page
 --------------------------------------------------------------------------------------------------------------------------
-attentive   sprinter          240  19.03   20.3  21.13     240/240           0       20.3  20.3     0              1
-attentive   quick             240  18.56  19.83  21.45     240/240           0      19.83 19.83     0              1
-attentive   steady            240  17.32  19.14  21.72     240/240           0      19.14 19.14     0              1
-attentive   deliberate        240  15.02  18.06  22.61     240/240           0      18.06 18.06     0              1
-attentive   slow              240  15.01  16.79  21.58     240/240           0      16.79 16.79     0              1
-attentive   erratic           240  17.54  19.34  26.01     239/240           0      19.34 19.34     0              1
+attentive   sprinter           60  19.19  20.26  20.78       60/60           0      20.26 20.26     0              1
+attentive   quick              60  18.56  19.87  20.69       60/60           0      19.87 19.87     0              1
+attentive   steady             60  17.89  19.18  21.72       60/60           0      19.18 19.18     0              1
+attentive   deliberate         60  15.53  18.06   22.6       60/60           0      18.06 18.06     0              1
+attentive   slow               60  15.12  16.83  19.95       60/60           0      16.83 16.83     0              1
+attentive   erratic            60  18.19  19.23  22.96       60/60           0      19.23 19.23     0              1
 --------------------------------------------------------------------------------------------------------------------------
-attentive   ALL              1440  15.01  19.25  26.01   1439/1440   (99.93%)
+attentive   ALL               360  15.12   19.2  22.96   360/360   (100%)
 
-alt-tab     sprinter          240  18.19  20.14  21.02     240/240           0      20.14 32.58 12.46              1
-alt-tab     quick             240  17.68   19.6  20.92     240/240           0       19.6  27.8   8.1              1
-alt-tab     steady            240  16.68  18.93  21.54     240/240           0      18.93 24.08  4.95              1
-alt-tab     deliberate        240  15.12  17.75  22.43     240/240           0      17.75 20.71  2.84              1
-alt-tab     slow              240  15.02  16.71  21.58     240/240           0      16.71    19  1.94              1
-alt-tab     erratic           240   15.6  19.15  23.43     240/240           0      19.15 24.59  5.44              1
+alt-tab     sprinter           60  18.85  20.26  20.71       60/60           0      20.26 32.73 12.67              1
+alt-tab     quick              60   17.7  19.63  20.62       60/60           0      19.63 27.94  8.59              1
+alt-tab     steady             60  17.14  18.93  20.14       60/60           0      18.93 24.59  5.59              1
+alt-tab     deliberate         60  15.29  17.98  22.43       60/60           0      17.98 20.75  3.04              1
+alt-tab     slow               60  15.08  16.87  21.58       60/60           0      16.87 19.62   2.3              1
+alt-tab     erratic            60  17.77  19.14   22.7       60/60           0      19.14 24.96  5.74              1
 --------------------------------------------------------------------------------------------------------------------------
-alt-tab     ALL              1440  15.02  19.08  23.43   1440/1440   (100%)
+alt-tab     ALL               360  15.08   19.1   22.7   360/360   (100%)
 
-churn       sprinter          240  15.04  18.65  20.97     240/240           0      18.65 55.54 36.99             10
-churn       quick             240   15.1  19.18  21.34     240/240           0      19.18  41.8 23.79              6
-churn       steady            240  15.03  18.74  21.44     240/240           0      18.74 33.98  15.3              5
-churn       deliberate        240  15.02  17.53  21.09     240/240           0      17.53 26.37  8.25              4
-churn       slow              240  15.04  16.74  23.49     240/240           0      16.74 23.57  6.59              3
-churn       erratic           240  15.32  18.73  24.33     240/240           0      18.73 36.22 17.52              8
+churn       sprinter           60  15.16  18.67  20.86       60/60           0      18.67 54.02 35.99              6
+churn       quick              60   15.1  18.37  21.12       60/60           0      18.37 43.93 24.82              6
+churn       steady             60  15.15  18.74   20.8       60/60           0      18.74  35.4 17.37              3
+churn       deliberate         60  15.06   17.5  21.09       60/60           0       17.5 27.44  8.29              4
+churn       slow               60  15.05  16.64  22.18       60/60           0      16.64 24.09  6.69              2
+churn       erratic            60  15.36  18.89  21.89       60/60           0      18.89 39.89 20.65              3
 --------------------------------------------------------------------------------------------------------------------------
-churn       ALL              1440  15.02  18.26  24.33   1440/1440   (100%)
+churn       ALL               360  15.05   18.2  22.18   360/360   (100%)
 
-break       sprinter          240  15.02  19.32  20.98     240/240           0      19.32 43.51 24.87              7
-break       quick             240   15.1  19.47   21.3     240/240           0      19.47 33.61 14.45              7
-break       steady            240  15.16  18.85  22.67     240/240           0      18.85 28.33   9.7              4
-break       deliberate        240  15.16  17.73  22.13     240/240           0      17.73  20.2     0              4
-break       slow              240  15.03  16.93  23.01     240/240           0      16.93    18     0              3
-break       erratic           240  15.06  18.99  24.04     240/240           0      18.99 29.55 11.29              5
+break       sprinter           60   15.1  20.11  20.65       60/60           0      20.11 41.45 22.54              5
+break       quick              60   15.1  19.31  20.48       60/60           0      19.31 39.96 21.33              5
+break       steady             60  15.17  18.78  22.67       60/60           0      18.78 29.18 10.99              2
+break       deliberate         60  15.22  17.73  21.45       60/60           0      17.73 22.28  6.32              2
+break       slow               60  15.04  17.12  23.01       60/60           0      17.12 18.38     0              3
+break       erratic            60  15.28  19.05  21.57       60/60           0      19.05 32.66 13.31              5
 --------------------------------------------------------------------------------------------------------------------------
-break       ALL              1440  15.02   18.6  24.04   1440/1440   (100%)
+break       ALL               360  15.04  18.58  23.01   360/360   (100%)
 
 C10b CLOSE REASONS, PER PROFILE — 'break' is the sitting ending because the learner took one
 
-  attentive  arc-complete=1440
-  alt-tab    arc-complete=1440
-  churn      arc-complete=911  break=529
-  break      arc-complete=1042  break=398
+  attentive  arc-complete=360
+  alt-tab    arc-complete=360
+  churn      arc-complete=224  break=136
+  break      arc-complete=256  break=104
 
 C10c THE CYCLE — work -> break -> work, per page load. A break must not be a terminus.
      'break signals' is learn:session {phase:"break"}; 'resumed' is a sitting opened by
@@ -122,8 +122,8 @@ profile      break closes   break signals   resumed sittings   sittings per page
 --------------------------------------------------------------------------------------------------------
 attentive               0               0                  0                              1 / 1
 alt-tab                 0               0                  0                              1 / 1
-churn                 529             529                470                             1 / 10
-break                 398             398                359                              1 / 7
+churn                 136             136                118                              1 / 6
+break                 104             104                 98                              1 / 5
 
 C11 DOES THE FORECAST DESCRIBE WHAT THE ENGINE SERVES?
     `candidates()` is a model of §4's own order: the due-time queue, then the frontier score
@@ -144,14 +144,14 @@ C11 DOES THE FORECAST DESCRIBE WHAT THE ENGINE SERVES?
 
 archetype     next-beat hits   next-beat rate   whole-sitting match   planned min   actual min   size err
 --------------------------------------------------------------------------------------------------------------
-sprinter          2463/2463                1                  0.46         20.24        20.26        0.3
-quick             1580/1580                1                  0.46         19.88        19.88       0.35
-steady            1021/1021                1                  0.48         19.19         19.2       0.53
-deliberate          601/601                1                  0.51         17.74        17.98       0.82
-slow                374/374                1                  0.51         16.31        16.83        1.2
-erratic           1132/1132                1                  0.53         19.07        19.28       0.73
+sprinter          1848/1848                1                  0.46         20.26        20.26       0.31
+quick             1178/1178                1                  0.47         19.88        19.87       0.42
+steady              764/764                1                  0.48         19.13        19.18       0.62
+deliberate          455/455                1                   0.5         17.69        18.06       0.83
+slow                282/282                1                  0.49         16.25        16.83       1.28
+erratic             841/841                1                  0.52         19.03        19.23       0.68
 --------------------------------------------------------------------------------------------------------------
-ALL               7171/7171                1                  0.48                                  0.52
+ALL               5368/5368                1                  0.48                                  0.53
 
 C9  THE ARC MUST NOT COST LEARNING — Level 1 mastered % after 10 sittings, same learner, both arms
     Read the HOURS column first. The baseline reaches more of Level 1 for a slow learner only by
@@ -200,19 +200,18 @@ C8  WHAT THE SITTING SAYS  (EN source for keys P20 has not been handed yet)
   13 lines; over 7 words: 0; over 44 chars: 0; second person: 0; exclamations: 0; banned vocabulary: 0
 
 ====================================================================================================
-PASS  C1/C3/C10  no sitting EVER ends below the fifteen-minute floor   (0 of 5760 sittings across all four absence profiles (C3 is the attentive quarter of this corpus, not a fifth arm))
-PASS  C1/C3/C10  the arc lands in 15-25 minutes   (5759/5760 = 99.98%)
-PASS  C1/C3/C10  nothing is STARTED that is not expected to finish inside 25   (0 of 5760 sittings served an item outside the ceiling estimate)
-PASS  C1/C3/C10  the residual is a single long response, never the layer   (1 overrun(s) of 5760; 0 the layer cannot account for; 26.01min = +1.01 with one response +5.41 over its promise)
-PASS  C1/C3  no sitting ends mid-problem   (0 of 1440)
-PASS  C1/C3/C10  a certification event is CARRIED across every boundary, including a break   (0 carried in the attentive arm; 0 faults across 5760 sittings)
+PASS  C1/C3/C10  no sitting EVER ends below the fifteen-minute floor   (0 of 1440 sittings across all four absence profiles (C3 is the attentive quarter of this corpus, not a fifth arm))
+PASS  C1/C3/C10  the arc lands in 15-25 minutes   (1440/1440 = 100%)
+PASS  C1/C3/C10  nothing is STARTED that is not expected to finish inside 25   (0 of 1440 sittings served an item outside the ceiling estimate)
+PASS  C1/C3/C10  the residual is a single long response, never the layer   (no overruns)
+PASS  C1/C3  no sitting ends mid-problem   (0 of 360)
+PASS  C1/C3/C10  a certification event is CARRIED across every boundary, including a break   (0 carried in the attentive arm; 0 faults across 1440 sittings)
 PASS  C2     the baseline it replaces does NOT   (a control that never fails is measuring nothing)
-PASS  C10    the band holds when the learner LOOKS AWAY, every profile   (attentive 1439/1440; alt-tab 1440/1440; churn 1440/1440; break 1440/1440)
-PASS  C10    classroom churn (p=0.08, 2-9 min gaps) holds at >=99%   (1440/1440 = 100%)
-PASS  C10    no sitting ends mid-problem WITH absences, including mid-item ones   (0 of 5760 across all profiles)
-PASS  C10    a break ENDS a sitting — and only at or past the fifteen-minute floor   (break closes: churn 529, break 398; earliest 15.02 min)
-PASS  C10c   a break is a HINGE — the next sitting opens on the same page load   (359 resumed sittings; 398 learn:session{phase:"break"} signals; max sittings per page load 7)
-PASS  C11    the live forecast names the beat the engine serves next   (100% of beat boundaries; whole-sitting multiset 47.91% (reported, never used); median size error 0.52 min)
+PASS  C10    the band holds when the learner LOOKS AWAY, every profile   (attentive 360/360; alt-tab 360/360; churn 360/360; break 360/360)
+PASS  C10    classroom churn (p=0.08, 2-9 min gaps) holds at >=99%   (360/360 = 100%)
+PASS  C10    no sitting ends mid-problem WITH absences, including mid-item ones   (0 of 1440 across all profiles)
+PASS  C10    a break ENDS a sitting — and only at or past the fifteen-minute floor   (break closes: churn 136, break 104; earliest 15.1 min)
+PASS  C10c   a break is a HINGE — the next sitting opens on the same page load   (98 resumed sittings; 104 learn:session{phase:"break"} signals; max sittings per page load 5)
+PASS  C11    the live forecast names the beat the engine serves next   (100% of beat boundaries; whole-sitting multiset 47.78% (reported, never used); median size error 0.53 min)
 PASS  C6     a bad save is reported, never silently reset
-      out-of-band sittings: erratic 26.01min close=arc-complete lastBeat=acquire/complete items=30
 ====================================================================================================

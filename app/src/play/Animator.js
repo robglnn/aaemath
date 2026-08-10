@@ -378,11 +378,17 @@ export class Animator {
     for (let i = 0; i < 2; i++) {
       const tag = i === 0 ? "L" : "R";
       const sign = i === 0 ? -1 : 1;
-      set(`hip${tag}`, pose.thigh[i], 0, sign * pose.hipSplay[i]);
-      set(`knee${tag}`, pose.knee[i], 0, 0);
-      set(`ankle${tag}`, pose.ankle[i], 0, 0);
-      set(`shoulder${tag}`, pose.shoulder[i], 0, sign * pose.shoulderSplay[i]);
-      set(`elbow${tag}`, pose.elbow[i], 0, 0);
+      // Limb flexion is authored in the +Z-forward sense, but the body is yawed so that its -Z
+      // faces the direction of travel (see Avatar's `_yaw`). Applying the poses unflipped bends
+      // every hinge the wrong way: knees forward, elbows hyperextended. That was invisible while
+      // the avatar itself faced backwards — you were looking at the character's front, where a
+      // backward-bending elbow reads as a forward-bending one — so fixing the facing is what
+      // exposed it. One negation here converts the whole authored rig to the body's convention.
+      set(`hip${tag}`, -pose.thigh[i], 0, sign * pose.hipSplay[i]);
+      set(`knee${tag}`, -pose.knee[i], 0, 0);
+      set(`ankle${tag}`, -pose.ankle[i], 0, 0);
+      set(`shoulder${tag}`, -pose.shoulder[i], 0, sign * pose.shoulderSplay[i]);
+      set(`elbow${tag}`, -pose.elbow[i], 0, 0);
     }
 
     // Squash from the controller's own landing/jump impulse, applied to the whole body rather than

@@ -1,9 +1,9 @@
 {
   "id": "P33",
-  "state": "building",
-  "round": 2,
-  "gap": "A single 5-minute absence latches _breakPending and ends the Pomodoro at the next beat regardless of elapsed time, permanently (nothing calls restart()): under realistic away patterns only 6-46% of sittings land in 15-25 min, median 4.29 min for a fast learner, and review/measure/P33.mjs never calls noteAway() once",
+  "state": "critique",
+  "round": 1,
+  "gap": "The layer's headline 'ends on a win' never once happens: across my own 960 sittings and the builder's own 5760, closingWin is always the weakest token, 0 certifications, 0 provisional sets, L1 mastered 0% — so 11 of 13 VOICE lines are dead code, sittings 2-10 open with an EMPTY string, and every sitting closes with the identical two sentences. C9 printed certs=0/mastered=0% and no claim gates on it.",
   "note": "Round 2: fixing break-latch ordering, making break a cycle, adding away arm to measure, heavy-tail reservation, resolving LEVERAGE",
   "evidence": [],
-  "updated": "2026-08-10T17:05:40.520Z"
+  "updated": "2026-08-10T17:59:23.164Z"
 }

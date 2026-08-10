@@ -7,12 +7,31 @@ import { publish } from "./Introspect.js";
  *
  * ## Why this exists
  *
- * `config.autoTier` was declared and read by nothing, so every machine booted at `high`: 3072-line
- * shadow cascades, the full post stack, and a 1.5x pixel ratio. This game is *for* school
- * Chromebooks — Intel UHD 600 / Iris Xe / Mali / Adreno / AMD-APU class parts pushing a 1366x768 or
- * 1920x1080 panel — and on those parts that tier is not a slightly worse experience, it is a
- * slideshow. A student whose first thirty seconds stutter does not come back, and the product goal
- * is that they come back on their own.
+ * `config.autoTier` was declared and read by nothing, so every machine booted at `high`: the full
+ * post stack and a 1.5x pixel ratio. This game is *for* school Chromebooks — Intel UHD 600 / Iris
+ * Xe / Mali / Adreno / AMD-APU class parts pushing a 1366x768 or 1920x1080 panel — and on those
+ * parts that tier is not a slightly worse experience, it is a slideshow. A student whose first
+ * thirty seconds stutter does not come back, and the product goal is that they come back on their
+ * own.
+ *
+ * ## What a tier step actually costs, as shipped — not as the table claims
+ *
+ * The tier table asks `high` for 3072² x3 shadow cascades. It does not get them: `world/Lighting.js`
+ * builds `cascades = min(2, tier.shadowCascades)` (line 322) and `res = clamp(tier.shadowResolution,
+ * 1024, 2048)` (line 337), so **`ultra`, `high` and `medium` all build the same 2048² x2 rig** and
+ * only `low`/`potato` differ. Quoting the table's numbers as the price of a tier — which the first
+ * two rounds of this file did — is fiction, and the measured version (P30 C10) is:
+ *
+ * | high → medium, as shipped | before | after |
+ * |---|---|---|
+ * | pixel ratio (drawing-buffer px per screen px) | 1.5 (2.25x) | 1.25 (1.5625x) — 31 % fewer pixels |
+ * | post passes | 5 | 3 |
+ * | shadow map | 2048² x2 | 1024² x2 — *this module's* ratio ladder, not the lighting rig's |
+ * | `grassDensity` / `drawDistance` / `particleBudget` | emitted on `quality:tier` and, today, consumed by nobody |
+ *
+ * That last row is why `report().signal` names its own unconsumed fields instead of letting a
+ * probe imply they did something: the pixel ratio, the shadow maps and the post stack are the
+ * three surfaces this module actually moves, and they are the three it measures moving.
  *
  * ## The asymmetry that sets every default in this file
  *

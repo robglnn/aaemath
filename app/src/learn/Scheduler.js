@@ -15,6 +15,14 @@ import { Mastery, REVIEW_LAPSE_BELOW } from "./Mastery.js";
  * by what that phase actually costs (a 22 s demonstration is not a 46 s solo item) and moves the
  * spacing ladder. A caller that only ever calls `next()`/`submit()` cannot get the bookkeeping
  * wrong, which is the point.
+ *
+ * **It keeps no score of its own.** A multi-item certification event has exactly ONE tally and it
+ * lives in `Mastery`, next to the scoring decision, because the round-1 version of this file kept
+ * a second one — `if (outcome.correct) this._event.right += 1` — fed it the CALLER's raw flag, and
+ * handed that straight to M4. A learner who idled twelve seconds, read the hint and typed what it
+ * said was refused all through acquisition and then certified anyway, at the one transition that
+ * decides the Level 1 percentage. Two counters is how that hid. There is one now, and it counts
+ * `result.credited`.
  */
 
 /** Wall clock, in minutes. `advance` is a no-op: real time moves on its own. */
@@ -108,6 +116,11 @@ export class Scheduler {
     this.inFlight = null;
     this.blockCount = 0;
     this.sessionEndsAt = this.clock.minutes() + this.sessionMinutes;
+    // A half-answered certification event is NOT dropped at a session boundary: §3's retention
+    // gate is about elapsed time and intervening sessions, not about finishing inside one sitting,
+    // and dropping it would punish a learner whose 25 minutes ran out on item 3 of 4. It is
+    // dropped only when the state itself is discarded, and that path lapses (Mastery.restore).
+    this._syncInFlight();
     return n;
   }
 
@@ -141,6 +154,7 @@ export class Scheduler {
       if (pick.kpId !== this.inFlight) {
         this.inFlight = pick.kpId;
         this.blockCount = 0;
+        this._syncInFlight();
       }
       return this._acquisitionRequest(pick.kpId);
     }
@@ -151,8 +165,11 @@ export class Scheduler {
         : pick.mode === "retention"
           ? this.M.spacing.retentionCheck.items
           : this.M.spacing.review.items;
-    this._event = { kpId: pick.kpId, mode: pick.mode, items, index: 0, right: 0 };
+    // NO `right` counter here. There is exactly one tally for a certification event and it lives
+    // in Mastery, where the scoring decision is made. Two counters is how the round-1 leak hid.
+    this._event = { kpId: pick.kpId, mode: pick.mode, items, index: 0 };
     this.mastery.beginEvent(pick.kpId, pick.mode, items);
+    this._syncInFlight();
     return this._eventRequest();
   }
 
@@ -474,9 +491,13 @@ export class Scheduler {
     if (req.mode === "acquire") {
       this.blockCount += 1;
       if (this.mastery.status(req.kpId) !== "learning") this.inFlight = null;
+      this._syncInFlight();
     } else if (this._event) {
       this._event.index += 1;
-      if (outcome.correct) this._event.right += 1;
+      // The event's `right` is NOT counted here. `outcome.correct` is the caller's claim;
+      // `Mastery._bookkeep` counts `result.credited`, which is the engine's decision, and M4
+      // reads that. Counting the caller's claim here is exactly the defect that let a learner
+      // read the hint on all four retention items and certify anyway.
       if (this._event.index >= this._event.items) this._finishEvent();
     }
     return result;
@@ -489,6 +510,9 @@ export class Scheduler {
     const kpId = ev.kpId;
     const s = this.mastery.stateOf(kpId);
     const sp = this.M.spacing;
+    // Read the engine's tally BEFORE any transition below clears it.
+    const tally = this.mastery.eventOf(kpId) ?? { served: ev.index, right: 0, refusedRight: 0 };
+    this._syncInFlight();
 
     if (ev.mode === "consolidate") {
       // A practice pass, not a passing score: `spacing.consolidation.passAtLeast` is 0. The two
@@ -499,7 +523,7 @@ export class Scheduler {
     }
 
     if (ev.mode === "retention") {
-      if (this.mastery.retentionPassed(kpId, ev.right)) {
+      if (this.mastery.retentionPassed(kpId, tally.right)) {
         const intervalDays = Math.min(sp.capDays, sp.ladderDays[0]);
         this.mastery.certify(kpId, { intervalDays, dueAtMinutes: now + intervalDays * 1440 });
       } else {
@@ -543,9 +567,71 @@ export class Scheduler {
     if (this.mastery.recentLapses(kpId) >= (LR.afterLapses ?? 2) && s.p < (LR.unlessBelow ?? 0.3)) s.pendingModel = true;
   }
 
+  // ------------------------------------------------------------------ abandonment
+
+  /**
+   * Drop the open certification event without finishing it.
+   *
+   * A retention check that has already been served items and is then thrown away is a lapse, for
+   * the same reason a failed one is: otherwise "walk away when it is going badly, come back and
+   * re-roll" is a strategy, and the check `nextEventAt` still points at is free. Consolidation
+   * carries no gate (`passAtLeast` is 0) and review is re-scheduled by its own ladder, so those
+   * two are simply dropped.
+   */
+  abandonEvent(reason = "abandoned") {
+    const ev = this._event;
+    if (!ev) return null;
+    this._event = null;
+    const tally = this.mastery.eventOf(ev.kpId);
+    const served = tally ? tally.served : ev.index;
+    this.mastery.clearEvent(ev.kpId);
+    this._syncInFlight();
+    if (ev.mode === "retention" && served > 0) {
+      this.mastery.lapse(ev.kpId, `retention-abandoned:${reason}`);
+      this._reenterTeaching(ev.kpId);
+      return { kpId: ev.kpId, mode: ev.mode, served, lapsed: true };
+    }
+    return { kpId: ev.kpId, mode: ev.mode, served, lapsed: false };
+  }
+
+  // ---------------------------------------------------------------- persistence
+
+  /**
+   * The Scheduler's half of the learner state. `Mastery.snapshot()` embeds this, so one
+   * `persist()` writes the whole engine. Without it a reload used to lose the open retention
+   * check (silently, with no lapse and no M2 dock) and the 40-item no-repeat window.
+   */
+  snapshot() {
+    return {
+      event: this._event ? { ...this._event } : null,
+      recentItemIds: [...this.recentItemIds],
+      inFlight: this.inFlight,
+      blockCount: this.blockCount,
+      secondsSpent: this.secondsSpent,
+      itemsThisSession: this.itemsThisSession,
+      reviewItemsThisSession: this.reviewItemsThisSession,
+      seq: this._seq,
+    };
+  }
+
+  restore(snap) {
+    if (!snap) return false;
+    this._event = snap.event ? { ...snap.event } : null;
+    this.recentItemIds = [...(snap.recentItemIds ?? [])];
+    this.inFlight = snap.inFlight ?? null;
+    this.blockCount = snap.blockCount ?? 0;
+    this.secondsSpent = snap.secondsSpent ?? 0;
+    this.itemsThisSession = snap.itemsThisSession ?? 0;
+    this.reviewItemsThisSession = snap.reviewItemsThisSession ?? 0;
+    this._seq = snap.seq ?? 0;
+    this._syncInFlight();
+    return true;
+  }
+
   // -------------------------------------------------------------------- probe
 
   probe() {
+    const tally = this._event ? this.mastery.eventOf(this._event.kpId) : null;
     return {
       sessionMinutes: this.sessionMinutes,
       secondsSpent: this.secondsSpent,
@@ -553,7 +639,18 @@ export class Scheduler {
       reviewItemsThisSession: this.reviewItemsThisSession,
       inFlight: this.inFlight ? [this.inFlight] : [],
       blockCount: this.blockCount,
-      event: this._event ? { kpId: this._event.kpId, mode: this._event.mode, index: this._event.index, items: this._event.items } : null,
+      recentItemIds: this.recentItemIds.length,
+      event: this._event
+        ? {
+            kpId: this._event.kpId,
+            mode: this._event.mode,
+            index: this._event.index,
+            items: this._event.items,
+            // The credited tally, so a reviewer can watch M4's count refuse a hinted correct.
+            right: tally?.right ?? 0,
+            refusedRight: tally?.refusedRight ?? 0,
+          }
+        : null,
       reviewCapLift: this.reviewCapLift,
       pullForward: this.pullForward,
     };

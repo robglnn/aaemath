@@ -27,7 +27,14 @@ import { Scheduler, realClock, virtualClock, mulberry32 } from "../learn/Schedul
  *
  * `req.hinted` is only the phase's default. Whoever presents the item must report what the world
  * ACTUALLY did — if a hint surfaced, say so on `submit`. That single flag is the thing standing
- * between a UI decision and the mastery gate.
+ * between a UI decision and the mastery gate, and it is enforced all the way through the
+ * CERTIFICATION surfaces: a hinted or sub-latency-floor correct answer on a retention item buys
+ * nothing toward M4's 3-of-4, however the phase was labelled. `submit` returns the engine's own
+ * verdict as `{ scored, masteryEligible, credited, reason }`; `credited` is the only thing any
+ * gate counts.
+ *
+ * One `persist()` writes the WHOLE engine — the learner model and the scheduler's open work — so a
+ * half-answered retention check resumes on reload instead of vanishing without a lapse.
  */
 export default {
   id: "learning",
@@ -52,6 +59,12 @@ export default {
       submit: (req, outcome) => system.scheduler.submit(req, outcome),
       beginSession: () => system.scheduler.beginSession(),
       endSession: () => system.scheduler.endSession(),
+      /**
+       * Drop the open multi-item event. A retention check that has already been served items and
+       * is then walked away from lapses the node — otherwise "leave when it is going badly and
+       * come back for a fresh check" is a strategy. Consolidation and review just clear.
+       */
+      abandonEvent: (reason) => system.scheduler.abandonEvent(reason),
       price: (kpId, form, phase) => system.mastery.price(kpId, form, phase),
       frontier: () => system.mastery.frontier(),
 

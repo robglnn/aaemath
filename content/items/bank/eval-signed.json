@@ -15,8 +15,80 @@
   "double-negative-collapsed-wrong",
   "two-negatives-make-positive-on-sum"
  ],
- "count": 30,
+ "count": 36,
  "items": [
+  {
+   "id": "eval-signed.square/construct/wndwcs",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -5"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 5,
+     "sq": 25
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "25",
+    "tex": "25"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-substituted-bare",
+     "response": "-25",
+     "tex": "-25",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.square",
+     "params": {
+      "v": 5,
+      "sq": 25
+     },
+     "text": "The cold value arrives bundled. Seat it bundled."
+    },
+    {
+     "key": "hint.state.eval-signed.square",
+     "params": {
+      "v": 5,
+      "sq": 25
+     },
+     "text": "Both copies of it inside the power are cold, and cold against cold does not stay cold."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 5
+   }
+  },
   {
    "id": "eval-signed.minusneg/construct/jgfsoo",
    "kpId": "eval-signed",
@@ -165,7 +237,7 @@
    }
   },
   {
-   "id": "eval-signed.square/repair/wnh1ur",
+   "id": "eval-signed.square/repair/xrim4m",
    "kpId": "eval-signed",
    "family": "eval-signed.square",
    "form": "repair",
@@ -174,19 +246,19 @@
    "objectClass": "Emitter",
    "stem": "x^{2}",
    "given": [
-    "x = -2"
+    "x = -3"
    ],
    "working": [
     "x^{2}",
-    "-2^{2}",
-    "-4"
+    "-3^{2}",
+    "-9"
    ],
    "brokenBy": "negative-substituted-bare",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 2,
-     "sq": 4,
+     "v": 3,
+     "sq": 9,
      "lines": 3,
      "line": 2
     },
@@ -195,16 +267,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|4",
-    "tex": "\\left(-2\\right)^{2}",
+    "canonical": "2|9",
+    "tex": "\\left(-3\\right)^{2}",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "negative-substituted-bare",
-     "response": "2|-4",
-     "tex": "-2^{2}",
+     "response": "2|-9",
+     "tex": "-3^{2}",
      "failKey": "fail.negative"
     }
    ],
@@ -217,8 +289,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 2,
-      "sq": 4,
+      "v": 3,
+      "sq": 9,
       "line": 2,
       "lines": 3
      },
@@ -227,8 +299,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 2,
-      "sq": 4,
+      "v": 3,
+      "sq": 9,
       "line": 2,
       "lines": 3
      },
@@ -236,9 +308,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.eval-signed.2",
+    "key": "frame.eval-signed.1",
     "params": {},
-    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
    },
    "standards": [
     "CCSS.6.EE.A.2c",
@@ -247,7 +319,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 2
+    "v": 3
    }
   },
   {
@@ -426,6 +498,175 @@
    }
   },
   {
+   "id": "eval-signed.square/generate/wn4fuv",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -6"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "v": 6,
+     "sq": 36,
+     "target": 36,
+     "at": -6,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 36 when the socket holds -6."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x^{2}",
+    "tex": "x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -6,
+    "value": 36,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "v": 6,
+      "sq": 36,
+      "target": 36,
+      "at": -6,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "v": 6,
+      "sq": 36,
+      "target": 36,
+      "at": -6,
+      "unknown": "x"
+     },
+     "text": "Seat -6 in whatever you build and it has to come out at 36."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 6
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/generate/9253u",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "9 - x",
+   "given": [
+    "x = -7"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 9,
+     "b": 7,
+     "target": 16,
+     "at": -7,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 16 when the socket holds -7."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "9 - x",
+    "tex": "9 - x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -7,
+    "value": 16,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 9,
+      "b": 7,
+      "target": 16,
+      "at": -7,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 9,
+      "b": 7,
+      "target": 16,
+      "at": -7,
+      "unknown": "x"
+     },
+     "text": "Seat -7 in whatever you build and it has to come out at 16."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 9,
+    "b": 7
+   }
+  },
+  {
    "id": "eval-signed.sumneg/generate/bdrkhe",
    "kpId": "eval-signed",
    "family": "eval-signed.sumneg",
@@ -444,9 +685,10 @@
      "a": 6,
      "b": 8,
      "target": -14,
+     "at": -6,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads -14 when the socket holds {at}."
+    "text": "Stack a load in x that reads -14 when the socket holds -6."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -477,6 +719,7 @@
       "a": 6,
       "b": 8,
       "target": -14,
+      "at": -6,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -487,9 +730,10 @@
       "a": 6,
       "b": 8,
       "target": -14,
+      "at": -6,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at -14."
+     "text": "Seat -6 in whatever you build and it has to come out at -14."
     }
    ],
    "worldFraming": {
@@ -506,6 +750,78 @@
    "params": {
     "a": 6,
     "b": 8
+   }
+  },
+  {
+   "id": "eval-signed.square/construct/wn4fuv",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -6"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 6,
+     "sq": 36
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "36",
+    "tex": "36"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-substituted-bare",
+     "response": "-36",
+     "tex": "-36",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.square",
+     "params": {
+      "v": 6,
+      "sq": 36
+     },
+     "text": "The cold value arrives bundled. Seat it bundled."
+    },
+    {
+     "key": "hint.state.eval-signed.square",
+     "params": {
+      "v": 6,
+      "sq": 36
+     },
+     "text": "Both copies of it inside the power are cold, and cold against cold does not stay cold."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 6
    }
   },
   {
@@ -656,7 +972,7 @@
    }
   },
   {
-   "id": "eval-signed.square/repair/wn4fuv",
+   "id": "eval-signed.square/repair/rbuodv",
    "kpId": "eval-signed",
    "family": "eval-signed.square",
    "form": "repair",
@@ -665,19 +981,19 @@
    "objectClass": "Emitter",
    "stem": "x^{2}",
    "given": [
-    "x = -6"
+    "x = -11"
    ],
    "working": [
     "x^{2}",
-    "-6^{2}",
-    "-36"
+    "-11^{2}",
+    "-121"
    ],
    "brokenBy": "negative-substituted-bare",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 6,
-     "sq": 36,
+     "v": 11,
+     "sq": 121,
      "lines": 3,
      "line": 2
     },
@@ -686,16 +1002,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|36",
-    "tex": "\\left(-6\\right)^{2}",
+    "canonical": "2|121",
+    "tex": "\\left(-11\\right)^{2}",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "negative-substituted-bare",
-     "response": "2|-36",
-     "tex": "-6^{2}",
+     "response": "2|-121",
+     "tex": "-11^{2}",
      "failKey": "fail.negative"
     }
    ],
@@ -708,8 +1024,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 6,
-      "sq": 36,
+      "v": 11,
+      "sq": 121,
       "line": 2,
       "lines": 3
      },
@@ -718,8 +1034,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 6,
-      "sq": 36,
+      "v": 11,
+      "sq": 121,
       "line": 2,
       "lines": 3
      },
@@ -738,7 +1054,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 6
+    "v": 11
    }
   },
   {
@@ -917,6 +1233,175 @@
    }
   },
   {
+   "id": "eval-signed.square/generate/wnh1ur",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -2"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "v": 2,
+     "sq": 4,
+     "target": 4,
+     "at": -2,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 4 when the socket holds -2."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x^{2}",
+    "tex": "x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -2,
+    "value": 4,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "v": 2,
+      "sq": 4,
+      "target": 4,
+      "at": -2,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "v": 2,
+      "sq": 4,
+      "target": 4,
+      "at": -2,
+      "unknown": "x"
+     },
+     "text": "Seat -2 in whatever you build and it has to come out at 4."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 2
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/generate/upsoy5",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "14 - x",
+   "given": [
+    "x = -8"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 14,
+     "b": 8,
+     "target": 22,
+     "at": -8,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 22 when the socket holds -8."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "14 - x",
+    "tex": "14 - x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -8,
+    "value": 22,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 14,
+      "b": 8,
+      "target": 22,
+      "at": -8,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 14,
+      "b": 8,
+      "target": 22,
+      "at": -8,
+      "unknown": "x"
+     },
+     "text": "Seat -8 in whatever you build and it has to come out at 22."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 14,
+    "b": 8
+   }
+  },
+  {
    "id": "eval-signed.sumneg/generate/1ekhh5a",
    "kpId": "eval-signed",
    "family": "eval-signed.sumneg",
@@ -935,9 +1420,10 @@
      "a": 2,
      "b": 11,
      "target": -13,
+     "at": -2,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads -13 when the socket holds {at}."
+    "text": "Stack a load in x that reads -13 when the socket holds -2."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -968,6 +1454,7 @@
       "a": 2,
       "b": 11,
       "target": -13,
+      "at": -2,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -978,9 +1465,10 @@
       "a": 2,
       "b": 11,
       "target": -13,
+      "at": -2,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at -13."
+     "text": "Seat -2 in whatever you build and it has to come out at -13."
     }
    ],
    "worldFraming": {
@@ -1322,6 +1810,175 @@
    }
   },
   {
+   "id": "eval-signed.square/generate/sg1lrh",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -13"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "v": 13,
+     "sq": 169,
+     "target": 169,
+     "at": -13,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 169 when the socket holds -13."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x^{2}",
+    "tex": "x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -13,
+    "value": 169,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "v": 13,
+      "sq": 169,
+      "target": 169,
+      "at": -13,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "v": 13,
+      "sq": 169,
+      "target": 169,
+      "at": -13,
+      "unknown": "x"
+     },
+     "text": "Seat -13 in whatever you build and it has to come out at 169."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 13
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/generate/1y6e3b0",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "9 - x",
+   "given": [
+    "x = -5"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 9,
+     "b": 5,
+     "target": 14,
+     "at": -5,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 14 when the socket holds -5."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "9 - x",
+    "tex": "9 - x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -5,
+    "value": 14,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 9,
+      "b": 5,
+      "target": 14,
+      "at": -5,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 9,
+      "b": 5,
+      "target": 14,
+      "at": -5,
+      "unknown": "x"
+     },
+     "text": "Seat -5 in whatever you build and it has to come out at 14."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 9,
+    "b": 5
+   }
+  },
+  {
    "id": "eval-signed.sumneg/construct/1drltdt",
    "kpId": "eval-signed",
    "family": "eval-signed.sumneg",
@@ -1396,7 +2053,7 @@
    }
   },
   {
-   "id": "eval-signed.square/repair/xrim4m",
+   "id": "eval-signed.square/repair/xr95mp",
    "kpId": "eval-signed",
    "family": "eval-signed.square",
    "form": "repair",
@@ -1405,19 +2062,19 @@
    "objectClass": "Emitter",
    "stem": "x^{2}",
    "given": [
-    "x = -3"
+    "x = -4"
    ],
    "working": [
     "x^{2}",
-    "-3^{2}",
-    "-9"
+    "-4^{2}",
+    "-16"
    ],
    "brokenBy": "negative-substituted-bare",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 3,
-     "sq": 9,
+     "v": 4,
+     "sq": 16,
      "lines": 3,
      "line": 2
     },
@@ -1426,16 +2083,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|9",
-    "tex": "\\left(-3\\right)^{2}",
+    "canonical": "2|16",
+    "tex": "\\left(-4\\right)^{2}",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "negative-substituted-bare",
-     "response": "2|-9",
-     "tex": "-3^{2}",
+     "response": "2|-16",
+     "tex": "-4^{2}",
      "failKey": "fail.negative"
     }
    ],
@@ -1448,8 +2105,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 3,
-      "sq": 9,
+      "v": 4,
+      "sq": 16,
       "line": 2,
       "lines": 3
      },
@@ -1458,8 +2115,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 3,
-      "sq": 9,
+      "v": 4,
+      "sq": 16,
       "line": 2,
       "lines": 3
      },
@@ -1467,9 +2124,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.eval-signed.1",
+    "key": "frame.eval-signed.2",
     "params": {},
-    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
    },
    "standards": [
     "CCSS.6.EE.A.2c",
@@ -1478,7 +2135,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 3
+    "v": 4
    }
   },
   {
@@ -1657,6 +2314,175 @@
    }
   },
   {
+   "id": "eval-signed.square/generate/xr95mp",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -4"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "v": 4,
+     "sq": 16,
+     "target": 16,
+     "at": -4,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 16 when the socket holds -4."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x^{2}",
+    "tex": "x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -4,
+    "value": 16,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "v": 4,
+      "sq": 16,
+      "target": 16,
+      "at": -4,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "v": 4,
+      "sq": 16,
+      "target": 16,
+      "at": -4,
+      "unknown": "x"
+     },
+     "text": "Seat -4 in whatever you build and it has to come out at 16."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 4
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/generate/1fnqy9q",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "3 - x",
+   "given": [
+    "x = -9"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 3,
+     "b": 9,
+     "target": 12,
+     "at": -9,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 12 when the socket holds -9."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3 - x",
+    "tex": "3 - x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -9,
+    "value": 12,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 3,
+      "b": 9,
+      "target": 12,
+      "at": -9,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 3,
+      "b": 9,
+      "target": 12,
+      "at": -9,
+      "unknown": "x"
+     },
+     "text": "Seat -9 in whatever you build and it has to come out at 12."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 9
+   }
+  },
+  {
    "id": "eval-signed.sumneg/generate/1173l8x",
    "kpId": "eval-signed",
    "family": "eval-signed.sumneg",
@@ -1675,9 +2501,10 @@
      "a": 7,
      "b": 2,
      "target": -9,
+     "at": -7,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads -9 when the socket holds {at}."
+    "text": "Stack a load in x that reads -9 when the socket holds -7."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -1708,6 +2535,7 @@
       "a": 7,
       "b": 2,
       "target": -9,
+      "at": -7,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -1718,9 +2546,10 @@
       "a": 7,
       "b": 2,
       "target": -9,
+      "at": -7,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at -9."
+     "text": "Seat -7 in whatever you build and it has to come out at -9."
     }
    ],
    "worldFraming": {
@@ -1737,6 +2566,78 @@
    "params": {
     "a": 7,
     "b": 2
+   }
+  },
+  {
+   "id": "eval-signed.square/construct/sg1lrh",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -13"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 13,
+     "sq": 169
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "169",
+    "tex": "169"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-substituted-bare",
+     "response": "-169",
+     "tex": "-169",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.square",
+     "params": {
+      "v": 13,
+      "sq": 169
+     },
+     "text": "The cold value arrives bundled. Seat it bundled."
+    },
+    {
+     "key": "hint.state.eval-signed.square",
+     "params": {
+      "v": 13,
+      "sq": 169
+     },
+     "text": "Both copies of it inside the power are cold, and cold against cold does not stay cold."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 13
    }
   },
   {
@@ -1887,6 +2788,92 @@
    }
   },
   {
+   "id": "eval-signed.square/repair/wnh1ur",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -2"
+   ],
+   "working": [
+    "x^{2}",
+    "-2^{2}",
+    "-4"
+   ],
+   "brokenBy": "negative-substituted-bare",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "v": 2,
+     "sq": 4,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|4",
+    "tex": "\\left(-2\\right)^{2}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-substituted-bare",
+     "response": "2|-4",
+     "tex": "-2^{2}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "v": 2,
+      "sq": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "v": 2,
+      "sq": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 2
+   }
+  },
+  {
    "id": "eval-signed.minusneg/repair/1i9mpfx",
    "kpId": "eval-signed",
    "family": "eval-signed.minusneg",
@@ -1971,499 +2958,6 @@
    "params": {
     "a": 11,
     "b": 5
-   }
-  },
-  {
-   "id": "eval-signed.sumneg/repair/1eij4sn",
-   "kpId": "eval-signed",
-   "family": "eval-signed.sumneg",
-   "form": "repair",
-   "difficulty": 3,
-   "tier": "core",
-   "objectClass": "Emitter",
-   "stem": "x + y",
-   "given": [
-    "x = -3",
-    "y = -4"
-   ],
-   "working": [
-    "x + y",
-    "3 + 4",
-    "7"
-   ],
-   "brokenBy": "two-negatives-make-positive-on-sum",
-   "ask": {
-    "key": "ask.repair",
-    "params": {
-     "a": 3,
-     "b": 4,
-     "lines": 3,
-     "line": 2
-    },
-    "text": "Name the joint that will not hold, and what it should read."
-   },
-   "answerType": "repair",
-   "unknown": "x",
-   "answer": {
-    "canonical": "2|-7",
-    "tex": "\\left(-3\\right) + \\left(-4\\right)",
-    "line": 2,
-    "valueKind": "expr"
-   },
-   "distractors": [
-    {
-     "misconception": "two-negatives-make-positive-on-sum",
-     "response": "2|7",
-     "tex": "3 + 4",
-     "failKey": "fail.negative"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.repair.2",
-     "params": {
-      "a": 3,
-      "b": 4,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Read down the working. One line does not follow from the one above it."
-    },
-    {
-     "key": "hint.repair.3",
-     "params": {
-      "a": 3,
-      "b": 4,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Line 2 is where the load stops matching."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-signed.2",
-    "params": {},
-    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "CCSS.7.EE.B.3",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2"
-   ],
-   "params": {
-    "a": 3,
-    "b": 4
-   }
-  },
-  {
-   "id": "eval-signed.sumneg/generate/1drinvu",
-   "kpId": "eval-signed",
-   "family": "eval-signed.sumneg",
-   "form": "generate",
-   "difficulty": 3,
-   "tier": "core",
-   "objectClass": "Emitter",
-   "stem": "x + y",
-   "given": [
-    "x = -2",
-    "y = -4"
-   ],
-   "ask": {
-    "key": "ask.gen.loadReadsAt",
-    "params": {
-     "a": 2,
-     "b": 4,
-     "target": -6,
-     "unknown": "x"
-    },
-    "text": "Stack a load in x that reads -6 when the socket holds {at}."
-   },
-   "answerType": "construction",
-   "unknown": "x",
-   "answer": {
-    "canonical": "x - 4",
-    "tex": "x - 4",
-    "witness": true
-   },
-   "check": {
-    "kind": "loadReadsAt",
-    "unknown": "x",
-    "at": -2,
-    "value": -6,
-    "needs": [
-     "letter"
-    ]
-   },
-   "distractors": [],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.gen.loadReadsAt.2",
-     "params": {
-      "a": 2,
-      "b": 4,
-      "target": -6,
-      "unknown": "x"
-     },
-     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
-    },
-    {
-     "key": "hint.gen.loadReadsAt.3",
-     "params": {
-      "a": 2,
-      "b": 4,
-      "target": -6,
-      "unknown": "x"
-     },
-     "text": "Seat {at} in whatever you build and it has to come out at -6."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-signed.1",
-    "params": {},
-    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "CCSS.7.EE.B.3",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2"
-   ],
-   "params": {
-    "a": 2,
-    "b": 4
-   }
-  },
-  {
-   "id": "eval-signed.minusneg/construct/m8pe08",
-   "kpId": "eval-signed",
-   "family": "eval-signed.minusneg",
-   "form": "construct",
-   "difficulty": 4,
-   "tier": "stretch",
-   "objectClass": "Emitter",
-   "stem": "13 - x",
-   "given": [
-    "x = -6"
-   ],
-   "ask": {
-    "key": "ask.reading",
-    "params": {
-     "a": 13,
-     "b": 6
-    },
-    "text": "Let it settle and read it."
-   },
-   "answerType": "integer",
-   "unknown": "x",
-   "answer": {
-    "canonical": "19",
-    "tex": "19"
-   },
-   "distractors": [
-    {
-     "misconception": "double-negative-collapsed-wrong",
-     "response": "7",
-     "tex": "7",
-     "failKey": "fail.negative"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.move.eval-signed.minusneg",
-     "params": {
-      "a": 13,
-      "b": 6
-     },
-     "text": "You are taking away something that was already inverted."
-    },
-    {
-     "key": "hint.state.eval-signed.minusneg",
-     "params": {
-      "a": 13,
-      "b": 6
-     },
-     "text": "13 is standing, and a cold 6 is coming off it rather than onto it."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-signed.1",
-    "params": {},
-    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "CCSS.7.EE.B.3",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2"
-   ],
-   "params": {
-    "a": 13,
-    "b": 6
-   }
-  },
-  {
-   "id": "eval-signed.sumneg/construct/1tn3w5i",
-   "kpId": "eval-signed",
-   "family": "eval-signed.sumneg",
-   "form": "construct",
-   "difficulty": 4,
-   "tier": "stretch",
-   "objectClass": "Emitter",
-   "stem": "x + y",
-   "given": [
-    "x = -4",
-    "y = -6"
-   ],
-   "ask": {
-    "key": "ask.reading",
-    "params": {
-     "a": 4,
-     "b": 6
-    },
-    "text": "Let it settle and read it."
-   },
-   "answerType": "integer",
-   "unknown": "x",
-   "answer": {
-    "canonical": "-10",
-    "tex": "-10"
-   },
-   "distractors": [
-    {
-     "misconception": "two-negatives-make-positive-on-sum",
-     "response": "10",
-     "tex": "10",
-     "failKey": "fail.negative"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.move.eval-signed.sumneg",
-     "params": {
-      "a": 4,
-      "b": 6
-     },
-     "text": "Two cold values joined. Nothing here warms either one."
-    },
-    {
-     "key": "hint.state.eval-signed.sumneg",
-     "params": {
-      "a": 4,
-      "b": 6
-     },
-     "text": "4 cold and 6 cold, and the join between them is a plus."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-signed.1",
-    "params": {},
-    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "CCSS.7.EE.B.3",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2"
-   ],
-   "params": {
-    "a": 4,
-    "b": 6
-   }
-  },
-  {
-   "id": "eval-signed.minusneg/repair/1fn2o65",
-   "kpId": "eval-signed",
-   "family": "eval-signed.minusneg",
-   "form": "repair",
-   "difficulty": 4,
-   "tier": "stretch",
-   "objectClass": "Emitter",
-   "stem": "3 - x",
-   "given": [
-    "x = -2"
-   ],
-   "working": [
-    "3 - x",
-    "3 - 2",
-    "1"
-   ],
-   "brokenBy": "double-negative-collapsed-wrong",
-   "ask": {
-    "key": "ask.repair",
-    "params": {
-     "a": 3,
-     "b": 2,
-     "lines": 3,
-     "line": 2
-    },
-    "text": "Name the joint that will not hold, and what it should read."
-   },
-   "answerType": "repair",
-   "unknown": "x",
-   "answer": {
-    "canonical": "2|5",
-    "tex": "3 - \\left(-2\\right)",
-    "line": 2,
-    "valueKind": "expr"
-   },
-   "distractors": [
-    {
-     "misconception": "double-negative-collapsed-wrong",
-     "response": "2|1",
-     "tex": "3 - 2",
-     "failKey": "fail.negative"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.repair.2",
-     "params": {
-      "a": 3,
-      "b": 2,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Read down the working. One line does not follow from the one above it."
-    },
-    {
-     "key": "hint.repair.3",
-     "params": {
-      "a": 3,
-      "b": 2,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Line 2 is where the load stops matching."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-signed.2",
-    "params": {},
-    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "CCSS.7.EE.B.3",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2"
-   ],
-   "params": {
-    "a": 3,
-    "b": 2
-   }
-  },
-  {
-   "id": "eval-signed.sumneg/repair/m8pe08",
-   "kpId": "eval-signed",
-   "family": "eval-signed.sumneg",
-   "form": "repair",
-   "difficulty": 4,
-   "tier": "stretch",
-   "objectClass": "Emitter",
-   "stem": "x + y",
-   "given": [
-    "x = -13",
-    "y = -6"
-   ],
-   "working": [
-    "x + y",
-    "13 + 6",
-    "19"
-   ],
-   "brokenBy": "two-negatives-make-positive-on-sum",
-   "ask": {
-    "key": "ask.repair",
-    "params": {
-     "a": 13,
-     "b": 6,
-     "lines": 3,
-     "line": 2
-    },
-    "text": "Name the joint that will not hold, and what it should read."
-   },
-   "answerType": "repair",
-   "unknown": "x",
-   "answer": {
-    "canonical": "2|-19",
-    "tex": "\\left(-13\\right) + \\left(-6\\right)",
-    "line": 2,
-    "valueKind": "expr"
-   },
-   "distractors": [
-    {
-     "misconception": "two-negatives-make-positive-on-sum",
-     "response": "2|19",
-     "tex": "13 + 6",
-     "failKey": "fail.negative"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.repair.2",
-     "params": {
-      "a": 13,
-      "b": 6,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Read down the working. One line does not follow from the one above it."
-    },
-    {
-     "key": "hint.repair.3",
-     "params": {
-      "a": 13,
-      "b": 6,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Line 2 is where the load stops matching."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-signed.1",
-    "params": {},
-    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "CCSS.7.EE.B.3",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2"
-   ],
-   "params": {
-    "a": 13,
-    "b": 6
    }
   }
  ]

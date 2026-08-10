@@ -47,34 +47,42 @@ import { signals } from "../core/Signals.js";
  * that the authored knees turn ≥2.5× faster than the plateaus, and claim DITHER measures the
  * longest run of identical 8-bit triplets down a sky column with the dither on and off.
  *
- * ## 3. Clouds: an ANGULAR block grid over a PERSPECTIVE deck
+ * ## 3. Clouds: an ANGULAR block grid over a CYLINDRICAL density field
  *
  * The target's clouds are not soft. Their silhouettes are rectangular staircases — chunky slabs
- * with crisp boundaries, two or three flat values each, and steps of roughly constant size all
- * over the frame. Two separate ideas produce that:
+ * with crisp boundaries, two or three flat values each, steps of roughly constant size all over
+ * the frame, and outlines that are big and simple rather than fussy. Three ideas produce that,
+ * and the file is arranged so each one can be pointed at:
  *
- *   * **Quantisation is angular.** The block grid is `floor` in (azimuth, dir.y). Blocks are
- *     therefore a constant angular size, which means a constant *screen* size — the steps near
- *     the horizon are as chunky as the ones overhead, exactly as in the target, and there is no
- *     aliasing to fight. The azimuth cell count is an integer per turn, so the grid wraps with no
- *     seam behind the player.
- *   * **Density is sampled on a flat deck.** Each cell's *centre direction* is projected onto a
- *     deck plane at `uDeckH` metres and the density field is evaluated there. That restores the
- *     perspective the angular grid threw away: cloud masses bunch up toward the horizon, open out
- *     overhead, advect on a real metres-per-second wind, and parallax if the camera moves.
+ *   * **Quantisation is angular.** The block grid is `floor` in (azimuth, `dir.y`). Blocks are
+ *     therefore a constant angular size, which is a constant *screen* size — the steps near the
+ *     horizon are as chunky as the ones overhead, exactly as in the target, and there is no
+ *     aliasing to fight because nothing gets smaller with distance. There are an integer number
+ *     of azimuth cells in a turn, so the grid closes behind the player with no seam. The density
+ *     is evaluated **once per block**, at the block's centre, which is what makes every boundary
+ *     in the finished frame a hard rectangular step rather than a soft threshold.
+ *   * **Density lives on a cylinder, not on a plane.** `(cos az, sin az)·ringR` for the azimuth
+ *     and a horizon-limited, square-rooted deck distance for the third axis. `ringR` decides how
+ *     wide a cloud is; `hScale` decides how tall. They have to be two numbers — the first draft
+ *     of this file used a flat polar plane where they are the same number, and it produced radial
+ *     streaks converging on the zenith instead of clouds. See the `CLOUDS` comment.
+ *   * **Simple outlines are an authored choice.** `vsFbm3` runs at gain 0.44, not 0.5, because
+ *     at 0.5 the top octave grows single-cell nubs and pinholes all over a silhouette and the
+ *     slab reads as lace.
  *
- * Shading is three flat values, chosen by looking at the two vertical neighbours in the block
- * grid: a cell whose neighbour toward the zenith is empty is the **lit top step**; one whose
- * neighbour toward the horizon is empty is the **shadowed under step**; everything else is body.
- * That is per-face flat shading done on a 2-D field, and it is why a slab reads as a solid with a
- * lit top and a dark underside rather than as a stain.
+ * Shading is three flat values, chosen by looking at the vertical neighbours in the block grid: a
+ * block with nothing above it is the **lit top step**, a block with nothing three cells below it
+ * is the **shadowed under step**, everything else is body (with a brighter core where the density
+ * is well over the threshold). That is per-face flat shading applied to a field, and it is why a
+ * slab reads as a solid with a lit top and a dark underside rather than as a stain.
  *
- * Two decks. The low deck is the target's cumulus band; the high deck is stretched along its own
- * wind into streaks, drifts the other way, and lives higher. **Neither is a scrolling texture:**
- * a second slow noise field displaces each deck's domain, so slabs are born and die instead of
- * merely sliding, and the two decks move on different bearings at different speeds. Claim SCROLL
- * in the measure script finds the best rigid 2-D shift between two frames eight seconds apart and
- * checks how much residual survives it.
+ * Two decks. The low deck is the target's cumulus band; the high deck is squashed on its
+ * elevation axis into drawn-out streaks, drifts the other way, faster, and lives higher.
+ * **Neither is a scrolling texture:** the block grid drifts with the wind so slabs translate
+ * smoothly, while a slow displacement field rearranges the density so slabs are *born and die*,
+ * and the two decks move on opposite bearings at different rates. Claim SCROLL in the measure
+ * script finds the best rigid 2-D shift between two frames eight seconds apart and checks how
+ * much residual survives it.
  *
  * ## 4. Where the colours come from
  *
@@ -95,8 +103,10 @@ import { signals } from "../core/Signals.js";
  * way under the target. `inverseToneMap()` solves ACES numerically for the scene-referred
  * radiance that comes *out* at the measured value, and the residual is on the probe so the claim
  * is checkable. Re-solved whenever `renderer.toneMapping` or `toneMappingExposure` changes.
- * `Atmosphere.js` bakes the same measured colours *un*-inverted, because three applies
- * `<fog_fragment>` after the tonemap — so both files land on the same pixels from opposite sides.
+ * `Atmosphere.js` bakes the same measured colours on whichever side of the curve *its* chunk is
+ * handed — three moves that side depending on whether a post-processing composer is installed —
+ * so the sky beside a distant silhouette and the haze in front of it land on the same pixel from
+ * opposite directions instead of being tuned to agree.
  *
  * ## 6. The sun is consumed, then published
  *
@@ -183,54 +193,57 @@ const CLOUDS = {
   elCell: 0.0096, // in dir.y. 0.55° near the horizon, where every cloud in the target lives.
 
   /**
-   * The deck is sampled in POLAR coordinates around the viewer, and the radius is compressed.
-   * Three problems are solved by that one decision and they are all fatal without it.
+   * A deck is sampled with 3-D noise on a CYLINDER: `(cos az, sin az) · ringR` for the azimuth,
+   * and a compressed deck distance for the third axis. Three problems die at once, and every one
+   * of them is fatal on its own.
    *
-   *   1. **The seam.** There are an integer number of azimuth cells in a turn and the sample point
-   *      is `(sin az, cos az) · r`, so the field closes on itself exactly. A field addressed by
-   *      `atan()` alone has a visible join behind the player.
+   *   1. **The seam.** Any function of `(cos az, sin az)` closes on itself exactly, at every
+   *      octave, forever. A field addressed by `atan()` has a visible join behind the player and
+   *      no amount of tuning removes it.
    *   2. **The barcode.** A raw flat deck samples at `deckH / sin(elevation)`, which runs to
-   *      infinity at the skyline: two adjacent elevation cells down there are kilometres apart and
-   *      sample uncorrelated noise, so the bottom of the sky becomes a mat of one-cell stripes.
-   *      `deckH / (sin el + yBias)` caps the furthest sample — the same horizon-limiting trick an
-   *      airmass uses, for the same reason — and `pow(·, radialExp)` compresses what is left, so
-   *      the whole visible band spans about five noise features from skyline to 30°.
-   *   3. **The shape.** Because the sample radius is small (3–8 units), one noise feature subtends
-   *      `1/r` radians of azimuth — 11° at r = 5 — while spanning a fraction of the elevation
-   *      band. That is *exactly* the target's proportion: slabs several times wider than they are
-   *      tall, in a band, with open sky between them. It falls out of the parameterisation instead
-   *      of being dialled in.
+   *      infinity at the skyline: two adjacent elevation cells down there are kilometres apart on
+   *      the deck and sample uncorrelated noise, so the bottom of the sky turns into a mat of
+   *      one-cell stripes. `sqrt(deckH / (sin el + yBias))` caps the furthest sample — the same
+   *      horizon-limiting trick an airmass uses, for the same reason — and takes the square root
+   *      of what is left, so the band recedes smoothly instead of exploding.
+   *   3. **The aspect ratio, which is the whole art direction.** The target's slabs are three to
+   *      four times wider than they are tall. On a cylinder that is two independent knobs:
+   *      `ringR` sets how wide a feature is in azimuth (a unit feature subtends `1/ringR`
+   *      radians — 11° at ringR = 5), and `hScale` sets how many features stack up the elevation
+   *      band. The first parameterisation this file tried was a flat polar plane, where the two
+   *      are the same number, and it produced radial streaks converging on the zenith. They are
+   *      not the same number and pretending they are is how a sky becomes a starburst.
    *
-   * `camParallax` translates the polar plane with the camera so the decks are not painted on the
+   * `camParallax` translates the cylinder with the camera so the decks are not painted on the
    * inside of a lid; at deck altitude it is a very small effect, which is correct.
    */
   low: {
     deckH: 1700, // metres above the camera
     yBias: 0.085, // caps the deck at ~20 km
-    radialScale: 0.055,
-    radialExp: 0.5,
-    aniso: 1.0,
+    ringR: 8.0, // => features ~7.2° wide in azimuth; slabs are two or three of them merged
+    hScale: 0.130, // => ~13 features stacked over 0..51° elevation, ~3.2° tall each
+    aniso: 1.0, // extra squash on the elevation axis
     azDrift: 0.0031, // rad/s: the whole deck walks past at ~0.18°/s
     camParallax: 0.0016, // noise units per metre of camera travel
-    cover: 0.556, // higher = more open sky. The target runs ~20-25% coverage.
-    core: 0.60,
+    cover: 0.578, // higher = more open sky. The target runs ~20-25% coverage.
+    core: 0.622,
     elLow: 0.075, // fade in from 4.3°
     elHigh: 0.78, // and out by 51°
-    evo: 0.021, // domain-displacement rate: slabs are born and die
+    evo: 0.026, // domain-displacement rate: slabs are born and die
   },
   high: {
     deckH: 4200,
     yBias: 0.15,
-    radialScale: 0.045,
-    radialExp: 0.5,
-    aniso: 2.6, // stretched across the polar plane => streaks, not stretched blobs
+    ringR: 6.5, // wider slabs …
+    hScale: 0.085,
+    aniso: 2.2, // … and flatter: this deck is the target's thin drawn-out streaks
     azDrift: -0.0052, // the other way, and faster: no single shift explains both decks
     camParallax: 0.0006,
-    cover: 0.585,
-    core: 0.625,
+    cover: 0.628,
+    core: 0.668,
     elLow: 0.17,
     elHigh: 0.96,
-    evo: 0.013,
+    evo: 0.016,
   },
 };
 
@@ -412,6 +425,43 @@ float vsNoise(vec2 p) {
 // Rotate-and-scale between octaves so the field has no axis-aligned grain of its own — the only
 // axis alignment in the finished cloud must come from the block grid.
 const mat2 VS_OCT = mat2(1.6598, 0.9834, -0.9834, 1.6598);
+
+// 3-D value noise. The cloud decks need it because a cylinder is the only cheap addressing scheme
+// that is seamless in azimuth AND lets cloud width and cloud height be two different numbers.
+float vsHash3(vec3 p) {
+  p = fract(p * vec3(0.1031, 0.1030, 0.0973));
+  p += dot(p, p.yxz + 33.33);
+  return fract((p.x + p.y) * p.z);
+}
+
+float vsNoise3(vec3 p) {
+  vec3 i = floor(p);
+  vec3 f = p - i;
+  vec3 u = f * f * (3.0 - 2.0 * f);
+  float n000 = vsHash3(i);
+  float n100 = vsHash3(i + vec3(1.0, 0.0, 0.0));
+  float n010 = vsHash3(i + vec3(0.0, 1.0, 0.0));
+  float n110 = vsHash3(i + vec3(1.0, 1.0, 0.0));
+  float n001 = vsHash3(i + vec3(0.0, 0.0, 1.0));
+  float n101 = vsHash3(i + vec3(1.0, 0.0, 1.0));
+  float n011 = vsHash3(i + vec3(0.0, 1.0, 1.0));
+  float n111 = vsHash3(i + vec3(1.0, 1.0, 1.0));
+  return mix(
+    mix(mix(n000, n100, u.x), mix(n010, n110, u.x), u.y),
+    mix(mix(n001, n101, u.x), mix(n011, n111, u.x), u.y),
+    u.z
+  );
+}
+
+// Rotate xy and scale z between octaves. Rotating (cos az, sin az) is still (cos, sin) of a
+// shifted angle, so every octave stays exactly periodic in azimuth — no seam, at any frequency.
+vec3 vsOct3(vec3 p) {
+  return vec3(
+    p.x * 1.6598 + p.y * 0.9834,
+    -p.x * 0.9834 + p.y * 1.6598,
+    p.z * 1.9273 + 31.7
+  );
+}
 `;
 
 /**
@@ -433,7 +483,7 @@ float vsBayer8(vec2 fc) {
 const NBANDS = SKY_BANDS.length;
 
 /** A deck's parameters, packed into the three vec4s the shader reads. */
-const deckA = (d) => new THREE.Vector4(d.deckH, d.radialScale, d.radialExp, d.cover);
+const deckA = (d) => new THREE.Vector4(d.deckH, d.ringR, d.hScale, d.cover);
 const deckB = (d) => new THREE.Vector4(d.core, d.elLow, d.elHigh, d.evo);
 const deckC = (d) => new THREE.Vector4(d.yBias, d.aniso, d.azDrift, d.camParallax);
 
@@ -512,7 +562,7 @@ uniform float uMotion;
 uniform float uCellAz;      // radians per azimuth cell
 uniform float uCellEl;      // dir.y per elevation cell
 
-uniform vec4  uDeckLowA;    // deckH, radialScale, radialExp, cover
+uniform vec4  uDeckLowA;    // deckH, ringR, hScale, cover
 uniform vec4  uDeckLowB;    // core, elLow, elHigh, evo
 uniform vec4  uDeckLowC;    // yBias, aniso, azDrift, camParallax
 uniform vec4  uDeckHighA;
@@ -563,18 +613,36 @@ float vsFbm(vec2 p, int octaves) {
 // distance, compressed by a power. See the CLOUDS comment for why all three of those words are
 // load-bearing.
 
+// Gain 0.44, not the usual 0.5. A cloud in the target is a big confident shape with a clean
+// staircase edge; at gain 0.5 the fourth octave carries 13% of the field and the silhouette grows
+// single-cell nubs and pinholes all over it, which reads as lace rather than as a slab.
+float vsFbm3(vec3 p, int octaves) {
+  float a = 0.5;
+  float s = 0.0;
+  float n = 0.0;
+  for (int i = 0; i < 6; i++) {
+    if (i >= octaves) break;
+    s += a * vsNoise3(p);
+    n += a;
+    p = vsOct3(p);
+    a *= 0.44;
+  }
+  return s / max(n, 1e-4);
+}
+
 float vsDeckDensity(vec2 idx, vec4 a, vec4 b, vec4 c, int oct) {
   float az = (idx.x + 0.5) * uCellAz;              // in the deck's own frame: drift is not added,
   float y  = max((idx.y + 0.5) * uCellEl, 0.0);    // so the pattern is rigid and the GRID moves.
-  float r  = pow(a.x / (y + c.x), a.z) * a.y;
-  vec2 p = vec2(sin(az), cos(az)) * r + uCamPos.xz * c.w;
-  p.x *= c.y;                                      // anisotropy: streaks for the high deck
-  // Shapes are BORN AND DIE: a slow second field displaces the domain, so no rigid shift of an
-  // earlier frame can reproduce a later one. review/measure/P10.mjs measures exactly that.
+  // Horizon-limited, square-rooted deck distance: the third axis of the cylinder.
+  float h = sqrt(a.x / (y + c.x)) * a.z * c.y;
+  vec3 p = vec3(vec2(cos(az), sin(az)) * a.y + uCamPos.xz * c.w, h);
+  // Shapes are BORN AND DIE: a slow field displaces the domain, so no rigid shift of an earlier
+  // frame can reproduce a later one. review/measure/P10.mjs measures exactly that. The amplitude
+  // is deliberately well under one feature — a large warp does not evolve a cloud, it smears it.
   float e = b.w * uTime;
-  vec2 disp = vec2(vsNoise(p * 0.23 + vec2(e, 3.7)), vsNoise(p * 0.19 + vec2(-e * 0.8, 9.1)));
-  p += (disp - 0.5) * 2.6;
-  return vsFbm(p, oct);
+  vec2 disp = vec2(vsNoise(p.xz * 0.31 + vec2(e, 3.7)), vsNoise(p.xz * 0.27 + vec2(-e * 0.8, 9.1)));
+  p.xz += (disp - 0.5) * 1.1;
+  return vsFbm3(p, oct);
 }
 
 // One deck, returned as (coverage, shadeSelect) where shadeSelect is 0 under-step, 1 body,
@@ -589,7 +657,7 @@ vec2 vsDeckShade(vec2 idx, vec4 a, vec4 b, vec4 c, int oct) {
     // the slab's underside; a block with nothing above it is the slab's lit top. Per-face flat
     // shading on a 2-D field — two cells deep, because a one-cell rim at 0.55° is a hairline and
     // the target's slabs carry a shadow band you can actually read.
-    float below = vsDeckDensity(idx + vec2(0.0, -2.0), a, b, c, oct);
+    float below = vsDeckDensity(idx + vec2(0.0, -3.0), a, b, c, oct);
     float above = vsDeckDensity(idx + vec2(0.0,  2.0), a, b, c, oct);
     if (below < a.w) sel = 0.0;
     else if (above < a.w) sel = 3.0;

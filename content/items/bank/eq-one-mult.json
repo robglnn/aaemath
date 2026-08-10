@@ -16,7 +16,7 @@
   "division-order-reversed",
   "fraction-form-inverted"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "eq-one-mult.mult/construct/dd9k94",
@@ -76,7 +76,7 @@
       "a": 3,
       "b": 18
      },
-     "text": "There are 3 identical members and together they carry 18."
+     "text": "The collar reads a count of 3, and together they carry 18."
     }
    ],
    "worldFraming": {
@@ -482,7 +482,7 @@
       "a": 4,
       "b": 12
      },
-     "text": "There are 4 identical members and together they carry 12."
+     "text": "The collar reads a count of 4, and together they carry 12."
     }
    ],
    "worldFraming": {
@@ -888,7 +888,7 @@
       "a": 3,
       "b": 12
      },
-     "text": "There are 3 identical members and together they carry 12."
+     "text": "The collar reads a count of 3, and together they carry 12."
     }
    ],
    "worldFraming": {
@@ -1294,7 +1294,7 @@
       "a": 3,
       "b": 6
      },
-     "text": "There are 3 identical members and together they carry 6."
+     "text": "The collar reads a count of 3, and together they carry 6."
     }
    ],
    "worldFraming": {
@@ -2448,6 +2448,482 @@
    "params": {
     "a": 2,
     "b": 12
+   }
+  },
+  {
+   "id": "eq-one-mult.mult/construct/1dsox32",
+   "kpId": "eq-one-mult",
+   "family": "eq-one-mult.mult",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "2x = 8",
+   "given": [],
+   "ask": {
+    "key": "ask.value",
+    "params": {
+     "a": 2,
+     "b": 8
+    },
+    "text": "Close it."
+   },
+   "answerType": "rational",
+   "unknown": "x",
+   "answer": {
+    "canonical": "4",
+    "tex": "4"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-the-coefficient",
+     "response": "6",
+     "tex": "6",
+     "failKey": "fail.inverse"
+    },
+    {
+     "misconception": "division-order-reversed",
+     "response": "1/4",
+     "tex": "\\frac{1}{4}",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.eq-one-mult.mult",
+     "params": {
+      "a": 2,
+      "b": 8
+     },
+     "text": "Share both pans by the count on the collar."
+    },
+    {
+     "key": "hint.state.eq-one-mult.mult",
+     "params": {
+      "a": 2,
+      "b": 8
+     },
+     "text": "The collar reads a count of 2, and together they carry 8."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-one-mult.1",
+    "params": {},
+    "text": "Identical members, one load. Share both pans and one member tells you what it takes."
+   },
+   "standards": [
+    "CCSS.6.EE.B.7",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.6.AR.2.3",
+    "VA.6.PFA.3"
+   ],
+   "params": {
+    "a": 2,
+    "b": 8
+   }
+  },
+  {
+   "id": "eq-one-mult.fraction/construct/jgiy6n",
+   "kpId": "eq-one-mult",
+   "family": "eq-one-mult.fraction",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "\\frac{x}{8} = 7",
+   "given": [],
+   "ask": {
+    "key": "ask.value",
+    "params": {
+     "a": 8,
+     "b": 7
+    },
+    "text": "Close it."
+   },
+   "answerType": "rational",
+   "unknown": "x",
+   "answer": {
+    "canonical": "56",
+    "tex": "56"
+   },
+   "distractors": [
+    {
+     "misconception": "fraction-form-inverted",
+     "response": "7/8",
+     "tex": "\\frac{7}{8}",
+     "failKey": "fail.inverse"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.eq-one-mult.fraction",
+     "params": {
+      "a": 8,
+      "b": 7
+     },
+     "text": "The socket has already been shared. Put back what was taken out."
+    },
+    {
+     "key": "hint.state.eq-one-mult.fraction",
+     "params": {
+      "a": 8,
+      "b": 7
+     },
+     "text": "One share of it is 7, and there are 8 shares."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-one-mult.2",
+    "params": {},
+    "text": "Third Rung. The floor sags first and goes down second; nothing here falls without warning."
+   },
+   "standards": [
+    "CCSS.6.EE.B.7",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.6.AR.2.3",
+    "VA.6.PFA.3"
+   ],
+   "params": {
+    "a": 8,
+    "b": 7
+   }
+  },
+  {
+   "id": "eq-one-mult.mult/repair/86bmif",
+   "kpId": "eq-one-mult",
+   "family": "eq-one-mult.mult",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "4x = 16",
+   "given": [],
+   "working": [
+    "4x = 16",
+    "x = \\frac{1}{4}"
+   ],
+   "brokenBy": "division-order-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "b": 16,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -4 = 0",
+    "tex": "x = 4",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-the-coefficient",
+     "response": "2|1*x + -12 = 0",
+     "tex": "x = 12",
+     "failKey": "fail.inverse"
+    },
+    {
+     "misconception": "division-order-reversed",
+     "response": "2|1*x + -1/4 = 0",
+     "tex": "x = \\frac{1}{4}",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "b": 16,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "b": 16,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-one-mult.2",
+    "params": {},
+    "text": "Third Rung. The floor sags first and goes down second; nothing here falls without warning."
+   },
+   "standards": [
+    "CCSS.6.EE.B.7",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.6.AR.2.3",
+    "VA.6.PFA.3"
+   ],
+   "params": {
+    "a": 4,
+    "b": 16
+   }
+  },
+  {
+   "id": "eq-one-mult.fraction/repair/117rvci",
+   "kpId": "eq-one-mult",
+   "family": "eq-one-mult.fraction",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "\\frac{x}{7} = 9",
+   "given": [],
+   "working": [
+    "\\frac{x}{7} = 9",
+    "x = \\frac{9}{7}"
+   ],
+   "brokenBy": "fraction-form-inverted",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 7,
+     "b": 9,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -63 = 0",
+    "tex": "x = 63",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "fraction-form-inverted",
+     "response": "2|1*x + -9/7 = 0",
+     "tex": "x = \\frac{9}{7}",
+     "failKey": "fail.inverse"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 7,
+      "b": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 7,
+      "b": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-one-mult.1",
+    "params": {},
+    "text": "Identical members, one load. Share both pans and one member tells you what it takes."
+   },
+   "standards": [
+    "CCSS.6.EE.B.7",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.6.AR.2.3",
+    "VA.6.PFA.3"
+   ],
+   "params": {
+    "a": 7,
+    "b": 9
+   }
+  },
+  {
+   "id": "eq-one-mult.mult/construct/12s04kl",
+   "kpId": "eq-one-mult",
+   "family": "eq-one-mult.mult",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "5x = 35",
+   "given": [],
+   "ask": {
+    "key": "ask.value",
+    "params": {
+     "a": 5,
+     "b": 35
+    },
+    "text": "Close it."
+   },
+   "answerType": "rational",
+   "unknown": "x",
+   "answer": {
+    "canonical": "7",
+    "tex": "7"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-the-coefficient",
+     "response": "30",
+     "tex": "30",
+     "failKey": "fail.inverse"
+    },
+    {
+     "misconception": "division-order-reversed",
+     "response": "1/7",
+     "tex": "\\frac{1}{7}",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.eq-one-mult.mult",
+     "params": {
+      "a": 5,
+      "b": 35
+     },
+     "text": "Share both pans by the count on the collar."
+    },
+    {
+     "key": "hint.state.eq-one-mult.mult",
+     "params": {
+      "a": 5,
+      "b": 35
+     },
+     "text": "The collar reads a count of 5, and together they carry 35."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-one-mult.2",
+    "params": {},
+    "text": "Third Rung. The floor sags first and goes down second; nothing here falls without warning."
+   },
+   "standards": [
+    "CCSS.6.EE.B.7",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.6.AR.2.3",
+    "VA.6.PFA.3"
+   ],
+   "params": {
+    "a": 5,
+    "b": 35
+   }
+  },
+  {
+   "id": "eq-one-mult.fraction/construct/1sippvr",
+   "kpId": "eq-one-mult",
+   "family": "eq-one-mult.fraction",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "\\frac{x}{4} = 3",
+   "given": [],
+   "ask": {
+    "key": "ask.value",
+    "params": {
+     "a": 4,
+     "b": 3
+    },
+    "text": "Close it."
+   },
+   "answerType": "rational",
+   "unknown": "x",
+   "answer": {
+    "canonical": "12",
+    "tex": "12"
+   },
+   "distractors": [
+    {
+     "misconception": "fraction-form-inverted",
+     "response": "3/4",
+     "tex": "\\frac{3}{4}",
+     "failKey": "fail.inverse"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.eq-one-mult.fraction",
+     "params": {
+      "a": 4,
+      "b": 3
+     },
+     "text": "The socket has already been shared. Put back what was taken out."
+    },
+    {
+     "key": "hint.state.eq-one-mult.fraction",
+     "params": {
+      "a": 4,
+      "b": 3
+     },
+     "text": "One share of it is 3, and there are 4 shares."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-one-mult.2",
+    "params": {},
+    "text": "Third Rung. The floor sags first and goes down second; nothing here falls without warning."
+   },
+   "standards": [
+    "CCSS.6.EE.B.7",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.6.AR.2.3",
+    "VA.6.PFA.3"
+   ],
+   "params": {
+    "a": 4,
+    "b": 3
    }
   }
  ]

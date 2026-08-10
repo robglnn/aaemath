@@ -17,7 +17,7 @@
   "stops-before-fully-simplified",
   "over-combines-to-one-term"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "simplify-expression.core/construct/17fbu2d",
@@ -2783,6 +2783,558 @@
     "a": 5,
     "b": 6,
     "c": -5
+   }
+  },
+  {
+   "id": "simplify-expression.core/generate/10t5k7",
+   "kpId": "simplify-expression",
+   "family": "simplify-expression.core",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "3 + 4\\left(x - 2\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.gathersTo",
+    "params": {
+     "a": 3,
+     "b": 4,
+     "c": -2,
+     "opened": -8,
+     "target": "4*x + -5",
+     "unknown": "x"
+    },
+    "text": "Stack a load that gathers to 4*x + -5."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3 + 4\\left(x - 2\\right)",
+    "tex": "3 + 4\\left(x - 2\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "4*x + -5",
+    "unknown": "x",
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 3,
+      "b": 4,
+      "c": -2,
+      "opened": -8,
+      "target": "4*x + -5",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 3,
+      "b": 4,
+      "c": -2,
+      "opened": -8,
+      "target": "4*x + -5",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read 4*x + -5. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.simplify-expression.2",
+    "params": {},
+    "text": "Sennar will walk this deck without looking down. Make it short."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 4,
+    "c": -2
+   }
+  },
+  {
+   "id": "simplify-expression.core/construct/y8ewl4",
+   "kpId": "simplify-expression",
+   "family": "simplify-expression.core",
+   "form": "construct",
+   "difficulty": 5,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "6 + -4\\left(x - 5\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 6,
+     "b": -4,
+     "c": -5,
+     "opened": 20
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-4*x + 26",
+    "tex": "-4x + 26"
+   },
+   "requiresGathered": true,
+   "distractors": [
+    {
+     "misconception": "combine-before-distributing",
+     "response": "2*x + -10",
+     "tex": "2x - 10",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "over-combines-to-one-term",
+     "response": "22*x",
+     "tex": "22x",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "stops-before-fully-simplified",
+     "response": "-4*x + 26",
+     "tex": "6 + -4x + 20",
+     "failKey": "fail.load.unsettled",
+     "surface": true
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.simplify-expression.core",
+     "params": {
+      "a": 6,
+      "b": -4,
+      "c": -5,
+      "opened": 20
+     },
+     "text": "Open the bundle first. Gather after."
+    },
+    {
+     "key": "hint.state.simplify-expression.core",
+     "params": {
+      "a": 6,
+      "b": -4,
+      "c": -5,
+      "opened": 20
+     },
+     "text": "Opened, the bundle left 20 of fixed weight standing beside 6."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.simplify-expression.1",
+    "params": {},
+    "text": "Open every bundle, gather every like kind, and what is left is the shortest deck that still reaches."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6,
+    "b": -4,
+    "c": -5
+   }
+  },
+  {
+   "id": "simplify-expression.core/repair/19bp1hv",
+   "kpId": "simplify-expression",
+   "family": "simplify-expression.core",
+   "form": "repair",
+   "difficulty": 5,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "2 + -6\\left(x + 5\\right)",
+   "given": [],
+   "working": [
+    "2 + -6\\left(x + 5\\right)",
+    "2 + -6x - 30",
+    "-34x"
+   ],
+   "brokenBy": "over-combines-to-one-term",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": -6,
+     "c": 5,
+     "opened": -30,
+     "lines": 3,
+     "line": 3
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3|-6*x + -28",
+    "tex": "-6x - 28",
+    "line": 3,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "over-combines-to-one-term",
+     "response": "3|-34*x",
+     "tex": "-34x",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": -6,
+      "c": 5,
+      "opened": -30,
+      "line": 3,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": -6,
+      "c": 5,
+      "opened": -30,
+      "line": 3,
+      "lines": 3
+     },
+     "text": "Line 3 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.simplify-expression.2",
+    "params": {},
+    "text": "Sennar will walk this deck without looking down. Make it short."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": -6,
+    "c": 5
+   }
+  },
+  {
+   "id": "simplify-expression.core/generate/1n65pzd",
+   "kpId": "simplify-expression",
+   "family": "simplify-expression.core",
+   "form": "generate",
+   "difficulty": 5,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "3 + 3\\left(x - 9\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.gathersTo",
+    "params": {
+     "a": 3,
+     "b": 3,
+     "c": -9,
+     "opened": -27,
+     "target": "3*x + -24",
+     "unknown": "x"
+    },
+    "text": "Stack a load that gathers to 3*x + -24."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3 + 3\\left(x - 9\\right)",
+    "tex": "3 + 3\\left(x - 9\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "3*x + -24",
+    "unknown": "x",
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 3,
+      "b": 3,
+      "c": -9,
+      "opened": -27,
+      "target": "3*x + -24",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 3,
+      "b": 3,
+      "c": -9,
+      "opened": -27,
+      "target": "3*x + -24",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read 3*x + -24. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.simplify-expression.2",
+    "params": {},
+    "text": "Sennar will walk this deck without looking down. Make it short."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 3,
+    "c": -9
+   }
+  },
+  {
+   "id": "simplify-expression.core/construct/2c6dl8",
+   "kpId": "simplify-expression",
+   "family": "simplify-expression.core",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "7 + 3\\left(x + 3\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 7,
+     "b": 3,
+     "c": 3,
+     "opened": 9
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3*x + 16",
+    "tex": "3x + 16"
+   },
+   "requiresGathered": true,
+   "distractors": [
+    {
+     "misconception": "combine-before-distributing",
+     "response": "10*x + 30",
+     "tex": "10x + 30",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "over-combines-to-one-term",
+     "response": "19*x",
+     "tex": "19x",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "stops-before-fully-simplified",
+     "response": "3*x + 16",
+     "tex": "7 + 3x + 9",
+     "failKey": "fail.load.unsettled",
+     "surface": true
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.simplify-expression.core",
+     "params": {
+      "a": 7,
+      "b": 3,
+      "c": 3,
+      "opened": 9
+     },
+     "text": "Open the bundle first. Gather after."
+    },
+    {
+     "key": "hint.state.simplify-expression.core",
+     "params": {
+      "a": 7,
+      "b": 3,
+      "c": 3,
+      "opened": 9
+     },
+     "text": "Opened, the bundle left 9 of fixed weight standing beside 7."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.simplify-expression.1",
+    "params": {},
+    "text": "Open every bundle, gather every like kind, and what is left is the shortest deck that still reaches."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 3,
+    "c": 3
+   }
+  },
+  {
+   "id": "simplify-expression.core/repair/1h0noz6",
+   "kpId": "simplify-expression",
+   "family": "simplify-expression.core",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "3 + 4\\left(x + 2\\right)",
+   "given": [],
+   "working": [
+    "3 + 4\\left(x + 2\\right)",
+    "7\\left(x + 2\\right)",
+    "7x + 14"
+   ],
+   "brokenBy": "combine-before-distributing",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 4,
+     "c": 2,
+     "opened": 8,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|4*x + 11",
+    "tex": "3 + 4x + 8",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "combine-before-distributing",
+     "response": "2|7*x + 14",
+     "tex": "7\\left(x + 2\\right)",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 4,
+      "c": 2,
+      "opened": 8,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 4,
+      "c": 2,
+      "opened": 8,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.simplify-expression.1",
+    "params": {},
+    "text": "Open every bundle, gather every like kind, and what is left is the shortest deck that still reaches."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 4,
+    "c": 2
    }
   }
  ]

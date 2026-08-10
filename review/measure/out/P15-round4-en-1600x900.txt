@@ -1,0 +1,40 @@
+(node:31032) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+session restarted after a hot reload (1/3)
+session restarted after a hot reload (2/3)
+
+P15 — strict KaTeX pipeline, DOM and in-world
+────────────────────────────────────────────────────────────────────────────────────────────────
+PASS  C1     every fixture expression typesets in en/es/pl                   0 failures             got 0
+PASS  C2a    malformed TeX is refused by validate()                          21 refusals            got 21
+PASS  C2b    a refused expression never returns its source, a katex-error n  0 leaks                got 0
+PASS  C3a    every expression has a spoken form in every locale              0 missing              got 0
+PASS  C3b    no spoken form contains TeX notation                            0 with \ { } ^ _       got 0
+PASS  C4     ES/PL take a decimal comma, a centre dot and (PL) a colon for   0 wrong                got 0
+PASS  C5     the plain comparison text is identical in every locale          0 divergent            got 0
+PASS  C6     no banned classroom vocabulary in any player-facing string thi  0 hits (relation readings declared) got 0
+PASS  C7     1000 renders of one expression typeset it exactly once          typesets == 1          got 1
+PASS  C7b    the KaTeX raster is a hard-edged alpha mask, not a blurred one  partial-alpha band <= 1.3 px got 0.64
+PASS  C7c    a raster is produced at a real working resolution               >= 64 px tall          got 256
+PASS  C8a    zero KaTeX failures in every locale and size                    0                      got 0
+PASS  C8b    zero raw-TeX leaks into visible UI                              0 runs leaking         got 0
+PASS  C8c    KaTeX really ran (DOM nodes present in every run)               >= 3                   got 3
+PASS  C9     every claim carries role=math with a localized, notation-free   0 bad rows             got 0
+PASS  C9b    the aria-label language follows the requested locale            has en                 got en
+PASS  C10    no panel is ever magnified: >= 1 texel per device pixel, at 90  >= 1.00                got 1.85
+FAIL  C11    the raster grows with the viewport instead of staying fixed     4K bucket > 900p bucket got 0 vs 64
+PASS  C12    the claim standing ~38 m away is still drawn at a legible size  em >= 12 device px     got 17.3
+PASS  C13    120 frames of play cause no re-typeset and no re-raster         0 new typesets, 0 new rasters got 0 / 0
+PASS  C14a   a malformed claim never produces a katex-error node             0                      got 0
+PASS  C14b   the malformed source appears nowhere in the document            false                  got false
+PASS  C14c   no raw TeX reaches the visible UI when a claim is refused       false                  got false
+PASS  C14d   the refusal is logged to __vs.errors so a build cannot ship it  >= 1 new error naming the refusal got 1: KaTeX refused a claim [en,display]: KaTeX parse error: Unexp
+FAIL  C14e   the player sees a typeset stand-in, not an empty space          ink present in the panel's rectangle got 0
+PASS  C14f   the stand-in announces itself as unreadable rather than readin  localized fallback phrase got unreadable claim
+PASS  C15    the ink is pure white, as it is in the target                   >= 248.0 (target 254)  got 251.9
+PASS  C16    no panel, no frame and no glow: the sky 3-5 px from the ink is  >= -3.0 (target 5.3)   got 0.3
+FAIL  C17    glyph edges are hard: the partial-coverage band is about one p  <= 2.0 px (target 0.72) got 4.15
+FAIL  C18    still hard-edged at 3840x2160 (no upscaled texture)             <= 2.0 px              got n/a
+PASS  C19    the ink out-contrasts what the target achieves against its own  >= 1.91 (target)       got 1.92
+────────────────────────────────────────────────────────────────────────────────────────────────
+27/31 claims passed

@@ -25,10 +25,11 @@ import { warn } from "../core/Introspect.js";
  *     Typing it as an albedo applies the key's colour twice and turns sandstone into salmon. The one
  *     rule, applied to every substance and printed in the probe:
  *
- *         albedo = linear(sampled lit role) / linear(key #FFE3B8) / shadingMultiplier
+ *         albedo = linear(sampled role) / ( linear(key) · N·L + ambientIrradiance(hemi) / π )
  *
- *     §3.2 does that division by hand for two surfaces and gets rock `#F5B268` and ground `#8A733E`.
- *     `albedoFrom()` does it for all of them, so re-sampling the palette re-derives the world.
+ *     §3.2 does that division by hand for one surface, against the key alone; this file does it for
+ *     all of them against the whole light, which agrees with §3.2 where the key dominates and fixes
+ *     it where the fill does. Re-sample the palette and the world re-derives.
  *
  *  3. **The dark end of the frame is bimodal, and that is a mechanism, not a tint (§3.4).** A face
  *     *turned from the key* converges on `rock.shadow` `#1B2C33` (hue 198) whatever its albedo. A
@@ -118,46 +119,65 @@ const KEY_LINEAR = new THREE.Color().setHex(KEY_HEX, THREE.SRGBColorSpace);
  * plane was tilted. Look at the target: the courier stands on a faceted ridge and the ground that
  * reads as "lit ground" is its sun-facing slope, not its top.
  *
- * **Authored: 0.342**, which is a facet tilted about 11° toward the key. It is the lowest value that
- * leaves every derived albedo comfortably under 1.0, and it puts `ground.lit`'s albedo at `#C4B86C`
- * — a pale ochre sand, which is what the substance is. Raise it and the world's albedos go dark and
- * chalky; lower it and they clip. Everything else in the rig hangs off it, so it is one constant and
- * `review/measure/P11.mjs` measures the consequences rather than the constant.
+ * **Authored: 0.342**, a facet tilted about 11° toward the key. It is the lowest value that leaves
+ * every derived albedo comfortably under 1.0. Raise it and the world's albedos go dark and chalky;
+ * lower it and they clip. Everything else in the rig hangs off it, so it is one constant, and
+ * `review/measure/P11.mjs` measures its consequences rather than the constant.
  */
 export const GROUND_FACET_NDL = 0.342;
+
+const HEMI_GROUND = new THREE.Color().setHex(FILL_GROUND_HEX, THREE.SRGBColorSpace);
 
 const derivedAlbedos = {};
 
 /**
- * The §3.2 division, as code.
+ * **The §3.2 division, as code — and it is a division by the WHOLE light, not just by the key.**
  *
- * `role` is a colour **sampled off the target**, i.e. a rendered pixel. `multiplier` is the shading
- * multiplier that pixel was standing under, on §1.2's cosine ladder
- * (1.00 / 0.71 / 0.61 / 0.54 / 0.27 / 0.05). A role sampled on a facet square to the key is at 1.0
- * and needs no argument; a role sampled on a facet well off the key must say so, or the albedo comes
- * out far too dark and the substance renders as a silhouette.
+ * §3.2 prints one worked albedo: "linear(brightest measured facet) / linear(key)". That is right for
+ * a facet square to the key, where the key is 97 % of what lands on it, and it is **badly wrong for
+ * ground**, where the key arrives at N·L 0.34 and the blue fill is a third of the total: divide by
+ * the key alone and the blue the fill put there is charged to the albedo, the albedo comes out
+ * ~3.5x too blue in its B channel, and every ground plane in the game renders olive-green instead of
+ * warm ochre. That was a real round of this piece, and the render is in `review/shots/p11/`.
  *
- * Returns a linear THREE.Color, and records the sRGB hex it implies so `stats()` can print the whole
- * derivation for a critic to redo by hand.
+ * So invert the whole thing:
+ *
+ *     rendered = albedo · ( keyLinear · N·L + ambientIrradiance(hemi) / π )      [K = π]
+ *
+ * `role` is a colour **sampled off the target** — a rendered pixel, never a material property.
+ * `ndl` is the N·L that pixel was standing at (§1.2's cosine ladder: 1.00 / 0.71 / 0.61 / 0.54 /
+ * 0.27). `hemi` is three's hemisphere weight for that orientation: 1 for a face pointing at the sky,
+ * 0.5 for a vertical face. Fed a facet square to the key the formula reproduces §3.2's own worked
+ * answer — rock comes out `#F2AC5A` against the document's `#F5B268` — so it agrees where the
+ * document is right and disagrees only where the document's shortcut breaks down.
+ *
+ * Returns a linear THREE.Color and records the whole derivation so `stats()` can print it and a
+ * critic can redo the arithmetic by hand.
  */
-export function albedoFrom(role, multiplier = 1, label = role) {
+export function albedoFrom(role, { ndl = 1, hemi = 0.5, label = role } = {}) {
   const rendered = roleColor(role);
+  const F = fill();
+  const amb = ["r", "g", "b"].map((k) =>
+    ((HEMI_GROUND[k] + (F.color[k] - HEMI_GROUND[k]) * hemi) * F.intensity) / Math.PI
+  );
+  // rendered = albedo · (keyLinear·N·L + ambientIrradiance/π), with the key's intensity at π.
   const c = new THREE.Color(
-    rendered.r / KEY_LINEAR.r / multiplier,
-    rendered.g / KEY_LINEAR.g / multiplier,
-    rendered.b / KEY_LINEAR.b / multiplier
+    rendered.r / (KEY_LINEAR.r * ndl + amb[0]),
+    rendered.g / (KEY_LINEAR.g * ndl + amb[1]),
+    rendered.b / (KEY_LINEAR.b * ndl + amb[2])
   );
   const over = Math.max(c.r, c.g, c.b);
   if (over > 1.0) {
     // An albedo above 1 is not a colour; it means the sampled pixel was standing at a higher N·L
-    // than the multiplier claims. Clamp so nothing renders as a blown white blob, and say so.
-    warn(`Materials: albedo "${label}" from ${role} at N·L ${multiplier} exceeds 1 (${over.toFixed(3)}) — clamped`);
+    // than the caller claims. Clamp so nothing renders as a blown white blob, and say so out loud.
+    warn(`Materials: albedo "${label}" from ${role} at N·L ${ndl} exceeds 1 (${over.toFixed(3)}) — clamped`);
     c.multiplyScalar(1 / over);
   }
   derivedAlbedos[label] = {
     from: role,
     sampled: `#${rendered.getHexString(THREE.SRGBColorSpace).toUpperCase()}`,
-    ladderStep: multiplier,
+    ndl,
+    hemi,
     albedo: `#${c.clone().getHexString(THREE.SRGBColorSpace).toUpperCase()}`,
     linear: [r4(c.r), r4(c.g), r4(c.b)],
     clamped: over > 1 ? r4(over) : undefined,
@@ -186,6 +206,12 @@ export function albedoFrom(role, multiplier = 1, label = role) {
  *
  * Re-sample the palette and the fill re-derives. That is the whole point of doing it in code.
  */
+let _fill = null;
+/** Memoised — the fill is a pure function of the palette and is asked for by every archetype. */
+export function fill() {
+  return (_fill ??= deriveFill());
+}
+
 export function deriveFill() {
   const lit = roleColor("ground.lit");
   const shadow = roleColor("ground.shadow");
@@ -312,7 +338,7 @@ const GLSL_WATER = /* glsl */ `
 		vec2 p = vVsWorld.xz;
 		float a = fract( dot( p, vec2( 0.9239, 0.3827 ) ) * uVsWater.x - uVsTime * uVsWater.z );
 		float b = fract( dot( p, vec2( -0.3827, 0.9239 ) ) * uVsWater.y + uVsTime * uVsWater.z * 0.62 );
-		float band = step( uVsWater.w, a ) + step( 0.82, b );
+		float band = step( uVsWater.w, a ) + step( 0.93, b );
 		totalEmissiveRadiance = band > 1.5 ? uVsWaterHot : ( band > 0.5 ? uVsWaterMid : uVsWaterBody );
 	}
 #endif
@@ -387,7 +413,7 @@ const KNEE = 0.035;
 const ARCHETYPES = {
   // ---- warm stone: "what cooled — a claim that closed and settled" (§10.2)
   rock: {
-    albedo: () => albedoFrom("rock.lit.a", LADDER.lit, "rock"),
+    albedo: () => albedoFrom("rock.lit.a", { ndl: LADDER.lit, hemi: 0.5, label: "rock" }),
     tint: TINT.full,
     rim: 1,
   },
@@ -398,12 +424,12 @@ const ARCHETYPES = {
    * `#223522`. Those are the two pixels §3.2 and §3.4 are both written from.
    */
   ground: {
-    albedo: () => albedoFrom("ground.lit", GROUND_FACET_NDL, "ground"),
+    albedo: () => albedoFrom("ground.lit", { ndl: GROUND_FACET_NDL, hemi: 1, label: "ground" }),
     tint: TINT.full,
     rim: 0.85,
   },
   stone: {
-    albedo: () => albedoFrom("stone.bone", LADDER.lit, "stone"),
+    albedo: () => albedoFrom("stone.bone", { ndl: LADDER.lit, hemi: 0.5, label: "stone" }),
     tint: TINT.full,
     rim: 1,
   },
@@ -413,7 +439,7 @@ const ARCHETYPES = {
    */
   metal: {
     albedo: () =>
-      cooled(albedoFrom("stone.bone", LADDER.lit, "metal.base"), 0.3, deriveFill().color),
+      cooled(albedoFrom("stone.bone", { ndl: LADDER.lit, hemi: 0.5, label: "metal" }), 0.3, fill().color),
     tint: TINT.full,
     rim: 1,
     record: "metal",
@@ -425,19 +451,19 @@ const ARCHETYPES = {
    * shadowed ground), so it is divided at the same ground facet the rest of that construction used.
    */
   grey: {
-    albedo: () => albedoFrom("world.grey", GROUND_FACET_NDL, "grey"),
+    albedo: () => albedoFrom("world.grey", { ndl: GROUND_FACET_NDL, hemi: 1, label: "grey" }),
     tint: TINT.none,
     rim: 0,
   },
   greyDeep: {
-    albedo: () => albedoFrom("world.grey.deep", LADDER.e, "greyDeep"),
+    albedo: () => albedoFrom("world.grey.deep", { ndl: LADDER.e, hemi: 0.5, label: "greyDeep" }),
     tint: TINT.none,
     rim: 0,
   },
 
   // ---- foliage: "green is a value, not a colour" (§7.1). Y <= 0.22, S <= 0.45, mostly shadow.
   foliage: {
-    albedo: () => albedoFrom("world.foliage.lit", LADDER.lit, "foliage"),
+    albedo: () => albedoFrom("world.foliage.lit", { ndl: LADDER.lit, hemi: 0.6, label: "foliage" }),
     tint: TINT.foliage,
     rim: 0.4,
     side: THREE.DoubleSide,
@@ -474,7 +500,17 @@ const ARCHETYPES = {
     tint: TINT.none,
     rim: 0,
     accent: true,
-    water: V4(1 / 5.5, 1 / 3.1, 0.055, 0.66),
+    /**
+     * x, y: ramp frequencies in cycles per metre — 1/9 and 1/6.5, i.e. a band every 9 m and every
+     * 6.5 m. Low on purpose: every band boundary is a hard luminance step, and §11.6 caps the frame
+     * at 0.2 % of pixels moving more than 0.05 Y in one fixed step. Halve the wavelength and you
+     * double the boundary length and double the fizz.
+     * z: scroll, metres of phase per second. 0.03 / (1/9) = 0.27 m/s of boundary travel — a carry
+     * moving at a walking pace, and 4.5 mm in one fixed step.
+     * w: the first band's threshold. 0.80 leaves the body at 80 % of the surface, the middle band at
+     * about 19 % and the hot core at about 1 %, which is what keeps §7.2's accent budget payable.
+     */
+    water: V4(1 / 9, 1 / 6.5, 0.03, 0.8),
   },
   /** Teal veins on a shelf underside — §10.1 requires them to be separate strips, never a tint. */
   vein: {
@@ -485,26 +521,26 @@ const ARCHETYPES = {
 
   // ---- the player and NPCs (§10.4). Skinned, so route (b): flatShading on the material.
   heroPlate: {
-    albedo: () => albedoFrom("hero.rim", LADDER.lit, "heroPlate"),
+    albedo: () => albedoFrom("hero.rim", { ndl: LADDER.lit, hemi: 0.5, label: "heroPlate" }),
     tint: TINT.hero,
     rim: 1,
     flatShading: true,
   },
   heroSkin: {
-    albedo: () => albedoFrom("hero.skin", LADDER.e, "heroSkin"),
+    albedo: () => albedoFrom("hero.skin", { ndl: LADDER.e, hemi: 0.5, label: "heroSkin" }),
     tint: TINT.hero,
     rim: 0.55,
     flatShading: true,
   },
   heroHair: {
-    albedo: () => albedoFrom("hero.hair", LADDER.e, "heroHair"),
+    albedo: () => albedoFrom("hero.hair", { ndl: LADDER.e, hemi: 0.5, label: "heroHair" }),
     tint: TINT.hero,
     rim: 0.55,
     flatShading: true,
   },
   /** Straps, gloves, soles: §10.4's cool near-black, and never `#000000`. */
   heroDark: {
-    albedo: () => albedoFrom("hero.dark", LADDER.e, "heroDark"),
+    albedo: () => albedoFrom("hero.dark", { ndl: LADDER.e, hemi: 0.5, label: "heroDark" }),
     tint: TINT.hero,
     rim: 0.3,
     flatShading: true,
@@ -602,9 +638,12 @@ class MaterialFactory {
     const local = {
       uVsTune: { value: V4(tint, rim, KNEE, 0) },
       uVsWater: { value: (spec.water ?? V4(0, 0, 0, 0)).clone() },
-      uVsWaterBody: { value: body.clone().multiplyScalar(0.9) },
-      uVsWaterMid: { value: body.clone().lerp(hot, 0.45).multiplyScalar(0.92) },
-      uVsWaterHot: { value: hot.clone().multiplyScalar(0.94) },
+      // §5.4's measured peaks: carry body `water.body` Y 0.4178, carry surface `water.core` Y 0.8175.
+      // The middle band is deliberately held BELOW §7.2's accent gate (V 0.80) so that only the hot
+      // core spends the frame's cyan budget — the body of a carry is teal, not an accent.
+      uVsWaterBody: { value: body.clone().multiplyScalar(0.86) },
+      uVsWaterMid: { value: body.clone().lerp(hot, 0.3).multiplyScalar(0.9) },
+      uVsWaterHot: { value: hot.clone().multiplyScalar(0.95) },
     };
     mat.userData.vsUniforms = local;
     mat.userData.vsArchetype = name;
@@ -777,12 +816,37 @@ export function buildBoard(materials) {
   const marks = {};
 
   /**
-   * The shelf's surface, as a function. Deterministic, gentle and *authored* rather than noise: a
-   * low ridge the courier stands on. Everything on the board is placed through it, because a prop
-   * hovering a centimetre off the ground would break the one measurement this piece exists to make.
+   * The shelf's surface, as a function. Deterministic, authored, and — this is the part that took a
+   * round to learn — **corrugated across the key's bearing**.
+   *
+   * Sampling the target settles an argument the document does not: `ground.lit` `#78632C` (hue 43,
+   * S 0.63, Y 0.131) and `ground.shadow` `#223522` (hue 120, Y 0.030) are *both* ground, four metres
+   * apart, and what separates them is whether the key reaches the facet. A dead-flat shelf under a
+   * 9° sun receives sin(9°) = 0.16 of the key and renders the green one everywhere — correct physics
+   * and a picture that has thrown away half the target's palette.
+   *
+   * So the shelf runs a low ridge across the sun's bearing: a slope of about 19° puts sun-facing
+   * facets at N·L ≈ 0.5 (warm ochre) and their neighbours below 0.1 (green), which is exactly the
+   * bimodal ground the target has. Everything on the board is placed through this function, because
+   * a prop hovering a centimetre off the ground would break the one measurement this piece exists
+   * to make.
    */
-  const groundAt = (x, z) =>
-    Math.cos(x * 0.16) * 0.62 + Math.sin(-z * 0.21 + 1.1) * 0.5 - Math.abs(z) * 0.02;
+  const SUN_BEARING = THREE.MathUtils.degToRad(118); // palette.motion.timeOfDay, the world-fixed key
+  const su = Math.sin(SUN_BEARING);
+  const sv = Math.cos(SUN_BEARING);
+  const groundAt = (x, z) => {
+    const along = x * su + z * sv; // metres along the key's bearing
+    const across = x * sv - z * su;
+    // Slopes, not dunes: the first term alone is ±0.30 m over a 10 m wavelength, which is a 10.5°
+    // facet — enough to put a sun-facing plane at N·L ≈ 0.37 (warm ochre) and its neighbour below
+    // 0.05 (green), and gentle enough that you can still see across the shelf.
+    return (
+      Math.sin(along * 0.62) * 0.42 +
+      Math.sin(across * 0.31 + 1.1) * 0.3 +
+      Math.sin(along * 0.19 - 0.4) * 0.5 -
+      Math.abs(z) * 0.015
+    );
+  };
 
   const add = (geo, mat, x, lift, z, name) => {
     const mesh = new THREE.Mesh(flatten(geo), mat);
@@ -798,7 +862,7 @@ export function buildBoard(materials) {
   //     (§2.2) and not one quad: the whole ground calibration lives on facets that tilt a little
   //     toward the key, which is what §3.2's "lit ground plane" actually is. 6 x 4 cells over 34 x 22
   //     metres is a 5.7 m facet — well over §2.2's 3 m minimum for a walkable shelf.
-  const shelfGeo = new THREE.PlaneGeometry(34, 22, 6, 4);
+  const shelfGeo = new THREE.PlaneGeometry(34, 22, 11, 7);
   const sp = shelfGeo.attributes.position;
   for (let i = 0; i < sp.count; i++) {
     // The plane is authored in its own XY and then laid down: local +y becomes world −z.
@@ -825,39 +889,46 @@ export function buildBoard(materials) {
 
   // --- foreground spire, left third of frame, five lit planes and one turned (§2.3). Cut in three
   //     height bands so one mass carries a countable ladder rather than one value per side.
-  const spire = add(new THREE.ConeGeometry(2.6, 9, 6, 3), materials.rock(), -9.2, 4.4, -1.0, "vs.board.spire");
-  spire.rotation.y = 0.42;
-  spire.scale.set(1, 1, 0.74);
-  add(new THREE.DodecahedronGeometry(1.9, 0), materials.rock(), -6.4, 0.9, 3.4, "vs.board.boulderA");
-  add(new THREE.DodecahedronGeometry(1.15, 0), materials.stone(), -4.4, 0.6, 5.0, "vs.board.boulderB");
+  // An icosahedron rather than a cone: 20 faces whose normals are spread over the sphere, so the
+  // mass always presents four to seven *distinct* lit values whatever the sun's bearing, which is
+  // §3.3's requirement and the thing a 6-sided cone structurally cannot do (its six normals sit on
+  // one ring, so a low sun lights two of them and turns the rest off together).
+  const spire = add(new THREE.IcosahedronGeometry(3.4, 0), materials.rock(), -9.0, 4.4, 3.0, "vs.board.spire");
+  spire.rotation.set(0.18, 0.42, 0.1);
+  spire.scale.set(1, 1.85, 0.82);
+  add(new THREE.DodecahedronGeometry(1.9, 0), materials.rock(), -7.0, 0.9, 6.4, "vs.board.boulderA");
+  add(new THREE.DodecahedronGeometry(1.15, 0), materials.stone(), -5.4, 0.6, 4.4, "vs.board.boulderB");
+  // The substances trio: one rock, one certainty and one carry inside a single framing, because
+  // "three distinct substances in a flat-shaded language" is a claim about one picture.
+  add(new THREE.DodecahedronGeometry(1.35, 0), materials.rock(), 2.4, 0.8, 4.2, "vs.board.boulderC");
 
   // --- a certainty field: two facet values plus a hot core, and a real accent light (§5.4).
   const cluster = new THREE.Group();
   cluster.name = "vs.board.crystal";
-  cluster.position.set(6.4, groundAt(6.4, 2.4) - 0.05, 2.4);
+  cluster.position.set(5.0, groundAt(5.0, 2.6) - 0.05, 2.6);
   const shards = [
-    [0, 0, 0, 1.0, 0.0],
-    [0.85, 0, 0.4, 0.66, 0.5],
-    [-0.7, 0, 0.55, 0.54, -0.7],
-    [0.25, 0, -0.8, 0.78, 0.25],
+    [0, 0, 0, 0.9, 0.0],
+    [0.7, 0, 0.35, 0.6, 0.5],
+    [-0.6, 0, 0.5, 0.48, -0.7],
+    [0.2, 0, -0.7, 0.7, 0.25],
   ];
   shards.forEach(([x, , z, s, tilt], i) => {
-    const geo = flatten(new THREE.ConeGeometry(0.34 * s, 2.5 * s, 5, 1));
+    const geo = flatten(new THREE.ConeGeometry(0.3 * s, 2.2 * s, 5, 1));
     const m = new THREE.Mesh(geo, i === 0 ? materials.crystalCore() : materials.crystal());
-    m.position.set(x, 1.25 * s, z);
+    m.position.set(x, 1.1 * s, z);
     m.rotation.z = tilt * 0.22;
     m.castShadow = true;
     m.name = `vs.board.crystal.${i}`;
     cluster.add(m);
   });
   group.add(cluster);
-  marks.crystal = cluster.position.clone().setY(cluster.position.y + 1.3);
+  marks.crystal = cluster.position.clone().setY(cluster.position.y + 1.1);
 
   // --- a carry, running across the shelf. §5 wants "flat surface facets", not a mirror plane, so
   //     the strip is nudged into facets deterministically before it is flattened: the animated ramp
   //     is the break-up, and this is the geometry it breaks up across.
-  const carryZ = 6.4;
-  const carryGeo = new THREE.PlaneGeometry(26, 1.9, 20, 2);
+  const carryZ = 7.6;
+  const carryGeo = new THREE.PlaneGeometry(26, 1.3, 18, 2);
   const cp = carryGeo.attributes.position;
   for (let i = 0; i < cp.count; i++) {
     const x = cp.getX(i);
@@ -866,7 +937,7 @@ export function buildBoard(materials) {
     // two coplanar surfaces never z-fight (anti-pattern 16).
     cp.setZ(
       i,
-      groundAt(x, carryZ - y) + 0.06 + Math.sin(x * 0.9 + y * 2.1) * 0.05 + Math.sin(x * 2.3) * 0.028
+      groundAt(x, carryZ - y) + 0.3 + Math.sin(x * 0.9 + y * 2.1) * 0.05 + Math.sin(x * 2.3) * 0.028
     );
   }
   const carry = new THREE.Mesh(flatten(carryGeo), materials.water());
@@ -875,7 +946,7 @@ export function buildBoard(materials) {
   carry.receiveShadow = false;
   carry.name = "vs.board.carry";
   group.add(carry);
-  marks.water = new THREE.Vector3(2.0, groundAt(2.0, carryZ) + 0.06, carryZ);
+  marks.water = new THREE.Vector3(3.0, groundAt(3.0, carryZ) + 0.3, carryZ);
 
   // --- grey: what was answered instead of solved. A sagging span with props under it (§10.2).
   const span = add(new THREE.BoxGeometry(6.2, 0.34, 1.5), materials.grey(), -14.2, 1.7, -6.0, "vs.board.grey");
@@ -885,21 +956,25 @@ export function buildBoard(materials) {
   // --- foliage. Blades, alpha-tested, never a bright green (§7.1).
   for (let i = 0; i < 9; i++) {
     const a = (i / 9) * Math.PI * 2;
-    const bx = -3.6 + Math.cos(a) * 2.6;
-    const bz = 3.2 + Math.sin(a) * 1.2;
+    const bx = 0.6 + Math.cos(a) * 2.4;
+    const bz = 5.2 + Math.sin(a) * 1.1;
     const blade = add(new THREE.ConeGeometry(0.26, 0.85 + (i % 3) * 0.2, 3, 1), materials.foliage(), bx, 0.42, bz, `vs.board.blade.${i}`);
     blade.rotation.y = a;
   }
 
   // --- metal: a lighter, cooler albedo and nothing else (§5).
-  add(new THREE.CylinderGeometry(0.55, 0.55, 1.5, 6, 1), materials.metal(), 9.6, 0.75, -3.4, "vs.board.metal");
+  add(new THREE.CylinderGeometry(0.55, 0.55, 1.5, 6, 1), materials.metal(), 8.6, 0.75, -1.6, "vs.board.metal");
 
   // --- the courier. Issued kit, not heroic plate (§10.4): mostly the cool armour value, one warm
   //     key-lit edge, a can at one hip, and a silhouette a shoulder line does not explain.
   const hero = new THREE.Group();
   hero.name = "vs.board.hero";
-  const heroFoot = groundAt(0, 0);
-  hero.position.set(0, heroFoot, 0);
+  // The courier stands on the sunlit side of the ridge, exactly where the target's does: the
+  // nearest point to the board's origin whose analytic N·L sits in the 0.34-0.45 band, so §3.2's
+  // ground witness has a plane of the right orientation directly under the boots.
+  const HERO_X = -3.5, HERO_Z = 2.0;
+  const heroFoot = groundAt(HERO_X, HERO_Z);
+  hero.position.set(HERO_X, heroFoot, HERO_Z);
   hero.rotation.y = -0.5;
   const part = (geo, mat, x, y, z, name) => {
     const m = new THREE.Mesh(flatten(geo), mat);
@@ -925,18 +1000,21 @@ export function buildBoard(materials) {
   group.add(hero);
   // The measurement script needs exact world points, not approximate ones: the sole of the right
   // boot, the head, and a patch of open shelf. C1/C2 are only as good as these three numbers.
-  marks.hero = new THREE.Vector3(0, heroFoot, 0);
+  marks.hero = new THREE.Vector3(HERO_X, heroFoot, HERO_Z);
   hero.updateMatrixWorld(true);
   marks.sole = hero.getObjectByName("hero.footR").getWorldPosition(new THREE.Vector3());
   marks.sole.y = heroFoot + 0.004; // 4 mm above the shelf, directly under the right boot
-  marks.heroHead = new THREE.Vector3(0, heroFoot + 1.85, 0);
-  marks.rock = new THREE.Vector3(-9.2, groundAt(-9.2, -1.0) + 4.4, -1.0);
-  marks.ground = new THREE.Vector3(3.0, groundAt(3.0, -1.0), -1.0);
+  marks.heroHead = new THREE.Vector3(HERO_X, heroFoot + 1.85, HERO_Z);
+  marks.rock = new THREE.Vector3(-9.0, groundAt(-9.0, 3.0) + 4.4, 3.0);
+  marks.ground = new THREE.Vector3(0.5, groundAt(0.5, -1.0), -1.0);
 
   group.userData.marks = Object.fromEntries(
     Object.entries(marks).map(([k, v]) => [k, [v.x, v.y, v.z]])
   );
-  group.userData.groundAt = [0.16, 0.62, 0.21, 1.1, 0.5, 0.02]; // the coefficients, for a critic
+  // The height field itself, so `review/measure/P11.mjs` can pick a ground sample by its true
+  // surface normal instead of hoping a screen point landed on an up-facing facet.
+  group.userData.heightFn = groundAt;
+  group.userData.sunBearingDeg = 118;
   return group;
 }
 

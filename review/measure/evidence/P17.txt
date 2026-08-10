@@ -1,0 +1,57 @@
+P17 — item bank & generators, measured
+
+catalogue 1152 items · generated audited 4993 · 32 knowledge points
+
+PASS  C1  32/32 nodes, min 36 items                                                                         [threshold: 32/32 nodes, min >= 24]
+        every knowledge point in the graph has >= 24 committed items
+PASS  C2  96 pairs, min 3 committed items, 0 undeclared                                                     [threshold: 96 pairs, min >= 3 committed, 0 undeclared]
+        every (knowledge point x misconception) pair the graph declares is carried by committed items, and no distractor names a misconception the graph does not declare
+PASS  C3  388 solved from the stem + 42 from the language rule, 0 disagreements, 0 families with no audit route  [threshold: 0 disagreements, 0 unrouted families]
+        every committed construct item's stated answer is reproduced by an independent solver reading only its stem, seatings and ask
+PASS  C4  825/825 distractors re-derived, 0 mismatches, 0 family/misconception pairs with no transcribed formula  [threshold: 100% re-derived, 0 mismatches]
+        every distractor equals the response its misconception's diagnosticSignature predicts, recomputed from the knowledge graph
+PASS  C5  1152 items, 0 violations                                                                          [threshold: 0 violations]
+        PAIRWISE-SEPARATED: on every served stem, no misconception equals the correct response and no two collide
+PASS  C6  419 repair items, 246 of them equivalence-chain workings audited line by line, 0 violations       [threshold: 0 violations]
+        every repair item's working really does stop following at the line the answer names, and no distractor would also restore the claim
+PASS  C7  303 generate items, 0 violations                                                                  [threshold: 0 violations]
+        every generate item's own witness satisfies its declared property and every distractor fails it
+PASS  C8  4993 generated, 1810 answers re-derived, 3483 distractors re-derived, 1808 workings, 1375 properties, 0 failures  [threshold: >= 5000 generated, 0 failures]
+        freshly generated items pass every audit the committed ones pass — the bank cannot run dry and cannot go wrong when it refills
+PASS  C9  27252 strings, 0 failures                                                                         [threshold: 0 failures]
+        every TeX string in the bank typesets under strict KaTeX (G2)
+PASS  C10  279 distinct keys, 0 missing, 0 unresolvable placeholders, 0 untranslated                         [threshold: 0 / 0 / 0]
+        every learner-facing key resolves in en, es and pl, every placeholder has a parameter, and no locale falls back to the English string (G3)
+PASS  C11  281 keys x 3 locales, 0 hits                                                                      [threshold: 0 hits]
+        no banned classroom word from design/voice.md appears in any item string, in any locale
+PASS  C12  3456 hint rungs, 0 leaks                                                                          [threshold: 0 leaks]
+        no rung of the faded ladder contains the value being asked for — a hint that gives the answer is not a scaffold
+PASS  C13  3115 accepted spellings, 1512 distractor spellings, 0 failures                                    [threshold: 0 failures]
+        every documented spelling of a correct response is accepted, and every distractor is refused AND diagnosed as its own misconception (L7)
+PASS  C14  13 spellings, 0 failures                                                                          [threshold: 0 failures]
+        equivalent forms are one response: x=4 / 4 / 4.0 / 4,0 / +4 / 8/2, a\cdot b / a*b / ab, and x>3 / 3<x
+PASS  C15  construct 0.0209 vs priced 0.03; repair 0.002 vs priced 0.03; generate 0.0018 vs priced 0.02      [threshold: measured <= priced, per form]
+        a bot with no knowledge succeeds no more often than model.trueGuessByForm prices the form at (L5, and the measurement §9 asks P17 to supply)
+PASS  C16  2560 draws across 32 knowledge points, 0 failures                                                 [threshold: 0 repeats, 0 dry]
+        80 consecutive draws on one knowledge point never repeat an item id — more than any session can ask for, with the generator covering what the catalogue cannot
+PASS  C2b  96 pairs, worst 12 of 12 distinct targeted items                                                  [threshold: 96 pairs, 12 of 12]
+        for every (knowledge point x misconception) pair the selector can serve 12 distinct items that carry that misconception, so retrieval practice against a specific wrong idea never repeats or runs out (learning-architecture.md §4)
+PASS  C17  1152 items, 62 distinct codes, 0 failures                                                         [threshold: 0 failures]
+        every item is tagged to a knowledge point in the graph and to standards codes that exist in content/standards.json (L3)
+PASS  C18  32 files, ids identical, strings identical                                                        [threshold: identical]
+        content/items/index.mjs carries exactly the data in content/items/bank/*.json and strings.json — the inlined copy cannot drift
+PASS  C19  1152 regenerated vs 1152 shipped, identical                                                       [threshold: identical]
+        re-running the builder from the shipped seed reproduces the shipped bank exactly (G4)
+PASS  C20  worst family eq-combine-side.core at 13.54% of drawn stems rejected                               [threshold: < 25%]
+        the PAIRWISE-SEPARATED stem filter costs less than the 25% the knowledge graph sets as a build failure
+PASS  C21  90 keys with parameters, 0 disagreements                                                          [threshold: 0 disagreements]
+        the generator's map of which parameters each string prints agrees with strings.json — the leak filter cannot go stale without failing here
+
+blind-success by form (bot draws, no knowledge):
+  construct    360/17200  = 0.0209   priced at 0.03
+  repair        34/16760  = 0.002   priced at 0.03
+  generate      22/12120  = 0.0018   priced at 0.02
+
+22/22 claims pass
+
+RESULT: PASS

@@ -460,6 +460,38 @@ export class Atmosphere {
   }
 
   /**
+   * Reviewer hook. Given screen points in NDC, return the true distance and world height of the
+   * surface behind each one, by raycasting the live scene.
+   *
+   * A claim about *distance* haze that is checked against "the bottom of the frame" is not a
+   * claim about distance, it is a claim about screen position — so this exists to let
+   * `review/measure/P10.mjs` bin its A/B pixels by metres rather than by pixels. The sky plate is
+   * excluded because it is a three-vertex triangle in NDC and raycasting it is meaningless.
+   * Capped at 48 points: this is a measurement affordance, never a per-frame path.
+   */
+  sampleDistances(points) {
+    const cam = this.kernel.camera;
+    const ray = new THREE.Raycaster();
+    ray.far = 1e6;
+    const targets = this.scene.children.filter((o) => o.name !== "sky");
+    const out = [];
+    for (const p of (points || []).slice(0, 48)) {
+      ray.setFromCamera(new THREE.Vector2(p.nx, p.ny), cam);
+      const hits = ray.intersectObjects(targets, true);
+      const hit = hits.find((h) => h.object?.name !== "sky-plate" && h.object?.visible !== false);
+      out.push({
+        nx: p.nx,
+        ny: p.ny,
+        hit: !!hit,
+        distance: hit ? r3(hit.distance) : null,
+        worldY: hit ? r3(hit.point.y) : null,
+        f: hit ? r4(this.hazeFactor(hit.distance, hit.point.y)) : null,
+      });
+    }
+    return out;
+  }
+
+  /**
    * The law, in JS, on the same constants the shader was generated from. `review/measure/P10.mjs`
    * uses it to predict a pixel instead of trusting this file's prose.
    */

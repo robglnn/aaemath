@@ -1,5 +1,8 @@
-[en] ready=true fps~5 draws=59 tris=165102 katex=3/0f
-[es] ready=true fps~5 draws=58 tris=164722 katex=3/0f
-[pl] ready=true fps~5 draws=58 tris=164186 katex=3/0f
+P16 round 2 — node tools/review.mjs verify --langs=en,es,pl
+run: 2026-08-10T03:44:56Z
+
+[en] ready=true fps~4 draws=65 tris=172531 katex=3/0f
+[es] ready=true fps~3 draws=65 tris=173961 katex=3/0f
+[pl] ready=true fps~4 draws=65 tris=173385 katex=3/0f
 
 VERIFY PASSED

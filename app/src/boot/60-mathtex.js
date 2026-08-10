@@ -30,30 +30,31 @@ const STANDING_CLAIMS = [
     id: "leaf9-span",
     kpId: "eq-one-add",
     tex: "x + 3 = 7",
-    position: [2.6, 5.15, 1.0],
-    em: 0.62,
+    anchor: { right: -2.7, up: 2.0, forward: 14 },
+    em: 0.66,
   },
   {
     id: "leaf9-share",
     kpId: "eq-one-mult",
     tex: "\\frac{1}{2}x = 4",
-    position: [2.6, 3.85, 1.0],
-    em: 0.62,
+    anchor: { right: -2.7, up: 0.5, forward: 14 },
+    em: 0.66,
   },
   {
     id: "leaf9-working",
-    position: [9.2, 4.5, 1.0],
+    anchor: { right: 3.0, up: 1.3, forward: 14 },
     em: 0.55,
     working: { slope: 0.62, intercept: 0.02, xTicks: 10, yTicks: 8 },
   },
   {
-    // Standing a long way off, so "readable at gameplay distance" is a thing a reviewer can
-    // look at rather than a thing this file claims.
+    // Standing a long way off, and well clear of the others on screen, so "readable at
+    // gameplay distance" is a thing a reviewer can look at rather than a thing this file
+    // claims.
     id: "leaf9-mark",
     kpId: "ineq-one-step",
     tex: "2x + 1 \\ge 9",
-    position: [-19.0, 8.0, -34.0],
-    em: 1.15,
+    anchor: { right: 22.0, up: 2.6, forward: 42 },
+    em: 1.1,
   },
 ];
 
@@ -100,7 +101,8 @@ export default {
         kpId: spec.kpId ?? null,
         tex: spec.tex ?? "",
         position: spec.at ?? spec.position ?? [0, 2, 0],
-        height: spec.height ?? 1,
+        anchor: spec.anchor ?? null,
+        em: spec.em ?? 0.6,
         billboard: spec.billboard ?? "yaw",
         displayMode: spec.display !== false,
         working: spec.working ?? null,

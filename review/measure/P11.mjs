@@ -73,6 +73,33 @@ function claim(id, value, pass, note = "") {
 const results = { tier: TIER, width: WIDTH, height: HEIGHT, post: KEEP_POST, measurements: {} };
 
 await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
+  /**
+   * Kill Vite's HMR client for the run.
+   *
+   * This measurement holds state in the page — the board, the toolkit, a stashed frame buffer — over
+   * a couple of minutes. In a repo where other pieces are being edited at the same time, a single
+   * save anywhere triggers a full reload, `window.__p11` vanishes mid-sequence and the run dies with
+   * "Execution context was destroyed" and no diagnosis. Stub the client with an empty module (rather
+   * than aborting the request, which would show up as a failed request in the report) and reload
+   * once, and the page is then immune to anything a neighbour does while this runs.
+   */
+  await d.page.route("**/@vite/client*", (r) =>
+    r.fulfill({ status: 200, contentType: "text/javascript", body: "export const createHotContext = () => ({ on(){}, send(){}, accept(){}, dispose(){}, prune(){}, invalidate(){}, decline(){} }); export const injectQuery = (u) => u; export const removeStyle = () => {}; export const updateStyle = () => {};" })
+  );
+  await d.page.reload({ waitUntil: "load", timeout: 90000 });
+  await d.page.waitForFunction(() => window.__vs && (window.__vs.ready || window.__vs.fatal), {
+    timeout: 90000,
+  });
+
+  // Detach the post stack before the first frame is stepped. These claims are about the lighting and
+  // material path P11 owns; a composited bloom or grade belongs to P12 and would be measured as if
+  // it were this piece's work — and a neighbour's pass throwing mid-edit would take the run with it.
+  await d.run((keepPost) => {
+    const K = window.__vs.kernel;
+    K.__p11Composer = K.composer;
+    if (!keepPost) K.composer = null;
+  }, KEEP_POST);
+
   await d.play(0.6);
 
   // A neighbouring piece mid-edit must not make this piece unmeasurable, but it must also never be
@@ -95,17 +122,8 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
 
   // Stand the board up and take the camera.
   const setup = await d.run(
-    ([view, keepPost]) => {
-      const K = window.__vs.kernel;
-      if (!keepPost) {
-        // These claims are about the lighting and material path; a composited grade belongs to P12.
-        K.__p11Composer = K.composer;
-        K.composer = null;
-      }
-      const L = K.byName.get("lighting");
-      return L.materialBoard({ view });
-    },
-    ["wide", KEEP_POST]
+    (view) => window.__vs.kernel.byName.get("lighting").materialBoard({ view }),
+    "wide"
   );
   results.marks = setup.marks;
 
@@ -226,24 +244,45 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     const shadowXZ = new three(-key.x, 0, -key.z).normalize();
     const sideXZ = new three(-shadowXZ.z, 0, shadowXZ.x);
     const foot = new three(marks.sole[0], marks.sole[1], marks.sole[2]);
-    // sample a run of points along the shadow and take the darkest stable one
-    const shadePts = [];
-    for (let t = 0.5; t <= 1.6; t += 0.1) {
-      const p = foot.clone().addScaledVector(shadowXZ, t);
-      const s = T.project([p.x, p.y, p.z]);
-      shadePts.push({ t, px: T.box(s[0], s[1], 2) });
-    }
-    shadePts.sort((a, b) => T.lum(...a.px) - T.lum(...b.px));
-    const shade = shadePts[Math.min(2, shadePts.length - 1)].px;
-    // and an unshadowed patch of the same shelf, well clear of everything on it
-    const litPts = [];
-    for (let t = -1.6; t <= 1.6; t += 0.4) {
-      const p = foot.clone().addScaledVector(sideXZ, 2.4).addScaledVector(shadowXZ, t);
-      const s = T.project([p.x, p.y, p.z]);
-      litPts.push(T.box(s[0], s[1], 2));
-    }
-    litPts.sort((a, b) => T.lum(...a) - T.lum(...b));
-    const light = litPts[litPts.length >> 1];
+
+    // §3.2's witness is ONE ground plane, lit and in its own cast shadow. Both halves must be the
+    // same kind of plane or the number measures orientation, not shadow — so every sample is picked
+    // by the shelf's analytic surface normal: up-facing (ny >= 0.90) and a plane the key would
+    // otherwise reach (N·L >= 0.30).
+    // Every sample is picked by the shelf's ANALYTIC surface normal (up-facing, and in the same N·L
+    // band as §3.2's witness) and then checked for occlusion, because a projected point that landed
+    // on a boulder standing in front of the shelf is what wrecked two earlier rounds of this run.
+    const sampleAt = (x, z) => {
+      const y = T.groundY(x, z) + 0.01;
+      if (!T.visibleAt([x, y, z], "vs.board.shelf")) return null;
+      const s = T.project([x, y, z]);
+      if (s[0] < 6 || s[1] < 6 || s[0] > T.buf.w - 7 || s[1] > T.buf.h - 7) return null;
+      return T.box(s[0], s[1], 2);
+    };
+    const eligible = (x, z) => {
+      const n = T.groundNormal(x, z);
+      const ndl = T.groundNdL(x, z);
+      return n[1] >= 0.9 && ndl >= 0.3 && ndl <= 0.45;
+    };
+    // Sweep the whole shelf for planes of the RIGHT KIND — up-facing, N·L inside §3.2's band — and
+    // let luminance sort them. With orientation and albedo held fixed by construction, the only
+    // thing left that can darken one of these pixels is a cast shadow, so the population is bimodal
+    // and p05 / p75 are the two halves of §3.2's witness. This beats walking out from the boots:
+    // a shadow's exact landing on a shelf with relief is a guess, and a guess that misses reads as
+    // "no shadow" rather than as "bad sampling".
+    const pts = [];
+    for (let x = -13; x <= 13; x += 0.4)
+      for (let z = -8; z <= 8; z += 0.4) {
+        if (!eligible(x, z)) continue;
+        const px = sampleAt(x, z);
+        if (px) pts.push(px);
+      }
+    pts.sort((a, b) => T.lum(...a) - T.lum(...b));
+    const shade = pts.length ? pts[Math.floor(pts.length * 0.05)] : [0, 0, 0];
+    const light = pts.length ? pts[Math.floor(pts.length * 0.75)] : [0, 0, 0];
+    const shadePts = pts;
+    const litPts = pts;
+    T.__litGroundY = pts.length ? T.lum(...light) : 0;
     const ys = T.lum(...shade), yl = T.lum(...light);
 
     // Rock mass: brightest lit facet against the most turned facet of the spire.
@@ -257,6 +296,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     }
     return {
       faces: faces.length,
+      shadeSamples: shadePts.length, litSamples: litPts.length,
       groundLit: yl, groundShade: ys, groundRatio: ys > 0 ? yl / ys : 0,
       groundLitPx: light, groundShadePx: shade,
       groundLitHsv: T.hsv(...light),
@@ -383,17 +423,26 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       const px = T.box(s[0], s[1], 1);
       walk.push({ t: d0, y: T.lum(...px), sx: s[0], sy: s[1] });
     }
-    // Reference: the same shelf, the same albedo, out of the shadow — the median of a run so a
-    // single facet edge cannot set the baseline.
-    const across = new three(-dirXZ.z, 0, dirXZ.x);
+    // Reference: unshadowed shelf of the same orientation, found the same way K1 finds it, so the
+    // contact number is a comparison against lit ground and not against whatever happened to be
+    // 1.4 m sideways (which, on a shelf with relief, is often another shadow).
+    const eligible = (x, z) => {
+      const n = T.groundNormal(x, z);
+      const ndl = T.groundNdL(x, z);
+      return n[1] >= 0.9 && ndl >= 0.3 && ndl <= 0.45;
+    };
     const refs = [];
-    for (let t = 0; t <= 30; t++) {
-      const p = sole.clone().addScaledVector(dirXZ, t * 0.02).addScaledVector(across, 1.4);
-      const s = T.project([p.x, p.y, p.z]);
-      refs.push(T.lum(...T.box(s[0], s[1], 1)));
-    }
+    for (let x = -13; x <= 13; x += 0.5)
+      for (let z = -8; z <= 8; z += 0.5) {
+        if (!eligible(x, z)) continue;
+        const y = T.groundY(x, z) + 0.01;
+        if (!T.visibleAt([x, y, z], "vs.board.shelf")) continue;
+        const s = T.project([x, y, z]);
+        if (s[0] < 6 || s[1] < 6 || s[0] > T.buf.w - 7 || s[1] > T.buf.h - 7) continue;
+        refs.push(T.lum(...T.box(s[0], s[1], 2)));
+      }
     refs.sort((a, b) => a - b);
-    const litRef = refs[refs.length >> 1];
+    const litRef = refs.length ? refs[Math.floor(refs.length * 0.75)] : 0;
     const darkening = walk.map((w) => 1 - w.y / Math.max(litRef, 1e-4));
     let first = null;
     for (let i = 0; i < walk.length; i++) if (darkening[i] >= 0.45) { first = walk[i].t; break; }
@@ -433,7 +482,8 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       return { n: faces.length, hue: med(hs), s: med(ss), v: med(vs), y: med(ys) };
     };
     return {
-      rock: pick("vs.board.boulderA", -0.05),
+      rock: pick("vs.board.boulderC", 0.05),
+      rockAll: pick("vs.board.boulderC", -1),
       crystal: pick("vs.board.crystal.0", -1),
       water: pick("vs.board.carry", -1),
       grey: pick("vs.board.grey", -1),

@@ -17,7 +17,7 @@
   "coefficient-applied-to-constant-only",
   "strictness-contradicts-context"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "ineq-two-step.turned/construct/u93nvl",
@@ -86,7 +86,7 @@
       "lifted": -1,
       "mark": "1/5"
      },
-     "text": "With the lip gone the rail carries -1, and the mark comes to 1/5 once."
+     "text": "With the lip gone the rail carries -1 against an inverted count of 5."
     }
    ],
    "worldFraming": {
@@ -175,7 +175,7 @@
       "lifted": 24,
       "mark": 6
      },
-     "text": "With the lip gone, 4 members carry 24, and the detent has not moved."
+     "text": "With the lip gone, a count of 4 carries 24, and the detent has not moved."
     }
    ],
    "worldFraming": {
@@ -551,7 +551,7 @@
       "lifted": -6,
       "mark": "6/7"
      },
-     "text": "With the lip gone the rail carries -6, and the mark comes to 6/7 once."
+     "text": "With the lip gone the rail carries -6 against an inverted count of 7."
     }
    ],
    "worldFraming": {
@@ -640,7 +640,7 @@
       "lifted": 10,
       "mark": 5
      },
-     "text": "With the lip gone, 2 members carry 10, and the detent has not moved."
+     "text": "With the lip gone, a count of 2 carries 10, and the detent has not moved."
     }
    ],
    "worldFraming": {
@@ -1016,7 +1016,7 @@
       "lifted": -1,
       "mark": "1/5"
      },
-     "text": "With the lip gone the rail carries -1, and the mark comes to 1/5 once."
+     "text": "With the lip gone the rail carries -1 against an inverted count of 5."
     }
    ],
    "worldFraming": {
@@ -1105,7 +1105,7 @@
       "lifted": 2,
       "mark": 1
      },
-     "text": "With the lip gone, 2 members carry 2, and the detent has not moved."
+     "text": "With the lip gone, a count of 2 carries 2, and the detent has not moved."
     }
    ],
    "worldFraming": {
@@ -1481,7 +1481,7 @@
       "lifted": 2,
       "mark": "-2/5"
      },
-     "text": "With the lip gone the rail carries 2, and the mark comes to -2/5 once."
+     "text": "With the lip gone the rail carries 2 against an inverted count of 5."
     }
    ],
    "worldFraming": {
@@ -1570,7 +1570,7 @@
       "lifted": 25,
       "mark": 5
      },
-     "text": "With the lip gone, 5 members carry 25, and the detent has not moved."
+     "text": "With the lip gone, a count of 5 carries 25, and the detent has not moved."
     }
    ],
    "worldFraming": {
@@ -1945,7 +1945,7 @@
       "lifted": 3,
       "mark": "-3/4"
      },
-     "text": "With the lip gone the rail carries 3, and the mark comes to -3/4 once."
+     "text": "With the lip gone the rail carries 3 against an inverted count of 4."
     }
    ],
    "worldFraming": {
@@ -2034,7 +2034,7 @@
       "lifted": 6,
       "mark": 2
      },
-     "text": "With the lip gone, 3 members carry 6, and the detent has not moved."
+     "text": "With the lip gone, a count of 3 carries 6, and the detent has not moved."
     }
    ],
    "worldFraming": {
@@ -2411,7 +2411,7 @@
       "lifted": 11,
       "mark": "-11/7"
      },
-     "text": "With the lip gone the rail carries 11, and the mark comes to -11/7 once."
+     "text": "With the lip gone the rail carries 11 against an inverted count of 7."
     }
    ],
    "worldFraming": {
@@ -2500,7 +2500,7 @@
       "lifted": 12,
       "mark": 3
      },
-     "text": "With the lip gone, 4 members carry 12, and the detent has not moved."
+     "text": "With the lip gone, a count of 4 carries 12, and the detent has not moved."
     }
    ],
    "worldFraming": {
@@ -2808,6 +2808,560 @@
     "a": 6,
     "b": 11,
     "c": 12
+   }
+  },
+  {
+   "id": "ineq-two-step.turned/construct/dzukr8",
+   "kpId": "ineq-two-step",
+   "family": "ineq-two-step.turned",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "-5x + 3 > -2",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "a": 5,
+     "b": 3,
+     "c": -2,
+     "lifted": -5,
+     "mark": "1"
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 1",
+    "tex": "x < 1"
+   },
+   "distractors": [
+    {
+     "misconception": "flipped-twice",
+     "response": "x > 1",
+     "tex": "x > 1",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "coefficient-applied-to-constant-only",
+     "response": "x > -5",
+     "tex": "x > -5",
+     "failKey": "fail.partial.divide"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-two-step.turned",
+     "params": {
+      "a": 5,
+      "b": 3,
+      "c": -2,
+      "lifted": -5,
+      "mark": "1"
+     },
+     "text": "Lift the lip, then share by the count — and the count is inverted."
+    },
+    {
+     "key": "hint.state.ineq-two-step.turned",
+     "params": {
+      "a": 5,
+      "b": 3,
+      "c": -2,
+      "lifted": -5,
+      "mark": "1"
+     },
+     "text": "With the lip gone the rail carries -5 against an inverted count of 5."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-two-step.1",
+    "params": {},
+    "text": "A mark with a lip and a count. Lift, then share."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-CED.A.1",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.7.11A",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 5,
+    "b": 3,
+    "c": -2
+   }
+  },
+  {
+   "id": "ineq-two-step.inclusive/construct/ka7gpp",
+   "kpId": "ineq-two-step",
+   "family": "ineq-two-step.inclusive",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "2x - 2 \\ge 10",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "a": 2,
+     "b": -2,
+     "c": 10,
+     "lifted": 12,
+     "mark": 6
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x >= 6",
+    "tex": "x \\ge 6"
+   },
+   "distractors": [
+    {
+     "misconception": "strictness-contradicts-context",
+     "response": "x > 6",
+     "tex": "x > 6",
+     "failKey": "fail.mark.edge"
+    },
+    {
+     "misconception": "coefficient-applied-to-constant-only",
+     "response": "x >= 12",
+     "tex": "x \\ge 12",
+     "failKey": "fail.partial.divide"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-two-step.inclusive",
+     "params": {
+      "a": 2,
+      "b": -2,
+      "c": 10,
+      "lifted": 12,
+      "mark": 6
+     },
+     "text": "The mark itself is permitted here. Lift the lip, then share."
+    },
+    {
+     "key": "hint.state.ineq-two-step.inclusive",
+     "params": {
+      "a": 2,
+      "b": -2,
+      "c": 10,
+      "lifted": 12,
+      "mark": 6
+     },
+     "text": "With the lip gone, a count of 2 carries 12, and the detent has not moved."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-two-step.2",
+    "params": {},
+    "text": "If anything turned over on the way, the stretch is on the other side of the mark when you look up."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-CED.A.1",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.7.11A",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 2,
+    "b": -2,
+    "c": 10,
+    "sol": 6
+   }
+  },
+  {
+   "id": "ineq-two-step.turned/repair/1l76hld",
+   "kpId": "ineq-two-step",
+   "family": "ineq-two-step.turned",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "-3x - 4 > 6",
+   "given": [],
+   "working": [
+    "-3x - 4 > 6",
+    "x > 10"
+   ],
+   "brokenBy": "coefficient-applied-to-constant-only",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": -4,
+     "c": 6,
+     "lifted": 10,
+     "mark": "-10/3",
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < -10/3",
+    "tex": "-3x > 10",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-applied-to-constant-only",
+     "response": "2|x > 10",
+     "tex": "x > 10",
+     "failKey": "fail.partial.divide"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": -4,
+      "c": 6,
+      "lifted": 10,
+      "mark": "-10/3",
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": -4,
+      "c": 6,
+      "lifted": 10,
+      "mark": "-10/3",
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-two-step.2",
+    "params": {},
+    "text": "If anything turned over on the way, the stretch is on the other side of the mark when you look up."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-CED.A.1",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.7.11A",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 3,
+    "b": -4,
+    "c": 6
+   }
+  },
+  {
+   "id": "ineq-two-step.inclusive/repair/98cpta",
+   "kpId": "ineq-two-step",
+   "family": "ineq-two-step.inclusive",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "5x + 12 \\ge 52",
+   "given": [],
+   "working": [
+    "5x + 12 \\ge 52",
+    "5x \\ge 40",
+    "x > 8"
+   ],
+   "brokenBy": "strictness-contradicts-context",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "b": 12,
+     "c": 52,
+     "lifted": 40,
+     "mark": 8,
+     "lines": 3,
+     "line": 3
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3|x >= 8",
+    "tex": "x \\ge 8",
+    "line": 3,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "strictness-contradicts-context",
+     "response": "3|x > 8",
+     "tex": "x > 8",
+     "failKey": "fail.mark.edge"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "b": 12,
+      "c": 52,
+      "lifted": 40,
+      "mark": 8,
+      "line": 3,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "b": 12,
+      "c": 52,
+      "lifted": 40,
+      "mark": 8,
+      "line": 3,
+      "lines": 3
+     },
+     "text": "Line 3 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-two-step.1",
+    "params": {},
+    "text": "A mark with a lip and a count. Lift, then share."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-CED.A.1",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.7.11A",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 5,
+    "b": 12,
+    "c": 52,
+    "sol": 8
+   }
+  },
+  {
+   "id": "ineq-two-step.turned/generate/dm27s7",
+   "kpId": "ineq-two-step",
+   "family": "ineq-two-step.turned",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "-5x + 9 > -7",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.markAdmitsTurned",
+    "params": {
+     "a": 5,
+     "b": 9,
+     "c": -7,
+     "lifted": -16,
+     "mark": "16/5",
+     "target": "x < 16/5",
+     "unknown": "x"
+    },
+    "text": "Set a rail with an inverted count whose admitted stretch is x < 16/5."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-5x + 9 > -7",
+    "tex": "-5x + 9 > -7",
+    "witness": true
+   },
+   "check": {
+    "kind": "markAdmits",
+    "stretch": "x < 16/5",
+    "unknown": "x",
+    "needs": [
+     "negativeCount",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.markAdmits.2",
+     "params": {
+      "a": 5,
+      "b": 9,
+      "c": -7,
+      "lifted": -16,
+      "mark": "16/5",
+      "target": "x < 16/5",
+      "unknown": "x"
+     },
+     "text": "Set the mark, then feel which side the detent is on."
+    },
+    {
+     "key": "hint.gen.markAdmits.3",
+     "params": {
+      "a": 5,
+      "b": 9,
+      "c": -7,
+      "lifted": -16,
+      "mark": "16/5",
+      "target": "x < 16/5",
+      "unknown": "x"
+     },
+     "text": "The arch has to admit x < 16/5 and refuse everything else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-two-step.2",
+    "params": {},
+    "text": "If anything turned over on the way, the stretch is on the other side of the mark when you look up."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-CED.A.1",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.7.11A",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 5,
+    "b": 9,
+    "c": -7
+   }
+  },
+  {
+   "id": "ineq-two-step.turned/construct/1fmkzsi",
+   "kpId": "ineq-two-step",
+   "family": "ineq-two-step.turned",
+   "form": "construct",
+   "difficulty": 5,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "-2x + 9 > 6",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "a": 2,
+     "b": 9,
+     "c": 6,
+     "lifted": -3,
+     "mark": "3/2"
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 3/2",
+    "tex": "x < \\frac{3}{2}"
+   },
+   "distractors": [
+    {
+     "misconception": "flipped-twice",
+     "response": "x > 3/2",
+     "tex": "x > \\frac{3}{2}",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "coefficient-applied-to-constant-only",
+     "response": "x > -3",
+     "tex": "x > -3",
+     "failKey": "fail.partial.divide"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-two-step.turned",
+     "params": {
+      "a": 2,
+      "b": 9,
+      "c": 6,
+      "lifted": -3,
+      "mark": "3/2"
+     },
+     "text": "Lift the lip, then share by the count — and the count is inverted."
+    },
+    {
+     "key": "hint.state.ineq-two-step.turned",
+     "params": {
+      "a": 2,
+      "b": 9,
+      "c": 6,
+      "lifted": -3,
+      "mark": "3/2"
+     },
+     "text": "With the lip gone the rail carries -3 against an inverted count of 2."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-two-step.1",
+    "params": {},
+    "text": "A mark with a lip and a count. Lift, then share."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-CED.A.1",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.7.11A",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 2,
+    "b": 9,
+    "c": 6
    }
   }
  ]

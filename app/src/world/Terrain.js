@@ -285,7 +285,7 @@ export const flatShared = {
   // across the Long Division still holds Y 0.293 against a sky at Y 0.559, so distance is worth
   // about 78% of the way to the haze colour and no more. Haze that goes to 1.0 erases a horizon
   // question, and this world is made of horizon questions.
-  uVsHazeP: { value: new THREE.Vector2(1 / 600, 0.78) },
+  uVsHazeP: { value: new THREE.Vector2(1 / 750, 0.78) },
   uVsShade: { value: sceneColor(PAL.shadow) },
 };
 
@@ -349,7 +349,12 @@ const GLSL_GRADE = /* glsl */ `
 		float vsD = length( vsToCam ) * uVsDist.x;
 		float vsSunAmt = pow( max( dot( normalize( -vsToCam ), uVsSun ), 0.0 ), 3.0 );
 		vec3 vsHz = mix( uVsHaze, uVsHazeSun, vsSunAmt ) * uVsLevel;
-		float vsH = clamp( uVsHazeP.y * ( 1.0 - exp( -vsD * uVsHazeP.x ) ) + uVsDist.y, 0.0, 0.985 );
+		// The exponent is the important half of this curve. A plain exp() puts a tenth of the haze
+		// on a rock a hundred metres away, and in a perceptual blend a tenth of a bright horizon
+		// lifts a shadow facet by a factor of three — the near-middle distance loses its shadow
+		// family and the whole leaf turns into one grey-brown value. Raising d/D to 1.7 keeps the
+		// first two hundred metres honest and still saturates by the horizon.
+		float vsH = clamp( uVsHazeP.y * ( 1.0 - exp( -pow( vsD * uVsHazeP.x, 1.7 ) ) ) + uVsDist.y, 0.0, 0.985 );
 		vec3 vsMix = mix( sqrt( max( vsCol, 0.0 ) ), sqrt( max( vsHz, 0.0 ) ), vsH );
 		vsCol = vsMix * vsMix;
 
@@ -639,11 +644,17 @@ export class Terrain {
         this.spec.design(x, z, out);
 
         // Layered noise, written above, added only where the level has not protected the ground.
-        const wobbleX = x + fbm(x * 0.0031, z * 0.0031, seed + 31, 3) * 44;
-        const wobbleZ = z + fbm(x * 0.0031, z * 0.0031, seed + 57, 3) * 44;
-        const broad = fbm(wobbleX * 0.0062, wobbleZ * 0.0062, seed, 3) * 9.5;
-        const ridge = (ridged(wobbleX * 0.0135, wobbleZ * 0.0135, seed + 5, 3) - 0.42) * 11.0;
-        const grain = fbm(x * 0.052, z * 0.052, seed + 11, 2) * 1.15;
+        // Deliberately quiet. Lethis sits eleven degrees above the horizon, so any facet tilted
+        // more than eleven degrees away from it falls into the shadow family — and a heightfield
+        // with lively high-frequency noise therefore renders as salt-and-pepper light and shade
+        // that averages, at two hundred metres, into one dead blue-brown. The reference's ground
+        // is big smooth planes with the drama in the *authored* cliffs, and this is how you get
+        // that: broad shape, one ridge line, almost no grain.
+        const wobbleX = x + fbm(x * 0.0031, z * 0.0031, seed + 31, 3) * 40;
+        const wobbleZ = z + fbm(x * 0.0031, z * 0.0031, seed + 57, 3) * 40;
+        const broad = fbm(wobbleX * 0.0055, wobbleZ * 0.0055, seed, 3) * 4.6;
+        const ridge = (ridged(wobbleX * 0.011, wobbleZ * 0.011, seed + 5, 3) - 0.42) * 5.4;
+        const grain = fbm(x * 0.042, z * 0.042, seed + 11, 2) * 0.3;
         const amp = (1 - clamp01(out.protect)) * (out.rough ?? 1);
 
         this.h[k] = out.h + (broad + ridge + grain) * amp;
@@ -756,7 +767,14 @@ export class Terrain {
     const topGeo = facetGeometry(top, (cx, cy, cz, nx2, ny, nz2, ti) => this._surfaceColor(cx, cy, cz, ny, ti));
     this.topGeometry = topGeo;
 
-    const surface = new THREE.Mesh(topGeo, flatMaterial("terrain.surface", { litFloor: 0.4 }));
+    // The ground gets a softer terminator and a gentler shadow than the props do. A cliff face is
+    // a plane and wants a hard edge; five hundred metres of open leaf is a *gradient*, and giving
+    // it the same near-binary ramp as a spire turns every eleven-degree undulation into a hard
+    // navy patch. Hard edges belong to the things whose edges are the point.
+    const surface = new THREE.Mesh(
+      topGeo,
+      flatMaterial("terrain.surface", { litFloor: 0.52, shade: 0.62, terminator: 0.17 })
+    );
     surface.name = "vs.terrain.surface";
     surface.receiveShadow = true;
     surface.castShadow = false; // the shadow camera is 30 m wide; a 660 m caster buys nothing
@@ -803,7 +821,7 @@ export class Terrain {
       this._undersideColor(cx, cy, cz, ny, ti)
     );
     this.underGeometry = underGeo;
-    const keel = new THREE.Mesh(underGeo, flatMaterial("terrain.keel", { litFloor: 0.3, shade: 0.92 }));
+    const keel = new THREE.Mesh(underGeo, flatMaterial("terrain.keel", { litFloor: 0.34, shade: 0.8, terminator: 0.1 }));
     keel.name = "vs.terrain.keel";
     keel.receiveShadow = false;
     keel.castShadow = false;

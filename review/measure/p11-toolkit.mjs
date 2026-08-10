@@ -83,6 +83,28 @@ export function installToolkit() {
     return [((w.x + 1) / 2) * el.width, ((1 - w.y) / 2) * el.height, w.z];
   };
 
+  /**
+   * The board's own height field, and the true surface normal off it. §3.2's witness is "one ground
+   * plane, lit vs its own cast shadow": both halves have to be the SAME kind of plane, or the
+   * measurement is comparing two orientations and calling it a shadow. Picking the sample by its
+   * analytic normal is the only way to guarantee that.
+   */
+  T.board = () => T.scene.getObjectByName("vs.materialBoard");
+  T.groundY = (x, z) => T.board().userData.heightFn(x, z);
+  T.groundNormal = (x, z) => {
+    const h = T.board().userData.heightFn;
+    const e = 0.05;
+    const dx = (h(x + e, z) - h(x - e, z)) / (2 * e);
+    const dz = (h(x, z + e) - h(x, z - e)) / (2 * e);
+    const len = Math.hypot(-dx, 1, -dz);
+    return [-dx / len, 1 / len, -dz / len];
+  };
+  T.groundNdL = (x, z) => {
+    const n = T.groundNormal(x, z);
+    const k = T.lighting._keyDir;
+    return n[0] * k.x + n[1] * k.y + n[2] * k.z;
+  };
+
   T.meshByName = (name) => {
     let hit = null;
     T.scene.traverse((o) => {
@@ -92,9 +114,69 @@ export function installToolkit() {
   };
 
   /**
-   * Every front-facing triangle of a mesh, with its world normal, its N.L against the key, and where
-   * its centroid lands on screen. This is what makes the "the steps sit on a cosine" claim testable
-   * rather than assertable.
+   * Every triangle on the board, in world space, cached once.
+   *
+   * Needed because a projected face centroid is only worth sampling if that face is the thing the
+   * camera actually sees there. Two rounds of this measurement were wrong because a face's centroid
+   * projected onto a boulder standing in front of it, and the "water" sample came back hue 47. There
+   * is no depth buffer to ask and no `THREE` binding reachable from the page, so: Möller–Trumbore,
+   * by hand, against every triangle the board owns. ~1300 triangles, once per candidate — free.
+   */
+  T.tris = () => {
+    if (T._tris) return T._tris;
+    const three = T.lighting.root.position.constructor;
+    const out = [];
+    const v = new three();
+    T.board().traverse((o) => {
+      if (!o.isMesh || !o.visible) return;
+      o.updateMatrixWorld(true);
+      const pos = o.geometry.attributes.position;
+      const idx = o.geometry.index;
+      const n = (idx ? idx.count : pos.count) / 3;
+      for (let t = 0; t < n; t++) {
+        const p = [0, 1, 2].map((k) => {
+          const i = idx ? idx.getX(t * 3 + k) : t * 3 + k;
+          v.fromBufferAttribute(pos, i).applyMatrix4(o.matrixWorld);
+          return [v.x, v.y, v.z];
+        });
+        out.push({ mesh: o.name, p });
+      }
+    });
+    T._tris = out;
+    return out;
+  };
+
+  /** Is `point` the first thing the camera meets along that ray, give or take 1 cm? */
+  T.visibleAt = (point, ownerName) => {
+    const cam = K.camera.position;
+    const d = [point[0] - cam.x, point[1] - cam.y, point[2] - cam.z];
+    const dist = Math.hypot(d[0], d[1], d[2]);
+    const dir = [d[0] / dist, d[1] / dist, d[2] / dist];
+    for (const tri of T.tris()) {
+      if (tri.mesh === ownerName) continue;
+      const [a, b, c] = tri.p;
+      const e1 = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+      const e2 = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+      const h = [dir[1] * e2[2] - dir[2] * e2[1], dir[2] * e2[0] - dir[0] * e2[2], dir[0] * e2[1] - dir[1] * e2[0]];
+      const det = e1[0] * h[0] + e1[1] * h[1] + e1[2] * h[2];
+      if (Math.abs(det) < 1e-9) continue;
+      const inv = 1 / det;
+      const s = [cam.x - a[0], cam.y - a[1], cam.z - a[2]];
+      const u = inv * (s[0] * h[0] + s[1] * h[1] + s[2] * h[2]);
+      if (u < 0 || u > 1) continue;
+      const q = [s[1] * e1[2] - s[2] * e1[1], s[2] * e1[0] - s[0] * e1[2], s[0] * e1[1] - s[1] * e1[0]];
+      const vv = inv * (dir[0] * q[0] + dir[1] * q[1] + dir[2] * q[2]);
+      if (vv < 0 || u + vv > 1) continue;
+      const tHit = inv * (e2[0] * q[0] + e2[1] * q[1] + e2[2] * q[2]);
+      if (tHit > 0.02 && tHit < dist - 0.01) return false;
+    }
+    return true;
+  };
+
+  /**
+   * Every front-facing, *unoccluded* triangle of a mesh, with its world normal, its N.L against the
+   * key, and where its centroid lands on screen. This is what makes the "the steps sit on a cosine"
+   * claim testable rather than assertable.
    */
   T.faces = (meshName) => {
     const m = T.meshByName(meshName);
@@ -124,6 +206,7 @@ export function installToolkit() {
       if (nrm.dot(toCam) <= 0.15) continue; // back-facing or edge-on: its pixels are unreliable
       const scr = T.project([centroid.x, centroid.y, centroid.z]);
       if (scr[0] < 4 || scr[1] < 4 || scr[0] > T.buf.w - 5 || scr[1] > T.buf.h - 5) continue;
+      if (!T.visibleAt([centroid.x, centroid.y, centroid.z], m.name)) continue;
       const area = ab.length() * ac.length() * 0.5;
       out.push({
         ndl: nrm.dot(key),

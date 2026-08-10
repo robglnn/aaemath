@@ -169,11 +169,25 @@ export class ItemBank {
     exclude = null,
     seed = null,
   } = {}) {
-    const relaxations = [];
+    // A targeted request is exhausted — catalogue AND generator — before the target is dropped.
+    // Relaxing the band first and the misconception last is the whole point: §4 says the item
+    // after an error is drawn from variants whose distractor space contains that misconception,
+    // and an engine that quietly serves an untargeted item instead has stopped doing retrieval
+    // practice against the wrong idea while still reporting that it did.
     if (misconception) {
-      relaxations.push({ form, difficulty, misconception, why: "targeted" });
-      if (difficulty != null) relaxations.push({ form, difficulty: null, misconception, why: "targeted-any-band" });
+      for (const d of [difficulty, null]) {
+        const pool = this.forKp(kpId, { form, difficulty: d, misconception, exclude });
+        if (pool.length) {
+          const pick = pool[pickIndex(seed ?? hashOf(kpId + misconception + sizeOf(exclude)), pool.length)];
+          return { item: pick, source: "catalogue", relaxation: d === difficulty ? "targeted" : "targeted-any-band" };
+        }
+        if (d === null) break;
+      }
+      const aimed = this.fresh({ kpId, form, difficulty, seed, exclude, misconception });
+      if (aimed) return { item: aimed, source: "generated", relaxation: "generated-targeted" };
     }
+
+    const relaxations = [];
     relaxations.push({ form, difficulty, misconception: null, why: "exact" });
     if (difficulty != null) {
       for (const d of [difficulty - 1, difficulty + 1, difficulty - 2, difficulty + 2]) {
@@ -200,7 +214,7 @@ export class ItemBank {
   }
 
   /** A brand-new item from the generator families. Deterministic in `seed`. */
-  fresh({ kpId, form = "construct", difficulty = null, seed = null, exclude = null } = {}) {
+  fresh({ kpId, form = "construct", difficulty = null, seed = null, exclude = null, misconception = null } = {}) {
     const meta = this.#meta.get(kpId);
     if (!meta) return null;
     const band = meta.band;
@@ -222,6 +236,7 @@ export class ItemBank {
       });
       if (!item) continue;
       if (exclude && has(exclude, item.id)) continue;
+      if (misconception && !item.distractors.some((d) => d.misconception === misconception)) continue;
       this.#generated++;
       const withStandards = { ...item, standards: meta.standards };
       this.#byId.set(item.id, withStandards);
@@ -325,11 +340,9 @@ export class ItemBank {
       return this.#checkConstruction(item, raw);
     }
 
-    let canon;
-    try {
-      canon = this.#canonicalize(item, raw);
-    } catch (err) {
-      return miss("unreadable", { detail: String(err.message || err) });
+    const canon = this.#canonicalize(item, raw);
+    if (canon.primary === null && !canon.all.length) {
+      return miss("unreadable", { detail: canon.detail });
     }
 
     // Correct, unless the knowledge point is about the surface and the surface is not there.
@@ -363,10 +376,19 @@ export class ItemBank {
     return miss("unmatched", { canonical: canon.primary, near: this.#near(item, canon.primary) });
   }
 
-  /** Every reading of the response the item's distractors could plausibly be written in. */
+  /**
+   * Every reading of the response the item's distractors could plausibly be written in.
+   *
+   * The reading the item ASKED for is the primary one, and it is the only one that can mark a
+   * response correct. The others exist so a wrong response is still diagnosed: a learner who
+   * answers a threshold with a single value has written something the primary reading cannot
+   * parse at all, and `single-value-for-a-set` is precisely the misconception that produces it.
+   * Refusing to read it would turn the most diagnosable error in the strand into a shrug.
+   */
   #canonicalize(item, raw) {
     const unknown = item.unknown || "x";
     const all = [];
+    let detail = null;
     const push = (fn) => {
       try {
         const v = fn();
@@ -376,6 +398,24 @@ export class ItemBank {
       }
     };
 
+    let primary = null;
+    try {
+      primary = this.#primaryReading(item, raw, unknown, all);
+    } catch (err) {
+      detail = String(err.message || err);
+    }
+    if (primary != null) all.unshift(primary);
+    push(() => canonNumber(raw, unknown));
+    push(() => canonExpr(raw));
+    push(() => canonEquation(raw));
+    push(() => canonInequality(raw, unknown));
+    push(() => canonValueSet(raw));
+    push(() => canonClosure(raw, unknown));
+    for (const r of canonRepairAll(raw, unknown)) if (!all.includes(r)) all.push(r);
+    return { primary, all, detail };
+  }
+
+  #primaryReading(item, raw, unknown, all) {
     let primary;
     switch (item.answerType) {
       case "integer":
@@ -419,16 +459,7 @@ export class ItemBank {
       default:
         primary = canonExpr(raw);
     }
-    all.push(primary);
-    // Alternative readings, so a distractor written in another shape still gets diagnosed —
-    // `produces-expression-not-equation` is a load where a claim was asked for, and the whole
-    // point of that misconception is that the learner did not write a Sill.
-    push(() => canonNumber(raw, unknown));
-    push(() => canonExpr(raw));
-    push(() => canonEquation(raw));
-    push(() => canonInequality(raw, unknown));
-    push(() => canonValueSet(raw));
-    return { primary, all };
+    return primary;
   }
 
   /** Distance to the true value, when both are numbers. Feeds `fail.near`, never a score. */
@@ -657,10 +688,14 @@ function flipInequality(tex) {
   return `${m[3].trim()} ${flip[m[2]] || m[2]} ${m[1].trim()}`;
 }
 
-/** "4, 7, -2" / "4; 7; -2" / "4 7 -2" -> a sorted canonical list of exact rationals. */
+/**
+ * "4, 7, -2" / "4; 7; -2" / "4 7 -2" -> a sorted canonical list of exact rationals.
+ * Inside a list the comma is a separator, never a decimal mark — see kit.mjs `listSource`.
+ */
 function canonValueSet(raw) {
   const parts = String(raw)
-    .split(/[;\n]|,(?!\d)|\s+/)
+    .replace(/\\;|\\,|\\quad/g, " ")
+    .split(/[;\n,]|\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
   if (!parts.length) throw new Error("empty set");

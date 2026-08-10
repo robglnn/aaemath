@@ -1,0 +1,277 @@
+{
+  "piece": "P17",
+  "ranAt": "2026-08-10T03:46:43.826Z",
+  "ms": 68599,
+  "catalogueItems": 1152,
+  "generatedAudited": 4993,
+  "knowledgePoints": 32,
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "every knowledge point in the graph has >= 24 committed items",
+      "pass": true,
+      "measured": "32/32 nodes, min 36 items",
+      "threshold": "32/32 nodes, min >= 24"
+    },
+    {
+      "id": "C2",
+      "claim": "every (knowledge point x misconception) pair the graph declares is carried by committed items, and no distractor names a misconception the graph does not declare",
+      "pass": true,
+      "measured": "96 pairs, min 3 committed items, 0 undeclared",
+      "threshold": "96 pairs, min >= 3 committed, 0 undeclared"
+    },
+    {
+      "id": "C3",
+      "claim": "every committed construct item's stated answer is reproduced by an independent solver reading only its stem, seatings and ask",
+      "pass": true,
+      "measured": "388 solved from the stem + 42 from the language rule, 0 disagreements, 0 families with no audit route",
+      "threshold": "0 disagreements, 0 unrouted families",
+      "notes": []
+    },
+    {
+      "id": "C4",
+      "claim": "every distractor equals the response its misconception's diagnosticSignature predicts, recomputed from the knowledge graph",
+      "pass": true,
+      "measured": "825/825 distractors re-derived, 0 mismatches, 0 family/misconception pairs with no transcribed formula",
+      "threshold": "100% re-derived, 0 mismatches",
+      "notes": []
+    },
+    {
+      "id": "C5",
+      "claim": "PAIRWISE-SEPARATED: on every served stem, no misconception equals the correct response and no two collide",
+      "pass": true,
+      "measured": "1152 items, 0 violations",
+      "threshold": "0 violations",
+      "notes": []
+    },
+    {
+      "id": "C6",
+      "claim": "every repair item's working really does stop following at the line the answer names, and no distractor would also restore the claim",
+      "pass": true,
+      "measured": "419 repair items, 246 of them equivalence-chain workings audited line by line, 0 violations",
+      "threshold": "0 violations",
+      "notes": []
+    },
+    {
+      "id": "C7",
+      "claim": "every generate item's own witness satisfies its declared property and every distractor fails it",
+      "pass": true,
+      "measured": "303 generate items, 0 violations",
+      "threshold": "0 violations",
+      "notes": []
+    },
+    {
+      "id": "C8",
+      "claim": "freshly generated items pass every audit the committed ones pass — the bank cannot run dry and cannot go wrong when it refills",
+      "pass": true,
+      "measured": "4993 generated, 1810 answers re-derived, 3483 distractors re-derived, 1808 workings, 1375 properties, 0 failures",
+      "threshold": ">= 5000 generated, 0 failures",
+      "notes": []
+    },
+    {
+      "id": "C9",
+      "claim": "every TeX string in the bank typesets under strict KaTeX (G2)",
+      "pass": true,
+      "measured": "27252 strings, 0 failures",
+      "threshold": "0 failures",
+      "notes": []
+    },
+    {
+      "id": "C10",
+      "claim": "every learner-facing key resolves in en, es and pl, every placeholder has a parameter, and no locale falls back to the English string (G3)",
+      "pass": true,
+      "measured": "279 distinct keys, 0 missing, 0 unresolvable placeholders, 0 untranslated",
+      "threshold": "0 / 0 / 0",
+      "notes": []
+    },
+    {
+      "id": "C11",
+      "claim": "no banned classroom word from design/voice.md appears in any item string, in any locale",
+      "pass": true,
+      "measured": "281 keys x 3 locales, 0 hits",
+      "threshold": "0 hits",
+      "notes": []
+    },
+    {
+      "id": "C12",
+      "claim": "no rung of the faded ladder contains the value being asked for — a hint that gives the answer is not a scaffold",
+      "pass": true,
+      "measured": "3456 hint rungs, 0 leaks",
+      "threshold": "0 leaks",
+      "notes": []
+    },
+    {
+      "id": "C13",
+      "claim": "every documented spelling of a correct response is accepted, and every distractor is refused AND diagnosed as its own misconception (L7)",
+      "pass": true,
+      "measured": "3115 accepted spellings, 1512 distractor spellings, 0 failures",
+      "threshold": "0 failures",
+      "notes": []
+    },
+    {
+      "id": "C14",
+      "claim": "equivalent forms are one response: x=4 / 4 / 4.0 / 4,0 / +4 / 8/2, a\\cdot b / a*b / ab, and x>3 / 3<x",
+      "pass": true,
+      "measured": "13 spellings, 0 failures",
+      "threshold": "0 failures",
+      "notes": []
+    },
+    {
+      "id": "C15",
+      "claim": "a bot with no knowledge succeeds no more often than model.trueGuessByForm prices the form at (L5, and the measurement §9 asks P17 to supply)",
+      "pass": true,
+      "measured": "construct 0.0209 vs priced 0.03; repair 0.002 vs priced 0.03; generate 0.0018 vs priced 0.02",
+      "threshold": "measured <= priced, per form",
+      "notes": []
+    },
+    {
+      "id": "C16",
+      "claim": "80 consecutive draws on one knowledge point never repeat an item id — more than any session can ask for, with the generator covering what the catalogue cannot",
+      "pass": true,
+      "measured": "2560 draws across 32 knowledge points, 0 failures",
+      "threshold": "0 repeats, 0 dry",
+      "notes": []
+    },
+    {
+      "id": "C2b",
+      "claim": "for every (knowledge point x misconception) pair the selector can serve 12 distinct items that carry that misconception, so retrieval practice against a specific wrong idea never repeats or runs out (learning-architecture.md §4)",
+      "pass": true,
+      "measured": "96 pairs, worst 12 of 12 distinct targeted items",
+      "threshold": "96 pairs, 12 of 12",
+      "notes": []
+    },
+    {
+      "id": "C17",
+      "claim": "every item is tagged to a knowledge point in the graph and to standards codes that exist in content/standards.json (L3)",
+      "pass": true,
+      "measured": "1152 items, 62 distinct codes, 0 failures",
+      "threshold": "0 failures",
+      "notes": []
+    },
+    {
+      "id": "C18",
+      "claim": "content/items/index.mjs carries exactly the data in content/items/bank/*.json and strings.json — the inlined copy cannot drift",
+      "pass": true,
+      "measured": "32 files, ids identical, strings identical",
+      "threshold": "identical"
+    },
+    {
+      "id": "C19",
+      "claim": "re-running the builder from the shipped seed reproduces the shipped bank exactly (G4)",
+      "pass": true,
+      "measured": "1152 regenerated vs 1152 shipped, identical",
+      "threshold": "identical"
+    },
+    {
+      "id": "C20",
+      "claim": "the PAIRWISE-SEPARATED stem filter costs less than the 25% the knowledge graph sets as a build failure",
+      "pass": true,
+      "measured": "worst family eq-combine-side.core at 13.54% of drawn stems rejected",
+      "threshold": "< 25%"
+    },
+    {
+      "id": "C21",
+      "claim": "the generator's map of which parameters each string prints agrees with strings.json — the leak filter cannot go stale without failing here",
+      "pass": true,
+      "measured": "90 keys with parameters, 0 disagreements",
+      "threshold": "0 disagreements",
+      "notes": []
+    }
+  ],
+  "passed": 22,
+  "failed": 0,
+  "detail": {
+    "itemsPerKp": {
+      "distribute-negative": 36,
+      "distribute-numeric": 36,
+      "distribute-variable": 36,
+      "eq-both-sides": 36,
+      "eq-combine-side": 36,
+      "eq-distribute": 36,
+      "eq-meaning": 36,
+      "eq-model-context": 36,
+      "eq-one-add": 36,
+      "eq-one-mult": 36,
+      "eq-special-cases": 36,
+      "eq-two-step": 36,
+      "equivalent-expressions": 36,
+      "eval-formula": 36,
+      "eval-signed": 36,
+      "eval-substitute": 36,
+      "expr-anatomy": 36,
+      "ineq-meaning": 36,
+      "ineq-negative-flip": 36,
+      "ineq-one-step": 36,
+      "ineq-two-step": 36,
+      "like-terms-combine": 36,
+      "like-terms-id": 36,
+      "oo-numeric": 36,
+      "oo-structure": 36,
+      "props-equality": 36,
+      "props-operations": 36,
+      "simplify-expression": 36,
+      "translate-order": 36,
+      "translate-phrase": 36,
+      "translate-sentence": 36,
+      "var-meaning": 36
+    },
+    "blindSuccess": {
+      "construct": {
+        "tries": 17200,
+        "hits": 360,
+        "rate": 0.0209,
+        "priced": 0.03
+      },
+      "repair": {
+        "tries": 16760,
+        "hits": 34,
+        "rate": 0.002,
+        "priced": 0.03
+      },
+      "generate": {
+        "tries": 12120,
+        "hits": 22,
+        "rate": 0.0018,
+        "priced": 0.02
+      }
+    },
+    "separationFilterWorst": [
+      {
+        "family": "eq-combine-side.core",
+        "drawn": 820,
+        "rejected": 111,
+        "pct": 13.54
+      },
+      {
+        "family": "eq-distribute.core",
+        "drawn": 888,
+        "rejected": 75,
+        "pct": 8.45
+      },
+      {
+        "family": "eq-one-add.plus",
+        "drawn": 900,
+        "rejected": 47,
+        "pct": 5.22
+      },
+      {
+        "family": "eq-both-sides.core",
+        "drawn": 729,
+        "rejected": 31,
+        "pct": 4.25
+      },
+      {
+        "family": "eq-two-step.core",
+        "drawn": 899,
+        "rejected": 19,
+        "pct": 2.11
+      },
+      {
+        "family": "simplify-expression.core",
+        "drawn": 893,
+        "rejected": 10,
+        "pct": 1.12
+      }
+    ]
+  }
+}

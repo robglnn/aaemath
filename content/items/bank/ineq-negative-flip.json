@@ -16,7 +16,7 @@
   "flip-but-sign-lost",
   "flip-on-subtracting-a-negative"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "ineq-negative-flip.divide/construct/vtqjik",
@@ -2560,6 +2560,512 @@
     "a": 7,
     "b": 6,
     "sol": "-6/7"
+   }
+  },
+  {
+   "id": "ineq-negative-flip.divide/construct/1sbpve7",
+   "kpId": "ineq-negative-flip",
+   "family": "ineq-negative-flip.divide",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "-2x < 4",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "a": 2,
+     "b": 4,
+     "mark": "-2"
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x > -2",
+    "tex": "x > -2"
+   },
+   "distractors": [
+    {
+     "misconception": "no-flip-on-negative-divide",
+     "response": "x < -2",
+     "tex": "x < -2",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "flip-but-sign-lost",
+     "response": "x > 2",
+     "tex": "x > 2",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-negative-flip.divide",
+     "params": {
+      "a": 2,
+      "b": 4,
+      "mark": "-2"
+     },
+     "text": "Sharing by an inverted count carries the rail over the Sill."
+    },
+    {
+     "key": "hint.state.ineq-negative-flip.divide",
+     "params": {
+      "a": 2,
+      "b": 4,
+      "mark": "-2"
+     },
+     "text": "The mark lands at -2, and the detent is no longer where it started."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-negative-flip.2",
+    "params": {},
+    "text": "You feel it go over through the handle a moment before you see it."
+   },
+   "standards": [
+    "CCSS.HSA-REI.B.3",
+    "CCSS.7.EE.B.4b",
+    "TEKS.A.5B",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 2,
+    "b": 4,
+    "sol": "-2"
+   }
+  },
+  {
+   "id": "ineq-negative-flip.subneg/construct/1s70nwq",
+   "kpId": "ineq-negative-flip",
+   "family": "ineq-negative-flip.subneg",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x - \\left(-8\\right) > 15",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 8,
+     "q": 15,
+     "mark": 7
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x > 7",
+    "tex": "x > 7"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-on-subtracting-a-negative",
+     "response": "x < 7",
+     "tex": "x < 7",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-negative-flip.subneg",
+     "params": {
+      "p": 8,
+      "q": 15,
+      "mark": 7
+     },
+     "text": "Taking away a cold value is not a count. The rail stays as it is."
+    },
+    {
+     "key": "hint.state.ineq-negative-flip.subneg",
+     "params": {
+      "p": 8,
+      "q": 15,
+      "mark": 7
+     },
+     "text": "Both pans came down by 8, and the mark is at 7."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-negative-flip.1",
+    "params": {},
+    "text": "Carry the rail over the Sill inverted and the detent changes sides."
+   },
+   "standards": [
+    "CCSS.HSA-REI.B.3",
+    "CCSS.7.EE.B.4b",
+    "TEKS.A.5B",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "p": 8,
+    "q": 15
+   }
+  },
+  {
+   "id": "ineq-negative-flip.divide/repair/d5dkds",
+   "kpId": "ineq-negative-flip",
+   "family": "ineq-negative-flip.divide",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "-2x < -6",
+   "given": [],
+   "working": [
+    "-2x < -6",
+    "x < 3"
+   ],
+   "brokenBy": "no-flip-on-negative-divide",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": -6,
+     "mark": "3",
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x > 3",
+    "tex": "x > 3",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "no-flip-on-negative-divide",
+     "response": "2|x < 3",
+     "tex": "x < 3",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "flip-but-sign-lost",
+     "response": "2|x > -3",
+     "tex": "x > -3",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": -6,
+      "mark": "3",
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": -6,
+      "mark": "3",
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-negative-flip.1",
+    "params": {},
+    "text": "Carry the rail over the Sill inverted and the detent changes sides."
+   },
+   "standards": [
+    "CCSS.HSA-REI.B.3",
+    "CCSS.7.EE.B.4b",
+    "TEKS.A.5B",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 2,
+    "b": -6,
+    "sol": "3"
+   }
+  },
+  {
+   "id": "ineq-negative-flip.subneg/repair/1d7p4rg",
+   "kpId": "ineq-negative-flip",
+   "family": "ineq-negative-flip.subneg",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x - \\left(-9\\right) > 7",
+   "given": [],
+   "working": [
+    "x - \\left(-9\\right) > 7",
+    "x < -2"
+   ],
+   "brokenBy": "flip-on-subtracting-a-negative",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 9,
+     "q": 7,
+     "mark": -2,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x > -2",
+    "tex": "x > -2",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-on-subtracting-a-negative",
+     "response": "2|x < -2",
+     "tex": "x < -2",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 9,
+      "q": 7,
+      "mark": -2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 9,
+      "q": 7,
+      "mark": -2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-negative-flip.1",
+    "params": {},
+    "text": "Carry the rail over the Sill inverted and the detent changes sides."
+   },
+   "standards": [
+    "CCSS.HSA-REI.B.3",
+    "CCSS.7.EE.B.4b",
+    "TEKS.A.5B",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "p": 9,
+    "q": 7
+   }
+  },
+  {
+   "id": "ineq-negative-flip.divide/generate/1wp64lf",
+   "kpId": "ineq-negative-flip",
+   "family": "ineq-negative-flip.divide",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "-4x < -8",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.markAdmitsTurned",
+    "params": {
+     "a": 4,
+     "b": -8,
+     "mark": "2",
+     "target": "x > 2",
+     "unknown": "x"
+    },
+    "text": "Set a rail with an inverted count whose admitted stretch is x > 2."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-4x < -8",
+    "tex": "-4x < -8",
+    "witness": true
+   },
+   "check": {
+    "kind": "markAdmits",
+    "stretch": "x > 2",
+    "unknown": "x",
+    "needs": [
+     "negativeCount"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.markAdmits.2",
+     "params": {
+      "a": 4,
+      "b": -8,
+      "mark": "2",
+      "target": "x > 2",
+      "unknown": "x"
+     },
+     "text": "Set the mark, then feel which side the detent is on."
+    },
+    {
+     "key": "hint.gen.markAdmits.3",
+     "params": {
+      "a": 4,
+      "b": -8,
+      "mark": "2",
+      "target": "x > 2",
+      "unknown": "x"
+     },
+     "text": "The arch has to admit x > 2 and refuse everything else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-negative-flip.2",
+    "params": {},
+    "text": "You feel it go over through the handle a moment before you see it."
+   },
+   "standards": [
+    "CCSS.HSA-REI.B.3",
+    "CCSS.7.EE.B.4b",
+    "TEKS.A.5B",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 4,
+    "b": -8,
+    "sol": "2"
+   }
+  },
+  {
+   "id": "ineq-negative-flip.divide/construct/19oq4vo",
+   "kpId": "ineq-negative-flip",
+   "family": "ineq-negative-flip.divide",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "-8x < -1",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "a": 8,
+     "b": -1,
+     "mark": "1/8"
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x > 1/8",
+    "tex": "x > \\frac{1}{8}"
+   },
+   "distractors": [
+    {
+     "misconception": "no-flip-on-negative-divide",
+     "response": "x < 1/8",
+     "tex": "x < \\frac{1}{8}",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "flip-but-sign-lost",
+     "response": "x > -1/8",
+     "tex": "x > -\\frac{1}{8}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-negative-flip.divide",
+     "params": {
+      "a": 8,
+      "b": -1,
+      "mark": "1/8"
+     },
+     "text": "Sharing by an inverted count carries the rail over the Sill."
+    },
+    {
+     "key": "hint.state.ineq-negative-flip.divide",
+     "params": {
+      "a": 8,
+      "b": -1,
+      "mark": "1/8"
+     },
+     "text": "The mark lands at 1/8, and the detent is no longer where it started."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-negative-flip.1",
+    "params": {},
+    "text": "Carry the rail over the Sill inverted and the detent changes sides."
+   },
+   "standards": [
+    "CCSS.HSA-REI.B.3",
+    "CCSS.7.EE.B.4b",
+    "TEKS.A.5B",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "params": {
+    "a": 8,
+    "b": -1,
+    "sol": "1/8"
    }
   }
  ]

@@ -86,30 +86,34 @@ function pad(aX, aZ, x0, x1, z0, z1, f) {
  * which is why the middle one runs *uphill*, from the east lip back up to the Standing House
  * claim. Nothing in the game explains that and nothing is allowed to.
  */
+// Widths are large on purpose. A carry narrower than about four terrain cells cannot be *cut* by
+// a six-metre heightfield — the trough averages away and the river ends up buried in the stone it
+// is supposed to have carved. These are also the widest bright shapes in the frame, and in the
+// reference the river is what walks the eye from the foreground to the horizon.
 export const CARRIES = [
   {
     id: "carry.low",
-    width: 16,
-    depth: 4.6,
-    pts: [[-306, -92], [-232, -76], [-150, -62], [-64, -46], [24, -30], [104, -14], [150, -6]],
+    width: 30,
+    depth: 3.4,
+    pts: [[-306, -92], [-232, -78], [-150, -66], [-64, -50], [24, -34], [104, -18], [150, -8]],
   },
   {
     id: "carry.middle",
-    width: 14,
-    depth: 3.8,
+    width: 26,
+    depth: 3.2,
     uphill: true,
     pts: [[172, 128], [104, 114], [36, 98], [-30, 78], [-92, 56], [-132, 32], [-150, 16]],
   },
   {
     id: "carry.high",
-    width: 13,
-    depth: 4.0,
+    width: 24,
+    depth: 3.2,
     pts: [[-262, 112], [-186, 136], [-92, 146], [4, 138], [90, 124], [148, 108]],
   },
   {
     id: "carry.field",
-    width: 12,
-    depth: 3.4,
+    width: 22,
+    depth: 3.0,
     pts: [[206, 54], [242, 82], [278, 114], [316, 150]],
   },
 ];
@@ -209,12 +213,12 @@ export const LEAF = {
     // --- the carries: troughs, protected so noise cannot break a river ----------------
     for (const c of CARRIES) {
       const { d } = distToPolyline(aX, aZ, c.pts);
-      if (d > c.width * 2.4) continue;
-      const w = 1 - smoothstep(c.width * 0.65, c.width * 2.1, d);
+      if (d > c.width * 2.0) continue;
+      const w = 1 - smoothstep(c.width * 0.5, c.width * 1.8, d);
       const floor = baseY(aX) - c.depth;
-      h = lerp(h, Math.min(h, floor), w * 0.95);
-      protect = Math.max(protect, w * 0.9);
-      if (w > 0.25) mat = 2;
+      h = lerp(h, Math.min(h, floor), w);
+      protect = Math.max(protect, w);
+      if (w > 0.2) mat = 2;
       thick = lerp(thick, 0.72, w);
     }
 
@@ -416,12 +420,12 @@ export class Level01 {
     // so the faces these turn toward the camera are all shadow side, which is the contrast the
     // reference builds its whole foreground out of.
     const hero = [
-      [-196, -30, 14, 58, 71],
-      [-214, -50, 9.5, 38, 72],
-      [-176, -56, 8, 30, 73],
-      [-228, -74, 11, 34, 74],
-      [-190, 44, 6.5, 20, 75],
-      [-168, 62, 5, 15, 76],
+      [-190, -26, 16, 64, 71],
+      [-208, -46, 10, 40, 72],
+      [-166, -50, 8.5, 30, 73],
+      [-226, -70, 11, 34, 74],
+      [-186, 42, 7, 22, 75],
+      [-160, 60, 5, 15, 76],
     ];
     for (const [aX, aZ, r, h, s] of hero) {
       const [x, z] = W(aX, aZ);
@@ -468,7 +472,7 @@ export class Level01 {
     // shards read as confetti, and the reference's ground is big confident shapes with talus
     // gathered where rock has actually come off a face.
     let placed = 0;
-    for (let i = 0; i < 2400 && placed < 120; i++) {
+    for (let i = 0; i < 3600 && placed < 62; i++) {
       const aX = -330 + hash2i(i, 1, 5501) * 660;
       const aZ = -226 + hash2i(i, 2, 5502) * 452;
       const [x, z] = W(aX, aZ);
@@ -476,7 +480,10 @@ export class Level01 {
       if (!Number.isFinite(y)) continue;
       const n = this.terrain.normalAt(x, z);
       const slope = 1 - (n ? n.y : 1);
-      if (hash2i(i, 3, 5503) > 0.05 + slope * 2.2) continue;
+      // Talus gathers under a face and nowhere else. Sprinkling rock evenly over open ground is
+      // the fastest way to turn five hundred metres of readable recession into a gravel pit.
+      if (slope < 0.09) continue;
+      if (hash2i(i, 3, 5503) > slope * 1.6) continue;
       const r = 1.8 + hash2i(i, 4, 5504) * (2.6 + slope * 9);
       rock.push(
         ...shard({
@@ -524,9 +531,11 @@ export class Level01 {
       ribbonTris(
         tris,
         c.pts,
-        (t) => c.width * (0.6 + 0.16 * Math.sin(t * 9.1) + 0.09 * Math.sin(t * 21)),
-        (aX) => baseY(aX) - c.depth + 1.2,
-        6
+        (t) => c.width * (0.72 + 0.13 * Math.sin(t * 9.1) + 0.07 * Math.sin(t * 21)),
+        // The surface sits high in its channel — a carry is syrup-thick and brimming, and a
+        // river sunk five metres into a slot is invisible from anywhere but directly above it.
+        (aX) => baseY(aX) - 1.5,
+        7
       );
     }
     const core = sceneRGB(PAL.carryCore);
@@ -640,8 +649,11 @@ export class Level01 {
       const big = hash2i(i, 3, 7003);
       const count = 2 + Math.floor(hash2i(i, 4, 7004) * 4);
       for (let k = 0; k < count; k++) {
-        const r = 0.6 + hash2i(i, 10 + k, 7005) * (1.1 + big * 2.4);
-        const h = r * (3.4 + hash2i(i, 20 + k, 7006) * 4.5);
+        // Person-sized, not building-sized. A certainty is the most beautiful object in the
+        // world and the only saturated accent in the palette, and thirty-metre ones turn the
+        // low end of the leaf into a fence.
+        const r = 0.32 + hash2i(i, 10 + k, 7005) * (0.5 + big * 0.85);
+        const h = r * (2.6 + hash2i(i, 20 + k, 7006) * 3.0);
         const [cx, cz] = W(aX + (hash2i(i, 30 + k, 7007) - 0.5) * 6, aZ + (hash2i(i, 40 + k, 7008) - 0.5) * 6);
         tris.push(
           ...shard({
@@ -656,7 +668,7 @@ export class Level01 {
     }
     // A few certainties standing on the old claim lines up-leaf, so the field is something the
     // horizon has been promising for four hundred metres rather than a surprise.
-    for (const [aX, aZ, r, h] of [[-38, -20, 2.2, 10], [30, 10, 1.8, 8], [-116, 26, 1.6, 6.5], [98, -46, 2.4, 11], [-186, 66, 1.5, 6]]) {
+    for (const [aX, aZ, r, h] of [[-38, -20, 1.4, 6], [30, 10, 1.1, 4.6], [-116, 26, 1.0, 4], [98, -46, 1.5, 6.4], [-186, 66, 0.9, 3.6]]) {
       const [x, z] = W(aX, aZ);
       tris.push(...shard({ x, y: this.groundA(aX, aZ) - 0.8, z, radius: r, height: h, sides: 5, taper: 0.15, lean: [0.6, -0.4], seed: 5100 + Math.abs(aX), jag: 0.12 }));
     }
@@ -705,24 +717,27 @@ export class Level01 {
     const tris = [];
     const s = this.nearScale;
     // Distance, bearing off down-leaf, radius, thickness, height above the leaf's own plane.
+    // Distance, bearing, radius, thickness, height, id, keel sag. The sag column is what stops
+    // eight floating leaves reading as eight identical flying saucers: a thin plate, a blunt
+    // wedge and a deep keel are three different silhouettes at thumbnail size.
     const leaves = [
-      [430, -0.34, 62, 46, 40, "leaf.nine.also"],
-      [560, 0.24, 44, 34, 96, "leaf.small.a"],
-      [640, -0.74, 92, 70, -20, "leaf.small.b"],
-      [720, 0.66, 58, 44, 140, "leaf.small.c"],
-      [830, -0.12, 130, 96, 74, "leaf.forty"],
-      [880, 0.98, 76, 58, 4, "leaf.small.d"],
-      [960, -0.55, 104, 82, 162, "leaf.small.e"],
-      [1020, 0.38, 88, 64, 36, "leaf.small.f"],
+      [430, -0.34, 62, 46, 40, "leaf.nine.also", 1.0],
+      [560, 0.24, 44, 26, 96, "leaf.small.a", 0.35],
+      [640, -0.74, 92, 88, -20, "leaf.small.b", 1.25],
+      [720, 0.66, 58, 40, 140, "leaf.small.c", 0.6],
+      [830, -0.12, 130, 84, 74, "leaf.forty", 1.15],
+      [880, 0.98, 76, 40, 4, "leaf.small.d", 0.3],
+      [960, -0.55, 104, 96, 162, "leaf.small.e", 1.3],
+      [1020, 0.38, 88, 52, 36, "leaf.small.f", 0.7],
     ];
     this.nearLeaves = [];
-    leaves.forEach(([dist, bearing, radius, thick, height, id], i) => {
+    leaves.forEach(([dist, bearing, radius, thick, height, id, sag], i) => {
       const d = dist * s;
       const aX = 60 + Math.cos(bearing) * d;
       const aZ = Math.sin(bearing) * d * 1.1;
       const [x, z] = W(aX, aZ);
       const y = baseY(aX) + height * s;
-      this._leafSolid(tris, { x, y, z, radius: radius * s, thick: thick * s, sides: 8 + (i % 3), seed: 400 + i });
+      this._leafSolid(tris, { x, y, z, radius: radius * s, thick: thick * s, sides: 7 + (i % 4), seed: 400 + i, sag });
       this.nearLeaves.push({ id, x: Math.round(x), y: Math.round(y), z: Math.round(z), radius: Math.round(radius * s) });
       // Two of them carry a certainty crest, so the archipelago is not eight grey pebbles.
       if (i % 3 === 0) {

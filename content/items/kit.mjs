@@ -426,8 +426,15 @@ class Parser {
       // `x^{2}` normalises to `x^(2)`, and a learner may type either — accept both.
       let expTok = this.next();
       let bracketed = false;
+      let sign = 1;
       if (expTok && expTok.t === "(") {
         bracketed = true;
+        expTok = this.next();
+      }
+      // `x^-1` is how a division by a letter comes back out of canonical form, and a learner
+      // may well type it. Accepted; the item bank never prints it.
+      if (expTok && expTok.t === "op" && (expTok.v === "-" || expTok.v === "+")) {
+        sign = expTok.v === "-" ? -1 : 1;
         expTok = this.next();
       }
       if (!expTok || expTok.t !== "num") throw new Error("exponent must be a whole number");
@@ -436,7 +443,7 @@ class Parser {
       if (!Number.isInteger(e) || e < 0 || e > 6) throw new Error("exponent out of range");
       let out = polyConst(R1);
       for (let i = 0; i < e; i++) out = polyMul(out, base);
-      base = out;
+      base = sign < 0 ? polyDiv(polyConst(R1), out) : out;
     }
     return base;
   }
@@ -473,13 +480,11 @@ export function parseStatement(src) {
     return { kind: "expr", poly: parseExprTokens(toks) };
   }
   const rel = toks[relIdx].v;
-  const left = parseExprTokens(toks.slice(0, relIdx));
-  const right = parseExprTokens(toks.slice(relIdx + 1));
-  if (toks.slice(relIdx + 1).some((t) => t.t === "rel")) {
-    // A chained equality (a + b = c = d) is itself a diagnostic, never a valid statement.
-    return { kind: "chain", rel, left, right };
-  }
-  return { kind: "rel", rel, left, right };
+  const rest = toks.slice(relIdx + 1);
+  // A chained equality (a + b = c = d) is itself a diagnostic, never a valid statement — and it
+  // has to be recognised BEFORE the far pan is parsed, because the far pan does not parse.
+  if (rest.some((t) => t.t === "rel")) return { kind: "chain", rel };
+  return { kind: "rel", rel, left: parseExprTokens(toks.slice(0, relIdx)), right: parseExprTokens(rest) };
 }
 
 function parseExprTokens(toks) {
@@ -568,10 +573,25 @@ export function canonInequality(src, unknown = "x") {
   return `${unknown} ${rel} ${rstr(value)}`;
 }
 
+/**
+ * Fold the TeX a learner may copy straight out of the world into plain separators.
+ *
+ * Inside a LIST a comma is always a separator, never a decimal mark — `4,7,-2` is three
+ * charges, not two. That is a deliberate, documented asymmetry with single-value answers,
+ * where `4,5` IS four-and-a-half (the ES and PL convention): a list and a decimal cannot both
+ * own the comma, and guessing which one a learner meant is how a right answer gets lost.
+ * Non-integer values inside a list are written as fractions or with a point.
+ */
+function listSource(src) {
+  return String(src)
+    .replace(/\\;|\\,|\\quad|\\qquad|\\!/g, " ")
+    .replace(/\\mid/g, "|");
+}
+
 /** Canonical form of a pair response: "x=4; y=4" in any order and spelling. */
 export function canonPair(src) {
-  const parts = String(src)
-    .split(/[;\n]|(?:,(?![0-9]))/)
+  const parts = listSource(src)
+    .split(/[;\n,]/)
     .map((s) => s.trim())
     .filter(Boolean);
   if (parts.length < 2) throw new Error("two sockets, two values");
@@ -592,14 +612,14 @@ export function canonPair(src) {
  * "3x, 5x | 2y | 7" == "7 | 5x, 3x | 2y".
  */
 export function canonPartition(src) {
-  const groups = String(src)
+  const groups = listSource(src)
     .split(/[;|\n]/)
     .map((g) => g.trim())
     .filter(Boolean);
   if (!groups.length) throw new Error("empty partition");
   const canon = groups.map((g) => {
     const terms = g
-      .split(/,(?![0-9])/)
+      .split(",")
       .map((t) => t.trim())
       .filter(Boolean)
       .map((t) => canonExpr(t));

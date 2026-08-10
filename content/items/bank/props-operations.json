@@ -16,7 +16,7 @@
   "regroup-across-subtraction",
   "identity-swapped"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "props-operations.commute/construct/1n3wlum",
@@ -170,19 +170,19 @@
    }
   },
   {
-   "id": "props-operations.identity/construct/12r0p65",
+   "id": "props-operations.identity/construct/12qvc2e",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "construct",
    "difficulty": 1,
    "tier": "easy",
    "objectClass": "Bearer",
-   "stem": "5x \\cdot 0 + x",
+   "stem": "6x \\cdot 0 + x",
    "given": [],
    "ask": {
     "key": "ask.load",
     "params": {
-     "a": 5
+     "a": 6
     },
     "text": "Write the load."
    },
@@ -195,8 +195,8 @@
    "distractors": [
     {
      "misconception": "identity-swapped",
-     "response": "6*x",
-     "tex": "5x + x",
+     "response": "7*x",
+     "tex": "6x + x",
      "failKey": "fail.slip"
     }
    ],
@@ -209,22 +209,22 @@
     {
      "key": "hint.move.props-operations.identity",
      "params": {
-      "a": 5
+      "a": 6
      },
      "text": "A count of nothing carries nothing, however big the term looks."
     },
     {
      "key": "hint.state.props-operations.identity",
      "params": {
-      "a": 5
+      "a": 6
      },
-     "text": "The 5 term is holding zero of itself. One socket is still standing."
+     "text": "The 6 term is holding zero of itself. One socket is still standing."
     }
    ],
    "worldFraming": {
-    "key": "frame.props-operations.2",
+    "key": "frame.props-operations.1",
     "params": {},
-    "text": "You learn which is which with your hands, standing on it."
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
    },
    "standards": [
     "CCSS.6.EE.A.3",
@@ -234,7 +234,7 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 5
+    "a": 6
    }
   },
   {
@@ -498,19 +498,183 @@
    }
   },
   {
-   "id": "props-operations.identity/generate/11mh5sn",
+   "id": "props-operations.commute/generate/1tmra5m",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "4 - 2x",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.gathersTo",
+    "params": {
+     "a": 4,
+     "b": 2,
+     "target": "-2*x + 4",
+     "unknown": "x"
+    },
+    "text": "Stack a load that gathers to -2*x + 4."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-2x + 4",
+    "tex": "-2x + 4",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "-2*x + 4",
+    "unknown": "x",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 4,
+      "b": 2,
+      "target": "-2*x + 4",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 4,
+      "b": 2,
+      "target": "-2*x + 4",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read -2*x + 4. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 2
+   }
+  },
+  {
+   "id": "props-operations.regroup/generate/3vhbz3",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "23 - \\left(3 + 4\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.loadTo",
+    "params": {
+     "a": 23,
+     "b": 3,
+     "c": 4,
+     "inner": 7,
+     "target": 16
+    },
+    "text": "Stack a load out of a product and a sum that settles to 16."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "23 - \\left(3 + 4\\right)",
+    "tex": "23 - \\left(3 + 4\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": 16,
+    "needs": [
+     "bundle",
+     "sum"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": 23,
+      "b": 3,
+      "c": 4,
+      "inner": 7,
+      "target": 16
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": 23,
+      "b": 3,
+      "c": 4,
+      "inner": 7,
+      "target": 16
+     },
+     "text": "Whatever you stack, it has to settle to 16 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 23,
+    "b": 3,
+    "c": 4
+   }
+  },
+  {
+   "id": "props-operations.identity/generate/11n5fw8",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "generate",
    "difficulty": 1,
    "tier": "easy",
    "objectClass": "Bearer",
-   "stem": "3x \\cdot 0 + x",
+   "stem": "4x \\cdot 0 + x",
    "given": [],
    "ask": {
     "key": "ask.gen.sealCan",
     "params": {
-     "a": 3,
+     "a": 4,
      "target": "1*x",
      "unknown": "x"
     },
@@ -519,8 +683,8 @@
    "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "x + 3x \\cdot 0",
-    "tex": "x + 3x \\cdot 0",
+    "canonical": "x + 4x \\cdot 0",
+    "tex": "x + 4x \\cdot 0",
     "witness": true
    },
    "check": {
@@ -541,7 +705,7 @@
     {
      "key": "hint.gen.loadGathersTo.2",
      "params": {
-      "a": 3,
+      "a": 4,
       "target": "1*x",
       "unknown": "x"
      },
@@ -550,7 +714,7 @@
     {
      "key": "hint.gen.loadGathersTo.3",
      "params": {
-      "a": 3,
+      "a": 4,
       "target": "1*x",
       "unknown": "x"
      },
@@ -558,9 +722,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.props-operations.2",
+    "key": "frame.props-operations.1",
     "params": {},
-    "text": "You learn which is which with your hands, standing on it."
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
    },
    "standards": [
     "CCSS.6.EE.A.3",
@@ -570,7 +734,7 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 3
+    "a": 4
    }
   },
   {
@@ -725,19 +889,19 @@
    }
   },
   {
-   "id": "props-operations.identity/construct/12qvc2e",
+   "id": "props-operations.identity/construct/fxt6wx",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "construct",
    "difficulty": 2,
    "tier": "core",
    "objectClass": "Bearer",
-   "stem": "6x \\cdot 0 + x",
+   "stem": "14x \\cdot 0 + x",
    "given": [],
    "ask": {
     "key": "ask.load",
     "params": {
-     "a": 6
+     "a": 14
     },
     "text": "Write the load."
    },
@@ -750,8 +914,8 @@
    "distractors": [
     {
      "misconception": "identity-swapped",
-     "response": "7*x",
-     "tex": "6x + x",
+     "response": "15*x",
+     "tex": "14x + x",
      "failKey": "fail.slip"
     }
    ],
@@ -764,22 +928,22 @@
     {
      "key": "hint.move.props-operations.identity",
      "params": {
-      "a": 6
+      "a": 14
      },
      "text": "A count of nothing carries nothing, however big the term looks."
     },
     {
      "key": "hint.state.props-operations.identity",
      "params": {
-      "a": 6
+      "a": 14
      },
-     "text": "The 6 term is holding zero of itself. One socket is still standing."
+     "text": "The 14 term is holding zero of itself. One socket is still standing."
     }
    ],
    "worldFraming": {
-    "key": "frame.props-operations.1",
+    "key": "frame.props-operations.2",
     "params": {},
-    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+    "text": "You learn which is which with your hands, standing on it."
    },
    "standards": [
     "CCSS.6.EE.A.3",
@@ -789,7 +953,7 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 6
+    "a": 14
    }
   },
   {
@@ -971,25 +1135,25 @@
    }
   },
   {
-   "id": "props-operations.identity/repair/12qvc2e",
+   "id": "props-operations.identity/repair/fxt6wx",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "repair",
    "difficulty": 2,
    "tier": "core",
    "objectClass": "Bearer",
-   "stem": "6x \\cdot 0 + x",
+   "stem": "14x \\cdot 0 + x",
    "given": [],
    "working": [
-    "6x \\cdot 0 + x",
-    "6x + x",
-    "7x"
+    "14x \\cdot 0 + x",
+    "14x + x",
+    "15x"
    ],
    "brokenBy": "identity-swapped",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "a": 6,
+     "a": 14,
      "lines": 3,
      "line": 2
     },
@@ -1006,8 +1170,8 @@
    "distractors": [
     {
      "misconception": "identity-swapped",
-     "response": "2|7*x",
-     "tex": "6x + x",
+     "response": "2|15*x",
+     "tex": "14x + x",
      "failKey": "fail.slip"
     }
    ],
@@ -1020,7 +1184,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "a": 6,
+      "a": 14,
       "line": 2,
       "lines": 3
      },
@@ -1029,7 +1193,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "a": 6,
+      "a": 14,
       "line": 2,
       "lines": 3
      },
@@ -1037,9 +1201,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.props-operations.1",
+    "key": "frame.props-operations.2",
     "params": {},
-    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+    "text": "You learn which is which with your hands, standing on it."
    },
    "standards": [
     "CCSS.6.EE.A.3",
@@ -1049,23 +1213,187 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 6
+    "a": 14
    }
   },
   {
-   "id": "props-operations.identity/generate/12qvc2e",
+   "id": "props-operations.commute/generate/1tn71nh",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "4 - 5x",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.gathersTo",
+    "params": {
+     "a": 4,
+     "b": 5,
+     "target": "-5*x + 4",
+     "unknown": "x"
+    },
+    "text": "Stack a load that gathers to -5*x + 4."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-5x + 4",
+    "tex": "-5x + 4",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "-5*x + 4",
+    "unknown": "x",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 4,
+      "b": 5,
+      "target": "-5*x + 4",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 4,
+      "b": 5,
+      "target": "-5*x + 4",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read -5*x + 4. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 5
+   }
+  },
+  {
+   "id": "props-operations.regroup/generate/19qz031",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "20 - \\left(9 + 7\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.loadTo",
+    "params": {
+     "a": 20,
+     "b": 9,
+     "c": 7,
+     "inner": 16,
+     "target": 4
+    },
+    "text": "Stack a load out of a product and a sum that settles to 4."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "20 - \\left(9 + 7\\right)",
+    "tex": "20 - \\left(9 + 7\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": 4,
+    "needs": [
+     "bundle",
+     "sum"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": 20,
+      "b": 9,
+      "c": 7,
+      "inner": 16,
+      "target": 4
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": 20,
+      "b": 9,
+      "c": 7,
+      "inner": 16,
+      "target": 4
+     },
+     "text": "Whatever you stack, it has to settle to 4 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 20,
+    "b": 9,
+    "c": 7
+   }
+  },
+  {
+   "id": "props-operations.identity/generate/fxt6wx",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "generate",
    "difficulty": 2,
    "tier": "core",
    "objectClass": "Bearer",
-   "stem": "6x \\cdot 0 + x",
+   "stem": "14x \\cdot 0 + x",
    "given": [],
    "ask": {
     "key": "ask.gen.sealCan",
     "params": {
-     "a": 6,
+     "a": 14,
      "target": "1*x",
      "unknown": "x"
     },
@@ -1074,8 +1402,8 @@
    "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "x + 6x \\cdot 0",
-    "tex": "x + 6x \\cdot 0",
+    "canonical": "x + 14x \\cdot 0",
+    "tex": "x + 14x \\cdot 0",
     "witness": true
    },
    "check": {
@@ -1096,7 +1424,7 @@
     {
      "key": "hint.gen.loadGathersTo.2",
      "params": {
-      "a": 6,
+      "a": 14,
       "target": "1*x",
       "unknown": "x"
      },
@@ -1105,7 +1433,7 @@
     {
      "key": "hint.gen.loadGathersTo.3",
      "params": {
-      "a": 6,
+      "a": 14,
       "target": "1*x",
       "unknown": "x"
      },
@@ -1113,9 +1441,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.props-operations.1",
+    "key": "frame.props-operations.2",
     "params": {},
-    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+    "text": "You learn which is which with your hands, standing on it."
    },
    "standards": [
     "CCSS.6.EE.A.3",
@@ -1125,7 +1453,7 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 6
+    "a": 14
    }
   },
   {
@@ -1280,19 +1608,19 @@
    }
   },
   {
-   "id": "props-operations.identity/construct/11ni1w4",
+   "id": "props-operations.identity/construct/ev46u8",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "construct",
    "difficulty": 3,
    "tier": "stretch",
    "objectClass": "Bearer",
-   "stem": "8x \\cdot 0 + x",
+   "stem": "19x \\cdot 0 + x",
    "given": [],
    "ask": {
     "key": "ask.load",
     "params": {
-     "a": 8
+     "a": 19
     },
     "text": "Write the load."
    },
@@ -1305,8 +1633,8 @@
    "distractors": [
     {
      "misconception": "identity-swapped",
-     "response": "9*x",
-     "tex": "8x + x",
+     "response": "20*x",
+     "tex": "19x + x",
      "failKey": "fail.slip"
     }
    ],
@@ -1319,16 +1647,16 @@
     {
      "key": "hint.move.props-operations.identity",
      "params": {
-      "a": 8
+      "a": 19
      },
      "text": "A count of nothing carries nothing, however big the term looks."
     },
     {
      "key": "hint.state.props-operations.identity",
      "params": {
-      "a": 8
+      "a": 19
      },
-     "text": "The 8 term is holding zero of itself. One socket is still standing."
+     "text": "The 19 term is holding zero of itself. One socket is still standing."
     }
    ],
    "worldFraming": {
@@ -1344,7 +1672,7 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 8
+    "a": 19
    }
   },
   {
@@ -1526,25 +1854,25 @@
    }
   },
   {
-   "id": "props-operations.identity/repair/11ni1w4",
+   "id": "props-operations.identity/repair/1kuew7u",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "repair",
    "difficulty": 3,
    "tier": "stretch",
    "objectClass": "Bearer",
-   "stem": "8x \\cdot 0 + x",
+   "stem": "22x \\cdot 0 + x",
    "given": [],
    "working": [
-    "8x \\cdot 0 + x",
-    "8x + x",
-    "9x"
+    "22x \\cdot 0 + x",
+    "22x + x",
+    "23x"
    ],
    "brokenBy": "identity-swapped",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "a": 8,
+     "a": 22,
      "lines": 3,
      "line": 2
     },
@@ -1561,8 +1889,8 @@
    "distractors": [
     {
      "misconception": "identity-swapped",
-     "response": "2|9*x",
-     "tex": "8x + x",
+     "response": "2|23*x",
+     "tex": "22x + x",
      "failKey": "fail.slip"
     }
    ],
@@ -1575,7 +1903,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "a": 8,
+      "a": 22,
       "line": 2,
       "lines": 3
      },
@@ -1584,7 +1912,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "a": 8,
+      "a": 22,
       "line": 2,
       "lines": 3
      },
@@ -1604,23 +1932,187 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 8
+    "a": 22
    }
   },
   {
-   "id": "props-operations.identity/generate/11n5fw8",
+   "id": "props-operations.commute/generate/1tnlv95",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "4 - 9x",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.gathersTo",
+    "params": {
+     "a": 4,
+     "b": 9,
+     "target": "-9*x + 4",
+     "unknown": "x"
+    },
+    "text": "Stack a load that gathers to -9*x + 4."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-9x + 4",
+    "tex": "-9x + 4",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "-9*x + 4",
+    "unknown": "x",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "target": "-9*x + 4",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "target": "-9*x + 4",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read -9*x + 4. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 9
+   }
+  },
+  {
+   "id": "props-operations.regroup/generate/av9lw9",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "35 - \\left(3 + 7\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.loadTo",
+    "params": {
+     "a": 35,
+     "b": 3,
+     "c": 7,
+     "inner": 10,
+     "target": 25
+    },
+    "text": "Stack a load out of a product and a sum that settles to 25."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "35 - \\left(3 + 7\\right)",
+    "tex": "35 - \\left(3 + 7\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": 25,
+    "needs": [
+     "bundle",
+     "sum"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": 35,
+      "b": 3,
+      "c": 7,
+      "inner": 10,
+      "target": 25
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": 35,
+      "b": 3,
+      "c": 7,
+      "inner": 10,
+      "target": 25
+     },
+     "text": "Whatever you stack, it has to settle to 25 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 35,
+    "b": 3,
+    "c": 7
+   }
+  },
+  {
+   "id": "props-operations.identity/generate/12rdb61",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "generate",
    "difficulty": 3,
    "tier": "stretch",
    "objectClass": "Bearer",
-   "stem": "4x \\cdot 0 + x",
+   "stem": "9x \\cdot 0 + x",
    "given": [],
    "ask": {
     "key": "ask.gen.sealCan",
     "params": {
-     "a": 4,
+     "a": 9,
      "target": "1*x",
      "unknown": "x"
     },
@@ -1629,8 +2121,8 @@
    "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "x + 4x \\cdot 0",
-    "tex": "x + 4x \\cdot 0",
+    "canonical": "x + 9x \\cdot 0",
+    "tex": "x + 9x \\cdot 0",
     "witness": true
    },
    "check": {
@@ -1651,7 +2143,7 @@
     {
      "key": "hint.gen.loadGathersTo.2",
      "params": {
-      "a": 4,
+      "a": 9,
       "target": "1*x",
       "unknown": "x"
      },
@@ -1660,7 +2152,7 @@
     {
      "key": "hint.gen.loadGathersTo.3",
      "params": {
-      "a": 4,
+      "a": 9,
       "target": "1*x",
       "unknown": "x"
      },
@@ -1668,9 +2160,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.props-operations.1",
+    "key": "frame.props-operations.2",
     "params": {},
-    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+    "text": "You learn which is which with your hands, standing on it."
    },
    "standards": [
     "CCSS.6.EE.A.3",
@@ -1680,7 +2172,7 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 4
+    "a": 9
    }
   },
   {
@@ -1835,19 +2327,19 @@
    }
   },
   {
-   "id": "props-operations.identity/construct/12rdb61",
+   "id": "props-operations.identity/construct/eu134z",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "construct",
    "difficulty": 1,
    "tier": "easy",
    "objectClass": "Bearer",
-   "stem": "9x \\cdot 0 + x",
+   "stem": "12x \\cdot 0 + x",
    "given": [],
    "ask": {
     "key": "ask.load",
     "params": {
-     "a": 9
+     "a": 12
     },
     "text": "Write the load."
    },
@@ -1860,8 +2352,8 @@
    "distractors": [
     {
      "misconception": "identity-swapped",
-     "response": "10*x",
-     "tex": "9x + x",
+     "response": "13*x",
+     "tex": "12x + x",
      "failKey": "fail.slip"
     }
    ],
@@ -1874,16 +2366,16 @@
     {
      "key": "hint.move.props-operations.identity",
      "params": {
-      "a": 9
+      "a": 12
      },
      "text": "A count of nothing carries nothing, however big the term looks."
     },
     {
      "key": "hint.state.props-operations.identity",
      "params": {
-      "a": 9
+      "a": 12
      },
-     "text": "The 9 term is holding zero of itself. One socket is still standing."
+     "text": "The 12 term is holding zero of itself. One socket is still standing."
     }
    ],
    "worldFraming": {
@@ -1899,7 +2391,7 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 9
+    "a": 12
    }
   },
   {
@@ -2081,25 +2573,25 @@
    }
   },
   {
-   "id": "props-operations.identity/repair/11n5fw8",
+   "id": "props-operations.identity/repair/12r0p65",
    "kpId": "props-operations",
    "family": "props-operations.identity",
    "form": "repair",
    "difficulty": 1,
    "tier": "easy",
    "objectClass": "Bearer",
-   "stem": "4x \\cdot 0 + x",
+   "stem": "5x \\cdot 0 + x",
    "given": [],
    "working": [
-    "4x \\cdot 0 + x",
-    "4x + x",
-    "5x"
+    "5x \\cdot 0 + x",
+    "5x + x",
+    "6x"
    ],
    "brokenBy": "identity-swapped",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "a": 4,
+     "a": 5,
      "lines": 3,
      "line": 2
     },
@@ -2116,8 +2608,8 @@
    "distractors": [
     {
      "misconception": "identity-swapped",
-     "response": "2|5*x",
-     "tex": "4x + x",
+     "response": "2|6*x",
+     "tex": "5x + x",
      "failKey": "fail.slip"
     }
    ],
@@ -2130,7 +2622,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "a": 4,
+      "a": 5,
       "line": 2,
       "lines": 3
      },
@@ -2139,7 +2631,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "a": 4,
+      "a": 5,
       "line": 2,
       "lines": 3
      },
@@ -2147,9 +2639,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.props-operations.1",
+    "key": "frame.props-operations.2",
     "params": {},
-    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+    "text": "You learn which is which with your hands, standing on it."
    },
    "standards": [
     "CCSS.6.EE.A.3",
@@ -2159,41 +2651,45 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 4
+    "a": 5
    }
   },
   {
-   "id": "props-operations.commute/construct/1ej7ew8",
+   "id": "props-operations.commute/generate/jgiy6n",
    "kpId": "props-operations",
    "family": "props-operations.commute",
-   "form": "construct",
-   "difficulty": 2,
-   "tier": "core",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
    "objectClass": "Bearer",
-   "stem": "3 - 3x",
+   "stem": "8 - 7x",
    "given": [],
    "ask": {
-    "key": "ask.load",
+    "key": "ask.gen.gathersTo",
     "params": {
-     "a": 3,
-     "b": 3
+     "a": 8,
+     "b": 7,
+     "target": "-7*x + 8",
+     "unknown": "x"
     },
-    "text": "Write the load."
+    "text": "Stack a load that gathers to -7*x + 8."
    },
-   "answerType": "expression",
+   "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "-3*x + 3",
-    "tex": "-3x + 3"
+    "canonical": "-7x + 8",
+    "tex": "-7x + 8",
+    "witness": true
    },
-   "distractors": [
-    {
-     "misconception": "subtraction-commutes",
-     "response": "3*x + -3",
-     "tex": "3x - 3",
-     "failKey": "fail.sill.sign"
-    }
-   ],
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "-7*x + 8",
+    "unknown": "x",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
    "hints": [
     {
      "key": "hint.look.Bearer",
@@ -2201,26 +2697,30 @@
      "text": "A load standing on one pan. It settles inward-out."
     },
     {
-     "key": "hint.move.props-operations.commute",
+     "key": "hint.gen.loadGathersTo.2",
      "params": {
-      "a": 3,
-      "b": 3
+      "a": 8,
+      "b": 7,
+      "target": "-7*x + 8",
+      "unknown": "x"
      },
-     "text": "A take-away does not turn freely. Carry the sign with the term."
+     "text": "Build it long. It only has to gather short."
     },
     {
-     "key": "hint.state.props-operations.commute",
+     "key": "hint.gen.loadGathersTo.3",
      "params": {
-      "a": 3,
-      "b": 3
+      "a": 8,
+      "b": 7,
+      "target": "-7*x + 8",
+      "unknown": "x"
      },
-     "text": "The 3 term is going first, and it was never a positive one."
+     "text": "Gathered, it must read -7*x + 8. How it gets there is yours."
     }
    ],
    "worldFraming": {
-    "key": "frame.props-operations.1",
+    "key": "frame.props-operations.2",
     "params": {},
-    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+    "text": "You learn which is which with your hands, standing on it."
    },
    "standards": [
     "CCSS.6.EE.A.3",
@@ -2230,44 +2730,47 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 3,
-    "b": 3
+    "a": 8,
+    "b": 7
    }
   },
   {
-   "id": "props-operations.regroup/construct/1dyjsti",
+   "id": "props-operations.regroup/generate/1m4lefm",
    "kpId": "props-operations",
    "family": "props-operations.regroup",
-   "form": "construct",
-   "difficulty": 2,
-   "tier": "core",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
    "objectClass": "Bearer",
-   "stem": "34 - \\left(2 + 8\\right)",
+   "stem": "14 - \\left(9 + 5\\right)",
    "given": [],
    "ask": {
-    "key": "ask.reading",
+    "key": "ask.gen.loadTo",
     "params": {
-     "a": 34,
-     "b": 2,
-     "c": 8,
-     "inner": 10
+     "a": 14,
+     "b": 9,
+     "c": 5,
+     "inner": 14,
+     "target": 0
     },
-    "text": "Let it settle and read it."
+    "text": "Stack a load out of a product and a sum that settles to 0."
    },
-   "answerType": "integer",
+   "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "24",
-    "tex": "24"
+    "canonical": "14 - \\left(9 + 5\\right)",
+    "tex": "14 - \\left(9 + 5\\right)",
+    "witness": true
    },
-   "distractors": [
-    {
-     "misconception": "regroup-across-subtraction",
-     "response": "40",
-     "tex": "40",
-     "failKey": "fail.partial.open"
-    }
-   ],
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": 0,
+    "needs": [
+     "bundle",
+     "sum"
+    ]
+   },
+   "distractors": [],
    "hints": [
     {
      "key": "hint.look.Bearer",
@@ -2275,24 +2778,26 @@
      "text": "A load standing on one pan. It settles inward-out."
     },
     {
-     "key": "hint.move.props-operations.regroup",
+     "key": "hint.gen.loadAuthor.2",
      "params": {
-      "a": 34,
-      "b": 2,
-      "c": 8,
-      "inner": 10
+      "a": 14,
+      "b": 9,
+      "c": 5,
+      "inner": 14,
+      "target": 0
      },
-     "text": "The whole bundle is coming off, not just the front of it."
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
     },
     {
-     "key": "hint.state.props-operations.regroup",
+     "key": "hint.gen.loadAuthor.3",
      "params": {
-      "a": 34,
-      "b": 2,
-      "c": 8,
-      "inner": 10
+      "a": 14,
+      "b": 9,
+      "c": 5,
+      "inner": 14,
+      "target": 0
      },
-     "text": "The bundle weighs 10, and all of it is leaving 34."
+     "text": "Whatever you stack, it has to settle to 0 and nothing else."
     }
    ],
    "worldFraming": {
@@ -2308,42 +2813,46 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 34,
-    "b": 2,
-    "c": 8
+    "a": 14,
+    "b": 9,
+    "c": 5
    }
   },
   {
-   "id": "props-operations.identity/construct/12qiq2i",
+   "id": "props-operations.identity/generate/12r0p65",
    "kpId": "props-operations",
    "family": "props-operations.identity",
-   "form": "construct",
-   "difficulty": 2,
-   "tier": "core",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
    "objectClass": "Bearer",
-   "stem": "2x \\cdot 0 + x",
+   "stem": "5x \\cdot 0 + x",
    "given": [],
    "ask": {
-    "key": "ask.load",
+    "key": "ask.gen.sealCan",
     "params": {
-     "a": 2
+     "a": 5,
+     "target": "1*x",
+     "unknown": "x"
     },
-    "text": "Write the load."
+    "text": "Seal a can whose contents come to 1*x."
    },
-   "answerType": "expression",
+   "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "1*x",
-    "tex": "x"
+    "canonical": "x + 5x \\cdot 0",
+    "tex": "x + 5x \\cdot 0",
+    "witness": true
    },
-   "distractors": [
-    {
-     "misconception": "identity-swapped",
-     "response": "3*x",
-     "tex": "2x + x",
-     "failKey": "fail.slip"
-    }
-   ],
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "1*x",
+    "unknown": "x",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
    "hints": [
     {
      "key": "hint.look.Bearer",
@@ -2351,24 +2860,28 @@
      "text": "A load standing on one pan. It settles inward-out."
     },
     {
-     "key": "hint.move.props-operations.identity",
+     "key": "hint.gen.loadGathersTo.2",
      "params": {
-      "a": 2
+      "a": 5,
+      "target": "1*x",
+      "unknown": "x"
      },
-     "text": "A count of nothing carries nothing, however big the term looks."
+     "text": "Build it long. It only has to gather short."
     },
     {
-     "key": "hint.state.props-operations.identity",
+     "key": "hint.gen.loadGathersTo.3",
      "params": {
-      "a": 2
+      "a": 5,
+      "target": "1*x",
+      "unknown": "x"
      },
-     "text": "The 2 term is holding zero of itself. One socket is still standing."
+     "text": "Gathered, it must read 1*x. How it gets there is yours."
     }
    ],
    "worldFraming": {
-    "key": "frame.props-operations.1",
+    "key": "frame.props-operations.2",
     "params": {},
-    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+    "text": "You learn which is which with your hands, standing on it."
    },
    "standards": [
     "CCSS.6.EE.A.3",
@@ -2378,7 +2891,7 @@
     "VA.8.PFA.1"
    ],
    "params": {
-    "a": 2
+    "a": 5
    }
   }
  ]

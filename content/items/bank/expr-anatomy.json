@@ -14,8 +14,80 @@
   "bare-x-has-no-coefficient",
   "sign-detached-from-term"
  ],
- "count": 30,
+ "count": 36,
  "items": [
+  {
+   "id": "expr-anatomy.count/construct/crcscl",
+   "kpId": "expr-anatomy",
+   "family": "expr-anatomy.count",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "7x + 7",
+   "given": [],
+   "ask": {
+    "key": "ask.terms",
+    "params": {
+     "terms": 2,
+     "stem": "7x + 7"
+    },
+    "text": "Count what comes away whole."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2",
+    "tex": "2"
+   },
+   "distractors": [
+    {
+     "misconception": "term-split-at-product",
+     "response": "3",
+     "tex": "3",
+     "failKey": "fail.term.count"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.expr-anatomy.count",
+     "params": {
+      "terms": 2,
+      "stem": "7x + 7"
+     },
+     "text": "Cut it at the plus and the minus. Count what comes away whole."
+    },
+    {
+     "key": "hint.state.expr-anatomy.count",
+     "params": {
+      "terms": 2,
+      "stem": "7x + 7"
+     },
+     "text": "A collar and its socket travel together; they are one piece, not two."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.expr-anatomy.2",
+    "params": {},
+    "text": "Ondu props things for a living and knows every one of these by its collar."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2b",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.912.AR.1.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 6,
+    "c": 7,
+    "withY": false
+   }
+  },
   {
    "id": "expr-anatomy.coefficient/construct/1mgw5yp",
    "kpId": "expr-anatomy",
@@ -474,19 +546,91 @@
    }
   },
   {
-   "id": "expr-anatomy.coefficient/construct/1oqtd27",
+   "id": "expr-anatomy.count/construct/yqu0xp",
+   "kpId": "expr-anatomy",
+   "family": "expr-anatomy.count",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "9x + 9y - 7",
+   "given": [],
+   "ask": {
+    "key": "ask.terms",
+    "params": {
+     "terms": 3,
+     "stem": "9x + 9y - 7"
+    },
+    "text": "Count what comes away whole."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3",
+    "tex": "3"
+   },
+   "distractors": [
+    {
+     "misconception": "term-split-at-product",
+     "response": "5",
+     "tex": "5",
+     "failKey": "fail.term.count"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.expr-anatomy.count",
+     "params": {
+      "terms": 3,
+      "stem": "9x + 9y - 7"
+     },
+     "text": "Cut it at the plus and the minus. Count what comes away whole."
+    },
+    {
+     "key": "hint.state.expr-anatomy.count",
+     "params": {
+      "terms": 3,
+      "stem": "9x + 9y - 7"
+     },
+     "text": "A collar and its socket travel together; they are one piece, not two."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.expr-anatomy.2",
+    "params": {},
+    "text": "Ondu props things for a living and knows every one of these by its collar."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2b",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.912.AR.1.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 9,
+    "c": 7,
+    "withY": true
+   }
+  },
+  {
+   "id": "expr-anatomy.coefficient/construct/qiieiw",
    "kpId": "expr-anatomy",
    "family": "expr-anatomy.coefficient",
    "form": "construct",
    "difficulty": 1,
    "tier": "core",
    "objectClass": "Bearer",
-   "stem": "x - 3y",
+   "stem": "x - 4y",
    "given": [],
    "ask": {
     "key": "ask.count",
     "params": {
-     "b": 3
+     "b": 4
     },
     "text": "The count stamped on the collar."
    },
@@ -513,22 +657,22 @@
     {
      "key": "hint.move.expr-anatomy.coefficient",
      "params": {
-      "b": 3
+      "b": 4
      },
-     "text": "Look at the collar on the bare term, not at the one carrying 3."
+     "text": "Look at the collar on the bare term, not at the one carrying 4."
     },
     {
      "key": "hint.state.expr-anatomy.coefficient",
      "params": {
-      "b": 3
+      "b": 4
      },
      "text": "A term with nothing stamped on its collar still rides in a count of one."
     }
    ],
    "worldFraming": {
-    "key": "frame.expr-anatomy.2",
+    "key": "frame.expr-anatomy.1",
     "params": {},
-    "text": "Ondu props things for a living and knows every one of these by its collar."
+    "text": "The load has already come apart at its joins; the pieces are lying where they fell."
    },
    "standards": [
     "CCSS.6.EE.A.2b",
@@ -536,7 +680,7 @@
     "FL.MA.912.AR.1.1"
    ],
    "params": {
-    "b": 3,
+    "b": 4,
     "tierNote": "core"
    }
   },
@@ -696,24 +840,24 @@
    }
   },
   {
-   "id": "expr-anatomy.coefficient/repair/qiieiw",
+   "id": "expr-anatomy.coefficient/repair/zaqd8z",
    "kpId": "expr-anatomy",
    "family": "expr-anatomy.coefficient",
    "form": "repair",
    "difficulty": 1,
    "tier": "core",
    "objectClass": "Bearer",
-   "stem": "x - 4y",
+   "stem": "x - 7y",
    "given": [],
    "working": [
-    "x - 4y",
+    "x - 7y",
     "0"
    ],
    "brokenBy": "bare-x-has-no-coefficient",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "b": 4,
+     "b": 7,
      "lines": 2,
      "line": 2
     },
@@ -744,7 +888,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "b": 4,
+      "b": 7,
       "line": 2,
       "lines": 2
      },
@@ -753,7 +897,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "b": 4,
+      "b": 7,
       "line": 2,
       "lines": 2
      },
@@ -761,9 +905,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.expr-anatomy.1",
+    "key": "frame.expr-anatomy.2",
     "params": {},
-    "text": "The load has already come apart at its joins; the pieces are lying where they fell."
+    "text": "Ondu props things for a living and knows every one of these by its collar."
    },
    "standards": [
     "CCSS.6.EE.A.2b",
@@ -771,7 +915,7 @@
     "FL.MA.912.AR.1.1"
    ],
    "params": {
-    "b": 4,
+    "b": 7,
     "tierNote": "core"
    }
   },
@@ -931,19 +1075,91 @@
    }
   },
   {
-   "id": "expr-anatomy.coefficient/construct/1rfp88u",
+   "id": "expr-anatomy.count/construct/5uteeh",
+   "kpId": "expr-anatomy",
+   "family": "expr-anatomy.count",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "8x + 4y - 7",
+   "given": [],
+   "ask": {
+    "key": "ask.terms",
+    "params": {
+     "terms": 3,
+     "stem": "8x + 4y - 7"
+    },
+    "text": "Count what comes away whole."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3",
+    "tex": "3"
+   },
+   "distractors": [
+    {
+     "misconception": "term-split-at-product",
+     "response": "5",
+     "tex": "5",
+     "failKey": "fail.term.count"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.expr-anatomy.count",
+     "params": {
+      "terms": 3,
+      "stem": "8x + 4y - 7"
+     },
+     "text": "Cut it at the plus and the minus. Count what comes away whole."
+    },
+    {
+     "key": "hint.state.expr-anatomy.count",
+     "params": {
+      "terms": 3,
+      "stem": "8x + 4y - 7"
+     },
+     "text": "A collar and its socket travel together; they are one piece, not two."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.expr-anatomy.2",
+    "params": {},
+    "text": "Ondu props things for a living and knows every one of these by its collar."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2b",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.912.AR.1.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 4,
+    "c": 7,
+    "withY": true
+   }
+  },
+  {
+   "id": "expr-anatomy.coefficient/construct/13ykhcn",
    "kpId": "expr-anatomy",
    "family": "expr-anatomy.coefficient",
    "form": "construct",
    "difficulty": 2,
    "tier": "stretch",
    "objectClass": "Bearer",
-   "stem": "x - 4y",
+   "stem": "x - 7y",
    "given": [],
    "ask": {
     "key": "ask.count",
     "params": {
-     "b": 4
+     "b": 7
     },
     "text": "The count stamped on the collar."
    },
@@ -970,22 +1186,22 @@
     {
      "key": "hint.move.expr-anatomy.coefficient",
      "params": {
-      "b": 4
+      "b": 7
      },
-     "text": "Look at the collar on the bare term, not at the one carrying 4."
+     "text": "Look at the collar on the bare term, not at the one carrying 7."
     },
     {
      "key": "hint.state.expr-anatomy.coefficient",
      "params": {
-      "b": 4
+      "b": 7
      },
      "text": "A term with nothing stamped on its collar still rides in a count of one."
     }
    ],
    "worldFraming": {
-    "key": "frame.expr-anatomy.1",
+    "key": "frame.expr-anatomy.2",
     "params": {},
-    "text": "The load has already come apart at its joins; the pieces are lying where they fell."
+    "text": "Ondu props things for a living and knows every one of these by its collar."
    },
    "standards": [
     "CCSS.6.EE.A.2b",
@@ -993,7 +1209,7 @@
     "FL.MA.912.AR.1.1"
    ],
    "params": {
-    "b": 4,
+    "b": 7,
     "tierNote": "stretch"
    }
   },
@@ -1153,24 +1369,24 @@
    }
   },
   {
-   "id": "expr-anatomy.coefficient/repair/94cvz7",
+   "id": "expr-anatomy.coefficient/repair/nnapfw",
    "kpId": "expr-anatomy",
    "family": "expr-anatomy.coefficient",
    "form": "repair",
    "difficulty": 2,
    "tier": "stretch",
    "objectClass": "Bearer",
-   "stem": "x - 3y",
+   "stem": "x - 6y",
    "given": [],
    "working": [
-    "x - 3y",
+    "x - 6y",
     "0"
    ],
    "brokenBy": "bare-x-has-no-coefficient",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "b": 3,
+     "b": 6,
      "lines": 2,
      "line": 2
     },
@@ -1201,7 +1417,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "b": 3,
+      "b": 6,
       "line": 2,
       "lines": 2
      },
@@ -1210,7 +1426,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "b": 3,
+      "b": 6,
       "line": 2,
       "lines": 2
      },
@@ -1218,9 +1434,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.expr-anatomy.2",
+    "key": "frame.expr-anatomy.1",
     "params": {},
-    "text": "Ondu props things for a living and knows every one of these by its collar."
+    "text": "The load has already come apart at its joins; the pieces are lying where they fell."
    },
    "standards": [
     "CCSS.6.EE.A.2b",
@@ -1228,7 +1444,7 @@
     "FL.MA.912.AR.1.1"
    ],
    "params": {
-    "b": 3,
+    "b": 6,
     "tierNote": "stretch"
    }
   },
@@ -1385,6 +1601,78 @@
     "b": 2,
     "c": 8,
     "withY": true
+   }
+  },
+  {
+   "id": "expr-anatomy.count/construct/6lew26",
+   "kpId": "expr-anatomy",
+   "family": "expr-anatomy.count",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "7x + 7",
+   "given": [],
+   "ask": {
+    "key": "ask.terms",
+    "params": {
+     "terms": 2,
+     "stem": "7x + 7"
+    },
+    "text": "Count what comes away whole."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2",
+    "tex": "2"
+   },
+   "distractors": [
+    {
+     "misconception": "term-split-at-product",
+     "response": "3",
+     "tex": "3",
+     "failKey": "fail.term.count"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.expr-anatomy.count",
+     "params": {
+      "terms": 2,
+      "stem": "7x + 7"
+     },
+     "text": "Cut it at the plus and the minus. Count what comes away whole."
+    },
+    {
+     "key": "hint.state.expr-anatomy.count",
+     "params": {
+      "terms": 2,
+      "stem": "7x + 7"
+     },
+     "text": "A collar and its socket travel together; they are one piece, not two."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.expr-anatomy.1",
+    "params": {},
+    "text": "The load has already come apart at its joins; the pieces are lying where they fell."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2b",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.912.AR.1.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 9,
+    "c": 7,
+    "withY": false
    }
   },
   {
@@ -1845,19 +2133,91 @@
    }
   },
   {
-   "id": "expr-anatomy.coefficient/construct/lvi2l6",
+   "id": "expr-anatomy.count/construct/cvyn0x",
+   "kpId": "expr-anatomy",
+   "family": "expr-anatomy.count",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "8x + 5y - 2",
+   "given": [],
+   "ask": {
+    "key": "ask.terms",
+    "params": {
+     "terms": 3,
+     "stem": "8x + 5y - 2"
+    },
+    "text": "Count what comes away whole."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3",
+    "tex": "3"
+   },
+   "distractors": [
+    {
+     "misconception": "term-split-at-product",
+     "response": "5",
+     "tex": "5",
+     "failKey": "fail.term.count"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.expr-anatomy.count",
+     "params": {
+      "terms": 3,
+      "stem": "8x + 5y - 2"
+     },
+     "text": "Cut it at the plus and the minus. Count what comes away whole."
+    },
+    {
+     "key": "hint.state.expr-anatomy.count",
+     "params": {
+      "terms": 3,
+      "stem": "8x + 5y - 2"
+     },
+     "text": "A collar and its socket travel together; they are one piece, not two."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.expr-anatomy.2",
+    "params": {},
+    "text": "Ondu props things for a living and knows every one of these by its collar."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2b",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.912.AR.1.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 5,
+    "c": 2,
+    "withY": true
+   }
+  },
+  {
+   "id": "expr-anatomy.coefficient/construct/12q62ry",
    "kpId": "expr-anatomy",
    "family": "expr-anatomy.coefficient",
    "form": "construct",
    "difficulty": 1,
    "tier": "core",
    "objectClass": "Bearer",
-   "stem": "x - 6y",
+   "stem": "x - 11y",
    "given": [],
    "ask": {
     "key": "ask.count",
     "params": {
-     "b": 6
+     "b": 11
     },
     "text": "The count stamped on the collar."
    },
@@ -1884,14 +2244,14 @@
     {
      "key": "hint.move.expr-anatomy.coefficient",
      "params": {
-      "b": 6
+      "b": 11
      },
-     "text": "Look at the collar on the bare term, not at the one carrying 6."
+     "text": "Look at the collar on the bare term, not at the one carrying 11."
     },
     {
      "key": "hint.state.expr-anatomy.coefficient",
      "params": {
-      "b": 6
+      "b": 11
      },
      "text": "A term with nothing stamped on its collar still rides in a count of one."
     }
@@ -1907,7 +2267,7 @@
     "FL.MA.912.AR.1.1"
    ],
    "params": {
-    "b": 6,
+    "b": 11,
     "tierNote": "core"
    }
   },
@@ -2067,24 +2427,24 @@
    }
   },
   {
-   "id": "expr-anatomy.coefficient/repair/lvi2l6",
+   "id": "expr-anatomy.coefficient/repair/12q62ry",
    "kpId": "expr-anatomy",
    "family": "expr-anatomy.coefficient",
    "form": "repair",
    "difficulty": 1,
    "tier": "core",
    "objectClass": "Bearer",
-   "stem": "x - 6y",
+   "stem": "x - 11y",
    "given": [],
    "working": [
-    "x - 6y",
+    "x - 11y",
     "0"
    ],
    "brokenBy": "bare-x-has-no-coefficient",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "b": 6,
+     "b": 11,
      "lines": 2,
      "line": 2
     },
@@ -2115,7 +2475,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "b": 6,
+      "b": 11,
       "line": 2,
       "lines": 2
      },
@@ -2124,7 +2484,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "b": 6,
+      "b": 11,
       "line": 2,
       "lines": 2
      },
@@ -2142,7 +2502,7 @@
     "FL.MA.912.AR.1.1"
    ],
    "params": {
-    "b": 6,
+    "b": 11,
     "tierNote": "core"
    }
   },
@@ -2298,6 +2658,78 @@
     "a": 5,
     "b": 9,
     "c": 2,
+    "withY": true
+   }
+  },
+  {
+   "id": "expr-anatomy.count/construct/1ju3dmw",
+   "kpId": "expr-anatomy",
+   "family": "expr-anatomy.count",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "8x + 3y - 7",
+   "given": [],
+   "ask": {
+    "key": "ask.terms",
+    "params": {
+     "terms": 3,
+     "stem": "8x + 3y - 7"
+    },
+    "text": "Count what comes away whole."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3",
+    "tex": "3"
+   },
+   "distractors": [
+    {
+     "misconception": "term-split-at-product",
+     "response": "5",
+     "tex": "5",
+     "failKey": "fail.term.count"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.expr-anatomy.count",
+     "params": {
+      "terms": 3,
+      "stem": "8x + 3y - 7"
+     },
+     "text": "Cut it at the plus and the minus. Count what comes away whole."
+    },
+    {
+     "key": "hint.state.expr-anatomy.count",
+     "params": {
+      "terms": 3,
+      "stem": "8x + 3y - 7"
+     },
+     "text": "A collar and its socket travel together; they are one piece, not two."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.expr-anatomy.1",
+    "params": {},
+    "text": "The load has already come apart at its joins; the pieces are lying where they fell."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2b",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.912.AR.1.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 3,
+    "c": 7,
     "withY": true
    }
   }

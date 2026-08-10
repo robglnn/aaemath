@@ -535,7 +535,20 @@ export function rasterizeWorking({
 
 // ---------------------------------------------------------------- the panel
 
-const BUCKETS = [64, 96, 128, 192, 256, 384, 512, 768, 1024, 1536, 2048];
+/**
+ * The size ladder, and it is fine on purpose.
+ *
+ * A coarse ladder (64, 96, 128, …) looks harmless and is not, because of how the GPU picks a
+ * mip level: it takes `lod = log2(texels per screen pixel)`, and a trilinear filter then
+ * *blends* the two levels either side. Overshooting to 1.85 texels per pixel puts lod at 0.89,
+ * which is 89% of the way to the half-resolution mip — a visibly soft glyph produced by a
+ * perfectly sharp texture. Steps of about 1.12× keep the ratio inside [1.02, 1.15], so lod
+ * stays under 0.2 and the sampler sits on mip 0 where the crisp pixels are.
+ */
+const BUCKETS = [
+  48, 54, 60, 68, 76, 86, 96, 108, 120, 136, 152, 172, 192, 216, 240, 272, 304, 344, 384, 432,
+  480, 544, 608, 688, 768, 864, 960, 1088, 1216, 1376, 1536, 1728, 1920, 2048,
+];
 const MAX_TEXTURE_EDGE = 4096;
 
 function bucketFor(needed, aspect) {
@@ -670,9 +683,10 @@ export class TexPanel {
     this.material.needsUpdate = true;
     if (old) old.dispose();
 
-    // A working is drawn four ems to a side, so its texture is 4× the bucket; a claim is
-    // laid out at exactly `bucket` px per em.
-    const pxPerEm = this.working ? bucket * 4 : bucket;
+    // One em is `bucket` texels, for a claim and for a working alike — which is what makes a
+    // working four ems to a side in the world, matching the target, where the plotted axes
+    // stand about four line-heights tall beside the equation.
+    const pxPerEm = bucket;
     this._widthPerEm = out.canvas.width / pxPerEm;
     this._heightPerEm = out.canvas.height / pxPerEm;
     this._texPerBucket = out.canvas.width / bucket;
@@ -700,19 +714,21 @@ export class TexPanel {
     this._emScreenPx = needed;
     this._texelsPerPixel = needed > 0 ? this._bucket / needed : 0;
 
+    const want = Math.max(BUCKETS[0], needed * 1.02);
     if (!this._bucket) {
-      this._rasterize(bucketFor(Math.max(BUCKETS[0], needed * 1.2), this._texPerBucket));
-      this._cooldown = 0.5;
+      this._rasterize(bucketFor(want, this._texPerBucket));
+      this._cooldown = 0.4;
     } else if (this._cooldown <= 0) {
-      // Hysteresis: grow eagerly, shrink lazily. A player walking a circle around a claim
-      // must not make it re-lay-out every frame.
-      const grow = needed * 1.2 > this._bucket && this._bucket < BUCKETS.at(-1);
-      const shrink = needed * 2.6 < this._bucket && this._bucket > BUCKETS[0];
+      // Hysteresis: grow as soon as the texture would be magnified, shrink only when it is
+      // wasting half its resolution. A player walking a circle around a claim must not make
+      // it re-lay-out every frame, and the cooldown caps the churn either way.
+      const grow = want > this._bucket && this._bucket < BUCKETS.at(-1);
+      const shrink = needed * 1.9 < this._bucket && this._bucket > BUCKETS[0];
       if (grow || shrink) {
-        const next = bucketFor(Math.max(BUCKETS[0], needed * 1.2), this._texPerBucket);
+        const next = bucketFor(want, this._texPerBucket);
         if (next !== this._bucket) {
           this._rasterize(next);
-          this._cooldown = 0.6;
+          this._cooldown = 0.5;
         }
       }
     }
@@ -786,6 +802,7 @@ export class TexField {
     this.viewportHeight = typeof innerHeight === "number" ? innerHeight : 1080;
     this.pixelRatio = kernel?.renderer?.getPixelRatio?.() ?? 1;
     this.driven = false;
+    this.anchored = false;
     this.register = null;
   }
 
@@ -857,9 +874,37 @@ export class TexField {
     }
   }
 
+  /**
+   * Resolve view anchors once the camera rig has settled. Frame 0 is not it — the rig starts
+   * at its default and snaps to the player during the first steps — so this waits a quarter
+   * of a simulated second, which is deterministic under `advance()` and therefore identical
+   * in a review capture and in play.
+   */
+  _resolveAnchors(camera) {
+    if (this.anchored || (this.kernel?.simTime ?? 0) < 0.25) return;
+    const fwd = new THREE.Vector3();
+    camera.getWorldDirection(fwd);
+    fwd.y = 0;
+    if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1);
+    fwd.normalize();
+    const right = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0, 1, 0)).normalize();
+    for (const panel of this.panels.values()) {
+      if (!panel.anchor) continue;
+      const a = panel.anchor;
+      panel.mesh.position
+        .copy(camera.position)
+        .addScaledVector(fwd, a.forward ?? 12)
+        .addScaledVector(right, a.right ?? 0);
+      panel.mesh.position.y = camera.position.y + (a.up ?? 0);
+      panel.anchor = null;
+    }
+    this.anchored = true;
+  }
+
   frame(dt) {
     const camera = this.kernel?.camera;
     if (!camera) return;
+    this._resolveAnchors(camera);
     const step = Math.min(dt, 0.1);
     for (const panel of this.panels.values()) {
       panel.update(step, camera, this.viewportHeight, this.pixelRatio);

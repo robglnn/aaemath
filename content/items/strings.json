@@ -793,9 +793,9 @@
       "pl": "Wepchnij ładunek w gniazdo wycięte dla {letter}. Nic innego tam nie wchodzi."
     },
     "hint.state.var-meaning.seat": {
-      "en": "The socket is holding {v} and the emitter is reading whatever it is holding.",
-      "es": "El encaje sostiene {v} y el emisor lee lo que sostiene.",
-      "pl": "Gniazdo trzyma {v}, a emiter pokazuje to, co trzyma."
+      "en": "The socket has taken the charge. The emitter reads exactly what the socket is holding, and nothing else.",
+      "es": "El encaje ya tomó la carga. El emisor lee exactamente lo que sostiene el encaje, y nada más.",
+      "pl": "Gniazdo wzięło ładunek. Emiter pokazuje dokładnie to, co gniazdo trzyma, i nic więcej."
     },
     "hint.move.var-meaning.relate": {
       "en": "One barge is the big pile. Put the count of {k} on the small one.",
@@ -1223,9 +1223,9 @@
       "pl": "Podziel obie szalki przez krotność z obręczy."
     },
     "hint.state.eq-one-mult.mult": {
-      "en": "There are {a} identical members and together they carry {b}.",
-      "es": "Hay {a} miembros idénticos y juntos llevan {b}.",
-      "pl": "Jest {a} identycznych członów i razem niosą {b}."
+      "en": "The collar reads a count of {a}, and together they carry {b}.",
+      "es": "El collar marca una cuenta de {a}, y juntos llevan {b}.",
+      "pl": "Obręcz pokazuje krotność {a}, a razem niosą {b}."
     },
     "hint.move.eq-one-mult.fraction": {
       "en": "The socket has already been shared. Put back what was taken out.",
@@ -1243,9 +1243,9 @@
       "pl": "Podnieś wargę, zanim podzielisz pomost. Z zewnątrz do środka, najpierw z góry."
     },
     "hint.state.eq-two-step.core": {
-      "en": "With the lip gone, {a} deck segments are carrying {lifted}.",
-      "es": "Sin el reborde, {a} tramos de tablero llevan {lifted}.",
-      "pl": "Bez wargi {a} przęseł pomostu niesie {lifted}."
+      "en": "With the lip gone, a count of {a} is carrying {lifted}.",
+      "es": "Sin el reborde, una cuenta de {a} lleva {lifted}.",
+      "pl": "Bez wargi krotność {a} niesie {lifted}."
     },
     "hint.move.eq-combine-side.core": {
       "en": "Gather the near pan first. It is carrying two stacks of one kind.",
@@ -1253,9 +1253,9 @@
       "pl": "Najpierw zbierz bliższą szalkę. Niesie dwa stosy jednego rodzaju."
     },
     "hint.state.eq-combine-side.core": {
-      "en": "Gathered, the near pan is {gathered} members and a lip of {c}.",
-      "es": "Reunido, el platillo cercano son {gathered} miembros y un reborde de {c}.",
-      "pl": "Po zebraniu bliższa szalka to {gathered} członów i warga {c}."
+      "en": "Gathered, the near pan is a count of {gathered} and a lip of {c}.",
+      "es": "Reunido, el platillo cercano es una cuenta de {gathered} y un reborde de {c}.",
+      "pl": "Po zebraniu bliższa szalka to krotność {gathered} i warga {c}."
     },
     "hint.move.eq-distribute.core": {
       "en": "Open the bundle, or share the whole lock by {p}. Both reach the same tooth.",
@@ -1273,9 +1273,9 @@
       "pl": "Zdejmuj zawartość z obu szalek, aż gniazdo zostanie tylko na jednej."
     },
     "hint.state.eq-both-sides.core": {
-      "en": "With the far pan's members taken off both, {left} of them are left standing.",
-      "es": "Quitando de ambos los miembros del platillo lejano, quedan {left} en pie.",
-      "pl": "Po zdjęciu z obu członów z dalszej szalki zostaje ich {left}."
+      "en": "With the far pan's contents taken off both, a count of {left} is left standing.",
+      "es": "Quitando de ambos el contenido del platillo lejano, queda en pie una cuenta de {left}.",
+      "pl": "Po zdjęciu z obu zawartości dalszej szalki zostaje krotność {left}."
     },
     "hint.move.eq-special-cases.always": {
       "en": "Keep taking off both pans and see what is left standing.",
@@ -1373,9 +1373,9 @@
       "pl": "Podnieś wargę, potem podziel przez krotność — a krotność jest odwrócona."
     },
     "hint.state.ineq-two-step.turned": {
-      "en": "With the lip gone the rail carries {lifted}, and the mark comes to {mark} once.",
-      "es": "Sin el reborde el riel lleva {lifted}, y la marca llega a {mark} una sola vez.",
-      "pl": "Bez wargi szyna niesie {lifted}, a znacznik dochodzi do {mark} raz."
+      "en": "With the lip gone the rail carries {lifted} against an inverted count of {a}.",
+      "es": "Sin el reborde el riel lleva {lifted} contra una cuenta invertida de {a}.",
+      "pl": "Bez wargi szyna niesie {lifted} wobec odwróconej krotności {a}."
     },
     "hint.move.ineq-two-step.inclusive": {
       "en": "The mark itself is permitted here. Lift the lip, then share.",
@@ -1383,9 +1383,9 @@
       "pl": "Tu sam znacznik jest dozwolony. Podnieś wargę, potem podziel."
     },
     "hint.state.ineq-two-step.inclusive": {
-      "en": "With the lip gone, {a} members carry {lifted}, and the detent has not moved.",
-      "es": "Sin el reborde, {a} miembros llevan {lifted}, y el trinquete no se ha movido.",
-      "pl": "Bez wargi {a} członów niesie {lifted}, a zapadka się nie ruszyła."
+      "en": "With the lip gone, a count of {a} carries {lifted}, and the detent has not moved.",
+      "es": "Sin el reborde, una cuenta de {a} lleva {lifted}, y el trinquete no se ha movido.",
+      "pl": "Bez wargi krotność {a} niesie {lifted}, a zapadka się nie ruszyła."
     },
     "ask.gen.loadReadsAt": {
       "en": "Stack a load in {unknown} that reads {target} when the socket holds {at}.",

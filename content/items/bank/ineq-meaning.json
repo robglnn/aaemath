@@ -16,7 +16,7 @@
   "endpoint-style-swapped",
   "reads-symbol-left-to-right-always"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "ineq-meaning.stretch/construct/1bvl2xy",
@@ -217,8 +217,8 @@
    "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "x - 1 ge 11",
-    "tex": "x - 1 ge 11",
+    "canonical": "x - 1 \\ge 11",
+    "tex": "x - 1 \\ge 11",
     "witness": true
    },
    "check": {
@@ -729,8 +729,8 @@
    "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "x - 1 ge -5",
-    "tex": "x - 1 ge -5",
+    "canonical": "x - 1 \\ge -5",
+    "tex": "x - 1 \\ge -5",
     "witness": true
    },
    "check": {
@@ -2094,8 +2094,8 @@
    "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "x - 1 ge 10",
-    "tex": "x - 1 ge 10",
+    "canonical": "x - 1 \\ge 10",
+    "tex": "x - 1 \\ge 10",
     "witness": true
    },
    "check": {
@@ -2580,6 +2580,523 @@
    ],
    "params": {
     "c": -6,
+    "strict": true
+   }
+  },
+  {
+   "id": "ineq-meaning.stretch/repair/158e0lf",
+   "kpId": "ineq-meaning",
+   "family": "ineq-meaning.stretch",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "-6 \\le x",
+   "given": [],
+   "working": [
+    "-6 \\le x",
+    "x > -6"
+   ],
+   "brokenBy": "endpoint-style-swapped",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "c": -6,
+     "strict": 0,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x >= -6",
+    "tex": "x \\ge -6",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "reads-symbol-left-to-right-always",
+     "response": "2|x <= -6",
+     "tex": "x \\le -6",
+     "failKey": "fail.mark.side"
+    },
+    {
+     "misconception": "endpoint-style-swapped",
+     "response": "2|x > -6",
+     "tex": "x > -6",
+     "failKey": "fail.mark.edge"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "c": -6,
+      "strict": 0,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "c": -6,
+      "strict": 0,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-meaning.2",
+    "params": {},
+    "text": "Not a point. A stretch."
+   },
+   "standards": [
+    "CCSS.6.EE.B.8",
+    "CCSS.6.EE.B.5",
+    "TEKS.6.9B",
+    "FL.MA.6.AR.1.2",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "c": -6,
+    "strict": false
+   }
+  },
+  {
+   "id": "ineq-meaning.stretch/construct/13s0d2c",
+   "kpId": "ineq-meaning",
+   "family": "ineq-meaning.stretch",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "3 < x",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "c": 3,
+     "strict": 1
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x > 3",
+    "tex": "x > 3"
+   },
+   "distractors": [
+    {
+     "misconception": "reads-symbol-left-to-right-always",
+     "response": "x < 3",
+     "tex": "x < 3",
+     "failKey": "fail.mark.side"
+    },
+    {
+     "misconception": "endpoint-style-swapped",
+     "response": "x >= 3",
+     "tex": "x \\ge 3",
+     "failKey": "fail.mark.edge"
+    },
+    {
+     "misconception": "single-value-for-a-set",
+     "response": "3",
+     "tex": "3",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-meaning.stretch",
+     "params": {
+      "c": 3,
+      "strict": 1
+     },
+     "text": "The detent sits on one side of the mark. Read which side is permitted."
+    },
+    {
+     "key": "hint.state.ineq-meaning.stretch",
+     "params": {
+      "c": 3,
+      "strict": 1
+     },
+     "text": "The mark is at 3, and the arch is lit on one side of it only."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-meaning.1",
+    "params": {},
+    "text": "Set the mark with your hands and the arch lights the whole stretch it will admit."
+   },
+   "standards": [
+    "CCSS.6.EE.B.8",
+    "CCSS.6.EE.B.5",
+    "TEKS.6.9B",
+    "FL.MA.6.AR.1.2",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "c": 3,
+    "strict": true
+   }
+  },
+  {
+   "id": "ineq-meaning.stretch/repair/9tz6k1",
+   "kpId": "ineq-meaning",
+   "family": "ineq-meaning.stretch",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "6 < x",
+   "given": [],
+   "working": [
+    "6 < x",
+    "x \\ge 6"
+   ],
+   "brokenBy": "endpoint-style-swapped",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "c": 6,
+     "strict": 1,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x > 6",
+    "tex": "x > 6",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "reads-symbol-left-to-right-always",
+     "response": "2|x < 6",
+     "tex": "x < 6",
+     "failKey": "fail.mark.side"
+    },
+    {
+     "misconception": "endpoint-style-swapped",
+     "response": "2|x >= 6",
+     "tex": "x \\ge 6",
+     "failKey": "fail.mark.edge"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "c": 6,
+      "strict": 1,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "c": 6,
+      "strict": 1,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-meaning.2",
+    "params": {},
+    "text": "Not a point. A stretch."
+   },
+   "standards": [
+    "CCSS.6.EE.B.8",
+    "CCSS.6.EE.B.5",
+    "TEKS.6.9B",
+    "FL.MA.6.AR.1.2",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "c": 6,
+    "strict": true
+   }
+  },
+  {
+   "id": "ineq-meaning.stretch/construct/110tf44",
+   "kpId": "ineq-meaning",
+   "family": "ineq-meaning.stretch",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "-6 < x",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "c": -6,
+     "strict": 1
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x > -6",
+    "tex": "x > -6"
+   },
+   "distractors": [
+    {
+     "misconception": "reads-symbol-left-to-right-always",
+     "response": "x < -6",
+     "tex": "x < -6",
+     "failKey": "fail.mark.side"
+    },
+    {
+     "misconception": "endpoint-style-swapped",
+     "response": "x >= -6",
+     "tex": "x \\ge -6",
+     "failKey": "fail.mark.edge"
+    },
+    {
+     "misconception": "single-value-for-a-set",
+     "response": "-6",
+     "tex": "-6",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-meaning.stretch",
+     "params": {
+      "c": -6,
+      "strict": 1
+     },
+     "text": "The detent sits on one side of the mark. Read which side is permitted."
+    },
+    {
+     "key": "hint.state.ineq-meaning.stretch",
+     "params": {
+      "c": -6,
+      "strict": 1
+     },
+     "text": "The mark is at -6, and the arch is lit on one side of it only."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-meaning.1",
+    "params": {},
+    "text": "Set the mark with your hands and the arch lights the whole stretch it will admit."
+   },
+   "standards": [
+    "CCSS.6.EE.B.8",
+    "CCSS.6.EE.B.5",
+    "TEKS.6.9B",
+    "FL.MA.6.AR.1.2",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "c": -6,
+    "strict": true
+   }
+  },
+  {
+   "id": "ineq-meaning.stretch/generate/mik7jh",
+   "kpId": "ineq-meaning",
+   "family": "ineq-meaning.stretch",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "10 \\le x",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.markAdmits",
+    "params": {
+     "c": 10,
+     "strict": 0,
+     "target": "x >= 10",
+     "unknown": "x"
+    },
+    "text": "Set a rail whose admitted stretch is x >= 10."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x - 1 \\ge 9",
+    "tex": "x - 1 \\ge 9",
+    "witness": true
+   },
+   "check": {
+    "kind": "markAdmits",
+    "stretch": "x >= 10",
+    "unknown": "x",
+    "needs": [
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.markAdmits.2",
+     "params": {
+      "c": 10,
+      "strict": 0,
+      "target": "x >= 10",
+      "unknown": "x"
+     },
+     "text": "Set the mark, then feel which side the detent is on."
+    },
+    {
+     "key": "hint.gen.markAdmits.3",
+     "params": {
+      "c": 10,
+      "strict": 0,
+      "target": "x >= 10",
+      "unknown": "x"
+     },
+     "text": "The arch has to admit x >= 10 and refuse everything else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-meaning.2",
+    "params": {},
+    "text": "Not a point. A stretch."
+   },
+   "standards": [
+    "CCSS.6.EE.B.8",
+    "CCSS.6.EE.B.5",
+    "TEKS.6.9B",
+    "FL.MA.6.AR.1.2",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "c": 10,
+    "strict": false
+   }
+  },
+  {
+   "id": "ineq-meaning.stretch/construct/qkgrw7",
+   "kpId": "ineq-meaning",
+   "family": "ineq-meaning.stretch",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "-5 < x",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "c": -5,
+     "strict": 1
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x > -5",
+    "tex": "x > -5"
+   },
+   "distractors": [
+    {
+     "misconception": "reads-symbol-left-to-right-always",
+     "response": "x < -5",
+     "tex": "x < -5",
+     "failKey": "fail.mark.side"
+    },
+    {
+     "misconception": "endpoint-style-swapped",
+     "response": "x >= -5",
+     "tex": "x \\ge -5",
+     "failKey": "fail.mark.edge"
+    },
+    {
+     "misconception": "single-value-for-a-set",
+     "response": "-5",
+     "tex": "-5",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-meaning.stretch",
+     "params": {
+      "c": -5,
+      "strict": 1
+     },
+     "text": "The detent sits on one side of the mark. Read which side is permitted."
+    },
+    {
+     "key": "hint.state.ineq-meaning.stretch",
+     "params": {
+      "c": -5,
+      "strict": 1
+     },
+     "text": "The mark is at -5, and the arch is lit on one side of it only."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-meaning.2",
+    "params": {},
+    "text": "Not a point. A stretch."
+   },
+   "standards": [
+    "CCSS.6.EE.B.8",
+    "CCSS.6.EE.B.5",
+    "TEKS.6.9B",
+    "FL.MA.6.AR.1.2",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "c": -5,
     "strict": true
    }
   }

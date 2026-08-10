@@ -2,22 +2,38 @@
  * P16 — the proof.
  *
  *   node review/measure/P16.mjs
- *   node review/measure/P16.mjs --learners=2000 --sessions=18 --json
+ *   node review/measure/P16.mjs --learners=2000 --sessions=22 --json
+ *   node review/measure/P16.mjs --strict            // declared §8 misses fail the run too
  *
  * This script does not restate the design. It drives the SHIPPED ENGINE — the very
- * `app/src/learn/{Graph,Mastery,Scheduler}.js` the browser boots — through a population of
- * simulated learners and a set of hostile bots, and prints PASS/FAIL against thresholds stated
- * at the top of the file. If it prints FAIL, P16 is wrong.
+ * `app/src/learn/{Graph,Mastery,Scheduler}.js` the browser boots, and the real
+ * `app/src/learn/ItemBank.js` P17 ships — through a population of simulated learners and a set of
+ * hostile bots, and prints PASS/FAIL against thresholds stated at the top of the file. If it
+ * prints FAIL, P16 is wrong.
  *
  * =============================================================================================
- * THE RULE THIS FILE EXISTS TO OBEY
+ * RULE 1 — WHERE A BOT'S SUCCESS RATE COMES FROM
  *
  * A bot's probability of being right is NEVER read from the model's own `guess` parameter. It is
- * read from `model.trueGuessByForm` / `model.trueGuessByPhase` — ground truth derived from the
- * size of an answer space, owing nothing to BKT — and it is looked up from the form and phase the
- * SCHEDULER ACTUALLY SERVED on that item, not from a form the harness chose in advance. Setting
- * `correct = rng() < guess` is not a test; it is the model's assumption restated with a number on
- * it, and a critic has already destroyed one attempt for exactly that.
+ * read from ground truth — the size of an answer space, owing nothing to BKT — and it is looked
+ * up from the form and phase the SCHEDULER ACTUALLY SERVED on that item, not from a form the
+ * harness chose in advance. Setting `correct = rng() < guess` is not a test; it is the model's
+ * assumption restated with a number on it.
+ *
+ * Round 2 of this script goes one step further, because `model.trueGuessByForm` is itself a
+ * hand-authored constant and the whole L5 result is a linear function of it. PART A2 MEASURES the
+ * blind-success rate EMPIRICALLY: it generates real items out of `ItemBank` and submits random
+ * legal responses through the live `check()`/`#checkConstruction`, per knowledge point and per
+ * form. The `bankGuesser` arm then draws its true success rate from those MEASURED numbers
+ * instead of from the JSON. A sensitivity sweep prints what the result would be if the constant
+ * were wrong by 3x, 6x, 8x and 17x, so the tolerance is visible rather than asserted.
+ *
+ * RULE 2 — A HARNESS THAT ONLY EVER PRINTS ZEROS IS MEASURING NOTHING
+ *
+ * Every zero in this file is paired with a CONTROL that must be non-zero. `legacyRetention`
+ * restores exactly one line of the round-1 engine — M4 counting the caller's raw `correct` flag
+ * instead of the engine's own `credited` verdict — and runs the identical bot against it. If that
+ * arm does not certify, this file cannot see the defect it claims to have fixed and the run fails.
  * =============================================================================================
  *
  * MODELLING ASSUMPTIONS. All of them flatter or penalise the design in ways a critic can attack,
@@ -43,13 +59,20 @@
  *      Bots never use this line; they draw from the blind rates alone.
  *  B1  `hintAbuser` idles past `antiGuessing.hintSurfaceMs` on every acquisition item and takes
  *      whatever the phase gives it, reporting `hinted` honestly.
- *  B2  `hintLeak` additionally models P18 shipping the hint surface into `solo` BY MISTAKE, where
- *      the engine is never told: 0.85 true success on every acquisition item, reported unhinted.
- *      This is the implementation bug the design has to survive, not a legal strategy.
- *  B3  The leak in B2 stops at acquisition. Consolidation, retention and review are built by the
- *      Scheduler at `phase: solo, hinted: false` from `model.spacing`, and a leak into THOSE would
- *      defeat the design outright — which is precisely why the JSON states `hinted: false` three
- *      separate times. Stated because it is the assumption that most protects the result.
+ *  B2  `hintLeak` additionally models P18 shipping the hint surface into `solo` BY MISTAKE during
+ *      ACQUISITION, where the engine is never told: 0.85 true success, reported unhinted.
+ *  B3  **DELETED.** Round 1 of this script asserted that the leak in B2 "stops at acquisition"
+ *      because `model.spacing` states `hinted: false` three times. That was wrong, and it was the
+ *      assumption that hid the biggest defect in the piece: the JSON field only seeds
+ *      `req.hinted`, while §6.1 is explicit that `hinted` is a PER-RESPONSE fact reported by the
+ *      world precisely because P18 can surface help where the phase says it should not. The case
+ *      the assumption excused is now an arm — `retentionHintLeak` — and a second one,
+ *      `retentionFast`, does the same through the latency floor. Both are the cases that break;
+ *      neither is excused.
+ *  B4  A blind responder in PART A2 knows the shape of the answer it must produce (an integer, an
+ *      inequality, a repair line, a claim) and picks uniformly inside that shape. That is the
+ *      BEST case for a guesser and therefore the conservative measurement: a responder who does
+ *      not even know the shape does strictly worse.
  */
 
 import { readFileSync } from "node:fs";
@@ -60,6 +83,7 @@ import { createHash } from "node:crypto";
 import { Graph, GraphError } from "../../app/src/learn/Graph.js";
 import { Mastery, bktUpdate, REVIEW_LAPSE_BELOW } from "../../app/src/learn/Mastery.js";
 import { Scheduler, virtualClock, mulberry32 } from "../../app/src/learn/Scheduler.js";
+import { ItemBank } from "../../app/src/learn/ItemBank.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(here, "..", "..");
@@ -73,26 +97,31 @@ const hasFlag = (name) => process.argv.includes(`--${name}`);
 
 const LEARNERS = argNum("learners", 400);
 const BOTS = argNum("bots", 400);
+const SWEEP_BOTS = argNum("sweepBots", 150);
+const BLIND_N = argNum("blind", 200);
 /**
  * 22 sessions x 25 min is the budget `review/p03/mastery-sim.mjs` defaults to and the budget its
  * committed evidence file was generated at. §5 of design/learning-architecture.md says "18
- * sessions" in its prose and then quotes the 22-session numbers, which is a defect in that
- * document reported in the P16 handoff rather than silently adopted. This script measures at 22
- * and prints the whole session-by-session curve, so the 18-session figure is visible too and
- * nobody has to take a budget on trust.
+ * sessions" in its prose and then quotes the 22-session numbers. This script measures at 22, and
+ * PART D reports the 18-session row of §8 as its own line with its real value, PASS or MISS.
  */
 const SESSIONS = argNum("sessions", 22);
 const LONG_SESSIONS = argNum("longSessions", 24);
 const SESSION_MINUTES = argNum("sessionMinutes", 25);
+const STRICT = hasFlag("strict");
 const CURVE = [12, 16, 18, 20, 22, 24];
 
 const GRAPH = new Graph(source);
 const M = GRAPH.model;
 const TOTAL = GRAPH.ids.length;
+const NEED80 = Math.ceil(0.8 * TOTAL); // 26 of 32
 const BAND = Object.fromEntries(M.bands.map((b) => [b.difficulty, b]));
 const TRUE_FORM = Object.fromEntries(Object.entries(M.trueGuessByForm).filter(([, v]) => typeof v === "number"));
 const TRUE_PHASE = Object.fromEntries(Object.entries(M.trueGuessByPhase).filter(([, v]) => typeof v === "number"));
 const UNSCORED_FORMS = M.forms.unscored;
+const SCORED_FORMS = M.forms.scored;
+/** Kinds that acquire the material the way a person does. Everything else answers blind. */
+const HONEST_KINDS = new Set(["median", "mixed", "retentionHintLeak", "retentionFast"]);
 
 // -------------------------------------------------------------------------------- thresholds
 /** Every claim this script makes, with the number it has to beat. A critic edits nothing else. */
@@ -112,6 +141,16 @@ const percentile = (sorted, q) => {
   return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo);
 };
 const sha = (obj) => createHash("sha256").update(JSON.stringify(obj)).digest("hex").slice(0, 16);
+/** Wilson 95% upper bound. A measured 0 of 6400 is not "zero"; it is "below 0.0006". */
+const wilsonUpper = (hits, n) => {
+  if (!n) return 1;
+  const z = 1.959964;
+  const p = hits / n;
+  const d = 1 + (z * z) / n;
+  const c = p + (z * z) / (2 * n);
+  const s = z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n));
+  return (c + s) / d;
+};
 const out = [];
 const say = (s = "") => out.push(s);
 
@@ -137,10 +176,10 @@ const check = (id, statement, fn) => {
 };
 
 /** A fresh engine with a virtual clock and no persistence, for single-path assertions. */
-function bench({ seed = 1 } = {}) {
+function bench({ seed = 1, sessionMinutes = SESSION_MINUTES, SchedulerClass = Scheduler } = {}) {
   const clock = virtualClock(0);
   const mastery = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null });
-  const sched = new Scheduler(mastery, { clock, rng: mulberry32(seed), sessionMinutes: SESSION_MINUTES });
+  const sched = new SchedulerClass(mastery, { clock, rng: mulberry32(seed), sessionMinutes });
   sched.beginSession();
   return { clock, mastery, sched };
 }
@@ -149,6 +188,84 @@ const snapOf = (m, id) => {
   const s = m.stateOf(id);
   return { p: s.p, scored: s.scored, atBand: s.atBand, forms: [...s.forms].join(","), status: s.status };
 };
+
+/**
+ * ROUND-1 ENGINE, ONE LINE OF IT. `Scheduler.submit` used to run
+ * `if (outcome.correct) this._event.right += 1;` — the CALLER's raw flag — and `_finishEvent`
+ * fed that straight into M4. This subclass puts that line back and nothing else, so every "0"
+ * elsewhere in this file has a control that must be non-zero.
+ */
+class LegacyCountingScheduler extends Scheduler {
+  constructor(...a) {
+    super(...a);
+    this._rawRight = 0;
+  }
+  submit(req, outcome) {
+    if (this._event && req.mode === this._event.mode && outcome.correct) this._rawRight += 1;
+    return super.submit(req, outcome);
+  }
+  _finishEvent() {
+    const ev = this._event;
+    if (ev && ev.mode === "retention") {
+      const tally = this.mastery.eventOf(ev.kpId);
+      if (tally) tally.right = this._rawRight; // <- the defect, restored verbatim
+    }
+    this._rawRight = 0;
+    return super._finishEvent();
+  }
+}
+
+/**
+ * Put one node on the doorstep of M4 and let the REAL Scheduler serve the real retention check.
+ * Nothing here reaches inside the gate: the four items come from `next()` and are answered
+ * through `submit()`, which is the only path the world has.
+ */
+const RET_KP = "var-meaning";
+function retentionRun({
+  correct = true,
+  hinted = false,
+  latencyMs = 5000,
+  phaseOverride = null,
+  formOverride = null,
+  SchedulerClass = Scheduler,
+  abandonAfter = null,
+} = {}) {
+  const clock = virtualClock(0);
+  const mastery = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null });
+  const sched = new SchedulerClass(mastery, { clock, rng: mulberry32(11), sessionMinutes: 600 });
+  const s = mastery.stateOf(RET_KP);
+  s.p = 0.99;
+  s.status = "provisional";
+  s.everUnlocked = true;
+  s.scored = 6;
+  s.atBand = 3;
+  s.forms = ["construct", "repair"];
+  s.consolidated = true;
+  s.provisionalAt = 0;
+  s.provisionalSession = 0;
+  s.nextEventAt = 0;
+  clock.set(24 * 60); // past the 12 h gate
+  sched.beginSession(); // the intervening session
+  const served = [];
+  for (let i = 0; i < 4; i++) {
+    const req = sched.next();
+    if (!req || req.mode !== "retention") return { mastery, sched, served, error: `item ${i} was ${req ? req.mode : "null"}` };
+    if (phaseOverride) req.phase = phaseOverride;
+    if (formOverride) req.form = formOverride;
+    if (abandonAfter != null && i === abandonAfter) return { mastery, sched, served, abandoned: true };
+    const r = sched.submit(req, { correct, hinted, latencyMs, itemId: `${RET_KP}#ret${i}` });
+    served.push({ phase: req.phase, form: req.form, scored: r.scored, credited: r.credited, reason: r.reason });
+  }
+  return {
+    mastery,
+    sched,
+    served,
+    status: mastery.status(RET_KP),
+    lapses: mastery.stateOf(RET_KP).lapses,
+    refusedUpward: mastery.stats.refusedUpward,
+    scoredCounter: mastery.stateOf(RET_KP).scored,
+  };
+}
 
 check("U1", "Graph validates the real content and rejects a cyclic graph", () => {
   new Graph(source); // must not throw
@@ -220,8 +337,8 @@ check("U6", "guided-1 IS scorable but is NOT mastery-eligible (M2/M3 counters st
   const moved = after.p > before.p;
   const counted = after.scored !== before.scored || after.atBand !== before.atBand || after.forms !== before.forms;
   return {
-    ok: r.scored === true && r.masteryEligible === false && moved && !counted,
-    detail: `p ${f(before.p)} -> ${f(after.p)}, scored ${before.scored} -> ${after.scored}`,
+    ok: r.scored === true && r.masteryEligible === false && r.credited === false && moved && !counted,
+    detail: `p ${f(before.p)} -> ${f(after.p)}, scored ${before.scored} -> ${after.scored}, credited=${r.credited}`,
   };
 });
 
@@ -233,7 +350,10 @@ check("U7", "the two axes compose by MAX, never by product", () => {
   const t = mastery.trueGuess("construct", "guided-3");
   const solo = mastery.modelledGuess(BAND[3], "generate", "solo");
   const okMax = Math.abs(g - 0.05 * 2) < 1e-12 && Math.abs(gg - 0.05 * 2) < 1e-12 && t === 0.85;
-  return { ok: okMax, detail: `b1 construct/guided-1 ${f(g)}, b1 generate/guided-1 ${f(gg)} (product would be ${f(0.05 * 0.6 * 2)}), true construct/guided-3 ${f(t, 2)}, b3 generate/solo ${f(solo)}` };
+  return {
+    ok: okMax,
+    detail: `b1 construct/guided-1 ${f(g)}, b1 generate/guided-1 ${f(gg)} (product would be ${f(0.05 * 0.6 * 2)}), true construct/guided-3 ${f(t, 2)}, b3 generate/solo ${f(solo)}`,
+  };
 });
 
 check("U8", "an over-cap form is REJECTED from the scored path, never clamped", () => {
@@ -324,7 +444,10 @@ check("U13", "M4 is a CONJUNCTION: 3-of-4 with the posterior below threshold doe
   s.p = 0.97;
   const passesHigh = mastery.retentionPassed("eq-two-step", 3);
   const passesFew = mastery.retentionPassed("eq-two-step", 2);
-  return { ok: passesLow === false && passesHigh === true && passesFew === false, detail: `p=0.90&3/4 -> ${passesLow}; p=0.97&3/4 -> ${passesHigh}; p=0.97&2/4 -> ${passesFew}` };
+  return {
+    ok: passesLow === false && passesHigh === true && passesFew === false,
+    detail: `p=0.90&3/4 -> ${passesLow}; p=0.97&3/4 -> ${passesHigh}; p=0.97&2/4 -> ${passesFew}`,
+  };
 });
 
 check("U14", "the form cycle is a RUNNING index on the M2 counter, never restarted at `construct`", () => {
@@ -349,10 +472,10 @@ check("U15", "the all-wrong BKT floor invariant: one correct from the floor neve
     ]) {
       let p = b.prior;
       for (let i = 0; i < 400; i++) p = bktUpdate(p, false, b.slip, b.guess, learn, 1);
-      const one = bktUpdate(p, true, b.slip, b.guess, learn, 1);
-      rows.push({ band: b.difficulty, label, floor: p, one });
-      if (one >= M.bkt.masteryThreshold)
-        return { ok: false, detail: `band ${b.difficulty} ${label}: floor ${f(p)} + 1 correct = ${f(one)} >= ${M.bkt.masteryThreshold}` };
+      const oneMore = bktUpdate(p, true, b.slip, b.guess, learn, 1);
+      rows.push({ band: b.difficulty, label, floor: p, one: oneMore });
+      if (oneMore >= M.bkt.masteryThreshold)
+        return { ok: false, detail: `band ${b.difficulty} ${label}: floor ${f(p)} + 1 correct = ${f(oneMore)} >= ${M.bkt.masteryThreshold}` };
     }
   }
   const worst = rows.reduce((a, r) => (r.one > a.one ? r : a));
@@ -391,16 +514,338 @@ check("U18", "a fake localStorage round-trips a session (state resumes)", () => 
   return { ok: hydrated && Math.abs(m1.p("var-meaning") - m2.p("var-meaning")) < 1e-15, detail: `p ${f(m1.p("var-meaning"))} -> ${f(m2.p("var-meaning"))}` };
 });
 
+// ------------------------------------------------------- THE GATE THAT GRANTS MASTERY (M4)
+//
+// U19-U24 are the assertions that did not exist in round 1 and that the round-1 engine fails.
+// Everything above this line was already true; the leak lived here, at the one transition that
+// moves a knowledge point into the only state that counts toward the Level 1 percentage.
+
+check("U19", "M4 baseline: four honest, unhinted, unhurried corrects DO certify", () => {
+  const r = retentionRun({});
+  return { ok: r.status === "mastered" && r.lapses === 0, detail: `status ${r.status}, lapses ${r.lapses}, credited ${r.served.filter((x) => x.credited).length}/4` };
+});
+
+check("U20", "M4 refuses a HINTED correct: four hinted corrects certify NOTHING and lapse the node", () => {
+  const r = retentionRun({ hinted: true, latencyMs: 14000 });
+  return {
+    ok: r.status === "learning" && r.lapses === 1 && r.refusedUpward === 4 && r.served.every((x) => x.credited === false),
+    detail: `status ${r.status}, lapses ${r.lapses}, refusedUpward ${r.refusedUpward}, reasons ${[...new Set(r.served.map((x) => x.reason))].join("|")}, M2 docked to ${r.scoredCounter}`,
+  };
+});
+
+check("U21", "M4 refuses a SUB-LATENCY-FLOOR correct: four 100 ms corrects certify NOTHING", () => {
+  const r = retentionRun({ latencyMs: 100 });
+  return {
+    ok: r.status === "learning" && r.lapses === 1 && r.refusedUpward === 4,
+    detail: `status ${r.status}, lapses ${r.lapses}, refusedUpward ${r.refusedUpward}, reasons ${[...new Set(r.served.map((x) => x.reason))].join("|")}`,
+  };
+});
+
+check("U22", "M4 refuses a SCAFFOLDED correct: retention forced to guided-1 is scorable but not credited", () => {
+  const r = retentionRun({ phaseOverride: "guided-1" });
+  const scored = r.served.filter((x) => x.scored).length;
+  return {
+    ok: r.status === "learning" && r.lapses === 1 && scored === 4 && r.served.every((x) => x.credited === false),
+    detail: `status ${r.status}, lapses ${r.lapses}, scored ${scored}/4 but credited ${r.served.filter((x) => x.credited).length}/4`,
+  };
+});
+
+check("U23", "CONTROL: the round-1 counting rule DOES certify the hinted arm — this harness can see the leak", () => {
+  const legacy = retentionRun({ hinted: true, latencyMs: 14000, SchedulerClass: LegacyCountingScheduler });
+  const shipped = retentionRun({ hinted: true, latencyMs: 14000 });
+  return {
+    ok: legacy.status === "mastered" && shipped.status === "learning",
+    detail: `round-1 rule (M4 counts outcome.correct) -> ${legacy.status}; shipped rule (M4 counts result.credited) -> ${shipped.status}`,
+  };
+});
+
+check("U24", "there is exactly ONE retention tally: the Scheduler keeps no `right` counter of its own", () => {
+  const r = retentionRun({ abandonAfter: 2 });
+  const evKeys = Object.keys(r.sched._event ?? {}).sort().join(",");
+  const tally = r.mastery.eventOf(RET_KP);
+  return {
+    ok: !("right" in (r.sched._event ?? {})) && tally && tally.right === 2 && tally.served === 2,
+    detail: `scheduler event keys {${evKeys}}; mastery tally served ${tally?.served} right ${tally?.right} refusedRight ${tally?.refusedRight}`,
+  };
+});
+
+check("U25", "an ABANDONED retention check is a lapse, not a free re-roll", () => {
+  // Round 1: the Scheduler's half of the state was never persisted, so a reload dropped a
+  // half-answered check with no lapse and no M2 dock — `nextEventAt` still due, re-roll forever.
+  const r = retentionRun({ correct: false, abandonAfter: 3 });
+  const before = { status: r.mastery.status(RET_KP), lapses: r.mastery.stateOf(RET_KP).lapses };
+  const res = r.sched.abandonEvent("test");
+  const after = { status: r.mastery.status(RET_KP), lapses: r.mastery.stateOf(RET_KP).lapses, scored: r.mastery.stateOf(RET_KP).scored };
+  return {
+    ok: res.lapsed === true && before.status === "provisional" && after.status === "learning" && after.lapses === 1 && after.scored === 3,
+    detail: `served ${res.served} then abandoned: ${before.status} -> ${after.status}, lapses ${before.lapses} -> ${after.lapses}, M2 docked 6 -> ${after.scored}`,
+  };
+});
+
+check("U26", "Scheduler state survives persist -> hydrate: open check, no-repeat window and inFlight", () => {
+  const store = new Map();
+  const fake = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, v), removeItem: (k) => store.delete(k) };
+  const clock = virtualClock(0);
+  const m1 = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: fake });
+  const s1 = new Scheduler(m1, { clock, rng: mulberry32(3), sessionMinutes: 600 });
+  s1.beginSession();
+  for (let i = 0; i < 5; i++) {
+    const req = s1.next();
+    if (!req) break;
+    s1.submit(req, { correct: true, latencyMs: 5000, itemId: `it${i}` });
+  }
+  // open a retention check and answer one item of it
+  const st = m1.stateOf(RET_KP);
+  Object.assign(st, { p: 0.99, status: "provisional", scored: 6, atBand: 3, forms: ["construct", "repair"], consolidated: true, provisionalAt: 0, provisionalSession: 0, nextEventAt: 0, everUnlocked: true });
+  clock.set(24 * 60);
+  s1.beginSession();
+  const rq = s1.next();
+  s1.submit(rq, { correct: true, latencyMs: 5000, itemId: "ret0" });
+  m1.persist();
+
+  const m2 = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: fake });
+  const s2 = new Scheduler(m2, { clock, rng: mulberry32(3), sessionMinutes: 600 });
+  const okHydrate = m2.hydrate();
+  const sameEvent = JSON.stringify(s1._event) === JSON.stringify(s2._event);
+  const sameIds = s1.recentItemIds.join(",") === s2.recentItemIds.join(",");
+  const sameTally = JSON.stringify(m1.eventOf(RET_KP)) === JSON.stringify(m2.eventOf(RET_KP));
+  const sameInFlight = m1.inFlight.join(",") === m2.inFlight.join(",");
+  return {
+    ok: okHydrate && sameEvent && sameIds && sameTally && sameInFlight && m2.status(RET_KP) === "provisional",
+    detail: `event ${JSON.stringify(s2._event)}, recentItemIds ${s2.recentItemIds.length}, tally ${JSON.stringify(m2.eventOf(RET_KP))}, inFlight [${m2.inFlight.join(",")}]`,
+  };
+});
+
+check("U27", "a snapshot with NO Scheduler half lapses the orphaned retention check", () => {
+  const r = retentionRun({ correct: true, abandonAfter: 3 });
+  const snap = JSON.parse(JSON.stringify(r.mastery.snapshot()));
+  delete snap.scheduler; // exactly the round-1 snapshot shape
+  const clock = virtualClock(r.sched.clock.minutes());
+  const fresh = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null });
+  fresh.restore(snap);
+  const s = fresh.stateOf(RET_KP);
+  return {
+    ok: s.status === "learning" && s.lapses === 1 && s.scored === 3 && s.event === null,
+    detail: `restored without a scheduler half: status ${s.status}, lapses ${s.lapses}, M2 6 -> ${s.scored}`,
+  };
+});
+
+check("U28", "the `mastery` probe carries `inFlight[]` at the TOP level, as §8 requirement 11 names it", () => {
+  const r = retentionRun({ abandonAfter: 2 });
+  const probe = r.mastery.probe();
+  return {
+    ok: Array.isArray(probe.inFlight) && probe.inFlight.includes(RET_KP) && Array.isArray(probe.openEvents) && probe.openEvents[0]?.right === 2,
+    detail: `inFlight [${probe.inFlight.join(",")}], openEvents ${JSON.stringify(probe.openEvents)}`,
+  };
+});
+
+// ============================================================ PART A2 — the REAL item bank
+//
+// `model.trueGuessByForm` is a hand-authored constant and the entire L5 result is a linear
+// function of it. This section stops taking it on trust: it generates real items out of
+// `app/src/learn/ItemBank.js` and pushes random legal responses through the live checker.
+
+const bank = new ItemBank();
+
+function blindResponder(seed) {
+  const rng = mulberry32(seed);
+  const ri = (lo, hi) => lo + Math.floor(rng() * (hi - lo + 1));
+  const int = () => ri(-20, 20);
+  const num = () => (rng() < 0.85 ? String(int()) : `${ri(-20, 20)}/${ri(2, 12)}`);
+  const lin = (u) => {
+    const a = ri(-10, 10) || 2;
+    const b = int();
+    const shape = ri(0, 2);
+    return shape === 0 ? `${a}*${u} + ${b}` : shape === 1 ? `${a}*${u}` : `${u} + ${b}`;
+  };
+  const rel = () => ["<", ">", "<=", ">="][ri(0, 3)];
+  return (item) => {
+    const u = item.unknown || "x";
+    switch (item.answerType) {
+      case "integer":
+      case "rational":
+        return num();
+      case "expression":
+        return lin(u);
+      case "equation":
+        return `${lin(u)} = ${rng() < 0.5 ? int() : lin(u)}`;
+      case "inequality":
+        return `${u} ${rel()} ${num()}`;
+      case "pair":
+        return `${u} = ${int()}; y = ${int()}`;
+      case "valueSet":
+        return Array.from({ length: ri(1, 3) }, () => int()).join(", ");
+      case "closure": {
+        // The adversarial blind strategy: a responder who knows the two words exist.
+        const r = rng();
+        return r < 1 / 3 ? "always" : r < 2 / 3 ? "none" : num();
+      }
+      case "partition": {
+        const terms = String(item.answer.canonical).split("|").flatMap((x) => x.split(","));
+        const k = ri(1, Math.max(1, terms.length));
+        const blocks = Array.from({ length: k }, () => []);
+        for (const t of terms) blocks[ri(0, k - 1)].push(t);
+        return blocks.filter((b) => b.length).map((b) => b.join(", ")).join(" | ");
+      }
+      case "repair": {
+        const lines = (item.working || []).length || 6;
+        return `${ri(1, lines)}: ${rng() < 0.5 ? `${u} = ${num()}` : `${ri(-9, 9) || 3}${u} = ${num()}`}`;
+      }
+      case "construction": {
+        const r = rng();
+        if (r < 0.4) return `${lin(u)} = ${rng() < 0.5 ? int() : lin(u)}`;
+        if (r < 0.65) return lin(u);
+        if (r < 0.8) return `${u} ${rel()} ${num()}`;
+        if (r < 0.9) {
+          const v = int();
+          return `a = ${v}; b = ${v}`;
+        }
+        return num();
+      }
+      default:
+        return num();
+    }
+  };
+}
+
+const tBank = Date.now();
+/** measured[`${kpId}|${form}`] = { n, hits, rate, types } — ground truth, from the shipped bank. */
+const measured = {};
+const measuredByForm = {};
+const measuredByType = {};
+for (const kpId of GRAPH.ids) {
+  for (const form of SCORED_FORMS) {
+    const answer = blindResponder((kpId.length * 7919 + form.length * 104729 + 13) >>> 0);
+    let n = 0;
+    let hits = 0;
+    const types = new Set();
+    for (let i = 0; i < BLIND_N; i++) {
+      const sel = bank.select({ kpId, form, difficulty: 1 + (i % 5), seed: (i * 2654435761 + 17) >>> 0 });
+      if (!sel) continue;
+      const item = sel.item;
+      types.add(item.answerType);
+      let ok = false;
+      try {
+        ok = bank.check(item, answer(item)).correct === true;
+      } catch {
+        ok = false;
+      }
+      n += 1;
+      if (ok) hits += 1;
+      const t = `${form}/${item.answerType}`;
+      measuredByType[t] = measuredByType[t] ?? { n: 0, hits: 0 };
+      measuredByType[t].n += 1;
+      if (ok) measuredByType[t].hits += 1;
+    }
+    measured[`${kpId}|${form}`] = { n, hits, rate: n ? hits / n : 0, types: [...types].join("/") };
+    measuredByForm[form] = measuredByForm[form] ?? { n: 0, hits: 0 };
+    measuredByForm[form].n += n;
+    measuredByForm[form].hits += hits;
+  }
+}
+for (const v of Object.values(measuredByForm)) {
+  v.rate = v.n ? v.hits / v.n : 0;
+  v.upper95 = wilsonUpper(v.hits, v.n);
+}
+const bankMs = Date.now() - tBank;
+
+/** Cells where the real bank is materially easier to fluke than the content file claims. */
+const OVER_CAP = M.bkt.identifiabilityCaps.maxTrueGuess; // 0.30
+const TRIPWIRE = 0.1; // §9's first named tripwire
+const hotCells = Object.entries(measured)
+  .map(([k, v]) => ({ cell: k, ...v }))
+  .filter((r) => r.rate > TRIPWIRE)
+  .sort((a, b) => b.rate - a.rate);
+
+check("U29", "measured blind rate per FORM, over the real ItemBank, is at or under the content file's claim", () => {
+  const rows = SCORED_FORMS.map((form) => {
+    const m = measuredByForm[form];
+    return `${form} ${f(m.rate)} (95% u.b. ${f(m.upper95)}) vs declared ${TRUE_FORM[form]}`;
+  });
+  const ok = SCORED_FORMS.every((form) => measuredByForm[form].rate <= TRUE_FORM[form]);
+  return { ok, detail: rows.join("; ") };
+});
+
+/**
+ * A named list, not a count. §9 says the moment a generator family ships a smaller answer space
+ * than `trueGuessByForm` assumes, the table has to change — so the cells that do are NAMED here
+ * and any NEW one fails the run. `eq-special-cases` is the one that exists today: its whole
+ * `construct` pool is `closure`-typed, i.e. "always / never / a value", which is a three-way
+ * choice wearing a construction. That is a P17/P03 finding, reported rather than absorbed.
+ */
+const KNOWN_HOT_CELLS = new Set(["eq-special-cases|construct"]);
+check("U30", "no NEW (knowledge point x form) cell of the real bank is above §9's tripwire", () => {
+  const unexpected = hotCells.filter((r) => !KNOWN_HOT_CELLS.has(r.cell));
+  return {
+    ok: unexpected.length === 0,
+    detail: unexpected.length
+      ? `UNDECLARED hot cell(s): ${unexpected.map((r) => `${r.cell} ${f(r.rate, 3)} [${r.types}]`).join(", ")}`
+      : `hot cells, all declared: ${hotCells.map((r) => `${r.cell} ${f(r.rate, 3)} [${r.types}]${r.rate > OVER_CAP ? " ABOVE maxTrueGuess " + OVER_CAP : ""}`).join(", ") || "none"}`,
+  };
+});
+
+check("U31", "the review ladder after certification is 1, 2, 5, 11, 24, 45, 45, 45 days (§3, growth 2.2, cap 45)", () => {
+  const r = retentionRun({});
+  if (r.status !== "mastered") return { ok: false, detail: `node did not certify: ${r.status}` };
+  const { mastery, sched } = r;
+  const days = [];
+  for (let i = 0; i < 8; i++) {
+    const s = mastery.stateOf(RET_KP);
+    days.push(s.intervalDays);
+    sched.clock.set(s.nextEventAt);
+    sched.beginSession();
+    for (let k = 0; k < 2; k++) {
+      const req = sched.next();
+      if (!req || req.mode !== "review" || req.kpId !== RET_KP)
+        return { ok: false, detail: `ladder step ${i} item ${k} served ${req ? `${req.mode} on ${req.kpId}` : "null"}` };
+      sched.submit(req, { correct: true, latencyMs: 5000, itemId: `rev${i}-${k}` });
+    }
+  }
+  const want = [1, 2, 5, 11, 24, 45, 45, 45];
+  return { ok: days.join(",") === want.join(","), detail: `${days.join(", ")} days` };
+});
+
+check("U32", "12 hours of idle time inside ONE session never produces a retention item (§3 needs an intervening session)", () => {
+  const clock = virtualClock(0);
+  const mastery = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null });
+  const sched = new Scheduler(mastery, { clock, rng: mulberry32(5), sessionMinutes: 100000 });
+  sched.beginSession();
+  const s = mastery.stateOf(RET_KP);
+  Object.assign(s, {
+    p: 0.99,
+    status: "provisional",
+    everUnlocked: true,
+    scored: 6,
+    atBand: 3,
+    forms: ["construct", "repair"],
+    consolidated: true,
+    provisionalAt: 0,
+    provisionalSession: mastery.session,
+    nextEventAt: 0,
+  });
+  clock.set(100 * 1440); // a hundred days of idle time, all inside one session
+  for (let i = 0; i < 20; i++) {
+    const req = sched.next();
+    if (req && req.mode === "retention") return { ok: false, detail: `retention served after idling, at item ${i}` };
+    if (!req) break;
+    sched.submit(req, { correct: true, latencyMs: 5000, itemId: `idle${i}` });
+  }
+  return { ok: true, detail: `100 days idle inside session ${mastery.session}: no retention item, node still ${mastery.status(RET_KP)}` };
+});
+
 // ==================================================================== PART B — the population
 //
-// One responder model, five kinds. Only the `answer` function differs, and only the bots' branch
+// One responder model, many kinds. Only the `answer` function differs, and only the bots' branch
 // touches the ground-truth tables.
 
 /** GROUND TRUTH for the item the scheduler ACTUALLY served. Never `guessByForm`. */
 const blindRate = (form, phase) => Math.max(TRUE_FORM[form] ?? 0.03, TRUE_PHASE[phase] ?? 0);
+/** GROUND TRUTH as MEASURED off the shipped item bank for this exact knowledge point and form. */
+const measuredRate = (kpId, form, phase) =>
+  Math.max(measured[`${kpId}|${form}`]?.rate ?? TRUE_FORM[form] ?? 0.03, TRUE_PHASE[phase] ?? 0);
 
-function makeResponder(kind, rng) {
-  const bot = kind !== "median" && kind !== "mixed";
+function makeResponder(kind, rng, opts = {}) {
+  const bot = !HONEST_KINDS.has(kind);
   const ability = kind === "mixed" ? Math.exp(gauss(rng) * 0.35) : 1;
   const thetaTrue = -0.8 + 1.2 * Math.log(ability);
   const known = new Map();
@@ -440,7 +885,12 @@ function makeResponder(kind, rng) {
 
       if (bot) {
         // ------- THE LOAD-BEARING LINE. Ground truth, from the served form and phase. -------
-        let rate = blindRate(req.form, req.phase);
+        let rate =
+          opts.forcedBlindRate != null
+            ? Math.max(opts.forcedBlindRate, phaseFloor)
+            : kind === "bankGuesser"
+              ? measuredRate(req.kpId, req.form, req.phase)
+              : blindRate(req.form, req.phase);
         if (kind === "hintAbuser" && req.mode === "acquire") {
           // Idles past hintSurfaceMs. Where the phase surfaces a hint, that hint is what it gets.
           if (M.phases.hinted?.[req.phase]) rate = Math.max(rate, TRUE_PHASE["guided-3"]);
@@ -464,29 +914,50 @@ function makeResponder(kind, rng) {
         correct = rng() < base + (1 - base) * phaseFloor;
       }
 
+      // ---- THE ARMS ASSUMPTION B3 USED TO EXCUSE ------------------------------------------
+      // Acquire honestly, then abuse ONLY the certification surface. §6.1: `hinted` is a
+      // per-response fact reported by the world, and the world can get it wrong anywhere.
+      if (kind === "retentionHintLeak" && req.mode === "retention") {
+        correct = rng() < TRUE_PHASE["guided-3"]; // idle 12 s, read the hint, type what it says
+        hinted = true;
+        latencyMs = M.antiGuessing.hintSurfaceMs + 2000;
+      } else if (kind === "retentionFast" && req.mode === "retention") {
+        latencyMs = 100; // knows it, commits under the floor
+      }
+
       return { correct, latencyMs, hinted, itemId: `${req.kpId}#${req.seq}` };
     },
   };
 }
 
-function runLearner({ seed, kind, sessions = SESSIONS, reviewCapLift = true, pullForward = true, prerequisiteClockReset = true }) {
+function runLearner({
+  seed,
+  kind,
+  sessions = SESSIONS,
+  reviewCapLift = true,
+  pullForward = true,
+  prerequisiteClockReset = true,
+  SchedulerClass = Scheduler,
+  forcedBlindRate = null,
+}) {
   const rng = mulberry32(seed);
   const clock = virtualClock(0);
   const mastery = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null, prerequisiteClockReset });
-  const sched = new Scheduler(mastery, {
+  const sched = new SchedulerClass(mastery, {
     clock,
     rng: mulberry32(seed ^ 0x9e3779b9),
     sessionMinutes: SESSION_MINUTES,
     reviewCapLift,
     pullForward,
   });
-  const responder = makeResponder(kind, rng);
+  const responder = makeResponder(kind, rng, { forcedBlindRate });
   const hostileBank = kind === "formHunter";
 
   let retentionAttempts = 0;
   let retentionPasses = 0;
   let peakMastered = 0;
   const trace = [];
+  const scoredTrace = [];
 
   for (let session = 0; session < sessions; session++) {
     clock.set(session * 1440); // A5: one session per day
@@ -508,11 +979,11 @@ function runLearner({ seed, kind, sessions = SESSIONS, reviewCapLift = true, pul
     const now = GRAPH.ids.filter((id) => mastery.status(id) === "mastered").length;
     peakMastered = Math.max(peakMastered, now);
     trace.push(now);
+    scoredTrace.push(mastery.stats.scoredItems);
   }
 
   const mastered = GRAPH.ids.filter((id) => mastery.status(id) === "mastered").length;
-  const need = Math.ceil(0.8 * TOTAL);
-  const at80 = trace.findIndex((m) => m >= need);
+  const at80 = trace.findIndex((m) => m >= NEED80);
   return {
     mastery,
     clock,
@@ -526,27 +997,35 @@ function runLearner({ seed, kind, sessions = SESSIONS, reviewCapLift = true, pul
     scoredItems: mastery.stats.scoredItems,
     unscoredItems: mastery.stats.unscoredItems,
     refusedUpward: mastery.stats.refusedUpward,
+    lapses: mastery.stats.lapses,
     theta: mastery.theta,
     retentionAttempts,
     retentionPasses,
     trace,
+    scoredTrace,
     sessionsTo80: at80 < 0 ? null : at80 + 1,
+    // §8's real row: SCORED OPPORTUNITIES consumed by the time 80% of Level 1 is certified —
+    // not the total the learner ever answers. Snapshotted at the session where it happens.
+    scoredTo80: at80 < 0 ? null : scoredTrace[at80],
   };
 }
 
+const cohortTimings = [];
 function cohort(kind, n, seedBase, sessions, opts = {}) {
   const rows = [];
+  const tc = Date.now();
   for (let i = 0; i < n; i++) rows.push(runLearner({ seed: seedBase + i * 7919, kind, sessions, ...opts }));
+  cohortTimings.push({ kind, n, ms: Date.now() - tc, label: opts.label ?? kind });
   const p = rows.map((r) => (100 * r.mastered) / TOTAL).sort((a, b) => a - b);
   const items = rows.map((r) => r.items).sort((a, b) => a - b);
-  const sum = (f) => rows.reduce((a, r) => a + f(r), 0);
-  const need = Math.ceil(0.8 * TOTAL);
+  const sum = (fn) => rows.reduce((a, r) => a + fn(r), 0);
   /** Level 1 mastery, in percent, as it stood at the END of session k (1-indexed). */
   const atSession = (k) => {
     if (k > sessions) return null;
     const v = rows.map((r) => (100 * r.trace[k - 1]) / TOTAL).sort((a, b) => a - b);
-    return { median: percentile(v, 0.5), p10: percentile(v, 0.1), shareAt80: rows.filter((r) => r.trace[k - 1] >= need).length / n };
+    return { median: percentile(v, 0.5), p10: percentile(v, 0.1), shareAt80: rows.filter((r) => r.trace[k - 1] >= NEED80).length / n };
   };
+  const to80 = rows.map((r) => r.scoredTo80).filter((x) => x != null).sort((a, b) => a - b);
   return {
     n,
     sessions,
@@ -568,9 +1047,14 @@ function cohort(kind, n, seedBase, sessions, opts = {}) {
     meanScoredItems: sum((r) => r.scoredItems) / n,
     meanUnscoredItems: sum((r) => r.unscoredItems) / n,
     meanRefusedUpward: sum((r) => r.refusedUpward) / n,
+    maxRefusedUpward: Math.max(...rows.map((r) => r.refusedUpward)),
+    meanLapses: sum((r) => r.lapses) / n,
     retentionPassRate: sum((r) => r.retentionAttempts) ? sum((r) => r.retentionPasses) / sum((r) => r.retentionAttempts) : null,
+    // §8: "median scored opportunities TO 80% mastery". Null for anyone who never got there.
+    medianScoredTo80: to80.length ? percentile(to80, 0.5) : null,
+    shareReaching80: to80.length / n,
     medianSessionsTo80: percentile(rows.map((r) => r.sessionsTo80 ?? 999).sort((a, b) => a - b), 0.5),
-    shareBySession: Array.from({ length: sessions }, (_, s) => rows.filter((r) => r.trace[s] >= Math.ceil(0.8 * TOTAL)).length / n),
+    shareBySession: Array.from({ length: sessions }, (_, s) => rows.filter((r) => r.trace[s] >= NEED80).length / n),
     meanTheta: sum((r) => r.theta) / n,
   };
 }
@@ -586,6 +1070,15 @@ const masher = cohort("masher", BOTS, 424242, SESSIONS);
 const formHunter = cohort("formHunter", BOTS, 606060, SESSIONS);
 const hintAbuser = cohort("hintAbuser", BOTS, 515151, SESSIONS);
 const hintLeak = cohort("hintLeak", BOTS, 727272, SESSIONS);
+// The arms assumption B3 used to declare out of scope.
+const retentionHintLeak = cohort("retentionHintLeak", BOTS, 838383, SESSIONS);
+const retentionFast = cohort("retentionFast", BOTS, 949494, SESSIONS);
+// The same arm against the ROUND-1 counting rule. Must be large, or this file sees nothing.
+const legacyRetention = cohort("retentionHintLeak", Math.max(60, Math.floor(BOTS / 2)), 838383, SESSIONS, {
+  SchedulerClass: LegacyCountingScheduler,
+});
+// The blind bot, priced off the REAL bank rather than off the content file's constants.
+const bankGuesser = cohort("bankGuesser", BOTS, 161616, SESSIONS);
 
 // §4.1: both selection rules off. The claim is that they are jointly load-bearing, so it has to
 // be measured on this engine and not quoted from the design document.
@@ -598,7 +1091,19 @@ const ablated = cohort("median", Math.max(60, Math.floor(LEARNERS / 4)), 5150, S
 // only flatter L4. So it is measured with the rule switched off rather than assumed harmless.
 const noClockReset = cohort("median", Math.max(60, Math.floor(LEARNERS / 4)), 5150, SESSIONS, { prerequisiteClockReset: false });
 
+/**
+ * SENSITIVITY. The whole L5 result is a linear function of `trueGuessByForm.construct = 0.03`.
+ * This sweep prices the guessing bot at a forced blind rate and prints what the gate does, so
+ * the tolerance is a measurement rather than a hope. 0.10 and 0.17 are §9's two named tripwires.
+ */
+const SWEEP_RATES = [0.03, 0.1, 0.17, 0.25, 0.5];
+const sweep = SWEEP_RATES.map((r) => ({
+  rate: r,
+  cohort: cohort("guesser", SWEEP_BOTS, 313131, SESSIONS, { forcedBlindRate: r }),
+}));
+
 const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+if (hasFlag("time")) console.error(cohortTimings.map((c) => `${c.kind} n=${c.n} ${c.ms}ms`).join("\n"));
 
 // --------------------------------------------------------------------------------- the claims
 
@@ -606,29 +1111,23 @@ claim("A", "L4", `median learner: median Level 1 mastery at ${SESSIONS} sessions
   value: `${median.median.toFixed(1)}% (p10 ${median.p10.toFixed(1)}%, ${pct(median.shareAt80)} of learners at >= 80%)`,
   pass: median.median >= 80,
 }));
-/**
- * §5: "Level 1 is gated by mastery, not by a clock, so the honest question is not 'how much in 18
- * sessions' but 'how long to 80%'." So the second L4 claim is measured in sessions, and the
- * 18-session snapshot is printed inside it rather than quietly dropped for failing a threshold
- * this script invented.
- */
-claim("A2", "L4", "median learner: median number of sessions to reach 80% of Level 1 <= 20 (8.3 h of play)", () => {
-  const at18 = median.atSession(18);
-  return {
-    value:
-      `median ${median.medianSessionsTo80} sessions; at the 18-session mark this engine's median learner holds ` +
-      `${at18.median.toFixed(1)}% with ${pct(at18.shareAt80)} of learners past the bar ` +
-      `(review/p03/mastery-sim.mjs --sessions=18 measures 71.9% / 9.0% on the same budget)`,
-    pass: median.medianSessionsTo80 <= 20,
-  };
-});
+claim("A2", "L4", "median learner: median number of sessions to reach 80% of Level 1 <= 20 (8.3 h of play)", () => ({
+  value: `median ${median.medianSessionsTo80} sessions; ${pct(median.shareReaching80)} of learners reach 80% inside the ${SESSIONS}-session budget`,
+  pass: median.medianSessionsTo80 <= 20,
+}));
 claim("B", "L4", `mixed-ability population: share at >= 80% mastery by ${LONG_SESSIONS} sessions >= 90%`, () => ({
   value: pct(mixedLong.shareAt80),
   pass: mixedLong.shareAt80 >= 0.9,
 }));
-claim("C", "L4", "median learner: median scored opportunities used is 480-900 (§8 conformance band)", () => ({
-  value: `${Math.round(median.meanScoredItems)} scored of ${Math.round(median.medianItems)} items in ${SESSIONS} sessions`,
-  pass: median.meanScoredItems >= 480 && median.meanScoredItems <= 900,
+/**
+ * §8's row is "median scored opportunities TO 80% mastery, 480-600". Round 1 of this script
+ * measured the total scored over the whole 22 sessions against a band it had widened to 480-900,
+ * which is a different quantity with a different band. This measures the quantity §8 names:
+ * `mastery.stats.scoredItems` snapshotted at the session where `mastered` first reaches 26 of 32.
+ */
+claim("C", "L4", "median SCORED OPPORTUNITIES consumed by the time 80% of Level 1 is certified is 480-600 (§8's real row)", () => ({
+  value: `${median.medianScoredTo80 == null ? "n/a" : Math.round(median.medianScoredTo80)} scored opportunities to ${NEED80}/32 certified (${pct(median.shareReaching80)} of learners get there; whole-budget total is ${Math.round(median.meanScoredItems)})`,
+  pass: median.medianScoredTo80 != null && median.medianScoredTo80 >= 480 && median.medianScoredTo80 <= 600,
 }));
 claim("D", "L5", "patient guessing bot: mean knowledge points certified < 0.01 of 32", () => ({
   value: `${guesser.meanMastered.toFixed(4)} (max ${guesser.maxMastered}, peak ever ${guesser.peakEverMastered})`,
@@ -642,23 +1141,60 @@ claim("F", "L5", "hint-abusing bot (idles for maximum scaffolding on every item)
   value: `${hintAbuser.meanMastered.toFixed(4)} (max ${hintAbuser.maxMastered}, gate opened on ${hintAbuser.meanGateOpens.toFixed(3)} nodes/run)`,
   pass: hintAbuser.maxMastered === 0,
 }));
-/**
- * The bug arm, and the one place this script refuses to claim a zero. §9 of the design is explicit
- * that the residual "is real, and it is per node, not per learner", and that claiming it is
- * structurally zero would be the overclaim the whole round exists to remove. Under a leaked hint
- * the gate OPENS on essentially every node — the bot is told it nearly has it — and the retention
- * check, which is built by the Scheduler at solo/unhinted and answered blind, is what stops
- * certification.
- */
-claim("G", "L5", "hint-LEAK bug arm (P18 leaks help into solo, engine never told): < 0.1 of 32 certified, none near the bar", () => ({
+claim("G", "L5", "hint-LEAK bug arm (P18 leaks help into solo during ACQUISITION): < 0.1 of 32 certified, none near the bar", () => ({
   value: `${hintLeak.meanMastered.toFixed(4)} certified/run (max ${hintLeak.maxMastered}, ${pct(hintLeak.shareAt80)} of runs at >= 80%), gate opened ${hintLeak.meanGateOpens.toFixed(1)}x/run on ${hintLeak.meanUnlocked.toFixed(1)}/32 nodes`,
   pass: hintLeak.meanMastered < 0.1 && hintLeak.maxMastered <= 2 && hintLeak.shareAt80 === 0,
 }));
 /**
- * CONTROL ARM. A harness that only ever prints zeros cannot be told apart from a broken detector,
- * which is the reason `mastery-sim.mjs` keeps its legacy rules running. If the leak arm did not
- * visibly move the gate, every other zero in this table would be worthless.
+ * THE ARM THE PREVIOUS ROUND EXCUSED. Honest acquisition, then the hint on all four retention
+ * items — the strategy a real fifteen-year-old actually runs. Round 1 of this engine certified
+ * 31.95 of 32 here. The threshold is exactly 0, and `refusedUpward > 0` proves the arm is live
+ * rather than silently inert.
  */
+claim("N", "L5", "retention hint-leak arm (acquires honestly, reads the hint on every M4 item): EXACTLY 0 certified", () => ({
+  value: `${retentionHintLeak.meanMastered.toFixed(4)} certified/run (max ${retentionHintLeak.maxMastered}); ${retentionHintLeak.meanRefusedUpward.toFixed(0)} refusedUpward and ${retentionHintLeak.meanLapses.toFixed(1)} lapses per run; ${retentionHintLeak.meanGateOpens.toFixed(1)} gate opens (it does reach M4)`,
+  pass: retentionHintLeak.meanMastered === 0 && retentionHintLeak.meanRefusedUpward > 0 && retentionHintLeak.meanGateOpens > 5,
+}));
+claim("O", "L5", "retention speed arm (acquires honestly, commits every M4 item in 100 ms): EXACTLY 0 certified", () => ({
+  value: `${retentionFast.meanMastered.toFixed(4)} certified/run (max ${retentionFast.maxMastered}); ${retentionFast.meanRefusedUpward.toFixed(0)} refusedUpward and ${retentionFast.meanLapses.toFixed(1)} lapses per run; ${retentionFast.meanGateOpens.toFixed(1)} gate opens`,
+  pass: retentionFast.meanMastered === 0 && retentionFast.meanRefusedUpward > 0 && retentionFast.meanGateOpens > 5,
+}));
+/**
+ * CONTROL ARM FOR N AND O. One line of the round-1 engine, restored. If this does not certify,
+ * the two zeros above are the zeros of a broken detector and the run is worthless.
+ */
+claim("P", "L5", "CONTROL: the round-1 M4 counting rule certifies the SAME arm on >= 20 of 32 — the harness can see the leak", () => ({
+  value: `round-1 rule: ${legacyRetention.meanMastered.toFixed(2)}/32 certified per run (max ${legacyRetention.maxMastered}, ${pct(legacyRetention.shareAt80)} of runs at >= 80%); shipped rule on the identical arm: ${retentionHintLeak.meanMastered.toFixed(4)}`,
+  pass: legacyRetention.meanMastered >= 20 && retentionHintLeak.meanMastered === 0,
+}));
+/**
+ * L5 without the content file's hand-authored constants anywhere in the loop.
+ */
+claim("Q", "L5", "blind bot priced off the REAL ItemBank (measured per kp x form, not the JSON): mean certified < 0.01", () => ({
+  value: `${bankGuesser.meanMastered.toFixed(4)} (max ${bankGuesser.maxMastered}, peak ever ${bankGuesser.peakEverMastered}); measured rates: ${SCORED_FORMS.map((x) => `${x} ${f(measuredByForm[x].rate, 4)}`).join(", ")}`,
+  pass: bankGuesser.meanMastered < 0.01,
+}));
+claim("R", "L5", "the real bank is no easier to fluke than the content file claims, per form", () => ({
+  value: SCORED_FORMS.map((x) => `${x}: measured ${f(measuredByForm[x].rate, 4)} (95% u.b. ${f(measuredByForm[x].upper95, 4)}) vs declared ${TRUE_FORM[x]}`).join("; "),
+  pass: SCORED_FORMS.every((x) => measuredByForm[x].rate <= TRUE_FORM[x]),
+}));
+claim("T", "L5", "the real bank's ONE under-priced cell is named, and the bank-priced bot still certifies nothing on it", () => {
+  const unexpected = hotCells.filter((h) => !KNOWN_HOT_CELLS.has(h.cell));
+  return {
+    value: hotCells.length
+      ? `${hotCells.map((h) => `${h.cell} ${f(h.rate, 4)} [${h.types}]`).join("; ")} — declared; ${unexpected.length} undeclared; bank-priced bot peak ever certified ${bankGuesser.peakEverMastered}`
+      : `no cell above ${TRIPWIRE}; bank-priced bot peak ever certified ${bankGuesser.peakEverMastered}`,
+    pass: unexpected.length === 0 && bankGuesser.peakEverMastered === 0,
+  };
+});
+claim("S", "L5", "sensitivity: the gate holds at 3x the assumed blind rate (§9's first tripwire, 0.10)", () => {
+  const at010 = sweep.find((s) => s.rate === 0.1).cohort;
+  const at017 = sweep.find((s) => s.rate === 0.17).cohort;
+  return {
+    value: `certified/32 at forced blind rate: ${sweep.map((s) => `${s.rate} -> ${s.cohort.meanMastered.toFixed(3)}`).join(", ")}`,
+    pass: at010.meanMastered < 0.05 && at017.meanMastered < 0.5,
+  };
+});
 claim("L", "L5", "control arm: the harness can SEE a leak — the bug arm opens the gate, the shipped rules do not", () => ({
   value: `leak arm unlocks ${hintLeak.meanUnlocked.toFixed(1)}/32 nodes per run; shipped hint-abuse arm unlocks ${hintAbuser.meanUnlocked.toFixed(2)}/32; guessing bot ${guesser.meanUnlocked.toFixed(2)}/32; form-hunting bot ${formHunter.meanUnlocked.toFixed(2)}/32`,
   pass: hintLeak.meanUnlocked >= 20 && hintAbuser.meanUnlocked < 4 && formHunter.meanUnlocked === 0,
@@ -684,43 +1220,139 @@ claim("K", "L2/L5", `every deterministic engine assertion passes (${asserts.leng
   pass: asserts.every((a) => a.ok),
 }));
 
+// ------------------------------------------------ PART D — §8's conformance table, measured
+//
+// Six rows, six bands, measured on THIS engine. A row that misses is printed as a miss with its
+// real value. One miss is DECLARED — it is a disagreement about the session budget, and the
+// reason is stated rather than the band quietly widened, which is what round 1 did.
+
+const at18 = median.atSession(18);
+/** The first session at which the median learner's mastery lands INSIDE §8's 90-96% band. */
+let bandEnteredAt = null;
+let bandEnteredValue = null;
+for (let k = 1; k <= SESSIONS; k++) {
+  const a = median.atSession(k);
+  if (a && a.median >= 90 && a.median <= 96) {
+    bandEnteredAt = k;
+    bandEnteredValue = a.median;
+    break;
+  }
+}
+
+/**
+ * Stated, not widened. Round 1 of this script quietly reframed this row to a >= 80% threshold at
+ * 22 sessions, which is a different claim about a different budget. The numbers cited from the
+ * reference simulation are line-checkable in `review/p03/evidence/mastery-sim.txt`.
+ */
+const DECLARED_MISS =
+  `§8's row is stated against an 18-session budget; §5 of the same document, and ` +
+  `review/p03/mastery-sim.mjs, both run 22. On 18 sessions this engine's median learner holds ` +
+  `${at18.median.toFixed(1)}% with ${pct(at18.shareAt80)} of learners past 80%, and lands inside the 90-96% band at ` +
+  `session ${bandEnteredAt ?? ">" + SESSIONS}${bandEnteredValue == null ? "" : ` (${bandEnteredValue.toFixed(1)}%)`}. ` +
+  `The row is not reproduced by the design's OWN script either: ` +
+  `\`node review/p03/mastery-sim.mjs --sessions=18 --learners=200\` measures the median learner at ` +
+  `71.9%, and the committed evidence at review/p03/evidence/mastery-sim.txt line 107 reads ` +
+  `"by session 18 (7.5 h of play): 24.3% of learners have >= 80% mastery" with line 113 putting the ` +
+  `median at 20 sessions to 80%. This engine is AHEAD of the reference on that row ` +
+  `(${at18.median.toFixed(1)}% against 71.9%) and still misses the band. ` +
+  `The honest conclusion is that §8's 18-session row is stated against ` +
+  `the wrong budget and belongs at ${bandEnteredAt ?? "20+"} sessions. That is a P03 content defect to fix in ` +
+  `the document, not a reason to move P16's own bar or to widen a band.`;
+
+const conformance = [
+  {
+    row: "median learner, mastered % at 18 sessions",
+    target: "90-96%",
+    value: `${at18.median.toFixed(1)}%`,
+    hit: at18.median >= 90 && at18.median <= 96,
+    declared: DECLARED_MISS,
+  },
+  {
+    row: "mixed population, share >= 80% at 24 sessions",
+    target: ">= 95%",
+    value: pct(mixedLong.shareAt80),
+    hit: mixedLong.shareAt80 >= 0.95,
+  },
+  {
+    row: "retention check pass rate, real learners",
+    target: "85-92%",
+    value: pct(median.retentionPassRate ?? 0),
+    hit: (median.retentionPassRate ?? 0) >= 0.85 && (median.retentionPassRate ?? 0) <= 0.92,
+  },
+  {
+    row: "patient guessing bot, mean KPs certified",
+    target: "< 0.01 of 32",
+    value: guesser.meanMastered.toFixed(4),
+    hit: guesser.meanMastered < 0.01,
+  },
+  {
+    row: "bot served judge2/select4, KPs certified",
+    target: "exactly 0, `scored` never increments",
+    value: `${formHunter.maxMastered} certified, max M2 counter ${formHunter.maxScoredCounter}`,
+    hit: formHunter.maxMastered === 0 && formHunter.maxScoredCounter === 0,
+  },
+  {
+    row: "median scored opportunities to 80% mastery",
+    target: "480-600",
+    value: median.medianScoredTo80 == null ? "never reached" : String(Math.round(median.medianScoredTo80)),
+    hit: median.medianScoredTo80 != null && median.medianScoredTo80 >= 480 && median.medianScoredTo80 <= 600,
+  },
+];
+const undeclaredMisses = conformance.filter((c) => !c.hit && !c.declared);
+const declaredMisses = conformance.filter((c) => !c.hit && c.declared);
+
 // ------------------------------------------------------------------------------------- output
 
 say("P16 — mastery engine: measured proof of L4 and L5");
-say("=".repeat(96));
-say(`engine under test: app/src/learn/{Graph,Mastery,Scheduler}.js   content: content/knowledge-graph.json`);
+say("=".repeat(100));
+say(`engine under test: app/src/learn/{Graph,Mastery,Scheduler,ItemBank}.js   content: content/knowledge-graph.json`);
 say(`graph: ${JSON.stringify(GRAPH.stats())}`);
 say(
   `gate: P >= ${M.bkt.masteryThreshold}, >= ${M.bkt.minScoredOpportunities} scored (>= ${M.bkt.minAtBandOpportunities} at band), >= ${M.bkt.minDistinctItemForms} forms, ` +
-    `then ${M.spacing.retentionCheck.passAtLeast}/${M.spacing.retentionCheck.items} AND P >= ${M.bkt.masteryThreshold} at a check >= ${M.spacing.retentionCheck.minHours} h and >= ${M.spacing.retentionCheck.minInterveningSessions} session later`
+    `then ${M.spacing.retentionCheck.passAtLeast}/${M.spacing.retentionCheck.items} CREDITED AND P >= ${M.bkt.masteryThreshold} at a check >= ${M.spacing.retentionCheck.minHours} h and >= ${M.spacing.retentionCheck.minInterveningSessions} session later`
 );
 say(`budget: ${SESSIONS} sessions x ${SESSION_MINUTES} min, one session per day. Bots: ${BOTS}/arm, learners: ${LEARNERS}/cohort. ${elapsed}s`);
 say("");
 say("TRUE blind-success rates the bots draw from (ground truth, never the model's guess):");
+say(`  declared by form:  ${Object.entries(TRUE_FORM).map(([k, v]) => `${k} ${v}`).join("   ")}`);
+say(`  declared by phase: ${Object.entries(TRUE_PHASE).map(([k, v]) => `${k} ${v}`).join("   ")}`);
 say(
-  `  by form:  ${Object.entries(TRUE_FORM).map(([k, v]) => `${k} ${v}`).join("   ")}`
+  `  MEASURED off the real ItemBank (${BLIND_N} items x ${GRAPH.ids.length} kps x ${SCORED_FORMS.length} forms, ${bankMs} ms): ` +
+    SCORED_FORMS.map((x) => `${x} ${f(measuredByForm[x].rate, 4)}`).join("   ")
 );
-say(`  by phase: ${Object.entries(TRUE_PHASE).map(([k, v]) => `${k} ${v}`).join("   ")}`);
-say(
-  `  for contrast, the model's own belief at band 3: ${Object.keys(TRUE_FORM).map((f2) => `${f2} ${(BAND[3].guess * (M.guessByForm[f2] ?? 1)).toFixed(3)}`).join("   ")}`
-);
+say(`  for contrast, the model's own belief at band 3: ${Object.keys(TRUE_FORM).map((f2) => `${f2} ${(BAND[3].guess * (M.guessByForm[f2] ?? 1)).toFixed(3)}`).join("   ")}`);
 say("");
 
 say("PART A — deterministic engine assertions");
-say("-".repeat(96));
+say("-".repeat(100));
 for (const a of asserts) {
   say(`  ${a.ok ? "PASS" : "FAIL"}  ${a.id}  ${a.statement}`);
   if (a.detail) say(`             ${a.detail}`);
 }
 say("");
 
+say("PART A2 — blind success measured against the REAL item bank, per answer type");
+say("-".repeat(100));
+say("  form/answerType".padEnd(34) + "n".padStart(8) + "hits".padStart(8) + "rate".padStart(10) + "95% u.b.".padStart(11));
+for (const [k, v] of Object.entries(measuredByType).sort((a, b) => b[1].hits / b[1].n - a[1].hits / a[1].n)) {
+  say(`  ${k}`.padEnd(34) + String(v.n).padStart(8) + String(v.hits).padStart(8) + f(v.hits / v.n, 4).padStart(10) + f(wilsonUpper(v.hits, v.n), 4).padStart(11));
+}
+say("");
+if (hotCells.length) {
+  say(`  cells above the §9 tripwire of ${TRIPWIRE} (a knowledge point whose answer space is smaller than the content file assumes):`);
+  for (const h of hotCells) say(`    ${h.cell.padEnd(34)} ${f(h.rate, 4)}  [${h.types}]   ${h.rate > OVER_CAP ? "*** ABOVE maxTrueGuess " + OVER_CAP + " ***" : ""}`);
+} else {
+  say(`  no (kp x form) cell above the §9 tripwire of ${TRIPWIRE}.`);
+}
+say("");
+
 say("PART B — cohorts");
-say("-".repeat(96));
+say("-".repeat(100));
 const cols = ["cohort", "n", "sess", "p10", "median", "p90", ">=80%", "certified", "peak", "items", "unscored", "refused"];
-say(cols[0].padEnd(30) + cols.slice(1).map((c, i) => c.padStart([5, 5, 8, 8, 8, 8, 10, 6, 8, 9, 9][i])).join(""));
+say(cols[0].padEnd(32) + cols.slice(1).map((c, i) => c.padStart([5, 5, 8, 8, 8, 8, 10, 6, 8, 9, 9][i])).join(""));
 const row = (label, c) =>
   say(
-    label.padEnd(30) +
+    label.padEnd(32) +
       String(c.n).padStart(5) +
       String(c.sessions).padStart(5) +
       `${c.p10.toFixed(1)}%`.padStart(8) +
@@ -736,14 +1368,26 @@ const row = (label, c) =>
 row("median learner", median);
 row("mixed population (long)", mixedLong);
 row("patient guessing bot", guesser);
+row("bank-priced guessing bot", bankGuesser);
 row("mashing bot", masher);
 row("form-hunting bot", formHunter);
 row("hint-abusing bot", hintAbuser);
-row("hint-leak bot (P18 bug arm)", hintLeak);
+row("hint-leak bot (acquisition)", hintLeak);
+row("retention hint-leak bot", retentionHintLeak);
+row("retention speed bot", retentionFast);
+row("^ SAME arm, round-1 M4 rule", legacyRetention);
 row("median, §4.1 rules OFF", ablated);
 row("median, prereq clock reset OFF", noClockReset);
 say("");
-say(`  median learner: mean theta ${median.meanTheta.toFixed(2)}, retention pass rate ${pct(median.retentionPassRate ?? 0)}, median sessions to 80% ${median.medianSessionsTo80}`);
+say(
+  `  median learner: mean theta ${median.meanTheta.toFixed(2)}, retention pass rate ${pct(median.retentionPassRate ?? 0)}, ` +
+    `median sessions to 80% ${median.medianSessionsTo80}, median scored opportunities to 80% ${median.medianScoredTo80 == null ? "n/a" : Math.round(median.medianScoredTo80)}`
+);
+say("");
+say("  sensitivity of L5 to the hand-authored `trueGuessByForm.construct = 0.03`:");
+say("    forced blind rate   certified/32   >=80% of runs");
+for (const s of sweep)
+  say(`      ${String(s.rate).padEnd(6)}            ${s.cohort.meanMastered.toFixed(3).padStart(8)}      ${pct(s.cohort.shareAt80).padStart(8)}`);
 say("");
 say("  Level 1 is gated by mastery, not by a clock, so the honest question is how LONG to 80%:");
 say("    session   hours   median learner: median %   share >= 80%      mixed population: median %   share >= 80%");
@@ -760,7 +1404,7 @@ for (const k of CURVE) {
 say("");
 
 say("PART C — claims");
-say("=".repeat(96));
+say("=".repeat(100));
 let allPass = true;
 const claimRows = [];
 for (const c of CLAIMS) {
@@ -771,19 +1415,61 @@ for (const c of CLAIMS) {
   say(`             measured: ${r.value}`);
 }
 say("");
-say(`RESULT: ${allPass ? "PASS" : "FAIL"} — ${claimRows.filter((c) => c.pass).length}/${claimRows.length} claims, ${asserts.filter((a) => a.ok).length}/${asserts.length} assertions`);
+
+say("PART D — §8 conformance table, measured on this engine");
+say("=".repeat(100));
+for (const c of conformance) {
+  say(`  ${c.hit ? "HIT " : "MISS"}  ${c.row.padEnd(48)} target ${c.target.padEnd(34)} measured ${c.value}`);
+}
+if (declaredMisses.length) {
+  say("");
+  say("  DECLARED MISS — stated, not widened:");
+  for (const c of declaredMisses) {
+    say(`    ${c.row}: measured ${c.value} against ${c.target}.`);
+    for (const line of wrap(c.declared, 96)) say(`      ${line}`);
+  }
+}
+say("");
+
+const conformanceOk = undeclaredMisses.length === 0 && (!STRICT || declaredMisses.length === 0);
+const result = allPass && conformanceOk ? "PASS" : "FAIL";
+say(
+  `RESULT: ${result} — ${claimRows.filter((c) => c.pass).length}/${claimRows.length} claims, ` +
+    `${asserts.filter((a) => a.ok).length}/${asserts.length} assertions, ` +
+    `§8 conformance ${conformance.filter((c) => c.hit).length}/${conformance.length} rows` +
+    (declaredMisses.length ? ` (+${declaredMisses.length} declared miss${declaredMisses.length > 1 ? "es" : ""}; run with --strict to fail on it)` : "")
+);
+
+function wrap(s, n) {
+  const words = s.split(/\s+/);
+  const lines = [];
+  let line = "";
+  for (const w of words) {
+    if ((line + " " + w).trim().length > n) {
+      lines.push(line.trim());
+      line = w;
+    } else line += " " + w;
+  }
+  if (line.trim()) lines.push(line.trim());
+  return lines;
+}
 
 const json = {
   generated: new Date().toISOString(),
-  engine: "app/src/learn/{Graph,Mastery,Scheduler}.js",
+  engine: "app/src/learn/{Graph,Mastery,Scheduler,ItemBank}.js",
   graph: GRAPH.stats(),
-  budget: { sessions: SESSIONS, sessionMinutes: SESSION_MINUTES, learners: LEARNERS, bots: BOTS },
+  budget: { sessions: SESSIONS, sessionMinutes: SESSION_MINUTES, learners: LEARNERS, bots: BOTS, blindItemsPerCell: BLIND_N },
   trueGuessByForm: TRUE_FORM,
   trueGuessByPhase: TRUE_PHASE,
+  measuredBlindByForm: Object.fromEntries(Object.entries(measuredByForm).map(([k, v]) => [k, { n: v.n, hits: v.hits, rate: Number(v.rate.toFixed(5)), upper95: Number(v.upper95.toFixed(5)) }])),
+  measuredBlindByAnswerType: Object.fromEntries(Object.entries(measuredByType).map(([k, v]) => [k, { n: v.n, hits: v.hits, rate: Number((v.hits / v.n).toFixed(5)) }])),
+  measuredBlindHotCells: hotCells.map((h) => ({ cell: h.cell, rate: Number(h.rate.toFixed(5)), types: h.types, n: h.n })),
+  sensitivitySweep: sweep.map((s) => ({ forcedBlindRate: s.rate, meanCertified: Number(s.cohort.meanMastered.toFixed(4)), shareAt80: Number(s.cohort.shareAt80.toFixed(4)) })),
   assertions: asserts,
-  cohorts: { median, mixedLong, guesser, masher, formHunter, hintAbuser, hintLeak, ablated, noClockReset },
+  cohorts: { median, mixedLong, guesser, bankGuesser, masher, formHunter, hintAbuser, hintLeak, retentionHintLeak, retentionFast, legacyRetention, ablated, noClockReset },
   claims: claimRows,
-  result: allPass ? "PASS" : "FAIL",
+  conformance: conformance.map((c) => ({ row: c.row, target: c.target, value: c.value, hit: c.hit, declaredMiss: c.declared ?? null })),
+  result,
 };
 
 if (hasFlag("json")) {
@@ -797,6 +1483,10 @@ if (hasFlag("json")) {
       {
         result: json.result,
         claims: claimRows,
+        conformance: json.conformance,
+        measuredBlindByForm: json.measuredBlindByForm,
+        measuredBlindHotCells: json.measuredBlindHotCells,
+        sensitivitySweep: json.sensitivitySweep,
         cohorts: Object.fromEntries(
           Object.entries(json.cohorts).map(([k, v]) => [
             k,
@@ -811,6 +1501,8 @@ if (hasFlag("json")) {
               maxM2Counter: v.maxScoredCounter,
               meanUnscoredItems: Number(v.meanUnscoredItems.toFixed(1)),
               meanRefusedUpward: Number(v.meanRefusedUpward.toFixed(1)),
+              meanLapses: Number(v.meanLapses.toFixed(2)),
+              medianScoredTo80: v.medianScoredTo80 == null ? null : Math.round(v.medianScoredTo80),
               retentionPassRate: v.retentionPassRate == null ? null : Number(v.retentionPassRate.toFixed(4)),
             },
           ])
@@ -822,4 +1514,4 @@ if (hasFlag("json")) {
   );
 }
 
-process.exitCode = allPass ? 0 : 1;
+process.exitCode = result === "PASS" ? 0 : 1;

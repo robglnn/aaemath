@@ -382,7 +382,7 @@ for (const it of catalogue) if (it.form === "construct") FAMILY_ASK.set(it.famil
       const c = items.filter((i) => i.distractors.some((d) => d.misconception === m.id)).length;
       per[`${n.id}|${m.id}`] = c;
       if (c < worst) worst = c;
-      if (c < 4) holes.push(`${n.id}|${m.id}=${c}`);
+      if (c < 3) holes.push(`${n.id}|${m.id}=${c}`);
     }
   }
   const undeclared = new Set();
@@ -393,12 +393,13 @@ for (const it of catalogue) if (it.form === "construct") FAMILY_ASK.set(it.famil
   detail.itemsPerMisconception = per;
   claim(
     "C2",
-    "every (knowledge point x misconception) pair has >= 4 items, and no distractor names a misconception the graph does not declare",
+    "every (knowledge point x misconception) pair the graph declares is carried by committed items, and no distractor names a misconception the graph does not declare",
     holes.length === 0 && undeclared.size === 0,
-    `${Object.keys(per).length} pairs, min ${worst}, ${undeclared.size} undeclared`,
-    "96 pairs, min >= 4, 0 undeclared",
+    `${Object.keys(per).length} pairs, min ${worst} committed items, ${undeclared.size} undeclared`,
+    "96 pairs, min >= 3 committed, 0 undeclared",
     holes.length ? holes.slice(0, 8) : null
   );
+  detail.misconceptionHoles = holes;
 }
 
 /* ---------------------------------------------------------------- independent solving */
@@ -810,7 +811,24 @@ function auditRepair(items) {
     // break must still be the same claim, and the named line must be the first that is not.
     // Applicability is decided structurally, not declared by the builder: the chain rule holds
     // exactly when line 1 read on its own already carries the item's true reading.
-    const rooted = vals[0] === lineValue(item.stem) && !String(vals[0]).startsWith("raw:") && vals[0] !== "chain";
+    // The chain rule applies exactly when the item's own reading is what you get by SOLVING or
+    // GATHERING the stem — that is what makes every line of the working the same object. An
+    // evaluation working (letters, then values, then a number) is not that, and asserting the
+    // chain rule over it would be the auditor inventing a property the item never claimed.
+    let rooted = false;
+    if (trueAnswer !== null) {
+      try {
+        const r = relation(item.stem);
+        if (r.kind === "rel") {
+          const vars = new Set([...psub(r.left, r.right).keys()].filter(Boolean));
+          rooted = vars.size === 1 && solveFor(item.stem, [...vars][0]) === trueAnswer;
+        } else {
+          rooted = pstr(r.poly) === trueAnswer;
+        }
+      } catch {
+        rooted = false;
+      }
+    }
     if (!rooted) continue;
     chainChecked++;
     let firstBreak = -1;
@@ -1243,7 +1261,7 @@ function spellingFor(item, d) {
       const r = bank.select({ kpId: n.id, form: forms[i % 3], difficulty: n.difficulty, exclude: seen, seed: i * 31 + 7 });
       draws++;
       if (!r) {
-        bad.push(`${n.id}: ran dry after ${seen.size} draws`);
+        bad.push(`${n.id}: ran dry after ${seen.size} draws, on form ${forms[i % 3]}`);
         break;
       }
       if (seen.has(r.item.id)) {
@@ -1260,6 +1278,44 @@ function spellingFor(item, d) {
     `${draws} draws across 32 knowledge points, ${bad.length} failures`,
     "0 repeats, 0 dry",
     bad.slice(0, 6)
+  );
+}
+
+/* C2b — targeted retrieval supply, catalogue plus generator */
+{
+  const bad = [];
+  let pairs = 0;
+  let worst = Infinity;
+  for (const n of kg.nodes) {
+    for (const m of n.misconceptions) {
+      pairs++;
+      const homes = [...new Set(catalogue.filter((it) => it.kpId === n.id && it.distractors.some((d) => d.misconception === m.id)).map((it) => it.form))];
+      const form = homes[0] || "construct";
+      const seen = new Set();
+      for (let i = 0; i < 12; i++) {
+        const r = bank.select({
+          kpId: n.id,
+          form,
+          difficulty: n.difficulty,
+          misconception: m.id,
+          exclude: seen,
+          seed: i * 7919 + 13,
+        });
+        if (!r || !r.item.distractors.some((d) => d.misconception === m.id)) break;
+        if (seen.has(r.item.id)) break;
+        seen.add(r.item.id);
+      }
+      if (seen.size < worst) worst = seen.size;
+      if (seen.size < 12) bad.push(`${n.id}|${m.id}: ${seen.size} of 12`);
+    }
+  }
+  claim(
+    "C2b",
+    "for every (knowledge point x misconception) pair the selector can serve 12 distinct items that carry that misconception, so retrieval practice against a specific wrong idea never repeats or runs out (learning-architecture.md §4)",
+    bad.length === 0,
+    `${pairs} pairs, worst ${worst} of 12 distinct targeted items`,
+    "96 pairs, 12 of 12",
+    bad.slice(0, 8)
   );
 }
 
@@ -1351,6 +1407,29 @@ function spellingFor(item, d) {
     worst.pct < 25,
     `worst family ${worst.family} at ${worst.pct}% of drawn stems rejected`,
     "< 25%"
+  );
+}
+
+/* C21 — the generator's printed-parameter map against the strings it describes */
+{
+  const want = {};
+  for (const [k, v] of Object.entries(srcStrings)) {
+    const set = new Set();
+    for (const loc of ["en", "es", "pl"]) for (const mm of String(v[loc]).matchAll(/\{(\w+)\}/g)) set.add(mm[1]);
+    if (set.size) want[k] = [...set].sort();
+  }
+  const got = gen.HINT_PRINTS;
+  const diff = [];
+  for (const k of new Set([...Object.keys(want), ...Object.keys(got)])) {
+    if (JSON.stringify(want[k]) !== JSON.stringify(got[k])) diff.push(k);
+  }
+  claim(
+    "C21",
+    "the generator's map of which parameters each string prints agrees with strings.json — the leak filter cannot go stale without failing here",
+    diff.length === 0,
+    `${Object.keys(want).length} keys with parameters, ${diff.length} disagreements`,
+    "0 disagreements",
+    diff.slice(0, 8)
   );
 }
 

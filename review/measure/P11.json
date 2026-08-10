@@ -3,114 +3,805 @@
   "width": 1280,
   "height": 720,
   "post": false,
-  "measurements": {},
+  "measurements": {
+    "facets": {
+      "meshes": 35,
+      "triangles": 670,
+      "flatTriangles": 670,
+      "flatFraction": 1
+    },
+    "regions": {
+      "count": 140,
+      "largestFrac": 0.2588064236111111,
+      "medianSpread": 0.009572705723345287,
+      "p90Spread": 0.017568070641160005
+    },
+    "ladder": {
+      "n": 2,
+      "medianErr": 0.019683448089446172,
+      "p90Err": 0.019683448089446172,
+      "steps": 1,
+      "ladder": [
+        0.1764
+      ],
+      "normalised": [
+        1
+      ],
+      "albedo": [
+        0.895877581214465,
+        0.4156767241790695,
+        0.1069224954513027
+      ]
+    },
+    "witnesses": {
+      "faces": 4,
+      "shadeSamples": 0,
+      "litSamples": 83,
+      "groundLit": 0.12436810206249355,
+      "groundShade": 0,
+      "groundRatio": 0,
+      "groundLitPx": [
+        116,
+        97,
+        43
+      ],
+      "groundShadePx": [
+        0,
+        0,
+        0
+      ],
+      "groundLitHsv": [
+        44.383561643835634,
+        0.6293103448275862,
+        0.4549019607843137
+      ],
+      "groundShadeHsv": [
+        0,
+        0,
+        0
+      ],
+      "rockLit": 0.17638592880070209,
+      "rockLitNdL": 0.3563863312977595,
+      "rockTurned": 0.025660911374352873,
+      "rockRatio": 6.873720353400747,
+      "rockLitPx": [
+        158,
+        105,
+        54
+      ],
+      "rockTurnedPx": [
+        30,
+        47,
+        53
+      ]
+    },
+    "families": {
+      "rock": {
+        "n": 2,
+        "hue": 197.5,
+        "s": 0.4444444444444444,
+        "y": 0.02575391469281167
+      },
+      "shelf": {
+        "n": 0,
+        "hue": null,
+        "s": null,
+        "y": null
+      },
+      "armour": {
+        "n": 2,
+        "hue": 198.46153846153845,
+        "s": 0.45614035087719296,
+        "y": 0.027833395827561617
+      },
+      "turnedPop": {
+        "n": 99690,
+        "share": 0.10817057291666667,
+        "hue": 196.8,
+        "s": 0.4444444444444444
+      },
+      "groundPop": {
+        "n": 37157,
+        "share": 0.04031792534722222,
+        "hue": 120,
+        "s": 0.3584905660377358
+      }
+    },
+    "withRealSky": {
+      "accent": 0.0059754774305555555,
+      "percentiles": {
+        "p05": 0.025753915309906006,
+        "p50": 0.18057486414909363,
+        "p95": 0.5291258692741394,
+        "hi": 0,
+        "lo": 0.00002712673611111111
+      }
+    },
+    "accent": {
+      "share": 0.005986328125,
+      "n": 5517,
+      "outside": 0,
+      "outsideShare": 0,
+      "boxes": 5
+    },
+    "temporal": {
+      "moved": 3,
+      "total": 921600,
+      "share": 0.0000032552083333333335
+    },
+    "exposure": {
+      "p05": 0.025753915309906006,
+      "p50": 0.15592646598815918,
+      "p95": 0.18255315721035004,
+      "hi": 0,
+      "lo": 0.00002604166666666667
+    },
+    "contact": {
+      "litRef": 0.14052177780456843,
+      "contactDarkening": 0.37187598059256377,
+      "atSole": 0.37187598059256377,
+      "firstDarkAt": null,
+      "soleScreen": [
+        621,
+        461
+      ],
+      "profile": [
+        [
+          0,
+          0.0883,
+          0.372
+        ],
+        [
+          0.02,
+          0.0893,
+          0.365
+        ],
+        [
+          0.04,
+          0.0893,
+          0.365
+        ],
+        [
+          0.06,
+          0.0883,
+          0.372
+        ],
+        [
+          0.08,
+          0.0883,
+          0.372
+        ],
+        [
+          0.1,
+          0.0883,
+          0.372
+        ],
+        [
+          0.12,
+          0.0883,
+          0.372
+        ],
+        [
+          0.14,
+          0.0883,
+          0.372
+        ],
+        [
+          0.16,
+          0.0883,
+          0.372
+        ],
+        [
+          0.18,
+          0.0893,
+          0.365
+        ],
+        [
+          0.2,
+          0.0883,
+          0.372
+        ],
+        [
+          0.22,
+          0.0883,
+          0.372
+        ],
+        [
+          0.24,
+          0.0883,
+          0.372
+        ],
+        [
+          0.26,
+          0.0893,
+          0.365
+        ],
+        [
+          0.28,
+          0.0893,
+          0.365
+        ],
+        [
+          0.3,
+          0.0883,
+          0.372
+        ],
+        [
+          0.32,
+          0.0883,
+          0.372
+        ],
+        [
+          0.34,
+          0.0883,
+          0.372
+        ],
+        [
+          0.36,
+          0.0883,
+          0.372
+        ],
+        [
+          0.38,
+          0.0883,
+          0.372
+        ],
+        [
+          0.4,
+          0.0883,
+          0.372
+        ],
+        [
+          0.42,
+          0.0883,
+          0.372
+        ],
+        [
+          0.44,
+          0.0883,
+          0.372
+        ],
+        [
+          0.46,
+          0.0883,
+          0.372
+        ],
+        [
+          0.48,
+          0.0893,
+          0.365
+        ],
+        [
+          0.5,
+          0.0893,
+          0.365
+        ]
+      ]
+    },
+    "substances": {
+      "rock": {
+        "n": 3,
+        "hue": 33.33333333333332,
+        "s": 0.38571428571428573,
+        "v": 0.27450980392156865,
+        "y": 0.04502621317580342
+      },
+      "rockAll": {
+        "n": 9,
+        "hue": 196.8,
+        "s": 0.4444444444444444,
+        "v": 0.2196078431372549,
+        "y": 0.027734556754678487
+      },
+      "crystal": {
+        "n": 2,
+        "hue": 168,
+        "s": 0.42105263157894735,
+        "v": 0.9686274509803922,
+        "y": 0.7779741180121899
+      },
+      "water": {
+        "n": 4,
+        "hue": 162.41379310344828,
+        "s": 0.32954545454545453,
+        "v": 0.6901960784313725,
+        "y": 0.37475810416042804
+      },
+      "grey": {
+        "n": 0,
+        "hue": null,
+        "s": null,
+        "v": null,
+        "y": null
+      },
+      "metal": {
+        "n": 2,
+        "hue": 214,
+        "s": 0.4838709677419355,
+        "v": 0.24313725490196078,
+        "y": 0.02531648922879249
+      },
+      "foliage": {
+        "n": 0,
+        "hue": null,
+        "s": null,
+        "v": null,
+        "y": null
+      }
+    },
+    "motion": {
+      "waterBox": [
+        0,
+        490,
+        1279,
+        719
+      ],
+      "crystalBox": [
+        658,
+        171,
+        709,
+        381
+      ],
+      "water": {
+        "moved": 13092,
+        "total": 294400,
+        "share": 0.044470108695652176
+      },
+      "crystal": {
+        "moved": 1,
+        "total": 10972,
+        "share": 0.0000911410864017499
+      }
+    },
+    "banned": {
+      "standard": 0,
+      "physical": 0,
+      "envMap": 0,
+      "normalMap": 0,
+      "roughnessMap": 0,
+      "anyMap": 0,
+      "meshes": 35,
+      "smoothNormals": 0,
+      "sceneEnvironment": 0
+    },
+    "probe": {
+      "renderer": {
+        "toneMapping": 0,
+        "toneMappingExposure": 1,
+        "outputColorSpace": "srgb",
+        "shadowMapEnabled": true
+      },
+      "shadow": {
+        "enabled": true,
+        "cascades": [
+          {
+            "radius": 13,
+            "mapSize": 2048,
+            "texelMetres": 0.0127,
+            "bias": -0.00016,
+            "normalBias": 0.014
+          },
+          {
+            "radius": 58,
+            "mapSize": 2048,
+            "texelMetres": 0.0566,
+            "bias": -0.00016,
+            "normalBias": 0.0623
+          }
+        ],
+        "splitMetres": 11.96,
+        "type": "PCF"
+      },
+      "lights": {
+        "key": {
+          "hex": "#FFE3B8",
+          "intensity": 3.3408
+        },
+        "fill": {
+          "sky": "#5EA3FF",
+          "ground": "#2A1F16",
+          "intensity": 0.8964,
+          "relativeToKey": 0.2853
+        },
+        "bounce": {
+          "hex": "#8A5B3E",
+          "intensity": 0.167
+        },
+        "rim": {
+          "gain": 0.28,
+          "elevationDeg": 11,
+          "insideShadowFamily": true
+        },
+        "accentPool": 4,
+        "accentsActive": 2,
+        "shadowCasters": 2,
+        "contributingLights": 5,
+        "zeroIntensityShadowOwners": 2
+      },
+      "materials": {
+        "instances": 13,
+        "built": 13,
+        "cacheHits": 22,
+        "programVariants": 5,
+        "archetypes": 17,
+        "textures": 0,
+        "standardMaterials": 0,
+        "envMaps": 0,
+        "missingRoles": [],
+        "keyHex": "#FFE3B8",
+        "albedos": {
+          "ground": {
+            "from": "ground.lit",
+            "sampled": "#78632C",
+            "ndl": 0.342,
+            "hemi": 1,
+            "albedo": "#BC9D43",
+            "linear": [
+              0.5024,
+              0.3394,
+              0.0561
+            ]
+          },
+          "rock": {
+            "from": "rock.lit.a",
+            "sampled": "#F59E49",
+            "ndl": 1,
+            "hemi": 0.5,
+            "albedo": "#F3AD5C",
+            "linear": [
+              0.8959,
+              0.4157,
+              0.1069
+            ]
+          },
+          "stone": {
+            "from": "stone.bone",
+            "sampled": "#AC8659",
+            "ndl": 1,
+            "hemi": 0.5,
+            "albedo": "#AB936F",
+            "linear": [
+              0.4048,
+              0.2898,
+              0.1603
+            ]
+          },
+          "crystalCore": {
+            "from": "crystal.hot - crystal.face",
+            "sampled": "#96FDE1",
+            "ladderStep": 1,
+            "albedo": "#45B3B0",
+            "linear": [
+              0.0588,
+              0.4487,
+              0.4323
+            ]
+          },
+          "crystal": {
+            "from": "crystal.hot - crystal.face",
+            "sampled": "#96FDE1",
+            "ladderStep": 1,
+            "albedo": "#45B3B0",
+            "linear": [
+              0.0588,
+              0.4487,
+              0.4323
+            ]
+          },
+          "grey": {
+            "from": "world.grey",
+            "sampled": "#484743",
+            "ndl": 0.342,
+            "hemi": 1,
+            "albedo": "#747363",
+            "linear": [
+              0.1733,
+              0.1714,
+              0.1249
+            ]
+          },
+          "foliage": {
+            "from": "world.foliage.lit",
+            "sampled": "#585939",
+            "ndl": 1,
+            "hemi": 0.6,
+            "albedo": "#576147",
+            "linear": [
+              0.0955,
+              0.12,
+              0.0628
+            ]
+          },
+          "metal": {
+            "from": "stone.bone",
+            "sampled": "#AC8659",
+            "ndl": 1,
+            "hemi": 0.5,
+            "albedo": "#AB936F",
+            "linear": [
+              0.4048,
+              0.2898,
+              0.1603
+            ]
+          },
+          "heroPlate": {
+            "from": "hero.rim",
+            "sampled": "#F3B16D",
+            "ndl": 1,
+            "hemi": 0.5,
+            "albedo": "#F1C188",
+            "linear": [
+              0.8794,
+              0.5345,
+              0.2454
+            ]
+          },
+          "heroDark": {
+            "from": "hero.dark",
+            "sampled": "#111416",
+            "ndl": 0.27,
+            "hemi": 0.5,
+            "albedo": "#262D30",
+            "linear": [
+              0.0194,
+              0.0267,
+              0.0294
+            ]
+          },
+          "heroSkin": {
+            "from": "hero.skin",
+            "sampled": "#542C13",
+            "ndl": 0.27,
+            "hemi": 0.5,
+            "albedo": "#96572B",
+            "linear": [
+              0.3065,
+              0.0962,
+              0.0238
+            ]
+          },
+          "heroHair": {
+            "from": "hero.hair",
+            "sampled": "#442611",
+            "ndl": 0.27,
+            "hemi": 0.5,
+            "albedo": "#7C4D27",
+            "linear": [
+              0.1999,
+              0.074,
+              0.0205
+            ]
+          }
+        },
+        "keys": [
+          "crystal",
+          "crystalCore",
+          "foliage",
+          "grey",
+          "ground",
+          "heroDark",
+          "heroHair",
+          "heroPlate",
+          "heroSkin",
+          "metal",
+          "rock",
+          "stone",
+          "water"
+        ]
+      }
+    },
+    "stats": {
+      "fps": 4,
+      "frameMs": 269.62,
+      "simTime": 9.85,
+      "frames": 215,
+      "steps": 591,
+      "drawCalls": 77,
+      "triangles": 1201,
+      "programs": 32,
+      "textures": 12,
+      "geometries": 63,
+      "pixelRatio": 1,
+      "tier": "medium"
+    }
+  },
+  "bootProblems": [],
+  "marks": {
+    "crystal": [
+      5,
+      1.3991113655072354,
+      2.6
+    ],
+    "water": [
+      3,
+      -0.6088149000164176,
+      7.6
+    ],
+    "hero": [
+      -3.5,
+      -0.47949586444320014,
+      2
+    ],
+    "sole": [
+      -3.3739695562556666,
+      -0.47549586444320013,
+      2.1030355630333837
+    ],
+    "heroHead": [
+      -3.5,
+      1.3705041355568,
+      2
+    ],
+    "rock": [
+      -9,
+      4.439277565676377,
+      3
+    ],
+    "ground": [
+      0.5,
+      0.38645302165648576,
+      -1
+    ]
+  },
+  "buffer": {
+    "w": 1280,
+    "h": 720
+  },
+  "rig": {
+    "key": [
+      1,
+      0.7681511472425809,
+      0.4793201830913402
+    ],
+    "keyI": 3.194286754066294,
+    "keyDir": [
+      0.8674322024847784,
+      0.19080692401699198,
+      -0.45951506160253397
+    ],
+    "fillSky": [
+      0.11159160356819388,
+      0.3676111711890492,
+      1
+    ],
+    "fillGround": [
+      0.023153366173251363,
+      0.013702083043526807,
+      0.008023192982520563
+    ],
+    "fillI": 0.8963523986165858,
+    "bounce": [
+      0.2541520943200296,
+      0.10461648408208657,
+      0.04817182422013895
+    ],
+    "bounceI": 0.1597143377033147,
+    "bounceDir": [
+      0.6769284277671681,
+      -0.6427876096865394,
+      -0.3585972567019094
+    ],
+    "rimDir": [
+      -0.8674318466944811,
+      0.1908089953765448,
+      0.45951487312555606
+    ],
+    "rimGain": 0.28,
+    "shadowTint": [
+      0.010960094003125918,
+      0.025186859622305935,
+      0.033104766565152086
+    ]
+  },
+  "consoleErrors": [],
+  "consoleWarnings": [],
   "table": [
     {
       "id": "F1",
       "claim": "flat shading is real: fraction of board triangles carrying one normal per face",
       "threshold": ">= 0.99",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 1,
+      "result": "PASS",
+      "note": "670/670 tris over 35 meshes",
       "source": "art-direction §2.1"
     },
     {
       "id": "F2",
       "claim": "a cliff resolves into countable planes (compact flat regions, tol 2/255, >= 0.02% of frame)",
       "threshold": ">= 20",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 140,
+      "result": "PASS",
+      "note": "largest region 25.88% of frame",
       "source": "§13 row 1, relaxed from 25 — the board is one shelf, not a vista"
     },
     {
       "id": "F3",
       "claim": "a facet is exactly one colour: median luminance spread inside a flat region",
       "threshold": "<= 0.02",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 0.0096,
+      "result": "PASS",
+      "note": "p90 0.0176",
       "source": "§3.3 / §1.1 (target measures 0.0096)"
     },
     {
       "id": "L1",
       "claim": "no tone curve: median |measured - predicted| / predicted over >= 12 lit facets",
       "threshold": "<= 0.08",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 0.0197,
+      "result": "FAIL",
+      "note": "2 lit facets, p90 err 0.0197, ladder [1]",
       "source": "§3.3, §3.5 — predicted is albedo x (N.L key + fill + bounce), linear"
     },
     {
       "id": "L2",
       "claim": "the object shows 4-7 distinct lit values plus a shadow value",
       "threshold": "4..7",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 1,
+      "result": "FAIL",
+      "note": "distinct lit values on one mass",
       "source": "§3.3"
     },
     {
       "id": "K1",
       "claim": "§3.2 witness 1 — ground inside its own cast shadow, absolute Y",
       "threshold": "0.0300 +- 0.010",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 0,
+      "result": "FAIL",
+      "note": "lit ground Y 0.1244, ratio 0 (target 4.36 at N·L 0.342)",
       "source": "§3.2/§3.4 (target Y 0.0300, and the ratio 4.36 follows at N·L 0.342)"
     },
     {
       "id": "K2",
       "claim": "§3.2 witness 2 — brightest lit rock facet vs the turned facet",
       "threshold": "10..30",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 6.87,
+      "result": "FAIL",
+      "note": "lit Y 0.1764 at N·L 0.36 vs turned Y 0.0257",
       "source": "§3.2's mid-facet witness is 11.96; the target's own extremes give 19.5"
     },
     {
       "id": "S1",
       "claim": "turned faces converge on one chromatic blue: median hue / S / Y",
       "threshold": "hue 190..206, S 0.33..0.50, Y 0.020..0.033",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": "hue 196.8 S 0.444 Y 0.0258",
+      "result": "PASS",
+      "note": "turned-face population is 10.82% of frame",
       "source": "§3.4, §13 row 3"
     },
     {
       "id": "S2",
       "claim": "and they converge independent of albedo: hue spread across rock, shelf and armour",
       "threshold": "<= 8 deg",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 1,
+      "result": "PASS",
+      "note": "rock 197.5, shelf null, armour 198.5",
       "source": "§3.4's three witnesses span 195..201 = 6 deg"
     },
     {
       "id": "S3",
       "claim": "cast shadow on open ground is the OTHER family, not the same blue",
       "threshold": "hue 100..140",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 0,
+      "result": "FAIL",
+      "note": "cast shadow on open ground keeps its albedo under the blue fill",
       "source": "§3.4, §13 row 4"
     },
     {
       "id": "S4",
       "claim": "the two dark families are genuinely separate",
       "threshold": ">= 50 deg apart",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 196.8,
+      "result": "PASS",
+      "note": "the two dark families must not be one",
       "source": "§13 row 4 (target 79.2)"
     },
     {
       "id": "C1",
       "claim": "the courier has a real contact shadow: darkening at the boot",
       "threshold": ">= 0.45",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 0.372,
+      "result": "FAIL",
+      "note": "lit reference Y 0.1405; darkening at the sole 0.372",
       "source": "the piece's own claim; no contact shadow is why a character floats"
     },
     {
@@ -118,89 +809,89 @@
       "claim": "and it starts AT the boot: lit gap between the sole and the shadow",
       "threshold": "<= 0.06 m",
       "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "result": "FAIL",
+      "note": "metres of lit ground between the sole and the shadow",
       "source": "peter-panning is the reflex fix that makes C1 worse"
     },
     {
       "id": "A1",
       "claim": "the accent budget: frame share at hue 150-200, V >= 0.80, S >= 0.25",
       "threshold": "0.4%..1.8%",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": "0.599%",
+      "result": "PASS",
+      "note": "5517 px in the cyan gate; with P10's sky in frame it is 0.6%",
       "source": "§7.2, §13 row 5"
     },
     {
       "id": "A2",
       "claim": "cyan has not leaked: accent-gate pixels landing outside the accent meshes",
       "threshold": "<= 3%",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": "0%",
+      "result": "PASS",
+      "note": "0 accent-gate pixels outside 5 accent meshes",
       "source": "§7.2, §13 row 6"
     },
     {
       "id": "M1",
       "claim": "three substances, not three tints: rock warm, crystal cyan-bright, water cyan",
       "threshold": "hues 20..50 / 150..200 / 150..200",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": "rock 33.3 / crystal 168 V 0.97 / water 162.4 V 0.69",
+      "result": "PASS",
+      "note": "grey hue null S null, metal hue 214, foliage Y null",
       "source": "§10.2"
     },
     {
       "id": "M2",
       "claim": "and water is a different substance from crystal because it MOVES",
       "threshold": "water >= 4% pixels change, crystal <= 0.5%",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": "water 4.45% / crystal 0.01%",
+      "result": "PASS",
+      "note": "over 1.0 s of simulation, camera static",
       "source": "§5 — the carry's animated hard-edged ramp"
     },
     {
       "id": "T1",
       "claim": "it does not fizz: pixels changing > 0.05 Y in one fixed step, camera static",
       "threshold": "<= 0.2%",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": "0%",
+      "result": "PASS",
+      "note": "3 of 921600 px changed > 0.05 Y in one fixed step",
       "source": "§11.6, palette.motion.budgets.temporalNoiseCeiling"
     },
     {
       "id": "N1",
       "claim": "nothing on §5's global ban list is in the board",
       "threshold": "0 of each",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": "{\"standard\":0,\"physical\":0,\"envMap\":0,\"normalMap\":0,\"roughnessMap\":0,\"anyMap\":0,\"meshes\":35,\"smoothNormals\":0,\"sceneEnvironment\":0}",
+      "result": "PASS",
+      "note": "35 board meshes; scene.environment null",
       "source": "§5, §12.2 no.18"
     },
     {
       "id": "N2",
       "claim": "the renderer path is linear: toneMapping is NoToneMapping",
       "threshold": "== 0",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": 0,
+      "result": "PASS",
+      "note": "0 == THREE.NoToneMapping",
       "source": "§3.5"
     },
     {
       "id": "P1",
       "claim": "the material factory shares: cache hits vs materials built",
       "threshold": "hits >= built",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": "22 hits / 13 built",
+      "result": "PASS",
+      "note": "13 instances across 5 program variants, 0 textures",
       "source": "architecture.md program budget"
     },
     {
       "id": "P2",
       "claim": "shader programs and draw calls with the board standing",
       "threshold": "programs <= 90, draws <= 320",
-      "measured": "NOT RUN",
-      "result": "MISSING",
-      "note": "",
+      "measured": "32 programs / 77 draws / 1201 tris",
+      "result": "PASS",
+      "note": "tier medium at 1280x720",
       "source": "architecture.md"
     }
   ]

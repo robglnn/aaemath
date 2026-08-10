@@ -377,7 +377,7 @@ export class PostStack {
     let n = 1; // grade
     if (this.effects.bloom || this.effects.sunGlow) n += 1; // bright
     if (this.effects.sunGlow) n += 1;
-    if (this.effects.bloom) n += this.bloom.levels * 2;
+    if (this.effects.bloom) n += this.bloom.drawCalls;
     return n;
   }
 
@@ -564,7 +564,7 @@ export class PostStack {
     const data = new Uint8Array(w * h * 4);
     this.renderer.readRenderTargetPixels(out, 0, 0, w, h, data);
     this.renderer.setRenderTarget(null);
-    const bloomLevels = this.bloom.levels;
+    const bloomLevels = { base: this.bloom.base, top: this.bloom.top, radius: this.bloom.radius };
 
     if (prevBloom !== bloom) {
       this.effects.bloom = prevBloom;

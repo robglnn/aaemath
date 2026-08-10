@@ -1,0 +1,7 @@
+(node:23744) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[en] ready=true fps~3 draws=65 tris=174921 katex=3/0f
+[es] ready=true fps~4 draws=65 tris=173519 katex=3/0f
+[pl] ready=true fps~3 draws=64 tris=172251 katex=3/0f
+
+VERIFY PASSED

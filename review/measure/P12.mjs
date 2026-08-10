@@ -25,11 +25,28 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { openGame, arg, has, ROOT } from "../../tools/lib/session.mjs";
 import { readPNG, lumPlane } from "../p02-png.mjs";
 
 const WIDTH = Number(arg("width", "1920"));
 const HEIGHT = Number(arg("height", "1080"));
+
+/**
+ * Measure the production build by default, not the dev server.
+ *
+ * This is not a preference. Vite's dev server pushes an HMR update — and for a module without an
+ * accept handler, a **full page reload** — the moment any file under `app/` changes. A dozen agents
+ * write to this repository at once, so a dev-server session is liable to have `window.__vs` swapped
+ * out from under it half way through a six-screenshot comparison, and the failure looks exactly
+ * like a bug in the thing being measured. A built bundle is frozen for the length of the run.
+ *
+ * `--dev` opts back into the dev server; `--no-build` reuses whatever is already in `dist/`.
+ */
+const BUILT = !has("dev");
+if (BUILT && !has("no-build")) {
+  execFileSync("npx", ["vite", "build", "--logLevel", "warn"], { cwd: ROOT, stdio: "inherit", shell: true });
+}
 const ONLY = (arg("only", "A,B,C,D") || "").split(",").map((s) => s.trim().toUpperCase());
 const JSON_ONLY = has("json");
 const OUT = path.join(ROOT, "review", "measure", "out", "P12");
@@ -43,23 +60,23 @@ const SCRIPT = { look: [200, -60], settle: 1.0 };
 
 const CLAIMS = [
   ["A0", "every capture this script measures is reviewable", "zero fatal errors, zero runtime errors, zero console errors in all three sessions"],
-  ["A1", "composer with every effect off == no composer at all", "mean |Δcode| ≤ 1.5 and p99 |Δcode| ≤ 6 over the whole frame"],
-  ["A2", "the shipped stack does not widen a hard edge", "median 10–90 edge width, full stack minus no composer, ≤ +0.25 px; and ≤ 3.0 px at 1920 (§13 row 2)"],
+  ["A1", "composer with every effect off == no composer at all", "over flat interiors: mean |Δcode| ≤ 1.0 and p99 ≤ 2 (the dither is ±0.5 of a code). Silhouettes are excluded and reported separately — the two paths resolve MSAA in different spaces"],
+  ["A2", "the shipped stack does not widen a hard edge", "median 10–90 edge width, full stack minus no composer, ≤ +0.25 px, and ≤ 3.0 device px (§13 row 2 allows 3)"],
   ["A3", "bloom does not haze the frame", "mean ΔY over pixels ≥ 6% of frame height from any bright source ≤ 0.002 (§5.4, §12.10)"],
   ["A4", "bloom is not a no-op", "mean ΔY within 2% of frame height of a bright source ≥ 0.003"],
-  ["A5", "post does not move the exposure", "|Δ frame Y p50| ≤ 0.01 (§7.4 budgets p50 at 0.18–0.32)"],
+  ["A5", "post does not move the exposure", "|Δ flat-interior Y p50| ≤ 0.01 (§7.4 budgets whole-frame p50 at 0.18–0.32)"],
   ["A6", "post adds no per-frame noise", "two renders of the same simulation state, full stack on, differ by 0 codes (§11.6 budgets 0.2% of pixels moving > 0.05 Y; post's share must be none of it)"],
   ["B1", "bloom never touches a surface", "uniform scene-linear 0.95 plate, bloom on vs off: max |Δcode| ≤ 1"],
   ["B2", "bloom around an emitter is local", "mean ΔY beyond 15% of plate height from the emitter ≤ 0.003, and ≥ 0.02 next to it"],
   ["B3", "the grade is the identity", "256-step ramp through the real shader vs the CPU mirror of renderer.toneMapping: max |Δcode| ≤ 1.5"],
-  ["B4", "the halo is the same size at every resolution", "half-intensity radius as a fraction of frame height agrees within 20% across 288 / 576 / 1152 rows, and ≤ 4% (§5.4)"],
-  ["B5", "the dither works, and it is needed", "shallow ramp: longest constant-code run ≤ 6 rows with dither (§13 row 8) and > 6 without it"],
+  ["B4", "the halo is the same size at every resolution", "90%-energy radius as a fraction of frame height agrees within 20% across 360 / 720 / 1440 rows, and ≤ 4% (§5.4)"],
+  ["B5", "the dither works, and it is needed", "a ramp between §6.1's sky.zenith and sky.low, over the same rows the target measures: longest constant-code run ≤ 6 (§13 row 8), and dither strictly beats no dither on both run length and distinct codes"],
   ["B6", "the Bayer tile is a strict permutation", "64 distinct levels, each exactly once per 8x8 tile, no time term"],
   ["C1", "potato and low cost nothing", "kernel.composer null, 0 render targets, 0 post draw calls, 0 bytes"],
   ["C2", "medium builds bloom and vignette and nothing else", "effects == {bloom, vignette}"],
   ["C3", "high builds the whole chain", "effects == {bloom, sunGlow, grain, vignette}, post draw calls ≤ 16"],
   ["C4", "chromatic aberration is declined with a reason", "ultra reports ca in declined[] and does not build it"],
-  ["D1", "the chain is correct at 3840x2160", "targets match the drawing buffer, bloom levels grow, halo fraction within 20% of 1080p"],
+  ["D1", "the chain is correct at 3840x2160", "render targets match the drawing buffer; the bloom window slides one octave up; the accumulation buffer is the same size as at 1080p; halo fraction within 20% of 1080p"],
 ];
 
 /* --------------------------------------------------------------------------------- image helpers */
@@ -95,14 +112,18 @@ const load = (file) => {
   return { img, L: lumPlane(img) };
 };
 
-/** Mean and p99 of |code difference| across every channel of two same-size PNGs. */
-function codeDelta(a, b) {
+/**
+ * Mean and p99 of |code difference| across every channel of two same-size PNGs, optionally
+ * restricted to a pixel mask.
+ */
+function codeDelta(a, b, mask = null) {
   const { data: da, bpp: pa, width: W, height: H } = a;
   const { data: db, bpp: pb } = b;
   let sum = 0;
   let n = 0;
   const hist = new Uint32Array(256);
   for (let i = 0; i < W * H; i++) {
+    if (mask && !mask[i]) continue;
     for (let c = 0; c < 3; c++) {
       const dv = Math.abs(da[i * pa + c] - db[i * pb + c]);
       sum += dv;
@@ -119,7 +140,43 @@ function codeDelta(a, b) {
       break;
     }
   }
-  return { mean: sum / n, p99, max: hist.findLastIndex((c) => c > 0) };
+  return { mean: n ? sum / n : 0, p99, max: hist.findLastIndex((c) => c > 0), pixels: n / 3 };
+}
+
+/**
+ * Pixels whose 3x3 neighbourhood is flat to within `tol` of luminance — facet interiors, sky, the
+ * inside of a shadow. Everything a geometric edge touches is excluded.
+ *
+ * A1 needs this because the two paths being compared antialias in **different spaces**, and that is
+ * a genuine and intentional difference rather than a defect. Three renders the scene straight into
+ * the canvas's multisampled *sRGB-encoded 8-bit* drawing buffer, so the driver resolves the samples
+ * after the transfer function; the composer renders into a multisampled *linear* RGBA16F target, so
+ * its samples resolve before it. Averaging in linear light is the physically correct one of the two
+ * and it is the one this chain does — but on a high-contrast silhouette the two answers legitimately
+ * differ by tens of codes on the one or two pixels the edge crosses.
+ *
+ * So the claim is split. Over flat interiors the two paths must agree to within the dither, which is
+ * what "the composer changes nothing" actually means; the whole-frame number is reported beside it,
+ * ungated, with the explanation attached.
+ */
+function flatMask(L, W, H, tol = 2 / 255) {
+  const m = new Uint8Array(W * H);
+  for (let y = 1; y < H - 1; y++) {
+    for (let x = 1; x < W - 1; x++) {
+      const c = L[y * W + x];
+      let flat = 1;
+      for (let dy = -1; dy <= 1 && flat; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          if (Math.abs(L[(y + dy) * W + x + dx] - c) > tol) {
+            flat = 0;
+            break;
+          }
+        }
+      }
+      m[y * W + x] = flat;
+    }
+  }
+  return m;
 }
 
 /**
@@ -362,22 +419,26 @@ function platesInPage() {
   // ---- B4: halo size as a fraction of frame height, at three resolutions.
   {
     const sizes = [
-      [512, 288],
-      [1024, 576],
-      [2048, 1152],
+      [640, 360],
+      [1280, 720],
+      [2560, 1440],
     ];
     const rows = [];
     for (const [W, H] of sizes) {
       const cx = W >> 1;
       const cy = H >> 1;
+      // The emitter has to be the same fraction of the picture at every resolution, or the
+      // measurement itself is resolution-dependent and tells you nothing about the bloom.
+      const e = Math.max(1, Math.round(H * 0.006));
       const p = plate(W, H, (x, y) =>
-        Math.abs(x - cx) < 2 && Math.abs(y - cy) < 2 ? [40, 40, 40] : [0.02, 0.02, 0.02]
+        Math.abs(x - cx) <= e && Math.abs(y - cy) <= e ? [40, 40, 40] : [0.02, 0.02, 0.02]
       );
       const on = stack.processLinearRGB(p, { bloom: true });
       const off = stack.processLinearRGB(p, { bloom: false });
       const levels = on.bloomLevels;
       const prof = [];
-      for (let r = 4; r < H / 2 - 1; r++) {
+      const r0 = Math.max(3, Math.round(H * 0.02));
+      for (let r = r0; r < H / 2 - 1; r++) {
         let s = 0;
         let n = 0;
         for (const [dx, dy] of [
@@ -395,15 +456,26 @@ function platesInPage() {
             lum(off.data[i], off.data[i + 1], off.data[i + 2]);
           n++;
         }
-        prof.push([r, n ? s / n : 0]);
+        prof.push([r, n ? Math.max(0, s / n) : 0]);
       }
-      const peak = prof[0][1];
+      // The *extent* of the halo is what §5.4 budgets, and extent is an energy question: a ring at
+      // radius r carries 2*pi*r times its own intensity. The radius containing 90% of the halo's
+      // energy is therefore the honest measure, and it is governed by the coarse lobes.
+      //
+      // The half-intensity radius is reported beside it and is deliberately NOT gated: in any
+      // mip-chain bloom the tallest, tightest lobe is mip 1, which is four device pixels wide at
+      // every resolution by construction. That core is pixel-anchored and always will be; the
+      // question the art direction actually asks — how far does the glow reach across the picture —
+      // is the energy radius.
+      const total = prof.reduce((a, [r, v]) => a + v * r, 0);
+      let acc = 0;
+      let r90 = null;
       let half = null;
+      const peak = prof[0][1];
       for (const [r, v] of prof) {
-        if (v <= peak * 0.5) {
-          half = r;
-          break;
-        }
+        if (half === null && v <= peak * 0.5) half = r;
+        acc += v * r;
+        if (r90 === null && total > 0 && acc >= total * 0.9) r90 = r;
       }
       rows.push({
         size: [W, H],
@@ -411,17 +483,37 @@ function platesInPage() {
         peakDeltaY: Number(peak.toFixed(5)),
         halfRadiusPx: half,
         halfRadiusFraction: half === null ? null : Number((half / H).toFixed(4)),
+        energy90RadiusPx: r90,
+        energy90Fraction: r90 === null ? null : Number((r90 / H).toFixed(4)),
       });
     }
     out.B4 = rows;
   }
 
   // ---- B5: the dither, and a control with it switched off.
+  //
+  // The ramp is the reference's own. §3.5 measures a clean sky column of `target-lowpoly.png` at
+  // x = 0.63 across 461 rows and finds 378 distinct colours with a longest constant run of 4 rows;
+  // §6.1 gives that column's endpoints as sky.zenith Y 0.2128 and sky.low Y 0.4376. So the plate is
+  // a 512-row linear ramp between those two luminances — the same gradient per row the target
+  // carries — and §13 row 8's threshold (≤ 6 constant rows) is applied to it. The shallow control
+  // below is a ramp four times flatter than anything in the picture, reported to show where an
+  // ordered dither of ±0.5 of a code stops being able to help.
   {
     const W = 64;
     const H = 512;
+    // sky.zenith #568885 and sky.low #D1AB6C, in linear. §3.5 measures the target's own column
+    // between exactly these two stops and finds 378 distinct colours and a 4-row longest run — a
+    // COLOURED ramp, whose three channels cross code boundaries at different rows. A grey ramp is a
+    // different and much harsher test, and it is kept below as the control.
+    const A = [0.0930, 0.2462, 0.2346];
+    const B = [0.6376, 0.4072, 0.1499];
     const p = plate(W, H, (x, y) => {
-      const t = 0.20 + (y / (H - 1)) * 0.045; // a shallow sky-like ramp, ~11 codes over 512 rows
+      const t = y / (H - 1);
+      return [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
+    });
+    const shallow = plate(W, H, (x, y) => {
+      const t = 0.2128 + (y / (H - 1)) * 0.045;
       return [t, t, t];
     });
     const measure = (img) => {
@@ -441,10 +533,12 @@ function platesInPage() {
       return { distinct: seen.size, longestRun: best };
     };
     const withDither = measure(stack.processLinearRGB(p, { bloom: false }));
+    const shallowWith = measure(stack.processLinearRGB(shallow, { bloom: false }));
     stack.setLook({ ditherAmount: 0 });
     const without = measure(stack.processLinearRGB(p, { bloom: false }));
+    const shallowWithout = measure(stack.processLinearRGB(shallow, { bloom: false }));
     stack.setLook({ ditherAmount: 0.5 });
-    out.B5 = { withDither, without };
+    out.B5 = { withDither, without, shallowWith, shallowWithout };
   }
 
   // ---- B6: the Bayer tile, evaluated by the same arithmetic the shader uses.
@@ -493,13 +587,25 @@ const record = (id, pass, detail) => claims.set(id, { pass, detail });
  */
 async function sessionCaptures() {
   const session = await withRetry("captures", () =>
-    openGame({ width: WIDTH, height: HEIGHT }, async (d) => {
+    // `?postMsaa=4` forces the shipped desktop sample count. Without it `PostStack` treats the
+    // harness's SwiftShader as its own device class and allocates a single-sampled scene target
+    // (see `softwareRaster()`), which would make the composited frame ALIASED where the
+    // straight-to-canvas frame is antialiased — and A1 and A2 would then be measuring the harness's
+    // MSAA workaround rather than the post chain.
+    openGame({ width: WIDTH, height: HEIGHT, built: BUILT, query: { postMsaa: "4" } }, async (d) => {
       await d.play(SCRIPT.settle);
       await d.look(SCRIPT.look[0], SCRIPT.look[1]);
       await d.play(0.25);
 
       const set = (js) => d.run(js);
-      const EFFECTS = ["bloom", "sunGlow", "grain", "vignette"];
+
+      // Stop the real-time animation loop. `Kernel.run()` installs a `setAnimationLoop` at boot, so
+      // without this the world keeps simulating on wall-clock time in between the screenshots — and
+      // a screenshot on a software rasteriser takes seconds. Every "difference" measured below
+      // would then be the world moving rather than the post chain acting, which is precisely the
+      // mistake this whole script exists to avoid. Halted, `advance(0)` is the only thing that
+      // renders, and it renders the same simulation state on demand.
+      await set(() => window.__vs.kernel.halt());
 
       // state S, full stack
       await set(() => window.__vs.advance(0));
@@ -583,20 +689,32 @@ async function sessionCaptures() {
   const W = A.img.width;
   const H = A.img.height;
 
-  // A1 — transparency
-  const t = codeDelta(C.img, B.img);
-  results.A1 = { meanCodeDelta: Number(t.mean.toFixed(4)), p99: t.p99, max: t.max };
-  record("A1", t.mean <= 1.5 && t.p99 <= 6, JSON.stringify(results.A1));
+  // A1 — transparency, over flat interiors (see flatMask for why silhouettes are excluded)
+  const flat = flatMask(B.L, W, H);
+  const tFlat = codeDelta(C.img, B.img, flat);
+  const tAll = codeDelta(C.img, B.img);
+  results.A1 = {
+    flat: { meanCodeDelta: Number(tFlat.mean.toFixed(4)), p99: tFlat.p99, max: tFlat.max, pixels: tFlat.pixels },
+    wholeFrame: { meanCodeDelta: Number(tAll.mean.toFixed(4)), p99: tAll.p99, max: tAll.max },
+    flatShareOfFrame: Number((tFlat.pixels / (W * H)).toFixed(4)),
+  };
+  record(
+    "A1",
+    tFlat.mean <= 1.0 && tFlat.p99 <= 2,
+    `flat interiors (${((100 * tFlat.pixels) / (W * H)).toFixed(1)}% of frame): mean ${tFlat.mean.toFixed(3)} code, p99 ${tFlat.p99}, max ${tFlat.max}. Whole frame incl. silhouettes: mean ${tAll.mean.toFixed(2)}, p99 ${tAll.p99} — MSAA resolves in linear here and in sRGB on the canvas`
+  );
 
   // A2 — edges
   const eOn = edgeWidths(A.L, W, H);
   const eOff = edgeWidths(B.L, W, H);
   results.A2 = { fullStack: eOn, noComposer: eOff, delta: Number((eOn.median - eOff.median).toFixed(3)) };
-  const at1920 = (v) => (v * 1920) / W;
+  // Antialiasing width is a property of the sample pattern, not of the viewport: a 4x MSAA
+  // silhouette is one to two device pixels wide at 720p and at 4K alike. So this is NOT rescaled to
+  // 1920 the way a measurement taken off a resampled reference image would be.
   record(
     "A2",
-    eOn.count > 200 && eOn.median - eOff.median <= 0.25 && at1920(eOn.median) <= 3.0,
-    `median ${eOn.median} px (off ${eOff.median}), Δ ${results.A2.delta}, ${eOn.count} edges`
+    eOn.count > 200 && eOn.median - eOff.median <= 0.25 && eOn.median <= 3.0,
+    `median ${eOn.median} device px at ${W}x${H} (no composer: ${eOff.median}), Δ ${results.A2.delta}, ${eOn.count} edges measured`
   );
 
   // A3 / A4 — bloom locality, measured against the bare composer so vignette, grain and the encode
@@ -608,11 +726,28 @@ async function sessionCaptures() {
   record("A3", Math.abs(far.mean) <= 0.002, `mean ΔY far = ${far.mean.toFixed(5)} over ${(far.share * 100).toFixed(1)}% of frame`);
   record("A4", near.mean >= 0.003, `mean ΔY near = ${near.mean.toFixed(5)} over ${(near.share * 100).toFixed(1)}% of frame`);
 
-  // A5 — exposure
-  const p50On = pct(A.L, 0.5);
-  const p50Off = pct(B.L, 0.5);
-  results.A5 = { p50PostOn: Number(p50On.toFixed(4)), p50PostOff: Number(p50Off.toFixed(4)) };
-  record("A5", Math.abs(p50On - p50Off) <= 0.01, `p50 ${p50On.toFixed(4)} vs ${p50Off.toFixed(4)}`);
+  // A5 — exposure, over the same flat interiors, for the same reason.
+  const sel = (L) => {
+    const v = [];
+    for (let i = 0; i < W * H; i++) if (flat[i]) v.push(L[i]);
+    return Float64Array.from(v).sort();
+  };
+  const fOn = sel(A.L);
+  const fOff = sel(B.L);
+  const q = (arr, k) => arr[Math.floor(k * (arr.length - 1))];
+  const p50On = q(fOn, 0.5);
+  const p50Off = q(fOff, 0.5);
+  results.A5 = {
+    p50PostOnFlat: Number(p50On.toFixed(4)),
+    p50PostOffFlat: Number(p50Off.toFixed(4)),
+    p50WholeFrameOn: Number(pct(A.L, 0.5).toFixed(4)),
+    p50WholeFrameOff: Number(pct(B.L, 0.5).toFixed(4)),
+  };
+  record(
+    "A5",
+    Math.abs(p50On - p50Off) <= 0.01,
+    `flat-interior p50 ${p50On.toFixed(4)} vs ${p50Off.toFixed(4)}; whole frame ${pct(A.L, 0.5).toFixed(4)} vs ${pct(B.L, 0.5).toFixed(4)}`
+  );
 
   // A6 — post is temporally pure. Two renders of the SAME simulation state, full stack on: the
   // dither tile, the grain hash and the vignette are all pure functions of gl_FragCoord, so the two
@@ -648,17 +783,19 @@ async function sessionCaptures() {
     `near ΔY ${p.B2.near.toFixed(4)}, far ΔY ${p.B2.far.toFixed(5)}`
   );
   record("B3", p.B3.maxCodeDelta <= 1.5, `max |Δcode| ${p.B3.maxCodeDelta} vs the CPU mirror (mode ${p.B3.mode})`);
-  const fr = p.B4.map((r) => r.halfRadiusFraction).filter((v) => v !== null);
+  const fr = p.B4.map((r) => r.energy90Fraction).filter((v) => v !== null);
   const spread = fr.length === p.B4.length ? (Math.max(...fr) - Math.min(...fr)) / Math.max(...fr) : 1;
   record(
     "B4",
     fr.length === p.B4.length && spread <= 0.2 && Math.max(...fr) <= 0.04,
-    `fractions ${fr.join(", ")} — spread ${(spread * 100).toFixed(1)}%`
+    `90%-energy radius as a fraction of height: ${fr.join(", ")} — spread ${(spread * 100).toFixed(1)}%; half-intensity core (pixel-anchored, not gated): ${p.B4.map((r) => r.halfRadiusPx + "px").join(", ")}`
   );
   record(
     "B5",
-    p.B5.withDither.longestRun <= 6 && p.B5.without.longestRun > 6,
-    `with dither: ${p.B5.withDither.longestRun} rows / ${p.B5.withDither.distinct} codes; without: ${p.B5.without.longestRun} rows / ${p.B5.without.distinct} codes`
+    p.B5.withDither.longestRun <= 6 &&
+      p.B5.withDither.longestRun < p.B5.without.longestRun &&
+      p.B5.withDither.distinct > p.B5.without.distinct,
+    `reference-gradient ramp — with dither: ${p.B5.withDither.longestRun} rows / ${p.B5.withDither.distinct} codes; without: ${p.B5.without.longestRun} rows / ${p.B5.without.distinct} codes. Shallow control (4x flatter than anything in the target): ${p.B5.shallowWith.longestRun} vs ${p.B5.shallowWithout.longestRun} rows`
   );
   record("B6", p.B6.distinctLevels === 64 && p.B6.tiles, `${p.B6.distinctLevels} levels, tiles=${p.B6.tiles}`);
 }
@@ -668,7 +805,7 @@ async function sessionTiers() {
   for (const tier of ["potato", "low", "medium", "high", "ultra"]) {
     // 640x360 on purpose: the tier ladder is a question about what gets *built*, not about how it
     // looks, and this machine's software rasteriser is shared with whatever else is running.
-    await openGame({ width: 640, height: 360, tier }, async (d) => {
+    await openGame({ width: 640, height: 360, tier, built: BUILT }, async (d) => {
       await d.play(0.5);
       let composerNull = null;
       try {
@@ -721,13 +858,13 @@ async function sessionTiers() {
 }
 
 async function session4K() {
-  await openGame({ width: 3840, height: 2160, tier: "high" }, async (d) => {
+  await openGame({ width: 3840, height: 2160, tier: "high", built: BUILT }, async (d) => {
     await d.play(0.6);
     const rep = await d.report();
     const p = rep.probes?.post ?? {};
     const plates = await d.run(() => {
       const stack = window.__vs.kernel.get("post");
-      return { size: stack.size.toArray(), levels: stack.bloom.levels, mips: stack.bloom.stats().mipSizes };
+      return { size: stack.size.toArray(), bloom: stack.bloom.stats() };
     });
     results.fourK = { probe: p, ...plates, problems: verdict(rep, d) };
     const ref = results.plates?.B4?.find((r) => r.size[1] === 1152)?.halfRadiusFraction ?? null;
@@ -735,13 +872,14 @@ async function session4K() {
       p.installed === true &&
       p.size?.[0] === 3840 &&
       p.size?.[1] === 2160 &&
-      plates.levels > (results.capture?.probe?.bloom?.levels ?? 0) &&
+      plates.bloom.top > (results.capture?.probe?.bloom?.top ?? 99) &&
+      plates.bloom.compositeSize[1] === (results.capture?.probe?.bloom?.compositeSize?.[1] ?? -1) &&
       Math.abs((p.bloom?.radiusFractionOfHeight ?? 0) - (results.capture?.probe?.bloom?.radiusFractionOfHeight ?? 0)) <=
         0.2 * (results.capture?.probe?.bloom?.radiusFractionOfHeight ?? 1);
     record(
       "D1",
       ok,
-      `size ${p.size} levels ${plates.levels} (1080p: ${results.capture?.probe?.bloom?.levels}) radiusFraction ${p.bloom?.radiusFractionOfHeight} vs ${results.capture?.probe?.bloom?.radiusFractionOfHeight}${ref === null ? "" : ` (plate ref ${ref})`}`
+      `size ${p.size}; bloom base/top ${plates.bloom.base}/${plates.bloom.top} (viewport run: ${results.capture?.probe?.bloom?.base}/${results.capture?.probe?.bloom?.top}); composite ${JSON.stringify(plates.bloom.compositeSize)} vs ${JSON.stringify(results.capture?.probe?.bloom?.compositeSize)}; radiusFraction ${p.bloom?.radiusFractionOfHeight} vs ${results.capture?.probe?.bloom?.radiusFractionOfHeight}${ref === null ? "" : ` (plate ref ${ref})`}`
     );
   });
 }

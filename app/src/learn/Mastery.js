@@ -473,6 +473,12 @@ export class Mastery {
       phase: out.phase,
       hinted: out.hinted,
       scored: out.scored,
+      // Additive field, in the spirit of §6.3's `scored`: a reviewer (and P24) must be able to
+      // see the gate's verdict from OUTSIDE the engine, not infer it from a counter that did not
+      // move. `scored` says the response produced a BKT update; `credited` says it was allowed to
+      // count toward mastery. Round 1's defect was invisible precisely because nothing published
+      // the difference.
+      credited: out.credited,
       ...(out.misconception ? { misconception: out.misconception } : {}),
     });
   }
@@ -777,7 +783,8 @@ export class Mastery {
         forms: [...(from.forms ?? [])],
         lapseAt: [...(from.lapseAt ?? [])],
         nextEventAt: from.nextEventAt == null ? Infinity : from.nextEventAt,
-        event: from.event ? { refusedRight: 0, ...from.event } : null,
+        // Key order is preserved so a re-persisted snapshot is byte-identical to the one read.
+        event: from.event ? { ...from.event, refusedRight: from.event.refusedRight ?? 0 } : null,
       });
     }
     // A snapshot that CARRIES a scheduler block is resumable, whether or not this particular

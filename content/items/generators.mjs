@@ -239,6 +239,338 @@ export const FAIL_KEY = {
   "strictness-contradicts-context": "fail.mark.edge",
 };
 
+/**
+ * Which parameters each locale key actually PRINTS. Generated from strings.json and asserted
+ * against it in review/measure/P17.mjs (C21), so it cannot drift.
+ *
+ * The leak filter below needs this because a hint is handed every parameter the item has and
+ * prints only some of them. Filtering on what it was HANDED deleted whole families — every
+ * `var-meaning.seat` item carries the seated value as a parameter, and that value is also the
+ * reading, so the naive filter refused every stem the family could ever draw.
+ */
+export const HINT_PRINTS = {
+ "ask.gen.loadTo": [
+  "target"
+ ],
+ "ask.gen.lockOpensAt": [
+  "target"
+ ],
+ "ask.gen.loadShape": [
+  "terms"
+ ],
+ "ask.gen.sealCan": [
+  "target"
+ ],
+ "ask.gen.gathersTo": [
+  "target"
+ ],
+ "ask.gen.standsWith": [
+  "target"
+ ],
+ "ask.gen.claimClosesAt": [
+  "target"
+ ],
+ "ask.gen.saidClaim": [
+  "target"
+ ],
+ "ask.gen.markAdmits": [
+  "target"
+ ],
+ "ask.gen.markAdmitsTurned": [
+  "target"
+ ],
+ "hint.repair.3": [
+  "line"
+ ],
+ "hint.gen.namesDiffer.3": [
+  "target"
+ ],
+ "hint.gen.loadAuthor.3": [
+  "target"
+ ],
+ "hint.gen.loadShape.3": [
+  "terms"
+ ],
+ "hint.gen.loadGathersTo.3": [
+  "target"
+ ],
+ "hint.gen.partitionWitness.3": [
+  "target"
+ ],
+ "hint.gen.claimClosesAt.3": [
+  "target"
+ ],
+ "hint.gen.markAdmits.3": [
+  "target"
+ ],
+ "spoken.var-meaning.relate": [
+  "k"
+ ],
+ "spoken.translate-phrase.groups": [
+  "a",
+  "b"
+ ],
+ "spoken.translate-phrase.twice": [
+  "b"
+ ],
+ "spoken.translate-order.lessthan": [
+  "a"
+ ],
+ "spoken.translate-order.subtractfrom": [
+  "a"
+ ],
+ "spoken.translate-order.dividedinto": [
+  "a"
+ ],
+ "spoken.translate-sentence.core": [
+  "a",
+  "b",
+  "c"
+ ],
+ "story.eq-model-context.span": [
+  "b",
+  "g",
+  "k"
+ ],
+ "story.eq-model-context.members": [
+  "T",
+  "w"
+ ],
+ "hint.move.var-meaning.seat": [
+  "letter"
+ ],
+ "hint.move.var-meaning.relate": [
+  "k"
+ ],
+ "hint.state.var-meaning.relate": [
+  "k"
+ ],
+ "hint.state.var-meaning.twin": [
+  "total"
+ ],
+ "hint.move.oo-numeric.addmul": [
+  "b",
+  "c"
+ ],
+ "hint.state.oo-numeric.addmul": [
+  "a",
+  "inner"
+ ],
+ "hint.state.oo-numeric.divmul": [
+  "a",
+  "b",
+  "c",
+  "first"
+ ],
+ "hint.state.oo-numeric.addsub": [
+  "a",
+  "b",
+  "c",
+  "first"
+ ],
+ "hint.move.expr-anatomy.coefficient": [
+  "b"
+ ],
+ "hint.state.expr-anatomy.term": [
+  "a"
+ ],
+ "hint.state.oo-structure.coefsq": [
+  "a",
+  "sq"
+ ],
+ "hint.state.oo-structure.negsq": [
+  "sq"
+ ],
+ "hint.state.oo-structure.juxt": [
+  "a",
+  "v"
+ ],
+ "hint.state.eval-substitute.twice": [
+  "sq",
+  "v"
+ ],
+ "hint.state.eval-substitute.concat": [
+  "a",
+  "v"
+ ],
+ "hint.state.eval-substitute.coefficient": [
+  "a",
+  "v"
+ ],
+ "hint.state.eval-signed.minusneg": [
+  "a",
+  "b"
+ ],
+ "hint.state.eval-signed.sumneg": [
+  "a",
+  "b"
+ ],
+ "hint.state.eval-formula.two": [
+  "rise"
+ ],
+ "hint.move.translate-phrase.groups": [
+  "a",
+  "b"
+ ],
+ "hint.state.translate-phrase.groups": [
+  "a",
+  "b"
+ ],
+ "hint.state.translate-phrase.twice": [
+  "b"
+ ],
+ "hint.state.translate-order.lessthan": [
+  "a"
+ ],
+ "hint.state.translate-order.subtractfrom": [
+  "a"
+ ],
+ "hint.state.translate-order.dividedinto": [
+  "a"
+ ],
+ "hint.state.translate-sentence.core": [
+  "a",
+  "b"
+ ],
+ "hint.state.props-operations.commute": [
+  "b"
+ ],
+ "hint.state.props-operations.regroup": [
+  "a",
+  "inner"
+ ],
+ "hint.state.props-operations.identity": [
+  "a"
+ ],
+ "hint.state.like-terms-id.xy": [
+  "first"
+ ],
+ "hint.state.like-terms-id.pow": [
+  "first"
+ ],
+ "hint.state.like-terms-combine.core": [
+  "gathered"
+ ],
+ "hint.state.distribute-numeric.sum": [
+  "first"
+ ],
+ "hint.state.distribute-numeric.product": [
+  "a",
+  "inner"
+ ],
+ "hint.state.distribute-variable.core": [
+  "first"
+ ],
+ "hint.state.distribute-negative.bare": [
+  "b",
+  "c"
+ ],
+ "hint.state.distribute-negative.subtract": [
+  "a",
+  "product"
+ ],
+ "hint.state.simplify-expression.core": [
+  "a",
+  "opened"
+ ],
+ "hint.state.equivalent-expressions.count": [
+  "a",
+  "b"
+ ],
+ "hint.state.eq-meaning.magazine": [
+  "a",
+  "b"
+ ],
+ "hint.state.props-equality.move": [
+  "a",
+  "b"
+ ],
+ "hint.state.props-equality.zero": [
+  "diff"
+ ],
+ "hint.state.eq-one-add.plus": [
+  "p",
+  "q"
+ ],
+ "hint.state.eq-one-add.minus": [
+  "p",
+  "q"
+ ],
+ "hint.state.eq-one-mult.mult": [
+  "a",
+  "b"
+ ],
+ "hint.state.eq-one-mult.fraction": [
+  "a",
+  "b"
+ ],
+ "hint.state.eq-two-step.core": [
+  "a",
+  "lifted"
+ ],
+ "hint.state.eq-combine-side.core": [
+  "c",
+  "gathered"
+ ],
+ "hint.move.eq-distribute.core": [
+  "p"
+ ],
+ "hint.state.eq-distribute.core": [
+  "p",
+  "q",
+  "shared"
+ ],
+ "hint.state.eq-both-sides.core": [
+  "left"
+ ],
+ "hint.state.eq-special-cases.refusal": [
+  "b",
+  "d"
+ ],
+ "hint.state.eq-model-context.span": [
+  "b",
+  "deck",
+  "k"
+ ],
+ "hint.state.eq-model-context.members": [
+  "exact"
+ ],
+ "hint.state.ineq-meaning.stretch": [
+  "c"
+ ],
+ "hint.state.ineq-one-step.plus": [
+  "mark",
+  "p"
+ ],
+ "hint.state.ineq-one-step.negconstant": [
+  "mark"
+ ],
+ "hint.state.ineq-negative-flip.divide": [
+  "mark"
+ ],
+ "hint.state.ineq-negative-flip.subneg": [
+  "mark",
+  "p"
+ ],
+ "hint.state.ineq-two-step.turned": [
+  "a",
+  "lifted"
+ ],
+ "hint.state.ineq-two-step.inclusive": [
+  "a",
+  "lifted"
+ ],
+ "ask.gen.loadReadsAt": [
+  "at",
+  "target",
+  "unknown"
+ ],
+ "hint.gen.loadReadsAt.3": [
+  "at",
+  "target"
+ ]
+};
+
 /* ------------------------------------------------------------------ tiers */
 /**
  * Three pitches inside a band. `core` sits at the node's own band; `easy` one below, `stretch`
@@ -295,7 +627,7 @@ shape({
   ask: "ask.reading",
   answerType: "integer",
   draw(rand, tier) {
-    const letters = ["k", "m", "t", "p", "r"];
+    const letters = ["k", "m", "t", "p", "r", "w", "g", "q"];
     const letter = pick(rand, letters);
     const v = intIn(rand, 2, tier === "easy" ? 12 : 20);
     if (v === alphaIndex(letter)) return null;
@@ -334,7 +666,7 @@ shape({
   ask: "ask.claim",
   answerType: "equation",
   draw(rand, tier) {
-    const k = intIn(rand, 2, tier === "easy" ? 5 : 9);
+    const k = intIn(rand, 2, tier === "easy" ? 8 : 18);
     return { k };
   },
   build(p) {
@@ -540,7 +872,7 @@ shape({
   ask: "ask.count",
   answerType: "integer",
   draw(rand, tier) {
-    const b = nz(rand, 2, 9);
+    const b = nz(rand, 2, tier === "easy" ? 9 : 20);
     return { b, tierNote: tier };
   },
   build(p) {
@@ -607,6 +939,13 @@ shape({
       given: [`x = ${p.v}`],
       answer: { canonical: rstr(I(correct)), tex: String(correct) },
       sigs: { "coefficient-under-exponent": { canonical: rstr(I(wrong)), tex: String(wrong) } },
+      gen: {
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "x", at: p.v, value: correct, needs: ["letter"] },
+        witness: cv(p.a, "x", 2),
+        ask: "ask.gen.loadReadsAt",
+        sigs: {},
+      },
       hint: { a: p.a, v: p.v, sq: p.v * p.v },
       trace: (misc) =>
         misc === "coefficient-under-exponent"
@@ -623,7 +962,7 @@ shape({
   ask: "ask.reading",
   answerType: "integer",
   draw(rand, tier) {
-    const v = intIn(rand, 2, tier === "easy" ? 6 : 9);
+    const v = intIn(rand, 2, tier === "easy" ? 12 : 20);
     return { v };
   },
   build(p) {
@@ -635,6 +974,13 @@ shape({
       given: [`x = ${p.v}`],
       answer: { canonical: rstr(I(correct)), tex: String(correct) },
       sigs: { "negative-square-sign-lost": { canonical: rstr(I(wrong)), tex: String(wrong) } },
+      gen: {
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "x", at: p.v, value: correct, needs: ["letter"] },
+        witness: "-x^{2}",
+        ask: "ask.gen.loadReadsAt",
+        sigs: {},
+      },
       hint: { v: p.v, sq: p.v * p.v },
       trace: (misc) =>
         misc === "negative-square-sign-lost"
@@ -686,7 +1032,7 @@ shape({
   ask: "ask.reading",
   answerType: "integer",
   draw(rand, tier) {
-    const v = intIn(rand, 2, tier === "easy" ? 6 : 11);
+    const v = intIn(rand, 2, tier === "easy" ? 9 : 24);
     return { v };
   },
   build(p) {
@@ -745,6 +1091,13 @@ shape({
         L(String(misc === "substitute-by-concatenation" ? p.concat : p.a + p.v), "expr"),
       ],
       traceKind: "expr",
+      gen: {
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "n", at: p.v, value: p.a + p.v, needs: ["letter"] },
+        witness: `${p.a} + n`,
+        ask: "ask.gen.loadReadsAt",
+        sigs: {},
+      },
     };
   },
 });
@@ -769,6 +1122,13 @@ shape({
       sigs: {
         "coefficient-dropped-on-substitution": { canonical: rstr(I(p.v)), tex: String(p.v) },
       },
+      gen: {
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "x", at: p.v, value: p.a * p.v, needs: ["letter"] },
+        witness: cv(p.a),
+        ask: "ask.gen.loadReadsAt",
+        sigs: {},
+      },
       hint: { a: p.a, v: p.v },
       trace: (misc) =>
         misc === "coefficient-dropped-on-substitution"
@@ -785,7 +1145,7 @@ shape({
   ask: "ask.reading",
   answerType: "integer",
   draw(rand, tier) {
-    const v = intIn(rand, 2, tier === "easy" ? 6 : 10);
+    const v = intIn(rand, 2, tier === "easy" ? 9 : 20);
     return { v };
   },
   build(p) {
@@ -802,6 +1162,13 @@ shape({
           ? [L(stem, "expr"), L(`-${p.v}^{2}`, "expr"), L(String(-correct), "expr")]
           : [L(stem, "expr"), L(`${paren(`-${p.v}`)}^{2}`, "expr"), L(String(correct), "expr")],
       traceKind: "expr",
+      gen: {
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "x", at: -p.v, value: correct, needs: ["letter"] },
+        witness: "x^{2}",
+        ask: "ask.gen.loadReadsAt",
+        sigs: {},
+      },
     };
   },
 });
@@ -831,6 +1198,13 @@ shape({
           ? [L(stem, "expr"), L(`${p.a} - ${p.b}`, "expr"), L(String(p.a - p.b), "expr")]
           : [L(stem, "expr"), L(`${p.a} - ${paren(`-${p.b}`)}`, "expr"), L(String(p.a + p.b), "expr")],
       traceKind: "expr",
+      gen: {
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "x", at: -p.b, value: p.a + p.b, needs: ["letter"] },
+        witness: `${p.a} - x`,
+        ask: "ask.gen.loadReadsAt",
+        sigs: {},
+      },
     };
   },
 });
@@ -1007,7 +1381,7 @@ shape({
   ask: "ask.load",
   answerType: "expression",
   draw(rand, tier) {
-    const b = intIn(rand, 3, 9);
+    const b = intIn(rand, 3, tier === "easy" ? 12 : 24);
     if (b === 2) return null;
     return { b };
   },
@@ -1237,6 +1611,13 @@ shape({
         L(misc === "subtraction-commutes" ? `${cv(p.b)} - ${p.a}` : `${cv(-p.b)} + ${p.a}`, "expr"),
       ],
       traceKind: "expr",
+      gen: {
+        kind: "loadGathersTo",
+        check: { kind: "loadGathersTo", target: canonExpr(`-${p.b}x + ${p.a}`), unknown: "x", needs: ["letter"] },
+        witness: `${cv(-p.b)} + ${p.a}`,
+        ask: "ask.gen.gathersTo",
+        sigs: {},
+      },
     };
   },
 });
@@ -1266,6 +1647,13 @@ shape({
         },
       },
       hint: { a: p.a, b: p.b, c: p.c, inner: p.b + p.c },
+      gen: {
+        kind: "loadAuthor",
+        check: { kind: "loadAuthor", settleTo: p.a - (p.b + p.c), needs: ["bundle", "sum"] },
+        witness: `${p.a} - \\left(${p.b} + ${p.c}\\right)`,
+        ask: "ask.gen.loadTo",
+        sigs: {},
+      },
       trace: (misc) =>
         misc === "regroup-across-subtraction"
           ? [L(stem, "expr"), L(`${p.a - p.b} + ${p.c}`, "expr"), L(String(p.a - p.b + p.c), "expr")]
@@ -1281,7 +1669,7 @@ shape({
   ask: "ask.load",
   answerType: "expression",
   draw(rand, tier) {
-    const a = nz(rand, 2, 9);
+    const a = nz(rand, 2, tier === "easy" ? 12 : 24);
     return { a };
   },
   build(p) {
@@ -1403,7 +1791,9 @@ for (const s of LTI_SHAPES) {
             mustStandWith: canonExpr(s2.terms[0]),
             excludes: s2.terms.map((t) => canonExpr(t)),
           },
-          witness: cv(p.a + p.b + 1),
+          // One more than the largest count on the stem, so the witness can never collide with
+          // a term already standing in the stacks.
+          witness: cv(Math.max(p.a, p.b, p.c, p.d, p.e) + 1),
           ask: "ask.gen.standsWith",
           sigs: {
             "all-variable-terms-alike": { canonical: canonExpr(s2.terms[1]), tex: s2.terms[1] },
@@ -2708,7 +3098,7 @@ shape({
           unknown: "x",
           needs: ["constantWithUnknown"],
         },
-        witness: `x - 1 ${p.strict ? ">" : "\ge"} ${p.c - 1}`,
+        witness: `x - 1 ${p.strict ? ">" : "\\ge"} ${p.c - 1}`,
         ask: "ask.gen.markAdmits",
         sigs: {},
       },
@@ -3078,6 +3468,7 @@ function genParams(check) {
   if (check.target != null) out.target = check.target;
   if (check.stretch != null) out.target = check.stretch;
   if (check.mustStandWith != null) out.target = check.mustStandWith;
+  if (check.at != null) out.at = check.at;
   if (check.relation != null) out.relation = check.relation;
   if (check.unknown != null) out.unknown = check.unknown;
   return out;
@@ -3130,11 +3521,13 @@ export function makeItem(shp, form, params, tier, band) {
     }
     if (!distractors.length) return null;
     // A rung of the ladder that happens to print the value being asked for is not a scaffold.
-    // The numbers a hint may name are fixed by its template, so the cheap fix is to refuse the
-    // stem rather than to soften the hint. Asserted from outside in review/measure/P17.mjs.
-    for (const v of Object.values(built.hint || {})) {
-      if (typeof v === "number" && String(v) === built.answer.canonical) return null;
-      if (typeof v === "string" && v === built.answer.canonical) return null;
+    // Refuse the stem: the numbers a hint may name are fixed by its template, so softening the
+    // hint would cost more than redrawing. Asserted from outside in review/measure/P17.mjs.
+    for (const key of [`hint.move.${shp.id}`, `hint.state.${shp.id}`]) {
+      for (const name of HINT_PRINTS[key] || []) {
+        const v = (built.hint || {})[name];
+        if (v !== undefined && String(v) === built.answer.canonical) return null;
+      }
     }
     return {
       id: itemId(shp.id, form, params),
@@ -3261,16 +3654,18 @@ export function generateForKp(
   // A balanced plan rather than a random walk: every (form x shape x tier) cell is visited in
   // turn, so no knowledge point ends up with sixteen `construct` items and no `generate`.
   const plan = [];
-  for (const tier of tiers) for (const form of forms) for (const shp of shapes) plan.push({ shp, form, tier });
+  for (const form of forms) for (const shp of shapes) plan.push({ shp, form });
   const out = [];
   const seen = new Set();
   let guard = 0;
   let i = 0;
   while (out.length < count && guard++ < count * 600) {
-    const cell = plan[i++ % plan.length];
-    const params = cell.shp.draw(rand, cell.tier);
+    const cell = plan[i % plan.length];
+    const tier = tiers[Math.floor(i / plan.length) % tiers.length];
+    i++;
+    const params = cell.shp.draw(rand, tier);
     if (!params) continue;
-    const item = makeItem(cell.shp, cell.form, params, cell.tier, band);
+    const item = makeItem(cell.shp, cell.form, params, tier, band);
     if (!item) continue;
     if (seen.has(item.id)) continue;
     seen.add(item.id);
@@ -3284,8 +3679,9 @@ export function generateOne(kpId, { form = "construct", tier = "core", band = 3,
   const shapes = (SHAPES_BY_KP.get(kpId) || []).filter((s) => true);
   if (!shapes.length) return null;
   const rand = rng(seed);
+  const start = (seed >>> 0) % shapes.length;
   for (let i = 0; i < tries; i++) {
-    const shp = shapes[i % shapes.length];
+    const shp = shapes[(start + i) % shapes.length];
     const params = shp.draw(rand, tier);
     if (!params) continue;
     const item = makeItem(shp, form, params, tier, band);

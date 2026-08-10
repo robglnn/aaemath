@@ -739,12 +739,19 @@ export class Lighting {
     const g = this._board.userData.marks;
     const views = {
       // Composed the way the target is: the spire cutting the left third, the courier standing on
-      // the shelf just right of centre, crystal and carry to the right, horizon high.
-      wide: { pos: [-4.2, 2.9, 13.6], look: [0.6, 1.9, 0.4], fov: 52 },
-      // The one thing this piece has to prove: where the courier meets the ground.
-      contact: { pos: [1.9, 1.05, 3.2], look: [g.hero[0], g.hero[1] + 0.42, g.hero[2]], fov: 30 },
-      // Three substances in one frame, at one scale, on one ground.
-      substances: { pos: [5.4, 2.4, 12.2], look: [4.4, 1.0, 4.2], fov: 40 },
+      // the shelf just right of centre, crystal and carry to the right, horizon high, the key low
+      // and about 45° off the view axis so both the lit and the turned families are in frame.
+      wide: { pos: [-1.0, 3.2, 13.6], look: [-2.6, 1.5, 1.0], fov: 54 },
+      // The one thing this piece has to prove: where the courier meets the ground. The camera has to
+      // stand DOWN-SUN of the courier or the cast shadow falls away behind them and the frame shows
+      // a pair of boots and no contact at all — which is exactly how a build ships a floating hero.
+      contact: {
+        pos: [g.hero[0] - 2.3, g.hero[1] + 0.95, g.hero[2] + 3.3],
+        look: [g.hero[0] - 0.35, g.hero[1] + 0.32, g.hero[2] + 0.15],
+        fov: 32,
+      },
+      // Rock, certainty and carry in one frame, at one scale, on one ground.
+      substances: { pos: [3.0, 2.3, 11.0], look: [4.2, 0.9, 4.6], fov: 44 },
     };
     const v = views[view] ?? views.wide;
     cam.position.set(...v.pos);

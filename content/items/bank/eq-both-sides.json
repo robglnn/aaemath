@@ -16,8 +16,103 @@
   "removed-from-one-side-only",
   "constants-collected-wrong-side"
  ],
- "count": 30,
+ "count": 36,
  "items": [
+  {
+   "id": "eq-both-sides.core/construct/wtixtk",
+   "kpId": "eq-both-sides",
+   "family": "eq-both-sides.core",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "6x + 5 = 4x + 17",
+   "given": [],
+   "ask": {
+    "key": "ask.value",
+    "params": {
+     "a": 6,
+     "b": 5,
+     "c": 4,
+     "d": 17,
+     "left": 2
+    },
+    "text": "Close it."
+   },
+   "answerType": "rational",
+   "unknown": "x",
+   "answer": {
+    "canonical": "6",
+    "tex": "6"
+   },
+   "distractors": [
+    {
+     "misconception": "moved-without-inverting",
+     "response": "6/5",
+     "tex": "\\frac{6}{5}",
+     "failKey": "fail.sill.sign"
+    },
+    {
+     "misconception": "removed-from-one-side-only",
+     "response": "2",
+     "tex": "2",
+     "failKey": "fail.onesided"
+    },
+    {
+     "misconception": "constants-collected-wrong-side",
+     "response": "11",
+     "tex": "11",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.eq-both-sides.core",
+     "params": {
+      "a": 6,
+      "b": 5,
+      "c": 4,
+      "d": 17,
+      "left": 2
+     },
+     "text": "Take contents off both pans until the socket stands on one pan only."
+    },
+    {
+     "key": "hint.state.eq-both-sides.core",
+     "params": {
+      "a": 6,
+      "b": 5,
+      "c": 4,
+      "d": 17,
+      "left": 2
+     },
+     "text": "With the far pan's contents taken off both, a count of 2 is left standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-both-sides.1",
+    "params": {},
+    "text": "Contents on both pans — the same contents, because it is the same stray in both sockets."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.8.8C",
+    "FL.MA.8.AR.2.1",
+    "VA.8.PFA.4"
+   ],
+   "params": {
+    "a": 6,
+    "b": 5,
+    "c": 4,
+    "d": 17
+   }
+  },
   {
    "id": "eq-both-sides.core/generate/7lsbpl",
    "kpId": "eq-both-sides",
@@ -107,6 +202,101 @@
     "b": 1,
     "c": 2,
     "d": 4
+   }
+  },
+  {
+   "id": "eq-both-sides.core/construct/4psq4x",
+   "kpId": "eq-both-sides",
+   "family": "eq-both-sides.core",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "2x + 6 = 3x + 3",
+   "given": [],
+   "ask": {
+    "key": "ask.value",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 3,
+     "d": 3,
+     "left": -1
+    },
+    "text": "Close it."
+   },
+   "answerType": "rational",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3",
+    "tex": "3"
+   },
+   "distractors": [
+    {
+     "misconception": "moved-without-inverting",
+     "response": "-3/5",
+     "tex": "-\\frac{3}{5}",
+     "failKey": "fail.sill.sign"
+    },
+    {
+     "misconception": "removed-from-one-side-only",
+     "response": "-3/2",
+     "tex": "-\\frac{3}{2}",
+     "failKey": "fail.onesided"
+    },
+    {
+     "misconception": "constants-collected-wrong-side",
+     "response": "-9",
+     "tex": "-9",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.eq-both-sides.core",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 3,
+      "d": 3,
+      "left": -1
+     },
+     "text": "Take contents off both pans until the socket stands on one pan only."
+    },
+    {
+     "key": "hint.state.eq-both-sides.core",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 3,
+      "d": 3,
+      "left": -1
+     },
+     "text": "With the far pan's contents taken off both, a count of -1 is left standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-both-sides.2",
+    "params": {},
+    "text": "Take contents off both until only one pan holds any."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.8.8C",
+    "FL.MA.8.AR.2.1",
+    "VA.8.PFA.4"
+   ],
+   "params": {
+    "a": 2,
+    "b": 6,
+    "c": 3,
+    "d": 3
    }
   },
   {
@@ -782,7 +972,7 @@
       "d": 7,
       "left": 1
      },
-     "text": "With the far pan's members taken off both, 1 of them are left standing."
+     "text": "With the far pan's contents taken off both, a count of 1 is left standing."
     }
    ],
    "worldFraming": {
@@ -968,7 +1158,7 @@
       "d": -2,
       "left": -2
      },
-     "text": "With the far pan's members taken off both, -2 of them are left standing."
+     "text": "With the far pan's contents taken off both, a count of -2 is left standing."
     }
    ],
    "worldFraming": {
@@ -1463,7 +1653,7 @@
       "d": 17,
       "left": 2
      },
-     "text": "With the far pan's members taken off both, 2 of them are left standing."
+     "text": "With the far pan's contents taken off both, a count of 2 is left standing."
     }
    ],
    "worldFraming": {
@@ -1958,7 +2148,7 @@
       "d": -13,
       "left": -4
      },
-     "text": "With the far pan's members taken off both, -4 of them are left standing."
+     "text": "With the far pan's contents taken off both, a count of -4 is left standing."
     }
    ],
    "worldFraming": {
@@ -2290,6 +2480,101 @@
    }
   },
   {
+   "id": "eq-both-sides.core/construct/19osfkj",
+   "kpId": "eq-both-sides",
+   "family": "eq-both-sides.core",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "6x + 2 = 2x + 26",
+   "given": [],
+   "ask": {
+    "key": "ask.value",
+    "params": {
+     "a": 6,
+     "b": 2,
+     "c": 2,
+     "d": 26,
+     "left": 4
+    },
+    "text": "Close it."
+   },
+   "answerType": "rational",
+   "unknown": "x",
+   "answer": {
+    "canonical": "6",
+    "tex": "6"
+   },
+   "distractors": [
+    {
+     "misconception": "moved-without-inverting",
+     "response": "3",
+     "tex": "3",
+     "failKey": "fail.sill.sign"
+    },
+    {
+     "misconception": "removed-from-one-side-only",
+     "response": "4",
+     "tex": "4",
+     "failKey": "fail.onesided"
+    },
+    {
+     "misconception": "constants-collected-wrong-side",
+     "response": "7",
+     "tex": "7",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.eq-both-sides.core",
+     "params": {
+      "a": 6,
+      "b": 2,
+      "c": 2,
+      "d": 26,
+      "left": 4
+     },
+     "text": "Take contents off both pans until the socket stands on one pan only."
+    },
+    {
+     "key": "hint.state.eq-both-sides.core",
+     "params": {
+      "a": 6,
+      "b": 2,
+      "c": 2,
+      "d": 26,
+      "left": 4
+     },
+     "text": "With the far pan's contents taken off both, a count of 4 is left standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-both-sides.2",
+    "params": {},
+    "text": "Take contents off both until only one pan holds any."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.8.8C",
+    "FL.MA.8.AR.2.1",
+    "VA.8.PFA.4"
+   ],
+   "params": {
+    "a": 6,
+    "b": 2,
+    "c": 2,
+    "d": 26
+   }
+  },
+  {
    "id": "eq-both-sides.core/repair/d94kif",
    "kpId": "eq-both-sides",
    "family": "eq-both-sides.core",
@@ -2562,7 +2847,7 @@
       "d": -10,
       "left": -2
      },
-     "text": "With the far pan's members taken off both, -2 of them are left standing."
+     "text": "With the far pan's contents taken off both, a count of -2 is left standing."
     }
    ],
    "worldFraming": {
@@ -2875,7 +3160,7 @@
       "d": 6,
       "left": 4
      },
-     "text": "With the far pan's members taken off both, 4 of them are left standing."
+     "text": "With the far pan's contents taken off both, a count of 4 is left standing."
     }
    ],
    "worldFraming": {
@@ -3004,6 +3289,301 @@
     "b": 8,
     "c": 3,
     "d": 12
+   }
+  },
+  {
+   "id": "eq-both-sides.core/generate/1wgx18a",
+   "kpId": "eq-both-sides",
+   "family": "eq-both-sides.core",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "7x + 5 = 2x + 25",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.claimClosesAt",
+    "params": {
+     "a": 7,
+     "b": 5,
+     "c": 2,
+     "d": 25,
+     "left": 5,
+     "target": "4",
+     "unknown": "x"
+    },
+    "text": "Author a claim on this site that closes at 4."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "7x + 5 = 2x + 25",
+    "tex": "7x + 5 = 2x + 25",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "x",
+    "value": "4",
+    "needs": [
+     "bothPans"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 7,
+      "b": 5,
+      "c": 2,
+      "d": 25,
+      "left": 5,
+      "target": "4",
+      "unknown": "x"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 7,
+      "b": 5,
+      "c": 2,
+      "d": 25,
+      "left": 5,
+      "target": "4",
+      "unknown": "x"
+     },
+     "text": "Whatever you write, seating 4 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-both-sides.1",
+    "params": {},
+    "text": "Contents on both pans — the same contents, because it is the same stray in both sockets."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.8.8C",
+    "FL.MA.8.AR.2.1",
+    "VA.8.PFA.4"
+   ],
+   "params": {
+    "a": 7,
+    "b": 5,
+    "c": 2,
+    "d": 25
+   }
+  },
+  {
+   "id": "eq-both-sides.core/construct/1fo6eau",
+   "kpId": "eq-both-sides",
+   "family": "eq-both-sides.core",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "3x - 6 = 2x + 3",
+   "given": [],
+   "ask": {
+    "key": "ask.value",
+    "params": {
+     "a": 3,
+     "b": -6,
+     "c": 2,
+     "d": 3,
+     "left": 1
+    },
+    "text": "Close it."
+   },
+   "answerType": "rational",
+   "unknown": "x",
+   "answer": {
+    "canonical": "9",
+    "tex": "9"
+   },
+   "distractors": [
+    {
+     "misconception": "moved-without-inverting",
+     "response": "9/5",
+     "tex": "\\frac{9}{5}",
+     "failKey": "fail.sill.sign"
+    },
+    {
+     "misconception": "removed-from-one-side-only",
+     "response": "3",
+     "tex": "3",
+     "failKey": "fail.onesided"
+    },
+    {
+     "misconception": "constants-collected-wrong-side",
+     "response": "-3",
+     "tex": "-3",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.eq-both-sides.core",
+     "params": {
+      "a": 3,
+      "b": -6,
+      "c": 2,
+      "d": 3,
+      "left": 1
+     },
+     "text": "Take contents off both pans until the socket stands on one pan only."
+    },
+    {
+     "key": "hint.state.eq-both-sides.core",
+     "params": {
+      "a": 3,
+      "b": -6,
+      "c": 2,
+      "d": 3,
+      "left": 1
+     },
+     "text": "With the far pan's contents taken off both, a count of 1 is left standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-both-sides.1",
+    "params": {},
+    "text": "Contents on both pans — the same contents, because it is the same stray in both sockets."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.8.8C",
+    "FL.MA.8.AR.2.1",
+    "VA.8.PFA.4"
+   ],
+   "params": {
+    "a": 3,
+    "b": -6,
+    "c": 2,
+    "d": 3
+   }
+  },
+  {
+   "id": "eq-both-sides.core/repair/p49x49",
+   "kpId": "eq-both-sides",
+   "family": "eq-both-sides.core",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "3x - 1 = 5x - 3",
+   "given": [],
+   "working": [
+    "3x - 1 = 5x - 3",
+    "8x = -2",
+    "x = -\\frac{1}{4}"
+   ],
+   "brokenBy": "moved-without-inverting",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": -1,
+     "c": 5,
+     "d": -3,
+     "left": -2,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -1 = 0",
+    "tex": "-2x - 1 = -3",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "moved-without-inverting",
+     "response": "2|1*x + 1/4 = 0",
+     "tex": "8x = -2",
+     "failKey": "fail.sill.sign"
+    },
+    {
+     "misconception": "removed-from-one-side-only",
+     "response": "2|1*x + 2/3 = 0",
+     "tex": "3x = -2",
+     "failKey": "fail.onesided"
+    },
+    {
+     "misconception": "constants-collected-wrong-side",
+     "response": "2|1*x + -2 = 0",
+     "tex": "-2x = -4",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": -1,
+      "c": 5,
+      "d": -3,
+      "left": -2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": -1,
+      "c": 5,
+      "d": -3,
+      "left": -2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-both-sides.2",
+    "params": {},
+    "text": "Take contents off both until only one pan holds any."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.8.8C",
+    "FL.MA.8.AR.2.1",
+    "VA.8.PFA.4"
+   ],
+   "params": {
+    "a": 3,
+    "b": -1,
+    "c": 5,
+    "d": -3
    }
   }
  ]

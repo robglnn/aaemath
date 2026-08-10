@@ -1,14 +1,2172 @@
-(node:46316) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(node:40968) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
 (Use `node --trace-deprecation ...` to show where the warning was created)
 {
-  "image": "review/shots/p13/06-wide.png",
-  "bytes": 806420,
+  "image": "review/shots/p13/09-wide.png",
+  "bytes": 785331,
   "lang": "en",
-  "ready": false,
-  "problems": [
-    "app never reported ready",
-    "console error: boot module \"./boot/12-sky.js\" failed to import: SyntaxError: Unexpected identifier 'idx'"
-  ]
+  "ready": true,
+  "stats": {
+    "fps": 1,
+    "frameMs": 1162.23,
+    "simTime": 6.983,
+    "frames": 146,
+    "steps": 419,
+    "drawCalls": 65,
+    "triangles": 198439,
+    "programs": 20,
+    "textures": 12,
+    "geometries": 29,
+    "pixelRatio": 1,
+    "tier": "medium"
+  },
+  "katex": {
+    "rendered": 3,
+    "failed": 0,
+    "failedSamples": [],
+    "rawSourceLeak": false,
+    "leakSample": null
+  },
+  "probes": {
+    "i18n": {
+      "locale": "en",
+      "requested": "en",
+      "reference": "en",
+      "keys": 338,
+      "referenceKeys": 338,
+      "missing": [],
+      "pluralCategories": [
+        "one",
+        "other"
+      ],
+      "conventions": {
+        "decimal": ".",
+        "group": ",",
+        "groupFrom": 4,
+        "texDecimal": ".",
+        "texGroup": "{,}",
+        "minus": "−",
+        "percentGap": "",
+        "listSep": ", ",
+        "listLast": " and "
+      },
+      "sample": {
+        "number": "16,004",
+        "decimal": "1.5",
+        "negative": "−2.25",
+        "percent": "80%",
+        "tex": "16{,}004.5",
+        "plural": {
+          "1": "1 leaf",
+          "2": "2 leaves",
+          "5": "5 leaves",
+          "22": "22 leaves",
+          "1.5": "1.5 leaves"
+        }
+      },
+      "rendered": 398,
+      "layout": null
+    },
+    "terrain": {
+      "id": "leaf-nine",
+      "cell": 6,
+      "grid": [
+        78,
+        116
+      ],
+      "bounds": {
+        "x0": -232,
+        "x1": 232,
+        "z0": -352,
+        "z1": 338
+      },
+      "surfaceTriangles": 9620,
+      "lipEdges": 408,
+      "indexed": false,
+      "flatNormalFraction": 1,
+      "underTriangles": 10436
+    },
+    "level": {
+      "id": "leaf-nine",
+      "downLeaf": [
+        0,
+        0,
+        -1
+      ],
+      "anchors": {
+        "spawn": {
+          "x": 10,
+          "y": 54.54,
+          "z": 216,
+          "leaf": [
+            -216,
+            10
+          ]
+        },
+        "brow": {
+          "x": 10,
+          "y": 52.84,
+          "z": 216,
+          "leaf": [
+            -216,
+            10
+          ]
+        },
+        "bollard": {
+          "x": 34,
+          "y": 48.84,
+          "z": 300,
+          "leaf": [
+            -300,
+            34
+          ]
+        },
+        "barge": {
+          "x": 74,
+          "y": 48.34,
+          "z": 296,
+          "leaf": [
+            -296,
+            74
+          ]
+        },
+        "kindness": {
+          "x": 116,
+          "y": 44.66,
+          "z": 266,
+          "leaf": [
+            -266,
+            116
+          ]
+        },
+        "standingHouse": {
+          "x": -66,
+          "y": 17.58,
+          "z": 90,
+          "leaf": [
+            -90,
+            -66
+          ]
+        },
+        "standingHouseSocket": {
+          "x": -63,
+          "y": 20.87,
+          "z": 104,
+          "leaf": [
+            -104,
+            -63
+          ]
+        },
+        "weir": {
+          "x": 78,
+          "y": 10.68,
+          "z": 30,
+          "leaf": [
+            -30,
+            78
+          ]
+        },
+        "terrace": {
+          "x": 20,
+          "y": 9.14,
+          "z": -24,
+          "leaf": [
+            24,
+            20
+          ]
+        },
+        "knuckle": {
+          "x": -52,
+          "y": 4.22,
+          "z": -66,
+          "leaf": [
+            66,
+            -52
+          ]
+        },
+        "spanNear": {
+          "x": 20,
+          "y": -14.26,
+          "z": -165.7,
+          "leaf": [
+            165.70000000000067,
+            20
+          ]
+        },
+        "spanFar": {
+          "x": 20,
+          "y": -20.39,
+          "z": -209.7,
+          "leaf": [
+            209.7000000000012,
+            20
+          ]
+        },
+        "secondLip": {
+          "x": 26,
+          "y": -24.79,
+          "z": -268,
+          "leaf": [
+            268,
+            26
+          ]
+        },
+        "certaintyField": {
+          "x": 30,
+          "y": -24.39,
+          "z": -258,
+          "leaf": [
+            258,
+            30
+          ]
+        },
+        "ridgeThing": {
+          "x": -150,
+          "y": -20.91,
+          "z": -268,
+          "leaf": [
+            268,
+            -150
+          ]
+        },
+        "edgewake": {
+          "x": 110,
+          "y": -24.59,
+          "z": -298,
+          "leaf": [
+            298,
+            110
+          ]
+        },
+        "lowLip": {
+          "x": 40,
+          "y": -17.75,
+          "z": -318,
+          "leaf": [
+            318,
+            40
+          ]
+        },
+        "cutters": {
+          "x": -66,
+          "y": -24.34,
+          "z": -296,
+          "leaf": [
+            296,
+            -66
+          ]
+        },
+        "span": {
+          "near": {
+            "x": 20,
+            "y": -14.26,
+            "z": -165.7,
+            "leaf": [
+              165.70000000000067,
+              20
+            ]
+          },
+          "far": {
+            "x": 20,
+            "y": -20.39,
+            "z": -209.7,
+            "leaf": [
+              209.7000000000012,
+              20
+            ]
+          },
+          "gap": 44,
+          "drop": -6.13
+        },
+        "vantis": {
+          "bearing": -0.16,
+          "distance": 10800
+        }
+      },
+      "carries": [
+        {
+          "id": "carry.low",
+          "uphill": false
+        },
+        {
+          "id": "carry.middle",
+          "uphill": true
+        },
+        {
+          "id": "carry.high",
+          "uphill": false
+        },
+        {
+          "id": "carry.field",
+          "uphill": false
+        }
+      ],
+      "landmarks": {
+        "spires": 21,
+        "boulders": 62,
+        "certaintyClusters": 90,
+        "vantisTowers": 98,
+        "nearLeaves": 8,
+        "horizonLeaves": 7
+      },
+      "backdrop": {
+        "compression": 17.81,
+        "nearScale": 0.571
+      },
+      "triangles": {
+        "rock": 1836,
+        "carries": 784,
+        "built": 676,
+        "certainties": 4976,
+        "archipelago": 524,
+        "backdrop": 1508
+      },
+      "sun": {
+        "toLight": [
+          0.869,
+          0.1908,
+          -0.4565
+        ],
+        "level": 1.0498
+      }
+    },
+    "sky": {
+      "tier": "medium",
+      "knobs": {
+        "lowOct": 3,
+        "highOct": 2,
+        "deck2": 1,
+        "rim": 1,
+        "errata": 1
+      },
+      "drawCalls": 1,
+      "triangles": 1,
+      "simTime": 6.9833,
+      "motionScale": 1,
+      "lethis": 1.0075,
+      "lethisMaxRatePerStep": 0.0001121,
+      "lethisRateBudgetPerStep": 0.0015,
+      "sun": {
+        "toLight": [
+          0.869,
+          0.1908,
+          -0.4565
+        ],
+        "elevationDeg": 10.999,
+        "azimuthDeg": 117.712,
+        "adopted": true,
+        "discRadiusDeg": 1.15
+      },
+      "bands": [
+        {
+          "elevationDeg": 0,
+          "hex": "#F7A75C"
+        },
+        {
+          "elevationDeg": 6,
+          "hex": "#EDA05E"
+        },
+        {
+          "elevationDeg": 10.5,
+          "hex": "#BC9968"
+        },
+        {
+          "elevationDeg": 15,
+          "hex": "#929576"
+        },
+        {
+          "elevationDeg": 20,
+          "hex": "#6D8E81"
+        },
+        {
+          "elevationDeg": 27,
+          "hex": "#558789"
+        },
+        {
+          "elevationDeg": 90,
+          "hex": "#4A848B"
+        }
+      ],
+      "bandSharp": 0.45,
+      "underHex": "#FFD6A0",
+      "cloud": {
+        "top": "#FFD891",
+        "body": "#FFCA84",
+        "under": "#DFAE74",
+        "sunward": "#FFF6E0",
+        "azCells": 656,
+        "cellAzDeg": 0.5488,
+        "cellElDirY": 0.0096,
+        "cellElDegNearHorizon": 0.55,
+        "gain": 1,
+        "decks": 2,
+        "lowElevationBandDeg": [
+          4.301,
+          51.261
+        ],
+        "rimShading": true
+      },
+      "errata": {
+        "enabled": true,
+        "azimuthDeg": 302.838,
+        "driftDegPerSec": 0.12
+      },
+      "dither": {
+        "lsb": 1.25,
+        "pattern": "bayer8x8",
+        "source": "gl_FragCoord",
+        "appliedAfter": "tonemapping+colorspace"
+      },
+      "toneMapping": 0,
+      "exposure": 1,
+      "toneSolveResidual": 0,
+      "toneSolveResiduals": {
+        "band0": 0,
+        "band6": 0,
+        "band10.5": 0,
+        "band15": 0,
+        "band20": 0,
+        "band27": 0,
+        "band90": 0,
+        "under": 0,
+        "cloudTop": 0,
+        "cloudBody": 0,
+        "cloudUnder": 0,
+        "cloudSunward": 0,
+        "sunGlow": 0,
+        "sunCore": 0,
+        "errata": 0,
+        "errataEdge": 0
+      }
+    },
+    "atmosphere": {
+      "installed": true,
+      "tier": "medium",
+      "enabled": true,
+      "flatFallback": false,
+      "space": "scene",
+      "composer": true,
+      "timeOfDay": 0.18,
+      "near": 43.601,
+      "far": 436.647,
+      "densityScale": 1,
+      "rangeScale": 1,
+      "law": {
+        "density": 3,
+        "max": 0.93,
+        "desaturation": 0.65,
+        "heightBase": -40,
+        "heightScale": 420,
+        "shape": "f = 1 - exp(-t^2 * density * exp(-(y-h0)/hscale)), t = (d-near)/(far-near)",
+        "appliedIn": "renderer output space, after tonemap + colorspace"
+      },
+      "sun": {
+        "toLight": [
+          0.869,
+          0.1908,
+          -0.4565
+        ],
+        "elevationDeg": 10.999,
+        "azimuthDeg": 117.712,
+        "bakedAzimuthDeg": 117.995
+      },
+      "sample": [
+        {
+          "distance": 40,
+          "f": 0
+        },
+        {
+          "distance": 120,
+          "f": 0.0911
+        },
+        {
+          "distance": 260,
+          "f": 0.5232
+        },
+        {
+          "distance": 500,
+          "f": 0.9065
+        },
+        {
+          "distance": 900,
+          "f": 0.93
+        },
+        {
+          "distance": 1600,
+          "f": 0.93
+        }
+      ],
+      "bakes": 3,
+      "materialsTouchedOnBake": 6
+    },
+    "lighting": {
+      "sun": {
+        "toLight": [
+          0.8691,
+          0.1908,
+          -0.4564
+        ],
+        "direction": [
+          -0.8691,
+          -0.1908,
+          0.4564
+        ],
+        "color": [
+          1,
+          0.7682,
+          0.4793
+        ],
+        "hex": "#FFE3B8",
+        "intensity": 3.2998,
+        "relativeIntensity": 1.0504,
+        "elevationDeg": 10.999,
+        "azimuthDeg": 117.708,
+        "discElevationDeg": 10.999,
+        "shadowElevationDeg": 16,
+        "shadowLengthRatio": 3.487,
+        "worldFixedBearing": true,
+        "timeOfDay": 0.2558,
+        "exposure": 1,
+        "tonemap": "none",
+        "fill": {
+          "hex": "#5EA3FF",
+          "ground": "#2A1F16",
+          "relative": 0.2853,
+          "derivation": "shadow/lit on (ground.lit, ground.shadow), solved for fill/(key+fill) — art-direction §3.1",
+          "docPrinted": "#66B3FF"
+        },
+        "bounce": {
+          "hex": "#8A5B3E",
+          "relative": 0.05
+        },
+        "rim": {
+          "toRim": [
+            -0.8691,
+            0.1908,
+            0.4564
+          ],
+          "gain": 0.28,
+          "tint": "#1B2C33"
+        },
+        "kick": {
+          "hex": "#1B2C33",
+          "relative": 0.28
+        }
+      },
+      "lights": {
+        "key": {
+          "hex": "#FFE3B8",
+          "intensity": 3.2998
+        },
+        "fill": {
+          "sky": "#5EA3FF",
+          "ground": "#2A1F16",
+          "intensity": 0.8964,
+          "relativeToKey": 0.2853
+        },
+        "bounce": {
+          "hex": "#8A5B3E",
+          "intensity": 0.165
+        },
+        "rim": {
+          "gain": 0.28,
+          "elevationDeg": 11,
+          "insideShadowFamily": true
+        },
+        "accentPool": 4,
+        "accentsActive": 0,
+        "shadowCasters": 2,
+        "contributingLights": 3,
+        "zeroIntensityShadowOwners": 2
+      },
+      "shadow": {
+        "enabled": true,
+        "cascades": [
+          {
+            "radius": 13,
+            "mapSize": 2048,
+            "texelMetres": 0.0127,
+            "bias": -0.00016,
+            "normalBias": 0.014
+          },
+          {
+            "radius": 58,
+            "mapSize": 2048,
+            "texelMetres": 0.0566,
+            "bias": -0.00016,
+            "normalBias": 0.0623
+          }
+        ],
+        "splitMetres": 11.96,
+        "type": "PCF"
+      },
+      "renderer": {
+        "toneMapping": 0,
+        "toneMappingExposure": 1,
+        "outputColorSpace": "srgb",
+        "shadowMapEnabled": true
+      },
+      "standInSky": false,
+      "fog": {
+        "hex": "#F7A75C",
+        "near": 43.6012,
+        "far": 436.6467319148937
+      },
+      "removedPlaceholderLights": 0,
+      "materials": {
+        "instances": 0,
+        "built": 0,
+        "cacheHits": 0,
+        "programVariants": 0,
+        "archetypes": 17,
+        "textures": 0,
+        "standardMaterials": 0,
+        "envMaps": 0,
+        "missingRoles": [],
+        "keyHex": "#FFE3B8",
+        "albedos": {},
+        "keys": []
+      },
+      "facets": null,
+      "board": null
+    },
+    "scatter": {
+      "seed": 0,
+      "tier": "medium",
+      "density": 0.66,
+      "surface": "terrain",
+      "surfaceQueries": 40404,
+      "built": true,
+      "outstanding": false,
+      "genCalls": 1702,
+      "genMsTotal": 110.8,
+      "instances": 6724,
+      "triangles": 70698,
+      "groundTriangles": 68101,
+      "meshes": 16,
+      "solids": 240,
+      "missingRoles": [],
+      "flatShading": {
+        "triangles": 2765,
+        "perFaceNormals": 2765,
+        "ratio": 1
+      },
+      "maxGeoTris": 30,
+      "islands": {
+        "count": 24,
+        "crystals": 53,
+        "structures": 63,
+        "rockTris": 2332,
+        "crystalTris": 265,
+        "distance": [
+          313.6,
+          1112.2
+        ],
+        "altitude": [
+          -16,
+          139.7
+        ]
+      },
+      "haze": {
+        "falloffMetres": 620,
+        "ceiling": 0.78,
+        "sceneFogUsed": false
+      },
+      "eye": [
+        11.15,
+        54.53,
+        220.55
+      ],
+      "checksum": 3233682822,
+      "closeUp": {
+        "pos": [
+          3.329,
+          53.171,
+          259.248
+        ],
+        "opts": {
+          "heading": [
+            -0.78,
+            -0.63
+          ]
+        },
+        "target": [
+          -2.958,
+          53.897,
+          254.169
+        ],
+        "height": 5.04
+      },
+      "categories": {
+        "crystal": {
+          "budget": [
+            409,
+            792
+          ],
+          "drawn": [
+            309,
+            792
+          ],
+          "geoTris": [
+            30,
+            20
+          ],
+          "tris": 25110,
+          "candidates": 1798,
+          "rejected": 4445,
+          "tiles": 435,
+          "gather": 260,
+          "fade": [
+            204.1428571428571,
+            232.1428571428571
+          ],
+          "lodDist": 58,
+          "checksum": 1746501057
+        },
+        "shard": {
+          "budget": [
+            277,
+            594
+          ],
+          "drawn": [
+            169,
+            565
+          ],
+          "geoTris": [
+            15,
+            12
+          ],
+          "tris": 9315,
+          "candidates": 795,
+          "rejected": 1317,
+          "tiles": 164,
+          "gather": 150,
+          "fade": [
+            105.92857142857142,
+            133.92857142857142
+          ],
+          "lodDist": 34,
+          "checksum": 1296578673
+        },
+        "boulder": {
+          "budget": [
+            277,
+            541
+          ],
+          "drawn": [
+            204,
+            541
+          ],
+          "geoTris": [
+            20,
+            8
+          ],
+          "tris": 8408,
+          "candidates": 1200,
+          "rejected": 3171,
+          "tiles": 236,
+          "gather": 185,
+          "fade": [
+            137.17857142857142,
+            165.17857142857142
+          ],
+          "lodDist": 52,
+          "checksum": 2302575808
+        },
+        "spire": {
+          "budget": [
+            79,
+            145
+          ],
+          "drawn": [
+            22,
+            145
+          ],
+          "geoTris": [
+            23,
+            10
+          ],
+          "tris": 1956,
+          "candidates": 221,
+          "rejected": 1791,
+          "tiles": 503,
+          "gather": 280,
+          "fade": [
+            221.99999999999997,
+            249.99999999999997
+          ],
+          "lodDist": 84,
+          "checksum": 4227688841
+        },
+        "chip": {
+          "budget": [
+            594,
+            0
+          ],
+          "drawn": [
+            594
+          ],
+          "geoTris": [
+            4
+          ],
+          "tris": 2376,
+          "candidates": 1119,
+          "rejected": 2668,
+          "tiles": 45,
+          "gather": 70,
+          "fade": [
+            34.49999999999999,
+            62.49999999999999
+          ],
+          "lodDist": 1000000000,
+          "checksum": 2475145819
+        },
+        "tuft": {
+          "budget": [
+            2508,
+            3300
+          ],
+          "drawn": [
+            1178,
+            1990
+          ],
+          "geoTris": [
+            10,
+            4
+          ],
+          "tris": 19740,
+          "candidates": 5102,
+          "rejected": 6022,
+          "tiles": 41,
+          "gather": 66,
+          "fade": [
+            30.928571428571423,
+            58.92857142857142
+          ],
+          "lodDist": 30,
+          "checksum": 3703240353
+        },
+        "abouts": {
+          "budget": [
+            594,
+            792
+          ],
+          "drawn": [
+            3,
+            22
+          ],
+          "geoTris": [
+            4,
+            2
+          ],
+          "tris": 56,
+          "candidates": 341,
+          "rejected": 2528,
+          "tiles": 32,
+          "gather": 52,
+          "fade": [
+            18.428571428571423,
+            46.42857142857142
+          ],
+          "lodDist": 24,
+          "checksum": 1966121425
+        },
+        "oldtrue": {
+          "budget": [
+            594,
+            0
+          ],
+          "drawn": [
+            190
+          ],
+          "geoTris": [
+            6
+          ],
+          "tris": 1140,
+          "candidates": 1286,
+          "rejected": 2687,
+          "tiles": 36,
+          "gather": 56,
+          "fade": [
+            21.999999999999993,
+            49.99999999999999
+          ],
+          "lodDist": 1000000000,
+          "checksum": 2695700030
+        }
+      }
+    },
+    "input": {
+      "device": {
+        "active": "kbm",
+        "style": "kbm",
+        "padId": null,
+        "padConnected": false,
+        "padVirtual": false,
+        "everPad": false,
+        "switches": 0,
+        "switchedAt": -1,
+        "dwell": 0.35,
+        "pending": null,
+        "usedAt": {
+          "kbm": 3.9833,
+          "pad": -1
+        }
+      },
+      "pad": {
+        "connected": false,
+        "samples": 0,
+        "edges": 0,
+        "axesRaw": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "axesCal": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "zero": null,
+        "zeroAt": -1,
+        "zeroCount": 0,
+        "still": 0,
+        "latched": [],
+        "sticksDown": [],
+        "pending": 0
+      },
+      "context": "play",
+      "focus": {
+        "focused": true,
+        "window": true,
+        "page": true
+      },
+      "step": 419,
+      "move": {
+        "x": 0,
+        "y": 0,
+        "mag": 0,
+        "source": "none"
+      },
+      "look": {
+        "dx": 0,
+        "dy": 0,
+        "yawTotal": 0,
+        "pitchTotal": -0.132,
+        "boost": 1,
+        "source": "none",
+        "pointerLock": false,
+        "lookMode": "auto"
+      },
+      "sticks": {
+        "left": {
+          "hw": {
+            "x": 0,
+            "y": 0
+          },
+          "zero": {
+            "x": 0,
+            "y": 0
+          },
+          "mapped": {
+            "x": 0,
+            "y": 0
+          },
+          "out": {
+            "x": 0,
+            "y": 0
+          },
+          "mag": 0
+        },
+        "right": {
+          "hw": {
+            "x": 0,
+            "y": 0
+          },
+          "zero": {
+            "x": 0,
+            "y": 0
+          },
+          "mapped": {
+            "x": 0,
+            "y": 0
+          },
+          "out": {
+            "x": 0,
+            "y": 0
+          },
+          "mag": 0
+        }
+      },
+      "held": [],
+      "actions": {},
+      "conflicts": [],
+      "unbound": [],
+      "bindings": {
+        "kbm": {
+          "moveForward": [
+            "KeyW",
+            "ArrowUp"
+          ],
+          "moveBack": [
+            "KeyS",
+            "ArrowDown"
+          ],
+          "moveLeft": [
+            "KeyA",
+            "ArrowLeft"
+          ],
+          "moveRight": [
+            "KeyD",
+            "ArrowRight"
+          ],
+          "jump": [
+            "Space"
+          ],
+          "sprint": [
+            "ShiftLeft",
+            "ShiftRight"
+          ],
+          "crouch": [
+            "ControlLeft",
+            "KeyC"
+          ],
+          "dash": [
+            "KeyF"
+          ],
+          "interact": [
+            "KeyE"
+          ],
+          "primary": [
+            "Mouse0"
+          ],
+          "secondary": [
+            "Mouse2"
+          ],
+          "cyclePrev": [
+            "Wheel-",
+            "BracketLeft"
+          ],
+          "cycleNext": [
+            "Wheel+",
+            "BracketRight"
+          ],
+          "map": [
+            "Tab"
+          ],
+          "menu": [
+            "Escape"
+          ],
+          "buildToggle": [
+            "KeyB"
+          ],
+          "buildSlot1": [
+            "Digit1"
+          ],
+          "buildSlot2": [
+            "Digit2"
+          ],
+          "buildSlot3": [
+            "Digit3"
+          ],
+          "buildSlot4": [
+            "Digit4"
+          ],
+          "buildRotate": [
+            "KeyR"
+          ],
+          "buildPlace": [
+            "Mouse0"
+          ],
+          "buildRemove": [
+            "Mouse2",
+            "KeyX"
+          ],
+          "confirm": [
+            "Enter",
+            "Space"
+          ],
+          "cancel": [
+            "Escape",
+            "Backspace"
+          ],
+          "navUp": [
+            "ArrowUp",
+            "KeyW"
+          ],
+          "navDown": [
+            "ArrowDown",
+            "KeyS"
+          ],
+          "navLeft": [
+            "ArrowLeft",
+            "KeyA"
+          ],
+          "navRight": [
+            "ArrowRight",
+            "KeyD"
+          ],
+          "tabPrev": [
+            "KeyQ",
+            "Wheel-"
+          ],
+          "tabNext": [
+            "KeyE",
+            "Wheel+"
+          ]
+        },
+        "pad": {
+          "moveForward": [
+            "Pad:LSUp"
+          ],
+          "moveBack": [
+            "Pad:LSDown"
+          ],
+          "moveLeft": [
+            "Pad:LSLeft"
+          ],
+          "moveRight": [
+            "Pad:LSRight"
+          ],
+          "jump": [
+            "Pad:A"
+          ],
+          "sprint": [
+            "Pad:L3"
+          ],
+          "crouch": [
+            "Pad:B"
+          ],
+          "dash": [
+            "Pad:R3"
+          ],
+          "interact": [
+            "Pad:X"
+          ],
+          "primary": [
+            "Pad:RT"
+          ],
+          "secondary": [
+            "Pad:LT"
+          ],
+          "cyclePrev": [
+            "Pad:LB"
+          ],
+          "cycleNext": [
+            "Pad:RB"
+          ],
+          "map": [
+            "Pad:View"
+          ],
+          "menu": [
+            "Pad:Menu"
+          ],
+          "buildToggle": [
+            "Pad:Y"
+          ],
+          "buildSlot1": [
+            "Pad:DUp"
+          ],
+          "buildSlot2": [
+            "Pad:DRight"
+          ],
+          "buildSlot3": [
+            "Pad:DDown"
+          ],
+          "buildSlot4": [
+            "Pad:DLeft"
+          ],
+          "buildRotate": [
+            "Pad:RB"
+          ],
+          "buildPlace": [
+            "Pad:RT"
+          ],
+          "buildRemove": [
+            "Pad:LT"
+          ],
+          "confirm": [
+            "Pad:A"
+          ],
+          "cancel": [
+            "Pad:B",
+            "Pad:Menu"
+          ],
+          "navUp": [
+            "Pad:DUp",
+            "Pad:LSUp"
+          ],
+          "navDown": [
+            "Pad:DDown",
+            "Pad:LSDown"
+          ],
+          "navLeft": [
+            "Pad:DLeft",
+            "Pad:LSLeft"
+          ],
+          "navRight": [
+            "Pad:DRight",
+            "Pad:LSRight"
+          ],
+          "tabPrev": [
+            "Pad:LB"
+          ],
+          "tabNext": [
+            "Pad:RB"
+          ]
+        }
+      },
+      "axes": {
+        "move": {
+          "x": {
+            "axis": 0,
+            "invert": false
+          },
+          "y": {
+            "axis": 1,
+            "invert": true
+          }
+        },
+        "look": {
+          "x": {
+            "axis": 2,
+            "invert": false
+          },
+          "y": {
+            "axis": 3,
+            "invert": false
+          }
+        }
+      },
+      "sticksSwapped": false,
+      "glyphs": {
+        "moveForward": "W",
+        "moveBack": "S",
+        "moveLeft": "A",
+        "moveRight": "D",
+        "jump": "Space",
+        "sprint": "L Shift",
+        "crouch": "L Ctrl",
+        "dash": "F",
+        "interact": "E",
+        "primary": "LMB",
+        "secondary": "RMB",
+        "cyclePrev": "Wheel ↑",
+        "cycleNext": "Wheel ↓",
+        "map": "Tab",
+        "menu": "Esc",
+        "buildToggle": "B",
+        "buildSlot1": "1",
+        "buildSlot2": "2",
+        "buildSlot3": "3",
+        "buildSlot4": "4",
+        "buildRotate": "R",
+        "buildPlace": "LMB",
+        "buildRemove": "RMB",
+        "confirm": "Enter",
+        "cancel": "Esc",
+        "navUp": "↑",
+        "navDown": "↓",
+        "navLeft": "←",
+        "navRight": "→",
+        "tabPrev": "Q",
+        "tabNext": "E"
+      },
+      "tuning": {
+        "moveBand": {
+          "inner": 0.24,
+          "outer": 0.94,
+          "exp": 1.25
+        },
+        "lookBand": {
+          "inner": 0.24,
+          "outer": 0.92,
+          "exp": 1.6
+        },
+        "lookRate": 3.25,
+        "lookRamp": {
+          "threshold": 0.9,
+          "seconds": 0.45,
+          "boost": 1.7,
+          "decay": 4
+        },
+        "mouseRadiansPerPixel": 0.0022,
+        "bufferDefault": 0.18,
+        "deviceDwell": 0.35,
+        "padWakeAxisDelta": 0.12,
+        "padRest": {
+          "settleSeconds": 1.5,
+          "firstSeconds": 0.35,
+          "maxOffset": 0.18,
+          "epsilon": 0.02
+        },
+        "padPollHz": 250,
+        "trigger": {
+          "press": 0.35,
+          "release": 0.28
+        },
+        "stickButton": {
+          "press": 0.55,
+          "release": 0.4
+        },
+        "maxSlots": 3,
+        "sensitivity": {
+          "look": 1,
+          "mouse": 1,
+          "pad": 1,
+          "invertX": false,
+          "invertY": false,
+          "holdToSprint": true,
+          "swapSticks": false,
+          "rumble": true
+        }
+      },
+      "actionCount": 31
+    },
+    "collision": {
+      "colliders": 4,
+      "triangles": 14528,
+      "cells": 29652,
+      "oversized": 28,
+      "cellSize": 2.5,
+      "fallbackGround": false,
+      "counters": {
+        "depenetrations": 0,
+        "rays": 2096,
+        "triTests": 13739
+      }
+    },
+    "locomotion": {
+      "position": [
+        10,
+        53.7838,
+        216
+      ],
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "speed": 0,
+      "verticalSpeed": 0,
+      "grounded": true,
+      "sliding": false,
+      "braking": false,
+      "pivotRemaining": 0,
+      "turnUsed": 0,
+      "blocked": false,
+      "blockTimer": 0,
+      "lastBlock": {
+        "speed": 0,
+        "at": -1
+      },
+      "state": "idle",
+      "lean": 0,
+      "push": 0,
+      "takeoff": [
+        0,
+        0,
+        -1
+      ],
+      "intent": [
+        0,
+        0
+      ],
+      "basisYawDeg": 0,
+      "headingDeg": 0,
+      "slopeDeg": 15.1981,
+      "groundNormal": [
+        0.0431,
+        0.965,
+        -0.2586
+      ],
+      "coyoteRemaining": 0.16,
+      "stepBudget": 0.37,
+      "ledgeRise": 0,
+      "bufferRemaining": 0,
+      "airtime": 0,
+      "squash": 0,
+      "landLock": 0,
+      "lastLand": {
+        "impact": 6.71,
+        "severity": 0,
+        "hard": false,
+        "at": 0.2333
+      },
+      "lastJump": {
+        "apex": 0,
+        "height": 0,
+        "airtime": 0,
+        "at": -1
+      },
+      "simTime": 6.9833,
+      "spawnPoint": [
+        10,
+        53.63,
+        216
+      ],
+      "voidLimit": 24.54,
+      "inputSource": "idle",
+      "cameraBasis": true,
+      "tunables": {
+        "capsuleRadius": 0.36,
+        "capsuleHeight": 1.82,
+        "walkSpeed": 2.4,
+        "runSpeed": 5.6,
+        "sprintSpeed": 8.3,
+        "groundAccel": 16,
+        "launchBoost": 0.9,
+        "groundBrake": 26,
+        "reverseBoost": 1.6,
+        "idleFriction": 23,
+        "lateralGrip": 19,
+        "brakeAngleDeg": 110,
+        "brakeHeadingDeg": 100,
+        "brakeHoldDeg": 99,
+        "brakeHeadingHoldDeg": 90,
+        "pivotSpeed": 3.3,
+        "pivotTime": 0.14,
+        "pivotAccel": 0.4,
+        "airAccel": 9,
+        "airDrag": 0.05,
+        "airAlongKeep": 0.55,
+        "airAlongFloor": 2.6,
+        "airLateralK": 0.55,
+        "airLateralMin": 2.6,
+        "turnRateSlow": 7,
+        "turnRateFast": 2.45,
+        "turnRateAir": 2.6,
+        "pivotTurnBoost": 1.75,
+        "carveScrub": 0.09,
+        "carveScrubDecel": 3.4,
+        "leanReference": 26,
+        "jumpSpeed": 7.45,
+        "gravityRise": 22,
+        "gravityFall": 33,
+        "apexSpeed": 1.2,
+        "apexGravityScale": 0.55,
+        "apexAirControl": 1.2,
+        "jumpCut": 0.42,
+        "minJumpHold": 0.055,
+        "terminalSpeed": 45,
+        "coyoteTime": 0.16,
+        "jumpBuffer": 0.19,
+        "jumpCooldown": 0.09,
+        "slopeLimitDeg": 47,
+        "slideAccel": 16,
+        "slideControl": 0.22,
+        "uphillK": 0.85,
+        "downhillK": 0.18,
+        "stepHeight": 0.55,
+        "stepAssist": 0.35,
+        "stepSpeedCost": 0.28,
+        "stepGraceSteps": 3,
+        "snapDistance": 0.38,
+        "snapSuppress": 0.09,
+        "groundEpsilon": 0.05,
+        "landSoftSpeed": 10.2,
+        "landHardSpeed": 24,
+        "landLockMin": 0.06,
+        "landLockMax": 0.26,
+        "landControlMin": 0.35,
+        "landSpeedKeep": 0.55,
+        "squashDecay": 0.22,
+        "blockImpactSpeed": 4,
+        "blockStateTime": 0.25,
+        "voidDrop": 30,
+        "strideLength": 2.1
+      }
+    },
+    "camera": {
+      "mode": "follow",
+      "framing": "follow",
+      "targetSource": "object",
+      "position": [
+        11.15,
+        54.5337,
+        220.5489
+      ],
+      "target": [
+        11.15,
+        54.6338,
+        216
+      ],
+      "player": [
+        10,
+        53.7838,
+        216
+      ],
+      "yaw": 0,
+      "pitch": 0.022,
+      "distance": 4.55,
+      "desiredDistance": 4.55,
+      "freeDistance": 4.87,
+      "allowedDistance": 4.55,
+      "penetrating": false,
+      "avatarOpacity": 1,
+      "fov": 62,
+      "occluded": false,
+      "occlusionDepth": 0,
+      "trauma": 0,
+      "shake": 0,
+      "shakeEnabled": true,
+      "reduceMotion": false,
+      "grounded": true,
+      "airTime": 0,
+      "pivotLift": 0,
+      "pivotDip": 0,
+      "speed": 0,
+      "speedMeasured": 0,
+      "speedSignal": 0,
+      "speedSignalAge": 6.7,
+      "followError": 0,
+      "followLag": 0,
+      "focus": {
+        "active": false,
+        "weight": 0,
+        "point": null
+      },
+      "lookUnit": "rad",
+      "lookScale": 1,
+      "sensitivity": 1,
+      "invertY": false,
+      "cameraShake": 1
+    },
+    "post": {
+      "installed": true,
+      "mode": "tier",
+      "tier": "medium",
+      "requested": [
+        "bloom",
+        "tonemap",
+        "vignette"
+      ],
+      "declined": [],
+      "unknown": [],
+      "effects": {
+        "bloom": true,
+        "sunGlow": false,
+        "grain": false,
+        "vignette": true
+      },
+      "display": {
+        "mode": 0,
+        "name": "none",
+        "mirrors": 0,
+        "exposure": 1
+      },
+      "size": [
+        1280,
+        720
+      ],
+      "samples": 0,
+      "targets": 6,
+      "targetBytes": 13514240,
+      "megabytes": 12.89,
+      "postDrawCalls": 10,
+      "bloom": {
+        "levels": 4,
+        "lastWeight": 0.48,
+        "mipSizes": [
+          [
+            640,
+            360
+          ],
+          [
+            320,
+            180
+          ],
+          [
+            160,
+            90
+          ],
+          [
+            80,
+            45
+          ],
+          [
+            40,
+            22
+          ]
+        ],
+        "drawCalls": 8,
+        "radiusFractionOfHeight": 0.0329
+      },
+      "sun": {
+        "source": "light:vs.key",
+        "direction": [
+          0.8667,
+          0.1908,
+          -0.4608
+        ],
+        "uv": [
+          0.5,
+          0.5
+        ],
+        "weight": 0,
+        "onScreen": false
+      },
+      "look": {
+        "bloomThreshold": 1.25,
+        "bloomKnee": 0.35,
+        "bloomStrength": 0.055,
+        "sunGlowStrength": 0.42,
+        "vignetteAmount": 0.08,
+        "vignetteStart": 0.72,
+        "grainAmount": 0.0018,
+        "ditherAmount": 0.5,
+        "shoulder": 1,
+        "white": 1,
+        "gradeIsIdentity": true
+      },
+      "frames": 146
+    },
+    "mathtex": {
+      "locale": "en",
+      "driven": false,
+      "registered": 3,
+      "panels": [
+        {
+          "id": "leaf9-span",
+          "kpId": "eq-one-add",
+          "kind": "claim",
+          "tex": "x + 3 = 7",
+          "ok": true,
+          "speech": "x plus 3 equals 7",
+          "locale": "en",
+          "em": 0.66,
+          "worldSize": [
+            3.341,
+            0.674
+          ],
+          "texturePx": 48,
+          "textureSize": [
+            243,
+            49
+          ],
+          "emScreenPx": 27,
+          "texelsPerPixel": 1.78,
+          "rasters": 1,
+          "position": [
+            8.45,
+            57.74,
+            206.52
+          ]
+        },
+        {
+          "id": "leaf9-share",
+          "kpId": "eq-one-mult",
+          "kind": "claim",
+          "tex": "\\frac{1}{2}x = 4",
+          "ok": true,
+          "speech": "1 over 2 x equals 4",
+          "locale": "en",
+          "em": 0.66,
+          "worldSize": [
+            2.461,
+            1.691
+          ],
+          "texturePx": 48,
+          "textureSize": [
+            179,
+            123
+          ],
+          "emScreenPx": 27.5,
+          "texelsPerPixel": 1.75,
+          "rasters": 1,
+          "position": [
+            8.45,
+            56.24,
+            206.52
+          ]
+        },
+        {
+          "id": "leaf9-working",
+          "kpId": null,
+          "kind": "working",
+          "tex": null,
+          "ok": true,
+          "speech": "",
+          "locale": "en",
+          "em": 0.55,
+          "worldSize": [
+            2.2,
+            2.2
+          ],
+          "texturePx": 48,
+          "textureSize": [
+            192,
+            192
+          ],
+          "emScreenPx": 22.6,
+          "texelsPerPixel": 2.12,
+          "rasters": 1,
+          "position": [
+            14.15,
+            57.04,
+            206.52
+          ]
+        },
+        {
+          "id": "leaf9-mark",
+          "kpId": "ineq-one-step",
+          "kind": "claim",
+          "tex": "2x + 1 \\ge 9",
+          "ok": true,
+          "speech": "2 x plus 1 is greater than or equal to 9",
+          "locale": "en",
+          "em": 1.1,
+          "worldSize": [
+            6.165,
+            1.169
+          ],
+          "texturePx": 48,
+          "textureSize": [
+            269,
+            51
+          ],
+          "emScreenPx": 13.8,
+          "texelsPerPixel": 3.47,
+          "rasters": 2,
+          "position": [
+            33.15,
+            58.34,
+            178.52
+          ]
+        }
+      ],
+      "fonts": {
+        "ready": true,
+        "loaded": 9,
+        "failed": [],
+        "ms": 24.9
+      },
+      "raster": {
+        "rasters": 4,
+        "ms": 27.9,
+        "glyphs": 6,
+        "paths": 0,
+        "rules": 0,
+        "unsupportedSvg": 0,
+        "baselineResidual": 0
+      }
+    },
+    "tex": {
+      "requests": 7,
+      "hits": 4,
+      "misses": 3,
+      "typesets": 3,
+      "failures": [],
+      "evictions": 0,
+      "typesetMs": 1,
+      "cacheSize": 3,
+      "locale": "en",
+      "unspokenNodeTypes": []
+    },
+    "itembank": {
+      "knowledgePoints": 32,
+      "items": 1152,
+      "generatedThisSession": 0,
+      "locale": "en",
+      "minItemsPerKp": 36,
+      "minItemsPerMisconception": 3,
+      "formsPerKp": {
+        "var-meaning": "11/18/7",
+        "oo-numeric": "15/16/5",
+        "expr-anatomy": "12/18/6",
+        "oo-structure": "14/11/11",
+        "eval-substitute": "13/12/11",
+        "eval-signed": "9/14/13",
+        "eval-formula": "13/13/10",
+        "translate-phrase": "13/14/9",
+        "translate-order": "17/14/5",
+        "props-operations": "12/12/12",
+        "like-terms-id": "12/12/12",
+        "like-terms-combine": "12/12/12",
+        "distribute-numeric": "15/14/7",
+        "distribute-variable": "12/12/12",
+        "distribute-negative": "16/13/7",
+        "simplify-expression": "12/13/11",
+        "equivalent-expressions": "11/13/12",
+        "eq-meaning": "12/12/12",
+        "props-equality": "15/14/7",
+        "eq-one-add": "13/16/7",
+        "eq-one-mult": "15/14/7",
+        "eq-two-step": "11/13/12",
+        "eq-combine-side": "10/12/14",
+        "eq-distribute": "12/12/12",
+        "eq-both-sides": "8/15/13",
+        "eq-special-cases": "16/7/13",
+        "translate-sentence": "12/11/13",
+        "eq-model-context": "14/15/7",
+        "ineq-meaning": "14/12/10",
+        "ineq-one-step": "16/13/7",
+        "ineq-negative-flip": "15/14/7",
+        "ineq-two-step": "15/14/7"
+      }
+    },
+    "mastery": {
+      "theta": -0.8,
+      "unlocked": 0,
+      "learning": 32,
+      "provisional": 0,
+      "mastered": 0,
+      "total": 32,
+      "level1Percent": 0,
+      "session": 1,
+      "responses": 0,
+      "dueNow": 0,
+      "due": [],
+      "inFlight": [],
+      "openEvents": [],
+      "unscoredItems": 0,
+      "refusedUpward": 0,
+      "stats": {
+        "items": 0,
+        "scoredItems": 0,
+        "unscoredItems": 0,
+        "refusedUpward": 0,
+        "prerequisiteCredits": 0,
+        "gateOpens": 0,
+        "certifications": 0,
+        "lapses": 0
+      },
+      "scorablePairs": {
+        "scorable": "construct,generate,repair x guided-1,solo",
+        "scorableCells": 6,
+        "masteryEligible": "construct,generate,repair x solo",
+        "masteryEligibleCells": 3,
+        "rejectedForms": [
+          "judge2",
+          "select4"
+        ],
+        "rejectedPhases": [
+          "guided-2",
+          "guided-3",
+          "model"
+        ]
+      },
+      "issues": [],
+      "graph": {
+        "nodes": 32,
+        "edges": 48,
+        "roots": 2,
+        "leaves": 4,
+        "longestChain": 11,
+        "bands": {
+          "1": 3,
+          "2": 11,
+          "3": 8,
+          "4": 7,
+          "5": 3
+        },
+        "maxDescendants": 30
+      },
+      "kps": {
+        "var-meaning": {
+          "p": 0.35,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "oo-numeric": {
+          "p": 0.35,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "expr-anatomy": {
+          "p": 0.35,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "oo-structure": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eval-substitute": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eval-signed": {
+          "p": 0.18,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eval-formula": {
+          "p": 0.18,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "translate-phrase": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "translate-order": {
+          "p": 0.18,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "props-operations": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "like-terms-id": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "like-terms-combine": {
+          "p": 0.18,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "distribute-numeric": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "distribute-variable": {
+          "p": 0.18,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "distribute-negative": {
+          "p": 0.12,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "simplify-expression": {
+          "p": 0.12,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "equivalent-expressions": {
+          "p": 0.12,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eq-meaning": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "props-equality": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eq-one-add": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eq-one-mult": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eq-two-step": {
+          "p": 0.18,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eq-combine-side": {
+          "p": 0.12,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eq-distribute": {
+          "p": 0.12,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eq-both-sides": {
+          "p": 0.12,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eq-special-cases": {
+          "p": 0.08,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "translate-sentence": {
+          "p": 0.18,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "eq-model-context": {
+          "p": 0.08,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "ineq-meaning": {
+          "p": 0.25,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "ineq-one-step": {
+          "p": 0.18,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "ineq-negative-flip": {
+          "p": 0.12,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        },
+        "ineq-two-step": {
+          "p": 0.08,
+          "status": "learning",
+          "scored": 0,
+          "atBand": 0,
+          "forms": [],
+          "attempts": 0,
+          "lapses": 0
+        }
+      },
+      "resumed": false,
+      "scheduler": {
+        "sessionMinutes": 25,
+        "secondsSpent": 0,
+        "itemsThisSession": 0,
+        "reviewItemsThisSession": 0,
+        "inFlight": [],
+        "blockCount": 0,
+        "recentItemIds": 0,
+        "event": null,
+        "reviewCapLift": true,
+        "pullForward": true
+      }
+    }
+  },
+  "problems": []
 }
-
-IMAGE IS NOT REVIEWABLE — fix the problems above first.

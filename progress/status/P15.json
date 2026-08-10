@@ -1,9 +1,9 @@
 {
   "id": "P15",
   "state": "building",
-  "round": 2,
+  "round": 5,
   "gap": null,
-  "note": "Tex.js + TexPanel.js + boot landed; world-space KaTeX renders. Screenshot capture currently blocked by another wave's world/post rewrite (reproduces with my module removed).",
+  "note": "verify PASSED en/es/pl with katex=3 rendered / 0 failed in each. Full measure run in flight for ES/PL pixels.",
   "evidence": [],
-  "updated": "2026-08-10T02:30:09.552Z"
+  "updated": "2026-08-10T03:39:12.077Z"
 }

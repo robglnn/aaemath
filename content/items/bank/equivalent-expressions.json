@@ -16,7 +16,7 @@
   "different-form-means-different",
   "counterexample-ignored"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "equivalent-expressions.count/construct/1lz0gh8",
@@ -2586,6 +2586,533 @@
    "params": {
     "a": 5,
     "b": 9
+   }
+  },
+  {
+   "id": "equivalent-expressions.count/repair/1173l8x",
+   "kpId": "equivalent-expressions",
+   "family": "equivalent-expressions.count",
+   "form": "repair",
+   "difficulty": 5,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "7\\left(x + 2\\right) \\;\\Rightarrow\\; 7x + \\square",
+   "given": [],
+   "working": [
+    "7\\left(x + 2\\right)",
+    "7x + 2"
+   ],
+   "brokenBy": "different-form-means-different",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 7,
+     "b": 2,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|7*x + 14",
+    "tex": "7x + 14",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "different-form-means-different",
+     "response": "2|7*x + 2",
+     "tex": "7x + 2",
+     "failKey": "fail.deck.shape"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 7,
+      "b": 2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 7,
+      "b": 2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.equivalent-expressions.2",
+    "params": {},
+    "text": "A surveyor is here to load both until something gives."
+   },
+   "standards": [
+    "CCSS.6.EE.A.4",
+    "CCSS.7.EE.A.2",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 2
+   }
+  },
+  {
+   "id": "equivalent-expressions.count/generate/1ej7ew8",
+   "kpId": "equivalent-expressions",
+   "family": "equivalent-expressions.count",
+   "form": "generate",
+   "difficulty": 5,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "3\\left(x + 3\\right) \\;\\Rightarrow\\; 3x + \\square",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.reshape",
+    "params": {
+     "a": 3,
+     "b": 3,
+     "target": "3*x + 9",
+     "unknown": "x"
+    },
+    "text": "Build a second deck of a different shape that carries the same load at every value."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3x + 9",
+    "tex": "3x + 9",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "3*x + 9",
+    "unknown": "x",
+    "needs": [
+     "differentSurface"
+    ],
+    "surface": "3(x + 3)"
+   },
+   "distractors": [
+    {
+     "misconception": "different-form-means-different",
+     "response": "surface:3(x+3)",
+     "tex": "3\\left(x + 3\\right)",
+     "failKey": "fail.deck.shape"
+    },
+    {
+     "misconception": "counterexample-ignored",
+     "response": "3*x + 3",
+     "tex": "3x + 3",
+     "failKey": "fail.deck.onevalue"
+    },
+    {
+     "misconception": "one-value-proves-equivalence",
+     "response": "12",
+     "tex": "12",
+     "failKey": "fail.deck.onevalue"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 3,
+      "b": 3,
+      "target": "3*x + 9",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 3,
+      "b": 3,
+      "target": "3*x + 9",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read 3*x + 9. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.equivalent-expressions.1",
+    "params": {},
+    "text": "Two decks of different shape over one gap. Only the ones that carry every load get the same plaque."
+   },
+   "standards": [
+    "CCSS.6.EE.A.4",
+    "CCSS.7.EE.A.2",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 3
+   }
+  },
+  {
+   "id": "equivalent-expressions.count/construct/1sippvr",
+   "kpId": "equivalent-expressions",
+   "family": "equivalent-expressions.count",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "4\\left(x + 3\\right) \\;\\Rightarrow\\; 4x + \\square",
+   "given": [],
+   "ask": {
+    "key": "ask.count",
+    "params": {
+     "a": 4,
+     "b": 3
+    },
+    "text": "The count stamped on the collar."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "12",
+    "tex": "12"
+   },
+   "distractors": [
+    {
+     "misconception": "different-form-means-different",
+     "response": "3",
+     "tex": "3",
+     "failKey": "fail.deck.shape"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.equivalent-expressions.count",
+     "params": {
+      "a": 4,
+      "b": 3
+     },
+     "text": "Load both decks at the same value and see which one comes up short."
+    },
+    {
+     "key": "hint.state.equivalent-expressions.count",
+     "params": {
+      "a": 4,
+      "b": 3
+     },
+     "text": "The bundle holds 3 of fixed weight, and 4 of it reaches the far end."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.equivalent-expressions.2",
+    "params": {},
+    "text": "A surveyor is here to load both until something gives."
+   },
+   "standards": [
+    "CCSS.6.EE.A.4",
+    "CCSS.7.EE.A.2",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 3
+   }
+  },
+  {
+   "id": "equivalent-expressions.count/repair/1lz0gh8",
+   "kpId": "equivalent-expressions",
+   "family": "equivalent-expressions.count",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "5\\left(x + 9\\right) \\;\\Rightarrow\\; 5x + \\square",
+   "given": [],
+   "working": [
+    "5\\left(x + 9\\right)",
+    "5x + 9"
+   ],
+   "brokenBy": "different-form-means-different",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "b": 9,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|5*x + 45",
+    "tex": "5x + 45",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "different-form-means-different",
+     "response": "2|5*x + 9",
+     "tex": "5x + 9",
+     "failKey": "fail.deck.shape"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "b": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "b": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.equivalent-expressions.1",
+    "params": {},
+    "text": "Two decks of different shape over one gap. Only the ones that carry every load get the same plaque."
+   },
+   "standards": [
+    "CCSS.6.EE.A.4",
+    "CCSS.7.EE.A.2",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 9
+   }
+  },
+  {
+   "id": "equivalent-expressions.count/generate/1fn2o65",
+   "kpId": "equivalent-expressions",
+   "family": "equivalent-expressions.count",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "3\\left(x + 2\\right) \\;\\Rightarrow\\; 3x + \\square",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.reshape",
+    "params": {
+     "a": 3,
+     "b": 2,
+     "target": "3*x + 6",
+     "unknown": "x"
+    },
+    "text": "Build a second deck of a different shape that carries the same load at every value."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3x + 6",
+    "tex": "3x + 6",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "3*x + 6",
+    "unknown": "x",
+    "needs": [
+     "differentSurface"
+    ],
+    "surface": "3(x + 2)"
+   },
+   "distractors": [
+    {
+     "misconception": "different-form-means-different",
+     "response": "surface:3(x+2)",
+     "tex": "3\\left(x + 2\\right)",
+     "failKey": "fail.deck.shape"
+    },
+    {
+     "misconception": "counterexample-ignored",
+     "response": "3*x + 2",
+     "tex": "3x + 2",
+     "failKey": "fail.deck.onevalue"
+    },
+    {
+     "misconception": "one-value-proves-equivalence",
+     "response": "9",
+     "tex": "9",
+     "failKey": "fail.deck.onevalue"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "target": "3*x + 6",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "target": "3*x + 6",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read 3*x + 6. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.equivalent-expressions.2",
+    "params": {},
+    "text": "A surveyor is here to load both until something gives."
+   },
+   "standards": [
+    "CCSS.6.EE.A.4",
+    "CCSS.7.EE.A.2",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 2
+   }
+  },
+  {
+   "id": "equivalent-expressions.count/repair/jgiy6n",
+   "kpId": "equivalent-expressions",
+   "family": "equivalent-expressions.count",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "8\\left(x + 7\\right) \\;\\Rightarrow\\; 8x + \\square",
+   "given": [],
+   "working": [
+    "8\\left(x + 7\\right)",
+    "8x + 7"
+   ],
+   "brokenBy": "different-form-means-different",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 8,
+     "b": 7,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|8*x + 56",
+    "tex": "8x + 56",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "different-form-means-different",
+     "response": "2|8*x + 7",
+     "tex": "8x + 7",
+     "failKey": "fail.deck.shape"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 8,
+      "b": 7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 8,
+      "b": 7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.equivalent-expressions.2",
+    "params": {},
+    "text": "A surveyor is here to load both until something gives."
+   },
+   "standards": [
+    "CCSS.6.EE.A.4",
+    "CCSS.7.EE.A.2",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 7
    }
   }
  ]

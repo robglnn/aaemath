@@ -115,11 +115,6 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       ravineTested++;
       if (terrain.isSolid(x, z)) ravineSolid++;
     }
-    // A ray straight down from high above the middle of the leaf must hit the top once and
-    // nothing else below it: the collider carries no second floor.
-    const ray = new window.__vsTHREE.Raycaster();
-    const belowHits = [];
-
     // --- C1 the two arches never share a frame ----------------------------------------
     const fovY = (K.camera.fov * Math.PI) / 180;
     const aspect = K.camera.aspect;
@@ -162,18 +157,21 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     // --- C2 / C3 --------------------------------------------------------------------
     const archSeparation = Math.hypot(A.bollard.x - A.secondLip.x, A.bollard.z - A.secondLip.z);
 
-    // Narrowest crossing of the ravine anywhere along it: if any line is jumpable the span
-    // stops being the only way across and Beat 3 has no teeth.
+    // Narrowest crossing of the ravine anywhere along it: if any line is jumpable, the span
+    // stops being the only way across and Beat 3 has no teeth. Only gaps with solid ground on
+    // *both* sides count — the open sky past the lip is not a crossing.
     let narrowest = Infinity;
     let narrowestAt = null;
-    for (let x = -200; x <= 200; x += 4) {
+    for (let x = -210; x <= 210; x += 3) {
       let run = 0;
+      let sawSolid = false;
       let best = Infinity;
-      for (let z = -260; z <= -60; z += 0.5) {
+      for (let z = -260; z <= -95; z += 0.5) {
         if (terrain.isSolid(x, z)) {
-          if (run > 0) best = Math.min(best, run);
+          if (run > 0 && sawSolid) best = Math.min(best, run);
           run = 0;
-        } else run += 0.5;
+          sawSolid = true;
+        } else if (sawSolid) run += 0.5;
       }
       if (best < narrowest) { narrowest = best; narrowestAt = x; }
     }
@@ -222,26 +220,58 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       }
     }
 
-    // --- P: which pixels are this piece's geometry, and what is each one? --------------
-    // Raycast a grid of screen pixels against the terrain and the level's own rock, so the
-    // colour claims are made about surfaces this piece owns rather than about whatever
-    // happened to be in frame.
-    const THREE = window.__vsTHREE;
-    const rc = new THREE.Raycaster();
-    rc.far = 1200;
-    const targets = [terrain.surface, level.rockMesh].filter(Boolean);
-    const sun = L.sun?.toLight ?? [0.87, 0.19, -0.46];
-    const samples = [];
+    // --- P: which pixels are this piece's terrain, and what is each one? ---------------
+    // March a ray through a grid of screen pixels against the heightfield, so the colour
+    // claims below are made about surfaces this piece owns and about facets whose orientation
+    // relative to Lethis is known — rather than about whatever happened to be in frame.
+    // Built by hand from the camera matrix; no library, and no debug global in shipped code.
+    const cam = K.camera;
+    cam.updateMatrixWorld();
+    const e = cam.matrixWorld.elements;
     const W = K.renderer.domElement.clientWidth;
     const H = K.renderer.domElement.clientHeight;
-    for (let py = 8; py < H; py += 10) {
-      for (let pxl = 8; pxl < W; pxl += 10) {
-        rc.setFromCamera(new THREE.Vector2((pxl / W) * 2 - 1, -((py / H) * 2 - 1)), K.camera);
-        const hit = rc.intersectObjects(targets, false)[0];
-        if (!hit) continue;
-        const n = hit.face.normal.clone().transformDirection(hit.object.matrixWorld);
+    const tanH = Math.tan((cam.fov * Math.PI) / 360);
+    const eyeP = [e[12], e[13], e[14]];
+    const sun = L.sun?.toLight ?? [0.87, 0.19, -0.46];
+    const samples = [];
+    for (let py = 6; py < H; py += 8) {
+      for (let pxl = 6; pxl < W; pxl += 8) {
+        const ndcx = (pxl / W) * 2 - 1;
+        const ndcy = -((py / H) * 2 - 1);
+        const cx = ndcx * tanH * cam.aspect;
+        const cy = ndcy * tanH;
+        // camera space (cx, cy, −1) through the world rotation columns of matrixWorld
+        let dx = e[0] * cx + e[4] * cy - e[8];
+        let dy = e[1] * cx + e[5] * cy - e[9];
+        let dz = e[2] * cx + e[6] * cy - e[10];
+        const dl = Math.hypot(dx, dy, dz) || 1;
+        dx /= dl; dy /= dl; dz /= dl;
+        let t = 1;
+        let hitT = -1;
+        let prev = 1;
+        for (let i = 0; i < 260; i++) {
+          const step = 0.35 + t * 0.02;
+          prev = t;
+          t += step;
+          if (t > 900) break;
+          const g = terrain.groundAt(eyeP[0] + dx * t, eyeP[2] + dz * t);
+          if (Number.isFinite(g) && eyeP[1] + dy * t < g) { hitT = t; break; }
+        }
+        if (hitT < 0) continue;
+        // bisect once for a clean facet read
+        let lo = prev;
+        let hi = hitT;
+        for (let i = 0; i < 12; i++) {
+          const mid = (lo + hi) / 2;
+          const g = terrain.groundAt(eyeP[0] + dx * mid, eyeP[2] + dz * mid);
+          if (Number.isFinite(g) && eyeP[1] + dy * mid < g) hi = mid; else lo = mid;
+        }
+        const hx = eyeP[0] + dx * hi;
+        const hz = eyeP[2] + dz * hi;
+        const n = terrain.normalAt(hx, hz);
+        if (!n) continue;
         const ndl = n.x * sun[0] + n.y * sun[1] + n.z * sun[2];
-        samples.push({ x: pxl, y: py, d: Number(hit.distance.toFixed(1)), ndl: Number(ndl.toFixed(3)), up: Number(n.y.toFixed(3)) });
+        samples.push({ x: pxl, y: py, d: Number(hi.toFixed(1)), ndl: Number(ndl.toFixed(3)), up: Number(n.y.toFixed(3)) });
       }
     }
 

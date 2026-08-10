@@ -1,0 +1,973 @@
+{
+ "piece": "P15",
+ "when": "2026-08-10T03:21:22.686Z",
+ "langs": [
+  "en"
+ ],
+ "sizes": [
+  "1600x900"
+ ],
+ "summary": {
+  "claims": 31,
+  "passed": 27,
+  "failed": 4
+ },
+ "claims": [
+  {
+   "id": "C1",
+   "claim": "every fixture expression typesets in en/es/pl",
+   "threshold": "0 failures",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C2a",
+   "claim": "malformed TeX is refused by validate()",
+   "threshold": "21 refusals",
+   "value": 21,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C2b",
+   "claim": "a refused expression never returns its source, a katex-error node, or raw TeX",
+   "threshold": "0 leaks",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C3a",
+   "claim": "every expression has a spoken form in every locale",
+   "threshold": "0 missing",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C3b",
+   "claim": "no spoken form contains TeX notation",
+   "threshold": "0 with \\ { } ^ _",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C4",
+   "claim": "ES/PL take a decimal comma, a centre dot and (PL) a colon for division",
+   "threshold": "0 wrong",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C5",
+   "claim": "the plain comparison text is identical in every locale",
+   "threshold": "0 divergent",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C6",
+   "claim": "no banned classroom vocabulary in any player-facing string this piece emits",
+   "threshold": "0 hits (relation readings declared)",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C7",
+   "claim": "1000 renders of one expression typeset it exactly once",
+   "threshold": "typesets == 1",
+   "value": 1,
+   "pass": true,
+   "note": "hits=999 misses=1"
+  },
+  {
+   "id": "C7b",
+   "claim": "the KaTeX raster is a hard-edged alpha mask, not a blurred one",
+   "threshold": "partial-alpha band <= 1.3 px",
+   "value": 0.64,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C7c",
+   "claim": "a raster is produced at a real working resolution",
+   "threshold": ">= 64 px tall",
+   "value": 256,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C8a",
+   "claim": "zero KaTeX failures in every locale and size",
+   "threshold": "0",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C8b",
+   "claim": "zero raw-TeX leaks into visible UI",
+   "threshold": "0 runs leaking",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C8c",
+   "claim": "KaTeX really ran (DOM nodes present in every run)",
+   "threshold": ">= 3",
+   "value": 3,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C9",
+   "claim": "every claim carries role=math with a localized, notation-free aria-label",
+   "threshold": "0 bad rows",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C9b",
+   "claim": "the aria-label language follows the requested locale",
+   "threshold": "has en",
+   "value": "en",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C10",
+   "claim": "no panel is ever magnified: >= 1 texel per device pixel, at 900p and at 4K",
+   "threshold": ">= 1.00",
+   "value": 1.85,
+   "pass": true,
+   "note": "worst: leaf9-share"
+  },
+  {
+   "id": "C11",
+   "claim": "the raster grows with the viewport instead of staying fixed",
+   "threshold": "4K bucket > 900p bucket",
+   "value": "0 vs 64",
+   "pass": false,
+   "note": null
+  },
+  {
+   "id": "C12",
+   "claim": "the claim standing ~38 m away is still drawn at a legible size",
+   "threshold": "em >= 12 device px",
+   "value": 17.3,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C13",
+   "claim": "120 frames of play cause no re-typeset and no re-raster",
+   "threshold": "0 new typesets, 0 new rasters",
+   "value": "0 / 0",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14a",
+   "claim": "a malformed claim never produces a katex-error node",
+   "threshold": "0",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14b",
+   "claim": "the malformed source appears nowhere in the document",
+   "threshold": "false",
+   "value": false,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14c",
+   "claim": "no raw TeX reaches the visible UI when a claim is refused",
+   "threshold": "false",
+   "value": false,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14d",
+   "claim": "the refusal is logged to __vs.errors so a build cannot ship it quietly",
+   "threshold": ">= 1 new error naming the refusal",
+   "value": "1: KaTeX refused a claim [en,display]: KaTeX parse error: Unexp",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14e",
+   "claim": "the player sees a typeset stand-in, not an empty space",
+   "threshold": "ink present in the panel's rectangle",
+   "value": 0,
+   "pass": false,
+   "note": null
+  },
+  {
+   "id": "C14f",
+   "claim": "the stand-in announces itself as unreadable rather than reading out notation",
+   "threshold": "localized fallback phrase",
+   "value": "unreadable claim",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C15",
+   "claim": "the ink is pure white, as it is in the target",
+   "threshold": ">= 248.0 (target 254)",
+   "value": 251.9,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C16",
+   "claim": "no panel, no frame and no glow: the sky 3-5 px from the ink is not darker than the sky 12-20 px away",
+   "threshold": ">= -3.0 (target 5.3)",
+   "value": 0.3,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C17",
+   "claim": "glyph edges are hard: the partial-coverage band is about one pixel wide",
+   "threshold": "<= 2.0 px (target 0.72)",
+   "value": 4.15,
+   "pass": false,
+   "note": null
+  },
+  {
+   "id": "C18",
+   "claim": "still hard-edged at 3840x2160 (no upscaled texture)",
+   "threshold": "<= 2.0 px",
+   "value": "n/a",
+   "pass": false,
+   "note": null
+  },
+  {
+   "id": "C19",
+   "claim": "the ink out-contrasts what the target achieves against its own sky",
+   "threshold": ">= 1.91 (target)",
+   "value": 1.92,
+   "pass": true,
+   "note": null
+  }
+ ],
+ "data": {
+  "speechSamples": [
+   {
+    "id": "share-half",
+    "locale": "en",
+    "speech": "1 over 2 x equals 4"
+   },
+   {
+    "id": "share-half",
+    "locale": "es",
+    "speech": "1 sobre 2 x igual a 4"
+   },
+   {
+    "id": "share-half",
+    "locale": "pl",
+    "speech": "1 łamane przez 2 x równa się 4"
+   },
+   {
+    "id": "decimals",
+    "locale": "en",
+    "speech": "3 point 5 x equals 10 point 25"
+   },
+   {
+    "id": "decimals",
+    "locale": "es",
+    "speech": "3 coma 5 x igual a 10 coma 25"
+   },
+   {
+    "id": "decimals",
+    "locale": "pl",
+    "speech": "3 przecinek 5 x równa się 10 przecinek 25"
+   },
+   {
+    "id": "signed",
+    "locale": "en",
+    "speech": "negative 3 over 4 x plus 2 equals negative 7"
+   },
+   {
+    "id": "signed",
+    "locale": "es",
+    "speech": "menos 3 sobre 4 x más 2 igual a menos 7"
+   },
+   {
+    "id": "signed",
+    "locale": "pl",
+    "speech": "minus 3 łamane przez 4 x plus 2 równa się minus 7"
+   }
+  ],
+  "conventions": [
+   {
+    "id": "decimal-en",
+    "locale": "en",
+    "out": "3.5",
+    "ok": true
+   },
+   {
+    "id": "decimal-es",
+    "locale": "es",
+    "out": "3{,}5",
+    "ok": true
+   },
+   {
+    "id": "decimal-pl",
+    "locale": "pl",
+    "out": "3{,}5",
+    "ok": true
+   },
+   {
+    "id": "times-en",
+    "locale": "en",
+    "out": "5 \\times 4",
+    "ok": true
+   },
+   {
+    "id": "times-es",
+    "locale": "es",
+    "out": "5 \\cdot 4",
+    "ok": true
+   },
+   {
+    "id": "times-pl",
+    "locale": "pl",
+    "out": "5 \\cdot 4",
+    "ok": true
+   },
+   {
+    "id": "div-pl",
+    "locale": "pl",
+    "out": "6 \\mathbin{:} 2",
+    "ok": true
+   },
+   {
+    "id": "group-en",
+    "locale": "en",
+    "out": "16{,}000",
+    "ok": true
+   },
+   {
+    "id": "group-es",
+    "locale": "es",
+    "out": "16\\,000",
+    "ok": true
+   },
+   {
+    "id": "verbatim-text",
+    "locale": "es",
+    "out": "\\text{3.5 spans}",
+    "ok": true
+   }
+  ],
+  "declaredVocabularyExceptions": [
+   "is less than",
+   "is greater than",
+   "is less than or equal to",
+   "is greater than or equal to",
+   "menor que",
+   "mayor que",
+   "menor o igual que",
+   "mayor o igual que",
+   "mniejsze od",
+   "większe od",
+   "mniejsze lub równe",
+   "większe lub równe"
+  ],
+  "reference": {
+   "equation": {
+    "box": [
+     1100,
+     380,
+     1500,
+     680
+    ],
+    "inkCount": 4878,
+    "inkCoverage": 0.0406,
+    "inkLuminance": 254,
+    "nearBgLuminance": 188.6,
+    "farBgLuminance": 183.2,
+    "haloDelta": 5.3,
+    "perimeter": 2167,
+    "edgeWidthPx": 0.72,
+    "contrastRatio": 1.91
+   },
+   "working": {
+    "box": [
+     1500,
+     350,
+     1900,
+     690
+    ],
+    "inkCount": 5579,
+    "inkCoverage": 0.041,
+    "inkLuminance": 253.9,
+    "nearBgLuminance": 193.1,
+    "farBgLuminance": 189.8,
+    "haloDelta": 3.3,
+    "perimeter": 2616,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 1.77
+   }
+  },
+  "panels": [
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "kpId": "eq-one-add",
+    "kind": "claim",
+    "tex": "x + 3 = 7",
+    "ok": true,
+    "speech": "x plus 3 equals 7",
+    "locale": "en",
+    "em": 0.66,
+    "worldSize": [
+     3.331,
+     0.67
+    ],
+    "texturePx": 64,
+    "textureSize": [
+     323,
+     65
+    ],
+    "emScreenPx": 34.1,
+    "texelsPerPixel": 1.88,
+    "rasters": 1,
+    "position": [
+     8.45,
+     57.74,
+     206.52
+    ]
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "kpId": "eq-one-mult",
+    "kind": "claim",
+    "tex": "\\frac{1}{2}x = 4",
+    "ok": true,
+    "speech": "1 over 2 x equals 4",
+    "locale": "en",
+    "em": 0.66,
+    "worldSize": [
+     2.465,
+     1.691
+    ],
+    "texturePx": 64,
+    "textureSize": [
+     239,
+     164
+    ],
+    "emScreenPx": 34.6,
+    "texelsPerPixel": 1.85,
+    "rasters": 1,
+    "position": [
+     8.45,
+     56.24,
+     206.52
+    ]
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "kpId": null,
+    "kind": "working",
+    "tex": null,
+    "ok": true,
+    "speech": "",
+    "locale": "en",
+    "em": 0.55,
+    "worldSize": [
+     2.2,
+     2.2
+    ],
+    "texturePx": 64,
+    "textureSize": [
+     256,
+     256
+    ],
+    "emScreenPx": 28.5,
+    "texelsPerPixel": 2.24,
+    "rasters": 1,
+    "position": [
+     14.15,
+     57.04,
+     206.52
+    ]
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "kpId": "ineq-one-step",
+    "kind": "claim",
+    "tex": "2x + 1 \\ge 9",
+    "ok": true,
+    "speech": "2 x plus 1 is greater than or equal to 9",
+    "locale": "en",
+    "em": 1.1,
+    "worldSize": [
+     6.17,
+     1.186
+    ],
+    "texturePx": 64,
+    "textureSize": [
+     359,
+     69
+    ],
+    "emScreenPx": 17.3,
+    "texelsPerPixel": 3.69,
+    "rasters": 2,
+    "position": [
+     33.15,
+     58.34,
+     178.52
+    ]
+   }
+  ],
+  "regions": [
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "box": [
+     531,
+     176,
+     767,
+     269
+    ],
+    "inkCount": 485,
+    "inkCoverage": 0.0221,
+    "inkLuminance": 252,
+    "nearBgLuminance": 185.7,
+    "farBgLuminance": 182.5,
+    "haloDelta": 3.2,
+    "perimeter": 390,
+    "edgeWidthPx": 4.15,
+    "contrastRatio": 1.92
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "box": [
+     558,
+     234,
+     745,
+     378
+    ],
+    "inkCount": 511,
+    "inkCoverage": 0.019,
+    "inkLuminance": 251.9,
+    "nearBgLuminance": 173.9,
+    "farBgLuminance": 170.5,
+    "haloDelta": 3.5,
+    "perimeter": 435,
+    "edgeWidthPx": 1.6,
+    "contrastRatio": 2.14
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "box": [
+     878,
+     173,
+     1053,
+     349
+    ],
+    "inkCount": 515,
+    "inkCoverage": 0.0167,
+    "inkLuminance": 252.3,
+    "nearBgLuminance": 171.9,
+    "farBgLuminance": 171.6,
+    "haloDelta": 0.3,
+    "perimeter": 491,
+    "edgeWidthPx": 0.67,
+    "contrastRatio": 2.13
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "box": [
+     1112,
+     271,
+     1289,
+     346
+    ],
+    "inkCount": 85,
+    "inkCoverage": 0.0064,
+    "inkLuminance": 249.9,
+    "nearBgLuminance": 182.7,
+    "farBgLuminance": 183.4,
+    "haloDelta": -0.8,
+    "perimeter": 83,
+    "edgeWidthPx": 1.64,
+    "contrastRatio": 1.81
+   }
+  ],
+  "a11y": [
+   {
+    "label": "en-1600x900",
+    "count": 3,
+    "rows": [
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "x plus 3 equals 7",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "1 over 2 x equals 4",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "2 x plus 1 is greater than or equal to 9",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     }
+    ],
+    "katexNodes": 3,
+    "katexErrors": 0
+   }
+  ],
+  "leaks": [
+   {
+    "label": "en-1600x900",
+    "katexFailed": 0,
+    "rawSourceLeak": false,
+    "katexRendered": 3,
+    "katexErrors": 0,
+    "bootProblems": 0
+   }
+  ],
+  "textures": [
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "width": 323,
+    "height": 65,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     323,
+     65
+    ],
+    "inkCount": 2018,
+    "inkCoverage": 0.0961,
+    "inkLuminance": 252.5,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "haloDelta": 0,
+    "perimeter": 1003,
+    "edgeWidthPx": 0.62,
+    "contrastRatio": 20.57
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "width": 239,
+    "height": 164,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     239,
+     164
+    ],
+    "inkCount": 2305,
+    "inkCoverage": 0.0588,
+    "inkLuminance": 253.3,
+    "nearBgLuminance": 0.1,
+    "farBgLuminance": 0,
+    "haloDelta": 0.1,
+    "perimeter": 1102,
+    "edgeWidthPx": 0.52,
+    "contrastRatio": 20.7
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "width": 256,
+    "height": 256,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     256,
+     256
+    ],
+    "inkCount": 4591,
+    "inkCoverage": 0.0701,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "haloDelta": 0,
+    "perimeter": 1994,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "width": 359,
+    "height": 69,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     359,
+     69
+    ],
+    "inkCount": 2604,
+    "inkCoverage": 0.1051,
+    "inkLuminance": 253.4,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "haloDelta": 0,
+    "perimeter": 1305,
+    "edgeWidthPx": 0.64,
+    "contrastRatio": 20.72
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "width": 323,
+    "height": 65,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     323,
+     65
+    ],
+    "inkCount": 2018,
+    "inkCoverage": 0.0961,
+    "inkLuminance": 252.5,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "haloDelta": 0,
+    "perimeter": 1003,
+    "edgeWidthPx": 0.62,
+    "contrastRatio": 20.57
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "width": 239,
+    "height": 164,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     239,
+     164
+    ],
+    "inkCount": 2305,
+    "inkCoverage": 0.0588,
+    "inkLuminance": 253.3,
+    "nearBgLuminance": 0.1,
+    "farBgLuminance": 0,
+    "haloDelta": 0.1,
+    "perimeter": 1102,
+    "edgeWidthPx": 0.52,
+    "contrastRatio": 20.7
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "width": 256,
+    "height": 256,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     256,
+     256
+    ],
+    "inkCount": 4591,
+    "inkCoverage": 0.0701,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "haloDelta": 0,
+    "perimeter": 1994,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "width": 359,
+    "height": 69,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     359,
+     69
+    ],
+    "inkCount": 2604,
+    "inkCoverage": 0.1051,
+    "inkLuminance": 253.4,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "haloDelta": 0,
+    "perimeter": 1305,
+    "edgeWidthPx": 0.64,
+    "contrastRatio": 20.72
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "width": 323,
+    "height": 65,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     323,
+     65
+    ],
+    "inkCount": 2018,
+    "inkCoverage": 0.0961,
+    "inkLuminance": 252.5,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "haloDelta": 0,
+    "perimeter": 1003,
+    "edgeWidthPx": 0.62,
+    "contrastRatio": 20.57
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "width": 239,
+    "height": 164,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     239,
+     164
+    ],
+    "inkCount": 2305,
+    "inkCoverage": 0.0588,
+    "inkLuminance": 253.3,
+    "nearBgLuminance": 0.1,
+    "farBgLuminance": 0,
+    "haloDelta": 0.1,
+    "perimeter": 1102,
+    "edgeWidthPx": 0.52,
+    "contrastRatio": 20.7
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "width": 256,
+    "height": 256,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     256,
+     256
+    ],
+    "inkCount": 4591,
+    "inkCoverage": 0.0701,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "haloDelta": 0,
+    "perimeter": 1994,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "width": 359,
+    "height": 69,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     359,
+     69
+    ],
+    "inkCount": 2604,
+    "inkCoverage": 0.1051,
+    "inkLuminance": 253.4,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "haloDelta": 0,
+    "perimeter": 1305,
+    "edgeWidthPx": 0.64,
+    "contrastRatio": 20.72
+   }
+  ],
+  "cache": {
+   "framesAdvanced": 120,
+   "typesetsBefore": 3,
+   "typesetsAfter": 3,
+   "rastersBefore": 4,
+   "rastersAfter": 4
+  },
+  "fallback": {
+   "errorsBefore": 0,
+   "source": "\\frac{1}{",
+   "panel": {
+    "id": "p15-malformed",
+    "kpId": null,
+    "kind": "claim",
+    "tex": "\\frac{1}{",
+    "ok": false,
+    "speech": "unreadable claim",
+    "locale": "en",
+    "em": 0.55,
+    "worldSize": [
+     0.51,
+     0.516
+    ],
+    "texturePx": 96,
+    "textureSize": [
+     89,
+     90
+    ],
+    "emScreenPx": 58.3,
+    "texelsPerPixel": 1.65,
+    "rasters": 1,
+    "position": [
+     10.95,
+     56.03,
+     213.52
+    ]
+   },
+   "katexErrors": 0,
+   "sourceInDom": false,
+   "overlayHasBackslash": false,
+   "errorsAfter": 1,
+   "lastError": "KaTeX refused a claim [en,display]: KaTeX parse error: Unexpected end of input in a macro argument, expected '}' at end of input: \\frac{1}{ — source withheld from the world, fallback shown",
+   "rawSourceLeak": false,
+   "ink": null
+  }
+ }
+}

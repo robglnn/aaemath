@@ -15,7 +15,7 @@
   "negative-square-sign-lost",
   "juxtaposition-means-add"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "oo-structure.coefsq/construct/rsaq7n",
@@ -94,7 +94,7 @@
    }
   },
   {
-   "id": "oo-structure.negsq/construct/wnh1ur",
+   "id": "oo-structure.negsq/construct/xrim4m",
    "kpId": "oo-structure",
    "family": "oo-structure.negsq",
    "form": "construct",
@@ -103,27 +103,27 @@
    "objectClass": "Aperture",
    "stem": "-x^{2}",
    "given": [
-    "x = 2"
+    "x = 3"
    ],
    "ask": {
     "key": "ask.reading",
     "params": {
-     "v": 2,
-     "sq": 4
+     "v": 3,
+     "sq": 9
     },
     "text": "Let it settle and read it."
    },
    "answerType": "integer",
    "unknown": "x",
    "answer": {
-    "canonical": "-4",
-    "tex": "-4"
+    "canonical": "-9",
+    "tex": "-9"
    },
    "distractors": [
     {
      "misconception": "negative-square-sign-lost",
-     "response": "4",
-     "tex": "4",
+     "response": "9",
+     "tex": "9",
      "failKey": "fail.negative"
     }
    ],
@@ -136,24 +136,24 @@
     {
      "key": "hint.move.oo-structure.negsq",
      "params": {
-      "v": 2,
-      "sq": 4
+      "v": 3,
+      "sq": 9
      },
      "text": "Nothing bundles the inversion in with the socket here. Look at what is inside the power."
     },
     {
      "key": "hint.state.oo-structure.negsq",
      "params": {
-      "v": 2,
-      "sq": 4
+      "v": 3,
+      "sq": 9
      },
-     "text": "The power reaches 4, and the inversion is still standing outside it."
+     "text": "The power reaches 9, and the inversion is still standing outside it."
     }
    ],
    "worldFraming": {
-    "key": "frame.oo-structure.2",
+    "key": "frame.oo-structure.1",
     "params": {},
-    "text": "This hatch was cut by somebody careful about what goes under a power."
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
    },
    "standards": [
     "CCSS.6.EE.A.2c",
@@ -162,7 +162,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 2
+    "v": 3
    }
   },
   {
@@ -329,7 +329,7 @@
    }
   },
   {
-   "id": "oo-structure.negsq/repair/wndwcs",
+   "id": "oo-structure.negsq/repair/xsfetx",
    "kpId": "oo-structure",
    "family": "oo-structure.negsq",
    "form": "repair",
@@ -338,19 +338,19 @@
    "objectClass": "Aperture",
    "stem": "-x^{2}",
    "given": [
-    "x = 5"
+    "x = 8"
    ],
    "working": [
     "-x^{2}",
-    "\\left(-5\\right)^{2}",
-    "25"
+    "\\left(-8\\right)^{2}",
+    "64"
    ],
    "brokenBy": "negative-square-sign-lost",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 5,
-     "sq": 25,
+     "v": 8,
+     "sq": 64,
      "lines": 3,
      "line": 2
     },
@@ -359,16 +359,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|-25",
-    "tex": "-\\left(5^{2}\\right)",
+    "canonical": "2|-64",
+    "tex": "-\\left(8^{2}\\right)",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "negative-square-sign-lost",
-     "response": "2|25",
-     "tex": "\\left(-5\\right)^{2}",
+     "response": "2|64",
+     "tex": "\\left(-8\\right)^{2}",
      "failKey": "fail.negative"
     }
    ],
@@ -381,8 +381,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 5,
-      "sq": 25,
+      "v": 8,
+      "sq": 64,
       "line": 2,
       "lines": 3
      },
@@ -391,8 +391,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 5,
-      "sq": 25,
+      "v": 8,
+      "sq": 64,
       "line": 2,
       "lines": 3
      },
@@ -400,9 +400,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.oo-structure.1",
+    "key": "frame.oo-structure.2",
     "params": {},
-    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+    "text": "This hatch was cut by somebody careful about what goes under a power."
    },
    "standards": [
     "CCSS.6.EE.A.2c",
@@ -411,7 +411,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 5
+    "v": 8
    }
   },
   {
@@ -502,6 +502,178 @@
    }
   },
   {
+   "id": "oo-structure.coefsq/generate/rs7kpo",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "3x^{2}",
+   "given": [
+    "x = 3"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 3,
+     "v": 3,
+     "sq": 9,
+     "target": 27,
+     "at": 3,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 27 when the socket holds 3."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3x^{2}",
+    "tex": "3x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 3,
+    "value": 27,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 3,
+      "v": 3,
+      "sq": 9,
+      "target": 27,
+      "at": 3,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 3,
+      "v": 3,
+      "sq": 9,
+      "target": 27,
+      "at": 3,
+      "unknown": "x"
+     },
+     "text": "Seat 3 in whatever you build and it has to come out at 27."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "v": 3
+   }
+  },
+  {
+   "id": "oo-structure.negsq/generate/wnh1ur",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 2"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "v": 2,
+     "sq": 4,
+     "target": -4,
+     "at": 2,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads -4 when the socket holds 2."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-x^{2}",
+    "tex": "-x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 2,
+    "value": -4,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "v": 2,
+      "sq": 4,
+      "target": -4,
+      "at": 2,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "v": 2,
+      "sq": 4,
+      "target": -4,
+      "at": 2,
+      "unknown": "x"
+     },
+     "text": "Seat 2 in whatever you build and it has to come out at -4."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 2
+   }
+  },
+  {
    "id": "oo-structure.juxt/generate/av06fq",
    "kpId": "oo-structure",
    "family": "oo-structure.juxt",
@@ -519,9 +691,10 @@
      "a": 5,
      "v": 3,
      "target": 15,
+     "at": 3,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads 15 when the socket holds {at}."
+    "text": "Stack a load in x that reads 15 when the socket holds 3."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -552,6 +725,7 @@
       "a": 5,
       "v": 3,
       "target": 15,
+      "at": 3,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -562,9 +736,10 @@
       "a": 5,
       "v": 3,
       "target": 15,
+      "at": 3,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 15."
+     "text": "Seat 3 in whatever you build and it has to come out at 15."
     }
    ],
    "worldFraming": {
@@ -657,6 +832,78 @@
    "params": {
     "a": 5,
     "v": 8
+   }
+  },
+  {
+   "id": "oo-structure.negsq/construct/wnh1ur",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 2"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 2,
+     "sq": 4
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-4",
+    "tex": "-4"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "4",
+     "tex": "4",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.negsq",
+     "params": {
+      "v": 2,
+      "sq": 4
+     },
+     "text": "Nothing bundles the inversion in with the socket here. Look at what is inside the power."
+    },
+    {
+     "key": "hint.state.oo-structure.negsq",
+     "params": {
+      "v": 2,
+      "sq": 4
+     },
+     "text": "The power reaches 4, and the inversion is still standing outside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 2
    }
   },
   {
@@ -823,7 +1070,7 @@
    }
   },
   {
-   "id": "oo-structure.negsq/repair/xr604q",
+   "id": "oo-structure.negsq/repair/rbi2dz",
    "kpId": "oo-structure",
    "family": "oo-structure.negsq",
    "form": "repair",
@@ -832,19 +1079,19 @@
    "objectClass": "Aperture",
    "stem": "-x^{2}",
    "given": [
-    "x = 7"
+    "x = 15"
    ],
    "working": [
     "-x^{2}",
-    "\\left(-7\\right)^{2}",
-    "49"
+    "\\left(-15\\right)^{2}",
+    "225"
    ],
    "brokenBy": "negative-square-sign-lost",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 7,
-     "sq": 49,
+     "v": 15,
+     "sq": 225,
      "lines": 3,
      "line": 2
     },
@@ -853,16 +1100,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|-49",
-    "tex": "-\\left(7^{2}\\right)",
+    "canonical": "2|-225",
+    "tex": "-\\left(15^{2}\\right)",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "negative-square-sign-lost",
-     "response": "2|49",
-     "tex": "\\left(-7\\right)^{2}",
+     "response": "2|225",
+     "tex": "\\left(-15\\right)^{2}",
      "failKey": "fail.negative"
     }
    ],
@@ -875,8 +1122,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 7,
-      "sq": 49,
+      "v": 15,
+      "sq": 225,
       "line": 2,
       "lines": 3
      },
@@ -885,8 +1132,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 7,
-      "sq": 49,
+      "v": 15,
+      "sq": 225,
       "line": 2,
       "lines": 3
      },
@@ -894,9 +1141,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.oo-structure.1",
+    "key": "frame.oo-structure.2",
     "params": {},
-    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+    "text": "This hatch was cut by somebody careful about what goes under a power."
    },
    "standards": [
     "CCSS.6.EE.A.2c",
@@ -905,7 +1152,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 7
+    "v": 15
    }
   },
   {
@@ -996,6 +1243,178 @@
    }
   },
   {
+   "id": "oo-structure.coefsq/generate/auoic1",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "5x^{2}",
+   "given": [
+    "x = 4"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 5,
+     "v": 4,
+     "sq": 16,
+     "target": 80,
+     "at": 4,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 80 when the socket holds 4."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "5x^{2}",
+    "tex": "5x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 4,
+    "value": 80,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 5,
+      "v": 4,
+      "sq": 16,
+      "target": 80,
+      "at": 4,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 5,
+      "v": 4,
+      "sq": 16,
+      "target": 80,
+      "at": 4,
+      "unknown": "x"
+     },
+     "text": "Seat 4 in whatever you build and it has to come out at 80."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "v": 4
+   }
+  },
+  {
+   "id": "oo-structure.negsq/generate/xr604q",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 7"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "v": 7,
+     "sq": 49,
+     "target": -49,
+     "at": 7,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads -49 when the socket holds 7."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-x^{2}",
+    "tex": "-x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 7,
+    "value": -49,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "v": 7,
+      "sq": 49,
+      "target": -49,
+      "at": 7,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "v": 7,
+      "sq": 49,
+      "target": -49,
+      "at": 7,
+      "unknown": "x"
+     },
+     "text": "Seat 7 in whatever you build and it has to come out at -49."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 7
+   }
+  },
+  {
    "id": "oo-structure.juxt/generate/1bpwswq",
    "kpId": "oo-structure",
    "family": "oo-structure.juxt",
@@ -1013,9 +1432,10 @@
      "a": 3,
      "v": 12,
      "target": 36,
+     "at": 12,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads 36 when the socket holds {at}."
+    "text": "Stack a load in x that reads 36 when the socket holds 12."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -1046,6 +1466,7 @@
       "a": 3,
       "v": 12,
       "target": 36,
+      "at": 12,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -1056,9 +1477,10 @@
       "a": 3,
       "v": 12,
       "target": 36,
+      "at": 12,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 36."
+     "text": "Seat 12 in whatever you build and it has to come out at 36."
     }
    ],
    "worldFraming": {
@@ -1154,7 +1576,7 @@
    }
   },
   {
-   "id": "oo-structure.negsq/construct/wndwcs",
+   "id": "oo-structure.negsq/construct/wok5k0",
    "kpId": "oo-structure",
    "family": "oo-structure.negsq",
    "form": "construct",
@@ -1163,27 +1585,27 @@
    "objectClass": "Aperture",
    "stem": "-x^{2}",
    "given": [
-    "x = 5"
+    "x = 9"
    ],
    "ask": {
     "key": "ask.reading",
     "params": {
-     "v": 5,
-     "sq": 25
+     "v": 9,
+     "sq": 81
     },
     "text": "Let it settle and read it."
    },
    "answerType": "integer",
    "unknown": "x",
    "answer": {
-    "canonical": "-25",
-    "tex": "-25"
+    "canonical": "-81",
+    "tex": "-81"
    },
    "distractors": [
     {
      "misconception": "negative-square-sign-lost",
-     "response": "25",
-     "tex": "25",
+     "response": "81",
+     "tex": "81",
      "failKey": "fail.negative"
     }
    ],
@@ -1196,18 +1618,18 @@
     {
      "key": "hint.move.oo-structure.negsq",
      "params": {
-      "v": 5,
-      "sq": 25
+      "v": 9,
+      "sq": 81
      },
      "text": "Nothing bundles the inversion in with the socket here. Look at what is inside the power."
     },
     {
      "key": "hint.state.oo-structure.negsq",
      "params": {
-      "v": 5,
-      "sq": 25
+      "v": 9,
+      "sq": 81
      },
-     "text": "The power reaches 25, and the inversion is still standing outside it."
+     "text": "The power reaches 81, and the inversion is still standing outside it."
     }
    ],
    "worldFraming": {
@@ -1222,7 +1644,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 5
+    "v": 9
    }
   },
   {
@@ -1389,7 +1811,7 @@
    }
   },
   {
-   "id": "oo-structure.negsq/repair/wok5k0",
+   "id": "oo-structure.negsq/repair/sgpvv2",
    "kpId": "oo-structure",
    "family": "oo-structure.negsq",
    "form": "repair",
@@ -1398,19 +1820,19 @@
    "objectClass": "Aperture",
    "stem": "-x^{2}",
    "given": [
-    "x = 9"
+    "x = 18"
    ],
    "working": [
     "-x^{2}",
-    "\\left(-9\\right)^{2}",
-    "81"
+    "\\left(-18\\right)^{2}",
+    "324"
    ],
    "brokenBy": "negative-square-sign-lost",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 9,
-     "sq": 81,
+     "v": 18,
+     "sq": 324,
      "lines": 3,
      "line": 2
     },
@@ -1419,16 +1841,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|-81",
-    "tex": "-\\left(9^{2}\\right)",
+    "canonical": "2|-324",
+    "tex": "-\\left(18^{2}\\right)",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "negative-square-sign-lost",
-     "response": "2|81",
-     "tex": "\\left(-9\\right)^{2}",
+     "response": "2|324",
+     "tex": "\\left(-18\\right)^{2}",
      "failKey": "fail.negative"
     }
    ],
@@ -1441,8 +1863,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 9,
-      "sq": 81,
+      "v": 18,
+      "sq": 324,
       "line": 2,
       "lines": 3
      },
@@ -1451,8 +1873,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 9,
-      "sq": 81,
+      "v": 18,
+      "sq": 324,
       "line": 2,
       "lines": 3
      },
@@ -1471,7 +1893,179 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 9
+    "v": 18
+   }
+  },
+  {
+   "id": "oo-structure.coefsq/generate/rsnc7j",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "3x^{2}",
+   "given": [
+    "x = 8"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 3,
+     "v": 8,
+     "sq": 64,
+     "target": 192,
+     "at": 8,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 192 when the socket holds 8."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3x^{2}",
+    "tex": "3x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 8,
+    "value": 192,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 3,
+      "v": 8,
+      "sq": 64,
+      "target": 192,
+      "at": 8,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 3,
+      "v": 8,
+      "sq": 64,
+      "target": 192,
+      "at": 8,
+      "unknown": "x"
+     },
+     "text": "Seat 8 in whatever you build and it has to come out at 192."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "v": 8
+   }
+  },
+  {
+   "id": "oo-structure.negsq/generate/xsfetx",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 8"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "v": 8,
+     "sq": 64,
+     "target": -64,
+     "at": 8,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads -64 when the socket holds 8."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-x^{2}",
+    "tex": "-x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 8,
+    "value": -64,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "v": 8,
+      "sq": 64,
+      "target": -64,
+      "at": 8,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "v": 8,
+      "sq": 64,
+      "target": -64,
+      "at": 8,
+      "unknown": "x"
+     },
+     "text": "Seat 8 in whatever you build and it has to come out at -64."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 8
    }
   },
   {
@@ -1492,9 +2086,10 @@
      "a": 11,
      "v": 11,
      "target": 121,
+     "at": 11,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads 121 when the socket holds {at}."
+    "text": "Stack a load in x that reads 121 when the socket holds 11."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -1525,6 +2120,7 @@
       "a": 11,
       "v": 11,
       "target": 121,
+      "at": 11,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -1535,9 +2131,10 @@
       "a": 11,
       "v": 11,
       "target": 121,
+      "at": 11,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 121."
+     "text": "Seat 11 in whatever you build and it has to come out at 121."
     }
    ],
    "worldFraming": {
@@ -1633,7 +2230,7 @@
    }
   },
   {
-   "id": "oo-structure.negsq/construct/wn4fuv",
+   "id": "oo-structure.negsq/construct/rbuodv",
    "kpId": "oo-structure",
    "family": "oo-structure.negsq",
    "form": "construct",
@@ -1642,27 +2239,27 @@
    "objectClass": "Aperture",
    "stem": "-x^{2}",
    "given": [
-    "x = 6"
+    "x = 11"
    ],
    "ask": {
     "key": "ask.reading",
     "params": {
-     "v": 6,
-     "sq": 36
+     "v": 11,
+     "sq": 121
     },
     "text": "Let it settle and read it."
    },
    "answerType": "integer",
    "unknown": "x",
    "answer": {
-    "canonical": "-36",
-    "tex": "-36"
+    "canonical": "-121",
+    "tex": "-121"
    },
    "distractors": [
     {
      "misconception": "negative-square-sign-lost",
-     "response": "36",
-     "tex": "36",
+     "response": "121",
+     "tex": "121",
      "failKey": "fail.negative"
     }
    ],
@@ -1675,18 +2272,18 @@
     {
      "key": "hint.move.oo-structure.negsq",
      "params": {
-      "v": 6,
-      "sq": 36
+      "v": 11,
+      "sq": 121
      },
      "text": "Nothing bundles the inversion in with the socket here. Look at what is inside the power."
     },
     {
      "key": "hint.state.oo-structure.negsq",
      "params": {
-      "v": 6,
-      "sq": 36
+      "v": 11,
+      "sq": 121
      },
-     "text": "The power reaches 36, and the inversion is still standing outside it."
+     "text": "The power reaches 121, and the inversion is still standing outside it."
     }
    ],
    "worldFraming": {
@@ -1701,7 +2298,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 6
+    "v": 11
    }
   },
   {
@@ -1778,7 +2375,7 @@
    }
   },
   {
-   "id": "oo-structure.negsq/repair/xrim4m",
+   "id": "oo-structure.negsq/repair/wn4fuv",
    "kpId": "oo-structure",
    "family": "oo-structure.negsq",
    "form": "repair",
@@ -1787,19 +2384,19 @@
    "objectClass": "Aperture",
    "stem": "-x^{2}",
    "given": [
-    "x = 3"
+    "x = 6"
    ],
    "working": [
     "-x^{2}",
-    "\\left(-3\\right)^{2}",
-    "9"
+    "\\left(-6\\right)^{2}",
+    "36"
    ],
    "brokenBy": "negative-square-sign-lost",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 3,
-     "sq": 9,
+     "v": 6,
+     "sq": 36,
      "lines": 3,
      "line": 2
     },
@@ -1808,16 +2405,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|-9",
-    "tex": "-\\left(3^{2}\\right)",
+    "canonical": "2|-36",
+    "tex": "-\\left(6^{2}\\right)",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "negative-square-sign-lost",
-     "response": "2|9",
-     "tex": "\\left(-3\\right)^{2}",
+     "response": "2|36",
+     "tex": "\\left(-6\\right)^{2}",
      "failKey": "fail.negative"
     }
    ],
@@ -1830,8 +2427,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 3,
-      "sq": 9,
+      "v": 6,
+      "sq": 36,
       "line": 2,
       "lines": 3
      },
@@ -1840,8 +2437,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 3,
-      "sq": 9,
+      "v": 6,
+      "sq": 36,
       "line": 2,
       "lines": 3
      },
@@ -1849,9 +2446,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.oo-structure.1",
+    "key": "frame.oo-structure.2",
     "params": {},
-    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+    "text": "This hatch was cut by somebody careful about what goes under a power."
    },
    "standards": [
     "CCSS.6.EE.A.2c",
@@ -1860,7 +2457,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "v": 3
+    "v": 6
    }
   },
   {
@@ -1951,6 +2548,178 @@
    }
   },
   {
+   "id": "oo-structure.coefsq/generate/1b1c6c",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "2x^{2}",
+   "given": [
+    "x = 2"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 2,
+     "v": 2,
+     "sq": 4,
+     "target": 8,
+     "at": 2,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 8 when the socket holds 2."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2x^{2}",
+    "tex": "2x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 2,
+    "value": 8,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 2,
+      "v": 2,
+      "sq": 4,
+      "target": 8,
+      "at": 2,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 2,
+      "v": 2,
+      "sq": 4,
+      "target": 8,
+      "at": 2,
+      "unknown": "x"
+     },
+     "text": "Seat 2 in whatever you build and it has to come out at 8."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "v": 2
+   }
+  },
+  {
+   "id": "oo-structure.negsq/generate/xr95mp",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 4"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "v": 4,
+     "sq": 16,
+     "target": -16,
+     "at": 4,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads -16 when the socket holds 4."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-x^{2}",
+    "tex": "-x^{2}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 4,
+    "value": -16,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "v": 4,
+      "sq": 16,
+      "target": -16,
+      "at": 4,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "v": 4,
+      "sq": 16,
+      "target": -16,
+      "at": 4,
+      "unknown": "x"
+     },
+     "text": "Seat 4 in whatever you build and it has to come out at -16."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 4
+   }
+  },
+  {
    "id": "oo-structure.juxt/generate/9qvgnw",
    "kpId": "oo-structure",
    "family": "oo-structure.juxt",
@@ -1968,9 +2737,10 @@
      "a": 5,
      "v": 5,
      "target": 25,
+     "at": 5,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads 25 when the socket holds {at}."
+    "text": "Stack a load in x that reads 25 when the socket holds 5."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -2001,6 +2771,7 @@
       "a": 5,
       "v": 5,
       "target": 25,
+      "at": 5,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -2011,9 +2782,10 @@
       "a": 5,
       "v": 5,
       "target": 25,
+      "at": 5,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 25."
+     "text": "Seat 5 in whatever you build and it has to come out at 25."
     }
    ],
    "worldFraming": {
@@ -2109,7 +2881,7 @@
    }
   },
   {
-   "id": "oo-structure.negsq/construct/xr95mp",
+   "id": "oo-structure.negsq/construct/xr604q",
    "kpId": "oo-structure",
    "family": "oo-structure.negsq",
    "form": "construct",
@@ -2118,27 +2890,27 @@
    "objectClass": "Aperture",
    "stem": "-x^{2}",
    "given": [
-    "x = 4"
+    "x = 7"
    ],
    "ask": {
     "key": "ask.reading",
     "params": {
-     "v": 4,
-     "sq": 16
+     "v": 7,
+     "sq": 49
     },
     "text": "Let it settle and read it."
    },
    "answerType": "integer",
    "unknown": "x",
    "answer": {
-    "canonical": "-16",
-    "tex": "-16"
+    "canonical": "-49",
+    "tex": "-49"
    },
    "distractors": [
     {
      "misconception": "negative-square-sign-lost",
-     "response": "16",
-     "tex": "16",
+     "response": "49",
+     "tex": "49",
      "failKey": "fail.negative"
     }
    ],
@@ -2151,90 +2923,18 @@
     {
      "key": "hint.move.oo-structure.negsq",
      "params": {
-      "v": 4,
-      "sq": 16
+      "v": 7,
+      "sq": 49
      },
      "text": "Nothing bundles the inversion in with the socket here. Look at what is inside the power."
     },
     {
      "key": "hint.state.oo-structure.negsq",
      "params": {
-      "v": 4,
-      "sq": 16
+      "v": 7,
+      "sq": 49
      },
-     "text": "The power reaches 16, and the inversion is still standing outside it."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.oo-structure.2",
-    "params": {},
-    "text": "This hatch was cut by somebody careful about what goes under a power."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "CCSS.HSA-SSE.A.1b",
-    "TEKS.6.7A",
-    "VA.7.PFA.2"
-   ],
-   "params": {
-    "v": 4
-   }
-  },
-  {
-   "id": "oo-structure.juxt/construct/gim17c",
-   "kpId": "oo-structure",
-   "family": "oo-structure.juxt",
-   "form": "construct",
-   "difficulty": 2,
-   "tier": "core",
-   "objectClass": "Aperture",
-   "stem": "10x",
-   "given": [
-    "x = 12"
-   ],
-   "ask": {
-    "key": "ask.reading",
-    "params": {
-     "a": 10,
-     "v": 12
-    },
-    "text": "Let it settle and read it."
-   },
-   "answerType": "integer",
-   "unknown": "x",
-   "answer": {
-    "canonical": "120",
-    "tex": "120"
-   },
-   "distractors": [
-    {
-     "misconception": "juxtaposition-means-add",
-     "response": "22",
-     "tex": "22",
-     "failKey": "fail.load.unsettled"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Aperture",
-     "params": {},
-     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
-    },
-    {
-     "key": "hint.move.oo-structure.juxt",
-     "params": {
-      "a": 10,
-      "v": 12
-     },
-     "text": "A collar against a socket is a product. There is no join between them."
-    },
-    {
-     "key": "hint.state.oo-structure.juxt",
-     "params": {
-      "a": 10,
-      "v": 12
-     },
-     "text": "10 of them, each one carrying 12."
+     "text": "The power reaches 49, and the inversion is still standing outside it."
     }
    ],
    "worldFraming": {
@@ -2249,184 +2949,7 @@
     "VA.7.PFA.2"
    ],
    "params": {
-    "a": 10,
-    "v": 12
-   }
-  },
-  {
-   "id": "oo-structure.coefsq/repair/rs7kpo",
-   "kpId": "oo-structure",
-   "family": "oo-structure.coefsq",
-   "form": "repair",
-   "difficulty": 2,
-   "tier": "core",
-   "objectClass": "Aperture",
-   "stem": "3x^{2}",
-   "given": [
-    "x = 3"
-   ],
-   "working": [
-    "3x^{2}",
-    "\\left(3 \\cdot 3\\right)^{2}",
-    "81"
-   ],
-   "brokenBy": "coefficient-under-exponent",
-   "ask": {
-    "key": "ask.repair",
-    "params": {
-     "a": 3,
-     "v": 3,
-     "sq": 9,
-     "lines": 3,
-     "line": 2
-    },
-    "text": "Name the joint that will not hold, and what it should read."
-   },
-   "answerType": "repair",
-   "unknown": "x",
-   "answer": {
-    "canonical": "2|27",
-    "tex": "3 \\cdot 3^{2}",
-    "line": 2,
-    "valueKind": "expr"
-   },
-   "distractors": [
-    {
-     "misconception": "coefficient-under-exponent",
-     "response": "2|81",
-     "tex": "\\left(3 \\cdot 3\\right)^{2}",
-     "failKey": "fail.load.unsettled"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Aperture",
-     "params": {},
-     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
-    },
-    {
-     "key": "hint.repair.2",
-     "params": {
-      "a": 3,
-      "v": 3,
-      "sq": 9,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Read down the working. One line does not follow from the one above it."
-    },
-    {
-     "key": "hint.repair.3",
-     "params": {
-      "a": 3,
-      "v": 3,
-      "sq": 9,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Line 2 is where the load stops matching."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.oo-structure.1",
-    "params": {},
-    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "CCSS.HSA-SSE.A.1b",
-    "TEKS.6.7A",
-    "VA.7.PFA.2"
-   ],
-   "params": {
-    "a": 3,
-    "v": 3
-   }
-  },
-  {
-   "id": "oo-structure.negsq/repair/wn4fuv",
-   "kpId": "oo-structure",
-   "family": "oo-structure.negsq",
-   "form": "repair",
-   "difficulty": 2,
-   "tier": "core",
-   "objectClass": "Aperture",
-   "stem": "-x^{2}",
-   "given": [
-    "x = 6"
-   ],
-   "working": [
-    "-x^{2}",
-    "\\left(-6\\right)^{2}",
-    "36"
-   ],
-   "brokenBy": "negative-square-sign-lost",
-   "ask": {
-    "key": "ask.repair",
-    "params": {
-     "v": 6,
-     "sq": 36,
-     "lines": 3,
-     "line": 2
-    },
-    "text": "Name the joint that will not hold, and what it should read."
-   },
-   "answerType": "repair",
-   "unknown": "x",
-   "answer": {
-    "canonical": "2|-36",
-    "tex": "-\\left(6^{2}\\right)",
-    "line": 2,
-    "valueKind": "expr"
-   },
-   "distractors": [
-    {
-     "misconception": "negative-square-sign-lost",
-     "response": "2|36",
-     "tex": "\\left(-6\\right)^{2}",
-     "failKey": "fail.negative"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Aperture",
-     "params": {},
-     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
-    },
-    {
-     "key": "hint.repair.2",
-     "params": {
-      "v": 6,
-      "sq": 36,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Read down the working. One line does not follow from the one above it."
-    },
-    {
-     "key": "hint.repair.3",
-     "params": {
-      "v": 6,
-      "sq": 36,
-      "line": 2,
-      "lines": 3
-     },
-     "text": "Line 2 is where the load stops matching."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.oo-structure.2",
-    "params": {},
-    "text": "This hatch was cut by somebody careful about what goes under a power."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "CCSS.HSA-SSE.A.1b",
-    "TEKS.6.7A",
-    "VA.7.PFA.2"
-   ],
-   "params": {
-    "v": 6
+    "v": 7
    }
   }
  ]

@@ -15,7 +15,7 @@
   "one-value-for-all-letters",
   "second-variable-ignored"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "eval-formula.two/construct/n6jt8u",
@@ -247,9 +247,10 @@
      "q": 10,
      "rise": 24,
      "target": 94,
+     "at": 12,
      "unknown": "r"
     },
-    "text": "Stack a load in r that reads 94 when the socket holds {at}."
+    "text": "Stack a load in r that reads 94 when the socket holds 12."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -283,6 +284,7 @@
       "q": 10,
       "rise": 24,
       "target": 94,
+      "at": 12,
       "unknown": "r"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -296,9 +298,10 @@
       "q": 10,
       "rise": 24,
       "target": 94,
+      "at": 12,
       "unknown": "r"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 94."
+     "text": "Seat 12 in whatever you build and it has to come out at 94."
     }
    ],
    "worldFraming": {
@@ -452,9 +455,10 @@
      "q": 7,
      "rise": 8,
      "target": 50,
+     "at": 2,
      "unknown": "r"
     },
-    "text": "Stack a load in r that reads 50 when the socket holds {at}."
+    "text": "Stack a load in r that reads 50 when the socket holds 2."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -488,6 +492,7 @@
       "q": 7,
       "rise": 8,
       "target": 50,
+      "at": 2,
       "unknown": "r"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -501,9 +506,10 @@
       "q": 7,
       "rise": 8,
       "target": 50,
+      "at": 2,
       "unknown": "r"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 50."
+     "text": "Seat 2 in whatever you build and it has to come out at 50."
     }
    ],
    "worldFraming": {
@@ -546,9 +552,10 @@
      "q": 2,
      "rise": 18,
      "target": 26,
+     "at": 6,
      "unknown": "r"
     },
-    "text": "Stack a load in r that reads 26 when the socket holds {at}."
+    "text": "Stack a load in r that reads 26 when the socket holds 6."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -582,6 +589,7 @@
       "q": 2,
       "rise": 18,
       "target": 26,
+      "at": 6,
       "unknown": "r"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -595,9 +603,10 @@
       "q": 2,
       "rise": 18,
       "target": 26,
+      "at": 6,
       "unknown": "r"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 26."
+     "text": "Seat 6 in whatever you build and it has to come out at 26."
     }
    ],
    "worldFraming": {
@@ -1375,9 +1384,10 @@
      "q": 9,
      "rise": 77,
      "target": 95,
+     "at": 11,
      "unknown": "r"
     },
-    "text": "Stack a load in r that reads 95 when the socket holds {at}."
+    "text": "Stack a load in r that reads 95 when the socket holds 11."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -1411,6 +1421,7 @@
       "q": 9,
       "rise": 77,
       "target": 95,
+      "at": 11,
       "unknown": "r"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -1424,9 +1435,10 @@
       "q": 9,
       "rise": 77,
       "target": 95,
+      "at": 11,
       "unknown": "r"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 95."
+     "text": "Seat 11 in whatever you build and it has to come out at 95."
     }
    ],
    "worldFraming": {
@@ -1677,9 +1689,10 @@
      "q": 9,
      "rise": 12,
      "target": 39,
+     "at": 3,
      "unknown": "r"
     },
-    "text": "Stack a load in r that reads 39 when the socket holds {at}."
+    "text": "Stack a load in r that reads 39 when the socket holds 3."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -1713,6 +1726,7 @@
       "q": 9,
       "rise": 12,
       "target": 39,
+      "at": 3,
       "unknown": "r"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -1726,9 +1740,10 @@
       "q": 9,
       "rise": 12,
       "target": 39,
+      "at": 3,
       "unknown": "r"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 39."
+     "text": "Seat 3 in whatever you build and it has to come out at 39."
     }
    ],
    "worldFraming": {
@@ -2187,9 +2202,10 @@
      "q": 5,
      "rise": 48,
      "target": 63,
+     "at": 8,
      "unknown": "r"
     },
-    "text": "Stack a load in r that reads 63 when the socket holds {at}."
+    "text": "Stack a load in r that reads 63 when the socket holds 8."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -2223,6 +2239,7 @@
       "q": 5,
       "rise": 48,
       "target": 63,
+      "at": 8,
       "unknown": "r"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -2236,9 +2253,10 @@
       "q": 5,
       "rise": 48,
       "target": 63,
+      "at": 8,
       "unknown": "r"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 63."
+     "text": "Seat 8 in whatever you build and it has to come out at 63."
     }
    ],
    "worldFraming": {
@@ -2489,9 +2507,10 @@
      "q": 12,
      "rise": 10,
      "target": 46,
+     "at": 5,
      "unknown": "r"
     },
-    "text": "Stack a load in r that reads 46 when the socket holds {at}."
+    "text": "Stack a load in r that reads 46 when the socket holds 5."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -2525,6 +2544,7 @@
       "q": 12,
       "rise": 10,
       "target": 46,
+      "at": 5,
       "unknown": "r"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -2538,9 +2558,10 @@
       "q": 12,
       "rise": 10,
       "target": 46,
+      "at": 5,
       "unknown": "r"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 46."
+     "text": "Seat 5 in whatever you build and it has to come out at 46."
     }
    ],
    "worldFraming": {
@@ -2680,9 +2701,10 @@
      "q": 8,
      "rise": 6,
      "target": 38,
+     "at": 2,
      "unknown": "r"
     },
-    "text": "Stack a load in r that reads 38 when the socket holds {at}."
+    "text": "Stack a load in r that reads 38 when the socket holds 2."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -2716,6 +2738,7 @@
       "q": 8,
       "rise": 6,
       "target": 38,
+      "at": 2,
       "unknown": "r"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -2729,9 +2752,10 @@
       "q": 8,
       "rise": 6,
       "target": 38,
+      "at": 2,
       "unknown": "r"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 38."
+     "text": "Seat 2 in whatever you build and it has to come out at 38."
     }
    ],
    "worldFraming": {
@@ -2982,9 +3006,10 @@
      "q": 4,
      "rise": 20,
      "target": 40,
+     "at": 5,
      "unknown": "r"
     },
-    "text": "Stack a load in r that reads 40 when the socket holds {at}."
+    "text": "Stack a load in r that reads 40 when the socket holds 5."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -3018,6 +3043,7 @@
       "q": 4,
       "rise": 20,
       "target": 40,
+      "at": 5,
       "unknown": "r"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -3031,9 +3057,10 @@
       "q": 4,
       "rise": 20,
       "target": 40,
+      "at": 5,
       "unknown": "r"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 40."
+     "text": "Seat 5 in whatever you build and it has to come out at 40."
     }
    ],
    "worldFraming": {
@@ -3052,6 +3079,616 @@
     "d": 5,
     "p": 5,
     "q": 4
+   }
+  },
+  {
+   "id": "eval-formula.two/construct/14rn5pl",
+   "kpId": "eval-formula",
+   "family": "eval-formula.two",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "4r + 2s",
+   "given": [
+    "r = 2",
+    "s = 11"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "c": 4,
+     "d": 2,
+     "p": 2,
+     "q": 11,
+     "rise": 8
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "30",
+    "tex": "30"
+   },
+   "distractors": [
+    {
+     "misconception": "second-variable-ignored",
+     "response": "8",
+     "tex": "8",
+     "failKey": "fail.seat.partial"
+    },
+    {
+     "misconception": "values-assigned-by-order",
+     "response": "48",
+     "tex": "48",
+     "failKey": "fail.seat.wrongsocket"
+    },
+    {
+     "misconception": "one-value-for-all-letters",
+     "response": "12",
+     "tex": "12",
+     "failKey": "fail.seat.wrongsocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.eval-formula.two",
+     "params": {
+      "c": 4,
+      "d": 2,
+      "p": 2,
+      "q": 11,
+      "rise": 8
+     },
+     "text": "Each charge goes to its own socket, not to whichever one is nearest."
+    },
+    {
+     "key": "hint.state.eval-formula.two",
+     "params": {
+      "c": 4,
+      "d": 2,
+      "p": 2,
+      "q": 11,
+      "rise": 8
+     },
+     "text": "The rise has come out at 8. The run has not been seated yet."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-formula.2",
+    "params": {},
+    "text": "Sixth Vey walks lines like this one and has never seated a value in the wrong socket."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.3",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "c": 4,
+    "d": 2,
+    "p": 2,
+    "q": 11
+   }
+  },
+  {
+   "id": "eval-formula.two/repair/19aqikt",
+   "kpId": "eval-formula",
+   "family": "eval-formula.two",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "5r + 7s",
+   "given": [
+    "r = 6",
+    "s = 2"
+   ],
+   "working": [
+    "5r + 7s",
+    "5 \\cdot 6 + 7 \\cdot 6",
+    "72"
+   ],
+   "brokenBy": "one-value-for-all-letters",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "c": 5,
+     "d": 7,
+     "p": 6,
+     "q": 2,
+     "rise": 30,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|44",
+    "tex": "5 \\cdot 6 + 7 \\cdot 2",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "second-variable-ignored",
+     "response": "2|30",
+     "tex": "5 \\cdot 6 + 7 \\cdot 0",
+     "failKey": "fail.seat.partial"
+    },
+    {
+     "misconception": "values-assigned-by-order",
+     "response": "2|52",
+     "tex": "5 \\cdot 2 + 7 \\cdot 6",
+     "failKey": "fail.seat.wrongsocket"
+    },
+    {
+     "misconception": "one-value-for-all-letters",
+     "response": "2|72",
+     "tex": "5 \\cdot 6 + 7 \\cdot 6",
+     "failKey": "fail.seat.wrongsocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "c": 5,
+      "d": 7,
+      "p": 6,
+      "q": 2,
+      "rise": 30,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "c": 5,
+      "d": 7,
+      "p": 6,
+      "q": 2,
+      "rise": 30,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-formula.2",
+    "params": {},
+    "text": "Sixth Vey walks lines like this one and has never seated a value in the wrong socket."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.3",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "c": 5,
+    "d": 7,
+    "p": 6,
+    "q": 2
+   }
+  },
+  {
+   "id": "eval-formula.two/generate/12o1x88",
+   "kpId": "eval-formula",
+   "family": "eval-formula.two",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "3r + 6s",
+   "given": [
+    "r = 7",
+    "s = 5"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "c": 3,
+     "d": 6,
+     "p": 7,
+     "q": 5,
+     "rise": 21,
+     "target": 51,
+     "at": 7,
+     "unknown": "r"
+    },
+    "text": "Stack a load in r that reads 51 when the socket holds 7."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3r + 30",
+    "tex": "3r + 30",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "r",
+    "at": 7,
+    "value": 51,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "c": 3,
+      "d": 6,
+      "p": 7,
+      "q": 5,
+      "rise": 21,
+      "target": 51,
+      "at": 7,
+      "unknown": "r"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "c": 3,
+      "d": 6,
+      "p": 7,
+      "q": 5,
+      "rise": 21,
+      "target": 51,
+      "at": 7,
+      "unknown": "r"
+     },
+     "text": "Seat 7 in whatever you build and it has to come out at 51."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-formula.1",
+    "params": {},
+    "text": "Two names, two sockets, one deck: a rise and a run, and neither takes the other's charge."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.3",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "c": 3,
+    "d": 6,
+    "p": 7,
+    "q": 5
+   }
+  },
+  {
+   "id": "eval-formula.two/construct/1r4z730",
+   "kpId": "eval-formula",
+   "family": "eval-formula.two",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "4r + 2s",
+   "given": [
+    "r = 3",
+    "s = 2"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "c": 4,
+     "d": 2,
+     "p": 3,
+     "q": 2,
+     "rise": 12
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "16",
+    "tex": "16"
+   },
+   "distractors": [
+    {
+     "misconception": "second-variable-ignored",
+     "response": "12",
+     "tex": "12",
+     "failKey": "fail.seat.partial"
+    },
+    {
+     "misconception": "values-assigned-by-order",
+     "response": "14",
+     "tex": "14",
+     "failKey": "fail.seat.wrongsocket"
+    },
+    {
+     "misconception": "one-value-for-all-letters",
+     "response": "18",
+     "tex": "18",
+     "failKey": "fail.seat.wrongsocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.eval-formula.two",
+     "params": {
+      "c": 4,
+      "d": 2,
+      "p": 3,
+      "q": 2,
+      "rise": 12
+     },
+     "text": "Each charge goes to its own socket, not to whichever one is nearest."
+    },
+    {
+     "key": "hint.state.eval-formula.two",
+     "params": {
+      "c": 4,
+      "d": 2,
+      "p": 3,
+      "q": 2,
+      "rise": 12
+     },
+     "text": "The rise has come out at 12. The run has not been seated yet."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-formula.1",
+    "params": {},
+    "text": "Two names, two sockets, one deck: a rise and a run, and neither takes the other's charge."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.3",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "c": 4,
+    "d": 2,
+    "p": 3,
+    "q": 2
+   }
+  },
+  {
+   "id": "eval-formula.two/construct/1rhxqzq",
+   "kpId": "eval-formula",
+   "family": "eval-formula.two",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "7r + 6s",
+   "given": [
+    "r = 7",
+    "s = 3"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "c": 7,
+     "d": 6,
+     "p": 7,
+     "q": 3,
+     "rise": 49
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "67",
+    "tex": "67"
+   },
+   "distractors": [
+    {
+     "misconception": "second-variable-ignored",
+     "response": "49",
+     "tex": "49",
+     "failKey": "fail.seat.partial"
+    },
+    {
+     "misconception": "values-assigned-by-order",
+     "response": "63",
+     "tex": "63",
+     "failKey": "fail.seat.wrongsocket"
+    },
+    {
+     "misconception": "one-value-for-all-letters",
+     "response": "91",
+     "tex": "91",
+     "failKey": "fail.seat.wrongsocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.eval-formula.two",
+     "params": {
+      "c": 7,
+      "d": 6,
+      "p": 7,
+      "q": 3,
+      "rise": 49
+     },
+     "text": "Each charge goes to its own socket, not to whichever one is nearest."
+    },
+    {
+     "key": "hint.state.eval-formula.two",
+     "params": {
+      "c": 7,
+      "d": 6,
+      "p": 7,
+      "q": 3,
+      "rise": 49
+     },
+     "text": "The rise has come out at 49. The run has not been seated yet."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-formula.1",
+    "params": {},
+    "text": "Two names, two sockets, one deck: a rise and a run, and neither takes the other's charge."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.3",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "c": 7,
+    "d": 6,
+    "p": 7,
+    "q": 3
+   }
+  },
+  {
+   "id": "eval-formula.two/repair/11ngohg",
+   "kpId": "eval-formula",
+   "family": "eval-formula.two",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "2r + 3s",
+   "given": [
+    "r = 9",
+    "s = 3"
+   ],
+   "working": [
+    "2r + 3s",
+    "2 \\cdot 3 + 3 \\cdot 9",
+    "33"
+   ],
+   "brokenBy": "values-assigned-by-order",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "c": 2,
+     "d": 3,
+     "p": 9,
+     "q": 3,
+     "rise": 18,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|27",
+    "tex": "2 \\cdot 9 + 3 \\cdot 3",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "second-variable-ignored",
+     "response": "2|18",
+     "tex": "2 \\cdot 9 + 3 \\cdot 0",
+     "failKey": "fail.seat.partial"
+    },
+    {
+     "misconception": "values-assigned-by-order",
+     "response": "2|33",
+     "tex": "2 \\cdot 3 + 3 \\cdot 9",
+     "failKey": "fail.seat.wrongsocket"
+    },
+    {
+     "misconception": "one-value-for-all-letters",
+     "response": "2|45",
+     "tex": "2 \\cdot 9 + 3 \\cdot 9",
+     "failKey": "fail.seat.wrongsocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "c": 2,
+      "d": 3,
+      "p": 9,
+      "q": 3,
+      "rise": 18,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "c": 2,
+      "d": 3,
+      "p": 9,
+      "q": 3,
+      "rise": 18,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-formula.1",
+    "params": {},
+    "text": "Two names, two sockets, one deck: a rise and a run, and neither takes the other's charge."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.3",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "c": 2,
+    "d": 3,
+    "p": 9,
+    "q": 3
    }
   }
  ]

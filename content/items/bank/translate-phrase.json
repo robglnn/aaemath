@@ -15,7 +15,7 @@
   "no-variable-introduced",
   "twice-read-as-plus-two"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "translate-phrase.groups/construct/1sjdzzc",
@@ -103,7 +103,7 @@
    }
   },
   {
-   "id": "translate-phrase.twice/construct/1k75i2z",
+   "id": "translate-phrase.twice/construct/1lb72cu",
    "kpId": "translate-phrase",
    "family": "translate-phrase.twice",
    "form": "construct",
@@ -115,34 +115,34 @@
    "spoken": {
     "key": "spoken.translate-phrase.twice",
     "params": {
-     "b": 6
+     "b": 7
     },
-    "text": "Twice what you brought, and 6 more on top."
+    "text": "Twice what you brought, and 7 more on top."
    },
    "ask": {
     "key": "ask.load",
     "params": {
-     "b": 6
+     "b": 7
     },
     "text": "Write the load."
    },
    "answerType": "expression",
    "unknown": "n",
    "answer": {
-    "canonical": "2*n + 6",
-    "tex": "2n + 6"
+    "canonical": "2*n + 7",
+    "tex": "2n + 7"
    },
    "distractors": [
     {
      "misconception": "twice-read-as-plus-two",
-     "response": "1*n + 8",
-     "tex": "n + 2 + 6",
+     "response": "1*n + 9",
+     "tex": "n + 2 + 7",
      "failKey": "fail.said.flat"
     },
     {
      "misconception": "no-variable-introduced",
-     "response": "8",
-     "tex": "8",
+     "response": "9",
+     "tex": "9",
      "failKey": "fail.said.nosocket"
     }
    ],
@@ -155,22 +155,22 @@
     {
      "key": "hint.move.translate-phrase.twice",
      "params": {
-      "b": 6
+      "b": 7
      },
      "text": "Twice is a count, not a join."
     },
     {
      "key": "hint.state.translate-phrase.twice",
      "params": {
-      "b": 6
+      "b": 7
      },
-     "text": "The socket is riding in a count of two, and 6 is standing beside it."
+     "text": "The socket is riding in a count of two, and 7 is standing beside it."
     }
    ],
    "worldFraming": {
-    "key": "frame.translate-phrase.2",
+    "key": "frame.translate-phrase.1",
     "params": {},
-    "text": "The can has to be sealed before the sentence finishes."
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
    },
    "standards": [
     "CCSS.6.EE.A.2a",
@@ -179,7 +179,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "b": 6
+    "b": 7
    }
   },
   {
@@ -281,7 +281,7 @@
    }
   },
   {
-   "id": "translate-phrase.twice/repair/1la3ynl",
+   "id": "translate-phrase.twice/repair/9e9j3u",
    "kpId": "translate-phrase",
    "family": "translate-phrase.twice",
    "form": "repair",
@@ -293,19 +293,19 @@
    "spoken": {
     "key": "spoken.translate-phrase.twice",
     "params": {
-     "b": 8
+     "b": 10
     },
-    "text": "Twice what you brought, and 8 more on top."
+    "text": "Twice what you brought, and 10 more on top."
    },
    "working": [
     "n",
-    "10"
+    "n + 2 + 10"
    ],
-   "brokenBy": "no-variable-introduced",
+   "brokenBy": "twice-read-as-plus-two",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "b": 8,
+     "b": 10,
      "lines": 2,
      "line": 2
     },
@@ -314,22 +314,22 @@
    "answerType": "repair",
    "unknown": "n",
    "answer": {
-    "canonical": "2|2*n + 8",
-    "tex": "2n + 8",
+    "canonical": "2|2*n + 10",
+    "tex": "2n + 10",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "twice-read-as-plus-two",
-     "response": "2|1*n + 10",
-     "tex": "n + 2 + 8",
+     "response": "2|1*n + 12",
+     "tex": "n + 2 + 10",
      "failKey": "fail.said.flat"
     },
     {
      "misconception": "no-variable-introduced",
-     "response": "2|10",
-     "tex": "10",
+     "response": "2|12",
+     "tex": "12",
      "failKey": "fail.said.nosocket"
     }
    ],
@@ -342,7 +342,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "b": 8,
+      "b": 10,
       "line": 2,
       "lines": 2
      },
@@ -351,7 +351,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "b": 8,
+      "b": 10,
       "line": 2,
       "lines": 2
      },
@@ -359,9 +359,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.translate-phrase.2",
+    "key": "frame.translate-phrase.1",
     "params": {},
-    "text": "The can has to be sealed before the sentence finishes."
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
    },
    "standards": [
     "CCSS.6.EE.A.2a",
@@ -370,7 +370,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "b": 8
+    "b": 10
    }
   },
   {
@@ -546,7 +546,7 @@
    }
   },
   {
-   "id": "translate-phrase.twice/construct/1las8r6",
+   "id": "translate-phrase.twice/construct/1lba7ut",
    "kpId": "translate-phrase",
    "family": "translate-phrase.twice",
    "form": "construct",
@@ -558,34 +558,34 @@
    "spoken": {
     "key": "spoken.translate-phrase.twice",
     "params": {
-     "b": 3
+     "b": 4
     },
-    "text": "Twice what you brought, and 3 more on top."
+    "text": "Twice what you brought, and 4 more on top."
    },
    "ask": {
     "key": "ask.load",
     "params": {
-     "b": 3
+     "b": 4
     },
     "text": "Write the load."
    },
    "answerType": "expression",
    "unknown": "n",
    "answer": {
-    "canonical": "2*n + 3",
-    "tex": "2n + 3"
+    "canonical": "2*n + 4",
+    "tex": "2n + 4"
    },
    "distractors": [
     {
      "misconception": "twice-read-as-plus-two",
-     "response": "1*n + 5",
-     "tex": "n + 2 + 3",
+     "response": "1*n + 6",
+     "tex": "n + 2 + 4",
      "failKey": "fail.said.flat"
     },
     {
      "misconception": "no-variable-introduced",
-     "response": "5",
-     "tex": "5",
+     "response": "6",
+     "tex": "6",
      "failKey": "fail.said.nosocket"
     }
    ],
@@ -598,22 +598,22 @@
     {
      "key": "hint.move.translate-phrase.twice",
      "params": {
-      "b": 3
+      "b": 4
      },
      "text": "Twice is a count, not a join."
     },
     {
      "key": "hint.state.translate-phrase.twice",
      "params": {
-      "b": 3
+      "b": 4
      },
-     "text": "The socket is riding in a count of two, and 3 is standing beside it."
+     "text": "The socket is riding in a count of two, and 4 is standing beside it."
     }
    ],
    "worldFraming": {
-    "key": "frame.translate-phrase.1",
+    "key": "frame.translate-phrase.2",
     "params": {},
-    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+    "text": "The can has to be sealed before the sentence finishes."
    },
    "standards": [
     "CCSS.6.EE.A.2a",
@@ -622,7 +622,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "b": 3
+    "b": 4
    }
   },
   {
@@ -724,7 +724,7 @@
    }
   },
   {
-   "id": "translate-phrase.twice/repair/1lba7ut",
+   "id": "translate-phrase.twice/repair/1la3ynl",
    "kpId": "translate-phrase",
    "family": "translate-phrase.twice",
    "form": "repair",
@@ -736,19 +736,19 @@
    "spoken": {
     "key": "spoken.translate-phrase.twice",
     "params": {
-     "b": 4
+     "b": 8
     },
-    "text": "Twice what you brought, and 4 more on top."
+    "text": "Twice what you brought, and 8 more on top."
    },
    "working": [
     "n",
-    "6"
+    "10"
    ],
    "brokenBy": "no-variable-introduced",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "b": 4,
+     "b": 8,
      "lines": 2,
      "line": 2
     },
@@ -757,22 +757,22 @@
    "answerType": "repair",
    "unknown": "n",
    "answer": {
-    "canonical": "2|2*n + 4",
-    "tex": "2n + 4",
+    "canonical": "2|2*n + 8",
+    "tex": "2n + 8",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "twice-read-as-plus-two",
-     "response": "2|1*n + 6",
-     "tex": "n + 2 + 4",
+     "response": "2|1*n + 10",
+     "tex": "n + 2 + 8",
      "failKey": "fail.said.flat"
     },
     {
      "misconception": "no-variable-introduced",
-     "response": "2|6",
-     "tex": "6",
+     "response": "2|10",
+     "tex": "10",
      "failKey": "fail.said.nosocket"
     }
    ],
@@ -785,7 +785,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "b": 4,
+      "b": 8,
       "line": 2,
       "lines": 2
      },
@@ -794,7 +794,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "b": 4,
+      "b": 8,
       "line": 2,
       "lines": 2
      },
@@ -813,7 +813,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "b": 4
+    "b": 8
    }
   },
   {
@@ -989,7 +989,7 @@
    }
   },
   {
-   "id": "translate-phrase.twice/construct/1lba7ut",
+   "id": "translate-phrase.twice/construct/1k75i2z",
    "kpId": "translate-phrase",
    "family": "translate-phrase.twice",
    "form": "construct",
@@ -1001,34 +1001,34 @@
    "spoken": {
     "key": "spoken.translate-phrase.twice",
     "params": {
-     "b": 4
+     "b": 6
     },
-    "text": "Twice what you brought, and 4 more on top."
+    "text": "Twice what you brought, and 6 more on top."
    },
    "ask": {
     "key": "ask.load",
     "params": {
-     "b": 4
+     "b": 6
     },
     "text": "Write the load."
    },
    "answerType": "expression",
    "unknown": "n",
    "answer": {
-    "canonical": "2*n + 4",
-    "tex": "2n + 4"
+    "canonical": "2*n + 6",
+    "tex": "2n + 6"
    },
    "distractors": [
     {
      "misconception": "twice-read-as-plus-two",
-     "response": "1*n + 6",
-     "tex": "n + 2 + 4",
+     "response": "1*n + 8",
+     "tex": "n + 2 + 6",
      "failKey": "fail.said.flat"
     },
     {
      "misconception": "no-variable-introduced",
-     "response": "6",
-     "tex": "6",
+     "response": "8",
+     "tex": "8",
      "failKey": "fail.said.nosocket"
     }
    ],
@@ -1041,16 +1041,16 @@
     {
      "key": "hint.move.translate-phrase.twice",
      "params": {
-      "b": 4
+      "b": 6
      },
      "text": "Twice is a count, not a join."
     },
     {
      "key": "hint.state.translate-phrase.twice",
      "params": {
-      "b": 4
+      "b": 6
      },
-     "text": "The socket is riding in a count of two, and 4 is standing beside it."
+     "text": "The socket is riding in a count of two, and 6 is standing beside it."
     }
    ],
    "worldFraming": {
@@ -1065,7 +1065,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "b": 4
+    "b": 6
    }
   },
   {
@@ -1167,6 +1167,99 @@
    }
   },
   {
+   "id": "translate-phrase.twice/repair/1np5f9r",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 20
+    },
+    "text": "Twice what you brought, and 20 more on top."
+   },
+   "working": [
+    "n",
+    "22"
+   ],
+   "brokenBy": "no-variable-introduced",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "b": 20,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|2*n + 20",
+    "tex": "2n + 20",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "2|1*n + 22",
+     "tex": "n + 2 + 20",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|22",
+     "tex": "22",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "b": 20,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "b": 20,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 20
+   }
+  },
+  {
    "id": "translate-phrase.groups/generate/1m04i2o",
    "kpId": "translate-phrase",
    "family": "translate-phrase.groups",
@@ -1250,6 +1343,86 @@
    ],
    "params": {
     "a": 5,
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.twice/construct/1k7eykw",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 5
+    },
+    "text": "Twice what you brought, and 5 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "b": 5
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2*n + 5",
+    "tex": "2n + 5"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "1*n + 7",
+     "tex": "n + 2 + 5",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "7",
+     "tex": "7",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.twice",
+     "params": {
+      "b": 5
+     },
+     "text": "Twice is a count, not a join."
+    },
+    {
+     "key": "hint.state.translate-phrase.twice",
+     "params": {
+      "b": 5
+     },
+     "text": "The socket is riding in a count of two, and 5 is standing beside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
     "b": 5
    }
   },
@@ -1352,7 +1525,7 @@
    }
   },
   {
-   "id": "translate-phrase.twice/repair/1k7eykw",
+   "id": "translate-phrase.twice/repair/1k75i2z",
    "kpId": "translate-phrase",
    "family": "translate-phrase.twice",
    "form": "repair",
@@ -1364,19 +1537,19 @@
    "spoken": {
     "key": "spoken.translate-phrase.twice",
     "params": {
-     "b": 5
+     "b": 6
     },
-    "text": "Twice what you brought, and 5 more on top."
+    "text": "Twice what you brought, and 6 more on top."
    },
    "working": [
     "n",
-    "n + 2 + 5"
+    "8"
    ],
-   "brokenBy": "twice-read-as-plus-two",
+   "brokenBy": "no-variable-introduced",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "b": 5,
+     "b": 6,
      "lines": 2,
      "line": 2
     },
@@ -1385,22 +1558,22 @@
    "answerType": "repair",
    "unknown": "n",
    "answer": {
-    "canonical": "2|2*n + 5",
-    "tex": "2n + 5",
+    "canonical": "2|2*n + 6",
+    "tex": "2n + 6",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "twice-read-as-plus-two",
-     "response": "2|1*n + 7",
-     "tex": "n + 2 + 5",
+     "response": "2|1*n + 8",
+     "tex": "n + 2 + 6",
      "failKey": "fail.said.flat"
     },
     {
      "misconception": "no-variable-introduced",
-     "response": "2|7",
-     "tex": "7",
+     "response": "2|8",
+     "tex": "8",
      "failKey": "fail.said.nosocket"
     }
    ],
@@ -1413,7 +1586,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "b": 5,
+      "b": 6,
       "line": 2,
       "lines": 2
      },
@@ -1422,7 +1595,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "b": 5,
+      "b": 6,
       "line": 2,
       "lines": 2
      },
@@ -1430,9 +1603,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.translate-phrase.1",
+    "key": "frame.translate-phrase.2",
     "params": {},
-    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+    "text": "The can has to be sealed before the sentence finishes."
    },
    "standards": [
     "CCSS.6.EE.A.2a",
@@ -1441,7 +1614,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "b": 5
+    "b": 6
    }
   },
   {
@@ -1617,6 +1790,86 @@
    }
   },
   {
+   "id": "translate-phrase.twice/construct/1las8r6",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 3
+    },
+    "text": "Twice what you brought, and 3 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "b": 3
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2*n + 3",
+    "tex": "2n + 3"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "1*n + 5",
+     "tex": "n + 2 + 3",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "5",
+     "tex": "5",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.twice",
+     "params": {
+      "b": 3
+     },
+     "text": "Twice is a count, not a join."
+    },
+    {
+     "key": "hint.state.translate-phrase.twice",
+     "params": {
+      "b": 3
+     },
+     "text": "The socket is riding in a count of two, and 3 is standing beside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 3
+   }
+  },
+  {
    "id": "translate-phrase.groups/repair/9253u",
    "kpId": "translate-phrase",
    "family": "translate-phrase.groups",
@@ -1715,7 +1968,7 @@
    }
   },
   {
-   "id": "translate-phrase.twice/repair/1k75i2z",
+   "id": "translate-phrase.twice/repair/9em53q",
    "kpId": "translate-phrase",
    "family": "translate-phrase.twice",
    "form": "repair",
@@ -1727,19 +1980,19 @@
    "spoken": {
     "key": "spoken.translate-phrase.twice",
     "params": {
-     "b": 6
+     "b": 14
     },
-    "text": "Twice what you brought, and 6 more on top."
+    "text": "Twice what you brought, and 14 more on top."
    },
    "working": [
     "n",
-    "8"
+    "n + 2 + 14"
    ],
-   "brokenBy": "no-variable-introduced",
+   "brokenBy": "twice-read-as-plus-two",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "b": 6,
+     "b": 14,
      "lines": 2,
      "line": 2
     },
@@ -1748,22 +2001,22 @@
    "answerType": "repair",
    "unknown": "n",
    "answer": {
-    "canonical": "2|2*n + 6",
-    "tex": "2n + 6",
+    "canonical": "2|2*n + 14",
+    "tex": "2n + 14",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "twice-read-as-plus-two",
-     "response": "2|1*n + 8",
-     "tex": "n + 2 + 6",
+     "response": "2|1*n + 16",
+     "tex": "n + 2 + 14",
      "failKey": "fail.said.flat"
     },
     {
      "misconception": "no-variable-introduced",
-     "response": "2|8",
-     "tex": "8",
+     "response": "2|16",
+     "tex": "16",
      "failKey": "fail.said.nosocket"
     }
    ],
@@ -1776,7 +2029,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "b": 6,
+      "b": 14,
       "line": 2,
       "lines": 2
      },
@@ -1785,7 +2038,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "b": 6,
+      "b": 14,
       "line": 2,
       "lines": 2
      },
@@ -1793,9 +2046,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.translate-phrase.2",
+    "key": "frame.translate-phrase.1",
     "params": {},
-    "text": "The can has to be sealed before the sentence finishes."
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
    },
    "standards": [
     "CCSS.6.EE.A.2a",
@@ -1804,7 +2057,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "b": 6
+    "b": 14
    }
   },
   {
@@ -1980,7 +2233,7 @@
    }
   },
   {
-   "id": "translate-phrase.twice/construct/1la3ynl",
+   "id": "translate-phrase.twice/construct/8azefj",
    "kpId": "translate-phrase",
    "family": "translate-phrase.twice",
    "form": "construct",
@@ -1992,34 +2245,34 @@
    "spoken": {
     "key": "spoken.translate-phrase.twice",
     "params": {
-     "b": 8
+     "b": 19
     },
-    "text": "Twice what you brought, and 8 more on top."
+    "text": "Twice what you brought, and 19 more on top."
    },
    "ask": {
     "key": "ask.load",
     "params": {
-     "b": 8
+     "b": 19
     },
     "text": "Write the load."
    },
    "answerType": "expression",
    "unknown": "n",
    "answer": {
-    "canonical": "2*n + 8",
-    "tex": "2n + 8"
+    "canonical": "2*n + 19",
+    "tex": "2n + 19"
    },
    "distractors": [
     {
      "misconception": "twice-read-as-plus-two",
-     "response": "1*n + 10",
-     "tex": "n + 2 + 8",
+     "response": "1*n + 21",
+     "tex": "n + 2 + 19",
      "failKey": "fail.said.flat"
     },
     {
      "misconception": "no-variable-introduced",
-     "response": "10",
-     "tex": "10",
+     "response": "21",
+     "tex": "21",
      "failKey": "fail.said.nosocket"
     }
    ],
@@ -2032,16 +2285,16 @@
     {
      "key": "hint.move.translate-phrase.twice",
      "params": {
-      "b": 8
+      "b": 19
      },
      "text": "Twice is a count, not a join."
     },
     {
      "key": "hint.state.translate-phrase.twice",
      "params": {
-      "b": 8
+      "b": 19
      },
-     "text": "The socket is riding in a count of two, and 8 is standing beside it."
+     "text": "The socket is riding in a count of two, and 19 is standing beside it."
     }
    ],
    "worldFraming": {
@@ -2056,7 +2309,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "b": 8
+    "b": 19
    }
   },
   {
@@ -2158,6 +2411,99 @@
    }
   },
   {
+   "id": "translate-phrase.twice/repair/1ot6zjm",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 21
+    },
+    "text": "Twice what you brought, and 21 more on top."
+   },
+   "working": [
+    "n",
+    "n + 2 + 21"
+   ],
+   "brokenBy": "twice-read-as-plus-two",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "b": 21,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|2*n + 21",
+    "tex": "2n + 21",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "2|1*n + 23",
+     "tex": "n + 2 + 21",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|23",
+     "tex": "23",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "b": 21,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "b": 21,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 21
+   }
+  },
+  {
    "id": "translate-phrase.groups/generate/9253u",
    "kpId": "translate-phrase",
    "family": "translate-phrase.groups",
@@ -2242,86 +2588,6 @@
    "params": {
     "a": 9,
     "b": 7
-   }
-  },
-  {
-   "id": "translate-phrase.twice/construct/1k7eykw",
-   "kpId": "translate-phrase",
-   "family": "translate-phrase.twice",
-   "form": "construct",
-   "difficulty": 1,
-   "tier": "easy",
-   "objectClass": "Vessel",
-   "stem": "n",
-   "given": [],
-   "spoken": {
-    "key": "spoken.translate-phrase.twice",
-    "params": {
-     "b": 5
-    },
-    "text": "Twice what you brought, and 5 more on top."
-   },
-   "ask": {
-    "key": "ask.load",
-    "params": {
-     "b": 5
-    },
-    "text": "Write the load."
-   },
-   "answerType": "expression",
-   "unknown": "n",
-   "answer": {
-    "canonical": "2*n + 5",
-    "tex": "2n + 5"
-   },
-   "distractors": [
-    {
-     "misconception": "twice-read-as-plus-two",
-     "response": "1*n + 7",
-     "tex": "n + 2 + 5",
-     "failKey": "fail.said.flat"
-    },
-    {
-     "misconception": "no-variable-introduced",
-     "response": "7",
-     "tex": "7",
-     "failKey": "fail.said.nosocket"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Vessel",
-     "params": {},
-     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
-    },
-    {
-     "key": "hint.move.translate-phrase.twice",
-     "params": {
-      "b": 5
-     },
-     "text": "Twice is a count, not a join."
-    },
-    {
-     "key": "hint.state.translate-phrase.twice",
-     "params": {
-      "b": 5
-     },
-     "text": "The socket is riding in a count of two, and 5 is standing beside it."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.translate-phrase.1",
-    "params": {},
-    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2a",
-    "CCSS.6.EE.B.6",
-    "FL.MA.6.AR.1.1",
-    "VA.A.EO.1"
-   ],
-   "params": {
-    "b": 5
    }
   },
   {
@@ -2423,6 +2689,99 @@
    }
   },
   {
+   "id": "translate-phrase.twice/repair/1lba7ut",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 4
+    },
+    "text": "Twice what you brought, and 4 more on top."
+   },
+   "working": [
+    "n",
+    "6"
+   ],
+   "brokenBy": "no-variable-introduced",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "b": 4,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|2*n + 4",
+    "tex": "2n + 4",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "2|1*n + 6",
+     "tex": "n + 2 + 4",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|6",
+     "tex": "6",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "b": 4,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "b": 4,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 4
+   }
+  },
+  {
    "id": "translate-phrase.groups/construct/9253u",
    "kpId": "translate-phrase",
    "family": "translate-phrase.groups",
@@ -2505,6 +2864,86 @@
    "params": {
     "a": 9,
     "b": 7
+   }
+  },
+  {
+   "id": "translate-phrase.twice/construct/9ecolt",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 13
+    },
+    "text": "Twice what you brought, and 13 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "b": 13
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2*n + 13",
+    "tex": "2n + 13"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "1*n + 15",
+     "tex": "n + 2 + 13",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "15",
+     "tex": "15",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.twice",
+     "params": {
+      "b": 13
+     },
+     "text": "Twice is a count, not a join."
+    },
+    {
+     "key": "hint.state.translate-phrase.twice",
+     "params": {
+      "b": 13
+     },
+     "text": "The socket is riding in a count of two, and 13 is standing beside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 13
    }
   },
   {
@@ -2606,7 +3045,7 @@
    }
   },
   {
-   "id": "translate-phrase.twice/repair/1las8r6",
+   "id": "translate-phrase.twice/repair/1k7eykw",
    "kpId": "translate-phrase",
    "family": "translate-phrase.twice",
    "form": "repair",
@@ -2618,19 +3057,19 @@
    "spoken": {
     "key": "spoken.translate-phrase.twice",
     "params": {
-     "b": 3
+     "b": 5
     },
-    "text": "Twice what you brought, and 3 more on top."
+    "text": "Twice what you brought, and 5 more on top."
    },
    "working": [
     "n",
-    "n + 2 + 3"
+    "n + 2 + 5"
    ],
    "brokenBy": "twice-read-as-plus-two",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "b": 3,
+     "b": 5,
      "lines": 2,
      "line": 2
     },
@@ -2639,22 +3078,22 @@
    "answerType": "repair",
    "unknown": "n",
    "answer": {
-    "canonical": "2|2*n + 3",
-    "tex": "2n + 3",
+    "canonical": "2|2*n + 5",
+    "tex": "2n + 5",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "twice-read-as-plus-two",
-     "response": "2|1*n + 5",
-     "tex": "n + 2 + 3",
+     "response": "2|1*n + 7",
+     "tex": "n + 2 + 5",
      "failKey": "fail.said.flat"
     },
     {
      "misconception": "no-variable-introduced",
-     "response": "2|5",
-     "tex": "5",
+     "response": "2|7",
+     "tex": "7",
      "failKey": "fail.said.nosocket"
     }
    ],
@@ -2667,7 +3106,7 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "b": 3,
+      "b": 5,
       "line": 2,
       "lines": 2
      },
@@ -2676,7 +3115,7 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "b": 3,
+      "b": 5,
       "line": 2,
       "lines": 2
      },
@@ -2695,7 +3134,94 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "b": 3
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.groups/generate/1fmkp2i",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 3,
+     "b": 5
+    },
+    "text": "3 runs of it, and 5 more on top."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 3,
+     "b": 5,
+     "target": "3*n + 5",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 3*n + 5."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "3n + 5",
+    "tex": "3n + 5",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "3*n + 5",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "target": "3*n + 5",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "target": "3*n + 5",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 3*n + 5. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 5
    }
   }
  ]

@@ -14,7 +14,7 @@
   "inverse-operations-on-each-side",
   "divide-by-possible-zero"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "props-equality.move/construct/rwz4xt",
@@ -2427,6 +2427,486 @@
    "params": {
     "a": 3,
     "b": 6
+   }
+  },
+  {
+   "id": "props-equality.move/generate/qsuf5z",
+   "kpId": "props-equality",
+   "family": "props-equality.move",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "x + 5 = 11",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.claimClosesAt",
+    "params": {
+     "a": 5,
+     "b": 11,
+     "target": "6",
+     "unknown": "x"
+    },
+    "text": "Author a claim on this site that closes at 6."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 5 = 11",
+    "tex": "x + 5 = 11",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "x",
+    "value": "6",
+    "needs": [
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 5,
+      "b": 11,
+      "target": "6",
+      "unknown": "x"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 5,
+      "b": 11,
+      "target": "6",
+      "unknown": "x"
+     },
+     "text": "Whatever you write, seating 6 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-equality.2",
+    "params": {},
+    "text": "Rell weighs everything she owns, including her boots, including you."
+   },
+   "standards": [
+    "CCSS.HSA-REI.A.1",
+    "CCSS.6.EE.B.5",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 11
+   }
+  },
+  {
+   "id": "props-equality.move/construct/yfm24b",
+   "kpId": "props-equality",
+   "family": "props-equality.move",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "x + 5 = -9",
+   "given": [],
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 5,
+     "b": -9
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*x + 14 = 0",
+    "tex": "x = -14"
+   },
+   "distractors": [
+    {
+     "misconception": "operate-on-one-side",
+     "response": "1*x + 9 = 0",
+     "tex": "x = -9",
+     "failKey": "fail.onesided"
+    },
+    {
+     "misconception": "inverse-operations-on-each-side",
+     "response": "1*x + 4 = 0",
+     "tex": "x = -4",
+     "failKey": "fail.inverse"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.props-equality.move",
+     "params": {
+      "a": 5,
+      "b": -9
+     },
+     "text": "Whatever you lift off the near pan comes off the far pan too."
+    },
+    {
+     "key": "hint.state.props-equality.move",
+     "params": {
+      "a": 5,
+      "b": -9
+     },
+     "text": "The near pan is carrying a lip of 5, and the far pan is carrying -9."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-equality.2",
+    "params": {},
+    "text": "Rell weighs everything she owns, including her boots, including you."
+   },
+   "standards": [
+    "CCSS.HSA-REI.A.1",
+    "CCSS.6.EE.B.5",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": -9
+   }
+  },
+  {
+   "id": "props-equality.zero/construct/1ejpdzv",
+   "kpId": "props-equality",
+   "family": "props-equality.zero",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "3x = 8x",
+   "given": [],
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 3,
+     "b": 8,
+     "diff": -5
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*x = 0",
+    "tex": "-5x = 0"
+   },
+   "distractors": [
+    {
+     "misconception": "divide-by-possible-zero",
+     "response": "1 = 0",
+     "tex": "3 = 8",
+     "failKey": "fail.sill.zero"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.props-equality.zero",
+     "params": {
+      "a": 3,
+      "b": 8,
+      "diff": -5
+     },
+     "text": "Sharing both pans by a socket is sharing by something that may be nothing."
+    },
+    {
+     "key": "hint.state.props-equality.zero",
+     "params": {
+      "a": 3,
+      "b": 8,
+      "diff": -5
+     },
+     "text": "Take the far pan off the near one and -5 of the socket is left standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-equality.2",
+    "params": {},
+    "text": "Rell weighs everything she owns, including her boots, including you."
+   },
+   "standards": [
+    "CCSS.HSA-REI.A.1",
+    "CCSS.6.EE.B.5",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 8
+   }
+  },
+  {
+   "id": "props-equality.move/repair/5f67ww",
+   "kpId": "props-equality",
+   "family": "props-equality.move",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "x - 6 = 7",
+   "given": [],
+   "working": [
+    "x - 6 = 7",
+    "x = 7"
+   ],
+   "brokenBy": "operate-on-one-side",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": -6,
+     "b": 7,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -13 = 0",
+    "tex": "x = 13",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "operate-on-one-side",
+     "response": "2|1*x + -7 = 0",
+     "tex": "x = 7",
+     "failKey": "fail.onesided"
+    },
+    {
+     "misconception": "inverse-operations-on-each-side",
+     "response": "2|1*x + -1 = 0",
+     "tex": "x = 1",
+     "failKey": "fail.inverse"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": -6,
+      "b": 7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": -6,
+      "b": 7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-equality.1",
+    "params": {},
+    "text": "Rell's balance. Lift a mass off the near pan and the far pan rises until you have lifted as much off it."
+   },
+   "standards": [
+    "CCSS.HSA-REI.A.1",
+    "CCSS.6.EE.B.5",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": -6,
+    "b": 7
+   }
+  },
+  {
+   "id": "props-equality.zero/repair/1conct7",
+   "kpId": "props-equality",
+   "family": "props-equality.zero",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "2x = 9x",
+   "given": [],
+   "working": [
+    "2x = 9x",
+    "2 = 9"
+   ],
+   "brokenBy": "divide-by-possible-zero",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": 9,
+     "diff": -7,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x = 0",
+    "tex": "-7x = 0",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "divide-by-possible-zero",
+     "response": "2|1 = 0",
+     "tex": "2 = 9",
+     "failKey": "fail.sill.zero"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": 9,
+      "diff": -7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": 9,
+      "diff": -7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-equality.2",
+    "params": {},
+    "text": "Rell weighs everything she owns, including her boots, including you."
+   },
+   "standards": [
+    "CCSS.HSA-REI.A.1",
+    "CCSS.6.EE.B.5",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 9
+   }
+  },
+  {
+   "id": "props-equality.move/generate/eif82z",
+   "kpId": "props-equality",
+   "family": "props-equality.move",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "x + 2 = -4",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.claimClosesAt",
+    "params": {
+     "a": 2,
+     "b": -4,
+     "target": "-6",
+     "unknown": "x"
+    },
+    "text": "Author a claim on this site that closes at -6."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 2 = -4",
+    "tex": "x + 2 = -4",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "x",
+    "value": "-6",
+    "needs": [
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 2,
+      "b": -4,
+      "target": "-6",
+      "unknown": "x"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 2,
+      "b": -4,
+      "target": "-6",
+      "unknown": "x"
+     },
+     "text": "Whatever you write, seating -6 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-equality.2",
+    "params": {},
+    "text": "Rell weighs everything she owns, including her boots, including you."
+   },
+   "standards": [
+    "CCSS.HSA-REI.A.1",
+    "CCSS.6.EE.B.5",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": -4
    }
   }
  ]

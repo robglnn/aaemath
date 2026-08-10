@@ -16,7 +16,7 @@
   "distribute-reaches-variable-only",
   "coefficients-added-not-multiplied"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "distribute-variable.core/construct/1of3p1i",
@@ -2926,6 +2926,588 @@
     "a": 5,
     "b": 3,
     "c": 6
+   }
+  },
+  {
+   "id": "distribute-variable.core/construct/5tm83u",
+   "kpId": "distribute-variable",
+   "family": "distribute-variable.core",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "4\\left(3x - 3\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 4,
+     "b": 3,
+     "c": -3,
+     "first": 12,
+     "second": -12
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "12*x + -12",
+    "tex": "12x - 12"
+   },
+   "distractors": [
+    {
+     "misconception": "variable-multiplied-as-well",
+     "response": "12*x^2 + -12",
+     "tex": "12x^{2} - 12",
+     "failKey": "fail.kind.changed"
+    },
+    {
+     "misconception": "distribute-reaches-variable-only",
+     "response": "12*x + -3",
+     "tex": "12x - 3",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "coefficients-added-not-multiplied",
+     "response": "7*x + 1",
+     "tex": "7x + 1",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-variable.core",
+     "params": {
+      "a": 4,
+      "b": 3,
+      "c": -3,
+      "first": 12,
+      "second": -12
+     },
+     "text": "The collar outside multiplies the collar inside. The socket rides along untouched."
+    },
+    {
+     "key": "hint.state.distribute-variable.core",
+     "params": {
+      "a": 4,
+      "b": 3,
+      "c": -3,
+      "first": 12,
+      "second": -12
+     },
+     "text": "The socket term has climbed to a count of 12. The fixed weight is still waiting."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-variable.1",
+    "params": {},
+    "text": "The ward has a socket in it now. The value scales what it is rated for, never what it is made of."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 4,
+    "b": 3,
+    "c": -3
+   }
+  },
+  {
+   "id": "distribute-variable.core/repair/1ayj35d",
+   "kpId": "distribute-variable",
+   "family": "distribute-variable.core",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "3\\left(5x - 3\\right)",
+   "given": [],
+   "working": [
+    "3\\left(5x - 3\\right)",
+    "15x - 3"
+   ],
+   "brokenBy": "distribute-reaches-variable-only",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 5,
+     "c": -3,
+     "first": 15,
+     "second": -9,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|15*x + -9",
+    "tex": "15x - 9",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "variable-multiplied-as-well",
+     "response": "2|15*x^2 + -9",
+     "tex": "15x^{2} - 9",
+     "failKey": "fail.kind.changed"
+    },
+    {
+     "misconception": "distribute-reaches-variable-only",
+     "response": "2|15*x + -3",
+     "tex": "15x - 3",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "coefficients-added-not-multiplied",
+     "response": "2|8*x",
+     "tex": "8x",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "c": -3,
+      "first": 15,
+      "second": -9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "c": -3,
+      "first": 15,
+      "second": -9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-variable.2",
+    "params": {},
+    "text": "You can watch the rating climb on the plate as it goes in."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 5,
+    "c": -3
+   }
+  },
+  {
+   "id": "distribute-variable.core/generate/1uxvuea",
+   "kpId": "distribute-variable",
+   "family": "distribute-variable.core",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "3\\left(6x - 9\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.gathersTo",
+    "params": {
+     "a": 3,
+     "b": 6,
+     "c": -9,
+     "first": 18,
+     "second": -27,
+     "target": "18*x + -27",
+     "unknown": "x"
+    },
+    "text": "Stack a load that gathers to 18*x + -27."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3\\left(6x - 9\\right)",
+    "tex": "3\\left(6x - 9\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "18*x + -27",
+    "unknown": "x",
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": -9,
+      "first": 18,
+      "second": -27,
+      "target": "18*x + -27",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": -9,
+      "first": 18,
+      "second": -27,
+      "target": "18*x + -27",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read 18*x + -27. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-variable.1",
+    "params": {},
+    "text": "The ward has a socket in it now. The value scales what it is rated for, never what it is made of."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 6,
+    "c": -9
+   }
+  },
+  {
+   "id": "distribute-variable.core/repair/uknwul",
+   "kpId": "distribute-variable",
+   "family": "distribute-variable.core",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "2\\left(-6x - 2\\right)",
+   "given": [],
+   "working": [
+    "2\\left(-6x - 2\\right)",
+    "-12x^{2} - 4"
+   ],
+   "brokenBy": "variable-multiplied-as-well",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": -6,
+     "c": -2,
+     "first": -12,
+     "second": -4,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-12*x + -4",
+    "tex": "-12x - 4",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "variable-multiplied-as-well",
+     "response": "2|-12*x^2 + -4",
+     "tex": "-12x^{2} - 4",
+     "failKey": "fail.kind.changed"
+    },
+    {
+     "misconception": "distribute-reaches-variable-only",
+     "response": "2|-12*x + -2",
+     "tex": "-12x - 2",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "coefficients-added-not-multiplied",
+     "response": "2|-4*x",
+     "tex": "-4x",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": -6,
+      "c": -2,
+      "first": -12,
+      "second": -4,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": -6,
+      "c": -2,
+      "first": -12,
+      "second": -4,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-variable.2",
+    "params": {},
+    "text": "You can watch the rating climb on the plate as it goes in."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": -6,
+    "c": -2
+   }
+  },
+  {
+   "id": "distribute-variable.core/generate/1dqr5jq",
+   "kpId": "distribute-variable",
+   "family": "distribute-variable.core",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "5\\left(5x + 1\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.gathersTo",
+    "params": {
+     "a": 5,
+     "b": 5,
+     "c": 1,
+     "first": 25,
+     "second": 5,
+     "target": "25*x + 5",
+     "unknown": "x"
+    },
+    "text": "Stack a load that gathers to 25*x + 5."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "5\\left(5x + 1\\right)",
+    "tex": "5\\left(5x + 1\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "25*x + 5",
+    "unknown": "x",
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "c": 1,
+      "first": 25,
+      "second": 5,
+      "target": "25*x + 5",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "c": 1,
+      "first": 25,
+      "second": 5,
+      "target": "25*x + 5",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read 25*x + 5. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-variable.1",
+    "params": {},
+    "text": "The ward has a socket in it now. The value scales what it is rated for, never what it is made of."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": 5,
+    "c": 1
+   }
+  },
+  {
+   "id": "distribute-variable.core/construct/1c3vhgm",
+   "kpId": "distribute-variable",
+   "family": "distribute-variable.core",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "3\\left(5x + 3\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 3,
+     "b": 5,
+     "c": 3,
+     "first": 15,
+     "second": 9
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "15*x + 9",
+    "tex": "15x + 9"
+   },
+   "distractors": [
+    {
+     "misconception": "variable-multiplied-as-well",
+     "response": "15*x^2 + 9",
+     "tex": "15x^{2} + 9",
+     "failKey": "fail.kind.changed"
+    },
+    {
+     "misconception": "distribute-reaches-variable-only",
+     "response": "15*x + 3",
+     "tex": "15x + 3",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "coefficients-added-not-multiplied",
+     "response": "8*x + 6",
+     "tex": "8x + 6",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-variable.core",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "c": 3,
+      "first": 15,
+      "second": 9
+     },
+     "text": "The collar outside multiplies the collar inside. The socket rides along untouched."
+    },
+    {
+     "key": "hint.state.distribute-variable.core",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "c": 3,
+      "first": 15,
+      "second": 9
+     },
+     "text": "The socket term has climbed to a count of 15. The fixed weight is still waiting."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-variable.1",
+    "params": {},
+    "text": "The ward has a socket in it now. The value scales what it is rated for, never what it is made of."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 5,
+    "c": 3
    }
   }
  ]

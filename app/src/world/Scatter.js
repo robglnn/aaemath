@@ -45,8 +45,9 @@ import { signals } from "../core/Signals.js";
  * **Deterministic.** Every position, rotation, scale and colour is a pure function of
  * `(seed, category, tile, lattice index)`. No `Math.random`, no dependence on frame order, arrival
  * order or camera path. Two boots produce identical placement, which is the only reason a
- * round-over-round capture comparison means anything. `probe().checksum` is order-independent, so
- * it agrees even when the two boots streamed their tiles in a different order.
+ * round-over-round capture comparison means anything. `probe().placementDigest` hashes a fixed
+ * block of tiles rather than whatever happens to be streamed, so it is a pure function of the seed
+ * and cannot be fooled by two boots that loaded their tiles in a different order.
  *
  * **Streamed and hard-budgeted.** Candidates are generated per 24 m tile on demand around the
  * viewer with a per-frame time budget, and each category has an explicit per-LOD instance ceiling
@@ -600,11 +601,23 @@ const FADE_PARS = /* glsl */ `
   varying float vEyeDist;
 `;
 
+const STATIC_PARS = /* glsl */ `
+  uniform vec3 uEye;
+  varying float vFade;
+  varying float vEyeDist;
+`;
+
 const FRAG_PARS = /* glsl */ `
   varying float vFade;
   varying float vEyeDist;
   uniform vec3 uHaze;
   uniform vec3 uHazeColor;
+`;
+
+/** The archipelago does not fade or sway; it only needs the distance the haze reads. */
+const STATIC_BODY = /* glsl */ `
+  vFade = 1.0;
+  vEyeDist = distance(uEye, (modelMatrix * vec4(transformed, 1.0)).xyz);
 `;
 
 /**
@@ -761,9 +774,9 @@ class Surface {
 const ISLAND_BANDS = [
   // Three distance bands. Radius grows with distance so an island's angular size stays legible,
   // but not fast enough to cancel perspective — the archipelago has to *recede*.
-  { d: [300, 480], y: [22, 105], r: [13, 26], build: 0.25, crystal: 0.85 },
-  { d: [520, 830], y: [30, 165], r: [24, 50], build: 0.5, crystal: 0.6 },
-  { d: [880, 1150], y: [-30, 235], r: [44, 92], build: 0.8, crystal: 0.3 },
+  { d: [300, 480], y: [18, 95], r: [16, 32], build: 0.3, crystal: 0.85 },
+  { d: [520, 830], y: [26, 150], r: [30, 62], build: 0.55, crystal: 0.6 },
+  { d: [880, 1150], y: [-30, 215], r: [54, 110], build: 0.8, crystal: 0.35 },
 ];
 
 /**
@@ -846,27 +859,29 @@ function buildArchipelago(seed, count, overLeaf) {
     for (let s = 0; s < sides; s++) {
       const s2 = (s + 1) % sides;
       const f = 0.72 + r() * 0.4;
-      rock.tri(centre, P(s, 0.98, topJ[s]), P(s2, 0.98, topJ[s2]), [f * 0.42, f * 0.5, f * 0.3]);
+      rock.tri(centre, P(s, 0.98, topJ[s]), P(s2, 0.98, topJ[s2]), [f * 0.5, f * 0.62, f * 0.34]);
     }
     // Rim: a hard overhanging lip. This is the edge that reads as a cut-out against the sky.
     const lipY = -rad * (0.1 + r() * 0.08);
     for (let s = 0; s < sides; s++) {
       const s2 = (s + 1) % sides;
       const f = 0.9 + r() * 0.35;
-      rock.quad(P(s, 0.98, topJ[s]), P(s, 1.02, lipY), P(s2, 1.02, lipY), P(s2, 0.98, topJ[s2]), [f, f * 0.86, f * 0.66]);
+      rock.quad(P(s, 0.98, topJ[s]), P(s, 1.02, lipY), P(s2, 1.02, lipY), P(s2, 0.98, topJ[s2]), [f * 1.15, f * 0.97, f * 0.72]);
     }
     // The fracture: three tapering rings to a point, darkening downward. Ragged, not conical —
     // each ring gets its own per-side jitter so no two silhouettes agree.
     let prevR = 1.02;
     let prevY = lipY;
-    const depth = rad * (1.0 + r() * 1.3);
+    // Chunky, not needle-like. A leaf is a fracture of a *surface*: the reference reads its
+    // undersides as a thick wedge coming to a blunt point, roughly as deep as the shelf is wide.
+    const depth = rad * (0.7 + r() * 0.8);
     const steps = 3;
     for (let k = 1; k <= steps; k++) {
       const kr = 1.02 * Math.pow(1 - k / (steps + 0.55), 1.25);
       const ky = lipY - depth * (k / steps);
       const wob = [];
       for (let s = 0; s < sides; s++) wob.push(0.72 + r() * 0.6);
-      const shade = 0.62 - k * 0.14;
+      const shade = 0.78 - k * 0.17;
       for (let s = 0; s < sides; s++) {
         const s2 = (s + 1) % sides;
         const a = (s / sides) * TAU + yaw;
@@ -940,7 +955,7 @@ function buildArchipelago(seed, count, overLeaf) {
 // ---------------------------------------------------------------------------- the system
 
 const TIER_SCALE = { potato: 0.18, low: 0.36, medium: 0.66, high: 1, ultra: 1.35 };
-const TIER_ISLANDS = { potato: 10, low: 16, medium: 24, high: 34, ultra: 44 };
+const TIER_ISLANDS = { potato: 12, low: 20, medium: 32, high: 44, ultra: 56 };
 
 export const SCATTER_TILE = 24;
 
@@ -1054,6 +1069,8 @@ export class Scatter {
       flatShading: false,
       vertexColors: true,
       dithering: true,
+      // This piece owns its own aerial perspective (see HAZE_TAIL), so three fog stays off.
+      fog: false,
       side: side ?? THREE.FrontSide,
     });
     mat.userData.fadeUniform = uniforms.uFade;
@@ -1066,6 +1083,29 @@ export class Scatter {
       // applies vertex colour to the *diffuse*. Without this the emissive floor would be a
       // constant wash across the whole crystal and the bands would wash out with it.
       lightBody: bandEmissive ? "totalEmissiveRadiance *= vColor;" : null,
+      fragmentTail: HAZE_TAIL,
+    });
+  }
+
+  /** A non-instanced sibling of `_flatMaterial`: same haze, same flat facets, no fade, no wind. */
+  _staticMaterial(key, { colour, emissive = 0x000000, emissiveIntensity = 1 }) {
+    const mat = new THREE.MeshStandardMaterial({
+      color: col(colour),
+      roughness: 1,
+      metalness: 0,
+      emissive: col(emissive),
+      emissiveIntensity,
+      flatShading: false,
+      vertexColors: true,
+      dithering: true,
+      fog: false,
+    });
+    return extend(mat, key, {
+      uniforms: this._shared,
+      vertexPars: STATIC_PARS,
+      vertexBody: STATIC_BODY,
+      fragmentPars: FRAG_PARS,
+      lightBody: "totalEmissiveRadiance *= vColor;",
       fragmentTail: HAZE_TAIL,
     });
   }
@@ -1119,7 +1159,7 @@ export class Scatter {
          * rather than deciding the hue.
          */
         emissive: PAL.crystalHot,
-        emissiveIntensity: 0.7,
+        emissiveIntensity: 0.8,
         bandEmissive: true,
       },
       flora: { colour: PAL.foliageLit, side: THREE.DoubleSide, wind: 1 },
@@ -1132,10 +1172,10 @@ export class Scatter {
         id: "crystal",
         family: "crystal",
         geo: [crystalGeo(true, seed ^ 0x11), crystalGeo(false, seed ^ 0x11)],
-        budget: [cap(380), cap(760)],
+        budget: [cap(470), cap(950)],
         lodDist: 58,
         gather: 260,
-        spacing: 13,
+        spacing: 11,
         cluster: "crystal",
         shadow: true,
         solid: true,
@@ -1189,10 +1229,10 @@ export class Scatter {
         id: "tuft",
         family: "flora",
         geo: [tuftGeo(true, seed ^ 0x66), tuftGeo(false, seed ^ 0x66)],
-        budget: [cap(2600), cap(3400)],
-        lodDist: 26,
-        gather: 58,
-        spacing: 2.3,
+        budget: [cap(3800), cap(5000)],
+        lodDist: 30,
+        gather: 66,
+        spacing: 1.9,
         cluster: "flat",
         shadow: false,
         wind: true,
@@ -1256,7 +1296,7 @@ export class Scatter {
         const flat = measureFlatness(geo);
         return { mesh, geo, inst, colour, tris: triCount(geo), flat, drawn: 0, capacity: count };
       });
-      return { ...s, index, lods, tiles: new Map(), candidates: 0, rejected: 0, checksum: 0 };
+      return { ...s, index, lods, tiles: new Map(), candidates: 0, rejected: 0 };
     });
   }
 
@@ -1277,24 +1317,29 @@ export class Scatter {
     // no distance fade — it is *supposed* to be there at a kilometre — and because two more
     // materials are free next to a 90-program budget.
     if (!this._islandMats) {
+      /**
+       * The archipelago is a *backdrop*, and a backdrop is authored rather than lit.
+       *
+       * A leaf at 300–1100 m turns almost nothing toward a sun sitting 8° above the horizon, so
+       * left to the light rig alone it renders as a black cut-out — which is what the first pass
+       * measured. `world.md`'s horizon is made of questions and a question has to be legible, so
+       * the value of an island comes from its own vertex-coloured emissive (top, rim, fracture,
+       * each its own flat band) and the rig only adds a warm edge on the sun side. Then haze
+       * takes it the rest of the way back, with the same ceiling as everything else here.
+       */
       this._islandMats = [
-        new THREE.MeshStandardMaterial({
-          color: col(PAL.rock),
-          roughness: 1,
-          metalness: 0,
-          vertexColors: true,
-          dithering: true,
+        this._staticMaterial("p13:island-rock", {
+          colour: PAL.rock,
+          emissive: PAL.rock,
+          emissiveIntensity: 0.62,
         }),
-        new THREE.MeshStandardMaterial({
-          color: col(PAL.crystalFace),
-          roughness: 0.62,
-          metalness: 0,
-          emissive: col(PAL.crystalHot),
-          emissiveIntensity: 0.7,
-          vertexColors: true,
-          dithering: true,
+        this._staticMaterial("p13:island-crystal", {
+          colour: PAL.crystalFace,
+          emissive: PAL.crystalHot,
+          emissiveIntensity: 0.95,
         }),
       ];
+      this._materials.push(...this._islandMats);
     }
     const { rock, crystal, stats } = buildArchipelago(this.seed ^ 0xa11, count, (x, z, r) => this._overLeaf(x, z, r));
     const mk = (geo, mat, name, existing) => {
@@ -1342,7 +1387,7 @@ export class Scatter {
   _field(x, z, hNorm) {
     const blob = fbm2(x * 0.0165 + 11.3, z * 0.0165 - 4.7, this.seed ^ 0x1c1c, 3);
     const line = 1 - Math.abs(noise2(x * 0.021 - 3.1, z * 0.021 + 8.4, this.seed ^ 0x2d2d) * 2 - 1);
-    return clamp01(ramp(blob, 0.56, 0.84) * (0.55 + 0.45 * (1 - hNorm)) + Math.pow(clamp01(line), 8) * 0.7);
+    return clamp01(ramp(blob, 0.48, 0.78) * (0.55 + 0.45 * (1 - hNorm)) + Math.pow(clamp01(line), 8) * 0.8);
   }
 
   /** Low-frequency region mask: meadow (1) against barren (0). */
@@ -1418,9 +1463,26 @@ export class Scatter {
     return tx * 73856093 + tz * 19349663;
   }
 
-  /** Generate one (category, tile). Pure in (seed, category, tile) — no frame or camera state. */
+  /** Generate and register one (category, tile). */
   _generateTile(cat, tx, tz) {
     const t0 = performance.now();
+    const tile = this._makeTile(cat, tx, tz, true);
+    cat.tiles.set(this._tileKey(tx, tz), tile);
+    cat.candidates += tile.count;
+    cat.rejected += tile.rejected;
+    if (tile.solid.length) this._solids.push(...tile.solid);
+    this._genCalls++;
+    this._genMs += performance.now() - t0;
+    return tile;
+  }
+
+  /**
+   * Build one (category, tile). A pure function of `(seed, category, tile, surface)` — no frame
+   * counter, no camera, no arrival order, and with `useClearings` off, no dependence on where the
+   * player happened to spawn. That purity is what `probe().placementDigest` is able to hash, and
+   * it is the whole reason a round-over-round capture comparison means anything.
+   */
+  _makeTile(cat, tx, tz, useClearings) {
     const spacing = cat.spacing;
     const x0 = tx * SCATTER_TILE;
     const z0 = tz * SCATTER_TILE;
@@ -1451,7 +1513,7 @@ export class Scatter {
           rejected++;
           continue;
         }
-        if (this._inClearing(px, pz)) {
+        if (useClearings && this._inClearing(px, pz)) {
           rejected++;
           continue;
         }
@@ -1459,39 +1521,64 @@ export class Scatter {
       }
     }
 
-    const count = out.lod.length;
-    const tile = {
+    return {
       tx,
       tz,
-      count,
+      rejected,
+      count: out.lod.length,
       mat: Float32Array.from(out.mat),
       col: Float32Array.from(out.col),
       inst: Float32Array.from(out.inst),
       lod: Float32Array.from(out.lod),
+      solid: out.solid,
       cx: x0 + SCATTER_TILE * 0.5,
       cz: z0 + SCATTER_TILE * 0.5,
     };
-    cat.tiles.set(this._tileKey(tx, tz), tile);
-    cat.candidates += count;
-    cat.rejected += rejected;
-    // Order-independent checksum: two runs that stream tiles in different orders still agree.
-    let sum = cat.checksum >>> 0;
-    for (let i = 0; i < count; i++) {
-      const o = i * 16;
-      sum =
-        (sum +
-          hashU32(
-            Math.round(tile.mat[o + 12] * 64),
-            Math.round(tile.mat[o + 14] * 64),
-            (Math.round(tile.mat[o + 13] * 64) ^ cat.index) >>> 0
-          )) >>>
-        0;
+  }
+
+  /**
+   * A hash of the placement over a fixed block of tiles around the origin, per category.
+   *
+   * The streaming checksum could never carry the determinism claim on its own: which tiles exist
+   * at any moment depends on the per-frame time budget and on where the viewer has been, so two
+   * honest runs legitimately hold different tile *sets*. This does not. It is computed from a
+   * fixed 5x5 tile block, ignoring clearings, and is therefore a pure function of the seed, the
+   * category and the surface — which is exactly the thing "deterministic placement" means.
+   *
+   * Cached after the first call; `rebuild()` drops it because the surface may have changed.
+   */
+  placementDigest() {
+    if (this._digest) return this._digest;
+    if (this.surface.mode === "flat" || this.surface.mode === "none") return null;
+    const out = {};
+    for (const cat of this.categories) {
+      let sum = 0;
+      let n = 0;
+      for (let tz = -2; tz <= 2; tz++) {
+        for (let tx = -2; tx <= 2; tx++) {
+          const tile = this._makeTile(cat, tx, tz, false);
+          n += tile.count;
+          for (let i = 0; i < tile.count; i++) {
+            const o = i * 16;
+            // Every element of the transform, quantised to 1/64, so a moved, re-scaled or
+            // re-rotated instance all change the digest.
+            for (let k = 0; k < 16; k += 4) {
+              sum =
+                (sum +
+                  hashU32(
+                    Math.round(tile.mat[o + k] * 64),
+                    Math.round(tile.mat[o + k + 1] * 64),
+                    (Math.round(tile.mat[o + k + 2] * 64) ^ (cat.index * 31 + k)) >>> 0
+                  )) >>>
+                0;
+            }
+          }
+        }
+      }
+      out[cat.id] = { hash: sum >>> 0, instances: n };
     }
-    cat.checksum = sum;
-    if (out.solid.length) this._solids.push(...out.solid);
-    this._genCalls++;
-    this._genMs += performance.now() - t0;
-    return tile;
+    this._digest = out;
+    return out;
   }
 
   _inClearing(x, z) {
@@ -1611,7 +1698,9 @@ export class Scatter {
     switch (cat.id) {
       case "crystal":
         sy = o.height ?? 1;
-        sx = sy * (0.11 + rr() * 0.08);
+        // Width is biased narrow but has a long tail, so a formation holds needles and blocks at
+        // once. One width ratio for every prism is what makes a field read as stamped fins.
+        sx = sy * (0.10 + Math.pow(rr(), 1.5) * 0.26);
         break;
       case "shard":
         sy = o.height ?? 0.6;
@@ -1638,7 +1727,9 @@ export class Scatter {
         sx = sy * (1.1 + rr() * 0.9);
         break;
       case "oldtrue":
-        sy = 1;
+        // A lichen crust is flat, but it is not all one crust: vary the vertical scale too, or
+        // the category is literally stamped in one axis.
+        sy = 0.5 + rr() * 1.1;
         sx = 0.4 + rr() * 0.9;
         break;
       default:
@@ -1666,7 +1757,7 @@ export class Scatter {
         break;
       case "tuft":
       case "abouts":
-        lum = 0.78 + Math.pow(rr(), 1.2) * 0.6;
+        lum = 0.95 + Math.pow(rr(), 1.1) * 0.65;
         warm = (rr() - 0.5) * 0.16;
         break;
       case "oldtrue":
@@ -1700,13 +1791,13 @@ export class Scatter {
       cat.tiles.clear();
       cat.candidates = 0;
       cat.rejected = 0;
-      cat.checksum = 0;
     }
     this._solids.length = 0;
     this._solidsAt = null;
     this._lastGatherEye.set(1e9, 1e9, 1e9);
     this._built = false;
     this._outstanding = true;
+    this._digest = null;
   }
 
   frame() {
@@ -1957,8 +2048,7 @@ export class Scatter {
         gather: cat.gather,
         fade: [cat.material.userData.fadeUniform.value.x, cat.material.userData.fadeUniform.value.y],
         lodDist: cat.lodDist,
-        checksum: cat.checksum,
-      };
+        };
       for (const l of cat.lods) {
         per.drawn.push(l.drawn);
         per.tris += l.drawn * l.tris;
@@ -2003,9 +2093,13 @@ export class Scatter {
         distance: [Number(is.dMin.toFixed(1)), Number(is.dMax.toFixed(1))],
         altitude: [Number(is.yMin.toFixed(1)), Number(is.yMax.toFixed(1))],
       },
-      haze: { strength: this._shared.uHaze.value.z, sceneFog: Boolean(this.kernel.scene.fog) },
+      haze: {
+        falloffMetres: Number((1 / this._shared.uHaze.value.x).toFixed(1)),
+        ceiling: this._shared.uHaze.value.y,
+        sceneFogUsed: false,
+      },
       eye: [Number(this._eye.x.toFixed(2)), Number(this._eye.y.toFixed(2)), Number(this._eye.z.toFixed(2))],
-      checksum: this.categories.reduce((a, c) => (a + c.checksum) >>> 0, 0) >>> 0,
+      placementDigest: this.placementDigest(),
       closeUp: this._closeUp(),
       categories: cats,
     };

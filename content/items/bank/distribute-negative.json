@@ -16,7 +16,7 @@
   "leading-minus-dropped",
   "subtract-before-distributing"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "distribute-negative.bare/construct/ye3so1",
@@ -2715,6 +2715,549 @@
    "params": {
     "b": 5,
     "c": 4
+   }
+  },
+  {
+   "id": "distribute-negative.subtract/construct/1sxrd5m",
+   "kpId": "distribute-negative",
+   "family": "distribute-negative.subtract",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "4 - 5\\left(x + 8\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 4,
+     "b": 5,
+     "c": 8,
+     "product": 40
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-5*x + -36",
+    "tex": "-5x - 36"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-before-distributing",
+     "response": "-1*x + -8",
+     "tex": "-x - 8",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "flip-first-term-only",
+     "response": "-5*x + 44",
+     "tex": "-5x + 44",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "leading-minus-dropped",
+     "response": "5*x + 44",
+     "tex": "5x + 44",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-negative.subtract",
+     "params": {
+      "a": 4,
+      "b": 5,
+      "c": 8,
+      "product": 40
+     },
+     "text": "The whole product is coming off, not just its front."
+    },
+    {
+     "key": "hint.state.distribute-negative.subtract",
+     "params": {
+      "a": 4,
+      "b": 5,
+      "c": 8,
+      "product": 40
+     },
+     "text": "The bundle carries 40 of fixed weight, and all of it is leaving 4."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-negative.1",
+    "params": {},
+    "text": "An inverted value through a bundle turns every ward at once. Miss one and the lock opens for the wrong thing, politely."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 5,
+    "c": 8
+   }
+  },
+  {
+   "id": "distribute-negative.bare/repair/1s2j5iv",
+   "kpId": "distribute-negative",
+   "family": "distribute-negative.bare",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "-\\left(2x + 3\\right)",
+   "given": [],
+   "working": [
+    "-\\left(2x + 3\\right)",
+    "2x + 3"
+   ],
+   "brokenBy": "leading-minus-dropped",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "b": 2,
+     "c": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-2*x + -3",
+    "tex": "-2x - 3",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-first-term-only",
+     "response": "2|-2*x + 3",
+     "tex": "-2x + 3",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "leading-minus-dropped",
+     "response": "2|2*x + 3",
+     "tex": "2x + 3",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "b": 2,
+      "c": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "b": 2,
+      "c": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-negative.2",
+    "params": {},
+    "text": "Camber has a form for locks that open for the wrong thing. It is short."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "b": 2,
+    "c": 3
+   }
+  },
+  {
+   "id": "distribute-negative.subtract/repair/2cl76w",
+   "kpId": "distribute-negative",
+   "family": "distribute-negative.subtract",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "7 - 3\\left(x + 7\\right)",
+   "given": [],
+   "working": [
+    "7 - 3\\left(x + 7\\right)",
+    "3x + 28"
+   ],
+   "brokenBy": "leading-minus-dropped",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 7,
+     "b": 3,
+     "c": 7,
+     "product": 21,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-3*x + -14",
+    "tex": "-3x - 14",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-before-distributing",
+     "response": "2|4*x + 28",
+     "tex": "4x + 28",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "flip-first-term-only",
+     "response": "2|-3*x + 28",
+     "tex": "-3x + 28",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "leading-minus-dropped",
+     "response": "2|3*x + 28",
+     "tex": "3x + 28",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 7,
+      "b": 3,
+      "c": 7,
+      "product": 21,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 7,
+      "b": 3,
+      "c": 7,
+      "product": 21,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-negative.1",
+    "params": {},
+    "text": "An inverted value through a bundle turns every ward at once. Miss one and the lock opens for the wrong thing, politely."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 3,
+    "c": 7
+   }
+  },
+  {
+   "id": "distribute-negative.subtract/generate/s8kkrv",
+   "kpId": "distribute-negative",
+   "family": "distribute-negative.subtract",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "2 - 5\\left(x + 7\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.gathersTo",
+    "params": {
+     "a": 2,
+     "b": 5,
+     "c": 7,
+     "product": 35,
+     "target": "-5*x + -33",
+     "unknown": "x"
+    },
+    "text": "Stack a load that gathers to -5*x + -33."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2 - 5\\left(x + 7\\right)",
+    "tex": "2 - 5\\left(x + 7\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "-5*x + -33",
+    "unknown": "x",
+    "needs": [
+     "bundle",
+     "negativeOutside"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 2,
+      "b": 5,
+      "c": 7,
+      "product": 35,
+      "target": "-5*x + -33",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 2,
+      "b": 5,
+      "c": 7,
+      "product": 35,
+      "target": "-5*x + -33",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read -5*x + -33. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-negative.2",
+    "params": {},
+    "text": "Camber has a form for locks that open for the wrong thing. It is short."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 5,
+    "c": 7
+   }
+  },
+  {
+   "id": "distribute-negative.bare/construct/10pscov",
+   "kpId": "distribute-negative",
+   "family": "distribute-negative.bare",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "-\\left(5x - 3\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "b": 5,
+     "c": -3
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-5*x + 3",
+    "tex": "-5x + 3"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-first-term-only",
+     "response": "-5*x + -3",
+     "tex": "-5x - 3",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "leading-minus-dropped",
+     "response": "5*x + -3",
+     "tex": "5x - 3",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-negative.bare",
+     "params": {
+      "b": 5,
+      "c": -3
+     },
+     "text": "An inverted value through a bundle turns every ward. All of them."
+    },
+    {
+     "key": "hint.state.distribute-negative.bare",
+     "params": {
+      "b": 5,
+      "c": -3
+     },
+     "text": "The 5 term has turned. The -3 has not been reached yet."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-negative.2",
+    "params": {},
+    "text": "Camber has a form for locks that open for the wrong thing. It is short."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "b": 5,
+    "c": -3
+   }
+  },
+  {
+   "id": "distribute-negative.subtract/construct/1knrzna",
+   "kpId": "distribute-negative",
+   "family": "distribute-negative.subtract",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "15 - 4\\left(x + 5\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 15,
+     "b": 4,
+     "c": 5,
+     "product": 20
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-4*x + -5",
+    "tex": "-4x - 5"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-before-distributing",
+     "response": "11*x + 55",
+     "tex": "11x + 55",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "flip-first-term-only",
+     "response": "-4*x + 35",
+     "tex": "-4x + 35",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "leading-minus-dropped",
+     "response": "4*x + 35",
+     "tex": "4x + 35",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-negative.subtract",
+     "params": {
+      "a": 15,
+      "b": 4,
+      "c": 5,
+      "product": 20
+     },
+     "text": "The whole product is coming off, not just its front."
+    },
+    {
+     "key": "hint.state.distribute-negative.subtract",
+     "params": {
+      "a": 15,
+      "b": 4,
+      "c": 5,
+      "product": 20
+     },
+     "text": "The bundle carries 20 of fixed weight, and all of it is leaving 15."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-negative.1",
+    "params": {},
+    "text": "An inverted value through a bundle turns every ward at once. Miss one and the lock opens for the wrong thing, politely."
+   },
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 15,
+    "b": 4,
+    "c": 5
    }
   }
  ]

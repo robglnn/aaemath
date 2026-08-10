@@ -1,6 +1,6 @@
 {
- "generated": "960 items across 32 knowledge points",
- "perKp": 30,
+ "generated": "1152 items across 32 knowledge points",
+ "perKp": 36,
  "seed": 20260809,
  "kps": {
   "var-meaning": {
@@ -16,16 +16,16 @@
     "var-must-differ",
     "var-alphabet-value"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 9,
-    "repair": 15,
-    "generate": 6
+    "construct": 14,
+    "repair": 17,
+    "generate": 5
    },
    "itemsPerMisconception": {
-    "var-as-label": 7,
-    "var-must-differ": 17,
-    "var-alphabet-value": 6
+    "var-alphabet-value": 11,
+    "var-as-label": 9,
+    "var-must-differ": 16
    }
   },
   "oo-numeric": {
@@ -42,16 +42,16 @@
     "oo-mult-before-div",
     "oo-add-before-sub"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 13,
-    "repair": 13,
-    "generate": 4
+    "construct": 15,
+    "repair": 16,
+    "generate": 5
    },
    "itemsPerMisconception": {
-    "oo-strict-left-to-right": 10,
-    "oo-mult-before-div": 7,
-    "oo-add-before-sub": 9
+    "oo-strict-left-to-right": 12,
+    "oo-mult-before-div": 8,
+    "oo-add-before-sub": 11
    }
   },
   "expr-anatomy": {
@@ -67,16 +67,16 @@
     "bare-x-has-no-coefficient",
     "sign-detached-from-term"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 10,
+    "construct": 16,
     "repair": 15,
     "generate": 5
    },
    "itemsPerMisconception": {
+    "term-split-at-product": 11,
     "bare-x-has-no-coefficient": 10,
-    "sign-detached-from-term": 10,
-    "term-split-at-product": 5
+    "sign-detached-from-term": 10
    }
   },
   "oo-structure": {
@@ -93,16 +93,16 @@
     "negative-square-sign-lost",
     "juxtaposition-means-add"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
     "construct": 14,
-    "repair": 12,
-    "generate": 4
+    "repair": 10,
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "coefficient-under-exponent": 9,
+    "coefficient-under-exponent": 8,
     "negative-square-sign-lost": 9,
-    "juxtaposition-means-add": 8
+    "juxtaposition-means-add": 7
    }
   },
   "eval-substitute": {
@@ -119,16 +119,16 @@
     "substitute-by-concatenation",
     "coefficient-dropped-on-substitution"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 14,
-    "repair": 13,
-    "generate": 3
+    "construct": 13,
+    "repair": 12,
+    "generate": 11
    },
    "itemsPerMisconception": {
-    "substitute-first-occurrence-only": 8,
-    "substitute-by-concatenation": 10,
-    "coefficient-dropped-on-substitution": 9
+    "substitute-first-occurrence-only": 9,
+    "substitute-by-concatenation": 8,
+    "coefficient-dropped-on-substitution": 8
    }
   },
   "eval-signed": {
@@ -145,16 +145,16 @@
     "double-negative-collapsed-wrong",
     "two-negatives-make-positive-on-sum"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 11,
-    "repair": 15,
-    "generate": 4
+    "construct": 12,
+    "repair": 13,
+    "generate": 11
    },
    "itemsPerMisconception": {
-    "double-negative-collapsed-wrong": 11,
-    "two-negatives-make-positive-on-sum": 12,
-    "negative-substituted-bare": 3
+    "negative-substituted-bare": 7,
+    "double-negative-collapsed-wrong": 9,
+    "two-negatives-make-positive-on-sum": 9
    }
   },
   "eval-formula": {
@@ -171,16 +171,16 @@
     "one-value-for-all-letters",
     "second-variable-ignored"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 10,
-    "repair": 11,
-    "generate": 9
+    "construct": 13,
+    "repair": 13,
+    "generate": 10
    },
    "itemsPerMisconception": {
-    "second-variable-ignored": 21,
-    "values-assigned-by-order": 21,
-    "one-value-for-all-letters": 21
+    "second-variable-ignored": 26,
+    "values-assigned-by-order": 26,
+    "one-value-for-all-letters": 26
    }
   },
   "translate-phrase": {
@@ -197,16 +197,16 @@
     "no-variable-introduced",
     "twice-read-as-plus-two"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 11,
-    "repair": 13,
-    "generate": 6
+    "construct": 13,
+    "repair": 16,
+    "generate": 7
    },
    "itemsPerMisconception": {
     "keyword-without-structure": 14,
-    "no-variable-introduced": 24,
-    "twice-read-as-plus-two": 10
+    "no-variable-introduced": 29,
+    "twice-read-as-plus-two": 15
    }
   },
   "translate-order": {
@@ -223,16 +223,16 @@
     "divided-into-reversed",
     "subtract-from-reversed"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 14,
-    "repair": 11,
+    "construct": 17,
+    "repair": 14,
     "generate": 5
    },
    "itemsPerMisconception": {
-    "less-than-reversed": 8,
-    "subtract-from-reversed": 8,
-    "divided-into-reversed": 9
+    "less-than-reversed": 10,
+    "subtract-from-reversed": 10,
+    "divided-into-reversed": 11
    }
   },
   "props-operations": {
@@ -250,16 +250,16 @@
     "regroup-across-subtraction",
     "identity-swapped"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 15,
+    "construct": 12,
     "repair": 12,
-    "generate": 3
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "subtraction-commutes": 9,
-    "regroup-across-subtraction": 9,
-    "identity-swapped": 9
+    "subtraction-commutes": 8,
+    "regroup-across-subtraction": 8,
+    "identity-swapped": 8
    }
   },
   "like-terms-id": {
@@ -277,16 +277,16 @@
     "constant-like-variable",
     "exponent-ignored-in-matching"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 10,
-    "repair": 10,
-    "generate": 10
+    "construct": 12,
+    "repair": 12,
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "all-variable-terms-alike": 20,
-    "constant-like-variable": 20,
-    "exponent-ignored-in-matching": 10
+    "all-variable-terms-alike": 24,
+    "constant-like-variable": 24,
+    "exponent-ignored-in-matching": 12
    }
   },
   "like-terms-combine": {
@@ -304,16 +304,16 @@
     "variable-parts-added-too",
     "sign-left-behind-on-move"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 11,
-    "repair": 9,
-    "generate": 10
+    "construct": 12,
+    "repair": 12,
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "combine-unlike-terms": 20,
-    "variable-parts-added-too": 20,
-    "sign-left-behind-on-move": 20
+    "combine-unlike-terms": 24,
+    "variable-parts-added-too": 24,
+    "sign-left-behind-on-move": 24
    }
   },
   "distribute-numeric": {
@@ -331,16 +331,16 @@
     "distribute-over-a-product",
     "distribute-by-adding"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 13,
-    "repair": 11,
-    "generate": 6
+    "construct": 15,
+    "repair": 14,
+    "generate": 7
    },
    "itemsPerMisconception": {
-    "distribute-to-first-term-only": 12,
-    "distribute-by-adding": 12,
-    "distribute-over-a-product": 12
+    "distribute-to-first-term-only": 15,
+    "distribute-by-adding": 15,
+    "distribute-over-a-product": 14
    }
   },
   "distribute-variable": {
@@ -358,16 +358,16 @@
     "distribute-reaches-variable-only",
     "coefficients-added-not-multiplied"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 10,
-    "repair": 10,
-    "generate": 10
+    "construct": 12,
+    "repair": 12,
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "variable-multiplied-as-well": 20,
-    "distribute-reaches-variable-only": 20,
-    "coefficients-added-not-multiplied": 20
+    "variable-multiplied-as-well": 24,
+    "distribute-reaches-variable-only": 24,
+    "coefficients-added-not-multiplied": 24
    }
   },
   "distribute-negative": {
@@ -385,16 +385,16 @@
     "leading-minus-dropped",
     "subtract-before-distributing"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 13,
-    "repair": 11,
-    "generate": 6
+    "construct": 16,
+    "repair": 13,
+    "generate": 7
    },
    "itemsPerMisconception": {
-    "flip-first-term-only": 24,
-    "leading-minus-dropped": 24,
-    "subtract-before-distributing": 12
+    "flip-first-term-only": 29,
+    "leading-minus-dropped": 29,
+    "subtract-before-distributing": 15
    }
   },
   "simplify-expression": {
@@ -413,16 +413,16 @@
     "stops-before-fully-simplified",
     "over-combines-to-one-term"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 10,
-    "repair": 11,
-    "generate": 9
+    "construct": 12,
+    "repair": 13,
+    "generate": 11
    },
    "itemsPerMisconception": {
-    "combine-before-distributing": 13,
-    "over-combines-to-one-term": 18,
-    "stops-before-fully-simplified": 10
+    "combine-before-distributing": 16,
+    "over-combines-to-one-term": 21,
+    "stops-before-fully-simplified": 12
    }
   },
   "equivalent-expressions": {
@@ -440,16 +440,16 @@
     "different-form-means-different",
     "counterexample-ignored"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 10,
-    "repair": 10,
-    "generate": 10
+    "construct": 11,
+    "repair": 13,
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "different-form-means-different": 30,
-    "counterexample-ignored": 10,
-    "one-value-proves-equivalence": 10
+    "different-form-means-different": 36,
+    "counterexample-ignored": 12,
+    "one-value-proves-equivalence": 12
    }
   },
   "eq-meaning": {
@@ -468,16 +468,16 @@
     "solution-never-checked",
     "equation-true-for-everything"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 10,
-    "repair": 10,
-    "generate": 10
+    "construct": 12,
+    "repair": 12,
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "equation-true-for-everything": 10,
-    "solution-never-checked": 18,
-    "equals-means-compute-now": 2
+    "equation-true-for-everything": 12,
+    "solution-never-checked": 21,
+    "equals-means-compute-now": 3
    }
   },
   "props-equality": {
@@ -493,16 +493,16 @@
     "inverse-operations-on-each-side",
     "divide-by-possible-zero"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 13,
-    "repair": 12,
-    "generate": 5
+    "construct": 15,
+    "repair": 14,
+    "generate": 7
    },
    "itemsPerMisconception": {
-    "operate-on-one-side": 14,
-    "inverse-operations-on-each-side": 14,
-    "divide-by-possible-zero": 11
+    "operate-on-one-side": 16,
+    "inverse-operations-on-each-side": 16,
+    "divide-by-possible-zero": 13
    }
   },
   "eq-one-add": {
@@ -520,16 +520,16 @@
     "subtraction-order-reversed",
     "minus-inverted-wrongly"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 11,
-    "repair": 13,
-    "generate": 6
+    "construct": 13,
+    "repair": 16,
+    "generate": 7
    },
    "itemsPerMisconception": {
-    "same-operation-not-inverse": 13,
-    "subtraction-order-reversed": 13,
-    "minus-inverted-wrongly": 11
+    "same-operation-not-inverse": 15,
+    "subtraction-order-reversed": 15,
+    "minus-inverted-wrongly": 14
    }
   },
   "eq-one-mult": {
@@ -547,16 +547,16 @@
     "division-order-reversed",
     "fraction-form-inverted"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 11,
-    "repair": 12,
+    "construct": 15,
+    "repair": 14,
     "generate": 7
    },
    "itemsPerMisconception": {
-    "subtract-the-coefficient": 10,
-    "division-order-reversed": 10,
-    "fraction-form-inverted": 13
+    "subtract-the-coefficient": 13,
+    "division-order-reversed": 13,
+    "fraction-form-inverted": 16
    }
   },
   "eq-two-step": {
@@ -574,16 +574,16 @@
     "inverse-order-inverted",
     "constant-sign-flipped"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 9,
-    "repair": 11,
-    "generate": 10
+    "construct": 11,
+    "repair": 13,
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "divide-before-clearing-constant": 14,
-    "inverse-order-inverted": 15,
-    "constant-sign-flipped": 14
+    "divide-before-clearing-constant": 17,
+    "inverse-order-inverted": 18,
+    "constant-sign-flipped": 17
    }
   },
   "eq-combine-side": {
@@ -601,16 +601,16 @@
     "one-like-term-dropped",
     "constant-absorbed-into-coefficient"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 8,
-    "repair": 11,
-    "generate": 11
+    "construct": 10,
+    "repair": 12,
+    "generate": 14
    },
    "itemsPerMisconception": {
-    "combine-across-the-equals": 19,
-    "one-like-term-dropped": 19,
-    "constant-absorbed-into-coefficient": 19
+    "combine-across-the-equals": 22,
+    "one-like-term-dropped": 22,
+    "constant-absorbed-into-coefficient": 22
    }
   },
   "eq-distribute": {
@@ -628,16 +628,16 @@
     "divide-bracket-only",
     "coefficient-never-undone"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 10,
-    "repair": 10,
-    "generate": 10
+    "construct": 12,
+    "repair": 12,
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "distribute-partially-in-equation": 18,
-    "divide-bracket-only": 18,
-    "coefficient-never-undone": 12
+    "distribute-partially-in-equation": 22,
+    "divide-bracket-only": 22,
+    "coefficient-never-undone": 14
    }
   },
   "eq-both-sides": {
@@ -655,16 +655,16 @@
     "removed-from-one-side-only",
     "constants-collected-wrong-side"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 6,
-    "repair": 13,
-    "generate": 11
+    "construct": 10,
+    "repair": 14,
+    "generate": 12
    },
    "itemsPerMisconception": {
-    "moved-without-inverting": 19,
-    "removed-from-one-side-only": 19,
-    "constants-collected-wrong-side": 19
+    "moved-without-inverting": 24,
+    "removed-from-one-side-only": 24,
+    "constants-collected-wrong-side": 24
    }
   },
   "eq-special-cases": {
@@ -682,16 +682,16 @@
     "identity-called-no-solution",
     "contradiction-given-a-solution"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 13,
-    "repair": 5,
-    "generate": 12
+    "construct": 16,
+    "repair": 7,
+    "generate": 13
    },
    "itemsPerMisconception": {
-    "vanishing-variable-means-zero": 18,
-    "identity-called-no-solution": 7,
-    "contradiction-given-a-solution": 6
+    "vanishing-variable-means-zero": 23,
+    "identity-called-no-solution": 8,
+    "contradiction-given-a-solution": 8
    }
   },
   "translate-sentence": {
@@ -709,16 +709,16 @@
     "sides-merged",
     "unknown-defined-as-wrong-quantity"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 11,
-    "repair": 9,
-    "generate": 10
+    "construct": 12,
+    "repair": 11,
+    "generate": 13
    },
    "itemsPerMisconception": {
-    "produces-expression-not-equation": 20,
-    "sides-merged": 20,
-    "unknown-defined-as-wrong-quantity": 20
+    "produces-expression-not-equation": 23,
+    "sides-merged": 23,
+    "unknown-defined-as-wrong-quantity": 23
    }
   },
   "eq-model-context": {
@@ -737,16 +737,16 @@
     "answers-the-wrong-question",
     "non-viable-solution-accepted"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 12,
-    "repair": 12,
-    "generate": 6
+    "construct": 15,
+    "repair": 14,
+    "generate": 7
    },
    "itemsPerMisconception": {
-    "answers-the-wrong-question": 8,
-    "arithmetic-shortcut-only": 22,
-    "non-viable-solution-accepted": 12
+    "answers-the-wrong-question": 9,
+    "arithmetic-shortcut-only": 27,
+    "non-viable-solution-accepted": 14
    }
   },
   "ineq-meaning": {
@@ -764,16 +764,16 @@
     "endpoint-style-swapped",
     "reads-symbol-left-to-right-always"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 11,
-    "repair": 10,
-    "generate": 9
+    "construct": 14,
+    "repair": 12,
+    "generate": 10
    },
    "itemsPerMisconception": {
-    "reads-symbol-left-to-right-always": 21,
-    "endpoint-style-swapped": 21,
-    "single-value-for-a-set": 11
+    "reads-symbol-left-to-right-always": 26,
+    "endpoint-style-swapped": 26,
+    "single-value-for-a-set": 14
    }
   },
   "ineq-one-step": {
@@ -791,16 +791,16 @@
     "solved-as-equation",
     "flip-because-a-negative-appeared"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 12,
-    "repair": 12,
-    "generate": 6
+    "construct": 16,
+    "repair": 13,
+    "generate": 7
    },
    "itemsPerMisconception": {
-    "flip-after-adding": 12,
-    "solved-as-equation": 12,
-    "flip-because-a-negative-appeared": 12
+    "flip-after-adding": 14,
+    "solved-as-equation": 16,
+    "flip-because-a-negative-appeared": 15
    }
   },
   "ineq-negative-flip": {
@@ -818,16 +818,16 @@
     "flip-but-sign-lost",
     "flip-on-subtracting-a-negative"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 12,
-    "repair": 12,
-    "generate": 6
+    "construct": 15,
+    "repair": 14,
+    "generate": 7
    },
    "itemsPerMisconception": {
-    "no-flip-on-negative-divide": 12,
-    "flip-but-sign-lost": 12,
-    "flip-on-subtracting-a-negative": 12
+    "no-flip-on-negative-divide": 15,
+    "flip-but-sign-lost": 15,
+    "flip-on-subtracting-a-negative": 14
    }
   },
   "ineq-two-step": {
@@ -846,16 +846,16 @@
     "coefficient-applied-to-constant-only",
     "strictness-contradicts-context"
    ],
-   "count": 30,
+   "count": 36,
    "forms": {
-    "construct": 12,
-    "repair": 12,
-    "generate": 6
+    "construct": 15,
+    "repair": 14,
+    "generate": 7
    },
    "itemsPerMisconception": {
-    "flipped-twice": 9,
-    "coefficient-applied-to-constant-only": 17,
-    "strictness-contradicts-context": 10
+    "flipped-twice": 11,
+    "coefficient-applied-to-constant-only": 21,
+    "strictness-contradicts-context": 12
    }
   }
  }

@@ -16,7 +16,7 @@
   "identity-called-no-solution",
   "contradiction-given-a-solution"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "eq-special-cases.always/construct/1cnqk3w",
@@ -2467,6 +2467,504 @@
    ],
    "params": {
     "a": 4,
+    "b": 8
+   }
+  },
+  {
+   "id": "eq-special-cases.refusal/construct/1beqkqs",
+   "kpId": "eq-special-cases",
+   "family": "eq-special-cases.refusal",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "4x + 9 = 4x - 8",
+   "given": [],
+   "ask": {
+    "key": "ask.closure",
+    "params": {
+     "a": 4,
+     "b": 9,
+     "d": -8
+    },
+    "text": "Say what the Sill is holding: one footing, an always, or a refusal."
+   },
+   "answerType": "closure",
+   "unknown": "x",
+   "answer": {
+    "canonical": "none",
+    "tex": "\\text{---}"
+   },
+   "distractors": [
+    {
+     "misconception": "vanishing-variable-means-zero",
+     "response": "0",
+     "tex": "0",
+     "failKey": "fail.socket.gone"
+    },
+    {
+     "misconception": "contradiction-given-a-solution",
+     "response": "-17",
+     "tex": "-17",
+     "failKey": "fail.refusal"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.eq-special-cases.refusal",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "d": -8
+     },
+     "text": "Take the sockets off both pans and read what the Sill still holds."
+    },
+    {
+     "key": "hint.state.eq-special-cases.refusal",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "d": -8
+     },
+     "text": "The sockets are gone and the Sill is holding 9 against -8."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-special-cases.1",
+    "params": {},
+    "text": "Some gaps take exactly one footing. Some are spanned before you arrive. Some take none at all."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7a",
+    "CCSS.HSA-REI.A.1",
+    "TEKS.A.5A",
+    "FL.MA.8.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 9,
+    "d": -8
+   }
+  },
+  {
+   "id": "eq-special-cases.always/repair/1tn71nh",
+   "kpId": "eq-special-cases",
+   "family": "eq-special-cases.always",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "4\\left(x + 5\\right) = 4x + 20",
+   "given": [],
+   "working": [
+    "4\\left(x + 5\\right) = 4x + 20",
+    "0 = 0",
+    "x = 0"
+   ],
+   "brokenBy": "vanishing-variable-means-zero",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "b": 5,
+     "lines": 3,
+     "line": 3
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3|0 = 0",
+    "tex": "0 = 0",
+    "line": 3,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "vanishing-variable-means-zero",
+     "response": "3|1*x = 0",
+     "tex": "x = 0",
+     "failKey": "fail.socket.gone"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "b": 5,
+      "line": 3,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "b": 5,
+      "line": 3,
+      "lines": 3
+     },
+     "text": "Line 3 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-special-cases.2",
+    "params": {},
+    "text": "The Remainder of Vantis is an always. The name of Leaf Nine is a refusal."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7a",
+    "CCSS.HSA-REI.A.1",
+    "TEKS.A.5A",
+    "FL.MA.8.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 5
+   }
+  },
+  {
+   "id": "eq-special-cases.refusal/generate/1wdanfq",
+   "kpId": "eq-special-cases",
+   "family": "eq-special-cases.refusal",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "3x - 6 = 3x - 3",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.refusal",
+    "params": {
+     "a": 3,
+     "b": -6,
+     "d": -3,
+     "target": "none",
+     "unknown": "x"
+    },
+    "text": "Author a claim across this gap that no value closes."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3x - 6 = 3x - 3",
+    "tex": "3x - 6 = 3x - 3",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "x",
+    "value": "none",
+    "needs": [
+     "bothPans"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 3,
+      "b": -6,
+      "d": -3,
+      "target": "none",
+      "unknown": "x"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 3,
+      "b": -6,
+      "d": -3,
+      "target": "none",
+      "unknown": "x"
+     },
+     "text": "Whatever you write, seating none has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-special-cases.1",
+    "params": {},
+    "text": "Some gaps take exactly one footing. Some are spanned before you arrive. Some take none at all."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7a",
+    "CCSS.HSA-REI.A.1",
+    "TEKS.A.5A",
+    "FL.MA.8.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": -6,
+    "d": -3
+   }
+  },
+  {
+   "id": "eq-special-cases.always/construct/1n3wlum",
+   "kpId": "eq-special-cases",
+   "family": "eq-special-cases.always",
+   "form": "construct",
+   "difficulty": 5,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "5\\left(x + 7\\right) = 5x + 35",
+   "given": [],
+   "ask": {
+    "key": "ask.closure",
+    "params": {
+     "a": 5,
+     "b": 7
+    },
+    "text": "Say what the Sill is holding: one footing, an always, or a refusal."
+   },
+   "answerType": "closure",
+   "unknown": "x",
+   "answer": {
+    "canonical": "always",
+    "tex": "\\text{---}"
+   },
+   "distractors": [
+    {
+     "misconception": "vanishing-variable-means-zero",
+     "response": "0",
+     "tex": "0",
+     "failKey": "fail.socket.gone"
+    },
+    {
+     "misconception": "identity-called-no-solution",
+     "response": "none",
+     "tex": "\\text{---}",
+     "failKey": "fail.always"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.eq-special-cases.always",
+     "params": {
+      "a": 5,
+      "b": 7
+     },
+     "text": "Keep taking off both pans and see what is left standing."
+    },
+    {
+     "key": "hint.state.eq-special-cases.always",
+     "params": {
+      "a": 5,
+      "b": 7
+     },
+     "text": "Opened, the near pan is exactly what the far pan already was."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-special-cases.1",
+    "params": {},
+    "text": "Some gaps take exactly one footing. Some are spanned before you arrive. Some take none at all."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7a",
+    "CCSS.HSA-REI.A.1",
+    "TEKS.A.5A",
+    "FL.MA.8.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 7
+   }
+  },
+  {
+   "id": "eq-special-cases.refusal/construct/yfhpn8",
+   "kpId": "eq-special-cases",
+   "family": "eq-special-cases.refusal",
+   "form": "construct",
+   "difficulty": 5,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "2x - 9 = 2x + 8",
+   "given": [],
+   "ask": {
+    "key": "ask.closure",
+    "params": {
+     "a": 2,
+     "b": -9,
+     "d": 8
+    },
+    "text": "Say what the Sill is holding: one footing, an always, or a refusal."
+   },
+   "answerType": "closure",
+   "unknown": "x",
+   "answer": {
+    "canonical": "none",
+    "tex": "\\text{---}"
+   },
+   "distractors": [
+    {
+     "misconception": "vanishing-variable-means-zero",
+     "response": "0",
+     "tex": "0",
+     "failKey": "fail.socket.gone"
+    },
+    {
+     "misconception": "contradiction-given-a-solution",
+     "response": "17",
+     "tex": "17",
+     "failKey": "fail.refusal"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.eq-special-cases.refusal",
+     "params": {
+      "a": 2,
+      "b": -9,
+      "d": 8
+     },
+     "text": "Take the sockets off both pans and read what the Sill still holds."
+    },
+    {
+     "key": "hint.state.eq-special-cases.refusal",
+     "params": {
+      "a": 2,
+      "b": -9,
+      "d": 8
+     },
+     "text": "The sockets are gone and the Sill is holding -9 against 8."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-special-cases.1",
+    "params": {},
+    "text": "Some gaps take exactly one footing. Some are spanned before you arrive. Some take none at all."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7a",
+    "CCSS.HSA-REI.A.1",
+    "TEKS.A.5A",
+    "FL.MA.8.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": -9,
+    "d": 8
+   }
+  },
+  {
+   "id": "eq-special-cases.always/repair/1dsox32",
+   "kpId": "eq-special-cases",
+   "family": "eq-special-cases.always",
+   "form": "repair",
+   "difficulty": 5,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "2\\left(x + 8\\right) = 2x + 16",
+   "given": [],
+   "working": [
+    "2\\left(x + 8\\right) = 2x + 16",
+    "0 = 0",
+    "x = 0"
+   ],
+   "brokenBy": "vanishing-variable-means-zero",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": 8,
+     "lines": 3,
+     "line": 3
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3|0 = 0",
+    "tex": "0 = 0",
+    "line": 3,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "vanishing-variable-means-zero",
+     "response": "3|1*x = 0",
+     "tex": "x = 0",
+     "failKey": "fail.socket.gone"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": 8,
+      "line": 3,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": 8,
+      "line": 3,
+      "lines": 3
+     },
+     "text": "Line 3 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eq-special-cases.1",
+    "params": {},
+    "text": "Some gaps take exactly one footing. Some are spanned before you arrive. Some take none at all."
+   },
+   "standards": [
+    "CCSS.8.EE.C.7a",
+    "CCSS.HSA-REI.A.1",
+    "TEKS.A.5A",
+    "FL.MA.8.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
     "b": 8
    }
   }

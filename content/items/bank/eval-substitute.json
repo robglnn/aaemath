@@ -15,10 +15,10 @@
   "substitute-by-concatenation",
   "coefficient-dropped-on-substitution"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
-   "id": "eval-substitute.twice/construct/xrim4m",
+   "id": "eval-substitute.twice/construct/xr95mp",
    "kpId": "eval-substitute",
    "family": "eval-substitute.twice",
    "form": "construct",
@@ -27,27 +27,27 @@
    "objectClass": "Emitter",
    "stem": "x^{2} + x",
    "given": [
-    "x = 3"
+    "x = 4"
    ],
    "ask": {
     "key": "ask.reading",
     "params": {
-     "v": 3,
-     "sq": 9
+     "v": 4,
+     "sq": 16
     },
     "text": "Let it settle and read it."
    },
    "answerType": "integer",
    "unknown": "x",
    "answer": {
-    "canonical": "12",
-    "tex": "12"
+    "canonical": "20",
+    "tex": "20"
    },
    "distractors": [
     {
      "misconception": "substitute-first-occurrence-only",
-     "response": "9",
-     "tex": "9",
+     "response": "16",
+     "tex": "16",
      "failKey": "fail.seat.partial"
     }
    ],
@@ -60,24 +60,24 @@
     {
      "key": "hint.move.eval-substitute.twice",
      "params": {
-      "v": 3,
-      "sq": 9
+      "v": 4,
+      "sq": 16
      },
      "text": "Seat it in every socket the name opened. All of them, or the load will not settle."
     },
     {
      "key": "hint.state.eval-substitute.twice",
      "params": {
-      "v": 3,
-      "sq": 9
+      "v": 4,
+      "sq": 16
      },
-     "text": "The squared socket is holding 9. The bare one is still holding 3."
+     "text": "The squared socket is holding 16. The bare one is still holding 4."
     }
    ],
    "worldFraming": {
-    "key": "frame.eval-substitute.1",
+    "key": "frame.eval-substitute.2",
     "params": {},
-    "text": "Every socket cut for that name is open. The charge is in your hand."
+    "text": "The beacon has been dark for a hundred years for want of one number."
    },
    "standards": [
     "CCSS.6.EE.A.2c",
@@ -86,7 +86,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "v": 3
+    "v": 4
    }
   },
   {
@@ -237,7 +237,7 @@
    }
   },
   {
-   "id": "eval-substitute.twice/repair/wn4fuv",
+   "id": "eval-substitute.twice/repair/wok5k0",
    "kpId": "eval-substitute",
    "family": "eval-substitute.twice",
    "form": "repair",
@@ -246,19 +246,19 @@
    "objectClass": "Emitter",
    "stem": "x^{2} + x",
    "given": [
-    "x = 6"
+    "x = 9"
    ],
    "working": [
     "x^{2} + x",
-    "6^{2}",
-    "36"
+    "9^{2}",
+    "81"
    ],
    "brokenBy": "substitute-first-occurrence-only",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 6,
-     "sq": 36,
+     "v": 9,
+     "sq": 81,
      "lines": 3,
      "line": 2
     },
@@ -267,16 +267,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|42",
-    "tex": "6^{2} + 6",
+    "canonical": "2|90",
+    "tex": "9^{2} + 9",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "substitute-first-occurrence-only",
-     "response": "2|36",
-     "tex": "6^{2}",
+     "response": "2|81",
+     "tex": "9^{2}",
      "failKey": "fail.seat.partial"
     }
    ],
@@ -289,8 +289,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 6,
-      "sq": 36,
+      "v": 9,
+      "sq": 81,
       "line": 2,
       "lines": 3
      },
@@ -299,8 +299,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 6,
-      "sq": 36,
+      "v": 9,
+      "sq": 81,
       "line": 2,
       "lines": 3
      },
@@ -308,9 +308,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.eval-substitute.2",
+    "key": "frame.eval-substitute.1",
     "params": {},
-    "text": "The beacon has been dark for a hundred years for want of one number."
+    "text": "Every socket cut for that name is open. The charge is in your hand."
    },
    "standards": [
     "CCSS.6.EE.A.2c",
@@ -319,7 +319,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "v": 6
+    "v": 9
    }
   },
   {
@@ -497,7 +497,7 @@
    }
   },
   {
-   "id": "eval-substitute.twice/generate/xr95mp",
+   "id": "eval-substitute.twice/generate/wndwcs",
    "kpId": "eval-substitute",
    "family": "eval-substitute.twice",
    "form": "generate",
@@ -506,17 +506,18 @@
    "objectClass": "Emitter",
    "stem": "x^{2} + x",
    "given": [
-    "x = 4"
+    "x = 5"
    ],
    "ask": {
     "key": "ask.gen.loadReadsAt",
     "params": {
-     "v": 4,
-     "sq": 16,
-     "target": 20,
+     "v": 5,
+     "sq": 25,
+     "target": 30,
+     "at": 5,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads 20 when the socket holds {at}."
+    "text": "Stack a load in x that reads 30 when the socket holds 5."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -528,8 +529,8 @@
    "check": {
     "kind": "loadReadsAt",
     "unknown": "x",
-    "at": 4,
-    "value": 20,
+    "at": 5,
+    "value": 30,
     "needs": [
      "letter"
     ]
@@ -544,9 +545,10 @@
     {
      "key": "hint.gen.loadReadsAt.2",
      "params": {
-      "v": 4,
-      "sq": 16,
-      "target": 20,
+      "v": 5,
+      "sq": 25,
+      "target": 30,
+      "at": 5,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -554,84 +556,13 @@
     {
      "key": "hint.gen.loadReadsAt.3",
      "params": {
-      "v": 4,
-      "sq": 16,
-      "target": 20,
+      "v": 5,
+      "sq": 25,
+      "target": 30,
+      "at": 5,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 20."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-substitute.2",
-    "params": {},
-    "text": "The beacon has been dark for a hundred years for want of one number."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2",
-    "VA.A.EO.1"
-   ],
-   "params": {
-    "v": 4
-   }
-  },
-  {
-   "id": "eval-substitute.twice/construct/wok5k0",
-   "kpId": "eval-substitute",
-   "family": "eval-substitute.twice",
-   "form": "construct",
-   "difficulty": 2,
-   "tier": "core",
-   "objectClass": "Emitter",
-   "stem": "x^{2} + x",
-   "given": [
-    "x = 9"
-   ],
-   "ask": {
-    "key": "ask.reading",
-    "params": {
-     "v": 9,
-     "sq": 81
-    },
-    "text": "Let it settle and read it."
-   },
-   "answerType": "integer",
-   "unknown": "x",
-   "answer": {
-    "canonical": "90",
-    "tex": "90"
-   },
-   "distractors": [
-    {
-     "misconception": "substitute-first-occurrence-only",
-     "response": "81",
-     "tex": "81",
-     "failKey": "fail.seat.partial"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.move.eval-substitute.twice",
-     "params": {
-      "v": 9,
-      "sq": 81
-     },
-     "text": "Seat it in every socket the name opened. All of them, or the load will not settle."
-    },
-    {
-     "key": "hint.state.eval-substitute.twice",
-     "params": {
-      "v": 9,
-      "sq": 81
-     },
-     "text": "The squared socket is holding 81. The bare one is still holding 9."
+     "text": "Seat 5 in whatever you build and it has to come out at 30."
     }
    ],
    "worldFraming": {
@@ -646,7 +577,250 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "v": 9
+    "v": 5
+   }
+  },
+  {
+   "id": "eval-substitute.concat/generate/12wong6",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.concat",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "6 + n",
+   "given": [
+    "n = 5"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 6,
+     "v": 5,
+     "target": 11,
+     "at": 5,
+     "unknown": "n"
+    },
+    "text": "Stack a load in n that reads 11 when the socket holds 5."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "6 + n",
+    "tex": "6 + n",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "n",
+    "at": 5,
+    "value": 11,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 6,
+      "v": 5,
+      "target": 11,
+      "at": 5,
+      "unknown": "n"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 6,
+      "v": 5,
+      "target": 11,
+      "at": 5,
+      "unknown": "n"
+     },
+     "text": "Seat 5 in whatever you build and it has to come out at 11."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.1",
+    "params": {},
+    "text": "Every socket cut for that name is open. The charge is in your hand."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 6,
+    "v": 5,
+    "concat": 65
+   }
+  },
+  {
+   "id": "eval-substitute.coefficient/generate/17tne5c",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.coefficient",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "6x",
+   "given": [
+    "x = 2"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 6,
+     "v": 2,
+     "target": 12,
+     "at": 2,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 12 when the socket holds 2."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "6x",
+    "tex": "6x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 2,
+    "value": 12,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 6,
+      "v": 2,
+      "target": 12,
+      "at": 2,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 6,
+      "v": 2,
+      "target": 12,
+      "at": 2,
+      "unknown": "x"
+     },
+     "text": "Seat 2 in whatever you build and it has to come out at 12."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.1",
+    "params": {},
+    "text": "Every socket cut for that name is open. The charge is in your hand."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 6,
+    "v": 2
+   }
+  },
+  {
+   "id": "eval-substitute.twice/construct/sgpvv2",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.twice",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x^{2} + x",
+   "given": [
+    "x = 18"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 18,
+     "sq": 324
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "342",
+    "tex": "342"
+   },
+   "distractors": [
+    {
+     "misconception": "substitute-first-occurrence-only",
+     "response": "324",
+     "tex": "324",
+     "failKey": "fail.seat.partial"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-substitute.twice",
+     "params": {
+      "v": 18,
+      "sq": 324
+     },
+     "text": "Seat it in every socket the name opened. All of them, or the load will not settle."
+    },
+    {
+     "key": "hint.state.eval-substitute.twice",
+     "params": {
+      "v": 18,
+      "sq": 324
+     },
+     "text": "The squared socket is holding 324. The bare one is still holding 18."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.1",
+    "params": {},
+    "text": "Every socket cut for that name is open. The charge is in your hand."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 18
    }
   },
   {
@@ -797,7 +971,7 @@
    }
   },
   {
-   "id": "eval-substitute.twice/repair/xsfetx",
+   "id": "eval-substitute.twice/repair/rbrivw",
    "kpId": "eval-substitute",
    "family": "eval-substitute.twice",
    "form": "repair",
@@ -806,19 +980,19 @@
    "objectClass": "Emitter",
    "stem": "x^{2} + x",
    "given": [
-    "x = 8"
+    "x = 16"
    ],
    "working": [
     "x^{2} + x",
-    "8^{2}",
-    "64"
+    "16^{2}",
+    "256"
    ],
    "brokenBy": "substitute-first-occurrence-only",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 8,
-     "sq": 64,
+     "v": 16,
+     "sq": 256,
      "lines": 3,
      "line": 2
     },
@@ -827,16 +1001,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|72",
-    "tex": "8^{2} + 8",
+    "canonical": "2|272",
+    "tex": "16^{2} + 16",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "substitute-first-occurrence-only",
-     "response": "2|64",
-     "tex": "8^{2}",
+     "response": "2|256",
+     "tex": "16^{2}",
      "failKey": "fail.seat.partial"
     }
    ],
@@ -849,8 +1023,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 8,
-      "sq": 64,
+      "v": 16,
+      "sq": 256,
       "line": 2,
       "lines": 3
      },
@@ -859,8 +1033,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 8,
-      "sq": 64,
+      "v": 16,
+      "sq": 256,
       "line": 2,
       "lines": 3
      },
@@ -868,9 +1042,9 @@
     }
    ],
    "worldFraming": {
-    "key": "frame.eval-substitute.2",
+    "key": "frame.eval-substitute.1",
     "params": {},
-    "text": "The beacon has been dark for a hundred years for want of one number."
+    "text": "Every socket cut for that name is open. The charge is in your hand."
    },
    "standards": [
     "CCSS.6.EE.A.2c",
@@ -879,7 +1053,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "v": 8
+    "v": 16
    }
   },
   {
@@ -1057,7 +1231,7 @@
    }
   },
   {
-   "id": "eval-substitute.twice/generate/xsfetx",
+   "id": "eval-substitute.twice/generate/sfms5t",
    "kpId": "eval-substitute",
    "family": "eval-substitute.twice",
    "form": "generate",
@@ -1066,17 +1240,18 @@
    "objectClass": "Emitter",
    "stem": "x^{2} + x",
    "given": [
-    "x = 8"
+    "x = 17"
    ],
    "ask": {
     "key": "ask.gen.loadReadsAt",
     "params": {
-     "v": 8,
-     "sq": 64,
-     "target": 72,
+     "v": 17,
+     "sq": 289,
+     "target": 306,
+     "at": 17,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads 72 when the socket holds {at}."
+    "text": "Stack a load in x that reads 306 when the socket holds 17."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -1088,8 +1263,8 @@
    "check": {
     "kind": "loadReadsAt",
     "unknown": "x",
-    "at": 8,
-    "value": 72,
+    "at": 17,
+    "value": 306,
     "needs": [
      "letter"
     ]
@@ -1104,9 +1279,10 @@
     {
      "key": "hint.gen.loadReadsAt.2",
      "params": {
-      "v": 8,
-      "sq": 64,
-      "target": 72,
+      "v": 17,
+      "sq": 289,
+      "target": 306,
+      "at": 17,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -1114,12 +1290,13 @@
     {
      "key": "hint.gen.loadReadsAt.3",
      "params": {
-      "v": 8,
-      "sq": 64,
-      "target": 72,
+      "v": 17,
+      "sq": 289,
+      "target": 306,
+      "at": 17,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 72."
+     "text": "Seat 17 in whatever you build and it has to come out at 306."
     }
    ],
    "worldFraming": {
@@ -1134,43 +1311,49 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "v": 8
+    "v": 17
    }
   },
   {
-   "id": "eval-substitute.twice/construct/sfw8nq",
+   "id": "eval-substitute.concat/generate/1lvkw6",
    "kpId": "eval-substitute",
-   "family": "eval-substitute.twice",
-   "form": "construct",
-   "difficulty": 3,
-   "tier": "stretch",
+   "family": "eval-substitute.concat",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
    "objectClass": "Emitter",
-   "stem": "x^{2} + x",
+   "stem": "2 + n",
    "given": [
-    "x = 10"
+    "n = 3"
    ],
    "ask": {
-    "key": "ask.reading",
+    "key": "ask.gen.loadReadsAt",
     "params": {
-     "v": 10,
-     "sq": 100
+     "a": 2,
+     "v": 3,
+     "target": 5,
+     "at": 3,
+     "unknown": "n"
     },
-    "text": "Let it settle and read it."
+    "text": "Stack a load in n that reads 5 when the socket holds 3."
    },
-   "answerType": "integer",
+   "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "110",
-    "tex": "110"
+    "canonical": "2 + n",
+    "tex": "2 + n",
+    "witness": true
    },
-   "distractors": [
-    {
-     "misconception": "substitute-first-occurrence-only",
-     "response": "100",
-     "tex": "100",
-     "failKey": "fail.seat.partial"
-    }
-   ],
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "n",
+    "at": 3,
+    "value": 5,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
    "hints": [
     {
      "key": "hint.look.Emitter",
@@ -1178,20 +1361,26 @@
      "text": "A socket cut for a name, and a charge waiting outside it."
     },
     {
-     "key": "hint.move.eval-substitute.twice",
+     "key": "hint.gen.loadReadsAt.2",
      "params": {
-      "v": 10,
-      "sq": 100
+      "a": 2,
+      "v": 3,
+      "target": 5,
+      "at": 3,
+      "unknown": "n"
      },
-     "text": "Seat it in every socket the name opened. All of them, or the load will not settle."
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
     },
     {
-     "key": "hint.state.eval-substitute.twice",
+     "key": "hint.gen.loadReadsAt.3",
      "params": {
-      "v": 10,
-      "sq": 100
+      "a": 2,
+      "v": 3,
+      "target": 5,
+      "at": 3,
+      "unknown": "n"
      },
-     "text": "The squared socket is holding 100. The bare one is still holding 10."
+     "text": "Seat 3 in whatever you build and it has to come out at 5."
     }
    ],
    "worldFraming": {
@@ -1206,7 +1395,166 @@
     "VA.A.EO.1"
    ],
    "params": {
+    "a": 2,
+    "v": 3,
+    "concat": 23
+   }
+  },
+  {
+   "id": "eval-substitute.coefficient/generate/rpydd2",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.coefficient",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "5x",
+   "given": [
+    "x = 10"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 5,
+     "v": 10,
+     "target": 50,
+     "at": 10,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 50 when the socket holds 10."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "5x",
+    "tex": "5x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 10,
+    "value": 50,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 5,
+      "v": 10,
+      "target": 50,
+      "at": 10,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 5,
+      "v": 10,
+      "target": 50,
+      "at": 10,
+      "unknown": "x"
+     },
+     "text": "Seat 10 in whatever you build and it has to come out at 50."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.1",
+    "params": {},
+    "text": "Every socket cut for that name is open. The charge is in your hand."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 5,
     "v": 10
+   }
+  },
+  {
+   "id": "eval-substitute.twice/construct/8tv085",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.twice",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "x^{2} + x",
+   "given": [
+    "x = 22"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 22,
+     "sq": 484
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "506",
+    "tex": "506"
+   },
+   "distractors": [
+    {
+     "misconception": "substitute-first-occurrence-only",
+     "response": "484",
+     "tex": "484",
+     "failKey": "fail.seat.partial"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-substitute.twice",
+     "params": {
+      "v": 22,
+      "sq": 484
+     },
+     "text": "Seat it in every socket the name opened. All of them, or the load will not settle."
+    },
+    {
+     "key": "hint.state.eval-substitute.twice",
+     "params": {
+      "v": 22,
+      "sq": 484
+     },
+     "text": "The squared socket is holding 484. The bare one is still holding 22."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.2",
+    "params": {},
+    "text": "The beacon has been dark for a hundred years for want of one number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 22
    }
   },
   {
@@ -1357,7 +1705,7 @@
    }
   },
   {
-   "id": "eval-substitute.twice/repair/wok5k0",
+   "id": "eval-substitute.twice/repair/sgpvv2",
    "kpId": "eval-substitute",
    "family": "eval-substitute.twice",
    "form": "repair",
@@ -1366,19 +1714,19 @@
    "objectClass": "Emitter",
    "stem": "x^{2} + x",
    "given": [
-    "x = 9"
+    "x = 18"
    ],
    "working": [
     "x^{2} + x",
-    "9^{2}",
-    "81"
+    "18^{2}",
+    "324"
    ],
    "brokenBy": "substitute-first-occurrence-only",
    "ask": {
     "key": "ask.repair",
     "params": {
-     "v": 9,
-     "sq": 81,
+     "v": 18,
+     "sq": 324,
      "lines": 3,
      "line": 2
     },
@@ -1387,16 +1735,16 @@
    "answerType": "repair",
    "unknown": "x",
    "answer": {
-    "canonical": "2|90",
-    "tex": "9^{2} + 9",
+    "canonical": "2|342",
+    "tex": "18^{2} + 18",
     "line": 2,
     "valueKind": "expr"
    },
    "distractors": [
     {
      "misconception": "substitute-first-occurrence-only",
-     "response": "2|81",
-     "tex": "9^{2}",
+     "response": "2|324",
+     "tex": "18^{2}",
      "failKey": "fail.seat.partial"
     }
    ],
@@ -1409,8 +1757,8 @@
     {
      "key": "hint.repair.2",
      "params": {
-      "v": 9,
-      "sq": 81,
+      "v": 18,
+      "sq": 324,
       "line": 2,
       "lines": 3
      },
@@ -1419,8 +1767,8 @@
     {
      "key": "hint.repair.3",
      "params": {
-      "v": 9,
-      "sq": 81,
+      "v": 18,
+      "sq": 324,
       "line": 2,
       "lines": 3
      },
@@ -1439,7 +1787,7 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "v": 9
+    "v": 18
    }
   },
   {
@@ -1617,7 +1965,7 @@
    }
   },
   {
-   "id": "eval-substitute.twice/generate/wndwcs",
+   "id": "eval-substitute.twice/generate/rbuodv",
    "kpId": "eval-substitute",
    "family": "eval-substitute.twice",
    "form": "generate",
@@ -1626,17 +1974,18 @@
    "objectClass": "Emitter",
    "stem": "x^{2} + x",
    "given": [
-    "x = 5"
+    "x = 11"
    ],
    "ask": {
     "key": "ask.gen.loadReadsAt",
     "params": {
-     "v": 5,
-     "sq": 25,
-     "target": 30,
+     "v": 11,
+     "sq": 121,
+     "target": 132,
+     "at": 11,
      "unknown": "x"
     },
-    "text": "Stack a load in x that reads 30 when the socket holds {at}."
+    "text": "Stack a load in x that reads 132 when the socket holds 11."
    },
    "answerType": "construction",
    "unknown": "x",
@@ -1648,8 +1997,8 @@
    "check": {
     "kind": "loadReadsAt",
     "unknown": "x",
-    "at": 5,
-    "value": 30,
+    "at": 11,
+    "value": 132,
     "needs": [
      "letter"
     ]
@@ -1664,9 +2013,10 @@
     {
      "key": "hint.gen.loadReadsAt.2",
      "params": {
-      "v": 5,
-      "sq": 25,
-      "target": 30,
+      "v": 11,
+      "sq": 121,
+      "target": 132,
+      "at": 11,
       "unknown": "x"
      },
      "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
@@ -1674,84 +2024,13 @@
     {
      "key": "hint.gen.loadReadsAt.3",
      "params": {
-      "v": 5,
-      "sq": 25,
-      "target": 30,
+      "v": 11,
+      "sq": 121,
+      "target": 132,
+      "at": 11,
       "unknown": "x"
      },
-     "text": "Seat {at} in whatever you build and it has to come out at 30."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-substitute.1",
-    "params": {},
-    "text": "Every socket cut for that name is open. The charge is in your hand."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2",
-    "VA.A.EO.1"
-   ],
-   "params": {
-    "v": 5
-   }
-  },
-  {
-   "id": "eval-substitute.twice/construct/wn4fuv",
-   "kpId": "eval-substitute",
-   "family": "eval-substitute.twice",
-   "form": "construct",
-   "difficulty": 1,
-   "tier": "easy",
-   "objectClass": "Emitter",
-   "stem": "x^{2} + x",
-   "given": [
-    "x = 6"
-   ],
-   "ask": {
-    "key": "ask.reading",
-    "params": {
-     "v": 6,
-     "sq": 36
-    },
-    "text": "Let it settle and read it."
-   },
-   "answerType": "integer",
-   "unknown": "x",
-   "answer": {
-    "canonical": "42",
-    "tex": "42"
-   },
-   "distractors": [
-    {
-     "misconception": "substitute-first-occurrence-only",
-     "response": "36",
-     "tex": "36",
-     "failKey": "fail.seat.partial"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.move.eval-substitute.twice",
-     "params": {
-      "v": 6,
-      "sq": 36
-     },
-     "text": "Seat it in every socket the name opened. All of them, or the load will not settle."
-    },
-    {
-     "key": "hint.state.eval-substitute.twice",
-     "params": {
-      "v": 6,
-      "sq": 36
-     },
-     "text": "The squared socket is holding 36. The bare one is still holding 6."
+     "text": "Seat 11 in whatever you build and it has to come out at 132."
     }
    ],
    "worldFraming": {
@@ -1766,7 +2045,250 @@
     "VA.A.EO.1"
    ],
    "params": {
-    "v": 6
+    "v": 11
+   }
+  },
+  {
+   "id": "eval-substitute.concat/generate/1caovqm",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.concat",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "6 + n",
+   "given": [
+    "n = 9"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 6,
+     "v": 9,
+     "target": 15,
+     "at": 9,
+     "unknown": "n"
+    },
+    "text": "Stack a load in n that reads 15 when the socket holds 9."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "6 + n",
+    "tex": "6 + n",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "n",
+    "at": 9,
+    "value": 15,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 6,
+      "v": 9,
+      "target": 15,
+      "at": 9,
+      "unknown": "n"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 6,
+      "v": 9,
+      "target": 15,
+      "at": 9,
+      "unknown": "n"
+     },
+     "text": "Seat 9 in whatever you build and it has to come out at 15."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.1",
+    "params": {},
+    "text": "Every socket cut for that name is open. The charge is in your hand."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 6,
+    "v": 9,
+    "concat": 69
+   }
+  },
+  {
+   "id": "eval-substitute.coefficient/generate/1j1a1nj",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.coefficient",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "11x",
+   "given": [
+    "x = 7"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 11,
+     "v": 7,
+     "target": 77,
+     "at": 7,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 77 when the socket holds 7."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "11x",
+    "tex": "11x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 7,
+    "value": 77,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 11,
+      "v": 7,
+      "target": 77,
+      "at": 7,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 11,
+      "v": 7,
+      "target": 77,
+      "at": 7,
+      "unknown": "x"
+     },
+     "text": "Seat 7 in whatever you build and it has to come out at 77."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.2",
+    "params": {},
+    "text": "The beacon has been dark for a hundred years for want of one number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 11,
+    "v": 7
+   }
+  },
+  {
+   "id": "eval-substitute.twice/construct/xsfetx",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.twice",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x^{2} + x",
+   "given": [
+    "x = 8"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 8,
+     "sq": 64
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "72",
+    "tex": "72"
+   },
+   "distractors": [
+    {
+     "misconception": "substitute-first-occurrence-only",
+     "response": "64",
+     "tex": "64",
+     "failKey": "fail.seat.partial"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-substitute.twice",
+     "params": {
+      "v": 8,
+      "sq": 64
+     },
+     "text": "Seat it in every socket the name opened. All of them, or the load will not settle."
+    },
+    {
+     "key": "hint.state.eval-substitute.twice",
+     "params": {
+      "v": 8,
+      "sq": 64
+     },
+     "text": "The squared socket is holding 64. The bare one is still holding 8."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.2",
+    "params": {},
+    "text": "The beacon has been dark for a hundred years for want of one number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 8
    }
   },
   {
@@ -2177,196 +2699,45 @@
    }
   },
   {
-   "id": "eval-substitute.concat/construct/1md6sy0",
+   "id": "eval-substitute.concat/generate/1b3tbt0",
    "kpId": "eval-substitute",
    "family": "eval-substitute.concat",
-   "form": "construct",
-   "difficulty": 2,
-   "tier": "core",
-   "objectClass": "Emitter",
-   "stem": "7 + n",
-   "given": [
-    "n = 8"
-   ],
-   "ask": {
-    "key": "ask.reading",
-    "params": {
-     "a": 7,
-     "v": 8
-    },
-    "text": "Let it settle and read it."
-   },
-   "answerType": "integer",
-   "unknown": "x",
-   "answer": {
-    "canonical": "15",
-    "tex": "15"
-   },
-   "distractors": [
-    {
-     "misconception": "substitute-by-concatenation",
-     "response": "78",
-     "tex": "78",
-     "failKey": "fail.seat.wrongvalue"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.move.eval-substitute.concat",
-     "params": {
-      "a": 7,
-      "v": 8
-     },
-     "text": "The charge goes in as a value, not as a digit written next to another."
-    },
-    {
-     "key": "hint.state.eval-substitute.concat",
-     "params": {
-      "a": 7,
-      "v": 8
-     },
-     "text": "7 is fixed weight and 8 has just seated. There is a join between them."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-substitute.1",
-    "params": {},
-    "text": "Every socket cut for that name is open. The charge is in your hand."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2",
-    "VA.A.EO.1"
-   ],
-   "params": {
-    "a": 7,
-    "v": 8,
-    "concat": 78
-   }
-  },
-  {
-   "id": "eval-substitute.coefficient/construct/18x3ttl",
-   "kpId": "eval-substitute",
-   "family": "eval-substitute.coefficient",
-   "form": "construct",
-   "difficulty": 2,
-   "tier": "core",
-   "objectClass": "Emitter",
-   "stem": "6x",
-   "given": [
-    "x = 7"
-   ],
-   "ask": {
-    "key": "ask.reading",
-    "params": {
-     "a": 6,
-     "v": 7
-    },
-    "text": "Let it settle and read it."
-   },
-   "answerType": "integer",
-   "unknown": "x",
-   "answer": {
-    "canonical": "42",
-    "tex": "42"
-   },
-   "distractors": [
-    {
-     "misconception": "coefficient-dropped-on-substitution",
-     "response": "7",
-     "tex": "7",
-     "failKey": "fail.coefficient"
-    }
-   ],
-   "hints": [
-    {
-     "key": "hint.look.Emitter",
-     "params": {},
-     "text": "A socket cut for a name, and a charge waiting outside it."
-    },
-    {
-     "key": "hint.move.eval-substitute.coefficient",
-     "params": {
-      "a": 6,
-      "v": 7
-     },
-     "text": "The collar does not come off when the charge goes in."
-    },
-    {
-     "key": "hint.state.eval-substitute.coefficient",
-     "params": {
-      "a": 6,
-      "v": 7
-     },
-     "text": "The socket is holding 7, and there are 6 of it."
-    }
-   ],
-   "worldFraming": {
-    "key": "frame.eval-substitute.2",
-    "params": {},
-    "text": "The beacon has been dark for a hundred years for want of one number."
-   },
-   "standards": [
-    "CCSS.6.EE.A.2c",
-    "FL.MA.6.AR.1.3",
-    "VA.7.PFA.2",
-    "VA.A.EO.1"
-   ],
-   "params": {
-    "a": 6,
-    "v": 7
-   }
-  },
-  {
-   "id": "eval-substitute.concat/repair/70ucks",
-   "kpId": "eval-substitute",
-   "family": "eval-substitute.concat",
-   "form": "repair",
-   "difficulty": 2,
-   "tier": "core",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
    "objectClass": "Emitter",
    "stem": "5 + n",
    "given": [
-    "n = 8"
+    "n = 9"
    ],
-   "working": [
-    "5 + n",
-    "5 + 8",
-    "58"
-   ],
-   "brokenBy": "substitute-by-concatenation",
    "ask": {
-    "key": "ask.repair",
+    "key": "ask.gen.loadReadsAt",
     "params": {
      "a": 5,
-     "v": 8,
-     "lines": 3,
-     "line": 3
+     "v": 9,
+     "target": 14,
+     "at": 9,
+     "unknown": "n"
     },
-    "text": "Name the joint that will not hold, and what it should read."
+    "text": "Stack a load in n that reads 14 when the socket holds 9."
    },
-   "answerType": "repair",
+   "answerType": "construction",
    "unknown": "x",
    "answer": {
-    "canonical": "3|13",
-    "tex": "13",
-    "line": 3,
-    "valueKind": "expr"
+    "canonical": "5 + n",
+    "tex": "5 + n",
+    "witness": true
    },
-   "distractors": [
-    {
-     "misconception": "substitute-by-concatenation",
-     "response": "3|58",
-     "tex": "58",
-     "failKey": "fail.seat.wrongvalue"
-    }
-   ],
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "n",
+    "at": 9,
+    "value": 14,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
    "hints": [
     {
      "key": "hint.look.Emitter",
@@ -2374,24 +2745,26 @@
      "text": "A socket cut for a name, and a charge waiting outside it."
     },
     {
-     "key": "hint.repair.2",
+     "key": "hint.gen.loadReadsAt.2",
      "params": {
       "a": 5,
-      "v": 8,
-      "line": 3,
-      "lines": 3
+      "v": 9,
+      "target": 14,
+      "at": 9,
+      "unknown": "n"
      },
-     "text": "Read down the working. One line does not follow from the one above it."
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
     },
     {
-     "key": "hint.repair.3",
+     "key": "hint.gen.loadReadsAt.3",
      "params": {
       "a": 5,
-      "v": 8,
-      "line": 3,
-      "lines": 3
+      "v": 9,
+      "target": 14,
+      "at": 9,
+      "unknown": "n"
      },
-     "text": "Line 3 is where the load stops matching."
+     "text": "Seat 9 in whatever you build and it has to come out at 14."
     }
    ],
    "worldFraming": {
@@ -2407,8 +2780,165 @@
    ],
    "params": {
     "a": 5,
-    "v": 8,
-    "concat": 58
+    "v": 9,
+    "concat": 59
+   }
+  },
+  {
+   "id": "eval-substitute.coefficient/generate/1ny5n19",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.coefficient",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "7x",
+   "given": [
+    "x = 2"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 7,
+     "v": 2,
+     "target": 14,
+     "at": 2,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 14 when the socket holds 2."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "7x",
+    "tex": "7x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 2,
+    "value": 14,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 7,
+      "v": 2,
+      "target": 14,
+      "at": 2,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 7,
+      "v": 2,
+      "target": 14,
+      "at": 2,
+      "unknown": "x"
+     },
+     "text": "Seat 2 in whatever you build and it has to come out at 14."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.2",
+    "params": {},
+    "text": "The beacon has been dark for a hundred years for want of one number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 7,
+    "v": 2
+   }
+  },
+  {
+   "id": "eval-substitute.twice/construct/8truq6",
+   "kpId": "eval-substitute",
+   "family": "eval-substitute.twice",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x^{2} + x",
+   "given": [
+    "x = 21"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 21,
+     "sq": 441
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "462",
+    "tex": "462"
+   },
+   "distractors": [
+    {
+     "misconception": "substitute-first-occurrence-only",
+     "response": "441",
+     "tex": "441",
+     "failKey": "fail.seat.partial"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-substitute.twice",
+     "params": {
+      "v": 21,
+      "sq": 441
+     },
+     "text": "Seat it in every socket the name opened. All of them, or the load will not settle."
+    },
+    {
+     "key": "hint.state.eval-substitute.twice",
+     "params": {
+      "v": 21,
+      "sq": 441
+     },
+     "text": "The squared socket is holding 441. The bare one is still holding 21."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-substitute.1",
+    "params": {},
+    "text": "Every socket cut for that name is open. The charge is in your hand."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 21
    }
   }
  ]

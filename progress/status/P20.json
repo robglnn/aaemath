@@ -1,9 +1,14 @@
 {
   "id": "P20",
   "state": "building",
-  "round": 2,
+  "round": 3,
   "gap": null,
-  "note": "Runtime + 3 locale bundles (338 strings each) built; 12/12 offline claims pass. Measuring layout in the browser.",
-  "evidence": [],
-  "updated": "2026-08-10T02:26:44.919Z"
+  "note": "EN/ES/PL shipped: 338 strings per locale, 254 canon-exact from voice.md; runtime with CLDR plurals (pl one/few/many/other), locale number + KaTeX-safe TeX formatting, no-English-fallback missing tracker. verify PASSED dev and --built. review/measure/P20.mjs: 15/15 claims.",
+  "evidence": [
+    "review/measure/P20.out.txt",
+    "review/shots/p20/en-1600x900.png",
+    "review/shots/p20/es-1600x900.png",
+    "review/shots/p20/pl-1600x900.png"
+  ],
+  "updated": "2026-08-10T03:47:33.084Z"
 }

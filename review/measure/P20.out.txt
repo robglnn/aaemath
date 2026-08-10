@@ -1,0 +1,401 @@
+{
+  "piece": "P20",
+  "offline": false,
+  "claims": [
+    {
+      "id": "C1 CANON-EXACT",
+      "statement": "every shippable string in design/voice.md is in en.json, byte-identical",
+      "threshold": "0 mismatches, 254 keys",
+      "pass": true,
+      "canonKeys": 254,
+      "mismatches": 0,
+      "sample": []
+    },
+    {
+      "id": "C2 KEY-PARITY",
+      "statement": "es and pl carry exactly en's key paths, in exactly en's order",
+      "threshold": "0 missing, 0 extra, identical order in all 3",
+      "pass": true,
+      "locales": {
+        "en": {
+          "keys": 338,
+          "missing": 0,
+          "extra": 0,
+          "sameOrder": true,
+          "sampleMissing": [],
+          "sampleExtra": []
+        },
+        "es": {
+          "keys": 338,
+          "missing": 0,
+          "extra": 0,
+          "sameOrder": true,
+          "sampleMissing": [],
+          "sampleExtra": []
+        },
+        "pl": {
+          "keys": 338,
+          "missing": 0,
+          "extra": 0,
+          "sameOrder": true,
+          "sampleMissing": [],
+          "sampleExtra": []
+        }
+      }
+    },
+    {
+      "id": "C3 PLURAL-COVERAGE",
+      "statement": "every plural bundle supplies every CLDR category its language requires (pl needs 4)",
+      "threshold": "0 gaps in all 3",
+      "pass": true,
+      "locales": {
+        "en": {
+          "required": [
+            "one",
+            "other"
+          ],
+          "pluralBundles": 10,
+          "gaps": 0,
+          "sample": []
+        },
+        "es": {
+          "required": [
+            "one",
+            "other"
+          ],
+          "pluralBundles": 10,
+          "gaps": 0,
+          "sample": []
+        },
+        "pl": {
+          "required": [
+            "one",
+            "few",
+            "many",
+            "other"
+          ],
+          "pluralBundles": 10,
+          "gaps": 0,
+          "sample": []
+        }
+      }
+    },
+    {
+      "id": "C4 PLACEHOLDER-PARITY",
+      "statement": "no locale drops or invents a {placeholder}",
+      "threshold": "0 mismatches",
+      "pass": true,
+      "keysCarryingParams": 19,
+      "mismatches": 0,
+      "sample": []
+    },
+    {
+      "id": "C5 PLURAL-RULE",
+      "statement": "plurals.js reproduces CLDR for 34 hand-written cases, including pl's teens, …1s and fractions",
+      "threshold": "34/34 correct",
+      "pass": true,
+      "cases": 34,
+      "wrong": 0,
+      "sample": []
+    },
+    {
+      "id": "C6 NUMBER-CONVENTION",
+      "statement": "decimal mark, group separator, group threshold, minus, percent gap, TeX form and list conjunction per locale",
+      "threshold": "27/27 exact",
+      "pass": true,
+      "cases": 27,
+      "wrong": 0,
+      "sample": []
+    },
+    {
+      "id": "C7 NO-UNTRANSLATED",
+      "statement": "no es/pl string is byte-identical to its English source outside a declared allowlist",
+      "threshold": "0 outside the allowlist",
+      "pass": true,
+      "allowlist": [
+        "ui.lang.en",
+        "ui.lang.es",
+        "ui.lang.pl",
+        "ui.setting.control",
+        "ui.hud.provisional",
+        "walk.solv.01",
+        "sennar.refuse.help.01"
+      ],
+      "locales": {
+        "es": {
+          "identicalToEnglish": 0,
+          "keys": []
+        },
+        "pl": {
+          "identicalToEnglish": 0,
+          "keys": []
+        }
+      }
+    },
+    {
+      "id": "C8 BANNED-VOCAB",
+      "statement": "voice.md §1's ban holds in all three locales, by meaning not spelling",
+      "threshold": "0 hits (ui.title exempt: world.md §1 fixes the product name)",
+      "pass": true,
+      "exempt": [
+        "ui.title"
+      ],
+      "locales": {
+        "en": {
+          "hits": 0,
+          "sample": []
+        },
+        "es": {
+          "hits": 0,
+          "sample": []
+        },
+        "pl": {
+          "hits": 0,
+          "sample": []
+        }
+      }
+    },
+    {
+      "id": "C9 EXCLAMATION-BUDGET",
+      "statement": "exactly three exclamation marks in Level 1, all Ix's, the same three keys in every locale",
+      "threshold": "3 marks, keys == voice.md §2",
+      "pass": true,
+      "expected": [
+        "ix.bark.walker.01",
+        "ix.first.solve.01",
+        "ix.mastery.digit.01"
+      ],
+      "locales": {
+        "en": {
+          "marks": 3,
+          "keys": [
+            "ix.bark.walker.01",
+            "ix.first.solve.01",
+            "ix.mastery.digit.01"
+          ]
+        },
+        "es": {
+          "marks": 3,
+          "keys": [
+            "ix.bark.walker.01",
+            "ix.first.solve.01",
+            "ix.mastery.digit.01"
+          ]
+        },
+        "pl": {
+          "marks": 3,
+          "keys": [
+            "ix.bark.walker.01",
+            "ix.first.solve.01",
+            "ix.mastery.digit.01"
+          ]
+        }
+      }
+    },
+    {
+      "id": "C10 LENGTH-RESERVE",
+      "statement": "every capped register fits its locale reserve (EN cap, ES ×1.2, PL ×1.3) from voice.md §7",
+      "threshold": "0 over cap in all 3",
+      "pass": true,
+      "locales": {
+        "en": {
+          "over": 0,
+          "worstRatio": 0.977,
+          "sample": []
+        },
+        "es": {
+          "over": 0,
+          "worstRatio": 0.81,
+          "sample": []
+        },
+        "pl": {
+          "over": 0,
+          "worstRatio": 0.807,
+          "sample": []
+        }
+      }
+    },
+    {
+      "id": "C11 REGISTER-SURVIVES",
+      "statement": "Verse dash-bounded, cutters never say I, walk.rate names a body part, sys.* never says you — in every locale",
+      "threshold": "0 violations across 3 locales",
+      "pass": true,
+      "violations": 0,
+      "sample": []
+    },
+    {
+      "id": "C12 RENDERS-CLEAN",
+      "statement": "every string renders for every count the language can produce, with no placeholder left standing",
+      "threshold": "0 broken renders in all 3",
+      "pass": true,
+      "runtimeLoadable": true,
+      "locales": {
+        "en": {
+          "rendered": 398,
+          "broken": 0,
+          "sample": []
+        },
+        "es": {
+          "rendered": 398,
+          "broken": 0,
+          "sample": []
+        },
+        "pl": {
+          "rendered": 398,
+          "broken": 0,
+          "sample": []
+        }
+      }
+    },
+    {
+      "id": "C13 PROBE-CLEAN",
+      "statement": "the live i18n probe reports the requested locale and zero missing strings",
+      "threshold": "locale matches and missing.length == 0, keys == 338",
+      "pass": true,
+      "locales": {
+        "en": {
+          "locale": "en",
+          "keys": 338,
+          "missing": 0,
+          "rendered": 398,
+          "sample": {
+            "number": "16,004",
+            "decimal": "1.5",
+            "negative": "−2.25",
+            "percent": "80%",
+            "tex": "16{,}004.5",
+            "plural": {
+              "1": "1 leaf",
+              "2": "2 leaves",
+              "5": "5 leaves",
+              "22": "22 leaves",
+              "1.5": "1.5 leaves"
+            }
+          }
+        },
+        "es": {
+          "locale": "es",
+          "keys": 338,
+          "missing": 0,
+          "rendered": 398,
+          "sample": {
+            "number": "16 004",
+            "decimal": "1,5",
+            "negative": "−2,25",
+            "percent": "80 %",
+            "tex": "16\\,004{,}5",
+            "plural": {
+              "1": "1 hoja",
+              "2": "2 hojas",
+              "5": "5 hojas",
+              "22": "22 hojas",
+              "1.5": "1,5 hojas"
+            }
+          }
+        },
+        "pl": {
+          "locale": "pl",
+          "keys": 338,
+          "missing": 0,
+          "rendered": 398,
+          "sample": {
+            "number": "16 004",
+            "decimal": "1,5",
+            "negative": "−2,25",
+            "percent": "80 %",
+            "tex": "16\\,004{,}5",
+            "plural": {
+              "1": "1 liść",
+              "2": "2 liście",
+              "5": "5 liści",
+              "22": "22 liście",
+              "1.5": "1,5 liścia"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "C14 NO-LAYOUT-BREAK",
+      "statement": "the longest string of every register fits its box at 1600×900 and 1280×720, in all three locales",
+      "threshold": "0 px of overflow anywhere",
+      "pass": true,
+      "worstOverflowPx": 0,
+      "worstAt": null,
+      "cells": {
+        "en@1600x900": {
+          "boxes": 15,
+          "overflowing": 0,
+          "sample": []
+        },
+        "en@1280x720": {
+          "boxes": 15,
+          "overflowing": 0,
+          "sample": []
+        },
+        "es@1600x900": {
+          "boxes": 15,
+          "overflowing": 0,
+          "sample": []
+        },
+        "es@1280x720": {
+          "boxes": 15,
+          "overflowing": 0,
+          "sample": []
+        },
+        "pl@1600x900": {
+          "boxes": 15,
+          "overflowing": 0,
+          "sample": []
+        },
+        "pl@1280x720": {
+          "boxes": 15,
+          "overflowing": 0,
+          "sample": []
+        }
+      }
+    },
+    {
+      "id": "C15 PROOF-OFF-BY-DEFAULT",
+      "statement": "the measurement overlay never appears without ?i18nproof=1 (G8: no debug labels in a player frame)",
+      "threshold": "absent from the DOM",
+      "pass": true,
+      "presentWithoutFlag": false
+    }
+  ],
+  "live": {
+    "ran": true,
+    "foreignErrors": {
+      "en@1600": [],
+      "en@1280": [],
+      "es@1600": [],
+      "es@1280": [],
+      "pl@1600": [],
+      "pl@1280": []
+    },
+    "shots": [
+      "C:\\dev\\math\\aaemath\\review\\shots\\p20\\en-1600x900.png",
+      "C:\\dev\\math\\aaemath\\review\\shots\\p20\\es-1600x900.png",
+      "C:\\dev\\math\\aaemath\\review\\shots\\p20\\pl-1600x900.png"
+    ]
+  }
+}
+
+------------------------------------------------------------------------------
+PASS  C1 CANON-EXACT           0 mismatches, 254 keys
+PASS  C2 KEY-PARITY            0 missing, 0 extra, identical order in all 3
+PASS  C3 PLURAL-COVERAGE       0 gaps in all 3
+PASS  C4 PLACEHOLDER-PARITY    0 mismatches
+PASS  C5 PLURAL-RULE           34/34 correct
+PASS  C6 NUMBER-CONVENTION     27/27 exact
+PASS  C7 NO-UNTRANSLATED       0 outside the allowlist
+PASS  C8 BANNED-VOCAB          0 hits (ui.title exempt: world.md §1 fixes the product name)
+PASS  C9 EXCLAMATION-BUDGET    3 marks, keys == voice.md §2
+PASS  C10 LENGTH-RESERVE       0 over cap in all 3
+PASS  C11 REGISTER-SURVIVES    0 violations across 3 locales
+PASS  C12 RENDERS-CLEAN        0 broken renders in all 3
+PASS  C13 PROBE-CLEAN          locale matches and missing.length == 0, keys == 338
+PASS  C14 NO-LAYOUT-BREAK      0 px of overflow anywhere
+PASS  C15 PROOF-OFF-BY-DEFAULT absent from the DOM
+------------------------------------------------------------------------------
+15/15 claims pass

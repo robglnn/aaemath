@@ -15,7 +15,7 @@
   "oo-mult-before-div",
   "oo-add-before-sub"
  ],
- "count": 30,
+ "count": 36,
  "items": [
   {
    "id": "oo-numeric.addmul/construct/115n6ui",
@@ -2557,6 +2557,521 @@
     "a": 2,
     "b": 2,
     "c": 7
+   }
+  },
+  {
+   "id": "oo-numeric.divmul/repair/1mrvz9h",
+   "kpId": "oo-numeric",
+   "family": "oo-numeric.divmul",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "8 \\div 2 \\cdot 4",
+   "given": [],
+   "working": [
+    "8 \\div 2 \\cdot 4",
+    "8 \\div 8",
+    "1"
+   ],
+   "brokenBy": "oo-mult-before-div",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 8,
+     "b": 2,
+     "c": 4,
+     "first": 4,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|16",
+    "tex": "4 \\cdot 4",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "oo-mult-before-div",
+     "response": "2|1",
+     "tex": "8 \\div 8",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 8,
+      "b": 2,
+      "c": 4,
+      "first": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 8,
+      "b": 2,
+      "c": 4,
+      "first": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-numeric.2",
+    "params": {},
+    "text": "Rell's mate stacked this one and then walked off to argue about boots."
+   },
+   "standards": [
+    "CCSS.6.EE.A.1",
+    "CCSS.6.EE.A.2c",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 8,
+    "b": 2,
+    "c": 4
+   }
+  },
+  {
+   "id": "oo-numeric.addsub/repair/1iv0nj8",
+   "kpId": "oo-numeric",
+   "family": "oo-numeric.addsub",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "17 - 3 + 2",
+   "given": [],
+   "working": [
+    "17 - 3 + 2",
+    "17 - 5",
+    "12"
+   ],
+   "brokenBy": "oo-add-before-sub",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 17,
+     "b": 3,
+     "c": 2,
+     "first": 14,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|16",
+    "tex": "14 + 2",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "oo-add-before-sub",
+     "response": "2|12",
+     "tex": "17 - 5",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 17,
+      "b": 3,
+      "c": 2,
+      "first": 14,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 17,
+      "b": 3,
+      "c": 2,
+      "first": 14,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-numeric.1",
+    "params": {},
+    "text": "Three stacks and a plank, on a floor that shows you the moment you stack it wrong."
+   },
+   "standards": [
+    "CCSS.6.EE.A.1",
+    "CCSS.6.EE.A.2c",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 17,
+    "b": 3,
+    "c": 2
+   }
+  },
+  {
+   "id": "oo-numeric.addmul/generate/ueneht",
+   "kpId": "oo-numeric",
+   "family": "oo-numeric.addmul",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "9 + 5 \\cdot 2",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.loadTo",
+    "params": {
+     "a": 9,
+     "b": 5,
+     "c": 2,
+     "inner": 10,
+     "target": 19
+    },
+    "text": "Stack a load out of a product and a sum that settles to 19."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "9 + 5 \\cdot 2",
+    "tex": "9 + 5 \\cdot 2",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": 19,
+    "needs": [
+     "product",
+     "sum"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": 9,
+      "b": 5,
+      "c": 2,
+      "inner": 10,
+      "target": 19
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": 9,
+      "b": 5,
+      "c": 2,
+      "inner": 10,
+      "target": 19
+     },
+     "text": "Whatever you stack, it has to settle to 19 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-numeric.2",
+    "params": {},
+    "text": "Rell's mate stacked this one and then walked off to argue about boots."
+   },
+   "standards": [
+    "CCSS.6.EE.A.1",
+    "CCSS.6.EE.A.2c",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 9,
+    "b": 5,
+    "c": 2
+   }
+  },
+  {
+   "id": "oo-numeric.addmul/construct/1i5i229",
+   "kpId": "oo-numeric",
+   "family": "oo-numeric.addmul",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "10 + 4 \\cdot 3",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 10,
+     "b": 4,
+     "c": 3,
+     "inner": 12
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "22",
+    "tex": "22"
+   },
+   "distractors": [
+    {
+     "misconception": "oo-strict-left-to-right",
+     "response": "42",
+     "tex": "42",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.oo-numeric.addmul",
+     "params": {
+      "a": 10,
+      "b": 4,
+      "c": 3,
+      "inner": 12
+     },
+     "text": "The bundle of 4 and 3 settles before the join outside it."
+    },
+    {
+     "key": "hint.state.oo-numeric.addmul",
+     "params": {
+      "a": 10,
+      "b": 4,
+      "c": 3,
+      "inner": 12
+     },
+     "text": "Inside is 12. Now 10 joins it from outside."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-numeric.2",
+    "params": {},
+    "text": "Rell's mate stacked this one and then walked off to argue about boots."
+   },
+   "standards": [
+    "CCSS.6.EE.A.1",
+    "CCSS.6.EE.A.2c",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 10,
+    "b": 4,
+    "c": 3
+   }
+  },
+  {
+   "id": "oo-numeric.addsub/construct/tas57w",
+   "kpId": "oo-numeric",
+   "family": "oo-numeric.addsub",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "9 - 5 + 3",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 9,
+     "b": 5,
+     "c": 3,
+     "first": 4
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "7",
+    "tex": "7"
+   },
+   "distractors": [
+    {
+     "misconception": "oo-add-before-sub",
+     "response": "1",
+     "tex": "1",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.oo-numeric.addsub",
+     "params": {
+      "a": 9,
+      "b": 5,
+      "c": 3,
+      "first": 4
+     },
+     "text": "Take the joins in the order they stand, not in the order you like them."
+    },
+    {
+     "key": "hint.state.oo-numeric.addsub",
+     "params": {
+      "a": 9,
+      "b": 5,
+      "c": 3,
+      "first": 4
+     },
+     "text": "9 less 5 is 4, and 3 is still standing outside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-numeric.1",
+    "params": {},
+    "text": "Three stacks and a plank, on a floor that shows you the moment you stack it wrong."
+   },
+   "standards": [
+    "CCSS.6.EE.A.1",
+    "CCSS.6.EE.A.2c",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 9,
+    "b": 5,
+    "c": 3
+   }
+  },
+  {
+   "id": "oo-numeric.addmul/repair/2wcthb",
+   "kpId": "oo-numeric",
+   "family": "oo-numeric.addmul",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "12 + 2 \\cdot 5",
+   "given": [],
+   "working": [
+    "12 + 2 \\cdot 5",
+    "14 \\cdot 5",
+    "70"
+   ],
+   "brokenBy": "oo-strict-left-to-right",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 12,
+     "b": 2,
+     "c": 5,
+     "inner": 10,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|22",
+    "tex": "12 + 10",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "oo-strict-left-to-right",
+     "response": "2|70",
+     "tex": "14 \\cdot 5",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 12,
+      "b": 2,
+      "c": 5,
+      "inner": 10,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 12,
+      "b": 2,
+      "c": 5,
+      "inner": 10,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-numeric.2",
+    "params": {},
+    "text": "Rell's mate stacked this one and then walked off to argue about boots."
+   },
+   "standards": [
+    "CCSS.6.EE.A.1",
+    "CCSS.6.EE.A.2c",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 12,
+    "b": 2,
+    "c": 5
    }
   }
  ]

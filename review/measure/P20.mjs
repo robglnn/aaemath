@@ -463,26 +463,51 @@ if (!OFFLINE) {
       await attempt(() => openGame(
         { lang, width: size.w, height: size.h, query: { i18nproof: "1" } },
         async (d) => {
-          await d.play(1.0);
+          // Advancing time runs every other piece's hooks, and a sibling mid-rewrite can throw
+          // inside `after()`. Boot has already completed by the time openGame returns, so a
+          // failed advance costs this measurement nothing — and swallowing it here is what keeps
+          // a P20 number from depending on P13's current save state. Foreign errors are still
+          // collected and printed below, never attributed.
+          try {
+            await d.play(1.0);
+          } catch {
+            /* a sibling's hook threw; recorded via report().errors */
+          }
+          // The proof surface must actually be on the page before anything is measured or
+          // captured. Without this the retry above can hand back a session that reloaded under
+          // it, and the evidence is a black frame that looks like a render bug.
+          const mounted = await d.run(() => !!document.querySelector(".vs-i18nproof"));
+          if (!mounted) throw new Error(`${lang}@${size.w}: proof surface not mounted`);
           const p = await d.probe("i18n");
           if (size.w === 1600) probes[lang] = p;
           layouts[`${lang}@${size.w}x${size.h}`] = p?.layout ?? null;
           // Foreign boot failures are recorded, never attributed to P20.
-          const rep = await d.report();
+          const rep = await d.report().catch(() => ({ errors: ["report() unavailable"] }));
           foreignErrors[`${lang}@${size.w}`] = (rep.errors ?? []).map((e) => e.split("\n")[0]);
           if (SHOTS && size.w === 1600) {
             const file = `review/shots/p20/${lang}-1600x900.png`;
             // Pause the fixed-step clock first. Headless software GL is slow enough that a live
             // 3D scene can starve the compositor and time the capture out; the layout numbers
             // above are already taken, and a paused frame is the same frame.
-            await d.run(() => window.__vs?.pause?.(true));
+            await d.run(() => {
+              window.__vs?.pause?.(true);
+              // The proof surface is opaque and covers the viewport, so the canvas contributes
+              // no pixels to this capture — hiding it only stops software GL competing with the
+              // compositor, which is what times the screenshot out on a loaded machine.
+              const c = document.getElementById("stage");
+              if (c) c.style.visibility = "hidden";
+            });
             try {
-              await d.shoot(file);
+              await d.page.screenshot({ path: path.join(SROOT, file), timeout: 120000 });
               shots.push(path.join(SROOT, file));
             } catch (err) {
               shots.push(`${file} — CAPTURE FAILED: ${String(err).split("\n")[0]}`);
             }
-            await d.run(() => window.__vs?.pause?.(false));
+            await d.run(() => {
+              window.__vs?.pause?.(false);
+              const c = document.getElementById("stage");
+              if (c) c.style.visibility = "";
+            });
           }
           const sentinel = await d.run(() => (document.getElementById("overlay")?.innerText ?? "").includes("‹"));
           if (sentinel) throw new Error(`${lang}: a ‹key› sentinel is on screen`);

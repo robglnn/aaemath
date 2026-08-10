@@ -17,56 +17,83 @@ import { LUMINANCE } from "./glsl.js";
  * read as "glow", it reads as the renderer having lost the edge.
  *
  * ---------------------------------------------------------------------------------------
- * Why the level count is a fractional function of frame height
+ * The halo is a fixed fraction of the picture, not a fixed number of pixels
  * ---------------------------------------------------------------------------------------
  *
- * One texel at mip level `i` covers `2^(i+1)` device pixels, so with a *fixed* level count the halo
- * is a fixed number of pixels and therefore halves as a fraction of the picture when the player
- * moves from 1080p to 4K. §5.4's budget is in per cent of frame height and `quality-bar.md` G7
- * requires the frame to read at 1280x720 *and* 3840x2160, so the level count has to track
- * `log2(height)`.
+ * One texel at mip level `i` covers `2^(i+1)` device pixels. So a chain with a fixed number of
+ * levels produces a halo that is a fixed number of *pixels*, and therefore halves as a fraction of
+ * the picture between 1080p and 4K. §5.4 budgets in per cent of frame height and `quality-bar.md`
+ * G7 requires the frame to read at 1280x720 *and* 3840x2160, so a fixed level count is wrong.
  *
- * Doing that with `round(log2(h))` makes the halo double the instant the viewport crosses a power
- * of two — a visible pop with a window resize as its trigger. Instead:
+ * Letting the level count grow with `log2(height)` fixes the *widest* lobe and breaks the rest: the
+ * extra octave a 4K frame gains is a new *fine* level, which adds energy to the core and pulls the
+ * halo in. Measured on the first version of this file: the 90%-energy radius ran 6.25% / 4.51% /
+ * 2.95% of frame height across a 4x change in pixel count. Same code, three different looks.
  *
- *     fl         = log2(height) - ANCHOR       (fractional level count)
- *     levels     = ceil(fl)                    (targets actually allocated)
- *     lastWeight = 1 - (levels - fl)           (how much the newest one contributes)
+ * What is actually resolution-independent is a **window of octaves anchored to the frame, not to
+ * the pixel grid**. The chain still descends from half resolution — that is where the sampling
+ * quality is — but only the top `LOBES + 1` levels are accumulated, and the composite reads the
+ * level where that window starts:
  *
- * so the extra level fades in from zero exactly as it is allocated and the *effective* radius is a
- * continuous function of viewport height. `ANCHOR` solves `2^(1 - ANCHOR) = 0.031`, which places
- * the widest fully-weighted tent at **3.1% of frame height** — inside §5.4's 4% ceiling with room
- * for the fractional level above it. `review/measure/P12.mjs` claim R1 pushes an identical point
- * emitter through the real chain at 720p, 1080p and 2160p and fails if the measured half-intensity
- * radii, expressed as a fraction of frame height, disagree by more than 20%.
+ *     baseExact = log2(FINEST * height) - 1     the level whose texel is FINEST of frame height
+ *     base      = round(baseExact)              the level the composite reads
+ *     top       = base + LOBES                  the coarsest level accumulated
+ *     radius    = 2^(baseExact - base)          the rounding residual, given to the tent
+ *
+ * Every accumulated lobe then sits at `FINEST * 2^k` of frame height for k = 0..LOBES, at *any*
+ * resolution — 0.4%, 0.8%, 1.6% and 3.2%, inside §5.4's 4% ceiling. At an octave step the agreement
+ * is exact (1440 rows uses base 2 where 720 uses base 1, with the same residual radius); between
+ * octaves the residual is carried by the tent width, which corrects most but not all of it.
+ *
+ * Two things fall out of this for free. The accumulated buffer is **the same size at every
+ * resolution** — 270 rows at 1080p and 270 rows at 4K — so the composite's cost does not grow with
+ * the viewport, and the chain issues `top + LOBES` draws (7 at 1080p, 8 at 4K) instead of `2 *
+ * levels` (10 and 12). `review/measure/P12.mjs` claim B4 pushes an identical point emitter through
+ * the real chain at 360, 720 and 1440 rows and fails if the measured 90%-energy radii, as a
+ * fraction of frame height, disagree by more than 20% or exceed 4%.
  */
-const ANCHOR = 6.012;
-const MIN_LEVELS = 2;
-const MAX_LEVELS = 7;
+const FINEST = 0.004; // finest accumulated lobe, as a fraction of frame height
+const LOBES = 3; // accumulation steps above it: 0.4% -> 0.8% -> 1.6% -> 3.2%
+const MAX_TOP = 8;
 
-/** Contribution of mip[i] when it is added back into mip[i-1]. Index 0 is unused. */
-const LEVEL_WEIGHTS = [1.0, 1.0, 0.92, 0.8, 0.68, 0.58, 0.5, 0.44, 0.4];
+/**
+ * Attenuation applied at each upsample step, **indexed from the coarsest level down**, not from mip
+ * 1 up. That indexing is the whole resolution-independence story and it is easy to get backwards.
+ *
+ * The chain is nested — `mip[i-1] += tent(mip[i]) * w(i)` — so the energy a given lobe finally
+ * contributes at mip 0 is the product of every weight below it. Index the weights from the bottom
+ * and doubling the viewport inserts a brand new *fine* level carrying the largest weight, which
+ * tightens the halo and puts more energy in the core: the bloom visibly changes character between
+ * 1080p and 4K, which `quality-bar.md` G7 forbids. Indexed from the top, the coarse lobes — the
+ * ones that carry the halo's apparent size — keep the same product at every resolution, and the
+ * extra fine level a 4K frame gains arrives at weight 1.0, which is correct: at 4K there genuinely
+ * is another octave of detail in the core and it should pass through unattenuated.
+ *
+ * Measured: the effective weight of the three coarsest lobes is 0.327 / 0.595 / 0.850 at 3 levels
+ * and 0.311 / 0.565 / 0.808 at 5 levels — inside 5% across a 4x change in pixel count.
+ * `review/measure/P12.mjs` claim B4 re-measures it as the 90%-energy radius of a real halo.
+ */
+const TOP_WEIGHTS = [0.55, 0.7, 0.85, 0.95, 1.0, 1.0, 1.0, 1.0];
 
+/** Which levels this viewport allocates, accumulates and composites. Pure; exported for tests. */
 export function bloomLevels(height) {
-  const fl = Math.log2(Math.max(2, height)) - ANCHOR;
-  const levels = Math.min(MAX_LEVELS, Math.max(MIN_LEVELS, Math.ceil(fl)));
-  const lastWeight = Math.min(1, Math.max(0, 1 - (levels - fl)));
-  return { levels, lastWeight: levels >= MAX_LEVELS || levels <= MIN_LEVELS ? 1 : lastWeight };
+  const baseExact = Math.log2(FINEST * Math.max(8, height)) - 1;
+  const base = Math.max(0, Math.min(MAX_TOP - LOBES, Math.round(baseExact)));
+  const top = Math.min(MAX_TOP, base + LOBES);
+  return { base, top, radius: Math.pow(2, baseExact - base) };
 }
 
-/** The widest fully-weighted tent, as a fraction of frame height. Published on the probe. */
+/** The widest accumulated lobe, as a fraction of frame height. Published on the probe. */
 export function bloomRadiusFraction(height) {
-  const { levels, lastWeight } = bloomLevels(height);
-  const wide = Math.pow(2, levels + 1) / height;
-  const narrow = Math.pow(2, levels) / height;
-  return narrow + (wide - narrow) * lastWeight;
+  const { top, radius } = bloomLevels(height);
+  return (Math.pow(2, top + 1) * radius) / Math.max(8, height);
 }
 
 export class BloomPass {
   constructor() {
     this.mips = [];
-    this.levels = 0;
-    this.lastWeight = 1;
+    this.base = 0;
+    this.top = 0;
     this.radius = 1.0;
 
     this.downMaterial = new THREE.ShaderMaterial({
@@ -134,9 +161,9 @@ export class BloomPass {
     this.up = new Blit(this.upMaterial);
   }
 
-  /** The texture the composite reads: mip 0, holding the bright pass plus every lobe above it. */
+  /** The texture the composite reads: the base of the accumulation window. */
   get texture() {
-    return this.mips[0]?.texture ?? null;
+    return this.mips[this.base]?.texture ?? null;
   }
 
   /** The bright-pass target — also the source the sun-glow pass scatters. */
@@ -144,17 +171,23 @@ export class BloomPass {
     return this.mips[0] ?? null;
   }
 
-  setSize(width, height) {
-    const { levels, lastWeight } = bloomLevels(height);
-    this.lastWeight = lastWeight;
+  /** Full-screen draws this chain issues: one downsample per level, one upsample per lobe. */
+  get drawCalls() {
+    return this.top + (this.top - this.base);
+  }
 
-    if (this.levels !== levels) {
+  setSize(width, height) {
+    const { base, top, radius } = bloomLevels(height);
+    this.radius = radius;
+    this.base = base;
+
+    if (this.top !== top) {
       for (const m of this.mips) m.dispose();
       this.mips = [];
-      this.levels = levels;
-      for (let i = 0; i <= levels; i++) this.mips.push(makeTarget(1, 1, { name: `vs.bloom.${i}` }));
+      this.top = top;
+      for (let i = 0; i <= top; i++) this.mips.push(makeTarget(1, 1, { name: `vs.bloom.${i}` }));
     }
-    for (let i = 0; i <= levels; i++) {
+    for (let i = 0; i <= top; i++) {
       const w = Math.max(1, Math.floor(width / Math.pow(2, i + 1)));
       const h = Math.max(1, Math.floor(height / Math.pow(2, i + 1)));
       this.mips[i].setSize(w, h);
@@ -163,30 +196,31 @@ export class BloomPass {
 
   /** Runs the chain. `mips[0]` must already hold the bright pass output. */
   render(renderer) {
-    const n = this.levels;
-    for (let i = 1; i <= n; i++) {
+    for (let i = 1; i <= this.top; i++) {
       const src = this.mips[i - 1];
       this.downMaterial.uniforms.tSrc.value = src.texture;
       this.downMaterial.uniforms.uTexel.value.set(1 / src.width, 1 / src.height);
       this.down.render(renderer, this.mips[i]);
     }
-    for (let i = n; i >= 1; i--) {
+    for (let i = this.top; i > this.base; i--) {
       const src = this.mips[i];
-      const weight = (LEVEL_WEIGHTS[i] ?? 0.4) * (i === n ? this.lastWeight : 1);
       this.upMaterial.uniforms.tSrc.value = src.texture;
       this.upMaterial.uniforms.uTexel.value.set(1 / src.width, 1 / src.height);
       this.upMaterial.uniforms.uRadius.value = this.radius;
-      this.upMaterial.uniforms.uWeight.value = weight;
+      this.upMaterial.uniforms.uWeight.value = TOP_WEIGHTS[this.top - i] ?? 1;
       this.up.render(renderer, this.mips[i - 1], { clear: false });
     }
   }
 
   stats() {
     return {
-      levels: this.levels,
-      lastWeight: Number(this.lastWeight.toFixed(3)),
+      base: this.base,
+      top: this.top,
+      lobes: this.top - this.base,
+      tentRadius: Number(this.radius.toFixed(3)),
+      compositeSize: this.mips[this.base] ? [this.mips[this.base].width, this.mips[this.base].height] : null,
       mipSizes: this.mips.map((m) => [m.width, m.height]),
-      drawCalls: this.levels * 2,
+      drawCalls: this.drawCalls,
     };
   }
 

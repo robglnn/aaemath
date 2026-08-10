@@ -67,6 +67,18 @@ Any of these failing is an automatic fail, no argument:
 | G6 | Keyboard+mouse *and* gamepad both play the whole game | input probe reports both paths bound |
 | G7 | Readable at 1280×720 and at 3840×2160 | shots at both sizes |
 | G8 | No placeholder art, lorem text or debug labels in a player-visible frame | visual review |
+| G9 | The character faces the direction it is travelling | `verify` compares `headingDeg` against `yawDeg` after moving forward; >30° apart fails |
+
+G9 exists because this shipped broken and a *player* found it, not the tooling. The avatar sat at yaw
+180 while travelling at heading 0. Every automated check passed, because they all measured the input
+against the camera basis — which was correct the whole time. Nothing compared the body's facing to its
+motion, so nothing could see it. The player experienced it as two unrelated bugs (arms swapped,
+strafing reversed) and it was one.
+
+**The general lesson, which is worth more than the gate:** a measurement that confirms the thing you
+suspected is not evidence the feature works. Ask what the player actually sees, and check *that*.
+A capture of the character running forward would have shown it instantly — and one had been taken,
+and not looked at.
 
 ## 3. Learning gates
 

@@ -135,6 +135,30 @@ async function cmdVerify() {
         failures.push(`[${lang}] advance() did not move the simulation`);
       }
 
+      // Does the character face where it is going?
+      //
+      // This shipped broken and a player found it, not the tooling. The avatar sat at yaw 180 while
+      // travelling at heading 0 — facing backwards down its own line of travel — which a player reads
+      // as two unrelated bugs: swapped arms (you are seeing the character's front) and reversed
+      // strafing (the body slides toward its own left while facing you). Every automated check passed,
+      // because they all measured the *input* against the camera basis, which was correct throughout.
+      // Nothing compared the body's facing to its motion, so nothing could see it.
+      await d.hold("KeyW", 1.0);
+      const moved = await d.report();
+      const flat = Object.values(moved.probes ?? {}).filter((p) => p && typeof p === "object");
+      const heading = flat.find((p) => typeof p.headingDeg === "number")?.headingDeg;
+      const yaw = flat.find((p) => typeof p.yawDeg === "number")?.yawDeg;
+      if (typeof heading === "number" && typeof yaw === "number") {
+        const delta = Math.abs(((heading - yaw + 540) % 360) - 180);
+        if (delta > 30) {
+          failures.push(
+            `[${lang}] avatar faces ${delta.toFixed(0)}deg away from its direction of travel ` +
+              `(heading ${heading.toFixed(0)}, yaw ${yaw.toFixed(0)}) — arms will read swapped and strafing reversed`
+          );
+        }
+        lines.push(`[${lang}] facing: heading ${heading.toFixed(0)} vs yaw ${yaw.toFixed(0)} (${delta.toFixed(0)}deg off)`);
+      }
+
       const i18n = report.probes?.i18n;
       if (i18n?.missing?.length) {
         failures.push(`[${lang}] ${i18n.missing.length} missing strings: ${i18n.missing.slice(0, 6).join(", ")}`);

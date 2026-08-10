@@ -46,6 +46,33 @@ import { warn } from "../core/Introspect.js";
  * The only material types in this project are `MeshLambertMaterial` (lit), `MeshBasicMaterial`
  * (unlit) and a `ShaderMaterial` for the sky. Lambert is per-fragment in three r169 and has no
  * specular lobe at all, which is exactly what this target wants.
+ *
+ * ---------------------------------------------------------------------------------------------
+ * **Round 2: this file used to be dead code, and that is the only fact about it that mattered.**
+ *
+ * A hostile review found that `Materials.js` was imported by exactly one file — `Lighting.js` — and
+ * by no world module. `Terrain.js`, `Scatter.js` and `Level01.js` all built their own materials, so
+ * the entire flat-shaded factory painted nothing except a synthetic board that P11's own measurement
+ * script spawned. In the shipped frame a rock facet turned from the key read hue 33-40 (a plain
+ * darker ochre: a value-only ramp) against the target's 196-203. Every colour claim this piece had
+ * ever made described a scene no player would ever see.
+ *
+ * Two things changed as a result, and both are structural rather than cosmetic:
+ *
+ *  * **The synthetic board is gone.** `buildBoard()` and `Lighting.materialBoard()` were deleted
+ *    outright rather than left behind a flag, because a reviewer-only scene that renders the whole
+ *    material language is exactly the thing a future round will accidentally measure again.
+ *    `review/measure/P11.mjs` now has nothing to point at except the shipped world.
+ *
+ *  * **The factory took a second job: it builds materials for modules that own their own grade.**
+ *    `Scatter.js` needs a per-instance distance fade and wind; `Terrain.js` and `Level01.js` need
+ *    their own aerial perspective and author their value ladder as per-face vertex colour. Both used
+ *    to reach that by overwriting `onBeforeCompile` on a material they built themselves, which is
+ *    precisely why they could not use this file. So `_build` now takes an `extend` payload — extra
+ *    uniforms and GLSL injected at named points *around* this file's own grade — and `make()` hands
+ *    back an uncached instance for callers that need their own uniform block. The substance, the
+ *    albedo derivation, the §3.4 convergence, the rim and the shadow subtraction stay here; the
+ *    distance law stays with the piece that owns the distance.
  */
 
 // ---------------------------------------------------------------------------- palette access
@@ -269,7 +296,10 @@ export const shared = {
   uVsKeyDir: { value: new THREE.Vector3(0, 1, 0) }, // world, surface -> key
   uVsKeyRadiance: { value: new THREE.Color(0, 0, 0) }, // linear key colour * intensity / PI
   uVsRim: { value: new THREE.Vector4(0, 1, 0, 0) }, // xyz world dir toward the rim, w gain
-  uVsShadowTint: { value: new THREE.Color(0, 0, 0) }, // linear rock.shadow — §3.4's convergence
+  // §3.4's convergence colour. Seeded here rather than left black because `world/Terrain.js` shares
+  // this exact object and compiles against it, and a boot order where the rig arrives late must not
+  // be able to render one frame of black shadows.
+  uVsShadowTint: { value: roleColor("rock.shadow") },
   uVsCascade: { value: new THREE.Vector2(14, 60) }, // near split distance, far radius
   uVsTime: { value: 0 },
 };
@@ -320,8 +350,22 @@ float vsKeyShadow( float viewDist ) {
 }
 `;
 
+/**
+ * The world position every grade in this project reads.
+ *
+ * The instancing branch is not decoration. `Scatter.js` draws a hundred thousand rocks through
+ * `InstancedMesh`, and `modelMatrix * transformed` for an instanced draw is the *root* transform —
+ * every instance would report the same world position, the cascade split would pick the far shadow
+ * map at the player's feet, and this piece's own aerial perspective would flatten. three's
+ * `project_vertex` applies `instanceMatrix` to the view position and never gives us a world one, so
+ * it is done here, once, for every material this factory makes.
+ */
 const GLSL_VERTEX_TAIL = /* glsl */ `
-	vVsWorld = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;
+	#ifdef USE_INSTANCING
+		vVsWorld = ( modelMatrix * instanceMatrix * vec4( transformed, 1.0 ) ).xyz;
+	#else
+		vVsWorld = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;
+	#endif
 `;
 
 /**
@@ -546,6 +590,41 @@ const ARCHETYPES = {
     flatShading: true,
   },
 
+  // ---- surfaces whose own module owns the distance law (see the round-2 note at the top)
+  /**
+   * **Authored value, lit by its own module's grade.** `Terrain.js` and `Level01.js` bake the whole
+   * value ladder into per-face vertex colour and then run one grade that owns both the lit ramp and
+   * the aerial perspective for six hundred metres of leaf. Those colours are *rendered pixels*
+   * sampled off the reference, not albedos, so feeding them to §3.2's division would multiply the
+   * key in twice and blow the leaf out — which is why this archetype's own albedo is white and its
+   * tint is zero. What it takes from this file is the material *object* (so the ban list, the
+   * program budget and the probe cover it), `vVsWorld`, and — the part that moves pixels —
+   * `shared.uVsShadowTint`, so the leaf's shadow family is the same colour as the scatter's,
+   * written once per frame by the rig instead of typed twice in two files.
+   */
+  authored: {
+    albedo: () => new THREE.Color(1, 1, 1),
+    vertexColors: true,
+    flatShading: true,
+    tint: 0,
+    rim: 0,
+    keyShadow: false,
+    fog: false,
+    grade: false,
+  },
+  /**
+   * **A backdrop, authored rather than lit (§7.3).** The archipelago sits 300-1100 m out and turns
+   * almost nothing toward a sun 9° above the horizon, so left to the rig it renders as a black
+   * cut-out. It carries its own emissive floor and takes no §3.4 rotation: a floating leaf that
+   * converged on `rock.shadow` would read as a hole in the sky rather than as distance.
+   */
+  backdrop: {
+    albedo: () => albedoFrom("rock.lit.a", { ndl: LADDER.lit, hemi: 0.5, label: "backdrop" }),
+    tint: 0,
+    rim: 0,
+    fog: false,
+  },
+
   // ---- unlit
   /** §6.2 — flat quads on the sky sphere, hard alpha test, two values per slab and never three. */
   cloudSlab: { basic: true, albedo: () => roleColor("cloud.slab"), alphaTest: 0.5 },
@@ -560,6 +639,15 @@ class MaterialFactory {
     this.cache = new Map();
     this.built = 0;
     this.hits = 0;
+    this.uncached = 0;
+    /** How many materials each archetype has handed out. The probe prints it; a reviewer can see
+     *  from `__vs.probe("lighting").materials.handedOut` which substances the world actually uses,
+     *  without having to take a builder's word that the factory is wired in. */
+    this.handedOut = {};
+  }
+
+  _count(name) {
+    this.handedOut[name] = (this.handedOut[name] ?? 0) + 1;
   }
 
   /**
@@ -572,6 +660,7 @@ class MaterialFactory {
     if (!spec) throw new Error(`Materials: unknown archetype "${name}"`);
     const key = overrides ? `${name}|${stableKey(overrides)}` : name;
     const hit = this.cache.get(key);
+    this._count(name);
     if (hit) {
       this.hits++;
       return hit;
@@ -583,27 +672,53 @@ class MaterialFactory {
     return mat;
   }
 
+  /**
+   * Build an **uncached** instance of an archetype.
+   *
+   * `get()` is right for a substance: identical requests must collapse onto one instance. It is
+   * wrong for a caller that needs its own *uniform* block — `Scatter.js` gives every category its
+   * own distance-fade band and `Terrain.js` gives every surface its own lit floor, and both of those
+   * are uniforms on the material. Sharing the instance would mean one band for all of them.
+   *
+   * The cost is one material object, not one program: two instances of the same archetype and the
+   * same `extend.key` return the same `customProgramCacheKey`, so three compiles the family once.
+   * `stats().programVariants` is the number that has to stay under the budget, and it counts
+   * programs rather than materials for exactly this reason.
+   */
+  make(name, overrides = null) {
+    const spec = ARCHETYPES[name];
+    if (!spec) throw new Error(`Materials: unknown archetype "${name}"`);
+    const mat = this._build(name, spec, overrides || {});
+    mat.userData.vsKey = `${name}#${++this.uncached}`;
+    this.built++;
+    this._count(name);
+    this._programs ??= new Set();
+    this._programs.add(mat.customProgramCacheKey());
+    return mat;
+  }
+
   _build(name, spec, o) {
-    const color = o.color !== undefined
-      ? new THREE.Color().setHex(o.color, THREE.SRGBColorSpace)
-      : spec.albedo();
+    const color = o.color !== undefined ? toColor(o.color) : spec.albedo();
 
     if (spec.basic) {
       const basic = new THREE.MeshBasicMaterial({
         color,
         side: o.side ?? spec.side ?? THREE.FrontSide,
+        vertexColors: o.vertexColors ?? spec.vertexColors ?? false,
         transparent: false,
         alphaTest: o.alphaTest ?? spec.alphaTest ?? 0,
-        fog: o.fog ?? true,
+        fog: o.fog ?? spec.fog ?? true,
         toneMapped: true,
         dithering: true,
       });
-      basic.name = `vs.${name}`;
+      basic.name = o.name ?? `vs.${name}`;
       basic.userData.vsArchetype = name;
-      basic.userData.vsAccent = !!spec.accent; // P12's bloom mask reads this, never a luminance test
+      basic.userData.vsAccent = o.accent ?? !!spec.accent; // P12's bloom mask reads this, never a luminance test
       basic.customProgramCacheKey = () => `vs:basic:${basic.alphaTest > 0 ? "a" : "-"}`;
       return basic;
     }
+
+    const ext = o.extend ?? null;
 
     const mat = new THREE.MeshLambertMaterial({
       color,
@@ -611,19 +726,28 @@ class MaterialFactory {
       // Route (b) of §2.1, and ONLY for skinned meshes. Static geometry uses `flatten()` instead,
       // which is exact and costs no derivatives.
       flatShading: o.flatShading ?? spec.flatShading ?? false,
+      vertexColors: o.vertexColors ?? spec.vertexColors ?? false,
       alphaTest: o.alphaTest ?? spec.alphaTest ?? 0,
-      transparent: false,
-      fog: o.fog ?? true,
+      transparent: !!o.transparent,
+      opacity: o.opacity ?? 1,
+      depthWrite: o.depthWrite ?? true,
+      fog: o.fog ?? spec.fog ?? true,
       dithering: true, // §3.5 — the target dithers at 8-bit and that is why its sky does not band
     });
-    mat.name = `vs.${name}`;
+    mat.name = o.name ?? `vs.${name}`;
+    // Lambert still carries an envmap reflectivity term. There is no env map in this project (§5),
+    // but a neighbouring piece setting `scene.environment` must not silently multiply into a
+    // hand-authored value, so state it.
+    mat.reflectivity = 0;
 
-    if (spec.emissive) {
-      mat.emissive = spec.emissive();
-      mat.emissiveIntensity = o.emissiveIntensity ?? 1;
+    const emissive = o.emissive !== undefined ? toColor(o.emissive) : spec.emissive ? spec.emissive() : null;
+    if (emissive) {
+      mat.emissive = emissive;
+      mat.emissiveIntensity = o.emissiveIntensity ?? spec.emissiveIntensity ?? 1;
     }
 
-    const defines = { VS_KEYSHADOW: "" };
+    const defines = {};
+    if ((o.keyShadow ?? spec.keyShadow) !== false) defines.VS_KEYSHADOW = "";
     const tint = o.tint ?? spec.tint ?? 0;
     const rim = o.rim ?? spec.rim ?? 0;
     if (tint > 0) defines.VS_TINT = "";
@@ -647,25 +771,59 @@ class MaterialFactory {
     };
     mat.userData.vsUniforms = local;
     mat.userData.vsArchetype = name;
-    mat.userData.vsAccent = !!spec.accent;
+    mat.userData.vsAccent = o.accent ?? !!spec.accent;
+    if (ext?.userData) Object.assign(mat.userData, ext.userData);
+
+    /**
+     * The grade is skipped entirely when neither the §3.4 rotation nor the shadow subtraction is
+     * on. `authored` is the one archetype in that position: its own module writes `outgoingLight`
+     * from scratch straight afterwards, so emitting this block would compile a normal transform, a
+     * camera distance and a dot product per fragment for a value nothing reads.
+     */
+    const wantGrade = (spec.grade !== false) && (defines.VS_TINT !== undefined || defines.VS_KEYSHADOW !== undefined);
 
     mat.onBeforeCompile = (s) => {
-      Object.assign(s.uniforms, shared, local);
+      Object.assign(s.uniforms, shared, local, ext?.uniforms ?? {});
 
       s.vertexShader = s.vertexShader
-        .replace("#include <common>", "#include <common>\nvarying vec3 vVsWorld;")
+        .replace("#include <common>", "#include <common>\nvarying vec3 vVsWorld;\n" + (ext?.vertexPars ?? ""))
+        .replace("#include <begin_vertex>", "#include <begin_vertex>\n" + (ext?.vertexBody ?? ""))
         .replace("#include <project_vertex>", "#include <project_vertex>\n" + GLSL_VERTEX_TAIL);
 
       s.fragmentShader = s.fragmentShader
-        .replace("#include <common>", "#include <common>\n" + GLSL_PARS)
-        .replace("void main() {", GLSL_SHADOW_FN + "\nvoid main() {")
+        .replace("#include <common>", "#include <common>\n" + GLSL_PARS + "\n" + (ext?.fragmentPars ?? ""))
+        .replace("void main() {", GLSL_SHADOW_FN + "\n" + (ext?.fragmentFns ?? "") + "\nvoid main() {")
         .replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\n" + GLSL_WATER)
-        .replace("#include <opaque_fragment>", GLSL_GRADE + "\n#include <opaque_fragment>");
+        // Order is the whole contract with an extending module: this file's grade runs FIRST, so a
+        // §3.4-rotated face is already the right colour when the caller's distance law reaches it
+        // and haze lands on top of the shadow family rather than under it.
+        .replace(
+          "#include <opaque_fragment>",
+          (wantGrade ? GLSL_GRADE : "") + "\n" + (ext?.gradeBody ?? "") + "\n#include <opaque_fragment>"
+        );
+
+      if (ext?.lightBody) {
+        s.fragmentShader = s.fragmentShader.replace(
+          "#include <lights_fragment_end>",
+          "#include <lights_fragment_end>\n" + ext.lightBody
+        );
+      }
+      if (ext?.fragmentTail) {
+        s.fragmentShader = s.fragmentShader.replace(
+          "#include <fog_fragment>",
+          "#include <fog_fragment>\n" + ext.fragmentTail
+        );
+      }
+      mat.userData.vsShader = s;
     };
 
-    // Two materials may share a compiled program only if they share a define set. three's own cache
-    // key covers `defines`, but not the injected source, so state it explicitly.
-    const cacheKey = `vs:lambert:${Object.keys(defines).sort().join(",")}:${mat.flatShading ? "f" : "-"}:${mat.alphaTest > 0 ? "a" : "-"}`;
+    // Two materials may share a compiled program only if they share a define set AND the same
+    // injected source. three's own cache key covers `defines` and every material parameter but not
+    // the closure a module handed us, so the extension names itself.
+    const cacheKey =
+      `vs:lambert:${Object.keys(defines).sort().join(",")}` +
+      `:${mat.flatShading ? "f" : "-"}:${mat.alphaTest > 0 ? "a" : "-"}:${mat.vertexColors ? "c" : "-"}` +
+      (ext?.key ? `:${ext.key}` : "");
     mat.customProgramCacheKey = () => cacheKey;
     return mat;
   }
@@ -690,14 +848,20 @@ class MaterialFactory {
   glyph(o) { return this.get("glyph", o); }
 
   stats() {
-    const programs = new Set();
+    const programs = new Set(this._programs ?? []);
     for (const m of this.cache.values()) programs.add(m.customProgramCacheKey());
     return {
-      instances: this.cache.size,
+      instances: this.cache.size + this.uncached,
+      shared: this.cache.size,
+      uncached: this.uncached,
       built: this.built,
       cacheHits: this.hits,
       programVariants: programs.size,
+      programs: [...programs].sort(),
       archetypes: Object.keys(ARCHETYPES).length,
+      // Which substances the world actually asked for. Empty entries here are the signature of a
+      // factory nobody uses, which is the single finding that cost this piece a round.
+      handedOut: { ...this.handedOut },
       textures: 0, // §5: there is no texture in this project, on any surface, at any size
       standardMaterials: 0, // §5: banned globally, no exceptions
       envMaps: 0,
@@ -797,228 +961,53 @@ export function facetAudit(root) {
 
 const near = (a, b) => Math.abs(a - b) < 1e-4;
 
-// ---------------------------------------------------------------------------- reviewer board
-
-/**
- * **Reviewer-only.** Nothing in the game calls this.
- *
- * One shelf, one spire, one crystal cluster, one carry, one courier — every substance this factory
- * makes, at one scale, on one ground, lit by the real rig. `review/measure/P11.mjs` builds it and
- * measures whether rock, crystal and water read as three different substances in one flat-shaded
- * language, and whether the courier's feet meet the ground.
- *
- * It is deliberately built out of boxes, cones and low-parameter primitives run through `flatten()`,
- * because that is what §2.2's triangle budgets look like when you actually obey them.
- */
-export function buildBoard(materials) {
-  const group = new THREE.Group();
-  group.name = "vs.materialBoard";
-  const marks = {};
-
-  /**
-   * The shelf's surface, as a function. Deterministic, authored, and — this is the part that took a
-   * round to learn — **corrugated across the key's bearing**.
-   *
-   * Sampling the target settles an argument the document does not: `ground.lit` `#78632C` (hue 43,
-   * S 0.63, Y 0.131) and `ground.shadow` `#223522` (hue 120, Y 0.030) are *both* ground, four metres
-   * apart, and what separates them is whether the key reaches the facet. A dead-flat shelf under a
-   * 9° sun receives sin(9°) = 0.16 of the key and renders the green one everywhere — correct physics
-   * and a picture that has thrown away half the target's palette.
-   *
-   * So the shelf runs a low ridge across the sun's bearing: a slope of about 19° puts sun-facing
-   * facets at N·L ≈ 0.5 (warm ochre) and their neighbours below 0.1 (green), which is exactly the
-   * bimodal ground the target has. Everything on the board is placed through this function, because
-   * a prop hovering a centimetre off the ground would break the one measurement this piece exists
-   * to make.
-   */
-  const SUN_BEARING = THREE.MathUtils.degToRad(118); // palette.motion.timeOfDay, the world-fixed key
-  const su = Math.sin(SUN_BEARING);
-  const sv = Math.cos(SUN_BEARING);
-  const groundAt = (x, z) => {
-    const along = x * su + z * sv; // metres along the key's bearing
-    const across = x * sv - z * su;
-    // Slopes, not dunes: the first term alone is ±0.30 m over a 10 m wavelength, which is a 10.5°
-    // facet — enough to put a sun-facing plane at N·L ≈ 0.37 (warm ochre) and its neighbour below
-    // 0.05 (green), and gentle enough that you can still see across the shelf.
-    return (
-      Math.sin(along * 0.62) * 0.42 +
-      Math.sin(across * 0.31 + 1.1) * 0.3 +
-      Math.sin(along * 0.19 - 0.4) * 0.5 -
-      Math.abs(z) * 0.015
-    );
-  };
-
-  const add = (geo, mat, x, lift, z, name) => {
-    const mesh = new THREE.Mesh(flatten(geo), mat);
-    mesh.position.set(x, groundAt(x, z) + lift, z);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    mesh.name = name;
-    group.add(mesh);
-    return mesh;
-  };
-
-  // --- the shelf. Flat on top *as a surface*, but a low-poly shelf is a handful of enormous planes
-  //     (§2.2) and not one quad: the whole ground calibration lives on facets that tilt a little
-  //     toward the key, which is what §3.2's "lit ground plane" actually is. 6 x 4 cells over 34 x 22
-  //     metres is a 5.7 m facet — well over §2.2's 3 m minimum for a walkable shelf.
-  const shelfGeo = new THREE.PlaneGeometry(34, 22, 11, 7);
-  const sp = shelfGeo.attributes.position;
-  for (let i = 0; i < sp.count; i++) {
-    // The plane is authored in its own XY and then laid down: local +y becomes world −z.
-    sp.setZ(i, groundAt(sp.getX(i), -sp.getY(i)));
-  }
-  const shelf = new THREE.Mesh(flatten(shelfGeo), materials.ground());
-  shelf.rotation.x = -Math.PI / 2;
-  shelf.position.set(0, 0, 0);
-  shelf.receiveShadow = true;
-  shelf.name = "vs.board.shelf";
-  group.add(shelf);
-  // the shelf's body, so the frame reads as a leaf and not a floor
-  const rim = new THREE.Mesh(flatten(new THREE.BoxGeometry(34.4, 2.4, 22.4)), materials.ground());
-  rim.position.set(0, -1.2, 0);
-  rim.receiveShadow = true;
-  rim.name = "vs.board.shelfBody";
-  group.add(rim);
-  // --- and ragged underneath, because that is a fracture where the false part stopped.
-  const under = new THREE.Mesh(flatten(new THREE.ConeGeometry(15, 9, 7, 1)), materials.rock());
-  under.position.set(0, -6.9, 0);
-  under.rotation.x = Math.PI;
-  under.name = "vs.board.underside";
-  group.add(under);
-
-  // --- foreground spire, left third of frame, five lit planes and one turned (§2.3). Cut in three
-  //     height bands so one mass carries a countable ladder rather than one value per side.
-  // An icosahedron rather than a cone: 20 faces whose normals are spread over the sphere, so the
-  // mass always presents four to seven *distinct* lit values whatever the sun's bearing, which is
-  // §3.3's requirement and the thing a 6-sided cone structurally cannot do (its six normals sit on
-  // one ring, so a low sun lights two of them and turns the rest off together).
-  const spire = add(new THREE.IcosahedronGeometry(3.4, 0), materials.rock(), -9.0, 4.4, 3.0, "vs.board.spire");
-  spire.rotation.set(0.18, 0.42, 0.1);
-  spire.scale.set(1, 1.85, 0.82);
-  add(new THREE.DodecahedronGeometry(1.9, 0), materials.rock(), -7.0, 0.9, 6.4, "vs.board.boulderA");
-  add(new THREE.DodecahedronGeometry(1.15, 0), materials.stone(), -5.4, 0.6, 4.4, "vs.board.boulderB");
-  // The substances trio: one rock, one certainty and one carry inside a single framing, because
-  // "three distinct substances in a flat-shaded language" is a claim about one picture.
-  add(new THREE.DodecahedronGeometry(1.35, 0), materials.rock(), 2.4, 0.8, 4.2, "vs.board.boulderC");
-
-  // --- a certainty field: two facet values plus a hot core, and a real accent light (§5.4).
-  const cluster = new THREE.Group();
-  cluster.name = "vs.board.crystal";
-  cluster.position.set(5.0, groundAt(5.0, 2.6) - 0.05, 2.6);
-  const shards = [
-    [0, 0, 0, 0.9, 0.0],
-    [0.7, 0, 0.35, 0.6, 0.5],
-    [-0.6, 0, 0.5, 0.48, -0.7],
-    [0.2, 0, -0.7, 0.7, 0.25],
-  ];
-  shards.forEach(([x, , z, s, tilt], i) => {
-    const geo = flatten(new THREE.ConeGeometry(0.3 * s, 2.2 * s, 5, 1));
-    const m = new THREE.Mesh(geo, i === 0 ? materials.crystalCore() : materials.crystal());
-    m.position.set(x, 1.1 * s, z);
-    m.rotation.z = tilt * 0.22;
-    m.castShadow = true;
-    m.name = `vs.board.crystal.${i}`;
-    cluster.add(m);
-  });
-  group.add(cluster);
-  marks.crystal = cluster.position.clone().setY(cluster.position.y + 1.1);
-
-  // --- a carry, running across the shelf. §5 wants "flat surface facets", not a mirror plane, so
-  //     the strip is nudged into facets deterministically before it is flattened: the animated ramp
-  //     is the break-up, and this is the geometry it breaks up across.
-  const carryZ = 7.6;
-  const carryGeo = new THREE.PlaneGeometry(26, 1.3, 18, 2);
-  const cp = carryGeo.attributes.position;
-  for (let i = 0; i < cp.count; i++) {
-    const x = cp.getX(i);
-    const y = cp.getY(i);
-    // Lie the carry on the shelf's own surface, plus the facet break-up, plus 6 cm of clearance so
-    // two coplanar surfaces never z-fight (anti-pattern 16).
-    cp.setZ(
-      i,
-      groundAt(x, carryZ - y) + 0.3 + Math.sin(x * 0.9 + y * 2.1) * 0.05 + Math.sin(x * 2.3) * 0.028
-    );
-  }
-  const carry = new THREE.Mesh(flatten(carryGeo), materials.water());
-  carry.rotation.x = -Math.PI / 2;
-  carry.position.set(0, 0, carryZ);
-  carry.receiveShadow = false;
-  carry.name = "vs.board.carry";
-  group.add(carry);
-  marks.water = new THREE.Vector3(3.0, groundAt(3.0, carryZ) + 0.3, carryZ);
-
-  // --- grey: what was answered instead of solved. A sagging span with props under it (§10.2).
-  const span = add(new THREE.BoxGeometry(6.2, 0.34, 1.5), materials.grey(), -14.2, 1.7, -6.0, "vs.board.grey");
-  span.rotation.z = -0.03;
-  add(new THREE.BoxGeometry(0.34, 1.7, 0.34), materials.stone(), -12.0, 0.85, -6.0, "vs.board.prop");
-
-  // --- foliage. Blades, alpha-tested, never a bright green (§7.1).
-  for (let i = 0; i < 9; i++) {
-    const a = (i / 9) * Math.PI * 2;
-    const bx = 0.6 + Math.cos(a) * 2.4;
-    const bz = 5.2 + Math.sin(a) * 1.1;
-    const blade = add(new THREE.ConeGeometry(0.26, 0.85 + (i % 3) * 0.2, 3, 1), materials.foliage(), bx, 0.42, bz, `vs.board.blade.${i}`);
-    blade.rotation.y = a;
-  }
-
-  // --- metal: a lighter, cooler albedo and nothing else (§5).
-  add(new THREE.CylinderGeometry(0.55, 0.55, 1.5, 6, 1), materials.metal(), 8.6, 0.75, -1.6, "vs.board.metal");
-
-  // --- the courier. Issued kit, not heroic plate (§10.4): mostly the cool armour value, one warm
-  //     key-lit edge, a can at one hip, and a silhouette a shoulder line does not explain.
-  const hero = new THREE.Group();
-  hero.name = "vs.board.hero";
-  // The courier stands on the sunlit side of the ridge, exactly where the target's does: the
-  // nearest point to the board's origin whose analytic N·L sits in the 0.34-0.45 band, so §3.2's
-  // ground witness has a plane of the right orientation directly under the boots.
-  const HERO_X = -3.5, HERO_Z = 2.0;
-  const heroFoot = groundAt(HERO_X, HERO_Z);
-  hero.position.set(HERO_X, heroFoot, HERO_Z);
-  hero.rotation.y = -0.5;
-  const part = (geo, mat, x, y, z, name) => {
-    const m = new THREE.Mesh(flatten(geo), mat);
-    m.position.set(x, y, z);
-    m.castShadow = true;
-    m.receiveShadow = true;
-    m.name = name;
-    hero.add(m);
-    return m;
-  };
-  part(new THREE.BoxGeometry(0.62, 0.72, 0.38), materials.heroPlate(), 0, 1.28, 0, "hero.torso");
-  part(new THREE.BoxGeometry(0.52, 0.26, 0.34), materials.heroDark(), 0, 0.88, 0, "hero.belt");
-  part(new THREE.BoxGeometry(0.2, 0.24, 0.22), materials.heroSkin(), 0, 1.79, 0, "hero.head");
-  part(new THREE.BoxGeometry(0.24, 0.14, 0.26), materials.heroHair(), 0, 1.9, -0.02, "hero.hair");
-  part(new THREE.BoxGeometry(0.16, 0.62, 0.18), materials.heroPlate(), -0.39, 1.28, 0, "hero.armL");
-  part(new THREE.BoxGeometry(0.16, 0.62, 0.18), materials.heroPlate(), 0.39, 1.28, 0, "hero.armR");
-  part(new THREE.BoxGeometry(0.22, 0.8, 0.22), materials.heroDark(), -0.16, 0.46, 0, "hero.legL");
-  part(new THREE.BoxGeometry(0.22, 0.8, 0.22), materials.heroDark(), 0.16, 0.46, 0, "hero.legR");
-  part(new THREE.BoxGeometry(0.26, 0.1, 0.34), materials.heroDark(), -0.16, 0.05, 0.03, "hero.footL");
-  part(new THREE.BoxGeometry(0.26, 0.1, 0.34), materials.heroDark(), 0.16, 0.05, 0.03, "hero.footR");
-  // the can — one hip only, the permitted violation of the taper
-  part(new THREE.CylinderGeometry(0.15, 0.15, 0.36, 6, 1), materials.metal(), 0.36, 0.92, -0.16, "hero.can");
-  group.add(hero);
-  // The measurement script needs exact world points, not approximate ones: the sole of the right
-  // boot, the head, and a patch of open shelf. C1/C2 are only as good as these three numbers.
-  marks.hero = new THREE.Vector3(HERO_X, heroFoot, HERO_Z);
-  hero.updateMatrixWorld(true);
-  marks.sole = hero.getObjectByName("hero.footR").getWorldPosition(new THREE.Vector3());
-  marks.sole.y = heroFoot + 0.004; // 4 mm above the shelf, directly under the right boot
-  marks.heroHead = new THREE.Vector3(HERO_X, heroFoot + 1.85, HERO_Z);
-  marks.rock = new THREE.Vector3(-9.0, groundAt(-9.0, 3.0) + 4.4, 3.0);
-  marks.ground = new THREE.Vector3(0.5, groundAt(0.5, -1.0), -1.0);
-
-  group.userData.marks = Object.fromEntries(
-    Object.entries(marks).map(([k, v]) => [k, [v.x, v.y, v.z]])
-  );
-  // The height field itself, so `review/measure/P11.mjs` can pick a ground sample by its true
-  // surface normal instead of hoping a screen point landed on an up-facing facet.
-  group.userData.heightFn = groundAt;
-  group.userData.sunBearingDeg = 118;
-  return group;
-}
 
 // ---------------------------------------------------------------------------- helpers
+
+/**
+ * Which archetype painted each mesh in a subtree, and what is left that this factory did not build.
+ *
+ * This is the audit the last round of P11 had no answer to. `unowned` is the list that matters: a
+ * lit world mesh whose material carries no `vsArchetype` is a mesh this file does not describe, and
+ * any colour claim made about it is a claim about somebody else's shader.
+ */
+export function materialAudit(root) {
+  const byArchetype = {};
+  const unowned = [];
+  const banned = { standard: 0, physical: 0, envMap: 0, anyMap: 0, sceneEnvironment: 0 };
+  const MAPS = ["map", "normalMap", "roughnessMap", "bumpMap", "displacementMap", "aoMap",
+    "metalnessMap", "alphaMap", "emissiveMap", "lightMap", "specularMap"];
+  let meshes = 0;
+  root.traverse((o) => {
+    if (!o.isMesh || !o.material) return;
+    meshes++;
+    const list = Array.isArray(o.material) ? o.material : [o.material];
+    for (const m of list) {
+      if (m.isMeshStandardMaterial) banned.standard++;
+      if (m.isMeshPhysicalMaterial) banned.physical++;
+      if (m.envMap) banned.envMap++;
+      for (const k of MAPS) if (m[k]) banned.anyMap++;
+      const a = m.userData?.vsArchetype;
+      if (a) byArchetype[a] = (byArchetype[a] ?? 0) + 1;
+      else if (!m.isShaderMaterial && !m.isMeshDepthMaterial) {
+        unowned.push(`${o.name || o.type}:${m.name || m.type}`);
+      }
+    }
+  });
+  return {
+    meshes,
+    byArchetype,
+    owned: Object.values(byArchetype).reduce((a, b) => a + b, 0),
+    unowned: unowned.slice(0, 24),
+    unownedCount: unowned.length,
+    banned,
+  };
+}
+
+/** A THREE.Color from either a colour object or an sRGB hex number. */
+function toColor(v) {
+  return v?.isColor ? v.clone() : new THREE.Color().setHex(v, THREE.SRGBColorSpace);
+}
 
 function stableKey(o) {
   return Object.keys(o)

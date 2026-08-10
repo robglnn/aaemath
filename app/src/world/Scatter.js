@@ -2,6 +2,11 @@ import * as THREE from "three";
 import palette from "../../../design/palette.json";
 import { config } from "../core/Config.js";
 import { signals } from "../core/Signals.js";
+// `world/Materials.js` is a shared world service, not a sibling feature: it is the one place a
+// substance is defined, exactly as `world/Lighting.js` uses it. Importing it is the whole point of
+// this round — this piece used to build its own `MeshStandardMaterial` and the factory painted
+// nothing in the shipped game.
+import { materials } from "./Materials.js";
 
 /**
  * Scatter — everything standing on the leaf that is not the leaf, plus the archipelago in the sky.
@@ -1039,74 +1044,88 @@ export class Scatter {
   // ------------------------------------------------------------------ materials
 
   /**
-   * Every material in this piece: `MeshStandardMaterial`, metalness 0, roughness 1, no maps of any
-   * kind, `flatShading: true`.
+   * **Every material in this piece now comes out of `world/Materials.js`.**
    *
-   * Standard rather than Lambert for one specific reason: three only feeds `scene.environment` to
-   * standard/physical materials, and P11's rig publishes an in-engine environment probe as the
-   * ambient term. A Lambert scatter would sit visibly darker in shadow than the terrain it stands
-   * on. Roughness 1 with metalness 0 makes the specular lobe negligible, which is what the target
-   * wants — there is not one specular highlight anywhere in the reference.
+   * It used to build its own `MeshStandardMaterial`, and the comment that stood here justified it:
+   * three only feeds `scene.environment` to standard/physical materials, and the light rig of the
+   * day published an environment probe as its ambient term. That rig is gone — §5 bans env maps
+   * globally and `Lighting.js` has not set `scene.environment` for two revisions — so the
+   * justification outlived the reason, and the consequence was measured in a real capture: a rock
+   * facet turned from the key read **hue 33-40**, a plain darker ochre, against the target's
+   * **196-203**. A standard material with no §3.4 term has no shadow *family* at all; its dark side
+   * is just albedo x hemisphere fill, which is the same warm ochre at a lower value. That is a 160°
+   * hue miss on the largest read in the frame and it is why the world looked flat-brown.
+   *
+   * What the factory now owns: the substance and its derived albedo, the material type
+   * (`MeshLambertMaterial` — no specular lobe at all, which is what this target wants), the §3.4
+   * turned-face convergence on `rock.shadow`, the rim, the key-shadow subtraction and the program
+   * cache key. What this piece still owns, and hands over as an `extend` payload: the per-instance
+   * distance fade, the wind, and this piece's own aerial perspective. `make()` rather than `get()`
+   * because every category needs its own fade band, and a band is a uniform.
    */
-  _flatMaterial(key, { colour, roughness = 1, emissive = 0x000000, emissiveIntensity = 1, side, wind = 0, bandEmissive = false }) {
+  _flatMaterial(key, { archetype, colour, emissive, emissiveIntensity, side, wind = 0, bandEmissive = false, alphaTest = 0, tint, rim }) {
     const uniforms = {
       ...this._shared,
       // Filled in per category by `_buildCategories`, which derives the band from the gather
       // radius so the two can never drift apart.
       uFade: { value: new THREE.Vector2(1e6, 1e6 + 1) },
     };
-    const mat = new THREE.MeshStandardMaterial({
-      color: col(colour),
-      roughness,
-      metalness: 0,
-      emissive: col(emissive),
+    const mat = materials.make(archetype, {
+      name: key,
+      // The albedo is the archetype's own §3.2 derivation unless a category overrides it. The
+      // per-FACE value bands in these buffers are multipliers around 1.0 and ride on top of it.
+      color: colour,
+      emissive,
       emissiveIntensity,
+      side: side ?? THREE.FrontSide,
+      vertexColors: true,
+      alphaTest,
+      tint,
+      rim,
       // NOT `flatShading: true`. The normals in these buffers are *already* one per face — see
       // `faceNormals()` — and `probe().flatShading` measures that rather than trusting a flag.
       // Deriving them again from screen-space derivatives would be both redundant and worse: a
       // 3-pixel chip at 90 m straddles a 2x2 quad, the derivative reads across two triangles, and
       // the facet flips to a garbage normal. Baked normals are exact at every size.
       flatShading: false,
-      vertexColors: true,
-      dithering: true,
       // This piece owns its own aerial perspective (see HAZE_TAIL), so three fog stays off.
       fog: false,
-      side: side ?? THREE.FrontSide,
+      extend: {
+        key,
+        uniforms,
+        vertexPars: FADE_PARS + (wind ? "attribute float aBend;" : ""),
+        vertexBody: fadeBody({ wind: Boolean(wind) }),
+        fragmentPars: FRAG_PARS,
+        // The value ladder up a certainty is authored as per-face vertex colour, and three only
+        // applies vertex colour to the *diffuse*. Without this the emissive floor would be a
+        // constant wash across the whole crystal and the bands would wash out with it.
+        lightBody: bandEmissive ? "totalEmissiveRadiance *= vColor;" : null,
+        fragmentTail: HAZE_TAIL,
+        userData: { fadeUniform: uniforms.uFade },
+      },
     });
-    mat.userData.fadeUniform = uniforms.uFade;
-    return extend(mat, key, {
-      uniforms,
-      vertexPars: FADE_PARS + (wind ? "attribute float aBend;" : ""),
-      vertexBody: fadeBody({ wind: Boolean(wind) }),
-      fragmentPars: FRAG_PARS,
-      // The value ladder up a certainty is authored as per-face vertex colour, and three only
-      // applies vertex colour to the *diffuse*. Without this the emissive floor would be a
-      // constant wash across the whole crystal and the bands would wash out with it.
-      lightBody: bandEmissive ? "totalEmissiveRadiance *= vColor;" : null,
-      fragmentTail: HAZE_TAIL,
-    });
+    return mat;
   }
 
   /** A non-instanced sibling of `_flatMaterial`: same haze, same flat facets, no fade, no wind. */
-  _staticMaterial(key, { colour, emissive = 0x000000, emissiveIntensity = 1 }) {
-    const mat = new THREE.MeshStandardMaterial({
-      color: col(colour),
-      roughness: 1,
-      metalness: 0,
-      emissive: col(emissive),
+  _staticMaterial(key, { archetype, colour, emissive, emissiveIntensity = 1 }) {
+    return materials.make(archetype, {
+      name: key,
+      color: colour,
+      emissive,
       emissiveIntensity,
-      flatShading: false,
       vertexColors: true,
-      dithering: true,
+      flatShading: false,
       fog: false,
-    });
-    return extend(mat, key, {
-      uniforms: this._shared,
-      vertexPars: STATIC_PARS,
-      vertexBody: STATIC_BODY,
-      fragmentPars: FRAG_PARS,
-      lightBody: "totalEmissiveRadiance *= vColor;",
-      fragmentTail: HAZE_TAIL,
+      extend: {
+        key,
+        uniforms: this._shared,
+        vertexPars: STATIC_PARS,
+        vertexBody: STATIC_BODY,
+        fragmentPars: FRAG_PARS,
+        lightBody: "totalEmissiveRadiance *= vColor;",
+        fragmentTail: HAZE_TAIL,
+      },
     });
   }
 
@@ -1142,28 +1161,32 @@ export class Scatter {
      * so three compiles the family once and hands out the same program to all of them.
      */
     const FAMILY = {
-      stone: { colour: PAL.rock },
+      // Four substances, named rather than typed. Every colour below now comes from the archetype's
+      // own §3.2 derivation in `world/Materials.js`; this table says *which* substance, and nothing
+      // about what colour it is. That is the whole difference between this round and the last one.
+      stone: { archetype: "rock" },
       crystal: {
-        colour: PAL.crystalFace,
-        roughness: 0.62,
+        archetype: "crystal",
         /**
          * A certainty carries its own light, and it has to.
          *
          * The palette measures the accent at hue 164–168 and V ≥ 0.92. Solve for the albedo that
-         * produces that under this world's key — a warm dusk sun at `sky.sun` #FFF77D, linear
-         * (1.00, 0.93, 0.21) — and the blue channel comes out at 3.7, i.e. there is no reflectance
-         * that gets there. A purely diffuse cyan under a yellow sun is a *green*, which is exactly
-         * what the first pass measured: hue 142, and a frame-wide cool-accent census of 0.0000
-         * against the reference's 0.0094. So the crystal emits: `crystal.hot` at 0.7 lands the
-         * unlit facet inside the accent gate on its own, and the key adds value on top of it
-         * rather than deciding the hue.
+         * produces that under this world's key — a warm dusk sun, linear (1.00, 0.76, 0.47) — and
+         * the blue channel comes out above 3, i.e. there is no reflectance that gets there. A purely
+         * diffuse cyan under a warm sun is a *green*, which is exactly what an early pass measured:
+         * hue 142, and a frame-wide cool-accent census of 0.0000 against the reference's 0.0094. So
+         * the crystal emits, and the archetype is where that is decided: `crystal` carries
+         * `crystal.face` as its emissive floor and the span up to `crystal.hot` as its albedo, so a
+         * facet turned from the key still reads as a certainty and a facet square to it reaches the
+         * hot value. It also takes no §3.4 rotation — §7.2's whole point is that the accents are the
+         * only saturated thing in frame.
          */
-        emissive: PAL.crystalHot,
-        emissiveIntensity: 0.8,
         bandEmissive: true,
       },
-      flora: { colour: PAL.foliageLit, side: THREE.DoubleSide, wind: 1 },
-      lichen: { colour: PAL.bone, side: THREE.DoubleSide },
+      // `foliage` ships `alphaTest: 0.5` for cut-out leaves; these blades are solid geometry with no
+      // texture, so the test would only cost a define.
+      flora: { archetype: "foliage", side: THREE.DoubleSide, wind: 1, alphaTest: 0 },
+      lichen: { archetype: "stone", side: THREE.DoubleSide, alphaTest: 0 },
     };
     this._materials = [];
 
@@ -1328,12 +1351,17 @@ export class Scatter {
        * takes it the rest of the way back, with the same ceiling as everything else here.
        */
       this._islandMats = [
+        // `backdrop` and `crystal` both take zero §3.4 rotation, and that is deliberate: a floating
+        // leaf that converged on `rock.shadow` at a kilometre would read as a hole punched in the
+        // sky rather than as distance. The emissive floors stay authored here because they are a
+        // legibility decision about the horizon, not a claim about what stone is.
         this._staticMaterial("p13:island-rock", {
-          colour: PAL.rock,
+          archetype: "backdrop",
           emissive: PAL.rock,
           emissiveIntensity: 0.62,
         }),
         this._staticMaterial("p13:island-crystal", {
+          archetype: "crystal",
           colour: PAL.crystalFace,
           emissive: PAL.crystalHot,
           emissiveIntensity: 0.95,

@@ -1,9 +1,9 @@
 {
   "id": "P16",
-  "state": "critique",
+  "state": "building",
   "round": 1,
   "gap": "eq-special-cases|construct measures 0.335 blind on the SHIPPED bank - above the content file's own maxTrueGuess 0.30 - yet is priced at modelled 0.10 and is fully mastery-eligible; the derivePricing rejection machinery has no answer-space axis and P16.mjs U30 absorbs it via a KNOWN_HOT_CELLS allowlist while the sensitivity arm stops at 0.10",
-  "note": "Round 2: fixing retention-gate credit leak (scored-only counting), probe inFlight, scheduler-state persistence, real-ItemBank blind-rate arm",
+  "note": "Measuring true blind-guess rates against shipped bank; rebuilding P16.mjs proof to derive bot success from served item forms",
   "evidence": [],
-  "updated": "2026-08-10T05:47:54.632Z"
+  "updated": "2026-08-10T13:06:54.536Z"
 }

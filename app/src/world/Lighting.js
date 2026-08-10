@@ -7,8 +7,8 @@ import {
   shared,
   roleColor,
   roleHex,
-  buildBoard,
   facetAudit,
+  materialAudit,
   deriveFill,
   KEY_HEX,
   FILL_GROUND_HEX,
@@ -196,7 +196,6 @@ export class Lighting {
     this._sunTimer = 0;
     this._removedPlaceholders = 0;
     this._offs = [];
-    this._board = null;
     this._shadowTint = roleColor("rock.shadow"); // §3.4's convergence colour, decoded once
     this._accentColours = new Map();
 
@@ -689,78 +688,66 @@ export class Lighting {
         : null,
       removedPlaceholderLights: this._removedPlaceholders,
       materials: materials.stats(),
-      facets: this._board ? facetAudit(this.scene) : null,
-      board: this._board ? this._board.userData.marks : null,
+      // Which archetype painted which mesh IN THE SHIPPED SCENE. Cheap (one traverse, no per-triangle
+      // work) and cached for a second, because it is the answer to the only question that mattered
+      // last round: is this file's output actually on screen?
+      world: this._census(),
     };
+  }
+
+  /** A one-second-cached scene walk. `facetAudit` is per-triangle and is NOT in here on purpose. */
+  _census(maxAgeMs = 1000) {
+    const now = (globalThis.performance ?? Date).now();
+    if (!this._censusAt || now - this._censusAt > maxAgeMs) {
+      this._censusAt = now;
+      this._censusValue = materialAudit(this.scene);
+    }
+    return this._censusValue;
   }
 
   // -------------------------------------------------------------------------- reviewer only
 
   /**
-   * **Reviewer-only.** Builds `Materials.buildBoard()` into the live scene and frames a camera on it.
-   * Nothing in the game calls this; `review/measure/P11.mjs` does, because a claim about what rock,
-   * crystal, water and a character look like next to each other is not a claim until somebody has
-   * looked at the pixels.
+   * **Reviewer-only. There is no synthetic scene here and there must never be one again.**
+   *
+   * The previous revision of this file could build a `materialBoard()` — a private shelf with one of
+   * every substance on it — and `review/measure/P11.mjs` measured that instead of the game. Every
+   * colour this piece claimed was therefore true of a scene no player could reach, while a real rock
+   * facet turned from the key measured 160° of hue away from the target. The board is deleted, not
+   * flagged off, because a flag is an invitation.
+   *
+   * What is left is the smallest thing a measurement legitimately needs and cannot get any other
+   * way: **a camera it controls, pointed at the shipped world.** Nothing is added, nothing is
+   * hidden, no material is swapped. The systems that would fight for the camera are detached for the
+   * life of the run and the world underneath is exactly the one the player walks on.
    */
-  materialBoard({ view = "wide" } = {}) {
-    if (!this._board) {
-      this._board = buildBoard(materials);
-      this.scene.add(this._board);
-      const marks = this._board.userData.marks;
-      this.addAccent("board:crystal", new THREE.Vector3(...marks.crystal), {
-        radius: 5,
-        strength: 1,
-      });
-      this.addAccent("board:carry", new THREE.Vector3(...marks.water), { radius: 6, strength: 0.8 });
+  reviewCamera({ pos, look, fov = 50, detach = true } = {}) {
+    if (detach) {
+      for (const name of ["camera", "locomotion", "traversal"]) {
+        const sys = this.kernel.byName.get(name);
+        const i = sys ? this.kernel.systems.indexOf(sys) : -1;
+        if (i >= 0) this.kernel.systems.splice(i, 1);
+      }
+      this._detached = true;
     }
-    // The camera rig and locomotion will fight us for the frame, and every other world piece would
-    // stand its own geometry in front of the board. Detached and hidden for the life of the
-    // measurement run only; nothing here survives a reload.
-    for (const name of ["camera", "locomotion", "traversal"]) {
-      const sys = this.kernel.byName.get(name);
-      const i = sys ? this.kernel.systems.indexOf(sys) : -1;
-      if (i >= 0) this.kernel.systems.splice(i, 1);
-    }
-    // Hide by subtraction rather than by a list of names: any piece that mounts geometry after this
-    // was written would otherwise walk into the frame and be measured as if it were P11's.
-    const keep = new Set([this.root, this._board]);
-    for (const name of ["sky", "atmosphere", "weather"]) {
-      const sys = this.kernel.byName.get(name);
-      if (sys?.root) keep.add(sys.root);
-    }
-    this._hidden = [];
-    for (const child of this.scene.children) {
-      if (keep.has(child) || !child.visible || child.isLight) continue;
-      child.visible = false;
-      this._hidden.push(child.name || child.type);
-    }
-
     const cam = this.kernel.camera;
-    const g = this._board.userData.marks;
-    const views = {
-      // Composed the way the target is: the spire cutting the left third, the courier standing on
-      // the shelf just right of centre, crystal and carry to the right, horizon high, the key low
-      // and about 45° off the view axis so both the lit and the turned families are in frame.
-      wide: { pos: [-1.0, 3.2, 13.6], look: [-2.6, 1.5, 1.0], fov: 54 },
-      // The one thing this piece has to prove: where the courier meets the ground. The camera has to
-      // stand DOWN-SUN of the courier or the cast shadow falls away behind them and the frame shows
-      // a pair of boots and no contact at all — which is exactly how a build ships a floating hero.
-      contact: {
-        pos: [g.hero[0] - 2.3, g.hero[1] + 0.95, g.hero[2] + 3.3],
-        look: [g.hero[0] - 0.35, g.hero[1] + 0.32, g.hero[2] + 0.15],
-        fov: 32,
-      },
-      // Rock, certainty and carry in one frame, at one scale, on one ground.
-      substances: { pos: [3.0, 2.3, 11.0], look: [4.2, 0.9, 4.6], fov: 44 },
-    };
-    const v = views[view] ?? views.wide;
-    cam.position.set(...v.pos);
-    cam.fov = v.fov;
+    if (pos) cam.position.set(pos[0], pos[1], pos[2]);
+    cam.fov = fov;
     cam.updateProjectionMatrix();
-    cam.lookAt(...v.look);
+    if (look) cam.lookAt(look[0], look[1], look[2]);
     cam.updateMatrixWorld(true);
     this._fitShadowCameras();
-    return { view, marks: this._board.userData.marks, hidden: this._hidden };
+    return {
+      scene: "shipped",
+      detachedSystems: !!this._detached,
+      position: [cam.position.x, cam.position.y, cam.position.z],
+      fov: cam.fov,
+    };
+  }
+
+  /** **Reviewer-only.** Which archetype paints which mesh, right now, in the live scene. */
+  audit() {
+    return { ...materialAudit(this.scene), facets: facetAudit(this.scene) };
   }
 
   /**

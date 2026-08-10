@@ -90,31 +90,74 @@ function pad(aX, aZ, x0, x1, z0, z1, f) {
 // a six-metre heightfield — the trough averages away and the river ends up buried in the stone it
 // is supposed to have carved. These are also the widest bright shapes in the frame, and in the
 // reference the river is what walks the eye from the foreground to the horizon.
+//
+// **Three things about this list were wrong for a whole round and a critic found all of them.**
+//
+//  1. *None of them was in the arrival frame.* The comment above claimed the river walks the eye
+//     from foreground to horizon; across three captures spanning more than 180° of look-around
+//     there was not one teal pixel. `carry.low` ran at aZ ≈ −76 at the spawn's own down-leaf
+//     station, which is behind the crest, and every other carry was either up-leaf, off to the
+//     right shoulder, or past the ravine. `carry.spine` below is routed *along the corridor the
+//     player is looking down*, from twenty-three metres in front of the brow to the east lip four
+//     hundred metres away, and it is the subject of the frame.
+//
+//  2. *They ran through the raised pads.* `carry.low` crossed the crest (+54 m) and the knuckle
+//     (+34 m), and the carve is `h = min(h, baseY − depth)` — so it did not run *over* those, it
+//     cut a slot through them. A river at the bottom of a thirty-metre slot is exactly the thing
+//     this file's own comment at `_composeCarries` says is invisible from anywhere but above it.
+//     `carry.spine` is routed through open ground, and where it does cross a scarp it crosses it
+//     square with a shallow cut and a wide shoulder, which makes a valley rather than a trench.
+//
+//  3. *The ribbon was authored against `baseY`, not against the ground.* A surface at
+//     `baseY(aX) − 1.5` is under the terrace (which sits above `baseY`) and floating over the
+//     field (which sits below it). `brim` is now a height above **the ground the terrain actually
+//     built**, sampled at the ribbon's own corners — see `ribbonTris`. That is the number the
+//     "is the river visible" claim in `review/measure/P09.mjs` reads back.
+//
+// `depth` is now a shallow carve whose only job is to give the river a bank and to switch the
+// surface class; the visible surface is the ribbon, and the ribbon rides the ground.
 export const CARRIES = [
+  {
+    // The subject of the arrival frame. Starts 23 m in front of the brow, low in frame and wide,
+    // and runs 400 m down the leaf, narrowing, to pour off the east lip into open sky.
+    id: "carry.spine",
+    width: 34,
+    depth: 1.6,
+    brim: 0.45,
+    hero: true,
+    pts: [[-194, 16], [-152, 28], [-106, 18], [-58, 34], [-8, 46], [42, 66], [84, 100], [118, 138], [150, 178]],
+  },
   {
     id: "carry.low",
     width: 30,
-    depth: 3.4,
-    pts: [[-306, -92], [-232, -78], [-150, -66], [-64, -50], [24, -34], [104, -18], [150, -8]],
+    depth: 1.8,
+    brim: 0.45,
+    pts: [[-268, -104], [-214, -96], [-150, -78], [-64, -58], [24, -40], [104, -22], [150, -10]],
   },
   {
     id: "carry.middle",
     width: 26,
-    depth: 3.2,
+    depth: 1.6,
+    brim: 0.45,
     uphill: true,
     pts: [[172, 128], [104, 114], [36, 98], [-30, 78], [-92, 56], [-132, 32], [-150, 16]],
   },
   {
     id: "carry.high",
     width: 24,
-    depth: 3.2,
+    depth: 1.6,
+    brim: 0.45,
     pts: [[-262, 112], [-186, 136], [-92, 146], [4, 138], [90, 124], [148, 108]],
   },
   {
+    // Past the ravine, on the far shard: the eye picks the river back up beyond the hole and
+    // carries on to the low rim. The ravine is the one break in the run and it is a break in the
+    // *world*, not in the composition.
     id: "carry.field",
-    width: 22,
-    depth: 3.0,
-    pts: [[206, 54], [242, 82], [278, 114], [316, 150]],
+    width: 26,
+    depth: 1.6,
+    brim: 0.45,
+    pts: [[210, 4], [248, 18], [286, 8], [322, 20]],
   },
 ];
 

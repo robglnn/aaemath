@@ -1,9 +1,9 @@
 {
   "id": "P11",
-  "state": "critique",
+  "state": "building",
   "round": 1,
   "gap": "Materials.js is imported by nothing but Lighting.js: zero shipped meshes use the factory, so in-game rock shadows read warm hue 33-40 instead of the reference's blue-grey hue 196, and the player has no contact shadow (own C1/C2 fail).",
-  "note": "Reading binding docs and target-lowpoly.png before writing lighting/material code",
+  "note": "Wiring Materials.js factory into shipped world modules (Scatter/Terrain/Level01), rewriting P11.mjs to measure the shipped scene only",
   "evidence": [],
-  "updated": "2026-08-10T05:46:25.623Z"
+  "updated": "2026-08-10T13:06:50.410Z"
 }

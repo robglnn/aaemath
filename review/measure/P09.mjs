@@ -105,6 +105,13 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     // --- S4 no ground under the leaf --------------------------------------------------
     // Every point inside the ravine slot, and every point beyond the lip, must return no
     // surface at all — not a lower one.
+    //
+    // Two separate probes, because they can fail in different ways:
+    //   ravineSolid  — the ravine centreline, asked of the heightfield itself
+    //   belowHits    — the same slot *and* the sky past the lip, asked of the collision world
+    //                  from 400 m up with a 4 km reach, which is the query a falling player
+    //                  makes. Anything it finds is a floor under the leaf, and world.md §2.3
+    //                  says there is no floor under the leaf.
     let ravineSolid = 0;
     let ravineTested = 0;
     for (let i = 0; i < 400; i++) {
@@ -114,6 +121,28 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       if (Math.abs(x) > 210) continue;
       ravineTested++;
       if (terrain.isSolid(x, z)) ravineSolid++;
+    }
+    const belowHits = [];
+    let belowTested = 0;
+    for (let i = 0; i < 900; i++) {
+      // Half the samples in the ravine slot, half outside the leaf entirely.
+      let x;
+      let z;
+      if (i % 2 === 0) {
+        const aZ = -190 + (i / 2) * 0.86;
+        const aX = 176 + 26 * Math.sin(aZ * 0.0122) + 13 * Math.sin(aZ * 0.031 + 2.0);
+        x = aZ;
+        z = -aX;
+      } else {
+        const th = (i * 2.399963) % (Math.PI * 2);
+        const rad = 300 + ((i * 37) % 260);
+        x = Math.cos(th) * rad;
+        z = Math.sin(th) * rad;
+      }
+      if (terrain.isSolid(x, z)) continue; // not a hole here; nothing to prove
+      belowTested++;
+      const g = collision.groundAt(x, z, 400, 4000);
+      if (g?.hit) belowHits.push({ x: Math.round(x), z: Math.round(z), y: Math.round(g.y) });
     }
     // --- C1 the two arches never share a frame ----------------------------------------
     const fovY = (K.camera.fov * Math.PI) / 180;
@@ -287,7 +316,13 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       stats: window.__vs.stats(),
       facet: { medianEdge: Number(median.toFixed(2)), p10: Number(edges[Math.floor(edges.length * 0.1)].toFixed(2)), samples: edges.length },
       collider: { checked, misses, worstDelta: Number(worst.toFixed(4)) },
-      voids: { ravineTested, ravineSolid, belowHits: belowHits.length },
+      voids: {
+        ravineTested,
+        ravineSolid,
+        belowTested,
+        belowHits: belowHits.length,
+        belowSample: belowHits.slice(0, 6),
+      },
       arches: {
         separationMetres: Math.round(archSeparation),
         positions,
@@ -387,11 +422,19 @@ claim("S3", "the collider is the render geometry", M.collider.misses === 0 && M.
   worstDeltaMetres: M.collider.worstDelta,
   threshold: "0 misses, worst |render−collider| < 0.02 m",
 });
-claim("S4", "there is no ground under the leaf, and the ravine is a hole", M.voids.ravineSolid === 0, {
-  ravinePointsTested: M.voids.ravineTested,
-  ravinePointsSolid: M.voids.ravineSolid,
-  threshold: "0 solid samples on the ravine centreline",
-});
+claim(
+  "S4",
+  "there is no ground under the leaf, and the ravine is a hole",
+  M.voids.ravineSolid === 0 && M.voids.belowHits === 0,
+  {
+    ravinePointsTested: M.voids.ravineTested,
+    ravinePointsSolid: M.voids.ravineSolid,
+    voidPointsProbedFrom400m: M.voids.belowTested,
+    voidPointsThatFoundAFloor: M.voids.belowHits,
+    floorSample: M.voids.belowSample,
+    threshold: "0 solid samples on the ravine centreline, 0 colliders found under any hole",
+  }
+);
 claim("C1", "the Bollard and the Second Lip never share a frame", M.arches.bothVisible === 0, {
   cameraPositionsSwept: M.arches.positions,
   framingsHoldingBoth: M.arches.bothVisible,

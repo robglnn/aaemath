@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import { signals } from "../core/Signals.js";
 import { publish } from "../core/Introspect.js";
+// `world/Materials.js` is a shared world service — the one place a substance and the world's shadow
+// colour are defined — and world modules import it directly, exactly as `world/Lighting.js` does.
+import { materials, shared as rigUniforms } from "./Materials.js";
 
 /**
  * Terrain — the faceted low-poly heightfield Leaf Nine is cut out of, and the flat-shading
@@ -286,11 +289,27 @@ export const flatShared = {
   // about 78% of the way to the haze colour and no more. Haze that goes to 1.0 erases a horizon
   // question, and this world is made of horizon questions.
   uVsHazeP: { value: new THREE.Vector2(1 / 750, 0.78) },
-  uVsShade: { value: sceneColor(PAL.shadow) },
+  /**
+   * **The shadow family, taken by reference from the rig instead of typed here.**
+   *
+   * This used to be `sceneColor(PAL.shadow)` — `#1B2C33` pushed backwards through the ACES fit so
+   * that it would come out the other side unchanged. That inversion is correct only if something
+   * downstream applies ACES, and nothing does: `world/Lighting.js` §3.5 sets
+   * `renderer.toneMapping = NoToneMapping` (the palette is the grade, and a filmic shoulder
+   * compresses the top of §1.2's cosine ladder until facets stop reading as facets), and P12's
+   * `GradePass` mirrors whatever the renderer is doing, which is nothing. So the pre-inversion was
+   * being cashed in twice: `#1B2C33` rendered as `#2C3B41` — right hue, but **S 0.32 / V 0.26**
+   * against the target's **S 0.47 / V 0.20**. A washed-out shadow is how a two-value world turns
+   * into a one-value world.
+   *
+   * `Materials.shared.uVsShadowTint` is the *same uniform object* the whole scatter reads, and
+   * `Lighting._apply()` writes it once per frame. Sharing the object rather than the value is what
+   * makes "one shadow family in this world" a property of the code instead of two files agreeing.
+   */
+  uVsShade: rigUniforms.uVsShadowTint,
 };
 
 const GLSL_PARS = /* glsl */ `
-varying vec3 vVsWorld;
 uniform vec3  uVsSun;
 uniform float uVsLevel;
 uniform vec3  uVsHaze;
@@ -395,37 +414,44 @@ export function flatMaterial(key, opts = {}) {
     uVsDist: { value: new THREE.Vector2(opts.distance ?? 1, opts.hazeBias ?? 0) },
   };
 
-  const mat = new THREE.MeshLambertMaterial({
-    color: 0xffffff,
+  /**
+   * **The material object comes out of `world/Materials.js`, and that is not bookkeeping.**
+   *
+   * P11's flat-shaded factory used to be imported by exactly one file and painted nothing a player
+   * could see, which meant every colour claim that piece made was a claim about a private test
+   * scene. Every lit surface in the world now holds a material that factory built, so
+   * `materials.stats()`, the §5 ban audit and `Lighting.audit()` describe the shipped frame.
+   *
+   * The archetype is `authored` because this piece's value ladder is baked into per-face vertex
+   * colour and those colours are *rendered pixels* measured off the reference, not albedos. Handing
+   * them to §3.2's division would charge the key twice and blow six hundred metres of leaf out to
+   * white. So the factory contributes the material type, the ban list, `vVsWorld` (instancing-aware)
+   * and — the part that moves pixels — `shared.uVsShadowTint`; the lit ramp, the terminator and the
+   * aerial perspective stay here, in the piece that owns the distance, and run after it.
+   *
+   * `make()` rather than `get()`: every key here carries its own `uVsGrade`/`uVsDist`, and a shared
+   * instance could only hold one of them. They all still return the same `customProgramCacheKey`,
+   * so three compiles this family exactly once.
+   */
+  const mat = materials.make("authored", {
+    name: `vs.flat.${key}`,
     vertexColors: opts.vertexColors ?? true,
     flatShading: true,
     side: opts.side ?? THREE.FrontSide,
     fog: false, // this piece owns its own aerial perspective
-    dithering: true,
     transparent: !!opts.transparent,
     opacity: opts.opacity ?? 1,
     depthWrite: opts.depthWrite ?? true,
+    extend: {
+      key: "vs.flat",
+      uniforms: { ...flatShared, ...local },
+      fragmentPars: GLSL_PARS,
+      fragmentFns: GLSL_SHADOW,
+      gradeBody: GLSL_GRADE,
+    },
   });
-  mat.name = `vs.flat.${key}`;
-  mat.reflectivity = 0; // scene.environment must not multiply into a hand-authored value
   mat.userData.vsUniforms = local;
   mat.userData.vsEmissive = (opts.unlit ?? 0) > 0.5; // P12's bloom mask reads this flag
-
-  mat.onBeforeCompile = (sh) => {
-    Object.assign(sh.uniforms, flatShared, local);
-    sh.vertexShader = sh.vertexShader
-      .replace("#include <common>", "#include <common>\nvarying vec3 vVsWorld;")
-      .replace(
-        "#include <project_vertex>",
-        "#include <project_vertex>\n\tvVsWorld = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;"
-      );
-    sh.fragmentShader = sh.fragmentShader
-      .replace("#include <common>", "#include <common>\n" + GLSL_PARS)
-      .replace("void main() {", GLSL_SHADOW + "\nvoid main() {")
-      .replace("#include <opaque_fragment>", GLSL_GRADE + "\n#include <opaque_fragment>");
-  };
-  // Two of these share a program iff they share a define set; they all do.
-  mat.customProgramCacheKey = () => "vs.flat";
 
   _matCache.set(key, mat);
   return mat;
@@ -516,8 +542,31 @@ export function pushTri(out, a, b, c) {
  * optional shoulder rings. This is the whole vocabulary the reference's rock is drawn in — big
  * planes meeting at hard edges — and every spire, boulder and shard in the level is one of these.
  */
-export function shard({ x = 0, y = 0, z = 0, radius = 4, height = 10, sides = 5, taper = 0.18, lean = [0, 0], rings = [], seed = 1, jag = 0.3 }) {
+/**
+ * The default shoulder profile for anything tall enough that its side elevation is a big read.
+ *
+ * Three rings, and the reason there are three is *inclination*, not count. A ring set whose radius
+ * falls monotonically — `[[0.46,0.86],[0.78,0.52]]`, the old default here — gives four wall bands
+ * that all lean the same way, so all four take the same N·L and the spire renders as one uniform
+ * value with hairline seams in it. That is exactly the "single-plane cutout" a critic measured at
+ * 420×420 px on the left of the arrival frame.
+ *
+ * These four bands lean four different ways: a flared skirt that turns slightly *outward*, a near
+ * vertical shaft, a steep shoulder and a cap. Square-on to Lethis they span roughly 0.35 of N·L,
+ * which the grade curve in `GLSL_GRADE` opens into four separate values.
+ */
+export const SHOULDERS = [
+  [0.24, 1.06],
+  [0.55, 0.8],
+  [0.82, 0.34],
+];
+
+/** Height above which a shard gets `SHOULDERS` when the caller did not author its own rings. */
+export const SHOULDER_MIN_HEIGHT = 20;
+
+export function shard({ x = 0, y = 0, z = 0, radius = 4, height = 10, sides = 5, taper = 0.18, lean = [0, 0], rings = null, seed = 1, jag = 0.3 }) {
   const out = [];
+  if (rings == null) rings = height >= SHOULDER_MIN_HEIGHT ? SHOULDERS : [];
   const ringPts = (r, h, tw) => {
     const pts = [];
     for (let i = 0; i < sides; i++) {

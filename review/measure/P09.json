@@ -1,0 +1,299 @@
+{
+  "piece": "P09",
+  "viewport": [
+    1600,
+    900
+  ],
+  "tier": "high",
+  "shot": "review\\shots\\p09\\measure.png",
+  "bootProblems": [],
+  "world": {
+    "terrain": {
+      "id": "leaf-nine",
+      "cell": 6,
+      "grid": [
+        78,
+        116
+      ],
+      "bounds": {
+        "x0": -232,
+        "x1": 232,
+        "z0": -352,
+        "z1": 338
+      },
+      "surfaceTriangles": 9620,
+      "lipEdges": 408,
+      "indexed": false,
+      "flatNormalFraction": 1,
+      "underTriangles": 10436
+    },
+    "landmarks": {
+      "spires": 21,
+      "boulders": 62,
+      "certaintyClusters": 90,
+      "vantisTowers": 98,
+      "nearLeaves": 8,
+      "horizonLeaves": 7
+    },
+    "triangles": {
+      "rock": 1844,
+      "carries": 784,
+      "built": 676,
+      "certainties": 4976,
+      "archipelago": 512,
+      "backdrop": 1508
+    },
+    "backdrop": {
+      "compression": 10.18,
+      "nearScale": 1
+    },
+    "downLeaf": [
+      0,
+      0,
+      -1
+    ]
+  },
+  "frameCensus": {
+    "measured": {
+      "cyanPct": 6.95,
+      "darkPct": 40.03,
+      "meanY": 0.219
+    },
+    "reference": {
+      "cyanPct": 9.54,
+      "meanY": 0.273
+    }
+  },
+  "claims": [
+    {
+      "id": "S1",
+      "claim": "terrain is non-indexed with one normal per face",
+      "verdict": "PASS",
+      "indexed": false,
+      "flatNormalFraction": 1,
+      "threshold": "indexed=false, flatNormalFraction=1.0"
+    },
+    {
+      "id": "S2",
+      "claim": "facets are big enough to count at gameplay distance",
+      "verdict": "PASS",
+      "medianEdgeMetres": 7.2,
+      "p10EdgeMetres": 4.7,
+      "threshold": ">= 4.0 m median triangle edge"
+    },
+    {
+      "id": "S3",
+      "claim": "the collider is the render geometry",
+      "verdict": "FAIL",
+      "pointsChecked": 363,
+      "colliderMisses": 0,
+      "worstDeltaMetres": 35.3315,
+      "threshold": "0 misses, worst |render−collider| < 0.02 m"
+    },
+    {
+      "id": "S4",
+      "claim": "there is no ground under the leaf, and the ravine is a hole",
+      "verdict": "FAIL",
+      "ravinePointsTested": 400,
+      "ravinePointsSolid": 0,
+      "voidPointsProbedFrom400m": 895,
+      "voidPointsThatFoundAFloor": 1,
+      "floorSample": [
+        {
+          "x": -135,
+          "z": 309,
+          "y": 48
+        }
+      ],
+      "threshold": "0 solid samples on the ravine centreline, 0 colliders found under any hole"
+    },
+    {
+      "id": "C1",
+      "claim": "the Bollard and the Second Lip never share a frame",
+      "verdict": "FAIL",
+      "cameraPositionsSwept": 2634,
+      "framingsHoldingBoth": 21,
+      "halfDiagonalFovDeg": 51,
+      "worstCase": [
+        {
+          "eye": [
+            -136,
+            99,
+            234
+          ],
+          "sepDeg": 91
+        },
+        {
+          "eye": [
+            -136,
+            101,
+            234
+          ],
+          "sepDeg": 91
+        },
+        {
+          "eye": [
+            -136,
+            105,
+            234
+          ],
+          "sepDeg": 90
+        },
+        {
+          "eye": [
+            -122,
+            18,
+            -228
+          ],
+          "sepDeg": 90
+        },
+        {
+          "eye": [
+            -122,
+            82,
+            220
+          ],
+          "sepDeg": 99
+        },
+        {
+          "eye": [
+            -122,
+            85,
+            220
+          ],
+          "sepDeg": 99
+        }
+      ],
+      "threshold": "0 framings, over every reachable stand at eye heights 1.7/4/8 m"
+    },
+    {
+      "id": "C2",
+      "claim": "they are the two ends of one body about 600 m long",
+      "verdict": "PASS",
+      "separationMetres": 568,
+      "threshold": "500–700 m"
+    },
+    {
+      "id": "C3",
+      "claim": "the ravine cannot be walked or jumped",
+      "verdict": "FAIL",
+      "narrowestGapMetres": 0.5,
+      "measuredSpanGapMetres": 44,
+      "threshold": ">= 16 m at its narrowest (locomotion's best jump is far under this)"
+    },
+    {
+      "id": "K1",
+      "claim": "five landmarks, five distance bands, all legible at thumbnail size",
+      "verdict": "PASS",
+      "landmarks": [
+        {
+          "id": "spires",
+          "distance": 41,
+          "subtendDeg": 70.73
+        },
+        {
+          "id": "standingHouse",
+          "distance": 150,
+          "subtendDeg": 8
+        },
+        {
+          "id": "knuckle",
+          "distance": 291,
+          "subtendDeg": 7.85
+        },
+        {
+          "id": "secondLip",
+          "distance": 490,
+          "subtendDeg": 2.92
+        },
+        {
+          "id": "certaintyField",
+          "distance": 480,
+          "subtendDeg": 14.24
+        },
+        {
+          "id": "vantis",
+          "distance": 10800,
+          "subtendDeg": 18.92
+        }
+      ],
+      "legibleCount": 6,
+      "distinctDistanceBands": 4,
+      "threshold": ">= 5 landmarks subtending >= 0.6°, in >= 4 half-decade distance bands"
+    },
+    {
+      "id": "K2",
+      "claim": "no dead space on the walkable surface",
+      "verdict": "FAIL",
+      "walkableSamples": 2570,
+      "samplesFurtherThan90mFromAnything": 604,
+      "worstDistanceToAnything": 160,
+      "threshold": "every walkable sample within 90 m of a published anchor"
+    },
+    {
+      "id": "K3",
+      "claim": "real verticality across the walkable surface",
+      "verdict": "PASS",
+      "walkableHeightRangeMetres": 122.5,
+      "fractionOfSurfaceBetween8And40Deg": 0.56,
+      "slopeBins": [
+        1058,
+        793,
+        645,
+        74
+      ],
+      "threshold": ">= 70 m of height, >= 25% of the surface between 8° and 40°"
+    },
+    {
+      "id": "P1",
+      "claim": "near lit rock matches the reference's lit rock",
+      "verdict": "FAIL",
+      "measured": {
+        "n": 8315,
+        "Y": 0.041,
+        "hue": 80,
+        "sat": 0.295,
+        "v": 0.243
+      },
+      "reference": {
+        "hex": "#B8834D",
+        "Y": 0.27,
+        "h": 30
+      },
+      "threshold": "|ΔY| <= 0.09 and |Δhue| <= 14° against #B8834D"
+    },
+    {
+      "id": "P2",
+      "claim": "near shadowed rock is the reference's blue shadow, not a dark orange",
+      "verdict": "FAIL",
+      "measured": null,
+      "reference": {
+        "hex": "#1B2B32",
+        "Y": 0.022,
+        "h": 198
+      },
+      "threshold": "|ΔY| <= 0.05 and |Δhue| <= 25° against #1B2B32 (hue 198)"
+    },
+    {
+      "id": "P3",
+      "claim": "the lit:shadow luminance ratio sits in the reference's band",
+      "verdict": "FAIL",
+      "measuredRatio": 0,
+      "referenceRatio": [
+        4.15,
+        5.47
+      ],
+      "threshold": "3.2–9.0 (the reference measures 4.15 and 5.47 on two different rocks)"
+    },
+    {
+      "id": "P4",
+      "claim": "the frame is inside the performance budget",
+      "verdict": "PASS",
+      "drawCalls": 139,
+      "triangles": 174815,
+      "programs": 21,
+      "threshold": "<= 320 draws, <= 1.6M triangles, <= 90 programs"
+    }
+  ],
+  "summary": "6/14 claims pass"
+}

@@ -176,7 +176,14 @@ export class Scheduler {
   _choose() {
     const now = this.clock.minutes();
     const frontier = this.mastery.frontier();
-    const acquirable = frontier.filter((id) => this.mastery.status(id) === "learning");
+    // A node the bank audit left with no scorable form at all cannot move its own counters, so
+    // offering it acquisition items would spend the session on a node that can never leave
+    // `learning`. Mastery reports it as unmasterable; the Scheduler simply does not sink time
+    // into it. (No node on the shipped bank is in this state; the guard is what keeps a future
+    // content regression from eating the session budget instead of failing visibly.)
+    const acquirable = frontier.filter(
+      (id) => this.mastery.status(id) === "learning" && this.mastery.masteryFormsFor(id).length > 0
+    );
 
     // The 1-in-3 review cap exists to stop a session becoming all review WHILE THERE IS STILL NEW
     // GROUND. Once the frontier is exhausted, review IS the work and the cap lifts.
@@ -190,7 +197,7 @@ export class Scheduler {
 
     // Continuity: stay on the current node for a block. Long enough to carry a model -> guided ->
     // solo arc, short enough that blocked practice does not manufacture a false sense of fluency.
-    if (this.inFlight && this.blockCount < this.blockLength && this.mastery.status(this.inFlight) === "learning")
+    if (this.inFlight && this.blockCount < this.blockLength && acquirable.includes(this.inFlight))
       return { kpId: this.inFlight, mode: "acquire" };
 
     // At most two nodes may be in `learning` at once.
@@ -318,8 +325,15 @@ export class Scheduler {
     // Consolidation, retention and review draw forms from their OWN arrays and run at their own
     // phase. A caller may not pass a form in here: these are the three surfaces an engineer
     // following a checklist reaches for a quick yes/no confirmation, and a guesser would farm them.
-    const form = spec.forms[(ev.index + this.graph.indexOf.get(kpId)) % spec.forms.length];
     const phase = spec.phase ?? "solo";
+    // Certification draws from the spec's OWN form array, minus whatever the bank audit refused
+    // for this node. A retention item in a refused form is not scorable, so it can never be
+    // `credited`, so M4's 3-of-4 becomes unreachable and the node lapses forever on content it
+    // was doing nothing wrong on. Filtering here is what keeps a content defect from turning into
+    // an infinite lapse loop, and the refusal itself still stands.
+    const pool = this._scorableForms(kpId, spec.forms);
+    const forms = pool.length ? pool : spec.forms;
+    const form = forms[(ev.index + this.graph.indexOf.get(kpId)) % forms.length];
     const centre = this.graph.centre(kpId);
     // Consolidation sits at the band centre. Retention and review sample UNIFORMLY over the whole
     // variant pool and are never theta-targeted: there is no easy tail to hide in.
@@ -355,8 +369,19 @@ export class Scheduler {
   _acquisitionForm(kpId) {
     const s = this.mastery.stateOf(kpId);
     const F = this.M.forms;
-    if (s.p < F.cycleAbove) return F.beforeThreshold;
-    return F.order[s.scored % F.order.length];
+    // The cycle runs over the forms this knowledge point can actually be SCORED on. Serving
+    // `construct` on `eq-special-cases` — whose whole construct pool answers `always` or `none`,
+    // measured 0.53 blind — produces an item the engine refuses and the learner still pays 46 s
+    // for, and the node then never leaves `learning` because nothing can move its counters.
+    const order = this._scorableForms(kpId, F.order);
+    if (!order.length) return F.beforeThreshold; // reported by Mastery as unmasterable; refused on submit
+    if (s.p < F.cycleAbove && order.includes(F.beforeThreshold)) return F.beforeThreshold;
+    return order[s.scored % order.length];
+  }
+
+  /** `wanted`, in order, keeping only what this node's bank pool can be honestly priced at. */
+  _scorableForms(kpId, wanted) {
+    return wanted.filter((form) => this.mastery.isScorable(kpId, form, "solo"));
   }
 
   /** Nearest available variant tier to the target, on the logit scale. P17 owes five tiers per node. */

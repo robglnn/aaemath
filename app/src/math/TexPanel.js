@@ -30,9 +30,46 @@
  * wasteful at distance and at 4K. Each panel measures its own projected height in device
  * pixels every frame and re-rasterizes when it crosses a size bucket, with hysteresis and a
  * cooldown so it cannot thrash. Mip-maps plus anisotropy carry it at gameplay distance.
+ *
+ * ## Staying bounded — and what happens to a claim that will not fit
+ *
+ * "Size the texture from the ink" is the right idea and, on its own, an unbounded allocation:
+ * the ink is a function of the content, so a long enough claim asks for an arbitrarily large
+ * canvas and gets it. This file therefore never derives an allocation from content without a
+ * cap in front of it. There are four gates, cheapest first, each bounding a *different*
+ * quantity, and the first two live in `Tex.js` because they have to run before this file is
+ * reached at all:
+ *
+ *  1. **Source length** — `Tex.MAX_TEX_LENGTH`, checked before KaTeX runs.
+ *  2. **Parse-tree depth** — `Tex.MAX_TEX_DEPTH`, checked between parsing and typesetting,
+ *     because a 15-deep nested fraction crashes the renderer during layout and there is no
+ *     result left to measure afterwards.
+ *  3. **Ink extent, in ems** — `RASTER_CAPS.maxInkEms{Wide,Tall}`, checked after layout.
+ *     Bounds the *world* size of the quad, which the raster size does not: a claim scaled down
+ *     to fit a texture still stands as many ems wide as it did, and a legible-but-300-metre
+ *     billboard is not a claim, it is an attack with better manners.
+ *  4. **Canvas size** — `RASTER_CAPS.maxEdge` and `maxPixels`, checked before `canvas.width`
+ *     is assigned, and then again as an unconditional clamp on the assignment itself. Bounds
+ *     the allocation.
+ *
+ * Gate 4 first tries to **scale down**: re-lay the same expression out at a smaller font so
+ * the whole of it survives at lower texel density. Only if even `minFontPx` will not fit does
+ * it **refuse**, and refusing means the same hollow stand-in a malformed claim gets, plus a
+ * line in `__vs.errors`.
+ *
+ * It does not truncate, and that is a deliberate rejection of the obvious option. Half of
+ * `2x + 14 = 30` is `2x + 1`, which is not a fragment — it is a well-formed and *false*
+ * statement, and a player who acts on it has been lied to by the renderer. A visible cut
+ * marker does not fix that, because the claim is still readable and still wrong. So an
+ * expression this pipeline cannot draw whole is one it declines to draw at all.
+ *
+ * In the shipped game the caps have roughly 35x headroom and never bite: the four standing
+ * claims rasterize to 323x65, 239x164, 256x256 and 359x69 at 1600x900 (measured, see
+ * `review/measure/P15.mjs` claim H6). Gates 3 and 4 exist for content that does not exist yet
+ * and for anything that ever reaches `math:show` from outside this piece.
  */
 import * as THREE from "three";
-import { render, renderInto, getLocale } from "./Tex.js";
+import { render, renderInto, getLocale, refusedRecord } from "./Tex.js";
 
 // ---------------------------------------------------------------- hidden layout host
 
@@ -360,10 +397,99 @@ function inkBounds(items) {
   return { left, top, right, bottom, width: right - left, height: bottom - top };
 }
 
-const rasterStats = { rasters: 0, ms: 0, glyphs: 0, paths: 0, rules: 0, unsupportedSvg: 0, baselineResidual: 0 };
+/**
+ * The allocation ceiling, in one place so a reviewer can assert against the same numbers the
+ * code enforces.
+ *
+ * `maxEdge` is 4096 because that is the texture edge every WebGL2 implementation this game
+ * targets supports, and because the size ladder was already written against it. `maxPixels`
+ * is 2048² — 16 MiB of RGBA — and is the tighter of the two for anything large in both axes;
+ * a 4096² canvas would be 64 MiB for one claim, which is not a bound worth calling a bound.
+ * `minFontPx` is where scaling-down gives up and refusal takes over.
+ */
+export const RASTER_CAPS = Object.freeze({
+  maxEdge: 4096,
+  maxPixels: 2048 * 2048,
+  maxInkEmsWide: 48,
+  maxInkEmsTall: 24,
+  minFontPx: 8,
+});
+
+const rasterStats = {
+  rasters: 0,
+  ms: 0,
+  glyphs: 0,
+  paths: 0,
+  rules: 0,
+  unsupportedSvg: 0,
+  baselineResidual: 0,
+  // The bound, as a measurement rather than a promise: the largest canvas this process has
+  // ever allocated, and how many rasters had to be scaled down or refused to keep it there.
+  maxCanvasWidth: 0,
+  maxCanvasHeight: 0,
+  maxCanvasPixels: 0,
+  scaledDown: 0,
+  refusedGeometry: 0,
+};
 
 export function rasterStatistics() {
-  return { ...rasterStats, ms: Number(rasterStats.ms.toFixed(1)), baselineResidual: Number(rasterStats.baselineResidual.toFixed(3)) };
+  return {
+    ...rasterStats,
+    ms: Number(rasterStats.ms.toFixed(1)),
+    baselineResidual: Number(rasterStats.baselineResidual.toFixed(3)),
+    caps: { ...RASTER_CAPS },
+  };
+}
+
+const padFor = (fontPx) => Math.max(2, Math.round(fontPx * 0.05));
+
+/** The canvas this ink would need at this font size, before any cap is applied. */
+function canvasSizeFor(ink, fontPx) {
+  const pad = padFor(fontPx);
+  return { w: Math.ceil(ink.width) + pad * 2, h: Math.ceil(ink.height) + pad * 2 };
+}
+
+/** 1 when it already fits; otherwise the factor the font must be multiplied by so it does. */
+function fitScale(ink, fontPx) {
+  const { w, h } = canvasSizeFor(ink, fontPx);
+  if (w <= 0 || h <= 0) return 1;
+  return Math.min(
+    1,
+    RASTER_CAPS.maxEdge / w,
+    RASTER_CAPS.maxEdge / h,
+    Math.sqrt(RASTER_CAPS.maxPixels / (w * h))
+  );
+}
+
+/**
+ * Lay one already-typeset expression out in the hidden host at a chosen pixel size and turn
+ * it into paint instructions. Separated out because the cap may need to run it twice, at two
+ * font sizes, and doing that by hand in two places is how the second one drifts.
+ */
+function layoutTex(html, fontPx, color) {
+  const h = host();
+  h.textContent = "";
+  const box = document.createElement("div");
+  box.style.cssText = `display:inline-block;font-size:${fontPx}px;line-height:1.2;white-space:nowrap;color:${color};`;
+  box.innerHTML = html;
+  h.appendChild(box);
+  const stats = { glyphs: 0, paths: 0, rules: 0, wrapped: 0, unsupportedSvg: 0, baselineResidual: 0 };
+  const items = collect(box, stats);
+  return { items, ink: inkBounds(items), stats };
+}
+
+// A refusal is pushed to `__vs.errors` once per (locale, reason, source) and not once per
+// size bucket: a panel that re-rasterizes as the player walks toward it must not turn one
+// bad claim into an unbounded error log.
+const reportedRefusals = new Set();
+function refuseOnce(tex, locale, displayMode, error) {
+  const key = `${locale}|${error}|${String(tex).slice(0, 80)}`;
+  const first = !reportedRefusals.has(key);
+  if (first) {
+    if (reportedRefusals.size > 200) reportedRefusals.clear();
+    reportedRefusals.add(key);
+  }
+  return refusedRecord(tex, { locale, displayMode, error, report: first });
 }
 
 /**
@@ -372,31 +498,109 @@ export function rasterStatistics() {
  */
 export function rasterizeTex(tex, { locale = getLocale(), displayMode = true, fontPx = 256, rim = 0, color = "#ffffff" } = {}) {
   const t0 = performance.now();
-  const record = render(tex, { locale, displayMode });
+  // Gates 1 and 2 already ran: an over-length or over-deep source never reaches a layout,
+  // because `render` refused it and handed back the stand-in instead.
+  let record = render(tex, { locale, displayMode });
 
-  const h = host();
-  h.textContent = "";
-  const box = document.createElement("div");
-  box.style.cssText = `display:inline-block;font-size:${fontPx}px;line-height:1.2;white-space:nowrap;color:${color};`;
-  box.innerHTML = record.html;
-  h.appendChild(box);
+  let usedFontPx = Math.max(RASTER_CAPS.minFontPx, Math.round(fontPx) || RASTER_CAPS.minFontPx);
+  let pass = layoutTex(record.html, usedFontPx, color);
+  let bound = null;
 
-  const stats = { glyphs: 0, paths: 0, rules: 0, wrapped: 0, unsupportedSvg: 0, baselineResidual: 0 };
-  const items = collect(box, stats);
-  const ink = inkBounds(items);
+  // Gate 3 — the ink's extent in ems, which the raster size does not bound. This is what
+  // keeps a claim from standing hundreds of metres wide in the world.
+  if (pass.ink) {
+    const emsWide = pass.ink.width / usedFontPx;
+    const emsTall = pass.ink.height / usedFontPx;
+    if (emsWide > RASTER_CAPS.maxInkEmsWide || emsTall > RASTER_CAPS.maxInkEmsTall) {
+      bound = {
+        reason: "ink-extent",
+        emsWide: Number(emsWide.toFixed(1)),
+        emsTall: Number(emsTall.toFixed(1)),
+      };
+      rasterStats.refusedGeometry++;
+      record = refuseOnce(
+        tex,
+        record.locale,
+        displayMode,
+        `claim geometry out of bounds: ${emsWide.toFixed(1)}x${emsTall.toFixed(1)} ems, cap ` +
+          `${RASTER_CAPS.maxInkEmsWide}x${RASTER_CAPS.maxInkEmsTall}`
+      );
+      pass = layoutTex(record.html, usedFontPx, color);
+    }
+  }
 
+  // Gate 4 — the allocation. Scale down first so the whole expression survives; refuse only
+  // when even `minFontPx` will not fit it. Never truncate: see the file header.
+  if (pass.ink) {
+    if (fitScale(pass.ink, usedFontPx) < 1) {
+      const fromFontPx = usedFontPx;
+      // Iterated, not one-shot: the padding is a fixed fraction of the font so the shrink is
+      // very nearly linear, but "very nearly" lands a few pixels over the edge often enough
+      // that a single pass would refuse claims it should have fitted. Bounded at three.
+      for (let attempt = 0; attempt < 3 && fitScale(pass.ink, usedFontPx) < 1; attempt++) {
+        const next = Math.max(RASTER_CAPS.minFontPx, Math.floor(usedFontPx * fitScale(pass.ink, usedFontPx)));
+        if (next >= usedFontPx) break;
+        const retry = layoutTex(record.html, next, color);
+        if (!retry.ink) break;
+        usedFontPx = next;
+        pass = retry;
+      }
+      if (usedFontPx < fromFontPx) {
+        bound = { reason: "scaled", fromFontPx, toFontPx: usedFontPx };
+        rasterStats.scaledDown++;
+      }
+      if (fitScale(pass.ink, usedFontPx) < 1) {
+        const { w, h } = canvasSizeFor(pass.ink, usedFontPx);
+        bound = { reason: "raster-size", wantedWidth: w, wantedHeight: h };
+        rasterStats.refusedGeometry++;
+        record = refuseOnce(
+          tex,
+          record.locale,
+          displayMode,
+          `raster out of bounds: ${w}x${h} px at the smallest legible size, cap ` +
+            `${RASTER_CAPS.maxEdge} per axis / ${RASTER_CAPS.maxPixels} total`
+        );
+        pass = layoutTex(record.html, usedFontPx, color);
+      }
+    }
+  }
+
+  const { items, ink, stats } = pass;
   const canvas = document.createElement("canvas");
   if (!ink || ink.width < 1 || ink.height < 1) {
-    h.textContent = "";
+    host().textContent = "";
     canvas.width = 4;
     canvas.height = 4;
-    return { canvas, record, ink: { width: 4, height: 4 }, fontPx, stats, ok: false };
+    noteCanvas(canvas);
+    return {
+      canvas,
+      record,
+      ink: { width: 4, height: 4 },
+      fontPx: usedFontPx,
+      emsWide: 4 / usedFontPx,
+      emsTall: 4 / usedFontPx,
+      stats,
+      bound,
+      ok: false,
+    };
   }
 
   // A little breathing room so antialiasing and the outermost mip level never clip.
-  const pad = Math.max(2, Math.round(fontPx * 0.05));
-  canvas.width = Math.ceil(ink.width) + pad * 2;
-  canvas.height = Math.ceil(ink.height) + pad * 2;
+  const pad = padFor(usedFontPx);
+  // The unconditional clamp. Everything above should have made it a no-op, and it is written
+  // anyway: this is the one line that has to be true for the allocation to be bounded, so it
+  // does not depend on the reasoning above being right.
+  const want = canvasSizeFor(ink, usedFontPx);
+  let cw = Math.min(want.w, RASTER_CAPS.maxEdge);
+  let ch = Math.min(want.h, RASTER_CAPS.maxEdge);
+  if (cw * ch > RASTER_CAPS.maxPixels) {
+    const s = Math.sqrt(RASTER_CAPS.maxPixels / (cw * ch));
+    cw = Math.max(4, Math.floor(cw * s));
+    ch = Math.max(4, Math.floor(ch * s));
+  }
+  canvas.width = cw;
+  canvas.height = ch;
+  noteCanvas(canvas);
   const ctx = canvas.getContext("2d");
   const ox = ink.left - pad;
   const oy = ink.top - pad;
@@ -439,7 +643,7 @@ export function rasterizeTex(tex, { locale = getLocale(), displayMode = true, fo
   }
   paint();
 
-  h.textContent = "";
+  host().textContent = "";
 
   rasterStats.rasters++;
   rasterStats.ms += performance.now() - t0;
@@ -453,10 +657,25 @@ export function rasterizeTex(tex, { locale = getLocale(), displayMode = true, fo
     canvas,
     record,
     ink: { width: ink.width, height: ink.height, pad },
-    fontPx,
+    // The font size actually used, which is not the one asked for when gate 3 scaled it down.
+    // The panel sizes its quad from this, so a scaled raster still stands the right size in
+    // the world and still reports an honest texels-per-pixel.
+    fontPx: usedFontPx,
+    // The ink measured in ems, which is scale-free: this is what the size ladder needs in
+    // order to pick a bucket whose canvas fits, rather than discovering it afterwards.
+    emsWide: (Math.ceil(ink.width) + pad * 2) / usedFontPx,
+    emsTall: (Math.ceil(ink.height) + pad * 2) / usedFontPx,
     stats,
+    bound,
     ok: record.ok,
   };
+}
+
+/** Record the largest canvas this process has ever allocated, so the cap is measurable. */
+function noteCanvas(canvas) {
+  rasterStats.maxCanvasWidth = Math.max(rasterStats.maxCanvasWidth, canvas.width);
+  rasterStats.maxCanvasHeight = Math.max(rasterStats.maxCanvasHeight, canvas.height);
+  rasterStats.maxCanvasPixels = Math.max(rasterStats.maxCanvasPixels, canvas.width * canvas.height);
 }
 
 // ---------------------------------------------------------------- the working (plotted axes)
@@ -482,10 +701,14 @@ export function rasterizeWorking({
   stroke = 0.016,
   step = 0.0,
 } = {}) {
-  const size = Math.max(64, Math.round(pixels));
+  // Square by construction, so the area cap binds before the edge cap does: 2048² is the
+  // largest working this may allocate however large a `pixels` a caller asks for.
+  const squareCap = Math.min(RASTER_CAPS.maxEdge, Math.floor(Math.sqrt(RASTER_CAPS.maxPixels)));
+  const size = Math.min(squareCap, Math.max(64, Math.round(pixels) || 64));
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
+  noteCanvas(canvas);
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = color;
 
@@ -530,7 +753,9 @@ export function rasterizeWorking({
     prevY = ya;
   }
 
-  return { canvas, ink: { width: size, height: size } };
+  // `fontPx` here is the working's own em — it is four ems to a side by definition — so a
+  // clamped working still reports the right world size and the right texels-per-pixel.
+  return { canvas, ink: { width: size, height: size }, fontPx: size / 4, emsWide: 4, emsTall: 4 };
 }
 
 // ---------------------------------------------------------------- the panel
@@ -549,16 +774,23 @@ const BUCKETS = [
   48, 54, 60, 68, 76, 86, 96, 108, 120, 136, 152, 172, 192, 216, 240, 272, 304, 344, 384, 432,
   480, 544, 608, 688, 768, 864, 960, 1088, 1216, 1376, 1536, 1728, 1920, 2048,
 ];
-const MAX_TEXTURE_EDGE = 4096;
-
-function bucketFor(needed, aspect) {
-  for (const b of BUCKETS) {
-    if (b >= needed && b * Math.max(1, aspect) <= MAX_TEXTURE_EDGE) return b;
-  }
-  // Too wide to grow further: take the largest that still fits.
-  for (let i = BUCKETS.length - 1; i >= 0; i--) {
-    if (BUCKETS[i] * Math.max(1, aspect) <= MAX_TEXTURE_EDGE) return BUCKETS[i];
-  }
+/**
+ * Pick the smallest bucket that is sharp enough *and* whose canvas is inside the cap.
+ *
+ * `emsWide`/`emsTall` are the ink's extent in ems, which is what makes this checkable up
+ * front: a bucket of `b` texels per em produces a `b·emsWide` by `b·emsTall` canvas. Doing
+ * the arithmetic here rather than letting `rasterizeTex` clamp afterwards is the difference
+ * between a ladder that never asks for something it cannot have and one that keeps asking and
+ * keeps being refused.
+ */
+function bucketFor(needed, emsWide, emsTall) {
+  const w = Math.max(1, emsWide || 1);
+  const h = Math.max(1, emsTall || 1);
+  const fits = (b) =>
+    b * w <= RASTER_CAPS.maxEdge && b * h <= RASTER_CAPS.maxEdge && b * w * b * h <= RASTER_CAPS.maxPixels;
+  for (const b of BUCKETS) if (b >= needed && fits(b)) return b;
+  // Too big to grow further: take the largest that still fits.
+  for (let i = BUCKETS.length - 1; i >= 0; i--) if (fits(BUCKETS[i])) return BUCKETS[i];
   return BUCKETS[0];
 }
 
@@ -623,10 +855,15 @@ export class TexPanel {
     this.mesh.userData.vsTex = { id: this.id, kpId };
 
     this._bucket = 0;
+    this._fontPx = 0; // the size actually rasterized at; differs from the bucket only if capped
     this._texture = null;
     this._widthPerEm = 4; // refined after the first raster
-    this._texPerBucket = 5; // texture width per bucket unit; caps how far we may grow
+    // The ink's extent in ems, which is what tells the ladder how far it may grow. Seeded with
+    // a typical two-line claim and replaced by the measurement after the first raster.
+    this._emsWide = 5;
+    this._emsTall = 1.4;
     this._heightPerEm = 1.2;
+    this._bound = null;
     this._cooldown = 0;
     this._age = 0;
     this._emScreenPx = 0;
@@ -683,13 +920,18 @@ export class TexPanel {
     this.material.needsUpdate = true;
     if (old) old.dispose();
 
-    // One em is `bucket` texels, for a claim and for a working alike — which is what makes a
+    // One em is `fontPx` texels, for a claim and for a working alike — which is what makes a
     // working four ems to a side in the world, matching the target, where the plotted axes
-    // stand about four line-heights tall beside the equation.
-    const pxPerEm = bucket;
+    // stand about four line-heights tall beside the equation. `out.fontPx` and not `bucket`,
+    // because a capped raster was laid out smaller than it was asked for and the quad has to
+    // follow the ink, not the request.
+    const pxPerEm = out.fontPx || bucket;
     this._widthPerEm = out.canvas.width / pxPerEm;
     this._heightPerEm = out.canvas.height / pxPerEm;
-    this._texPerBucket = out.canvas.width / bucket;
+    this._emsWide = out.emsWide || this._widthPerEm;
+    this._emsTall = out.emsTall || this._heightPerEm;
+    this._bound = out.bound ?? null;
+    this._fontPx = pxPerEm;
     this._bucket = bucket;
     this._rasters++;
     this.record = out.record ?? null;
@@ -712,11 +954,13 @@ export class TexPanel {
     // actually being drawn at.
     const needed = this.em / worldPerPx;
     this._emScreenPx = needed;
-    this._texelsPerPixel = needed > 0 ? this._bucket / needed : 0;
+    // Measured against the size the texture was really laid out at, so a capped raster reports
+    // itself as the softer thing it is rather than as the bucket it was denied.
+    this._texelsPerPixel = needed > 0 ? (this._fontPx || this._bucket) / needed : 0;
 
     const want = Math.max(BUCKETS[0], needed * 1.02);
     if (!this._bucket) {
-      this._rasterize(bucketFor(want, this._texPerBucket));
+      this._rasterize(bucketFor(want, this._emsWide, this._emsTall));
       this._cooldown = 0.4;
     } else if (this._cooldown <= 0) {
       // Hysteresis: grow as soon as the texture would be magnified, shrink only when it is
@@ -725,7 +969,7 @@ export class TexPanel {
       const grow = want > this._bucket && this._bucket < BUCKETS.at(-1);
       const shrink = needed * 1.9 < this._bucket && this._bucket > BUCKETS[0];
       if (grow || shrink) {
-        const next = bucketFor(want, this._texPerBucket);
+        const next = bucketFor(want, this._emsWide, this._emsTall);
         if (next !== this._bucket) {
           this._rasterize(next);
           this._cooldown = 0.5;
@@ -761,7 +1005,10 @@ export class TexPanel {
       em: Number(this.em.toFixed(3)),
       worldSize: [Number(this.mesh.scale.x.toFixed(3)), Number(this.mesh.scale.y.toFixed(3))],
       texturePx: this._bucket,
+      fontPx: this._fontPx,
       textureSize: this._texture ? [this._texture.image.width, this._texture.image.height] : null,
+      // null in normal play; names the gate when a claim's geometry had to be bounded.
+      bound: this._bound,
       emScreenPx: Number(this._emScreenPx.toFixed(1)),
       texelsPerPixel: Number(this._texelsPerPixel.toFixed(2)),
       rasters: this._rasters,

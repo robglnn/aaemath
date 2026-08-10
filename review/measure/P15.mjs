@@ -41,6 +41,9 @@ const SIZES = (argOf("sizes", "1600x900,3840x2160") || "")
     return { w, h, label: s };
   });
 
+// Vite serves `app/` as its root, so this is the shipped module's URL on the dev server.
+const TEX_PANEL_URL = "/src/math/TexPanel.js";
+
 const claims = [];
 const data = {};
 
@@ -350,9 +353,39 @@ const MALFORMED = [
   "\\sqrt[",
 ];
 
+/**
+ * Hostile input. Not malformed — every one of these is *legal* TeX that KaTeX typesets
+ * without complaint, which is the point: the malformed fixtures above prove the parser
+ * refuses nonsense, and these prove the pipeline refuses to allocate, lay out or draw from
+ * content. Each attacks a different axis, and each is stopped by a different gate:
+ *
+ *   long20k     — 20,000 characters. The finding this round exists to close. Gate 1.
+ *   deepFrac15  — 15 nested fractions. The measured point at which laying the result out
+ *                 *crashes the Chromium renderer*: depth 14 lays out in under 2 ms, depth 15
+ *                 kills the tab. This one is the regression test that matters most, because
+ *                 without gate 2 the game does not degrade, it dies. Gate 2.
+ *   deepFrac60  — the same attack past the point of any doubt. Gate 2.
+ *   tallMatrix  — 150 rows, 220 ems tall. Shallow (parse depth 3) and long-but-legal, so it
+ *                 gets past gates 1 and 2 and has to be stopped by geometry. Gate 3.
+ *   wideLine    — 1,881 characters on one line, ~940 ems wide. Inside the length cap on
+ *                 purpose. Gate 3.
+ *
+ * The last two are the ones that keep the suite honest: they prove the length and depth caps
+ * are not quietly carrying the whole argument.
+ */
+const nestedFrac = (n) => "\\frac{1}{".repeat(n) + "2" + "}".repeat(n);
+
+const HOSTILE = [
+  { id: "long20k", tex: "x + x".repeat(4000), attacks: "source length", gate: "1 length" },
+  { id: "deepFrac15", tex: nestedFrac(15), attacks: "parse depth — the measured renderer crash", gate: "2 depth" },
+  { id: "deepFrac60", tex: nestedFrac(60), attacks: "parse depth", gate: "2 depth" },
+  { id: "tallMatrix", tex: `\\begin{matrix}${"1 \\\\ ".repeat(149)}1\\end{matrix}`, attacks: "ink height", gate: "3 ink extent" },
+  { id: "wideLine", tex: "1" + " + 1".repeat(470), attacks: "ink width", gate: "3 ink extent" },
+];
+
 async function offlineClaims() {
   const Tex = await import(pathToFileURL(path.join(ROOT, "app/src/math/Tex.js")).href);
-  const { validate, render, localizeTex, lintTexBank, texStats, resetTex, LOCALES } = Tex;
+  const { validate, render, localizeTex, lintTexBank, texStats, texFailures, resetTex, LOCALES } = Tex;
 
   // C1 — every shipped-shape expression typesets in every locale.
   const lint = lintTexBank(GOOD, { locales: LOCALES });
@@ -469,6 +502,57 @@ async function offlineClaims() {
   claim("C7", "1000 renders of one expression typeset it exactly once", "typesets == 1", st.typesets, st.typesets === 1,
     `hits=${st.hits} misses=${st.misses}`);
   resetTex();
+
+  // ---- H0 — the length gate, which is the only one of the three bounds that can be proved
+  // without a browser. Gates 2 and 3 are geometry and need a real layout; they are H1-H5,
+  // measured in the shipped game below.
+  const { MAX_TEX_LENGTH } = Tex;
+  const long = HOSTILE.find((h) => h.id === "long20k");
+  const wide = HOSTILE.find((h) => h.id === "wideLine");
+
+  let refusedLong = 0;
+  const t0 = process.hrtime.bigint();
+  for (const locale of LOCALES) if (!validate(long.tex, { locale }).ok) refusedLong++;
+  const longMs = Number(process.hrtime.bigint() - t0) / 1e6;
+
+  // The control: a string 10x shorter that the gate lets through, actually typeset. If the
+  // long one really is being refused before the parser, it must cost a small fraction of this.
+  const t1 = process.hrtime.bigint();
+  for (const locale of LOCALES) validate(wide.tex, { locale });
+  const wideMs = Number(process.hrtime.bigint() - t1) / 1e6;
+
+  claim("H0a", `a ${long.tex.length}-character claim is refused in every locale`, `${LOCALES.length} refusals`,
+    refusedLong, refusedLong === LOCALES.length, `cap is ${MAX_TEX_LENGTH} characters`);
+  claim("H0b", "the over-length claim never reaches the parser",
+    "cost < 20% of typesetting a 1,881-char claim",
+    `${longMs.toFixed(2)} ms vs ${wideMs.toFixed(1)} ms`, longMs < wideMs * 0.2);
+
+  // The refusal must not become the place the attack string lives.
+  const longRec = render(long.tex, { locale: "en" });
+  const failureLens = texFailures().map((f) => f.tex.length);
+  claim("H0c", "a refused over-length claim is not retained anywhere in the pipeline",
+    "record and failure log <= 200 chars",
+    `record ${longRec.tex.length}, worst failure row ${failureLens.length ? Math.max(...failureLens) : 0}`,
+    longRec.tex.length <= 200 && (failureLens.length === 0 || Math.max(...failureLens) <= 200));
+  claim("H0d", "the refusal shows the stand-in and says so, without notation",
+    "ok:false, speech has no \\ { }", `ok=${longRec.ok} speech="${longRec.speech}"`,
+    longRec.ok === false && !!longRec.speech && !/[\\{}^_]/.test(longRec.speech));
+
+  // And the geometry attacks must NOT be caught here — otherwise the length cap would be
+  // doing gates 2 and 3's job and the browser claims below would prove nothing.
+  const geometryPasses = HOSTILE.filter((h) => h.id !== "long20k").filter((h) => validate(h.tex, { locale: "en" }).ok);
+  claim("H0e", "the geometry attacks are legal TeX that the length gate lets through",
+    "3 of 3 typeset", `${geometryPasses.length}/3`, geometryPasses.length === 3,
+    HOSTILE.filter((h) => h.id !== "long20k" && !validate(h.tex, { locale: "en" }).ok)
+      .map((h) => `${h.id}: ${validate(h.tex, { locale: "en" }).error}`).join(" | ") || null);
+  data.hostileOffline = {
+    cap: MAX_TEX_LENGTH,
+    longChars: long.tex.length,
+    longRefuseMs: Number(longMs.toFixed(3)),
+    wideTypesetMs: Number(wideMs.toFixed(1)),
+    sizes: HOSTILE.map((h) => ({ id: h.id, chars: h.tex.length, attacks: h.attacks })),
+  };
+  resetTex();
 }
 
 // ---------------------------------------------------------------- B. in-browser claims
@@ -559,6 +643,147 @@ async function shootRetry(d, relPath, { attempts = 3, timeout = 240000, clip = n
   return false;
 }
 
+/**
+ * The hostile inputs, driven into the *shipped* world through the shipped `math:show` signal,
+ * on the same page and the same scene every other in-browser claim here is measured on. No
+ * test board is spawned and no module is stubbed: this is Leaf Nine with four attacks emitted
+ * into it, which is exactly what would happen if a content bug or a hostile item reached the
+ * teaching director.
+ */
+async function hostileClaims(d, shots) {
+  const rows = [];
+  const t0 = Date.now();
+  // The module URL is passed in rather than written inline so that no bundler or linter tries
+  // to resolve a browser path from Node. `TEX_PANEL_URL` is the dev server's path to the
+  // shipped module — the same instance the running game holds, not a second copy.
+  const caps = await d.run(async (url) => (await import(url)).RASTER_CAPS, TEX_PANEL_URL);
+  const simBefore = await d.run(() => window.__vs.stats().simTime ?? window.__vs.kernel.simTime);
+
+  for (let i = 0; i < HOSTILE.length; i++) {
+    const h = HOSTILE[i];
+    // Named on stderr before it is emitted, because the failure mode this suite is looking for
+    // is one that takes the page down with it — and a crash with no name in the log is a
+    // finding you have to reproduce from scratch.
+    console.error(`  hostile ${i + 1}/${HOSTILE.length}: ${h.id} (${h.tex.length} chars, attacks ${h.attacks})`);
+    const before = await d.run(() => ({
+      raster: window.__vs.probe("mathtex").raster,
+      errors: window.__vs.errors.length,
+    }));
+
+    const wall0 = Date.now();
+    await d.run(
+      ([id, tex, index]) => {
+        const k = window.__vs.kernel;
+        const fwd = k.camera.position.clone();
+        k.camera.getWorldDirection(fwd);
+        const up = k.camera.position.clone().set(0, 1, 0);
+        const right = k.camera.position.clone().crossVectors(fwd, up).normalize();
+        const at = k.camera.position
+          .clone()
+          .addScaledVector(fwd, 10)
+          .addScaledVector(right, (index - 1.5) * 2.2);
+        at.y = k.camera.position.y + 0.3;
+        k.signals.emit("math:show", { id, tex, at: [at.x, at.y, at.z], em: 0.6 });
+      },
+      [h.id, h.tex, i]
+    );
+    await d.play(0.6);
+    const wallMs = Date.now() - wall0;
+
+    const after = await d.run(
+      ([id, needle]) => {
+        const field = window.__vs.probe("mathtex");
+        return {
+          panel: field.panels.find((p) => p.id === id) ?? null,
+          raster: field.raster,
+          errors: window.__vs.errors.length,
+          lastError: window.__vs.errors.at(-1) ?? null,
+          // A prefix check is strictly stronger than a whole-string check and does not put a
+          // 20,000-character needle through the document on every call.
+          sourceInDom: document.documentElement.innerHTML.includes(needle),
+          katexErrors: document.querySelectorAll(".katex-error").length,
+          fatal: window.__vs.fatal,
+        };
+      },
+      [h.id, h.tex.slice(0, 200)]
+    );
+
+    rows.push({
+      id: h.id,
+      attacks: h.attacks,
+      chars: h.tex.length,
+      panel: after.panel,
+      textureSize: after.panel?.textureSize ?? null,
+      bound: after.panel?.bound ?? null,
+      ok: after.panel?.ok ?? null,
+      speech: after.panel?.speech ?? null,
+      rasters: after.raster.rasters - before.raster.rasters,
+      rasterMs: Number((after.raster.ms - before.raster.ms).toFixed(1)),
+      wallMs,
+      newErrors: after.errors - before.errors,
+      lastError: after.lastError,
+      sourceInDom: after.sourceInDom,
+      katexErrors: after.katexErrors,
+      fatal: after.fatal,
+    });
+  }
+
+  // The frame, after all four are standing in it. A capture that still reads is the difference
+  // between "bounded" and "bounded, and the game is still there".
+  const shot = path.join(shots, "hostile.png");
+  const shotOk = await shootRetry(d, path.relative(ROOT, shot).replace(/\\/g, "/"));
+  let frameInk = null;
+  if (shotOk) {
+    const img = readPng(shot);
+    frameInk = measureRegion(img, { x0: 0, y0: 0, x1: img.width, y1: img.height });
+  }
+
+  // Gate 3 in isolation. The panel path cannot reach it — the size ladder and the ink-extent
+  // gate between them mean no claim ever asks for a canvas over the cap (H7 proves that as
+  // arithmetic) — so it is exercised by calling the shipped module, in the shipped page, with
+  // a font size no panel would ever request. Stated plainly because it is the one claim in
+  // this file not measured through the in-world panel.
+  const scaleDown = await d.run(async (url) => {
+    const m = await import(url);
+    const t = performance.now();
+    const out = m.rasterizeTex("x + 3 = 7", { locale: "en", displayMode: true, fontPx: 3000 });
+    return {
+      ms: Number((performance.now() - t).toFixed(1)),
+      width: out.canvas.width,
+      height: out.canvas.height,
+      fontPx: out.fontPx,
+      bound: out.bound,
+      ok: out.ok,
+    };
+  }, TEX_PANEL_URL);
+
+  await d.run(() => window.__vs.kernel.signals.emit("math:hide", {}));
+  await d.play(1.0);
+  const alive = await d.run(() => {
+    const r = window.__vs.report();
+    return {
+      simTime: window.__vs.stats().simTime ?? window.__vs.kernel.simTime,
+      frames: window.__vs.stats().frames ?? null,
+      fatal: r.fatal,
+      ready: r.ready,
+      raster: window.__vs.probe("mathtex").raster,
+      // Everything in the error log that is not one of our deliberate refusals.
+      unexpectedErrors: window.__vs.errors.filter((e) => !/KaTeX refused a claim/.test(String(e))),
+    };
+  });
+
+  return {
+    caps,
+    rows,
+    scaleDown,
+    frameInk,
+    shot: shotOk ? path.relative(ROOT, shot) : null,
+    simBefore,
+    alive,
+    totalWallMs: Date.now() - t0,
+  };
+}
+
 async function browserClaims() {
   const { openGame } = await import(pathToFileURL(path.join(ROOT, "tools/lib/session.mjs")).href);
   fs.mkdirSync(SHOTS, { recursive: true });
@@ -586,6 +811,7 @@ async function browserClaims() {
   const textureRows = [];
   let cacheRow = null;
   let fallbackRow = null;
+  let hostileRows = null;
 
   for (const size of SIZES) {
     for (const lang of LANGS) {
@@ -731,6 +957,8 @@ async function browserClaims() {
             });
           }
           fallbackRow = { ...fb, ...fbAfter, ink: fbInk };
+
+          hostileRows = await hostileClaims(d, SHOTS);
         }
       });
     }
@@ -743,6 +971,7 @@ async function browserClaims() {
   data.textures = textureRows;
   data.cache = cacheRow;
   data.fallback = fallbackRow;
+  data.hostile = hostileRows;
 
   // ---- the raster itself
   const claimTextures = textureRows.filter((t) => t.inkCount > 200 && !t.empty);
@@ -818,6 +1047,76 @@ async function browserClaims() {
     claim("C14f", "the stand-in announces itself as unreadable rather than reading out notation",
       "localized fallback phrase", fallbackRow.panel?.speech ?? null,
       !!fallbackRow.panel && fallbackRow.panel.ok === false && !/[\\{}]/.test(fallbackRow.panel.speech || "x"));
+  }
+
+  // ---- H1-H8 — the hostile inputs, in the shipped world (Leaf Nine, EN, 1600x900).
+  if (hostileRows) {
+    const { caps, rows, scaleDown, alive, frameInk } = hostileRows;
+    const inCap = (w, h) => w > 0 && h > 0 && w <= caps.maxEdge && h <= caps.maxEdge && w * h <= caps.maxPixels;
+
+    const sized = rows.filter((r) => r.textureSize);
+    const overCap = sized.filter((r) => !inCap(r.textureSize[0], r.textureSize[1]));
+    claim("H1", "no hostile claim's texture exceeds the cap in either axis or in area",
+      `<= ${caps.maxEdge} px per axis, <= ${caps.maxPixels} px total`,
+      sized.map((r) => `${r.id} ${r.textureSize[0]}x${r.textureSize[1]}`).join(", ") || "no panels",
+      sized.length === HOSTILE.length && overCap.length === 0,
+      overCap.length ? `over cap: ${overCap.map((r) => r.id).join(", ")}` : null);
+
+    // The invariant over every raster the session ever made, standing claims and attacks
+    // alike — not only the four this block happened to sample.
+    const peak = alive.raster;
+    claim("H2", "the largest canvas allocated anywhere in the session is inside the cap",
+      `<= ${caps.maxEdge} px per axis, <= ${caps.maxPixels} px total, over ${peak.rasters} rasters`,
+      `${peak.maxCanvasWidth}x${peak.maxCanvasHeight} = ${peak.maxCanvasPixels} px`,
+      inCap(peak.maxCanvasWidth, peak.maxCanvasHeight) && peak.rasters > 0);
+
+    const worstMs = rows.length ? Math.max(...rows.map((r) => r.rasterMs)) : null;
+    claim("H3", "no hostile claim stalls the game: rasterizing one costs a hitch, not a hang",
+      "<= 400 ms of raster time", worstMs === null ? "n/a" : worstMs,
+      worstMs !== null && worstMs <= 400,
+      rows.map((r) => `${r.id} ${r.rasterMs}ms/${r.rasters}r`).join(" "));
+
+    const stillAlive =
+      !alive.fatal && alive.ready && alive.simTime > hostileRows.simBefore && alive.unexpectedErrors.length === 0;
+    claim("H4", "the game survives all four: no crash, clock still advancing, no error but the refusals",
+      "fatal null, simTime advanced, 0 unexpected errors",
+      `fatal=${alive.fatal} sim ${hostileRows.simBefore?.toFixed?.(2)}->${alive.simTime?.toFixed?.(2)} unexpected=${alive.unexpectedErrors.length}`,
+      stillAlive, alive.unexpectedErrors.slice(0, 2).join(" | ") || null);
+    claim("H4b", "the frame still renders with the attacks standing in it",
+      "ink present in the capture", frameInk?.inkCount ?? 0, (frameInk?.inkCount ?? 0) > 40,
+      hostileRows.shot);
+
+    const bad = rows.filter(
+      (r) => r.ok !== false || !r.speech || /[\\{}^_]/.test(r.speech) || r.sourceInDom || r.katexErrors > 0 || r.newErrors < 1
+    );
+    claim("H5", "every hostile claim is refused visibly, logged, and never shows its source",
+      "0 bad rows", `${rows.length - bad.length}/${rows.length} clean`, bad.length === 0,
+      bad.length ? JSON.stringify({ id: bad[0].id, ok: bad[0].ok, speech: bad[0].speech, dom: bad[0].sourceInDom, errs: bad[0].newErrors }) : null);
+    claim("H5b", "each refusal names the bound it broke, so a build cannot ship it quietly",
+      "every row logs a 'KaTeX refused' line",
+      rows.map((r) => `${r.id}: ${String(r.lastError).slice(0, 46)}`).join(" | "),
+      rows.every((r) => /KaTeX refused a claim/.test(String(r.lastError))));
+
+    // Headroom, on the shipped standing claims, measured in the same run as the attacks.
+    const shipped = textureRows.filter((t) => t.label === `${LANGS[0]}-${SIZES[0].label}`);
+    const worstShipped = shipped.length ? Math.max(...shipped.map((t) => t.width * t.height)) : 0;
+    claim("H6", "the cap has real headroom: the shipped claims are nowhere near it",
+      ">= 10x spare area", worstShipped ? `${(caps.maxPixels / worstShipped).toFixed(0)}x (worst shipped raster ${worstShipped} px)` : "n/a",
+      worstShipped > 0 && caps.maxPixels / worstShipped >= 10);
+
+    // Why the raster-size refusal branch cannot fire once the ink-extent gate holds: the
+    // smallest font the ladder can pick, times the widest ink the ink gate admits, is inside
+    // the cap. This is arithmetic on the shipped constants, not an opinion about them.
+    const wCorner = caps.maxInkEmsWide * caps.minFontPx;
+    const hCorner = caps.maxInkEmsTall * caps.minFontPx;
+    claim("H7", "no claim the ink-extent gate admits can ever be refused for raster size",
+      `${caps.maxInkEmsWide}x${caps.maxInkEmsTall} ems at ${caps.minFontPx} px fits the cap`,
+      `${wCorner}x${hCorner} px`, inCap(wCorner, hCorner));
+
+    claim("H8", "asked for a raster 3000 px per em, the pipeline scales it down and keeps the whole claim",
+      "inside the cap, ok:true, bound=scaled",
+      `${scaleDown.width}x${scaleDown.height} at ${scaleDown.fontPx}px, bound=${scaleDown.bound?.reason}, ok=${scaleDown.ok}, ${scaleDown.ms}ms`,
+      inCap(scaleDown.width, scaleDown.height) && scaleDown.ok === true && scaleDown.bound?.reason === "scaled");
   }
 }
 

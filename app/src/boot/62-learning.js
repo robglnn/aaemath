@@ -1,8 +1,11 @@
 import graphSource from "../../../content/knowledge-graph.json";
+import { BANK } from "../../../content/items/index.mjs";
+import { generateOne, TIERS } from "../../../content/items/generators.mjs";
 import { publish, warn } from "../core/Introspect.js";
 import { signals } from "../core/Signals.js";
 import { Graph } from "../learn/Graph.js";
-import { Mastery } from "../learn/Mastery.js";
+import { itemBank } from "../learn/ItemBank.js";
+import { Mastery, auditBlindGuessing, collectBankSample } from "../learn/Mastery.js";
 import { Scheduler, realClock, virtualClock, mulberry32 } from "../learn/Scheduler.js";
 
 /**
@@ -42,7 +45,39 @@ export default {
 
   async setup(kernel) {
     const graph = new Graph(graphSource); // throws loudly on a cyclic or unmappable graph
-    const mastery = new Mastery(graph, { now: () => Date.now() / 60000 });
+
+    /**
+     * Price the bank we actually ship, not the bank the content file describes.
+     *
+     * `model.trueGuessByForm` says a `construct` item is flukeable at 0.03 because a numeric slot
+     * accepts about forty values. `content/items` disagrees on eight knowledge points: the whole
+     * `eq-special-cases` construct pool answers `always` or `none` (measured 0.53 blind) and every
+     * one of its repair items answers `3|0 = 0` (measured 1.00). This audit is what lets the
+     * engine see that, and it is deliberately computed here from the SAME content the item bank
+     * is built from, rather than reaching into P17's module — the numbers are then identical to
+     * the ones `review/measure/P16.mjs` proves against, because both call the same function on
+     * the same data with the same fixed seeds.
+     *
+     * `mark` and `spell` are the SHIPPED checker. They are needed because `generate` items are
+     * marked against a PROPERTY, not against a string: counting distinct canonical answers says
+     * `expr-anatomy|generate` is flukeable at 0.011, and running the real checker says one
+     * three-term expression satisfies 93% of that pool. This is the composition root, and wiring
+     * two features together is the one thing a boot module is for — `Mastery.js` itself never
+     * imports the item bank, it is handed two functions.
+     *
+     * Cost is roughly a second of pure arithmetic inside an async setup, once, and it is paid
+     * before the first item can be priced on purpose: a table that arrives late is a table that
+     * priced the first session wrong.
+     */
+    const bankAudit = auditBlindGuessing(
+      collectBankSample({ bankFiles: BANK, generateOne, tiers: TIERS, bandOf: (id) => graph.difficulty(id) }),
+      {
+        mark: (item, response) => itemBank.check(item, response).correct === true,
+        spell: (item) => itemBank.accepts(item)[0],
+      }
+    );
+
+    const mastery = new Mastery(graph, { now: () => Date.now() / 60000, bankAudit });
     const scheduler = new Scheduler(mastery, { clock: realClock(), seed: 0x5eed, sessionMinutes: 25 });
 
     for (const issue of mastery.issues) warn(`learning: ${issue}`);
@@ -83,7 +118,7 @@ export default {
        */
       drive(items = 400, seed = 7) {
         const clock = virtualClock(0);
-        const m = new Mastery(graph, { now: () => clock.minutes(), storage: null });
+        const m = new Mastery(graph, { now: () => clock.minutes(), storage: null, bankAudit });
         const s = new Scheduler(m, { clock, rng: mulberry32(seed ^ 0x9e3779b9), sessionMinutes: 25 });
         const rng = mulberry32(seed);
         let served = 0;
@@ -97,7 +132,9 @@ export default {
             // A plain Rasch responder at a fixed true ability, floored by whatever the scaffold
             // gives away. Not a claim about learners — a fixed, reproducible response sequence.
             const base = 1 / (1 + Math.exp(-(0.9 - req.difficulty)));
-            const floor = m.pricing.trueByPhase[req.phase] ?? 0;
+            // Floored by what the WORLD gives away on this exact item: the scaffold the phase
+            // surfaces, and the bank's own measured blind rate for this knowledge point and form.
+            const floor = m.trueGuess(req.kpId, req.form, req.phase);
             s.submit(req, {
               correct: rng() < base + (1 - base) * floor,
               latencyMs: 4000,

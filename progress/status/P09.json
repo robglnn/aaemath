@@ -1,9 +1,9 @@
 {
   "id": "P09",
-  "state": "critique",
+  "state": "building",
   "round": 1,
   "gap": "Spawn frame has no subject: the teal carry/river that Level01.js's own comment calls 'what walks the eye from foreground to horizon' is invisible in all 360 views, the horizon is a flat ridgeline with no dominant landmark, and large spires render as single-plane cutouts (one uniform value over a 420x420px crop) while using only 11% of the triangle budget (172,694/1.6M, 63/320 draws). review/measure/P09.mjs crashes with ReferenceError: belowHits at line 290, so S1-P4 are all unproven.",
-  "note": "Reading binding docs and art target before writing terrain",
+  "note": "Fixing broken P09 harness (belowHits ReferenceError), routing a visible carry through the spawn corridor, adding a horizon massif, splitting spires into rings",
   "evidence": [],
-  "updated": "2026-08-10T05:46:47.323Z"
+  "updated": "2026-08-10T13:06:50.475Z"
 }

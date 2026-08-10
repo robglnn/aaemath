@@ -31,12 +31,79 @@
  * claims every frame, and re-typesetting an expression sixty times a second would put a
  * layout pass in the frame budget. `render()` is keyed on (locale, mode, source) and the
  * miss count is published so a reviewer can prove the cache is doing its job.
+ *
+ * ## Two of the four bounds on hostile input live here
+ *
+ * A claim is drawn by parsing it, building HTML, letting the browser lay that HTML out, and
+ * then allocating a canvas the size of the result. Every one of those steps scales with the
+ * content, so each has a cap, and the caps are ordered cheapest-first:
+ *
+ *  1. `MAX_TEX_LENGTH` — before KaTeX runs at all. Bounds everything downstream.
+ *  2. `MAX_TEX_DEPTH` — between the parse and the typesetting. Bounds *layout*, and it is not
+ *     a nicety: a 15-deep nested fraction crashes the Chromium renderer outright.
+ *  3. `RASTER_CAPS.maxInkEms*` in `TexPanel.js` — after layout. Bounds the world.
+ *  4. `RASTER_CAPS.maxEdge`/`maxPixels` in `TexPanel.js` — before allocating. Bounds memory.
+ *
+ * Both caps here are checked in `validate()` rather than in `render()`, which means a content
+ * lint catches a bad expression in Node, in CI, before anybody plays it — that is the whole
+ * reason `validate()` is DOM-free.
  */
 import katex from "katex";
 import { introspect } from "../core/Introspect.js";
 import { signals } from "../core/Signals.js";
 
 export const LOCALES = ["en", "es", "pl"];
+
+/**
+ * The longest source string this pipeline will look at. Not a style rule — an allocation
+ * bound. Everything downstream (parse tree, HTML, DOM layout, canvas) is at least linear in
+ * this number and the canvas is quadratic in it, so it is the single knob that keeps a
+ * hostile string from turning into a hostile allocation. Measured headroom: the longest TeX
+ * in `content/items/bank` is 34 characters.
+ */
+export const MAX_TEX_LENGTH = 2000;
+
+/**
+ * The deepest parse tree this pipeline will typeset, and the reason it exists is not
+ * hypothetical: **a 15-deep nested fraction crashes the renderer process.**
+ *
+ * Measured, in the shipped game, through `review/measure/P15.mjs`'s sweep: KaTeX itself is
+ * fine — it parses and builds 60-deep nesting in about 5 ms and 13 KB of HTML, and the node
+ * count grows linearly. Inserting that HTML into the document is fine too. The first
+ * `getBoundingClientRect()` on it takes the Chromium renderer down with `Target crashed`, and
+ * it does so at nested-fraction depth 15 (parse-tree depth 30) while depth 14 lays out in
+ * under 2 ms. So this cannot be caught by measuring the result: by the time there is a result
+ * to measure, the tab is gone. It has to be refused between the parse and the layout, which
+ * is exactly where `validate()` checks it.
+ *
+ * 16 is half the depth that crashes, and more than five times the deepest expression in the
+ * shipped bank — all 2,717 of which measure depth 3 or less. `\sqrt{\frac{x^{2}+1}{2}}`, which
+ * is more elaborate than anything Algebra I asks for, is depth 6.
+ */
+export const MAX_TEX_DEPTH = 16;
+
+// The keys a KaTeX parse node carries its children under. Walking these rather than every own
+// property keeps the measurement cheap and keeps it away from `loc`, which holds a reference
+// to the lexer and therefore to the whole source.
+const CHILD_KEYS = ["body", "numer", "denom", "base", "sub", "sup", "index", "mathml", "html"];
+
+/** How deep, and how many nodes. Linear in the tree, and the tree is bounded by the length cap. */
+function treeShape(node, depth = 0, acc = { depth: 0, nodes: 0 }) {
+  if (node == null) return acc;
+  if (Array.isArray(node)) {
+    // An array is a sibling list, not a nesting level: a hundred-term sum is wide, not deep.
+    for (const child of node) treeShape(child, depth, acc);
+    return acc;
+  }
+  if (typeof node !== "object") return acc;
+  acc.nodes++;
+  if (depth > acc.depth) acc.depth = depth;
+  for (const key of CHILD_KEYS) {
+    const child = node[key];
+    if (child != null && typeof child === "object") treeShape(child, depth + 1, acc);
+  }
+  return acc;
+}
 
 // ---------------------------------------------------------------- locale conventions
 
@@ -708,22 +775,36 @@ function settings(displayMode) {
 export function validate(tex, { locale = activeLocale, displayMode = false } = {}) {
   const loc = normalizeLocale(locale);
   const source = String(tex ?? "");
-  const localized = localizeTex(source, loc);
   const result = {
     ok: false,
     tex: source,
-    localizedTex: localized,
+    localizedTex: "",
     locale: loc,
     displayMode: !!displayMode,
     text: "",
     speech: "",
+    depth: null,
+    nodes: null,
     error: null,
   };
+
+  // The length gate goes first, ahead of `localizeTex` and a long way ahead of the parser.
+  // `localizeTex` is a character-by-character scanner that allocates a rewritten copy, so
+  // running it on a 20,000-character string before deciding to refuse it would mean the gate
+  // costs O(n) of the very thing it exists to avoid. Measured: refusing three locales' worth
+  // of a 20,000-character claim costs under a fifth of a millisecond this way.
+  if (source.length > MAX_TEX_LENGTH) {
+    result.error = `expression too long: ${source.length} characters, cap ${MAX_TEX_LENGTH}`;
+    return result;
+  }
 
   if (!source.trim()) {
     result.error = "empty expression";
     return result;
   }
+
+  const localized = localizeTex(source, loc);
+  result.localizedTex = localized;
 
   // `trust:false` makes KaTeX render these *without* their effect rather than complain, so a
   // content author would never learn their markup was silently dropped. Refuse instead: an
@@ -737,6 +818,18 @@ export function validate(tex, { locale = activeLocale, displayMode = false } = {
   try {
     const c = conventions(loc);
     const tree = katex.__parse(localized, settings(displayMode));
+
+    // Between the parse and the typesetting, which is the only window where this can be
+    // caught. Parsing deep nesting is safe and cheap; laying it out is what kills the
+    // renderer, and `renderToString` is the step that produces the HTML that gets laid out.
+    const shape = treeShape(tree);
+    result.depth = shape.depth;
+    result.nodes = shape.nodes;
+    if (shape.depth > MAX_TEX_DEPTH) {
+      result.error = `expression nested too deeply: depth ${shape.depth}, cap ${MAX_TEX_DEPTH}`;
+      return result;
+    }
+
     result.text = plainList(tree, c).replace(/\s+/g, " ").trim();
     result.speech = tidySpeech(speakList(tree, words(loc), c, []), words(loc));
     // Parsing is necessary but not sufficient — the builder can still refuse. Typeset it.
@@ -795,6 +888,54 @@ function safeFallbackHtml() {
   return fallbackHtml;
 }
 
+/**
+ * The record a refused claim gets, wherever the refusal came from.
+ *
+ * Exported because refusal is not only a parsing concern. `TexPanel` refuses a claim whose
+ * *geometry* it cannot bound — one whose ink would stand forty metres wide in the world, or
+ * whose raster would not fit the allocation cap — and a player has to meet exactly one
+ * refusal behaviour whatever the reason: the hollow stand-in, a spoken form that says the
+ * claim is unreadable, the source withheld, and a line in `__vs.errors` so a build cannot
+ * ship it quietly.
+ *
+ * `report:false` exists so a panel that re-rasterizes at a new size does not push the same
+ * refusal into `__vs.errors` once per size bucket.
+ */
+export function refusedRecord(source, { locale = activeLocale, displayMode = false, error = "refused", report = true } = {}) {
+  const loc = normalizeLocale(locale);
+  const w = words(loc);
+  const src = String(source ?? "");
+  if (report) {
+    STATS.failures++;
+    introspect.errors.push(
+      `KaTeX refused a claim [${loc}${displayMode ? ",display" : ""}]: ${error} — source withheld from the world, fallback shown`
+    );
+    // Truncated on purpose: this list is published through `__vs.probe("tex")`, and a probe
+    // that carries fifty copies of a 20,000-character attack string is its own denial of
+    // service against whoever is reading the report.
+    if (FAILURES.length < 50) {
+      FAILURES.push({
+        locale: loc,
+        displayMode: !!displayMode,
+        tex: src.length > 120 ? `${src.slice(0, 120)}… (${src.length} chars)` : src,
+        error,
+      });
+    }
+  }
+  return {
+    ok: false,
+    key: null,
+    tex: src,
+    localizedTex: "",
+    locale: loc,
+    displayMode: !!displayMode,
+    html: safeFallbackHtml(),
+    text: "",
+    speech: w.fallback,
+    error,
+  };
+}
+
 function remember(key, record) {
   CACHE.set(key, record);
   while (CACHE.size > MAX_CACHE) {
@@ -812,7 +953,13 @@ function remember(key, record) {
 export function render(tex, { locale = activeLocale, displayMode = false } = {}) {
   const loc = normalizeLocale(locale);
   const source = String(tex ?? "");
-  const key = `${loc} ${displayMode ? "d" : "i"} ${source}`;
+  // An over-length source is refused *and not retained*. Caching the refusal is what stops a
+  // caller re-requesting it every frame from re-pushing the same line into `__vs.errors`; but
+  // the cache must not become the place a 20,000-character attack string lives, so neither the
+  // key nor the cached record keeps a copy of a string whose only property was its size.
+  const oversize = source.length > MAX_TEX_LENGTH;
+  const kept = oversize ? `#${source.length}:${source.slice(0, 64)}` : source;
+  const key = `${loc} ${displayMode ? "d" : "i"} ${kept}`;
 
   STATS.requests++;
   const cached = CACHE.get(key);
@@ -826,25 +973,12 @@ export function render(tex, { locale = activeLocale, displayMode = false } = {})
   const t0 = now();
 
   if (!v.ok) {
-    STATS.failures++;
-    const detail = `KaTeX refused a claim [${loc}${displayMode ? ",display" : ""}]: ${v.error} — source withheld from the world, fallback shown`;
     // __vs.errors is what makes review.mjs mark the frame unreviewable. A malformed claim is
     // a content bug and must stop a build; it must never be a thing a player quietly sees.
-    introspect.errors.push(detail);
-    if (FAILURES.length < 50) FAILURES.push({ locale: loc, displayMode: !!displayMode, tex: source, error: v.error });
-    const w = words(loc);
-    return remember(key, {
-      ok: false,
-      key,
-      tex: source,
-      localizedTex: v.localizedTex,
-      locale: loc,
-      displayMode: !!displayMode,
-      html: safeFallbackHtml(),
-      text: "",
-      speech: w.fallback,
-      error: v.error,
-    });
+    const rec = refusedRecord(oversize ? kept : source, { locale: loc, displayMode, error: v.error });
+    rec.key = key;
+    rec.localizedTex = oversize ? "" : v.localizedTex;
+    return remember(key, rec);
   }
 
   let html;

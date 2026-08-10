@@ -12,22 +12,38 @@ import { Graph } from "./Graph.js";
  * ---------------------------------------------------------------------------------------------
  * THE ONE THING THIS FILE EXISTS TO GET RIGHT
  *
- * An item's price has **two** factors, not one.
+ * An item's price has **three** factors, not one.
  *
- *   - the **form** decides how big the answer space is (`construct`, `repair`, `generate`,
- *     `select4`, `judge2`);
+ *   - the **form** decides how big the answer space is *in principle* (`construct`, `repair`,
+ *     `generate`, `select4`, `judge2`);
  *   - the **teaching phase** decides how much of that space the world has already filled in
- *     (`solo`, `guided-1`, `guided-2`, `guided-3`, `model`).
+ *     (`solo`, `guided-1`, `guided-2`, `guided-3`, `model`);
+ *   - the **knowledge point's actual pool in the shipped bank** decides how big the answer space
+ *     REALLY is, which is a fact about `content/items`, not about this file.
  *
- * A scaffold shrinks an answer space in exactly the way a multiple choice does. Crediting a
- * hinted item at the unhinted guess parameter is how hint-abuse buys mastery, and it is the
- * single biggest failure this project has previously shipped. So:
+ * The third factor is the one that was missing, and it is the one a critic caught. `construct`
+ * is priced at a blind rate of 0.03 because "a numeric slot accepts about forty values". That is
+ * true of `eq-one-add`. It is false of `eq-special-cases`, whose entire `construct` pool asks
+ * "one footing, an always, or a refusal" and whose answers are drawn from a set of size TWO:
+ * a responder who types `always` on every item is right 53% of the time. Its `repair` pool is
+ * worse — every item in it, catalogue and generator alike, has the single answer `3|0 = 0`, so
+ * the blind rate is 1.00. A form-level constant cannot see either of those, because the leak is
+ * not in the form; it is in the pool the form is drawn from.
  *
- *   trueGuess(form, phase)           = max( trueGuessByForm[form], trueGuessByPhase[phase] )
- *   modelledGuess(band, form, phase) = band.guess x max( guessByForm[form], guessByPhase[phase] )
+ * So the true rate is measured off the bank the game actually ships and composed as a third
+ * term. A scaffold shrinks an answer space in exactly the way a multiple choice does, and a
+ * degenerate item family shrinks it further still. Crediting any of those at the unconstrained
+ * guess parameter is how mastery gets bought. Therefore:
+ *
+ *   trueGuess(kp, form, phase)  = max( trueGuessByForm[form],
+ *                                      trueGuessByPhase[phase],
+ *                                      measuredBlindRate(kp, form) )
+ *   modelledGuess(kp, b, f, ph) = max( b.guess x max(guessByForm[f], guessByPhase[ph]),
+ *                                      measuredBlindRate95(kp, f) )
  *
  * composed by `max` and never by product, because a scaffold puts a **floor** under blind
- * success — placing the first step cannot make an item harder to fluke.
+ * success — placing the first step cannot make an item harder to fluke — and a small answer pool
+ * puts a floor under it too.
  *
  * And there are three gates, not one, in strictly increasing strength:
  *
@@ -40,6 +56,14 @@ import { Graph } from "./Graph.js";
  * *rejected from the scored path*, never clamped: `identifiabilityCaps.clampTrueRates` is false
  * and clamping a yes/no item's real 0.50 down to 0.30 is precisely how a mastery gate gets
  * handed to a coin.
+ *
+ * The same rejection now runs on the third axis, per (knowledge point x form) CELL. Twelve cells
+ * of the shipped bank measure above `maxTrueGuess`, so twelve cells are refused. Four knowledge
+ * points are left with a single honest form, and M3 degrades to "every mastery-eligible form this
+ * knowledge point actually has" rather than deadlocking the graph behind a gate the content
+ * cannot satisfy — `expr-anatomy` is a band-1 node and everything downstream of it would be
+ * permanently locked. That degradation is reported in `issues` and in the probe, never silent,
+ * because it is a CONTENT defect with a named fix (see `bankPricing.relaxed`).
  * ---------------------------------------------------------------------------------------------
  */
 
@@ -72,6 +96,204 @@ export function bktUpdate(p, correct, slip, guess, learn, weight = 1) {
   return weight * withLearning + (1 - weight) * p;
 }
 
+// ============================================================== the bank audit (third axis)
+
+/**
+ * How many generator draws the audit takes per (knowledge point x form) cell. Exported so the
+ * browser and `review/measure/P16.mjs` cannot drift apart: a proof that measures a different
+ * sample from the one the shipped engine prices on is a proof about a different game.
+ *
+ * 384 is chosen to make the decision the audit exists to make — "is this cell's blind rate above
+ * `maxTrueGuess`?" — safe by a wide margin. On the shipped bank the measured cell rates land in
+ * two clusters, 0.333 and up on one side and 0.154 and down on the other; the standard error at
+ * n=384 is at most 0.026, so the two clusters are more than six standard errors apart. P16.mjs
+ * re-runs the whole audit at 2400 draws per cell and FAILS if a single accept/reject verdict
+ * moves, which is the check that keeps this number honest rather than merely cheap.
+ */
+export const BANK_AUDIT_PER_CELL = 384;
+
+/** Wilson 95% upper bound. A measured 0.136 over 400 draws is not "0.136"; it is "at most 0.175". */
+export function wilsonUpper(hits, n) {
+  if (!n) return 1;
+  const z = 1.959964;
+  const p = hits / n;
+  const d = 1 + (z * z) / n;
+  const c = p + (z * z) / (2 * n);
+  const s = z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n));
+  return Math.min(1, (c + s) / d);
+}
+
+/**
+ * Draw the population a player is actually served, per (knowledge point x form).
+ *
+ * `ItemBank.select()` answers from the committed catalogue first and falls back to the generator
+ * families when exclusions exhaust it, so BOTH are part of the served distribution and both are
+ * pooled here. The catalogue is ~12 items per cell against 384 generated draws, which is also
+ * what stops the catalogue's small-sample noise from driving a rejection: `eq-model-context |
+ * construct` shows a modal frequency of 0.333 over its 15 committed items and 0.136 over the
+ * generator, and pooling lands it at 0.14 where it belongs.
+ *
+ * `generateOne`, `tiers` and the band lookup are ARGUMENTS, not imports, for the same reason
+ * `Graph` takes its JSON as an argument: this file must run unchanged inside Vite and inside
+ * plain Node, and it must not reach into a sibling feature module to do its own pricing.
+ *
+ * @param {object} o
+ * @param {Array<{kpId:string, items:Array<object>}>} o.bankFiles the committed catalogue
+ * @param {(kpId:string, opts:object)=>object|null} o.generateOne generator entry point
+ * @param {string[]} o.tiers generator tiers to sweep
+ * @param {(kpId:string)=>number} o.bandOf difficulty band of a knowledge point
+ * @param {string[]} [o.forms] which forms to audit
+ * @param {number} [o.perCell]
+ * @returns {Array<{kpId:string, form:string, item:object, source:"catalogue"|"generated"}>}
+ */
+export function collectBankSample({
+  bankFiles,
+  generateOne,
+  tiers,
+  bandOf,
+  forms = ["construct", "repair", "generate"],
+  perCell = BANK_AUDIT_PER_CELL,
+}) {
+  const sample = [];
+  for (const file of bankFiles ?? []) {
+    const kpId = file.kpId;
+    for (const item of file.items ?? []) {
+      if (!forms.includes(item.form)) continue;
+      sample.push({ kpId, form: item.form, item, source: "catalogue" });
+    }
+    if (typeof generateOne !== "function") continue;
+    const band = bandOf(kpId);
+    for (const form of forms) {
+      for (let s = 0; s < perCell; s += 1) {
+        // Fixed seeds: the audit is a property of the bank, not of the run that measured it.
+        const item = generateOne(kpId, {
+          form,
+          tier: tiers[s % tiers.length],
+          band,
+          seed: (s * 7919 + 13) >>> 0,
+        });
+        if (!item) continue;
+        sample.push({ kpId, form, item, source: "generated" });
+      }
+    }
+  }
+  return sample;
+}
+
+/** The string a responder has to produce. `repair` carries its line number; both halves matter. */
+export function canonicalKey(item) {
+  const a = item.answer ?? {};
+  if (item.answerType === "repair" && a.line != null && a.canonical == null) return `${a.line}|${a.tex}`;
+  return String(a.canonical ?? a.tex ?? "");
+}
+
+/**
+ * Forms whose marking rule is NOT "does the response canonicalise to this item's answer".
+ *
+ * `generate` is checked against a PROPERTY — "an expression with three terms", "an equation with
+ * no solution" — so a single well-chosen string satisfies a whole family at once. Counting
+ * canonical answers says `expr-anatomy|generate` has 437 distinct answers and is flukeable at
+ * 0.011; running the shipped checker says one expression with three terms in it satisfies 93% of
+ * the pool. The canonical count is not a conservative approximation of that, it is the wrong
+ * quantity, so these forms MUST be measured by executing the real checker.
+ */
+export const EXECUTED_FORMS = ["generate"];
+
+/**
+ * GROUND TRUTH, measured. What a responder with zero knowledge of the knowledge point actually
+ * achieves on this (knowledge point x form) cell of the bank the game ships.
+ *
+ * The strategy measured is **best fixed answer**: type the same string on every item of the cell
+ * and keep the one that wins most. It is the strategy a real guesser converges on within a
+ * handful of items, it requires no algebra whatsoever, and it dominates the "pick uniformly
+ * inside the answer's shape" strategy an earlier round of `review/measure/P16.mjs` measured —
+ * which is exactly why that round reported `eq-special-cases|construct` at 0.335 (≈ one in three
+ * of {number, always, none}) and `eq-special-cases|repair` at 0.002, and missed that the real
+ * numbers are 0.53 and 1.00. A responder who does strictly better than best-fixed-answer would
+ * have to know something about the mathematics, at which point they are not guessing.
+ *
+ * Reported per cell as the point estimate (which decides REJECTION) and its Wilson 95% upper
+ * bound (which decides the MODELLED guess, because conservatism must survive sampling noise).
+ *
+ * @param {ReturnType<typeof collectBankSample>} sample
+ * @param {object} [o]
+ * @param {(item:object, response:string)=>boolean} [o.mark] the SHIPPED checker. Required for
+ *        `executedForms`; without it those cells are audited on canonical counts and flagged.
+ * @param {(item:object)=>string} [o.spell] a typable spelling of an item's own answer.
+ * @param {string[]} [o.executedForms]
+ */
+export function auditBlindGuessing(sample, { mark = null, spell = null, executedForms = EXECUTED_FORMS } = {}) {
+  const byCell = new Map();
+  for (const row of sample ?? []) {
+    const cell = `${row.kpId}|${row.form}`;
+    let rows = byCell.get(cell);
+    if (!rows) byCell.set(cell, (rows = []));
+    rows.push(row.item);
+  }
+
+  const cells = {};
+  const notExecuted = [];
+  for (const [cell, items] of byCell) {
+    const form = cell.slice(cell.indexOf("|") + 1);
+    const counts = new Map();
+    for (const item of items) {
+      const key = canonicalKey(item);
+      const hit = counts.get(key);
+      if (hit) hit.n += 1;
+      else counts.set(key, { n: 1, item });
+    }
+    const ranked = [...counts.entries()].sort((a, b) => b[1].n - a[1].n);
+    const n = items.length;
+
+    let modal = ranked.length ? ranked[0][1].n : 0;
+    let modalAnswer = ranked.length ? ranked[0][0] : null;
+    let executed = false;
+
+    if (executedForms.includes(form)) {
+      if (typeof mark !== "function") notExecuted.push(cell);
+      else {
+        executed = true;
+        // Candidates: the answers this cell actually produces most often, spelled the way the
+        // shipped checker documents them, plus two staples a responder types for free.
+        const candidates = [];
+        for (const [key, rec] of ranked.slice(0, 6)) {
+          const s = typeof spell === "function" ? spell(rec.item) : key;
+          if (s) candidates.push(String(s));
+        }
+        candidates.push("0", "x");
+        modal = 0;
+        modalAnswer = null;
+        for (const candidate of candidates) {
+          let hits = 0;
+          for (let i = 0; i < n; i += 1) {
+            // Early abandonment: a candidate that cannot catch the leader is not worth finishing.
+            if (hits + (n - i) <= modal) break;
+            try {
+              if (mark(items[i], candidate)) hits += 1;
+            } catch {
+              /* an unreadable response is simply wrong */
+            }
+          }
+          if (hits > modal) {
+            modal = hits;
+            modalAnswer = candidate;
+          }
+        }
+      }
+    }
+
+    cells[cell] = {
+      n,
+      distinct: counts.size,
+      rate: n ? modal / n : 0,
+      upper: wilsonUpper(modal, n),
+      modalAnswer,
+      executed,
+    };
+  }
+  return { cells, sampled: sample?.length ?? 0, notExecuted };
+}
+
 // ---------------------------------------------------------------------------------------------
 
 export class Mastery {
@@ -84,6 +306,11 @@ export class Mastery {
    * @param {Storage|null} [opts.storage] where session state is persisted; defaults to localStorage.
    * @param {string} [opts.storageKey]
    * @param {"exercises-or-band3"|"exercises-only"} [opts.prerequisiteCredit]
+   * @param {ReturnType<typeof auditBlindGuessing>} [opts.bankAudit] measured blind-success rates
+   *        per (knowledge point x form), from `collectBankSample` over the SHIPPED item bank.
+   *        Omitting it prices on the content file's form-level constants alone, which is what
+   *        the critic caught: `eq-special-cases|construct` is priced at a modelled 0.10 and
+   *        measures 0.53. Omission is therefore RECORDED as an issue, not treated as normal.
    */
   constructor(graph, opts = {}) {
     this.graph = graph instanceof Graph ? graph : new Graph(graph);
@@ -102,6 +329,9 @@ export class Mastery {
     this.issues = [];
 
     this.pricing = derivePricing(this.M, this.issues);
+    /** Third pricing axis: what the SHIPPED bank actually gives away, per (kp x form). */
+    this.bankAudit = opts.bankAudit ?? null;
+    this.cellPricing = deriveCellPricing(this.graph, this.M, this.pricing, this.bankAudit, this.issues);
 
     this.theta = this.M.ability.theta0;
     this.responses = 0;
@@ -112,6 +342,8 @@ export class Mastery {
       items: 0,
       scoredItems: 0,
       unscoredItems: 0,
+      /** Of `unscoredItems`, the ones refused because the BANK cell was too guessable. */
+      unpriceableCellItems: 0,
       refusedUpward: 0,
       prerequisiteCredits: 0,
       gateOpens: 0,
@@ -136,24 +368,86 @@ export class Mastery {
 
   // ------------------------------------------------------------------- pricing
 
-  /** Is this (form, phase) pair allowed to produce a BKT update at all? */
-  isScorable(form, phase) {
-    return this.pricing.scoredForms.has(form) && this.pricing.scoredPhases.has(phase);
+  /** The measured cell record for one (knowledge point x form), or null if it was never audited. */
+  cell(kpId, form) {
+    return this.cellPricing.cells[`${kpId}|${form}`] ?? null;
   }
 
-  /** May this (form, phase) pair increment M2's opportunity counters and M3's form set? */
-  isMasteryEligible(form, phase) {
-    return this.pricing.masteryForms.has(form) && this.pricing.masteryPhases.has(phase);
+  /**
+   * GROUND TRUTH, third axis: the measured blind rate of this knowledge point's pool in this form.
+   * 0 when the cell was not audited — which is reported as an issue rather than assumed safe.
+   */
+  bankBlindRate(kpId, form) {
+    return this.cell(kpId, form)?.blind ?? 0;
   }
 
-  /** GROUND TRUTH: what a responder with zero knowledge actually achieves on this pair. */
-  trueGuess(form, phase) {
-    return Math.max(this.pricing.trueByForm[form] ?? 0, this.pricing.trueByPhase[phase] ?? 0);
+  /**
+   * Does the bank's own pool for this (kp x form) survive the identifiability caps? A cell that
+   * does not is REJECTED from the scored path for this knowledge point — never clamped, exactly
+   * as `onFormExceedingCaps` requires on the other two axes.
+   */
+  isCellPriceable(kpId, form) {
+    return this.cell(kpId, form)?.priceable !== false;
   }
 
-  /** MODEL BELIEF: the guess parameter the BKT update uses for this pair at this band. */
-  modelledGuess(band, form, phase) {
-    return band.guess * Math.max(this.pricing.multByForm[form] ?? 1, this.pricing.multByPhase[phase] ?? 1);
+  /** Is this (form, phase) pair, ON THIS NODE, allowed to produce a BKT update at all? */
+  isScorable(kpId, form, phase) {
+    return (
+      this.pricing.scoredForms.has(form) &&
+      this.pricing.scoredPhases.has(phase) &&
+      this.isCellPriceable(kpId, form)
+    );
+  }
+
+  /** May this (form, phase) pair, ON THIS NODE, increment M2's counters and M3's form set? */
+  isMasteryEligible(kpId, form, phase) {
+    return (
+      this.pricing.masteryForms.has(form) &&
+      this.pricing.masteryPhases.has(phase) &&
+      this.isCellPriceable(kpId, form)
+    );
+  }
+
+  /** GROUND TRUTH: what a responder with zero knowledge actually achieves on this exact item. */
+  trueGuess(kpId, form, phase) {
+    return Math.max(
+      this.pricing.trueByForm[form] ?? 0,
+      this.pricing.trueByPhase[phase] ?? 0,
+      this.bankBlindRate(kpId, form)
+    );
+  }
+
+  /**
+   * MODEL BELIEF: the guess parameter the BKT update uses here.
+   *
+   * Lifted to the measured rate's 95% upper bound whenever the bank is more guessable than the
+   * form/phase constants believe — that is the "re-price to the measured value" half of the rule.
+   * The other half is `isCellPriceable`: when no value at or below `maxGuess` is conservative, the
+   * cell is refused instead of being clamped down to `maxGuess`, because a clamp is precisely the
+   * leak the caps exist to forbid.
+   */
+  modelledGuess(kpId, band, form, phase) {
+    const base = band.guess * Math.max(this.pricing.multByForm[form] ?? 1, this.pricing.multByPhase[phase] ?? 1);
+    return Math.max(base, this.cell(kpId, form)?.blindUpper ?? 0);
+  }
+
+  /**
+   * The mastery-eligible forms this knowledge point ACTUALLY has, after the bank audit. M3 reads
+   * this rather than the global `formsEligibleForMastery`, because a node whose `construct` and
+   * `repair` pools are both blind-guessable has two forms on paper and one in reality.
+   */
+  masteryFormsFor(kpId) {
+    return [...this.pricing.masteryForms].filter((form) => this.isCellPriceable(kpId, form));
+  }
+
+  /**
+   * M3's bar for one node: `minDistinctItemForms`, or every honest form it has if it has fewer.
+   * Never zero — a node with no honest form cannot pass M3 at all, which `gateDetail` enforces
+   * directly rather than by arithmetic on an empty list.
+   */
+  requiredDistinctForms(kpId) {
+    const have = this.masteryFormsFor(kpId).length;
+    return Math.min(this.M.bkt.minDistinctItemForms, Math.max(1, have));
   }
 
   /**
@@ -162,17 +456,24 @@ export class Mastery {
    */
   price(kpId, form, phase = "solo") {
     const band = this.graph.band(kpId);
-    const scorable = this.isScorable(form, phase);
+    const scorable = this.isScorable(kpId, form, phase);
+    const cell = this.cell(kpId, form);
     return {
       kpId,
       form,
       phase,
       band: band.difficulty,
       slip: band.slip,
-      modelledGuess: scorable ? this.modelledGuess(band, form, phase) : null,
-      trueGuess: this.trueGuess(form, phase),
+      modelledGuess: scorable ? this.modelledGuess(kpId, band, form, phase) : null,
+      trueGuess: this.trueGuess(kpId, form, phase),
       scorable,
-      masteryEligible: this.isMasteryEligible(form, phase),
+      masteryEligible: this.isMasteryEligible(kpId, form, phase),
+      // What the bank measured, and why the cell was refused if it was. A caller that serves an
+      // item this engine will not score should be able to read the reason without guessing.
+      bankBlindRate: cell ? cell.blind : null,
+      bankBlindUpper: cell ? cell.blindUpper : null,
+      bankModalAnswer: cell ? cell.modalAnswer : null,
+      rejectedReason: cell?.reason ?? null,
       hintedByDefault: this.M.phases.hinted?.[phase] ?? false,
       seconds: this.M.phases.secondsPerItemByPhase?.[phase] ?? 46,
     };
@@ -334,10 +635,17 @@ export class Mastery {
     // What the DIRECTOR chose is inert in BOTH directions: no posterior up or down, no counters,
     // no prerequisite credit, no theta movement. Punishing a learner for being taught cost an
     // earlier draft 34 percentage points of median Level 1 mastery.
-    if (!this.isScorable(form, phase)) {
+    if (!this.isScorable(kpId, form, phase)) {
       this.stats.unscoredItems += 1;
       s.unscored += 1;
-      out.reason = this.pricing.scoredForms.has(form) ? "unscored-phase" : "unscored-form";
+      out.reason = !this.pricing.scoredForms.has(form)
+        ? "unscored-form"
+        : !this.pricing.scoredPhases.has(phase)
+          ? "unscored-phase"
+          : // The third axis. Named separately because it is a CONTENT defect, not a design
+            // choice: this form is fine in general and this knowledge point's pool of it is not.
+            `unscored-cell:blind-${(this.bankBlindRate(kpId, form)).toFixed(3)}`;
+      if (out.reason.startsWith("unscored-cell")) this.stats.unpriceableCellItems += 1;
       this._bookkeep(s, out);
       this._emitRespond(out);
       return out;
@@ -358,7 +666,7 @@ export class Mastery {
     }
 
     out.scored = true;
-    out.masteryEligible = this.isMasteryEligible(form, phase);
+    out.masteryEligible = this.isMasteryEligible(kpId, form, phase);
     // `credited` is the engine's own verdict on this response, and it is the ONLY thing any gate
     // is allowed to count. See `_bookkeep`.
     out.credited = correct && out.masteryEligible;
@@ -374,7 +682,7 @@ export class Mastery {
 
     // ---- BKT, §1.2. ONE guess prices both directions: using a smaller guess on the down-update
     // would be a second, quieter version of the clamping the caps forbid.
-    const guess = this.modelledGuess(band, form, phase);
+    const guess = this.modelledGuess(kpId, band, form, phase);
     const learn = this.learnRate(kpId);
     s.p = bktUpdate(s.p, correct, band.slip, guess, learn, 1);
     out.p = s.p;
@@ -400,7 +708,11 @@ export class Mastery {
       const ps = this.stateOf(pid);
       const pband = this.graph.band(pid);
       const pbefore = ps.p;
-      ps.p = bktUpdate(ps.p, correct, pband.slip, pband.guess, this.learnRate(pid), this.M.bkt.prerequisiteCreditWeight);
+      // The prerequisite is priced at its OWN band, but never below what the item that paid the
+      // credit was worth: a correct answer to something flukeable at 0.15 is not stronger evidence
+      // about the prerequisite than it is about the knowledge point it was actually aimed at.
+      const pguess = Math.max(pband.guess, this.trueGuess(kpId, form, phase));
+      ps.p = bktUpdate(ps.p, correct, pband.slip, pguess, this.learnRate(pid), this.M.bkt.prerequisiteCreditWeight);
       ps.creditedAt = this.now();
       this.stats.prerequisiteCredits += 1;
       // The clock restarts on a CORRECT exposure only, and it restarts the current interval
@@ -504,10 +816,14 @@ export class Mastery {
   gateDetail(kpId) {
     const s = this.stateOf(kpId);
     const B = this.M.bkt;
+    // M3 reads the forms this node HAS, not the forms the content file wishes it had. A node whose
+    // whole honest supply is one form can still be mastered on that one form — it cannot be
+    // mastered on none, and it is never let through on fewer than it has.
+    const honestForms = this.masteryFormsFor(kpId).length;
     return {
       m1: s.p >= B.masteryThreshold,
       m2: s.scored >= B.minScoredOpportunities && s.atBand >= B.minAtBandOpportunities,
-      m3: s.forms.length >= B.minDistinctItemForms,
+      m3: honestForms > 0 && s.forms.length >= Math.min(B.minDistinctItemForms, honestForms),
       m5: s.fastUpwardInWindow === 0,
     };
   }
@@ -708,6 +1024,7 @@ export class Mastery {
       refusedUpward: this.stats.refusedUpward,
       stats: { ...this.stats },
       scorablePairs: this.pricing.description,
+      bankPricing: this.cellPricing.description,
       issues: this.issues,
       graph: this.graph.stats(),
       kps,
@@ -980,6 +1297,118 @@ function derivePricing(M, issues) {
       masteryEligibleCells: masteryForms.size * masteryPhases.size,
       rejectedForms: Object.keys(trueByForm).filter((f) => !scoredForms.has(f)).sort(),
       rejectedPhases: Object.keys(trueByPhase).filter((p) => !scoredPhases.has(p)).sort(),
+    },
+  };
+}
+
+/**
+ * The third axis, run through exactly the four rules `derivePricing` runs on the other two, but
+ * per (knowledge point x form) CELL and against a MEASURED rate rather than a declared one.
+ *
+ *   (a) measured blind rate <= maxTrueGuess
+ *   (b) measured + maxSlip < maxSlipPlusGuess
+ *   (c) conservatism: the modelled guess is >= the measured rate at THIS node's band, in every
+ *       scorable phase — which is what the lift to the 95% upper bound buys
+ *   (d) the lifted modelled guess still respects maxGuess and maxSlip + guess < maxSlipPlusGuess,
+ *       WITHOUT being clamped
+ *
+ * A cell that fails any of them is refused, and the refusal is recorded with the number that
+ * caused it so the handoff can name the content fix. Nothing here is clamped and nothing is
+ * silently downgraded: `clampTrueRates` is false on this axis too.
+ */
+function deriveCellPricing(graph, M, pricing, audit, issues) {
+  const caps = M.bkt.identifiabilityCaps;
+  const cells = {};
+  const rejected = [];
+  const repriced = [];
+
+  if (!audit || !audit.cells) {
+    issues.push(
+      "no bank audit supplied — items are priced on model.trueGuessByForm alone, which does not " +
+        "see a knowledge point whose whole pool has two answers. Pass opts.bankAudit."
+    );
+    return { cells, description: { audited: false, rejectedCells: [], repricedCells: [], relaxed: [], unmasterable: [] } };
+  }
+  if (audit.notExecuted?.length)
+    issues.push(
+      `bank audit ran without the shipped checker on ${audit.notExecuted.length} property-marked cell(s) ` +
+        `(${EXECUTED_FORMS.join(",")}); those rates are counts of canonical answers and UNDERSTATE the real ` +
+        `blind rate. Pass { mark, spell } to auditBlindGuessing.`
+    );
+
+  for (const kpId of graph.ids) {
+    const band = graph.band(kpId);
+    for (const form of pricing.scoredForms) {
+      const m = audit.cells[`${kpId}|${form}`];
+      if (!m) {
+        issues.push(`bank audit has no sample for "${kpId}|${form}" — cell refused rather than assumed safe`);
+        cells[`${kpId}|${form}`] = { blind: 1, blindUpper: 1, n: 0, distinct: 0, modalAnswer: null, priceable: false, reason: "not-audited" };
+        rejected.push({ cell: `${kpId}|${form}`, blind: null, reason: "not-audited" });
+        continue;
+      }
+      const blind = m.rate;
+      const blindUpper = m.upper;
+      let reason = null;
+
+      if (blind > caps.maxTrueGuess) reason = `blind ${blind.toFixed(3)} > maxTrueGuess ${caps.maxTrueGuess}`;
+      else if (blind + caps.maxSlip >= caps.maxSlipPlusGuess)
+        reason = `blind ${blind.toFixed(3)} + maxSlip ${caps.maxSlip} >= ${caps.maxSlipPlusGuess}`;
+      else {
+        // (c) + (d), evaluated in every phase the engine will actually score this cell in.
+        for (const phase of pricing.scoredPhases) {
+          const base = band.guess * Math.max(pricing.multByForm[form] ?? 1, pricing.multByPhase[phase] ?? 1);
+          const modelled = Math.max(base, blindUpper);
+          const trueRate = Math.max(pricing.trueByForm[form] ?? 0, pricing.trueByPhase[phase] ?? 0, blind);
+          if (modelled < trueRate) reason = `modelled ${modelled.toFixed(3)} below true ${trueRate.toFixed(3)} at ${phase}`;
+          else if (modelled > caps.maxGuess) reason = `conservative price ${modelled.toFixed(3)} > maxGuess ${caps.maxGuess} at ${phase}`;
+          else if (modelled + caps.maxSlip >= caps.maxSlipPlusGuess)
+            reason = `price ${modelled.toFixed(3)} + maxSlip ${caps.maxSlip} >= ${caps.maxSlipPlusGuess} at ${phase}`;
+          if (reason) break;
+        }
+      }
+
+      const record = {
+        blind,
+        blindUpper,
+        n: m.n,
+        distinct: m.distinct,
+        modalAnswer: m.modalAnswer,
+        priceable: reason === null,
+        reason,
+      };
+      cells[`${kpId}|${form}`] = record;
+      if (reason) rejected.push({ cell: `${kpId}|${form}`, blind: round6(blind), distinct: m.distinct, modalAnswer: m.modalAnswer, reason });
+      else if (blindUpper > band.guess * (pricing.multByForm[form] ?? 1))
+        repriced.push({ cell: `${kpId}|${form}`, from: round6(band.guess * (pricing.multByForm[form] ?? 1)), to: round6(blindUpper) });
+    }
+  }
+
+  // Which nodes lost so much supply that M3 has to degrade, and which lost all of it.
+  const relaxed = [];
+  const unmasterable = [];
+  for (const kpId of graph.ids) {
+    const have = [...pricing.masteryForms].filter((form) => cells[`${kpId}|${form}`]?.priceable !== false);
+    if (have.length === 0) unmasterable.push(kpId);
+    else if (have.length < M.bkt.minDistinctItemForms) relaxed.push({ kpId, forms: have, need: have.length });
+  }
+  for (const r of relaxed)
+    issues.push(
+      `CONTENT: "${r.kpId}" has only ${r.forms.join(",")} left after the bank audit, so M3 asks for ` +
+        `${r.need} distinct form(s) instead of ${M.bkt.minDistinctItemForms}. Fix the generator families named in ` +
+        `bankPricing.rejectedCells and this reverts on its own.`
+    );
+  for (const id of unmasterable)
+    issues.push(`CONTENT: "${id}" has NO mastery-eligible form left after the bank audit and can never be certified`);
+
+  return {
+    cells,
+    description: {
+      audited: true,
+      cellsPriced: Object.keys(cells).length,
+      rejectedCells: rejected.sort((a, b) => (b.blind ?? 1) - (a.blind ?? 1)),
+      repricedCells: repriced.sort((a, b) => b.to - a.to),
+      relaxed,
+      unmasterable,
     },
   };
 }

@@ -81,9 +81,18 @@ import { dirname, resolve } from "node:path";
 import { createHash } from "node:crypto";
 
 import { Graph, GraphError } from "../../app/src/learn/Graph.js";
-import { Mastery, bktUpdate, REVIEW_LAPSE_BELOW } from "../../app/src/learn/Mastery.js";
+import {
+  Mastery,
+  bktUpdate,
+  REVIEW_LAPSE_BELOW,
+  auditBlindGuessing,
+  collectBankSample,
+  BANK_AUDIT_PER_CELL,
+} from "../../app/src/learn/Mastery.js";
 import { Scheduler, virtualClock, mulberry32 } from "../../app/src/learn/Scheduler.js";
 import { ItemBank } from "../../app/src/learn/ItemBank.js";
+import { BANK } from "../../content/items/index.mjs";
+import { generateOne, TIERS } from "../../content/items/generators.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(here, "..", "..");
@@ -113,6 +122,27 @@ const CURVE = [12, 16, 18, 20, 22, 24];
 
 const GRAPH = new Graph(source);
 const M = GRAPH.model;
+
+/**
+ * THE AUDIT THE SHIPPED GAME PRICES ON.
+ *
+ * Built by the same exported function, over the same content, with the same fixed seeds and the
+ * same `BANK_AUDIT_PER_CELL`, as `app/src/boot/62-learning.js`. That identity is the point: the
+ * numbers in this file are the numbers the browser uses, and U33 below proves the two agree by
+ * re-deriving the whole table at a much larger sample and requiring every accept/reject verdict
+ * to be unchanged. A proof measured on a table the game does not use is a proof about nothing.
+ */
+const AUDIT_BANK = new ItemBank();
+const AUDIT_MARK = {
+  mark: (item, response) => AUDIT_BANK.check(item, response).correct === true,
+  spell: (item) => AUDIT_BANK.accepts(item)[0],
+};
+const AUDIT = auditBlindGuessing(
+  collectBankSample({ bankFiles: BANK, generateOne, tiers: TIERS, bandOf: (id) => GRAPH.difficulty(id) }),
+  AUDIT_MARK
+);
+/** A pricing table with the bank term switched OFF, so the two DECLARED axes can be read alone. */
+const ZERO_AUDIT = { cells: Object.fromEntries(Object.keys(AUDIT.cells).map((c) => [c, { n: 1, distinct: 1, rate: 0, upper: 0, modalAnswer: null, executed: true }])), notExecuted: [] };
 const TOTAL = GRAPH.ids.length;
 const NEED80 = Math.ceil(0.8 * TOTAL); // 26 of 32
 const BAND = Object.fromEntries(M.bands.map((b) => [b.difficulty, b]));
@@ -121,7 +151,7 @@ const TRUE_PHASE = Object.fromEntries(Object.entries(M.trueGuessByPhase).filter(
 const UNSCORED_FORMS = M.forms.unscored;
 const SCORED_FORMS = M.forms.scored;
 /** Kinds that acquire the material the way a person does. Everything else answers blind. */
-const HONEST_KINDS = new Set(["median", "mixed", "retentionHintLeak", "retentionFast"]);
+const HONEST_KINDS = new Set(["median", "mixed", "retentionHintLeak", "retentionFast", "liveMedian"]);
 
 // -------------------------------------------------------------------------------- thresholds
 /** Every claim this script makes, with the number it has to beat. A critic edits nothing else. */
@@ -151,6 +181,16 @@ const wilsonUpper = (hits, n) => {
   const s = z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n));
   return (c + s) / d;
 };
+/** Wilson 95% LOWER bound. "This cell is definitely above the cap" needs this one, not the point. */
+const wilsonLower = (hits, n) => {
+  if (!n) return 0;
+  const z = 1.959964;
+  const p = hits / n;
+  const d = 1 + (z * z) / n;
+  const c = p + (z * z) / (2 * n);
+  const s = z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n));
+  return Math.max(0, (c - s) / d);
+};
 const out = [];
 const say = (s = "") => out.push(s);
 
@@ -178,7 +218,7 @@ const check = (id, statement, fn) => {
 /** A fresh engine with a virtual clock and no persistence, for single-path assertions. */
 function bench({ seed = 1, sessionMinutes = SESSION_MINUTES, SchedulerClass = Scheduler } = {}) {
   const clock = virtualClock(0);
-  const mastery = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null });
+  const mastery = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: null });
   const sched = new SchedulerClass(mastery, { clock, rng: mulberry32(seed), sessionMinutes });
   sched.beginSession();
   return { clock, mastery, sched };
@@ -231,7 +271,7 @@ function retentionRun({
   abandonAfter = null,
 } = {}) {
   const clock = virtualClock(0);
-  const mastery = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null });
+  const mastery = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: null });
   const sched = new SchedulerClass(mastery, { clock, rng: mulberry32(11), sessionMinutes: 600 });
   const s = mastery.stateOf(RET_KP);
   s.p = 0.99;
@@ -267,19 +307,54 @@ function retentionRun({
   };
 }
 
-check("U1", "Graph validates the real content and rejects a cyclic graph", () => {
+/**
+ * FEED THE GRAPH A CYCLE. Three shapes, because "it throws on one hand-made two-cycle" is not the
+ * same claim as "a cyclic prerequisite relation cannot reach the runtime". Each one must throw
+ * `GraphError`, must say CYCLIC, and must PRINT THE ACTUAL LOOP — a validator that says
+ * "graph is invalid" and stops is a validator an author cannot act on. The last case also checks
+ * that construction fails BEFORE the memoised closures are built: `ancestors()` recurses through
+ * the prerequisite relation, and on a cycle that is the infinite regress the check exists to stop.
+ */
+check("U1", "Graph validates the real content and rejects a cyclic graph, naming the loop", () => {
   new Graph(source); // must not throw
-  const broken = structuredClone(source);
-  broken.nodes.find((n) => n.id === "var-meaning").prerequisites = ["expr-anatomy"];
-  let threw = null;
-  try {
-    new Graph(broken);
-  } catch (e) {
-    threw = e;
+  const shapes = [
+    { name: "2-cycle", apply: (g) => (g.nodes.find((n) => n.id === "var-meaning").prerequisites = ["expr-anatomy"]) },
+    {
+      name: "3-cycle",
+      apply: (g) => {
+        g.nodes.find((n) => n.id === "var-meaning").prerequisites = ["like-terms-id"];
+        g.nodes.find((n) => n.id === "like-terms-id").prerequisites = ["oo-structure"];
+        g.nodes.find((n) => n.id === "oo-structure").prerequisites = ["var-meaning"];
+      },
+    },
+    { name: "self-loop", apply: (g) => (g.nodes.find((n) => n.id === "eq-two-step").prerequisites = ["eq-two-step"]) },
+  ];
+  const seen = [];
+  for (const shape of shapes) {
+    const broken = structuredClone(source);
+    shape.apply(broken);
+    let threw = null;
+    try {
+      new Graph(broken);
+    } catch (e) {
+      threw = e;
+    }
+    if (!(threw instanceof GraphError)) return { ok: false, detail: `${shape.name}: did not throw GraphError` };
+    const line = threw.issues.find((i) => i.includes("CYCLIC"));
+    if (!line) return { ok: false, detail: `${shape.name}: threw without saying CYCLIC — ${threw.message}` };
+    // The message has to carry the loop itself, written out with the arrow, not just a verdict.
+    if (!line.includes("<-")) return { ok: false, detail: `${shape.name}: cycle not written out — ${line}` };
+    // And the engine above it must refuse too, from the same source, for the same reason.
+    let masteryThrew = false;
+    try {
+      new Mastery(broken, { bankAudit: AUDIT, storage: null, emit: () => {} });
+    } catch {
+      masteryThrew = true;
+    }
+    if (!masteryThrew) return { ok: false, detail: `${shape.name}: Mastery accepted a cyclic graph` };
+    seen.push(`${shape.name}: ${line.replace("prerequisite relation is CYCLIC: ", "")}`);
   }
-  if (!(threw instanceof GraphError)) return { ok: false, detail: "cyclic graph did not throw GraphError" };
-  const sawCycle = threw.issues.some((i) => i.includes("CYCLIC"));
-  return { ok: sawCycle, detail: sawCycle ? threw.issues.find((i) => i.includes("CYCLIC")) : threw.message };
+  return { ok: true, detail: seen.join(" | ") };
 });
 
 check("U2", "prerequisite closure, frontier and topological order are correct", () => {
@@ -345,14 +420,31 @@ check("U6", "guided-1 IS scorable but is NOT mastery-eligible (M2/M3 counters st
 check("U7", "the two axes compose by MAX, never by product", () => {
   const { mastery } = bench();
   const b1 = BAND[1];
-  const g = mastery.modelledGuess(b1, "construct", "guided-1");
-  const gg = mastery.modelledGuess(b1, "generate", "guided-1");
-  const t = mastery.trueGuess("construct", "guided-3");
-  const solo = mastery.modelledGuess(BAND[3], "generate", "solo");
+  // Read on a table with the bank term zeroed, so the two DECLARED axes are visible alone; the
+  // third axis is then read on the real table, where it must also compose by MAX and never lower
+  // a price. `eq-both-sides|construct` is the cell that exercises it: band-4 guess 0.08 against a
+  // measured blind rate that the bank puts well above it.
+  const KP = "var-meaning";
+  const declared = new Mastery(GRAPH, { bankAudit: ZERO_AUDIT, storage: null, emit: () => {} });
+  const g = declared.modelledGuess(KP, b1, "construct", "guided-1");
+  const gg = declared.modelledGuess(KP, b1, "generate", "guided-1");
+  const t = declared.trueGuess(KP, "construct", "guided-3");
+  const solo = declared.modelledGuess(KP, BAND[3], "generate", "solo");
   const okMax = Math.abs(g - 0.05 * 2) < 1e-12 && Math.abs(gg - 0.05 * 2) < 1e-12 && t === 0.85;
+
+  const HOT = "eq-both-sides";
+  const band4 = GRAPH.band(HOT);
+  const bankRate = mastery.bankBlindRate(HOT, "construct");
+  const withBank = mastery.modelledGuess(HOT, band4, "construct", "solo");
+  const withoutBank = declared.modelledGuess(HOT, band4, "construct", "solo");
+  // MAX on the third axis too: the bank can only ever raise a price, never lower one.
+  const thirdAxis = withBank >= withoutBank - 1e-12 && withBank >= bankRate - 1e-12 && bankRate > withoutBank;
   return {
-    ok: okMax,
-    detail: `b1 construct/guided-1 ${f(g)}, b1 generate/guided-1 ${f(gg)} (product would be ${f(0.05 * 0.6 * 2)}), true construct/guided-3 ${f(t, 2)}, b3 generate/solo ${f(solo)}`,
+    ok: okMax && thirdAxis,
+    detail:
+      `b1 construct/guided-1 ${f(g)}, b1 generate/guided-1 ${f(gg)} (product would be ${f(0.05 * 0.6 * 2)}), ` +
+      `true construct/guided-3 ${f(t, 2)}, b3 generate/solo ${f(solo)}; ` +
+      `third axis on ${HOT}|construct: declared ${f(withoutBank, 3)}, measured blind ${f(bankRate, 3)}, priced ${f(withBank, 3)}`,
   };
 });
 
@@ -369,12 +461,18 @@ check("U8", "an over-cap form is REJECTED from the scored path, never clamped", 
   };
 });
 
-check("U9", "the derived scorable matrix is exactly {construct,repair,generate} x {solo,guided-1}", () => {
+check("U9", "the derived scorable matrix is exactly {construct,repair,generate} x {solo,guided-1}, and every issue is a NAMED content defect", () => {
   const { mastery } = bench();
   const d = mastery.pricing.description;
+  // Issues are no longer expected to be empty: the bank audit reports content defects, and a
+  // silent engine is exactly what let `eq-special-cases` through. What must hold is that every
+  // issue is one of those reports and none is a pricing failure in the engine itself.
+  const stray = mastery.issues.filter((i) => !i.startsWith("CONTENT:"));
   return {
-    ok: d.scorableCells === 6 && d.masteryEligibleCells === 3 && mastery.issues.length === 0,
-    detail: `scorable ${d.scorableCells}/25 (${d.scorable}); mastery-eligible ${d.masteryEligibleCells}/25 (${d.masteryEligible}); issues ${mastery.issues.length}`,
+    ok: d.scorableCells === 6 && d.masteryEligibleCells === 3 && stray.length === 0,
+    detail:
+      `scorable ${d.scorableCells}/25 (${d.scorable}); mastery-eligible ${d.masteryEligibleCells}/25 (${d.masteryEligible}); ` +
+      `${mastery.issues.length} issue(s), all CONTENT reports${stray.length ? `; STRAY: ${stray.join(" | ")}` : ""}`,
   };
 });
 
@@ -486,7 +584,7 @@ check("U16", "state round-trips: snapshot -> restore reproduces the probe byte f
   const a = runLearner({ seed: 4242, kind: "median", sessions: 3 });
   const snap = a.mastery.snapshot();
   const clock = virtualClock(a.clock.minutes());
-  const fresh = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null });
+  const fresh = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: null });
   fresh.restore(JSON.parse(JSON.stringify(snap)));
   const same = sha(a.mastery.probe()) === sha(fresh.probe());
   return { ok: same, detail: `probe hash ${sha(a.mastery.probe())} vs ${sha(fresh.probe())}` };
@@ -506,10 +604,10 @@ check("U18", "a fake localStorage round-trips a session (state resumes)", () => 
   const store = new Map();
   const fake = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, v), removeItem: (k) => store.delete(k) };
   const clock = virtualClock(0);
-  const m1 = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: fake });
+  const m1 = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: fake });
   m1.respond({ kpId: "var-meaning", form: "construct", phase: "solo", correct: true, mode: "acquire", latencyMs: 5000 });
   m1.persist();
-  const m2 = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: fake });
+  const m2 = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: fake });
   const hydrated = m2.hydrate();
   return { ok: hydrated && Math.abs(m1.p("var-meaning") - m2.p("var-meaning")) < 1e-15, detail: `p ${f(m1.p("var-meaning"))} -> ${f(m2.p("var-meaning"))}` };
 });
@@ -586,7 +684,7 @@ check("U26", "Scheduler state survives persist -> hydrate: open check, no-repeat
   const store = new Map();
   const fake = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, v), removeItem: (k) => store.delete(k) };
   const clock = virtualClock(0);
-  const m1 = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: fake });
+  const m1 = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: fake });
   const s1 = new Scheduler(m1, { clock, rng: mulberry32(3), sessionMinutes: 600 });
   s1.beginSession();
   for (let i = 0; i < 5; i++) {
@@ -603,7 +701,7 @@ check("U26", "Scheduler state survives persist -> hydrate: open check, no-repeat
   s1.submit(rq, { correct: true, latencyMs: 5000, itemId: "ret0" });
   m1.persist();
 
-  const m2 = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: fake });
+  const m2 = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: fake });
   const s2 = new Scheduler(m2, { clock, rng: mulberry32(3), sessionMinutes: 600 });
   const okHydrate = m2.hydrate();
   const sameEvent = JSON.stringify(s1._event) === JSON.stringify(s2._event);
@@ -621,7 +719,7 @@ check("U27", "a snapshot with NO Scheduler half lapses the orphaned retention ch
   const snap = JSON.parse(JSON.stringify(r.mastery.snapshot()));
   delete snap.scheduler; // exactly the round-1 snapshot shape
   const clock = virtualClock(r.sched.clock.minutes());
-  const fresh = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null });
+  const fresh = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: null });
   fresh.restore(snap);
   const s = fresh.stateOf(RET_KP);
   return {
@@ -642,8 +740,19 @@ check("U28", "the `mastery` probe carries `inFlight[]` at the TOP level, as §8 
 // ============================================================ PART A2 — the REAL item bank
 //
 // `model.trueGuessByForm` is a hand-authored constant and the entire L5 result is a linear
-// function of it. This section stops taking it on trust: it generates real items out of
-// `app/src/learn/ItemBank.js` and pushes random legal responses through the live checker.
+// function of it. This section stops taking it on trust: it draws real items through the real
+// `ItemBank.select()` and marks real response strings with the live `check()`.
+//
+// ROUND 2 OF THIS FILE MEASURED THE WRONG STRATEGY, and that is why it reported
+// `eq-special-cases|construct` at 0.335 and shrugged. Its assumption B4 said a responder who
+// "picks uniformly inside the shape of the answer" is the BEST case for a guesser. It is not. The
+// best case is BEST FIXED ANSWER: type the same string every time and keep whichever string wins
+// most. On `eq-special-cases|construct` the shape-uniform bot spreads itself over
+// {a number, always, none} and scores 0.335; a bot that just types `always` scores 0.53. On
+// `eq-special-cases|repair` the shape-uniform bot invents line numbers and scores 0.002, while
+// EVERY item in that pool — catalogue and generator alike — has the single answer `3|0 = 0`, so
+// typing it scores 1.00. Both strategies are run below, side by side, and the gap between them is
+// printed, because the gap IS the finding.
 
 const bank = new ItemBank();
 
@@ -709,78 +818,287 @@ function blindResponder(seed) {
 }
 
 const tBank = Date.now();
-/** measured[`${kpId}|${form}`] = { n, hits, rate, types } — ground truth, from the shipped bank. */
-const measured = {};
-const measuredByForm = {};
+
+/**
+ * Draw one cell of the bank the way the Scheduler draws it: through `ItemBank.select()`, sweeping
+ * the five difficulty tiers, with a rolling exclusion set so the catalogue is exhausted and the
+ * generator fallback appears — which is exactly what happens to a player who stays on a knowledge
+ * point long enough to be certified on it.
+ */
+function drawCell(kpId, form, n) {
+  const items = [];
+  const exclude = new Set();
+  for (let i = 0; i < n; i++) {
+    const sel = bank.select({ kpId, form, difficulty: 1 + (i % 5), seed: (i * 2654435761 + 17) >>> 0, exclude });
+    if (!sel) continue;
+    items.push(sel.item);
+    exclude.add(sel.item.id);
+    if (exclude.size > 40) exclude.delete(exclude.values().next().value);
+  }
+  return items;
+}
+
+/** Every response string a blind responder could sensibly commit to for a whole cell. */
+function constantCandidates(items) {
+  const byAnswer = new Map();
+  for (const it of items) {
+    const key = it.answerType === "repair" ? `${it.answer.line}|${it.answer.tex}` : String(it.answer.canonical);
+    if (!byAnswer.has(key)) byAnswer.set(key, { item: it, n: 0 });
+    byAnswer.get(key).n += 1;
+  }
+  const ranked = [...byAnswer.values()].sort((a, b) => b.n - a.n).slice(0, 6);
+  // The spelling comes from `ItemBank.accepts()`, so every candidate is a string the shipped
+  // checker documents as typable. A candidate the parser rejects would understate the guesser.
+  const strings = new Set();
+  for (const r of ranked) {
+    const acc = bank.accepts(r.item);
+    if (acc && acc.length) strings.add(String(acc[0]));
+  }
+  // Plus the zero-knowledge staples, which cost nothing to try and which a real teenager tries.
+  for (const s of ["0", "1", "x = 0", "always", "none"]) strings.add(s);
+  return [...strings];
+}
+
+const OVER_CAP = M.bkt.identifiabilityCaps.maxTrueGuess; // 0.30
+const TRIPWIRE = 0.1; // §9's first named tripwire
+
+/**
+ * measuredBest[`${kp}|${form}`] — BEST FIXED ANSWER, executed end to end: real items from
+ * `select()`, real strings from `accepts()`, real verdicts from `check()`. No model parameter is
+ * read anywhere in this loop, and no rate is assumed; the number that comes out is a count of
+ * items the shipped checker marked correct for a responder who knows no algebra at all.
+ */
+const measuredBest = {};
+/** The round-2 strategy, kept as a CONTROL so the size of its blind spot is a printed number. */
+const measuredShape = {};
 const measuredByType = {};
 for (const kpId of GRAPH.ids) {
   for (const form of SCORED_FORMS) {
-    const answer = blindResponder((kpId.length * 7919 + form.length * 104729 + 13) >>> 0);
-    let n = 0;
-    let hits = 0;
-    const types = new Set();
-    for (let i = 0; i < BLIND_N; i++) {
-      const sel = bank.select({ kpId, form, difficulty: 1 + (i % 5), seed: (i * 2654435761 + 17) >>> 0 });
-      if (!sel) continue;
-      const item = sel.item;
-      types.add(item.answerType);
+    const items = drawCell(kpId, form, BLIND_N);
+    if (!items.length) continue;
+
+    let bestHits = 0;
+    let bestString = null;
+    for (const candidate of constantCandidates(items)) {
+      let hits = 0;
+      for (const item of items) {
+        try {
+          if (bank.check(item, candidate).correct === true) hits += 1;
+        } catch {
+          /* an unreadable response is simply wrong */
+        }
+      }
+      if (hits > bestHits) {
+        bestHits = hits;
+        bestString = candidate;
+      }
+    }
+    const types = [...new Set(items.map((i) => i.answerType))].join("/");
+    measuredBest[`${kpId}|${form}`] = {
+      n: items.length,
+      hits: bestHits,
+      rate: bestHits / items.length,
+      upper95: wilsonUpper(bestHits, items.length),
+      answer: bestString,
+      types,
+    };
+
+    const shape = blindResponder((kpId.length * 7919 + form.length * 104729 + 13) >>> 0);
+    let shapeHits = 0;
+    for (const item of items) {
       let ok = false;
       try {
-        ok = bank.check(item, answer(item)).correct === true;
+        ok = bank.check(item, shape(item)).correct === true;
       } catch {
         ok = false;
       }
-      n += 1;
-      if (ok) hits += 1;
+      if (ok) shapeHits += 1;
       const t = `${form}/${item.answerType}`;
-      measuredByType[t] = measuredByType[t] ?? { n: 0, hits: 0 };
+      measuredByType[t] = measuredByType[t] ?? { n: 0, hits: 0, best: 0 };
       measuredByType[t].n += 1;
       if (ok) measuredByType[t].hits += 1;
     }
-    measured[`${kpId}|${form}`] = { n, hits, rate: n ? hits / n : 0, types: [...types].join("/") };
-    measuredByForm[form] = measuredByForm[form] ?? { n: 0, hits: 0 };
-    measuredByForm[form].n += n;
-    measuredByForm[form].hits += hits;
+    measuredShape[`${kpId}|${form}`] = { n: items.length, hits: shapeHits, rate: shapeHits / items.length };
+    for (const item of items) {
+      const t = `${form}/${item.answerType}`;
+      measuredByType[t].best = Math.max(measuredByType[t].best, bestHits / items.length);
+    }
   }
 }
-for (const v of Object.values(measuredByForm)) {
-  v.rate = v.n ? v.hits / v.n : 0;
-  v.upper95 = wilsonUpper(v.hits, v.n);
+/**
+ * Per FORM, two numbers, because they answer two different questions and round 2 printed only the
+ * flattering one. `pooled` is what a guesser gets spraying the form across all 32 knowledge
+ * points. `worstCell` is what a guesser gets after ten minutes of noticing which knowledge point
+ * is soft — which is the number a mastery gate has to survive.
+ */
+const measuredByForm = {};
+for (const form of SCORED_FORMS) {
+  let n = 0;
+  let hits = 0;
+  let worst = 0;
+  let worstCell = null;
+  let shapeHits = 0;
+  for (const [cell, m] of Object.entries(measuredBest)) {
+    if (!cell.endsWith(`|${form}`)) continue;
+    n += m.n;
+    hits += m.hits;
+    shapeHits += measuredShape[cell]?.hits ?? 0;
+    if (m.rate > worst) {
+      worst = m.rate;
+      worstCell = cell;
+    }
+  }
+  measuredByForm[form] = {
+    n,
+    hits,
+    rate: n ? hits / n : 0,
+    upper95: wilsonUpper(hits, n),
+    shapeRate: n ? shapeHits / n : 0,
+    worst,
+    worstCell,
+  };
 }
+
 const bankMs = Date.now() - tBank;
 
-/** Cells where the real bank is materially easier to fluke than the content file claims. */
-const OVER_CAP = M.bkt.identifiabilityCaps.maxTrueGuess; // 0.30
-const TRIPWIRE = 0.1; // §9's first named tripwire
-const hotCells = Object.entries(measured)
+/** Cells the shipped bank actually gives away, worst first. This is the table that got re-priced. */
+const hotCells = Object.entries(measuredBest)
   .map(([k, v]) => ({ cell: k, ...v }))
   .filter((r) => r.rate > TRIPWIRE)
   .sort((a, b) => b.rate - a.rate);
+const overCapCells = hotCells.filter((r) => r.rate > OVER_CAP);
 
-check("U29", "measured blind rate per FORM, over the real ItemBank, is at or under the content file's claim", () => {
-  const rows = SCORED_FORMS.map((form) => {
-    const m = measuredByForm[form];
-    return `${form} ${f(m.rate)} (95% u.b. ${f(m.upper95)}) vs declared ${TRUE_FORM[form]}`;
-  });
-  const ok = SCORED_FORMS.every((form) => measuredByForm[form].rate <= TRUE_FORM[form]);
-  return { ok, detail: rows.join("; ") };
+/** What the SHIPPED ENGINE priced, for the same cells. `bench()` builds it from `AUDIT`. */
+const enginePricing = bench().mastery;
+
+check("U29", "no scored cell is credited at a modelled guess below what the LIVE bank measurably gives away", () => {
+  const bad = [];
+  for (const [cell, m] of Object.entries(measuredBest)) {
+    const [kpId, form] = cell.split("|");
+    if (!enginePricing.isScorable(kpId, form, "solo")) continue; // refused: the other half of the rule
+    const priced = enginePricing.modelledGuess(kpId, GRAPH.band(kpId), form, "solo");
+    // The live measurement has sampling error of its own, so the bar is its 95% LOWER bound:
+    // "the blind rate here is at least this, and the engine still prices it below that".
+    const floor = wilsonLower(m.hits, m.n);
+    if (priced + 1e-9 < floor) bad.push(`${cell} live ${f(m.rate, 3)} (>=${f(floor, 3)}) priced ${f(priced, 3)}`);
+  }
+  const lifted = Object.keys(measuredBest).filter((c) => {
+    const [kpId, form] = c.split("|");
+    return (
+      enginePricing.isScorable(kpId, form, "solo") &&
+      enginePricing.modelledGuess(kpId, GRAPH.band(kpId), form, "solo") > GRAPH.band(kpId).guess * (M.guessByForm[form] ?? 1) + 1e-12
+    );
+  }).length;
+  return {
+    ok: bad.length === 0,
+    detail: bad.length
+      ? `UNDER-PRICED: ${bad.join("; ")}`
+      : `${Object.keys(measuredBest).length} cells measured live; ${overCapCells.length} refused outright; ${lifted} re-priced upward; none credited below its measured blind rate`,
+  };
 });
 
 /**
- * A named list, not a count. §9 says the moment a generator family ships a smaller answer space
- * than `trueGuessByForm` assumes, the table has to change — so the cells that do are NAMED here
- * and any NEW one fails the run. `eq-special-cases` is the one that exists today: its whole
- * `construct` pool is `closure`-typed, i.e. "always / never / a value", which is a three-way
- * choice wearing a construction. That is a P17/P03 finding, reported rather than absorbed.
+ * The claim the previous round could not make. Every cell above `maxTrueGuess` must be REJECTED
+ * from the scored path for that knowledge point — not clamped, not declared, not absorbed into a
+ * named-exception list. `KNOWN_HOT_CELLS` is gone on purpose: an exception list is how
+ * `eq-special-cases|construct` sat at 0.335 through a passing run.
  */
-const KNOWN_HOT_CELLS = new Set(["eq-special-cases|construct"]);
-check("U30", "no NEW (knowledge point x form) cell of the real bank is above §9's tripwire", () => {
-  const unexpected = hotCells.filter((r) => !KNOWN_HOT_CELLS.has(r.cell));
+check("U30", "every cell the live bank puts DEFINITELY above maxTrueGuess is REFUSED, and no clearly-healthy cell is", () => {
+  const wrong = [];
+  for (const [cell, m] of Object.entries(measuredBest)) {
+    const [kpId, form] = cell.split("|");
+    const scorable = enginePricing.isScorable(kpId, form, "solo");
+    // "Definitely above" = the 95% lower bound of the live measurement clears the cap.
+    if (wilsonLower(m.hits, m.n) > OVER_CAP && scorable)
+      wrong.push(`${cell} is at least ${f(wilsonLower(m.hits, m.n), 3)} blind and is still scored`);
+    // The converse matters as much: refusing a healthy cell silently shrinks the curriculum. A
+    // cell whose 95% UPPER bound is under the tripwire cannot honestly be called guessable.
+    if (wilsonUpper(m.hits, m.n) < TRIPWIRE && !scorable)
+      wrong.push(`${cell} is at most ${f(wilsonUpper(m.hits, m.n), 3)} blind and was refused anyway`);
+  }
   return {
-    ok: unexpected.length === 0,
-    detail: unexpected.length
-      ? `UNDECLARED hot cell(s): ${unexpected.map((r) => `${r.cell} ${f(r.rate, 3)} [${r.types}]`).join(", ")}`
-      : `hot cells, all declared: ${hotCells.map((r) => `${r.cell} ${f(r.rate, 3)} [${r.types}]${r.rate > OVER_CAP ? " ABOVE maxTrueGuess " + OVER_CAP : ""}`).join(", ") || "none"}`,
+    ok: wrong.length === 0,
+    detail: wrong.length
+      ? wrong.join("; ")
+      : `refused ${overCapCells.length}: ${overCapCells.map((r) => `${r.cell} ${f(r.rate, 3)} (${JSON.stringify(r.answer)})`).join(", ")}`,
+  };
+});
+
+/**
+ * The shipped engine prices on an audit of `BANK_AUDIT_PER_CELL` draws. If that sample is too
+ * small, every rejection above is a coin flip wearing a decimal point. So the whole audit is
+ * re-derived at six times the sample and EVERY accept/reject verdict has to be identical.
+ */
+const REFERENCE_PER_CELL = argNum("referenceSample", BANK_AUDIT_PER_CELL * 6);
+const REFERENCE_AUDIT = auditBlindGuessing(
+  collectBankSample({
+    bankFiles: BANK,
+    generateOne,
+    tiers: TIERS,
+    bandOf: (id) => GRAPH.difficulty(id),
+    perCell: REFERENCE_PER_CELL,
+  })
+);
+check("U33", `the shipped ${BANK_AUDIT_PER_CELL}-draw audit gives the same verdicts as a ${REFERENCE_PER_CELL}-draw one`, () => {
+  const reference = new Mastery(GRAPH, { bankAudit: REFERENCE_AUDIT, storage: null, emit: () => {} });
+  const moved = [];
+  let worst = 0;
+  for (const kpId of GRAPH.ids) {
+    for (const form of SCORED_FORMS) {
+      const a = enginePricing.isScorable(kpId, form, "solo");
+      const b = reference.isScorable(kpId, form, "solo");
+      if (a !== b) moved.push(`${kpId}|${form} ${a ? "scored" : "refused"} -> ${b ? "scored" : "refused"}`);
+      worst = Math.max(worst, Math.abs(enginePricing.bankBlindRate(kpId, form) - reference.bankBlindRate(kpId, form)));
+    }
+  }
+  return {
+    ok: moved.length === 0,
+    detail: moved.length ? `verdicts moved: ${moved.join("; ")}` : `no verdict moved; largest rate drift ${f(worst, 4)}`,
+  };
+});
+
+/**
+ * The audit is a cheap derivation off the catalogue and the generators. This is the check that it
+ * agrees with the expensive one — real items through `select()`, real strings through `check()`.
+ * If these two ever diverge, the engine is pricing a bank the player is not being served.
+ */
+check("U34", "the engine's own audit never UNDER-states what the live bank gives away", () => {
+  const rows = [];
+  let worst = 0;
+  let worstCell = null;
+  for (const [cell, m] of Object.entries(measuredBest)) {
+    const [kpId, form] = cell.split("|");
+    const engine = enginePricing.bankBlindRate(kpId, form);
+    // Over-stating is safe — it only makes the engine stricter. UNDER-stating is the failure, and
+    // it is judged against the live measurement's own 95% lower bound so noise cannot fake it.
+    const gap = wilsonLower(m.hits, m.n) - engine;
+    if (gap > worst) {
+      worst = gap;
+      worstCell = `${cell} engine ${f(engine, 3)} vs live >= ${f(wilsonLower(m.hits, m.n), 3)}`;
+    }
+    if (gap > 0.02) rows.push(`${cell}: engine ${f(engine, 3)}, live ${f(m.rate, 3)} (>= ${f(wilsonLower(m.hits, m.n), 3)})`);
+  }
+  return {
+    ok: rows.length === 0,
+    detail: rows.length
+      ? `engine UNDER-states: ${rows.join("; ")}`
+      : `no cell under-stated across ${Object.keys(measuredBest).length} cells; worst shortfall ${f(Math.max(0, worst), 3)} (${worstCell})`,
+  };
+});
+
+check("U35", "an item in a REFUSED cell is inert, and its knowledge point is still reachable through the forms that survived", () => {
+  const { mastery } = bench();
+  const before = snapOf(mastery, "eq-special-cases");
+  const r = mastery.respond({ kpId: "eq-special-cases", form: "construct", phase: "solo", correct: true, mode: "acquire" });
+  const after = snapOf(mastery, "eq-special-cases");
+  if (r.scored !== false || JSON.stringify(before) !== JSON.stringify(after))
+    return { ok: false, detail: `refused cell still moved the state: scored=${r.scored} reason=${r.reason}` };
+  const survived = mastery.masteryFormsFor("eq-special-cases");
+  const ok2 = mastery.respond({ kpId: "eq-special-cases", form: survived[0], phase: "solo", correct: true, mode: "acquire" });
+  const relaxed = mastery.cellPricing.description.relaxed.map((x) => x.kpId);
+  return {
+    ok: survived.length > 0 && ok2.scored === true && ok2.credited === true && mastery.cellPricing.description.unmasterable.length === 0,
+    detail: `construct refused (${r.reason}); ${survived.join(",")} survives and credits; M3 relaxed on ${relaxed.join(", ") || "no node"}; unmasterable ${mastery.cellPricing.description.unmasterable.length}`,
   };
 });
 
@@ -807,7 +1125,7 @@ check("U31", "the review ladder after certification is 1, 2, 5, 11, 24, 45, 45, 
 
 check("U32", "12 hours of idle time inside ONE session never produces a retention item (§3 needs an intervening session)", () => {
   const clock = virtualClock(0);
-  const mastery = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null });
+  const mastery = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: null });
   const sched = new Scheduler(mastery, { clock, rng: mulberry32(5), sessionMinutes: 100000 });
   sched.beginSession();
   const s = mastery.stateOf(RET_KP);
@@ -838,11 +1156,55 @@ check("U32", "12 hours of idle time inside ONE session never produces a retentio
 // One responder model, many kinds. Only the `answer` function differs, and only the bots' branch
 // touches the ground-truth tables.
 
+// ------------------------------------------------------------------ the LIVE arms
+//
+// The arms below have NO success-rate parameter anywhere in the loop. The Scheduler names a
+// knowledge point, a form and a difficulty; `ItemBank.select()` hands over the item a player would
+// actually be shown; the bot types a string; `ItemBank.check()` decides whether it is right. The
+// only thing the harness supplies is the STRATEGY, and every strategy here is one a responder with
+// no algebra can execute. Whether it works is a property of the shipped bank, not of this file.
+//
+// This is the answer to the finding that destroyed the previous attempt: "the simulation set the
+// bot's true success rate equal to the model's own guess parameter". There is no rate to set.
+
+/** Band tier the Scheduler's logit target lands on, so `select()` gets the item the player gets. */
+function bandTierFor(req) {
+  const centre = GRAPH.centre(req.kpId);
+  const band = GRAPH.difficulty(req.kpId);
+  return Math.max(1, Math.min(5, band + Math.round((req.difficulty - centre) / 0.3)));
+}
+
+/** The best fixed answer for a cell, MEASURED off the bank in PART A2. A guesser's whole plan. */
+const bestConstantFor = (kpId, form) => measuredBest[`${kpId}|${form}`]?.answer ?? "0";
+
+/** A response string that is definitely wrong: a declared distractor, else a nonsense token. */
+function wrongStringFor(item, rng) {
+  const ds = item.distractors ?? [];
+  if (ds.length) {
+    const d = ds[Math.floor(rng() * ds.length) % ds.length];
+    if (d && d.response != null) return String(d.response);
+  }
+  return "17";
+}
+
+/** The item the player would be shown for this request, drawn through the shipped select path. */
+function liveItemFor(req, exclude, seq) {
+  const sel = bank.select({
+    kpId: req.kpId,
+    form: req.form,
+    difficulty: bandTierFor(req),
+    misconception: req.targetMisconception ?? null,
+    seed: (seq * 2654435761 + 17) >>> 0,
+    exclude,
+  });
+  return sel ? sel.item : null;
+}
+
 /** GROUND TRUTH for the item the scheduler ACTUALLY served. Never `guessByForm`. */
 const blindRate = (form, phase) => Math.max(TRUE_FORM[form] ?? 0.03, TRUE_PHASE[phase] ?? 0);
 /** GROUND TRUTH as MEASURED off the shipped item bank for this exact knowledge point and form. */
 const measuredRate = (kpId, form, phase) =>
-  Math.max(measured[`${kpId}|${form}`]?.rate ?? TRUE_FORM[form] ?? 0.03, TRUE_PHASE[phase] ?? 0);
+  Math.max(measuredBest[`${kpId}|${form}`]?.rate ?? TRUE_FORM[form] ?? 0.03, TRUE_PHASE[phase] ?? 0);
 
 function makeResponder(kind, rng, opts = {}) {
   const bot = !HONEST_KINDS.has(kind);
@@ -864,8 +1226,9 @@ function makeResponder(kind, rng, opts = {}) {
     /**
      * @param {object} req the request the SCHEDULER produced — form and phase come from it
      * @param {Mastery} mastery
+     * @param {object|null} item the REAL item, when this arm is running against the live bank
      */
-    answer(req, mastery) {
+    answer(req, mastery, item = null) {
       const band = GRAPH.band(req.kpId);
       const b = req.difficulty;
       const phaseFloor = TRUE_PHASE[req.phase] ?? 0;
@@ -877,6 +1240,42 @@ function makeResponder(kind, rng, opts = {}) {
         const boosted = s.relearn && (!M.spacing.relearnRequiresPriorMastery || s.everMastered);
         const t = Math.min(0.9, band.learn * ability * (boosted ? M.spacing.relearnLearnRateMultiplier : 1));
         if (rng() < t) known.set(req.kpId, true);
+      }
+
+      // ---------------------------------------------------------------- THE LIVE ARMS
+      // No rate. A string, and the shipped checker's verdict on it.
+      if (item) {
+        let response;
+        let liveHinted = req.hinted;
+        let liveLatency = 4000 + Math.floor(rng() * 8000);
+        if (kind === "liveHintAbuser") {
+          // The STRONGEST hint-abuser that can exist: it idles past `hintSurfaceMs`, reads the
+          // hint, and types the right answer EVERY time. Raw correctness 1.00. If this arm still
+          // certifies nothing, no weaker hint strategy can certify anything either.
+          response = String(bank.accepts(item)[0]);
+          liveHinted = true;
+          liveLatency = M.antiGuessing.hintSurfaceMs + 2000;
+        } else if (bot) {
+          // The blind guesser: the best fixed answer for the cell it was actually served, which
+          // PART A2 measured off the bank rather than read out of the model.
+          response = bestConstantFor(req.kpId, req.form);
+          if (kind === "liveMasher") liveLatency = rng() < 0.5 ? 200 : 4000;
+        } else if (known.get(req.kpId)) {
+          const slip = band.slip * (1 + 0.35 * Math.max(0, b - thetaTrue));
+          response = rng() < slip ? wrongStringFor(item, rng) : String(bank.accepts(item)[0]);
+        } else {
+          // Not acquired yet: no partial-credit fudge, just the blind strategy. Harsher on L4
+          // than the parameterised arm, which let the model's own `guess` stand in for partial
+          // knowledge — so a median learner who clears the bar here clears it the hard way.
+          response = bestConstantFor(req.kpId, req.form);
+        }
+        let liveCorrect = false;
+        try {
+          liveCorrect = bank.check(item, response).correct === true;
+        } catch {
+          liveCorrect = false;
+        }
+        return { correct: liveCorrect, latencyMs: liveLatency, hinted: liveHinted, itemId: item.id, response };
       }
 
       let correct;
@@ -942,7 +1341,7 @@ function runLearner({
 }) {
   const rng = mulberry32(seed);
   const clock = virtualClock(0);
-  const mastery = new Mastery(GRAPH, { now: () => clock.minutes(), emit: () => {}, storage: null, prerequisiteClockReset });
+  const mastery = new Mastery(GRAPH, { bankAudit: AUDIT, now: () => clock.minutes(), emit: () => {}, storage: null, prerequisiteClockReset });
   const sched = new SchedulerClass(mastery, {
     clock,
     rng: mulberry32(seed ^ 0x9e3779b9),
@@ -952,10 +1351,15 @@ function runLearner({
   });
   const responder = makeResponder(kind, rng, { forcedBlindRate });
   const hostileBank = kind === "formHunter";
+  /** LIVE arms pull the real item and let `ItemBank.check()` decide. No rate anywhere. */
+  const live = kind.startsWith("live");
+  const recentItems = new Set();
 
   let retentionAttempts = 0;
   let retentionPasses = 0;
   let peakMastered = 0;
+  let liveRight = 0;
+  let liveServed = 0;
   const trace = [];
   const scoredTrace = [];
 
@@ -968,7 +1372,15 @@ function runLearner({
       // A8: an item bank that read a closed question in a diagnostic signature and shipped it.
       if (hostileBank) req.form = UNSCORED_FORMS[req.seq % UNSCORED_FORMS.length];
       const lastOfCheck = req.mode === "retention" && req.itemIndex === req.itemsInEvent - 1;
-      const outcome = responder.answer(req, mastery);
+      const item = live ? liveItemFor(req, recentItems, req.seq + seed) : null;
+      const outcome = responder.answer(req, mastery, item);
+      if (item) {
+        recentItems.add(item.id);
+        if (recentItems.size > (M.antiGuessing.noRepeatWithinItems ?? 40))
+          recentItems.delete(recentItems.values().next().value);
+        liveServed += 1;
+        if (outcome.correct) liveRight += 1;
+      }
       sched.submit(req, outcome);
       if (lastOfCheck) {
         retentionAttempts += 1;
@@ -1001,6 +1413,10 @@ function runLearner({
     theta: mastery.theta,
     retentionAttempts,
     retentionPasses,
+    // The live arm's RAW success rate on the items it was actually served, as marked by the
+    // shipped checker. Not an input; an output. This is the number claim V reports.
+    liveServed,
+    liveRight,
     trace,
     scoredTrace,
     sessionsTo80: at80 < 0 ? null : at80 + 1,
@@ -1056,6 +1472,10 @@ function cohort(kind, n, seedBase, sessions, opts = {}) {
     medianSessionsTo80: percentile(rows.map((r) => r.sessionsTo80 ?? 999).sort((a, b) => a - b), 0.5),
     shareBySession: Array.from({ length: sessions }, (_, s) => rows.filter((r) => r.trace[s] >= NEED80).length / n),
     meanTheta: sum((r) => r.theta) / n,
+    // Live arms only: raw items right / items served, decided by `ItemBank.check()`.
+    liveServed: sum((r) => r.liveServed ?? 0),
+    liveRight: sum((r) => r.liveRight ?? 0),
+    liveRate: sum((r) => r.liveServed ?? 0) ? sum((r) => r.liveRight ?? 0) / sum((r) => r.liveServed ?? 0) : null,
   };
 }
 
@@ -1079,6 +1499,16 @@ const legacyRetention = cohort("retentionHintLeak", Math.max(60, Math.floor(BOTS
 });
 // The blind bot, priced off the REAL bank rather than off the content file's constants.
 const bankGuesser = cohort("bankGuesser", BOTS, 161616, SESSIONS);
+
+/**
+ * THE LIVE ARMS. Real items, real strings, real `check()`. Smaller cohorts because each item
+ * costs a bank selection and a parse, and because these arms are not measuring a distribution —
+ * they are answering a yes/no question about whether the gate can be walked through.
+ */
+const LIVE = argNum("live", 120);
+const liveMedian = cohort("liveMedian", LIVE, 5150, SESSIONS);
+const liveGuesser = cohort("liveGuesser", LIVE, 99991, SESSIONS);
+const liveHintAbuser = cohort("liveHintAbuser", LIVE, 515151, SESSIONS);
 
 // §4.1: both selection rules off. The claim is that they are jointly load-bearing, so it has to
 // be measured on this engine and not quoted from the design document.
@@ -1174,19 +1604,60 @@ claim("Q", "L5", "blind bot priced off the REAL ItemBank (measured per kp x form
   value: `${bankGuesser.meanMastered.toFixed(4)} (max ${bankGuesser.maxMastered}, peak ever ${bankGuesser.peakEverMastered}); measured rates: ${SCORED_FORMS.map((x) => `${x} ${f(measuredByForm[x].rate, 4)}`).join(", ")}`,
   pass: bankGuesser.meanMastered < 0.01,
 }));
-claim("R", "L5", "the real bank is no easier to fluke than the content file claims, per form", () => ({
-  value: SCORED_FORMS.map((x) => `${x}: measured ${f(measuredByForm[x].rate, 4)} (95% u.b. ${f(measuredByForm[x].upper95, 4)}) vs declared ${TRUE_FORM[x]}`).join("; "),
-  pass: SCORED_FORMS.every((x) => measuredByForm[x].rate <= TRUE_FORM[x]),
-}));
-claim("T", "L5", "the real bank's ONE under-priced cell is named, and the bank-priced bot still certifies nothing on it", () => {
-  const unexpected = hotCells.filter((h) => !KNOWN_HOT_CELLS.has(h.cell));
+/**
+ * THE CLAIM THE PREVIOUS ROUND GOT WRONG. `model.trueGuessByForm` says `construct` is flukeable at
+ * 0.03. Measured against the shipped bank with the strategy a guesser actually runs, the WORST
+ * `construct` cell is `eq-special-cases` and the worst `repair` cell is the same knowledge point
+ * at 1.00. So the content file's per-form claim is FALSE, and the pass condition is no longer
+ * "the bank agrees with the constant" — it is "the engine prices what the bank does, not what the
+ * constant says", cell by cell.
+ */
+claim("R", "L5", "the content file's per-form blind rate is FALSE on the shipped bank, and the engine prices the measurement instead", () => {
+  const rows = SCORED_FORMS.map(
+    (x) =>
+      `${x}: declared ${TRUE_FORM[x]}, pooled ${f(measuredByForm[x].rate, 4)}, WORST CELL ${f(measuredByForm[x].worst, 3)} at ${measuredByForm[x].worstCell}`
+  );
+  const understated = SCORED_FORMS.filter((x) => measuredByForm[x].worst > TRUE_FORM[x]);
+  // Every form the constant understates must have every offending cell either refused or lifted.
+  const unhandled = [];
+  for (const [cell, m] of Object.entries(measuredBest)) {
+    const [kpId, form] = cell.split("|");
+    if (m.rate <= (TRUE_FORM[form] ?? 0)) continue;
+    const scorable = enginePricing.isScorable(kpId, form, "solo");
+    if (!scorable) continue;
+    if (enginePricing.modelledGuess(kpId, GRAPH.band(kpId), form, "solo") + 1e-9 < m.rate) unhandled.push(cell);
+  }
   return {
-    value: hotCells.length
-      ? `${hotCells.map((h) => `${h.cell} ${f(h.rate, 4)} [${h.types}]`).join("; ")} — declared; ${unexpected.length} undeclared; bank-priced bot peak ever certified ${bankGuesser.peakEverMastered}`
-      : `no cell above ${TRIPWIRE}; bank-priced bot peak ever certified ${bankGuesser.peakEverMastered}`,
-    pass: unexpected.length === 0 && bankGuesser.peakEverMastered === 0,
+    value: `${rows.join("; ")} — ${understated.length}/${SCORED_FORMS.length} forms understated by the constant; ${unhandled.length} cells left under-priced`,
+    pass: unhandled.length === 0,
   };
 });
+claim("T", "L5", "every cell the bank gives away above maxTrueGuess is REFUSED, named, and still certifies nothing", () => {
+  const stillScored = overCapCells.filter((h) => {
+    const [kpId, form] = h.cell.split("|");
+    return enginePricing.isScorable(kpId, form, "solo");
+  });
+  return {
+    value: `${overCapCells.length} cells over ${OVER_CAP}: ${overCapCells.map((h) => `${h.cell} ${f(h.rate, 3)} by typing ${JSON.stringify(h.answer)}`).join("; ")} — all refused; bank-priced bot peak ever certified ${bankGuesser.peakEverMastered}`,
+    pass: stillScored.length === 0 && bankGuesser.peakEverMastered === 0,
+  };
+});
+/**
+ * L5 WITH NO RATE PARAMETER ANYWHERE. Real items, real strings, `ItemBank.check()` as the judge.
+ * The bots' success is an OUTPUT of this run, printed below, not an input to it.
+ */
+claim("V", "L5", "LIVE bank, no rate parameter: the blind guesser certifies NOTHING and its measured success is an output", () => ({
+  value: `guesser answered ${liveGuesser.liveRight}/${liveGuesser.liveServed} items right on the real bank (${pct(liveGuesser.liveRate ?? 0)}, decided by ItemBank.check) and certified ${liveGuesser.meanMastered.toFixed(4)}/32 (max ${liveGuesser.maxMastered}, peak ever ${liveGuesser.peakEverMastered}, gate opened on ${liveGuesser.meanGateOpens.toFixed(3)} nodes/run)`,
+  pass: liveGuesser.peakEverMastered === 0 && (liveGuesser.liveRate ?? 0) > 0,
+}));
+claim("W", "L5", "LIVE bank: a hint-abuser that answers EVERY item correctly certifies nothing", () => ({
+  value: `raw success ${pct(liveHintAbuser.liveRate ?? 0)} (${liveHintAbuser.liveRight}/${liveHintAbuser.liveServed} items, every one of them marked correct by ItemBank.check); certified ${liveHintAbuser.meanMastered.toFixed(4)}/32, peak ever ${liveHintAbuser.peakEverMastered}, refused upward ${liveHintAbuser.meanRefusedUpward.toFixed(0)} items/run`,
+  pass: liveHintAbuser.peakEverMastered === 0 && (liveHintAbuser.liveRate ?? 0) > 0.95 && liveHintAbuser.meanRefusedUpward > 100,
+}));
+claim("X", "L4", "LIVE bank: the median learner still reaches >= 80% of Level 1 with the real checker marking every answer", () => ({
+  value: `median ${liveMedian.median.toFixed(1)}%, p10 ${liveMedian.p10.toFixed(1)}%, ${pct(liveMedian.shareAt80)} of learners at >= 80%; raw item accuracy ${pct(liveMedian.liveRate ?? 0)}`,
+  pass: liveMedian.median >= 80,
+}));
 claim("S", "L5", "sensitivity: the gate holds at 3x the assumed blind rate (§9's first tripwire, 0.10)", () => {
   const at010 = sweep.find((s) => s.rate === 0.1).cohort;
   const at017 = sweep.find((s) => s.rate === 0.17).cohort;
@@ -1317,9 +1788,11 @@ say("TRUE blind-success rates the bots draw from (ground truth, never the model'
 say(`  declared by form:  ${Object.entries(TRUE_FORM).map(([k, v]) => `${k} ${v}`).join("   ")}`);
 say(`  declared by phase: ${Object.entries(TRUE_PHASE).map(([k, v]) => `${k} ${v}`).join("   ")}`);
 say(
-  `  MEASURED off the real ItemBank (${BLIND_N} items x ${GRAPH.ids.length} kps x ${SCORED_FORMS.length} forms, ${bankMs} ms): ` +
-    SCORED_FORMS.map((x) => `${x} ${f(measuredByForm[x].rate, 4)}`).join("   ")
+  `  MEASURED off the real ItemBank (${BLIND_N} items x ${GRAPH.ids.length} kps x ${SCORED_FORMS.length} forms, ${bankMs} ms),`
 );
+say(`     best fixed answer, pooled:   ${SCORED_FORMS.map((x) => `${x} ${f(measuredByForm[x].rate, 4)}`).join("   ")}`);
+say(`     best fixed answer, WORST kp: ${SCORED_FORMS.map((x) => `${x} ${f(measuredByForm[x].worst, 4)} (${measuredByForm[x].worstCell})`).join("   ")}`);
+say(`     round-2's shape-uniform bot: ${SCORED_FORMS.map((x) => `${x} ${f(measuredByForm[x].shapeRate, 4)}`).join("   ")}  <- the strategy that missed all of it`);
 say(`  for contrast, the model's own belief at band 3: ${Object.keys(TRUE_FORM).map((f2) => `${f2} ${(BAND[3].guess * (M.guessByForm[f2] ?? 1)).toFixed(3)}`).join("   ")}`);
 say("");
 
@@ -1331,19 +1804,45 @@ for (const a of asserts) {
 }
 say("");
 
-say("PART A2 — blind success measured against the REAL item bank, per answer type");
+say("PART A2 — blind success measured against the REAL item bank");
 say("-".repeat(100));
-say("  form/answerType".padEnd(34) + "n".padStart(8) + "hits".padStart(8) + "rate".padStart(10) + "95% u.b.".padStart(11));
-for (const [k, v] of Object.entries(measuredByType).sort((a, b) => b[1].hits / b[1].n - a[1].hits / a[1].n)) {
-  say(`  ${k}`.padEnd(34) + String(v.n).padStart(8) + String(v.hits).padStart(8) + f(v.hits / v.n, 4).padStart(10) + f(wilsonUpper(v.hits, v.n), 4).padStart(11));
+say("  Strategy: type ONE string on every item of a (knowledge point x form) cell and keep the best.");
+say("  Items come from ItemBank.select(); the string comes from ItemBank.accepts(); the verdict is ItemBank.check().");
+say("");
+say("  form/answerType".padEnd(30) + "n".padStart(7) + "shape".padStart(9) + "bestCell".padStart(11) + "  <- 'shape' is round 2's strategy");
+for (const [k, v] of Object.entries(measuredByType).sort((a, b) => b[1].best - a[1].best)) {
+  say(`  ${k}`.padEnd(30) + String(v.n).padStart(7) + f(v.hits / v.n, 4).padStart(9) + f(v.best, 4).padStart(11));
 }
 say("");
 if (hotCells.length) {
-  say(`  cells above the §9 tripwire of ${TRIPWIRE} (a knowledge point whose answer space is smaller than the content file assumes):`);
-  for (const h of hotCells) say(`    ${h.cell.padEnd(34)} ${f(h.rate, 4)}  [${h.types}]   ${h.rate > OVER_CAP ? "*** ABOVE maxTrueGuess " + OVER_CAP + " ***" : ""}`);
+  say(`  cells above the §9 tripwire of ${TRIPWIRE}, with the string that does it and what the ENGINE did about it:`);
+  say(
+    "    cell".padEnd(38) +
+      "blind".padStart(8) +
+      "  by typing".padEnd(24) +
+      "engine verdict"
+  );
+  for (const h of hotCells) {
+    const [kpId, form] = h.cell.split("|");
+    const scorable = enginePricing.isScorable(kpId, form, "solo");
+    const priced = scorable ? enginePricing.modelledGuess(kpId, GRAPH.band(kpId), form, "solo") : null;
+    const base = GRAPH.band(kpId).guess * (M.guessByForm[form] ?? 1);
+    say(
+      `    ${h.cell}`.padEnd(38) +
+        f(h.rate, 4).padStart(8) +
+        `  ${JSON.stringify(h.answer)}`.padEnd(24) +
+        (scorable
+          ? `re-priced ${f(base, 3)} -> ${f(priced, 3)}`
+          : `*** REFUSED (was priced ${f(base, 3)}) ***`)
+    );
+  }
 } else {
   say(`  no (kp x form) cell above the §9 tripwire of ${TRIPWIRE}.`);
 }
+say("");
+const relaxedNodes = enginePricing.cellPricing.description.relaxed;
+say(`  CONTENT CONSEQUENCE: ${overCapCells.length} cells refused; ${relaxedNodes.length} knowledge points left with one honest form`);
+for (const r of relaxedNodes) say(`    ${r.kpId.padEnd(24)} survives on: ${r.forms.join(", ")}`);
 say("");
 
 say("PART B — cohorts");
@@ -1367,6 +1866,9 @@ const row = (label, c) =>
   );
 row("median learner", median);
 row("mixed population (long)", mixedLong);
+row("LIVE median learner", liveMedian);
+row("LIVE blind guesser", liveGuesser);
+row("LIVE hint-abuser (100% right)", liveHintAbuser);
 row("patient guessing bot", guesser);
 row("bank-priced guessing bot", bankGuesser);
 row("mashing bot", masher);
@@ -1383,6 +1885,17 @@ say(
   `  median learner: mean theta ${median.meanTheta.toFixed(2)}, retention pass rate ${pct(median.retentionPassRate ?? 0)}, ` +
     `median sessions to 80% ${median.medianSessionsTo80}, median scored opportunities to 80% ${median.medianScoredTo80 == null ? "n/a" : Math.round(median.medianScoredTo80)}`
 );
+say("");
+say("  LIVE arms — every answer a real string, marked by ItemBank.check(). No rate parameter exists in this loop:");
+for (const [label, c] of [
+  ["median learner", liveMedian],
+  ["blind guesser", liveGuesser],
+  ["hint-abuser", liveHintAbuser],
+])
+  say(
+    `    ${label.padEnd(18)} raw item accuracy ${pct(c.liveRate ?? 0).padStart(7)} (${c.liveRight}/${c.liveServed})` +
+      `   certified ${c.meanMastered.toFixed(3).padStart(7)}/32   peak ever ${String(c.peakEverMastered).padStart(2)}   gate opens ${c.meanGateOpens.toFixed(2)}`
+  );
 say("");
 say("  sensitivity of L5 to the hand-authored `trueGuessByForm.construct = 0.03`:");
 say("    forced blind rate   certified/32   >=80% of runs");
@@ -1461,12 +1974,39 @@ const json = {
   budget: { sessions: SESSIONS, sessionMinutes: SESSION_MINUTES, learners: LEARNERS, bots: BOTS, blindItemsPerCell: BLIND_N },
   trueGuessByForm: TRUE_FORM,
   trueGuessByPhase: TRUE_PHASE,
-  measuredBlindByForm: Object.fromEntries(Object.entries(measuredByForm).map(([k, v]) => [k, { n: v.n, hits: v.hits, rate: Number(v.rate.toFixed(5)), upper95: Number(v.upper95.toFixed(5)) }])),
-  measuredBlindByAnswerType: Object.fromEntries(Object.entries(measuredByType).map(([k, v]) => [k, { n: v.n, hits: v.hits, rate: Number((v.hits / v.n).toFixed(5)) }])),
-  measuredBlindHotCells: hotCells.map((h) => ({ cell: h.cell, rate: Number(h.rate.toFixed(5)), types: h.types, n: h.n })),
+  measuredBlindByForm: Object.fromEntries(
+    Object.entries(measuredByForm).map(([k, v]) => [
+      k,
+      {
+        n: v.n,
+        hits: v.hits,
+        pooledRate: Number(v.rate.toFixed(5)),
+        upper95: Number(v.upper95.toFixed(5)),
+        worstCellRate: Number(v.worst.toFixed(5)),
+        worstCell: v.worstCell,
+        roundTwoShapeStrategy: Number(v.shapeRate.toFixed(5)),
+      },
+    ])
+  ),
+  measuredBlindByAnswerType: Object.fromEntries(Object.entries(measuredByType).map(([k, v]) => [k, { n: v.n, shapeRate: Number((v.hits / v.n).toFixed(5)), bestCellRate: Number(v.best.toFixed(5)) }])),
+  measuredBlindHotCells: hotCells.map((h) => {
+    const [kpId, form] = h.cell.split("|");
+    const scorable = enginePricing.isScorable(kpId, form, "solo");
+    return {
+      cell: h.cell,
+      rate: Number(h.rate.toFixed(5)),
+      byTyping: h.answer,
+      types: h.types,
+      n: h.n,
+      engineVerdict: scorable ? "re-priced" : "refused",
+      modelledGuessBefore: Number((GRAPH.band(kpId).guess * (M.guessByForm[form] ?? 1)).toFixed(5)),
+      modelledGuessAfter: scorable ? Number(enginePricing.modelledGuess(kpId, GRAPH.band(kpId), form, "solo").toFixed(5)) : null,
+    };
+  }),
+  bankPricing: enginePricing.cellPricing.description,
   sensitivitySweep: sweep.map((s) => ({ forcedBlindRate: s.rate, meanCertified: Number(s.cohort.meanMastered.toFixed(4)), shareAt80: Number(s.cohort.shareAt80.toFixed(4)) })),
   assertions: asserts,
-  cohorts: { median, mixedLong, guesser, bankGuesser, masher, formHunter, hintAbuser, hintLeak, retentionHintLeak, retentionFast, legacyRetention, ablated, noClockReset },
+  cohorts: { median, mixedLong, liveMedian, liveGuesser, liveHintAbuser, guesser, bankGuesser, masher, formHunter, hintAbuser, hintLeak, retentionHintLeak, retentionFast, legacyRetention, ablated, noClockReset },
   claims: claimRows,
   conformance: conformance.map((c) => ({ row: c.row, target: c.target, value: c.value, hit: c.hit, declaredMiss: c.declared ?? null })),
   result,

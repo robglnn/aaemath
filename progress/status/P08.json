@@ -1,0 +1,9 @@
+{
+  "id": "P08",
+  "state": "critique",
+  "round": 1,
+  "gap": null,
+  "note": "Avatar+Animator+boot32 shipped: code-built faceted humanoid (856 tris, 5 hero materials from Materials.js), 14-joint procedural rig, distance-driven phase, camera-opacity fade, capsule retired. Captures: p08-idle/run/air/shadow, all problems:[].",
+  "evidence": [],
+  "updated": "2026-08-10T05:53:24.926Z"
+}

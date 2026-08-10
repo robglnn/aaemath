@@ -117,6 +117,51 @@ real probe state, never the builder's summary). Workflow scripts are reusable:
 6. Then P06 traversal, P14 VFX, P21–P29 (HUD, menus, onboarding, progress viz, audio, building,
    session/save, coherence, delivery).
 
+## 6a. FIRST CRITIC VERDICTS (2026-08-10) — start here
+
+Four pieces got their first-ever hostile review. Scores are brutal and correct. Fix in this order.
+
+**P11 lighting/materials — 3/100. The most important finding in the project so far.**
+> `app/src/world/Materials.js` is **dead code in the shipped game**. It is imported by exactly one
+> file, `Lighting.js`, and by no world module — `Terrain.js`, `Scatter.js`, `Level01.js` all return
+> zero hits for `materials.get`. The entire 49 KB flat-shaded factory paints only the synthetic
+> `materialBoard` scene that P11's own measure script spawns.
+
+Consequence: in the real frame rock shadows read hue 33–40 (a plain darker ochre, value-only ramp)
+against the target's hue 196–203. **A ~160° hue miss on the largest read in the frame**, and the
+reason the world looks flat-brown rather than two-value. Terrain *ground* shadow does work
+(hue 120, matching `#223522`), so the rig is fine — the failure is rock/scatter not using it.
+- Fix: `Scatter.js:1058` and `:1092` construct `new THREE.MeshStandardMaterial(...)` directly (its own
+  comment at line 1042 announces "Every material in this piece: MeshStandardMaterial"). Replace with
+  `materials.get('rock')` / `materials.get('foliage')`. Same for `Terrain.js` and `Level01.js`.
+- Until a world mesh holds a factory material, **no P11 colour claim describes the game**.
+
+**P09 terrain/composition — 4/100.**
+> The authored spawn frame has no subject. `Level01.js:92`'s own comment says the river "is what walks
+> the eye from the foreground to the horizon" — across three captures spanning >180° of look-around,
+> **zero teal ribbon is visible anywhere**. Large forms are single-plane cutouts: the left spire is one
+> uniform dark value across 420×420 px with a single hairline seam.
+
+`Terrain.js:519` `shard()` defaults `rings: []`, so a spire is base-ring → apex — one visible quad from
+the side. Use `sides: 6-7, rings: [[0.28,0.92],[0.62,0.66]]` for anything above ~20 m. Budget is not the
+constraint: **172,694 triangles against a 1.6 M ceiling, 63 draw calls against 320 — 9× headroom unused.**
+
+**P15 KaTeX — 7/100.** `TexPanel.rasterize` sets canvas width from ink width with no clamp, so a
+20,000-character claim allocates a ~9,400 px canvas. Unbounded allocation; clamp it.
+
+**P16 mastery — see §7.** `eq-special-cases|construct` measures **0.335 blind on the shipped bank** —
+above the content file's own `maxTrueGuess` of 0.30 — yet is priced at a modelled 0.10.
+
+### The meta-lesson: two builders' proof scripts were themselves broken
+- `review/measure/P09.mjs:290` references `belowHits`, never declared in the page-evaluate scope. The
+  script dies with a ReferenceError before printing a single claim — so claims S1–S4, C1–C3, K1–K3 and
+  P1–P4 were **all unproven**, not passing.
+- `review/measure/P11.mjs` C1 returns −876.261 with "lit reference Y 0"; C2 reports NOT RUN. Broken,
+  not failing. And every claim it does make is measured on a synthetic board, not the shipped game.
+
+**Therefore: a green proof script is worth nothing until someone confirms it runs and measures the real
+game.** Any critic must re-run the builder's script AND check what scene it is actually measuring.
+
 ## 7. Learning-integrity findings that must not regress
 
 Critics found three separate routes by which scaffolded practice could be laundered into unearned

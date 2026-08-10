@@ -143,20 +143,47 @@ async function cmdVerify() {
       // strafing (the body slides toward its own left while facing you). Every automated check passed,
       // because they all measured the *input* against the camera basis, which was correct throughout.
       // Nothing compared the body's facing to its motion, so nothing could see it.
-      await d.hold("KeyW", 1.0);
-      const moved = await d.report();
-      const flat = Object.values(moved.probes ?? {}).filter((p) => p && typeof p === "object");
-      const heading = flat.find((p) => typeof p.headingDeg === "number")?.headingDeg;
-      const yaw = flat.find((p) => typeof p.yawDeg === "number")?.yawDeg;
-      if (typeof heading === "number" && typeof yaw === "number") {
-        const delta = Math.abs(((heading - yaw + 540) % 360) - 180);
-        if (delta > 30) {
+      // Compare the body's actual world-space forward axis against the direction it is travelling.
+      //
+      // The first version of this check compared the `headingDeg` and `yawDeg` probes, which differ
+      // by 180 degrees BY CONSTRUCTION — `headingDeg` negates z to read as a compass bearing and
+      // `yawDeg` does not. That made a correct avatar look broken, and "fixing" it to satisfy the
+      // gate turned the character around. Read the transform, not two probes that were never in the
+      // same convention.
+      await d.hold("KeyW", 1.0, { release: false });
+      const facing = await d.run(() => {
+        const k = window.__vs?.kernel;
+        const av = k?.byName.get("avatar");
+        // `body` holds the yaw; `root` only holds position. Reading `root` here made this gate
+        // blind — it always reported the same answer regardless of the avatar's actual facing.
+        const body = av?.body ?? av?.root;
+        if (!body) return null;
+        const before = body.getWorldPosition(new k.camera.position.constructor()).clone();
+        for (let i = 0; i < 12; i++) window.__vs.advance(1 / 60);
+        const after = body.getWorldPosition(new k.camera.position.constructor());
+        const vx = after.x - before.x;
+        const vz = after.z - before.z;
+        const speed = Math.hypot(vx, vz);
+        if (speed < 0.05) return { moved: speed };
+        // Local +Z of the body, in world space — the direction the authored model faces.
+        const m = body.matrixWorld.elements;
+        const fLen = Math.hypot(m[8], m[10]) || 1;
+        const dot = ((vx / speed) * m[8] + (vz / speed) * m[10]) / fLen;
+        return { moved: speed, alignment: dot };
+      });
+      await d.page.keyboard.up("KeyW");
+
+      if (facing && typeof facing.alignment === "number") {
+        const deg = (Math.acos(Math.max(-1, Math.min(1, facing.alignment))) * 180) / Math.PI;
+        if (facing.alignment < 0.5) {
           failures.push(
-            `[${lang}] avatar faces ${delta.toFixed(0)}deg away from its direction of travel ` +
-              `(heading ${heading.toFixed(0)}, yaw ${yaw.toFixed(0)}) — arms will read swapped and strafing reversed`
+            `[${lang}] avatar's front points ${deg.toFixed(0)}deg away from its direction of travel — ` +
+              `it is running sideways or backwards`
           );
         }
-        lines.push(`[${lang}] facing: heading ${heading.toFixed(0)} vs yaw ${yaw.toFixed(0)} (${delta.toFixed(0)}deg off)`);
+        lines.push(`[${lang}] facing: front is ${deg.toFixed(0)}deg off the travel direction`);
+      } else if (facing) {
+        lines.push(`[${lang}] facing: not checked (avatar moved only ${(facing.moved ?? 0).toFixed(3)}m)`);
       }
 
       const i18n = report.probes?.i18n;

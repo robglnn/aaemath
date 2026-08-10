@@ -439,14 +439,21 @@ export class Avatar {
       // `groundAt`. No import crosses the boundary; if it is ever gone, the fallback below still
       // produces a facing from where the body actually went.
       const h = src.heading;
-      // `heading.y` is the world **z** component, and world -z is forward. Reading it without the
-      // sign flip put the avatar at yaw 180 while travelling at heading 0 — the body faced exactly
-      // backwards down its own line of travel. That reads as two separate bugs to a player and is
-      // only one: the arms appear swapped (you are looking at the character's front, so its left
-      // hand is on your right) and strafing appears reversed (the body slides toward its own left
-      // while facing you), even though the movement itself is correct against the camera basis.
-      // `Locomotion`'s own `headingDeg` probe already negates it; this is the same convention.
-      if (h && (h.x || h.y)) this._yaw = Math.atan2(h.x, -h.y);
+      // CORRECT AS WRITTEN. Measured: heading (0,-1) gives yaw = atan2(0,-1) = pi, which maps the
+      // model's authored front (local +Z, see `prism`) onto world -z — exactly the velocity. The
+      // body's +Z axis then dots to +1 against motion.
+      //
+      // This line was "fixed" twice on bad evidence and both attempts made it worse, so the trail is
+      // worth keeping:
+      //   * `atan2(h.x, -h.y)` is a MIRROR, not a rotation. It matches a half turn only when
+      //     h.x === 0 (running dead ahead) and diverges the moment you strafe.
+      //   * `atan2(-h.x, -h.y)` is a real half turn, and wrong here for the same reason: there was
+      //     nothing to turn.
+      // Both were chased on a facing measurement that read `avatar.root` — which carries position
+      // only and never rotates — so it reported the same answer whatever this line said. Verify
+      // with review/measure/facing-dump.mjs, which prints heading, velocity and the body's own axes
+      // side by side and infers nothing.
+      if (h && (h.x || h.y)) this._yaw = Math.atan2(h.x, h.y);
       this._leanSrc = src.lean ?? 0;
       this._pushSrc = src.push ?? 0;
       this._squash = src.squash ?? 0;

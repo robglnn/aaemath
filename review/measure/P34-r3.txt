@@ -1,0 +1,224 @@
+(node:64008) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+==================================================================================================
+P34 — the learning round trip, driven through the SHIPPED BUILD
+==================================================================================================
+build ready: true   fatal: none   locale: en
+console errors: 0   katex failed: 0   raw TeX leak: false
+
+--------------------------------------------------------------------------------------------------
+SIGNAL TRACE — the ordered list of signals actually observed on the bus, per cycle
+(observer: boot/92-teaching.js; every emitter is shipped code under app/src)
+--------------------------------------------------------------------------------------------------
+cycle  0  ?  
+   t=   1.38  learn:teach    var-meaning             {"phase":"solo"}
+cycle  1  var-meaning  var-meaning.seat/generate/1spsl3y
+   t=   1.38  learn:present  var-meaning           
+   t=   1.38  math:show      var-meaning           
+   t=   1.38  math:show      var-meaning           
+   t=   1.38  math:show      var-meaning           
+   t=   1.38  math:show      var-meaning           
+   t=   1.38  math:show      var-meaning           
+   t=   2.17  math:show      var-meaning           
+   t=   3.75  learn:respond  var-meaning             {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2367,"hinted":false}
+   t=   3.75  learn:mastery  var-meaning             {"p":0.79292,"delta":0.44292,"status":"learning"}
+   t=   5.37  math:hide                            
+   t=   5.37  math:hide                            
+   t=   5.37  math:hide                            
+   t=   5.37  math:hide                            
+   t=   5.37  math:hide                            
+   t=   5.88  learn:teach    var-meaning             {"phase":"solo"}
+cycle  2  var-meaning  var-meaning.seat/repair/9gqe4t
+   t=   5.88  learn:present  var-meaning           
+   t=   5.88  math:show      var-meaning           
+   t=   5.88  math:show      var-meaning           
+   t=   5.88  math:show      var-meaning           
+   t=   5.88  math:show      var-meaning           
+   t=   5.88  math:show      var-meaning           
+   t=   5.88  math:show      var-meaning           
+   t=   5.88  math:show      var-meaning           
+   t=    6.4  math:show      var-meaning           
+   t=   8.18  learn:respond  var-meaning             {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2300,"hinted":false}
+   t=   8.18  learn:mastery  var-meaning             {"p":0.967474,"delta":0.174554,"status":"learning"}
+   t=   9.78  math:hide                            
+   t=   9.78  math:hide                            
+   t=   9.78  math:hide                            
+   t=   9.78  math:hide                            
+   t=   9.78  math:hide                            
+   t=   9.78  math:hide                            
+   t=   9.78  math:hide                            
+   t=  10.28  learn:teach    var-meaning             {"phase":"solo"}
+cycle  3  var-meaning  var-meaning.twin/construct/p1bbch
+   t=  10.28  learn:present  var-meaning           
+   t=  10.28  math:show      var-meaning           
+   t=  10.28  math:show      var-meaning           
+   t=  10.28  math:show      var-meaning           
+   t=  10.95  math:show      var-meaning           
+   t=  12.53  math:show      var-meaning           
+   t=  12.83  learn:respond  var-meaning             {"correct":true,"scored":false,"credited":false,"family":"var-meaning.twin","latencyMs":2550,"hinted":true}
+   t=  12.83  learn:session                          {"phase":"beat"}
+   t=  14.43  math:hide                            
+   t=  14.43  math:hide                            
+   t=  14.43  math:hide                            
+   t=  14.43  math:hide                            
+   t=  14.93  learn:teach    var-meaning             {"phase":"solo"}
+cycle  4  var-meaning  var-meaning.seat/generate/1gcua5p
+   t=  14.93  learn:present  var-meaning           
+   t=  14.93  math:show      var-meaning           
+   t=  14.93  math:show      var-meaning           
+   t=  14.93  math:show      var-meaning           
+   t=  14.93  math:show      var-meaning           
+   t=  14.93  math:show      var-meaning           
+   t=  15.45  math:show      var-meaning           
+   t=  17.03  learn:respond  var-meaning             {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2100,"hinted":false}
+   t=  17.03  learn:mastery  var-meaning             {"p":0.994776,"delta":0.027302,"status":"learning"}
+   t=  18.65  math:hide                            
+   t=  18.65  math:hide                            
+   t=  18.65  math:hide                            
+   t=  18.65  math:hide                            
+   t=  18.65  math:hide                            
+   t=  19.17  learn:teach    var-meaning             {"phase":"solo"}
+cycle  5  var-meaning  var-meaning.relate/construct/n5wzld
+   t=  19.17  learn:present  var-meaning           
+   t=  19.17  math:show      var-meaning           
+   t=  19.17  math:show      var-meaning           
+   t=  19.17  math:show      var-meaning           
+   t=  19.17  math:show      var-meaning           
+   t=  19.17  math:show      var-meaning           
+   t=  19.88  math:show      var-meaning           
+   t=  21.47  learn:respond  var-meaning             {"correct":false,"scored":true,"credited":false,"family":"var-meaning.relate","latencyMs":2300,"hinted":false}
+   t=  21.47  learn:mastery  var-meaning             {"p":0.966216,"delta":-0.02856,"status":"learning"}
+   t=  23.08  math:hide                            
+   t=  23.08  math:hide                            
+   t=  23.08  math:hide                            
+   t=  23.08  math:hide                            
+   t=  23.08  math:hide                            
+   t=   23.6  learn:teach    var-meaning             {"phase":"solo"}
+cycle  6  var-meaning  var-meaning.seat/repair/1en3shd
+   t=   23.6  learn:present  var-meaning           
+   t=   23.6  math:show      var-meaning           
+   t=   23.6  math:show      var-meaning           
+   t=   23.6  math:show      var-meaning           
+   t=   23.6  math:show      var-meaning           
+   t=   23.6  math:show      var-meaning           
+   t=   23.6  math:show      var-meaning           
+   t=   23.6  math:show      var-meaning           
+   t=  24.08  math:show      var-meaning           
+   t=  25.85  learn:respond  var-meaning             {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2250,"hinted":false}
+   t=  25.85  learn:mastery  var-meaning             {"p":0.995468,"delta":0.029252,"status":"learning"}
+   t=  25.85  learn:session                          {"phase":"beat"}
+   t=  27.47  math:hide                            
+   t=  27.47  math:hide                            
+   t=  27.47  math:hide                            
+   t=  27.47  math:hide                            
+   t=  27.47  math:hide                            
+   t=  27.47  math:hide                            
+   t=  27.47  math:hide                            
+   t=  27.98  learn:teach    var-meaning             {"phase":"solo"}
+cycle  7  var-meaning  var-meaning.seat/generate/1dk34az
+   t=  27.98  learn:present  var-meaning           
+   t=  27.98  math:show      var-meaning           
+   t=  27.98  math:show      var-meaning           
+   t=  27.98  math:show      var-meaning           
+   t=  27.98  math:show      var-meaning           
+   t=  27.98  math:show      var-meaning           
+   t=  28.63  math:show      var-meaning           
+   t=  30.22  learn:respond  var-meaning             {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2233,"hinted":false}
+   t=  30.22  learn:mastery  var-meaning             {"p":0.999288,"delta":0.00382,"status":"learning"}
+   t=  30.22  learn:unlock   var-meaning           
+   t=  30.22  learn:mastery  var-meaning             {"p":0.999288,"delta":0,"status":"provisional"}
+   t=  30.22  learn:session                          {"phase":"focus"}
+   t=  30.22  learn:session                          {"phase":"beat"}
+   t=  31.83  math:hide                            
+   t=  31.83  math:hide                            
+   t=  31.83  math:hide                            
+   t=  31.83  math:hide                            
+   t=  31.83  math:hide                            
+   t=  32.35  learn:teach    expr-anatomy            {"phase":"solo"}
+   ... 30 further cycles, same shape
+
+signal counts: {"learn:present":37,"math:show":198,"math:hide":153,"learn:teach":37,"learn:respond":36,"learn:mastery":30,"learn:unlock":3,"learn:session":22}
+
+--------------------------------------------------------------------------------------------------
+CLAIMS
+--------------------------------------------------------------------------------------------------
+PASS  C1  36 complete cycles observed with the chain present -> display -> respond in order (26 of them also carried learn:mastery, 36 retired with math:hide)
+PASS  R1  THE ANSWER KEY IS GONE AND THE LOOP STILL CLOSES: teachwiring.expected() no longer exists, and 29 of 29 cycles were answered from probe("mathtex").panels alone and marked CORRECT by the shipped ItemBank.check (29 were readable at all; 7 more were answered deliberately wrong to exercise the losing side). Strategies used: {"author-two-names":3,"repair-claim":2,"solve-system":1,"said-claim":1,"second-term":6,"gather-load":3,"repair-value":3,"evaluate":1,"author-to-target":3,"said-load":13}
+PASS  R2  the localized question reaches the glass in en: 36/36 cycles stood an ask row, and on 36/36 the string recovered from the rasterized \text{} was character-for-character what ItemBank.text() returned — no ⟨ask.reading⟩, no partial render (e.g. "Cut two sockets under different names that hold the same value.")
+PASS  R3  the charge in the socket is on screen: 5 given rows stood this run, and 5/5 of the cycles that carry a given showed every line of it — the difference between a floating "t" and "t" with "t = 5" under it
+PASS  R4  the response slot stands from _present() onward, empty or not: 36/36 cycles had a teach-entry row standing before a key was pressed (36 of them showing the empty rule)
+PASS  R5  the item's own graded hint ladder reaches the world: "?" stood teach-hint carrying "\\text{A socket cut for a name, and a charge waiting outside it.}" against ItemBank.present().hints[0] = "A socket cut for a name, and a charge waiting outside it." (rung 1 of the ladder; the response was then priced as hinted=true)
+PASS  R6  the untypeable canonical answer is fixed at the bank: all 1152 committed items now have an accepts()[0] inside ENTRY_GRAMMAR (0 outside) and the shipped check() marks every one of them correct (0 refused). Round 2: "x = 8,\; y = 8" for a pair, "2: 4 \cdot 30" for a repair, 241 items untypeable in total
+PASS  R8  no row the presenter stands covers another: 7 rows compared pairwise in the billboard plane, 0 overlapping
+PASS  R7  every row the presenter stands is inside the frame and above the legibility floor: 7 rows projected through the live camera, 0 outside NDC [-1,1], 0 standing in as the solid mark (teach-ask-0 y[0.776,0.926] teach-ask-1 y[0.64,0.759] teach-claim y[0.515,0.587] teach-given-0 y[0.335,0.438] teach-working-0 y[0.155,0.297] teach-working-1 y[-0.001,0.138] teach-entry y[-0.135,-0.038])
+PASS  C2  the three seams that had no emitter now have one: learn:present x37, math:show x198, math:hide x153
+PASS  C3  learn:present reached its listener: boot/60-mathtex.js flipped the field to driven=true and stood 4/4 authored spawn claims down (they were 4 panels at spawn: leaf9-span, leaf9-share, leaf9-working, leaf9-mark)
+PASS  C4  learn:respond x36 (36 in the trace): 36 carried a reported generator family, 36 carried a real latency, 26 were SCORED by Mastery (the rest were refused by a gate, which is the engine working)
+PASS  C4b  the round-2 delivery defect stayed closed: unreportedFamilyItems = 0 (family reporting: true via scheduler-serve)
+PASS  C5  Mastery consumed the responses: learn:mastery x30, scoredItems 26, refusedUpward 1, unscored 9
+PASS  C6  learn:teach x37 emitted by Scheduler and CONSUMED 37 times by the presenter (phases seen: {"solo":25,"model":3,"guided-1":3,"guided-2":2,"guided-3":4})
+PASS  C6b  learn:respond CONSUMED 36 times by the presenter — the claim is retired on the engine's announcement, not on submit()'s return value
+PASS  C7  Scheduler.serve() is on the shipped path and carried current: served 37 items (source {"generated":7,"catalogue":30}, relaxation {"generated-group-absent":6,"exact":18,"nearest-band":12,"generated":1}), serveMisses 0
+PASS  C7b  the session layer recorded delivery for every request: 37/37 carried an item, 37 carried a family, itemRelaxation {"generated-group-absent":6,"exact":18,"nearest-band":12,"generated":1}
+PASS  C8  8 item groups were loaded LAZILY on this page ({"demand":2,"prefetch":3,"explicit":3,"suppressed":0}); 0 chunk(s) arrived before the loop opened, 9 more during play: var-meaning, expr-anatomy, oo-numeric, oo-structure, translate-phrase, props-operations, like-terms-id, translate-order, translate-sentence
+PASS  C8b  the loader followed the learner past the lesson it started in: items were presented from ["expressions-1","structure-1","translation-1"] and chunks arrived for ["expressions-1","expressions-2","translation-1","structure-1","translation-2"] (1 frontier warm(s), triggers ["boot"]; the rest came from the learn:present and learn:unlock routes in boot/62-itembank.js)
+PASS  C9  learn:unlock x3 — a gate crossing reached its listener (nodes unlocked this run: ["var-meaning","expr-anatomy","translate-phrase"])
+PASS  C9b  P15 rule O1 holds for what the ENGINE stands, not just for what the level authored: 7 presented claim(s) measured, worst occlusion 0% (teach-ask-0 0%, teach-ask-1 0%, teach-claim 0%, teach-given-0 0%, teach-working-0 0%, teach-working-1 0%, teach-entry 0%)
+PASS  C11  the loop survives a sitting boundary: flow.restart() closed sitting 0 and opened 1, the presenter re-armed on learn:session{open} and was standing again, and the in-flight response was scored through the engine rather than lost (rescued 1, dropped 0)
+PASS  C10  the shipped page stayed clean while the loop ran: 0 console errors, 0 KaTeX failures, raw TeX leak false
+
+--------------------------------------------------------------------------------------------------
+THE RUN
+--------------------------------------------------------------------------------------------------
+cycles driven            36
+presenter               {"cycles":36,"presented":37,"committed":36,"correct":29,"wrong":7,"unscored":10,"unserved":0,"familyMissing":0,"rescued":1,"dropped":0,"emptyRequests":0,"shows":198,"hides":153,"textRows":65,"textRefused":0,"proseClipped":0,"givenRows":5,"askRows":45,"saidRows":19,"hintsShown":1,"hintedItems":1,"teachHeard":37,"respondHeard":36,"bySource":{"generated":7,"catalogue":30},"byRelaxation":{"generated-group-absent":6,"exact":18,"nearest-band":12,"generated":1},"byPhase":{"solo":25,"model":3,"guided-1":3,"guided-2":2,"guided-3":4}}
+knowledge points seen   ["var-meaning","expr-anatomy","props-operations","translate-phrase","translate-order"]
+lessons seen            ["expressions-1","structure-1","translation-1"]
+forms x phases          {"generate|solo":6,"repair|solo":5,"construct|solo":13,"construct|model":3,"construct|guided-1":3,"construct|guided-2":2,"construct|guided-3":4}
+item source             {"generated":7,"catalogue":29}
+mastery summary         level1 0%  scored 26  certifications 0
+session                 phase work  items 16  beats 5  close null
+field                   4 panels standing: ["teach-ask-0","teach-claim","teach-said-0","teach-entry"]
+
+--------------------------------------------------------------------------------------------------
+WHAT THE READER SAW, PER CYCLE — the response, and where it came from
+--------------------------------------------------------------------------------------------------
+   0 var-meaning      generate  ask=ask.gen.namesDiffer    rows[ask 2 said 0 given 1 working 0 entry 1] -> author-two-names  typed "a = 5; b = 5"       CORRECT
+   1 var-meaning      repair    ask=ask.repair             rows[ask 2 said 0 given 1 working 2 entry 1] -> repair-claim      typed "2: m = 9"           CORRECT
+   2 var-meaning      construct ask=ask.pair               rows[ask 1 said 0 given 0 working 0 entry 1] -> solve-system      typed "x=8, y=8"           CORRECT
+   3 var-meaning      generate  ask=ask.gen.namesDiffer    rows[ask 2 said 0 given 1 working 0 entry 1] -> author-two-names  typed "a = 12; b = 12"     CORRECT
+   4 var-meaning      construct ask=ask.claim              rows[ask 1 said 2 given 0 working 0 entry 1] -> said-claim        typed "-999"               wrong
+   5 var-meaning      repair    ask=ask.repair             rows[ask 2 said 0 given 1 working 2 entry 1] -> repair-claim      typed "2: q = 9"           CORRECT
+   6 var-meaning      generate  ask=ask.gen.namesDiffer    rows[ask 2 said 0 given 1 working 0 entry 1] -> author-two-names  typed "a = 7; b = 7"       CORRECT
+   7 expr-anatomy     construct ask=ask.term               rows[ask 1 said 0 given 0 working 0 entry 1] -> second-term       typed "-6*x"               CORRECT
+   8 expr-anatomy     construct ask=ask.term               rows[ask 1 said 0 given 0 working 0 entry 1] -> second-term       typed "-5*x"               CORRECT
+   9 expr-anatomy     construct ask=ask.term               rows[ask 1 said 0 given 0 working 0 entry 1] -> second-term       typed "-999"               wrong
+  10 expr-anatomy     construct ask=ask.term               rows[ask 1 said 0 given 0 working 0 entry 1] -> second-term       typed "-9*x"               CORRECT
+  11 expr-anatomy     construct ask=ask.term               rows[ask 1 said 0 given 0 working 0 entry 1] -> second-term       typed "-8*x"               CORRECT
+  12 expr-anatomy     construct ask=ask.term               rows[ask 1 said 0 given 0 working 0 entry 1] -> second-term       typed "-2*x"               CORRECT
+  13 props-operations construct ask=ask.load               rows[ask 1 said 0 given 0 working 0 entry 1] -> gather-load       typed "-8*x + 3"           CORRECT
+
+--------------------------------------------------------------------------------------------------
+OPEN FINDING FOR THE CONTENT PIECES — not fixed here, measured here
+--------------------------------------------------------------------------------------------------
+  226 of the bank's 303 generate items are marked CORRECT by the shipped checker when the response is the stem the presenter is standing.
+  "Author a claim that closes at 35" is asked with an accepted answer already in the frame. The presenter cannot
+  drop the stem safely — 'reshape' and 'partitionWitness' items are ABOUT the stem — so this is a content or a
+  checker decision (P17/P18), and it is why lib/reader.mjs answers every ask.gen.* from the ask and never by
+  copying the stem: a proof that leaned on the leak would be measuring the leak.
+  Also seen: ask.gen.sealCan / ask.gen.gathersTo interpolate the checker's machine spelling into player prose ("... comes to 24*n^-1").
+
+warnings from the running page:
+   learning: CONTENT: "expr-anatomy" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.
+   learning: CONTENT: "eq-special-cases" has NO mastery-eligible form left after the bank audit and can never be certified
+   learning: CONTENT: "eq-special-cases" (band 5) has NO mastery-eligible form on ANY delivery — every generator family of every scored form is above the caps [construct:eq-special-cases.always@1 answers "always", construct:eq-special-cases.refusal@1 answers "none", repair:eq-special-cases.always@1 answers "3: 0 = 0", generate:eq-special-cases.always@1 answers "5\left(x + 2\right) = 5x + 10", generate:eq-special-cases.refusal@1 answers "4x - 3 = 4x - 1"]. It can never be certified and it has no test-out. The fix is a new low-guess construct/repair pool with more distinct answers, never a looser threshold.
+   learning: TEST-OUT: "eq-special-cases" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.
+   learning: CONTENT: "eq-special-cases" (band 5) has NO mastery-eligible form on ANY delivery — every generator family of every scored form is above the caps [construct:eq-special-cases.always@1 answers "always", construct:eq-special-cases.refusal@1 answers "none", repair:eq-special-cases.always@1 answers "3: 0 = 0", generate:eq-special-cases.always@1 answers "5\left(x + 2\right) = 5x + 10", generate:eq-special-cases.refusal@1 answers "4x - 3 = 4x - 1"]. It can never be certified and it has no test-out. The fix is a new low-guess construct/repair pool with more distinct answers, never a looser threshold.
+   learning: TEST-OUT: "eq-special-cases" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.
+   math: claim "leaf9-span" reads 27.2 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.22 px, so the mark stands until the player is closer
+   math: claim "leaf9-share" reads 27.2 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.22 px, so the mark stands until the player is closer
+
+==================================================================================================
+24/24 claims pass
+==================================================================================================
+evidence: review/measure/evidence/P34.json

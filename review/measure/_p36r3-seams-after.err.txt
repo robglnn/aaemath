@@ -1,0 +1,20 @@
+
+1 file(s) imported by nothing, 29 file(s) with never-imported exports, 10 signal(s) with no listener, 3 listener(s) with no emitter
+A file imported by nothing is not necessarily dead — it may be reached by the boot glob or be a
+genuine leaf. But every entry here is a seam somebody has to justify out loud.
+
+7 closed seam(s) still unpriced, by declaration:
+  learn:present — owed by P34
+  learn:respond — owed by P34
+  learn:teach — owed by P34
+  learn:unlock — owed by P34
+  math:hide — owed by P34
+  math:show — owed by P34
+  quality:tier — owed by P35
+
+5 closed seam(s) with an effect on record:
+  camera:probe — hygiene, no behavioural difference (P36)
+  camera:shake — never one-ended; listener at app/src/play/CameraRig.js:474
+  camera:target — never one-ended; listener at app/src/play/CameraRig.js:520, app/src/world/Lighting.js:639
+  input:look — never one-ended; listener at app/src/play/CameraRig.js:422
+  world:resonance — pixels 0 → 412 (P36)

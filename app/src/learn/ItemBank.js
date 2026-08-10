@@ -1015,8 +1015,34 @@ export class ItemBank {
   /**
    * The documented acceptance set for an item, as example strings. Kept next to the checker on
    * purpose: a claim about what is accepted that is not executed is a claim nobody can trust.
+   *
+   * ==================================================================================================
+   * `accepts(item)[0]` IS GUARANTEED TYPEABLE, AND IT DID NOT USED TO BE
+   *
+   * The learner constructs a response by typing, and `learn/Teaching.js`'s entry admits exactly
+   * `ENTRY_GRAMMAR` below — no backslash, no braces, no superscript. Round 2 shipped a bank whose own
+   * first accepted spelling was outside that set for 241 of 1,152 committed items:
+   * `answerType: "pair"` documented `x = 8,\; y = 8`, `repair` documented `2: 4 \cdot 30`,
+   * `expression` documented `\frac{11}{n}`, `partition` documented `3x, 7x \;\mid\; 4y, 2y \;\mid\; 6`
+   * and `construction` documented `2 - 2\left(x + 8\right)`. Not one of them can be entered through
+   * the shipped surface. An acceptance set stated in a grammar the answer surface refuses is not an
+   * acceptance set; it is a defect wearing documentation.
+   *
+   * So `spellTypeable` rewrites the canonical (or, failing that, the TeX) into the grammar the entry
+   * allows — `\cdot` to `*`, `\frac{a}{b}` to `(a)/(b)`, `\ge` to `>=`, `x^{2}` to `x*x`, spacing
+   * commands to spaces — and the result goes FIRST. `review/measure/P34.mjs` runs the shipped
+   * `check()` over every committed item's `accepts()[0]` and fails the run unless all 1,152 are both
+   * inside the grammar and marked correct. The old spellings stay in the list behind it: they are
+   * still accepted, they are just no longer the one a caller reaches for first.
+   * ==================================================================================================
    */
   accepts(item) {
+    const first = spellTypeable(item);
+    const rest = this.#acceptsRaw(item);
+    return first ? [first, ...rest.filter((s) => s !== first)] : rest;
+  }
+
+  #acceptsRaw(item) {
     const a = item.answer;
     switch (item.answerType) {
       case "integer":
@@ -1455,6 +1481,83 @@ function pickIndex(seed, n) {
 function parseRatString(s) {
   const [n, d] = String(s).split("/");
   return rat(Number(n), d === undefined ? 1 : Number(d));
+}
+
+/* ------------------------------------------------------------------ the entry grammar */
+
+/**
+ * ONE CHARACTER OF A CONSTRUCTED RESPONSE — the acceptance set stated in the grammar the answer
+ * surface allows, which is the whole point of it living here.
+ *
+ * `learn/Teaching.js` owns the entry and has its own copy as a fallback; `boot/92-teaching.js`
+ * injects THIS one over it, so the set the bank promises and the set the keyboard admits are the
+ * same object at runtime and cannot drift into the round-2 state where they disagreed on 241 items.
+ * Every character is legal KaTeX on its own, so a half-typed response never reaches `Tex.validate`
+ * as something it must refuse.
+ */
+export const ENTRY_GRAMMAR = /^[0-9a-zA-Z+\-*/=<>.,()|:; ]$/;
+const ENTRY_GRAMMAR_ALL = /^[0-9a-zA-Z+\-*/=<>.,()|:; ]*$/;
+
+/** Is this whole spelling something the learner could actually type? */
+export function isTypeable(s) {
+  return ENTRY_GRAMMAR_ALL.test(String(s ?? ""));
+}
+
+/**
+ * TeX -> the entry grammar. Meaning-preserving by construction: every rewrite below is a different
+ * spelling of the same operation, and `#canonicalize` reads both spellings to the same canonical
+ * form. `x^{2}` becomes `x*x` because the entry has no superscript and `\^` is not legal KaTeX on
+ * its own — the alternative was admitting `^`, which makes the half-typed `x^` a refused claim and
+ * therefore a recorded KaTeX failure on a surface that is re-typeset every keystroke.
+ */
+function deTex(src) {
+  let s = String(src ?? "");
+  s = s.replace(/\\left|\\right/g, "");
+  s = s.replace(/\\cdot|\\times/g, "*");
+  s = s.replace(/\\div/g, "/");
+  s = s.replace(/\\ge/g, ">=").replace(/\\le/g, "<=");
+  s = s.replace(/\\mid/g, "|");
+  s = s.replace(/\\quad|\\qquad|\\;|\\,|\\:|\\!/g, " ");
+  // Nested fractions need more than one pass; four is deeper than anything the bank ships.
+  for (let i = 0; i < 4; i += 1) s = s.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)");
+  s = s.replace(/([A-Za-z0-9)])\^\{?(\d)\}?/g, (m, base, n) => {
+    const k = Number(n);
+    return k >= 1 && k <= 4 ? Array(k).fill(base).join("*") : m;
+  });
+  s = s.replace(/\\\{|\\\}/g, "").replace(/[{}]/g, "");
+  return s.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * The first spelling of this item's answer that a learner could type. `null` when nothing survives —
+ * which is a content fault worth seeing rather than papering over, so it is not substituted for.
+ */
+function spellTypeable(item) {
+  const a = item?.answer;
+  if (!a) return null;
+  const pick = (...candidates) => {
+    for (const c of candidates) {
+      if (c == null) continue;
+      const s = deTex(c);
+      if (s && isTypeable(s)) return s;
+    }
+    return null;
+  };
+  switch (item.answerType) {
+    case "repair": {
+      // `2|120` and `2|1*q + -9 = 0` — the line number, then the value in whichever kind it is.
+      const i = String(a.canonical ?? "").indexOf("|");
+      if (i < 0) return pick(a.canonical, a.tex);
+      const value = pick(a.canonical.slice(i + 1), a.tex);
+      return value ? `${a.canonical.slice(0, i)}: ${value}` : null;
+    }
+    case "partition":
+      return pick(String(a.canonical ?? "").replace(/\|/g, " | "), a.tex);
+    case "pair":
+      return pick(String(a.canonical ?? "").replace(/;/g, ", "), a.tex);
+    default:
+      return pick(a.canonical, a.tex);
+  }
 }
 
 function flipEquation(tex) {

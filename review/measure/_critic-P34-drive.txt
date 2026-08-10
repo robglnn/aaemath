@@ -1,0 +1,271 @@
+(node:41608) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+================================================================================================
+CRITIC DRIVER — built bundle, own bus recorder (emit wrapper installed: true), mode=know
+================================================================================================
+sim seconds of play: 206.55   cycles driven: 45   console errors: 0
+
+ALL SIGNAL COUNTS SEEN ON THE BUS (every name, not an allow-list):
+{
+ "world:collider": 4,
+ "player:spawn": 1,
+ "player:state": 58,
+ "world:sun": 1768,
+ "camera:probe": 12152,
+ "kernel:frame": 6076,
+ "player:land": 19,
+ "audio:cue": 37,
+ "world:resonance": 263,
+ "input:action": 272,
+ "learn:teach": 46,
+ "learn:present": 46,
+ "math:show": 134,
+ "player:jump": 18,
+ "learn:respond": 45,
+ "learn:mastery": 59,
+ "math:hide": 127,
+ "learn:unlock": 5,
+ "learn:session": 20,
+ "input:move": 2
+}
+
+ORDERED TRACE (learning + math signals only, first 90 entries):
+  t=   1.45  learn:teach    var-meaning          {"phase":"solo"}
+  t=   1.45  learn:present  var-meaning          {"form":"generate","phase":"solo","family":"var-meaning.seat","source":"catalogue","relaxation":"exact"}
+  t=   1.45  math:show      var-meaning          {"id":"teach-claim","tex":"t"}
+  t=   2.27  math:show      var-meaning          {"id":"teach-entry","tex":"a = 6; b = 6"}
+  t=   4.07  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2617,"reason":null}
+  t=   4.07  learn:mastery  var-meaning          {"p":0.79292,"delta":0.44292,"status":"learning"}
+  t=   5.68  math:hide                           {"id":"teach-claim"}
+  t=   5.68  math:hide                           {"id":"teach-entry"}
+  t=    6.2  learn:teach    var-meaning          {"phase":"solo"}
+  t=    6.2  learn:present  var-meaning          {"form":"repair","phase":"solo","family":"var-meaning.seat","source":"catalogue","relaxation":"exact"}
+  t=    6.2  math:show      var-meaning          {"id":"teach-claim","tex":"m"}
+  t=    6.2  math:show      var-meaning          {"id":"teach-working-0","tex":"1)\\;m = 9"}
+  t=    6.2  math:show      var-meaning          {"id":"teach-working-1","tex":"2)\\;m = 13"}
+  t=   6.73  math:show      var-meaning          {"id":"teach-entry","tex":"2: m = 9"}
+  t=   8.52  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2317,"reason":null}
+  t=   8.52  learn:mastery  var-meaning          {"p":0.967474,"delta":0.174554,"status":"learning"}
+  t=  10.12  math:hide                           {"id":"teach-claim"}
+  t=  10.12  math:hide                           {"id":"teach-working-0"}
+  t=  10.12  math:hide                           {"id":"teach-working-1"}
+  t=  10.12  math:hide                           {"id":"teach-entry"}
+  t=  10.62  learn:teach    var-meaning          {"phase":"solo"}
+  t=  10.62  learn:present  var-meaning          {"form":"construct","phase":"solo","family":"var-meaning.twin","source":"catalogue","relaxation":"exact"}
+  t=  10.62  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 16,\\quad x - y = 0"}
+  t=  11.28  math:show      var-meaning          {"id":"teach-entry","tex":"x = 8,; y = 8"}
+  t=  15.43  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.twin","latencyMs":4817,"reason":null}
+  t=  15.43  learn:mastery  var-meaning          {"p":0.994776,"delta":0.027302,"status":"learning"}
+  t=  17.05  math:hide                           {"id":"teach-claim"}
+  t=  17.05  math:hide                           {"id":"teach-entry"}
+  t=  17.57  learn:teach    var-meaning          {"phase":"solo"}
+  t=  17.57  learn:present  var-meaning          {"form":"generate","phase":"solo","family":"var-meaning.seat","source":"catalogue","relaxation":"exact"}
+  t=  17.57  math:show      var-meaning          {"id":"teach-claim","tex":"m"}
+  t=  18.33  math:show      var-meaning          {"id":"teach-entry","tex":"a = 4; b = 4"}
+  t=  20.12  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2550,"reason":null}
+  t=  20.12  learn:mastery  var-meaning          {"p":0.999179,"delta":0.004403,"status":"learning"}
+  t=  21.73  math:hide                           {"id":"teach-claim"}
+  t=  21.73  math:hide                           {"id":"teach-entry"}
+  t=  22.25  learn:teach    var-meaning          {"phase":"solo"}
+  t=  22.25  learn:present  var-meaning          {"form":"repair","phase":"solo","family":"var-meaning.twin","source":"catalogue","relaxation":"exact"}
+  t=  22.25  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 22,\\quad x - y = 0"}
+  t=  22.25  math:show      var-meaning          {"id":"teach-working-0","tex":"1)\\;x + y = 22"}
+  t=  22.25  math:show      var-meaning          {"id":"teach-working-1","tex":"2)\\;x = 7"}
+  t=  22.25  math:show      var-meaning          {"id":"teach-working-2","tex":"3)\\;y = 15"}
+  t=  22.73  math:show      var-meaning          {"id":"teach-entry","tex":"2: x = 11"}
+  t=  24.52  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.twin","latencyMs":2267,"reason":null}
+  t=  24.52  learn:mastery  var-meaning          {"p":0.999893,"delta":0.000714,"status":"learning"}
+  t=  24.52  learn:unlock   var-meaning          
+  t=  24.52  learn:mastery  var-meaning          {"p":0.999893,"delta":0,"status":"provisional"}
+  t=  24.52  learn:session                       {"phase":"focus"}
+  t=  24.52  learn:session                       {"phase":"beat"}
+  t=  26.13  math:hide                           {"id":"teach-claim"}
+  t=  26.13  math:hide                           {"id":"teach-working-0"}
+  t=  26.13  math:hide                           {"id":"teach-working-1"}
+  t=  26.13  math:hide                           {"id":"teach-working-2"}
+  t=  26.13  math:hide                           {"id":"teach-entry"}
+  t=  26.65  learn:teach    expr-anatomy         {"phase":"solo"}
+  t=  26.65  learn:present  expr-anatomy         {"form":"construct","phase":"solo","family":"expr-anatomy.term","source":"catalogue","relaxation":"exact"}
+  t=  26.65  math:show      expr-anatomy         {"id":"teach-claim","tex":"4 - 7x"}
+  t=  27.13  math:show      expr-anatomy         {"id":"teach-entry","tex":"-7"}
+  t=  27.27  math:show      expr-anatomy         {"id":"teach-entry","tex":"-7x"}
+  t=   29.2  learn:respond  expr-anatomy         {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2550,"reason":null}
+  t=   29.2  learn:mastery  expr-anatomy         {"p":0.79131,"delta":0.44131,"status":"learning"}
+  t=  30.82  math:hide                           {"id":"teach-claim"}
+  t=  30.82  math:hide                           {"id":"teach-entry"}
+  t=  31.33  learn:teach    expr-anatomy         {"phase":"solo"}
+  t=  31.33  learn:present  expr-anatomy         {"form":"construct","phase":"solo","family":"expr-anatomy.term","source":"catalogue","relaxation":"exact"}
+  t=  31.33  math:show      expr-anatomy         {"id":"teach-claim","tex":"7 - 9x"}
+  t=  31.82  math:show      expr-anatomy         {"id":"teach-entry","tex":"-9x"}
+  t=   33.6  learn:respond  expr-anatomy         {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2267,"reason":null}
+  t=   33.6  learn:mastery  expr-anatomy         {"p":0.960555,"delta":0.169245,"status":"learning"}
+  t=  35.22  math:hide                           {"id":"teach-claim"}
+  t=  35.22  math:hide                           {"id":"teach-entry"}
+  t=  35.73  learn:teach    expr-anatomy         {"phase":"solo"}
+  t=  35.73  learn:present  expr-anatomy         {"form":"construct","phase":"solo","family":"expr-anatomy.term","source":"catalogue","relaxation":"exact"}
+  t=  35.73  math:show      expr-anatomy         {"id":"teach-claim","tex":"12 - 5x"}
+  t=  36.22  math:show      expr-anatomy         {"id":"teach-entry","tex":"-5x"}
+  t=     38  learn:respond  expr-anatomy         {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2267,"reason":null}
+  t=     38  learn:mastery  expr-anatomy         {"p":0.99356,"delta":0.033005,"status":"learning"}
+  t=  39.62  math:hide                           {"id":"teach-claim"}
+  t=  39.62  math:hide                           {"id":"teach-entry"}
+  t=  40.13  learn:teach    expr-anatomy         {"phase":"solo"}
+  t=  40.13  learn:present  expr-anatomy         {"form":"construct","phase":"solo","family":"expr-anatomy.term","source":"catalogue","relaxation":"exact"}
+  t=  40.13  math:show      expr-anatomy         {"id":"teach-claim","tex":"8 - 6x"}
+  t=  40.62  math:show      expr-anatomy         {"id":"teach-entry","tex":"-6x"}
+  t=  42.53  learn:respond  expr-anatomy         {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2400,"reason":null}
+  t=  42.53  learn:mastery  expr-anatomy         {"p":0.998976,"delta":0.005416,"status":"learning"}
+  t=  44.15  math:hide                           {"id":"teach-claim"}
+  t=  44.15  math:hide                           {"id":"teach-entry"}
+  t=  44.67  learn:teach    expr-anatomy         {"phase":"solo"}
+  t=  44.67  learn:present  expr-anatomy         {"form":"construct","phase":"solo","family":"expr-anatomy.term","source":"catalogue","relaxation":"nearest-band"}
+  t=  44.67  math:show      expr-anatomy         {"id":"teach-claim","tex":"3 - 8x"}
+  ... 363 more
+
+CHAIN present -> math:show -> learn:respond -> learn:mastery, in order: 37 of 43 presentations
+
+p(known) BEFORE -> AFTER (only keys that moved):
+  var-meaning                        0.35 -> 0.9998928384405081
+  oo-numeric                         0.35 -> 0.973349174803045
+  expr-anatomy                       0.35 -> 0.9998378139026344
+  oo-structure                       0.25 -> 0.9529222797964835
+  eval-substitute                    0.25 -> 0.7543246943343588
+  eval-signed                        0.18 -> 0.6388008968887574
+  (6 moved of 32 tracked)
+
+scheduler BEFORE: {"sessionMinutes":25,"secondsSpent":0,"itemsThisSession":0,"reviewItemsThisSession":0,"inFlight":[],"blockCount":0,"recentItemIds":0,"noRepeatWindow":40,"recentCells":0,"widestCellWindow":0,"event":null,"probe":null,"reviewCapLift":true,"pullForward":true,"bank":true,"served":0,"servedBySource":{},"
+
+scheduler AFTER : served 46  serveMisses 0  bySource {"catalogue":29,"generated":17}  byRelaxation {"exact":22,"nearest-band":7,"generated-group-absent":17}
+session delivery: {"requests":46,"withItem":46,"withFamily":46,"unserved":0,"bySource":{"catalogue":29,"generated":17},"byRelaxation":{"exact":22,"nearest-band":7,"generated-group-absent":17}}
+mastery stats   : {"items":45,"scoredItems":38,"unscoredItems":7,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":16,"creditsByDistance":{"1":7,"2":3,"3":6},"ceilingHits":12,"gateOpens":5,"gateOpensByTestOut":2,"testOutsOffered":5,"testOutsByTrigger":{"ability":5},"testOutsPassed":2,"testOutsPassedByTrigger":{"ability":2},"testOutsFailed":3,"testOutItems":19,"certifications":0,"lapses":0}
+itembank loads  : {"demand":5,"prefetch":3,"explicit":3,"suppressed":0}  (at boot: {"demand":0,"prefetch":0,"explicit":3,"suppressed":0})
+
+JS CHUNKS THAT ARRIVED AFTER THE BASELINE SNAPSHOT (name @ startTime ms):
+      1165 ms   var-meaning-Ct12kn0-.js
+      1165 ms   oo-numeric-BjsVHueV.js
+      1165 ms   expr-anatomy-WYJhDm_0.js
+      1198 ms   oo-structure-Bges-2rk.js
+     10105 ms   translate-phrase-C_kymGnj.js
+     10105 ms   props-operations-zMhkLzfH.js
+     12359 ms   eval-substitute-CIy76Axk.js
+     12366 ms   eval-signed-C2UgWZdX.js
+     12366 ms   like-terms-id-BHdbC_9A.js
+     12367 ms   eq-meaning-I5IIrO-h.js
+     12367 ms   eval-formula-D5seGdi4.js
+
+spawn panels: ["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"]
+final panels: ["teach-claim"]
+
+SHOT CONTEXT (what the engine chose vs what stood in the world):
+{
+ "item": {
+  "itemId": "var-meaning.twin/construct/p1bbch",
+  "kpId": "var-meaning",
+  "form": "construct",
+  "phase": "solo",
+  "mode": "acquire",
+  "family": "var-meaning.twin",
+  "source": "catalogue",
+  "relaxation": "exact",
+  "difficulty": -1.3,
+  "testOut": true,
+  "hintShown": false
+ },
+ "typed": "x = 8,\\; y = 8",
+ "panels": [
+  {
+   "id": "teach-claim",
+   "tex": "x + y = 16,\\quad x - y = 0",
+   "pos": [
+    12.59,
+    63.46,
+    205.21
+   ]
+  },
+  {
+   "id": "teach-entry",
+   "tex": "x = 8,; y = 8",
+   "pos": [
+    12.59,
+    61.26,
+    205.21
+   ]
+  }
+ ],
+ "teaching": {
+  "phase": "standing",
+  "driver": "session",
+  "startedBy": "interact",
+  "simTime": 15.43,
+  "standing": [
+   "teach-claim",
+   "teach-entry"
+  ],
+  "response": "x = 8,; y = 8",
+  "item": {
+   "itemId": "var-meaning.twin/construct/p1bbch",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "solo",
+   "mode": "acquire",
+   "family": "var-meaning.twin",
+   "source": "catalogue",
+   "relaxation": "exact",
+   "difficulty": -1.3,
+   "testOut": true,
+   "hintShown": false
+  },
+  "announced": {
+   "kpId": "var-meaning",
+   "phase": "solo",
+   "testOut": true,
+   "at": 10.616666666666774
+  },
+  "lastRespond": {
+   "itemId": "var-meaning.seat/repair/9gqe4t",
+   "kpId": "var-meaning",
+   "correct": true,
+   "latencyMs": 2317,
+   "family": "var-meaning.seat",
+   "form": "repair",
+   "phase": "solo",
+   "hinted": false,
+   "scored": true,
+   "credited": true,
+   "reason": null
+  },
+  "framing": {
+   "framing": "Ix has been sitting in the empty one for a while, waiting to be told a number.",
+   "ask": "Charge both cores.",
+   "hints": 3
+  },
+  "stats": {
+   "cycles": 2,
+   "presented": 3,
+   "committed": 2,
+   "correct": 2,
+   "wrong": 0,
+   "unscored": 0,
+   "unserved": 0,
+   "familyMissing": 0,
+   "rescued": 0,
+   "dropped": 0,
+   "emptyRequests": 0,
+   "shows": 8,
+   "hides": 6,
+   "teachHeard": 3,
+   "respondHeard": 2,
+   "bySource": {
+    "catalogue": 3
+   },
+   "byRelaxation": {
+    "exact": 3
+   },
+   "byPhase": {
+    "solo": 3
+   }
+  }
+ }
+}
+capture: review/shots/p34/critic-standing.png
+evidence: review/measure/evidence/_critic-P34-know.json

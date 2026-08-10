@@ -1,0 +1,257 @@
+(node:39128) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+================================================================================================
+CRITIC DRIVER — built bundle, own bus recorder (emit wrapper installed: true), mode=guess
+================================================================================================
+sim seconds of play: 115.35   cycles driven: 25   console errors: 0
+
+ALL SIGNAL COUNTS SEEN ON THE BUS (every name, not an allow-list):
+{
+ "world:collider": 4,
+ "player:spawn": 1,
+ "player:state": 4,
+ "world:sun": 987,
+ "camera:probe": 6810,
+ "kernel:frame": 3405,
+ "player:land": 1,
+ "audio:cue": 1,
+ "world:resonance": 113,
+ "input:action": 2,
+ "learn:teach": 26,
+ "learn:present": 26,
+ "math:show": 53,
+ "learn:respond": 25,
+ "learn:mastery": 23,
+ "learn:session": 9,
+ "math:hide": 52
+}
+
+ORDERED TRACE (learning + math signals only, first 90 entries):
+  t=   1.42  learn:teach    var-meaning          {"phase":"solo"}
+  t=   1.42  learn:present  var-meaning          {"form":"generate","phase":"solo","family":"var-meaning.seat","source":"catalogue","relaxation":"exact"}
+  t=   1.42  math:show      var-meaning          {"id":"teach-claim","tex":"t"}
+  t=   2.25  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=   4.03  learn:respond  var-meaning          {"correct":false,"scored":true,"credited":false,"family":"var-meaning.seat","latencyMs":2617,"reason":null}
+  t=   4.03  learn:mastery  var-meaning          {"p":0.316788,"delta":-0.033212,"status":"learning"}
+  t=   4.03  learn:session                       {"phase":"beat"}
+  t=   5.65  math:hide                           {"id":"teach-claim"}
+  t=   5.65  math:hide                           {"id":"teach-entry"}
+  t=   6.17  learn:teach    var-meaning          {"phase":"model"}
+  t=   6.17  learn:present  var-meaning          {"form":"construct","phase":"model","family":"var-meaning.twin","source":"catalogue","relaxation":"exact"}
+  t=   6.17  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 20,\\quad x - y = 0"}
+  t=   6.17  math:show      var-meaning          {"id":"teach-working-model","tex":"x = 10,\\; y = 10"}
+  t=   6.67  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=   8.47  learn:respond  var-meaning          {"correct":false,"scored":false,"credited":false,"family":"var-meaning.twin","latencyMs":2300,"reason":"unscored-phase"}
+  t=  10.07  math:hide                           {"id":"teach-claim"}
+  t=  10.07  math:hide                           {"id":"teach-working-model"}
+  t=  10.07  math:hide                           {"id":"teach-entry"}
+  t=  10.57  learn:teach    var-meaning          {"phase":"guided-1"}
+  t=  10.57  learn:present  var-meaning          {"form":"construct","phase":"guided-1","family":"var-meaning.twin","source":"catalogue","relaxation":"exact"}
+  t=  10.57  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 16,\\quad x - y = 0"}
+  t=   11.1  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=  12.92  learn:respond  var-meaning          {"correct":false,"scored":true,"credited":false,"family":"var-meaning.twin","latencyMs":2350,"reason":null}
+  t=  12.92  learn:mastery  var-meaning          {"p":0.311905,"delta":-0.004883,"status":"learning"}
+  t=  14.52  math:hide                           {"id":"teach-claim"}
+  t=  14.52  math:hide                           {"id":"teach-entry"}
+  t=  15.02  learn:teach    var-meaning          {"phase":"model"}
+  t=  15.02  learn:present  var-meaning          {"form":"construct","phase":"model","family":"var-meaning.relate","source":"catalogue","relaxation":"exact"}
+  t=  15.02  math:show      var-meaning          {"id":"teach-claim","tex":"a,\\; b"}
+  t=  15.02  math:show      var-meaning          {"id":"teach-working-model","tex":"a = 13b"}
+  t=   15.7  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=  17.48  learn:respond  var-meaning          {"correct":false,"scored":false,"credited":false,"family":"var-meaning.relate","latencyMs":2467,"reason":"unscored-phase"}
+  t=  17.48  learn:session                       {"phase":"beat"}
+  t=   19.1  math:hide                           {"id":"teach-claim"}
+  t=   19.1  math:hide                           {"id":"teach-working-model"}
+  t=   19.1  math:hide                           {"id":"teach-entry"}
+  t=  19.62  learn:teach    var-meaning          {"phase":"guided-1"}
+  t=  19.62  learn:present  var-meaning          {"form":"construct","phase":"guided-1","family":"var-meaning.relate","source":"catalogue","relaxation":"exact"}
+  t=  19.62  math:show      var-meaning          {"id":"teach-claim","tex":"a,\\; b"}
+  t=  20.23  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=  22.02  learn:respond  var-meaning          {"correct":false,"scored":true,"credited":false,"family":"var-meaning.relate","latencyMs":2400,"reason":null}
+  t=  22.02  learn:mastery  var-meaning          {"p":0.313207,"delta":0.001302,"status":"learning"}
+  t=  23.63  math:hide                           {"id":"teach-claim"}
+  t=  23.63  math:hide                           {"id":"teach-entry"}
+  t=  24.15  learn:teach    var-meaning          {"phase":"guided-1"}
+  t=  24.15  learn:present  var-meaning          {"form":"construct","phase":"guided-1","family":"var-meaning.relate","source":"catalogue","relaxation":"exact"}
+  t=  24.15  math:show      var-meaning          {"id":"teach-claim","tex":"a,\\; b"}
+  t=  24.63  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=  26.42  learn:respond  var-meaning          {"correct":false,"scored":true,"credited":false,"family":"var-meaning.relate","latencyMs":2267,"reason":null}
+  t=  26.42  learn:mastery  var-meaning          {"p":0.313399,"delta":0.000192,"status":"learning"}
+  t=  28.03  math:hide                           {"id":"teach-claim"}
+  t=  28.03  math:hide                           {"id":"teach-entry"}
+  t=  28.55  learn:teach    var-meaning          {"phase":"guided-1"}
+  t=  28.55  learn:present  var-meaning          {"form":"construct","phase":"guided-1","family":"var-meaning.twin","source":"catalogue","relaxation":"exact"}
+  t=  28.55  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 14,\\quad x - y = 0"}
+  t=  29.03  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=   30.9  learn:respond  var-meaning          {"correct":false,"scored":true,"credited":false,"family":"var-meaning.twin","latencyMs":2350,"reason":null}
+  t=   30.9  learn:mastery  var-meaning          {"p":0.31143,"delta":-0.00197,"status":"learning"}
+  t=   30.9  learn:session                       {"phase":"beat"}
+  t=  32.52  math:hide                           {"id":"teach-claim"}
+  t=  32.52  math:hide                           {"id":"teach-entry"}
+  t=  33.03  learn:teach    var-meaning          {"phase":"guided-1"}
+  t=  33.03  learn:present  var-meaning          {"form":"construct","phase":"guided-1","family":"var-meaning.twin","source":"catalogue","relaxation":"exact"}
+  t=  33.03  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 8,\\quad x - y = 0"}
+  t=   33.8  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=  35.58  learn:respond  var-meaning          {"correct":false,"scored":true,"credited":false,"family":"var-meaning.twin","latencyMs":2550,"reason":null}
+  t=  35.58  learn:mastery  var-meaning          {"p":0.311155,"delta":-0.000274,"status":"learning"}
+  t=   37.2  math:hide                           {"id":"teach-claim"}
+  t=   37.2  math:hide                           {"id":"teach-entry"}
+  t=  37.72  learn:teach    var-meaning          {"phase":"guided-1"}
+  t=  37.72  learn:present  var-meaning          {"form":"construct","phase":"guided-1","family":"var-meaning.twin","source":"catalogue","relaxation":"nearest-band"}
+  t=  37.72  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 18,\\quad x - y = 0"}
+  t=  38.35  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=  40.15  learn:respond  var-meaning          {"correct":false,"scored":true,"credited":false,"family":"var-meaning.twin","latencyMs":2433,"reason":null}
+  t=  40.15  learn:mastery  var-meaning          {"p":0.311117,"delta":-0.000038,"status":"learning"}
+  t=  41.77  math:hide                           {"id":"teach-claim"}
+  t=  41.77  math:hide                           {"id":"teach-entry"}
+  t=  42.28  learn:teach    var-meaning          {"phase":"guided-1"}
+  t=  42.28  learn:present  var-meaning          {"form":"construct","phase":"guided-1","family":"var-meaning.relate","source":"catalogue","relaxation":"nearest-band"}
+  t=  42.28  math:show      var-meaning          {"id":"teach-claim","tex":"a,\\; b"}
+  t=  42.77  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  t=  44.55  learn:respond  var-meaning          {"correct":false,"scored":true,"credited":false,"family":"var-meaning.relate","latencyMs":2267,"reason":null}
+  t=  44.55  learn:mastery  var-meaning          {"p":0.313091,"delta":0.001974,"status":"learning"}
+  t=  44.55  learn:session                       {"phase":"beat"}
+  t=  46.17  math:hide                           {"id":"teach-claim"}
+  t=  46.17  math:hide                           {"id":"teach-entry"}
+  t=  46.68  learn:teach    var-meaning          {"phase":"guided-1"}
+  t=  46.68  learn:present  var-meaning          {"form":"construct","phase":"guided-1","family":"var-meaning.twin","source":"generated","relaxation":"generated"}
+  t=  46.68  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 24,\\quad x - y = 0"}
+  t=  47.17  math:show      var-meaning          {"id":"teach-entry","tex":"7"}
+  ... 124 more
+
+CHAIN present -> math:show -> learn:respond -> learn:mastery, in order: 23 of 26 presentations
+
+p(known) BEFORE -> AFTER (only keys that moved):
+  var-meaning                        0.35 -> 0.31111643020904456
+  (1 moved of 32 tracked)
+
+scheduler BEFORE: {"sessionMinutes":25,"secondsSpent":0,"itemsThisSession":0,"reviewItemsThisSession":0,"inFlight":[],"blockCount":0,"recentItemIds":0,"noRepeatWindow":40,"recentCells":0,"widestCellWindow":0,"event":null,"probe":null,"reviewCapLift":true,"pullForward":true,"bank":true,"served":0,"servedBySource":{},"
+
+scheduler AFTER : served 26  serveMisses 0  bySource {"catalogue":10,"generated":16}  byRelaxation {"exact":8,"nearest-band":2,"generated":16}
+session delivery: {"requests":26,"withItem":26,"withFamily":26,"unserved":0,"bySource":{"catalogue":10,"generated":16},"byRelaxation":{"exact":8,"nearest-band":2,"generated":16}}
+mastery stats   : {"items":25,"scoredItems":23,"unscoredItems":2,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":0,"creditsByDistance":{},"ceilingHits":0,"gateOpens":0,"gateOpensByTestOut":0,"testOutsOffered":1,"testOutsByTrigger":{"ability":1},"testOutsPassed":0,"testOutsPassedByTrigger":{},"testOutsFailed":1,"testOutItems":1,"certifications":0,"lapses":0}
+itembank loads  : {"demand":0,"prefetch":1,"explicit":3,"suppressed":0}  (at boot: {"demand":0,"prefetch":0,"explicit":3,"suppressed":0})
+
+JS CHUNKS THAT ARRIVED AFTER THE BASELINE SNAPSHOT (name @ startTime ms):
+      1041 ms   var-meaning-Ct12kn0-.js
+      1041 ms   oo-numeric-BjsVHueV.js
+      1041 ms   expr-anatomy-WYJhDm_0.js
+      1060 ms   oo-structure-Bges-2rk.js
+
+spawn panels: ["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"]
+final panels: ["teach-claim"]
+
+SHOT CONTEXT (what the engine chose vs what stood in the world):
+{
+ "item": {
+  "itemId": "var-meaning.twin/construct/p1bbch",
+  "kpId": "var-meaning",
+  "form": "construct",
+  "phase": "guided-1",
+  "mode": "acquire",
+  "family": "var-meaning.twin",
+  "source": "catalogue",
+  "relaxation": "exact",
+  "difficulty": -1.9000000000000001,
+  "testOut": false,
+  "hintShown": false
+ },
+ "typed": "7",
+ "panels": [
+  {
+   "id": "teach-claim",
+   "tex": "x + y = 16,\\quad x - y = 0",
+   "pos": [
+    12.59,
+    63.47,
+    205.24
+   ]
+  },
+  {
+   "id": "teach-entry",
+   "tex": "7",
+   "pos": [
+    12.59,
+    61.27,
+    205.24
+   ]
+  }
+ ],
+ "teaching": {
+  "phase": "standing",
+  "driver": "session",
+  "startedBy": "interact",
+  "simTime": 12.92,
+  "standing": [
+   "teach-claim",
+   "teach-entry"
+  ],
+  "response": "7",
+  "item": {
+   "itemId": "var-meaning.twin/construct/p1bbch",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "guided-1",
+   "mode": "acquire",
+   "family": "var-meaning.twin",
+   "source": "catalogue",
+   "relaxation": "exact",
+   "difficulty": -1.9000000000000001,
+   "testOut": false,
+   "hintShown": false
+  },
+  "announced": {
+   "kpId": "var-meaning",
+   "phase": "guided-1",
+   "testOut": false,
+   "at": 10.566666666666771
+  },
+  "lastRespond": {
+   "itemId": "var-meaning.twin/construct/1vlr62k",
+   "kpId": "var-meaning",
+   "correct": false,
+   "latencyMs": 2300,
+   "family": "var-meaning.twin",
+   "form": "construct",
+   "phase": "model",
+   "hinted": true,
+   "scored": false,
+   "credited": false,
+   "reason": "unscored-phase"
+  },
+  "framing": {
+   "framing": "Ix has been sitting in the empty one for a while, waiting to be told a number.",
+   "ask": "Charge both cores.",
+   "hints": 3
+  },
+  "stats": {
+   "cycles": 2,
+   "presented": 3,
+   "committed": 2,
+   "correct": 0,
+   "wrong": 2,
+   "unscored": 1,
+   "unserved": 0,
+   "familyMissing": 0,
+   "rescued": 0,
+   "dropped": 0,
+   "emptyRequests": 0,
+   "shows": 7,
+   "hides": 5,
+   "teachHeard": 3,
+   "respondHeard": 2,
+   "bySource": {
+    "catalogue": 3
+   },
+   "byRelaxation": {
+    "exact": 3
+   },
+   "byPhase": {
+    "solo": 1,
+    "model": 1,
+    "guided-1": 1
+   }
+  }
+ }
+}
+evidence: review/measure/evidence/_critic-P34-guess.json

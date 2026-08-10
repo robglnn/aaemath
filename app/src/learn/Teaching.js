@@ -75,26 +75,87 @@ export const TEACH = {
   maxServeRetries: 4,
   /** How long the presenter waits before asking a momentarily empty engine again. See `fixed()`. */
   waitRetrySeconds: 5,
+
   /**
-   * Sockets, in metres right / up / ahead of the camera. These are the three positions
-   * `boot/60-mathtex.js` measured clear of world geometry for the standing claims (its header
-   * documents the sweep that produced them) — the claim the engine chooses stands exactly where the
-   * claim the world stood did, which is the whole meaning of "the engine takes the surface over".
+   * ONE COLUMN, AND WHY IT IS NOT TWO.
+   *
+   * Round 2 stood the stem at `right 1.44` and the working stack at `right 6.3`, which is where
+   * `boot/60-mathtex.js` stands its authored pair and its authored working. That is a safe pair of
+   * positions for two SHORT claims and it is not safe for arbitrary bank content: the stem
+   * `x + y = 14,\quad x - y = 0` rasterizes 11.4 m wide, so it spans right −4.3 to 7.1, and the
+   * working line beside it spans 2.3 to 10.3. Two claims sharing 4.8 m of the same billboard plane,
+   * both `depthTest:false` at `renderOrder 5`, is the ninth way to lose a claim written down in
+   * `TexPanel.js`'s own header — the compositor turning a true statement into an unreadable one —
+   * with panels doing it to each other instead of rock doing it to them.
+   *
+   * A single column cannot do that. Every row is one line tall, rows are `mathStep` apart, and
+   * nothing is ever beside anything. It also reads the way a worked solution reads, top to bottom:
+   *
+   *     Let it settle and read it.          <- ask       (prose, above the stem)
+   *     q                                   <- stem      (the claim, at `stemUp`)
+   *     q = 9                               <- given
+   *     1) q = 9                            <- working
+   *     2) q = 17
+   *     ___                                 <- entry
+   *
+   * `stemUp` is unchanged at 2.86, which is where `leaf9-span` stands, so the frame the engine
+   * takes over still opens on the composition P15 measured: the claim above the horizon line, on
+   * bare sky, ink 0.0% occluded. Everything else grows from it.
+   */
+  column: { right: 1.44, forward: 14 },
+  /** The stem's height. The row above it is `+proseStep`, the row below `-mathStep`. */
+  stemUp: 2.86,
+  /** Metres between two prose rows and between two mathematics rows. */
+  proseStep: 1.15,
+  mathStep: 1.3,
+  /**
+   * Metres per em. `TexPanel`'s gate 8 refuses to present a claim under 33.3 device px per em at
+   * 1280x720, and the shipped frame measures 41.7 px per em per metre at `forward 14`.
+   *
+   * The prose sits HIGHER than the mathematics and is therefore further away — a row at `up 4.01` is
+   * 14.56 m from the camera against the stem's 14.29 — so the same metres-per-em buys fewer device
+   * pixels up there. `proseEm 0.86` measured 34.5 px per em on the shipped build against a floor of
+   * 33.3, and `review/measure/P34.mjs` claim R7 caught both ask rows standing in as the solid mark
+   * with 3% of margin left. 0.95 measures ~38 and leaves 14%. This is exactly the trade gate 8
+   * exists to force: fewer words per line, or a question nobody can read.
+   */
+  proseEm: 0.95,
+  mathEm: 0.88,
+  /**
+   * Where a prose row wraps. KaTeX does not wrap, so a line is as wide as it is: 46 characters
+   * measures about 21 m at `proseEm`, against 30.7 m of visible width at `forward 14`. The longest
+   * `ask` the bank ships is 89 characters (`ask.gen.reshape`, Polish), which is two rows.
+   */
+  wrapChars: 46,
+  /**
+   * Rows the `ask` may take ABOVE the stem, and the wider wrap tried before any of it is cut.
+   *
+   * A frame budget, measured rather than chosen: a prose row's centre projects about 0.135 of NDC
+   * per metre at `forward 14`, so a THIRD row above the stem lands at NDC y 1.04 and has its ink cut
+   * off by the top of the screen — measured, on the shipped build, with the said claim standing
+   * above the stem. Two rows is 92 characters at `wrapChars`, and the longest `ask` the bank ships
+   * is 89. `wrapWide` is tried before anything is cut so content growth widens a line rather than
+   * losing the end of a question, and `stats.proseClipped` counts the day that stops being enough.
+   *
+   * `spoken` moved BELOW the stem for the same reason and reads better there anyway: the ask is the
+   * instruction, the stem is the thing, and the said claim is a statement about the thing.
+   */
+  maxAskLines: 2,
+  wrapWide: 52,
+  /** Rows the said claim may take below the stem. */
+  maxSaidLines: 3,
+
+  /**
+   * Sockets, kept because `boot/92-teaching.js` publishes them and because they name the three
+   * positions the authored spawn frame was measured at. These are the rows a bare item with no
+   * `given` and no `working` produces; anything else is the same column with more rows in it.
    */
   sockets: {
+    prose: { right: 1.44, up: 4.01, forward: 14, em: 0.86 },
     claim: { right: 1.44, up: 2.86, forward: 14, em: 0.88 },
-    entry: { right: 1.44, up: 0.66, forward: 14, em: 0.88 },
-    /**
-     * The working stack is further from the camera than the pair, so it needs MORE metres per em,
-     * not fewer, to clear the same legibility floor. Round 1 shipped `em: 0.66` here and
-     * `TexPanel`'s gate 8 measured every line of it at 25.4-25.7 device px per em against a floor of
-     * 33.3 at 1280x720 — a repair item whose broken build is below the floor is an item the learner
-     * cannot read the fault in. 1.0 measures 38-39 px per em on the same frame.
-     */
-    working: { right: 6.3, up: 3.0, forward: 14, em: 1.0 },
+    entry: { right: 1.44, up: 1.56, forward: 14, em: 0.88 },
+    working: { right: 1.44, up: 1.56, forward: 14, em: 0.88 },
   },
-  /** Vertical spacing between stacked working lines, in metres. Scaled with the em above. */
-  workingStep: 1.35,
 };
 
 /**
@@ -106,7 +167,20 @@ export const TEACH = {
 const CLAIM_ID = "teach-claim";
 const ENTRY_ID = "teach-entry";
 const WORKING_ID = "teach-working";
-TEACH.ids = { claim: CLAIM_ID, entry: ENTRY_ID, working: WORKING_ID, prefix: "teach-" };
+const ASK_ID = "teach-ask";
+const SAID_ID = "teach-said";
+const GIVEN_ID = "teach-given";
+const HINT_ID = "teach-hint";
+TEACH.ids = {
+  claim: CLAIM_ID,
+  entry: ENTRY_ID,
+  working: WORKING_ID,
+  ask: ASK_ID,
+  said: SAID_ID,
+  given: GIVEN_ID,
+  hint: HINT_ID,
+  prefix: "teach-",
+};
 
 /**
  * What a keystroke may put into a response.
@@ -116,8 +190,70 @@ TEACH.ids = { claim: CLAIM_ID, entry: ENTRY_ID, working: WORKING_ID, prefix: "te
  * claim can never appear in a capture as a hollow stand-in. And it keeps the response inside the
  * grammar `ItemBank.check` canonicalizes: digits, an unknown, the four operators, relation symbols,
  * grouping, and the separators the `pair`, `partition` and `repair` answer types use.
+ *
+ * IT IS ALSO THE SET THE BANK HAS TO ANSWER IN, and round 2 shipped the two halves disagreeing:
+ * `ItemBank.accepts()` returned `x = 8,\; y = 8` for an `answerType: "pair"`, and `\` is not on this
+ * line, so the bank's own first accepted spelling could not be entered through the shipped surface
+ * at all. 241 of 1,152 committed items were in that state. The repair is on the bank's side — its
+ * `ENTRY_GRAMMAR` is now this same character class, `accepts()[0]` is guaranteed to satisfy it, and
+ * `boot/92-teaching.js` injects the bank's copy over this default so the two cannot drift. The
+ * default below is what a presenter mounted without a bank falls back to.
  */
 const ENTRY_CHARS = /^[0-9a-zA-Z+\-*/=<>.,()|:; ]$/;
+
+/**
+ * An empty response slot, and the caret that follows a response being written.
+ *
+ * NO DECIMAL POINT ANYWHERE IN THESE, AND IT IS NOT A STYLE CHOICE.
+ *
+ * `Tex.localizeTex` rewrites every decimal in a claim into the locale's own convention, and it
+ * exempts only the eight text-mode commands in `VERBATIM_GROUPS`. `\rule` is not one of them, so
+ * `\rule{2.4em}{0.06em}` reaches KaTeX in Polish as `\rule{2{,}4em}{0{,}06em}` — which KaTeX ACCEPTS.
+ * It does not throw, nothing is refused, `texFailures` stays empty, `verify` stays green, and the
+ * entry row rasterizes as a white block 0.75 of NDC tall that stands in front of two lines of the
+ * learner's own working. Caught on a Polish capture, not by a gate: every gate said the frame was
+ * fine. `review/measure/P34.mjs` claim R8 now measures row-on-row overlap so the next one is caught
+ * by a number.
+ *
+ * `2em` and `1pt` carry no decimal, so the scanner passes them through in all three locales. `1pt`
+ * is KaTeX's 0.1 em, thicker than the 0.06 this used to ask for and comfortably above gate 8's
+ * 0.045 em stroke floor.
+ */
+const ENTRY_RULE = "\\rule{2em}{1pt}";
+const ENTRY_CARET = "\\;\\rule{1em}{1pt}";
+
+/** TeX's own reserved characters, in the `\text{}` spellings that survive `strict: "error"`. */
+const TEXT_ESCAPES = {
+  "\\": "\\textbackslash{}",
+  "{": "\\{",
+  "}": "\\}",
+  $: "\\$",
+  "&": "\\&",
+  "#": "\\#",
+  _: "\\_",
+  "%": "\\%",
+  "^": "\\textasciicircum{}",
+  "~": "\\textasciitilde{}",
+};
+const escapeText = (s) => String(s ?? "").replace(/[\\{}$&#_%^~]/g, (c) => TEXT_ESCAPES[c]);
+
+/** Greedy word wrap. Never splits a word: a broken word in the middle of a question is a new lie. */
+function wrapText(text, max) {
+  const words = String(text ?? "").trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  const lines = [];
+  let line = "";
+  for (const w of words) {
+    if (!line) line = w;
+    else if (line.length + 1 + w.length <= max) line += ` ${w}`;
+    else {
+      lines.push(line);
+      line = w;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
 
 const round2 = (v) => Math.round(v * 100) / 100;
 
@@ -132,6 +268,11 @@ export class Teaching {
    * @param {(a:object)=>number[]|null} [opts.place] resolve a socket to a world position.
    * @param {(name:string,value:any)=>void} [opts.emit]
    * @param {(name:string,fn:Function)=>Function} [opts.on]
+   * @param {(tex:string)=>boolean} [opts.validateTex] `math/Tex.js`'s `validate`, INJECTED for the
+   *   same reason the bank is: `math/` is a sibling piece. Every localized sentence this presenter
+   *   stands is gated through it, so a Polish or Spanish `ask` that KaTeX cannot set is refused
+   *   whole rather than rendered as a hollow stand-in beside a live question.
+   * @param {RegExp} [opts.entryChars] the bank's `ENTRY_GRAMMAR`, one character at a time.
    */
   constructor(opts = {}) {
     this.session = opts.session ?? null;
@@ -140,6 +281,8 @@ export class Teaching {
     this.place = opts.place ?? (() => null);
     this.emit = opts.emit ?? ((name, value) => signals.emit(name, value));
     this.on = opts.on ?? ((name, fn) => signals.on(name, fn));
+    this.validateTex = opts.validateTex ?? null;
+    this.entryChars = opts.entryChars instanceof RegExp ? opts.entryChars : ENTRY_CHARS;
 
     /** `dormant` -> `idle` -> `standing` -> `marked` -> `gap` -> `standing` ... -> `spent`. */
     this.phase = this.session || this.learning ? "idle" : "dormant";
@@ -165,8 +308,16 @@ export class Teaching {
 
     /** Whether the world put information on the screen before this response was committed. */
     this.hintShown = false;
+    /** How far up the item's own graded hint ladder the learner has asked. */
+    this.hintIndex = 0;
     /** The typed response has changed and the claim below the item needs re-typesetting. */
     this._entryDirty = false;
+    /** Where the entry row landed for THIS item, and how many rows stand below the stem. */
+    this._entrySocket = { ...TEACH.sockets.entry };
+    this._belowRows = 0;
+    /** Localized rows this presenter stood, and any it had to refuse. Reported in `probe()`. */
+    this._stood = [];
+    this._refused = [];
 
     this.stats = {
       cycles: 0,
@@ -192,6 +343,18 @@ export class Teaching {
       emptyRequests: 0,
       shows: 0,
       hides: 0,
+      /** Localized sentences stood in the world, and any `Tex.validate` would not set. */
+      textRows: 0,
+      textRefused: 0,
+      /** Questions too long for the frame budget even at the wide wrap. Must stay 0. */
+      proseClipped: 0,
+      /** Items whose `given` reached the surface — round 2 stood none of them. */
+      givenRows: 0,
+      askRows: 0,
+      saidRows: 0,
+      /** Rungs of the item's own graded hint ladder the learner asked for. */
+      hintsShown: 0,
+      hintedItems: 0,
       /** Signals CONSUMED, not emitted. Zero on any of these is a seam that reopened. */
       teachHeard: 0,
       respondHeard: 0,
@@ -370,6 +533,9 @@ export class Teaching {
     this.item = req.item;
     this.response = "";
     this.hintShown = false;
+    this.hintIndex = 0;
+    this._stood = [];
+    this._refused = [];
     this.mark = this.simTime;
     if (!req.family) this.stats.familyMissing += 1;
     this.stats.bySource[req.itemSource ?? "unknown"] = (this.stats.bySource[req.itemSource ?? "unknown"] ?? 0) + 1;
@@ -402,6 +568,35 @@ export class Teaching {
       source: req.itemSource ?? null,
       relaxation: req.itemRelaxation ?? null,
       testOut: req.testOut === true,
+      /**
+       * P19. THE OPEN READING, AND ONLY THE OPEN READING.
+       *
+       * `app/src/learn/verbs/` needs to know what the claim SAYS in order to let a player perform it
+       * — a deck cannot be walked out over a gap nobody has described, and a bundle cannot be opened
+       * ward by ward by something that has not been told there is a bundle. Until now this signal
+       * carried identifiers only, so the only thing that could act on it was a renderer.
+       *
+       * What goes on the wire is exactly what is already standing in front of the player:
+       * `world.md` §2.1's **open reading** — the stem, the charge in the socket, the lines the item
+       * is about, the name of the unknown, the object class and the shape of the response. Every one
+       * of those is on screen the instant this fires.
+       *
+       * `answer`, `distractors`, `check` and `hints` are deliberately NOT here, and that is the
+       * whole design of the verb layer: a verb does real algebra on the open reading and whatever
+       * falls out goes to `ItemBank.check` exactly as a typed response does. A signal carrying the
+       * answer key would make every future listener a cheat channel and would make P19's own
+       * measurements worthless in the same way round 2's `expected()` hook made P34's worthless.
+       */
+      item: {
+        id: this.item.id,
+        stem: this.presented?.tex?.stem ?? this.item.stem ?? "",
+        given: this.presented?.tex?.given ?? this.item.given ?? [],
+        working: this.item.working ?? [],
+        unknown: this.presented?.unknown ?? this.item.unknown ?? "x",
+        answerType: this.presented?.answerType ?? this.item.answerType ?? null,
+        objectClass: this.presented?.objectClass ?? this.item.objectClass ?? null,
+        form: this.item.form ?? req.form ?? null,
+      },
     });
 
     this._display();
@@ -411,11 +606,72 @@ export class Teaching {
     return req;
   }
 
-  /** Stand the claim, the working it is about, and the empty response slot. */
+  /**
+   * Stand the whole item: what is being asked, the claim, what is given, the build it is about,
+   * and the slot the answer goes in.
+   *
+   * ==================================================================================================
+   * WHAT ROUND 2 STOOD, AND WHY IT WAS UNANSWERABLE
+   *
+   * Round 2 stood `item.stem` and `item.working` and nothing else. `ItemBank.present()` was called on
+   * every cycle and returned the localized `ask`, `framing`, `spoken` and three graded `hints` for
+   * that item, in the player's own language, and every one of them went into the probe and stopped.
+   * The consequence is not cosmetic. The bank's most common opening item is
+   * `var-meaning.seat/construct`: `stem "g"`, `given ["g = 8"]`, `ask "Let it settle and read it."`,
+   * answer `8`. Standing only the stem shows a player a floating `g` and requires them to type `8`.
+   * 196 committed items carry a `given` and none of it reached the screen; 1,152 carry an `ask` and
+   * none of it reached the screen. This is §6b happening inside the piece written to end §6b, and it
+   * is the reason this method is now the longest one in the file.
+   *
+   * Four things stand, and each is here because without it some item is impossible rather than hard:
+   *
+   *   `ask`     the question, wrapped and set in `\text{}`. It is the only thing that says what to do
+   *             with the claim: `ask.reading` and `ask.claim` and `ask.terms` are three completely
+   *             different demands on the identical stem.
+   *   `spoken`  the said claim, for the 117 items whose mathematics is a SENTENCE — "There are 3
+   *             crates on my barge for every one on yours" — which the stem `a,\; b` does not carry.
+   *   `given`   the charge in the socket. Already TeX, already produced, already localized.
+   *   `hints`   the item's own three-rung ladder, on request. See `hint()`.
+   *
+   * `framing` is deliberately NOT stood: it is scene-setting, its longest spelling is 125 characters
+   * (three more rows above an already two-row `ask`), and the ladder's first rung is the same class of
+   * line — `hint.look.Emitter`, "a socket cut for a name, and a charge waiting outside it" — reachable
+   * on request rather than pushing the question off the top of the frame. `probe().prose` reports it
+   * so the choice is visible instead of silent.
+   * ==================================================================================================
+   */
   _display() {
-    const S = TEACH.sockets;
-    const stem = this.presented?.tex?.stem ?? this.item?.stem ?? "";
-    if (stem) this._show(CLAIM_ID, stem, S.claim);
+    const above = [];
+    const below = [];
+    const p = this.presented;
+
+    // ---------------------------------------------------------------- above the stem: the question
+    const ask = typeof p?.ask === "string" ? p.ask : "";
+    let askLines = wrapText(ask, TEACH.wrapChars);
+    if (askLines.length > TEACH.maxAskLines) askLines = wrapText(ask, TEACH.wrapWide);
+    if (askLines.length > TEACH.maxAskLines) {
+      this.stats.proseClipped += 1;
+      askLines = askLines.slice(0, TEACH.maxAskLines);
+    }
+    askLines.forEach((line, i) => above.push({ id: `${ASK_ID}-${i}`, text: line, kind: "ask" }));
+
+    // ---------------------------------------------------------------- below the stem: the mathematics
+    /**
+     * The said claim, for the 117 items whose mathematics is a sentence. `spoken.var-meaning.relate`
+     * is "There are 13 crates on my barge for every one on yours" and the stem is `a,\; b` — without
+     * this row the item is a pair of letters and an instruction to write a claim about nothing.
+     */
+    const spoken = typeof p?.spoken === "string" ? p.spoken : "";
+    const saidLines = wrapText(spoken, TEACH.wrapChars).slice(0, TEACH.maxSaidLines);
+    saidLines.forEach((line, i) => below.push({ id: `${SAID_ID}-${i}`, text: line, kind: "said" }));
+
+    /**
+     * The charge that is actually in the socket. `ItemBank.present()` hands this over as
+     * `tex.given` — TeX, untouched, exactly like the stem — so standing it is one loop and no new
+     * anything. It is the difference between a floating `g` and `g` with `g = 8` under it.
+     */
+    const given = Array.isArray(p?.tex?.given) ? p.tex.given : Array.isArray(this.item?.given) ? this.item.given : [];
+    given.forEach((tex, i) => below.push({ id: `${GIVEN_ID}-${i}`, tex, kind: "given" }));
 
     /**
      * The lines the item is ABOUT, when it has them. A `repair` item is a shown build with one
@@ -424,12 +680,7 @@ export class Teaching {
      * types one expression and `TexPanel`'s gates are written per expression.
      */
     const lines = Array.isArray(this.item?.working) ? this.item.working : [];
-    lines.forEach((tex, i) => {
-      this._show(`${WORKING_ID}-${i}`, `${i + 1})\\;${tex}`, {
-        ...S.working,
-        up: S.working.up - i * TEACH.workingStep,
-      });
-    });
+    lines.forEach((tex, i) => below.push({ id: `${WORKING_ID}-${i}`, tex: `${i + 1})\\;${tex}`, kind: "working" }));
 
     /**
      * THE MODEL PHASE, which is the whole reason `learn:teach` is consumed rather than counted.
@@ -439,8 +690,7 @@ export class Teaching {
      * this as inert in both directions. The world demonstrating is therefore free, and refusing to
      * demonstrate would make the announcement a lie. `hintShown` records that it happened, and it is
      * reported on the outcome, so the response is priced as what it was.
-     */
-    /**
+     *
      * BOTH have to say `model`: the announcement the engine made, and the request it then handed
      * over. `learn:teach` is what gates the demonstration — that is the consumption — but a stale
      * announcement must never be able to scaffold an item the engine served as `solo`, and a test-out
@@ -451,17 +701,74 @@ export class Teaching {
     if (announcedHere && this.req?.phase === "model" && this.req?.testOut !== true) {
       const shown = this.item?.answer?.tex ?? this.item?.answer?.canonical ?? null;
       if (shown) {
-        this._show(`${WORKING_ID}-model`, shown, {
-          ...S.working,
-          up: S.working.up - lines.length * TEACH.workingStep,
-        });
+        below.push({ id: `${WORKING_ID}-model`, tex: shown, kind: "model" });
         this.hintShown = true;
       }
     }
+
+    /**
+     * THE EMPTY SLOT, AND WHY IT STANDS BEFORE THERE IS ANYTHING IN IT.
+     *
+     * Round 2's `_showEntry` returned early while `this.response` was empty, so the game gave a
+     * player no indication whatsoever that a response was possible — the loop opened, mathematics
+     * appeared, and the only way to discover that typing does anything was to guess. A rule at the
+     * bottom of the column is the smallest honest statement of "this is where your answer goes", and
+     * it is retired with the rest of the item in `_retire()`.
+     */
+    below.push({ id: ENTRY_ID, tex: ENTRY_RULE, kind: "entry" });
+
+    // ---------------------------------------------------------------- place the column
+    const col = TEACH.column;
+    above.forEach((row, i) => {
+      const socket = { ...col, up: TEACH.stemUp + (above.length - i) * TEACH.proseStep, em: TEACH.proseEm };
+      this._showText(row.id, row.text, socket, row.kind);
+    });
+
+    const stem = p?.tex?.stem ?? this.item?.stem ?? "";
+    if (stem) this._show(CLAIM_ID, stem, { ...col, up: TEACH.stemUp, em: TEACH.mathEm }, "claim");
+
+    below.forEach((row, i) => {
+      const up = TEACH.stemUp - (i + 1) * TEACH.mathStep;
+      if (row.text) {
+        this._showText(row.id, row.text, { ...col, up, em: TEACH.proseEm }, row.kind);
+        return;
+      }
+      const socket = { ...col, up, em: TEACH.mathEm };
+      if (row.id === ENTRY_ID) this._entrySocket = socket;
+      this._show(row.id, row.tex, socket, row.kind);
+      if (row.kind === "given") this.stats.givenRows += 1;
+    });
+    this._belowRows = below.length;
+  }
+
+  /**
+   * One localized SENTENCE, standing in the world as mathematics does.
+   *
+   * `\text{}` and the existing `_show`/`TexPanel` path — no HUD, no DOM, no second renderer. The
+   * gate is the point: `Tex.validate` runs `strict: "error"` KaTeX over the escaped sentence before
+   * it is sent, so a locale whose diacritics or punctuation KaTeX will not set is refused WHOLE and
+   * counted, rather than reaching the rasterizer and standing as a hollow mark next to a live
+   * question. That is RESUME's round-2 rule applied to prose: partially-rendered mathematics is a
+   * different and false statement, and a partially-rendered question is a different question.
+   */
+  _showText(id, plain, socket, kind = "text") {
+    const text = String(plain ?? "").trim();
+    if (!text) return false;
+    const tex = `\\text{${escapeText(text)}}`;
+    if (this.validateTex && !this.validateTex(tex)) {
+      this.stats.textRefused += 1;
+      this._refused.push({ id, kind, text });
+      return false;
+    }
+    this._show(id, tex, socket, kind);
+    this.stats.textRows += 1;
+    if (kind === "ask") this.stats.askRows += 1;
+    if (kind === "said") this.stats.saidRows += 1;
+    return true;
   }
 
   /** `math:show` — one expression, at one socket. The seam that had no emitter. */
-  _show(id, tex, socket) {
+  _show(id, tex, socket, kind = "claim") {
     const at = this.place(socket);
     this.emit("math:show", {
       id,
@@ -475,6 +782,9 @@ export class Teaching {
     });
     this.standing.add(id);
     this.stats.shows += 1;
+    const was = this._stood.find((r) => r.id === id);
+    if (was) was.tex = tex;
+    else this._stood.push({ id, kind, tex, up: round2(socket.up), em: socket.em });
   }
 
   /** `math:hide` — the other half of the same seam. */
@@ -491,6 +801,7 @@ export class Teaching {
     this.presented = null;
     this.response = "";
     this._entryDirty = false;
+    this._stood = [];
     this.mark = null;
   }
 
@@ -500,7 +811,7 @@ export class Teaching {
   type(ch) {
     if (this.phase !== "standing") return false;
     const c = String(ch ?? "");
-    if (c.length !== 1 || !ENTRY_CHARS.test(c)) return false;
+    if (c.length !== 1 || !this.entryChars.test(c)) return false;
     if (this.response.length >= TEACH.maxResponseChars) return false;
     this.response += c;
     this._entryDirty = true;
@@ -514,12 +825,53 @@ export class Teaching {
     return true;
   }
 
+  /**
+   * The response slot, standing whether or not there is anything in it.
+   *
+   * Empty is a rule; written-on is the response with a caret after it, so the slot never disappears
+   * and a learner who backspaces to nothing is not left staring at a question with no visible way to
+   * answer it. Every character `entryChars` admits is legal KaTeX on its own, so no half-typed
+   * response can reach `Tex.validate` as something it must refuse — measured over 37 partial
+   * spellings including `x =`, `2 |`, `1:` and `(`, all of which typeset.
+   */
   _showEntry() {
-    if (!this.response) {
-      if (this.standing.has(ENTRY_ID)) this._hide(ENTRY_ID);
-      return;
-    }
-    this._show(ENTRY_ID, this.response, TEACH.sockets.entry);
+    const tex = this.response ? `${this.response}${ENTRY_CARET}` : ENTRY_RULE;
+    this._show(ENTRY_ID, tex, this._entrySocket, "entry");
+  }
+
+  /**
+   * The next rung of the item's OWN graded hint ladder, into the world.
+   *
+   * `ItemBank.present()` has been returning three localized hints per item since P17 and nothing has
+   * ever shown one. There is no new pedagogy here and no new content: rung 0 is the item's
+   * `hint.look.<objectClass>` line, rung 1 moves, rung 2 states. It is pulled by the learner rather
+   * than pushed by a timer, and asking sets `hintShown`, which `commit()` already reports as
+   * `hinted` — so the engine prices a hinted response as a hinted response. `model.phases`'s
+   * `hintedNote` is explicit that this must be what the world ACTUALLY did, never inferred.
+   */
+  hint() {
+    if (this.phase !== "standing") return null;
+    const hints = Array.isArray(this.presented?.hints) ? this.presented.hints : [];
+    if (this.hintIndex >= hints.length) return null;
+    const i = this.hintIndex;
+    /**
+     * ONE ROW, REPLACED, and not a growing stack. `math:show` is idempotent on `id`, so re-sending
+     * `teach-hint` re-typesets the rung in place. The reason is the frame and it is measured: the
+     * deepest item the bank ships puts seven rows under the stem, and three accumulating hint rows
+     * under THAT project past NDC y −1 — a rung a player cannot see is not a rung. A ladder whose
+     * rungs supersede each other is also what "graded" means: rung 2 says everything rung 1 did.
+     */
+    const socket = {
+      ...TEACH.column,
+      up: TEACH.stemUp - (this._belowRows + 1) * TEACH.mathStep,
+      em: TEACH.proseEm,
+    };
+    const ok = this._showText(HINT_ID, hints[i], socket, "hint");
+    this.hintIndex += 1;
+    if (!this.hintShown) this.stats.hintedItems += 1;
+    this.hintShown = true;
+    this.stats.hintsShown += 1;
+    return ok ? hints[i] : null;
   }
 
   /**
@@ -635,8 +987,29 @@ export class Teaching {
         : null,
       announced: this.announced,
       lastRespond: this.lastRespond,
-      /** The localized surfaces the bank resolved for this item. P21's HUD is what will draw them. */
-      framing: this.presented ? { framing: this.presented.framing, ask: this.presented.ask, hints: this.presented.hints.length } : null,
+      /**
+       * The localized surfaces the bank resolved for this item, BESIDE the rows actually standing in
+       * the world. Round 2 published the left half of this and stood none of it, which is exactly the
+       * failure that has to be readable off a probe rather than argued about: `stood` is what
+       * `math:show` was called with, so a reviewer can check character for character that what
+       * `ItemBank.text()` returned is what is in front of the player.
+       *
+       * `framing` is reported and deliberately not stood — see `_display`.
+       */
+      prose: this.presented
+        ? {
+            ask: this.presented.ask,
+            spoken: this.presented.spoken,
+            framing: this.presented.framing,
+            hints: this.presented.hints,
+            hintIndex: this.hintIndex,
+            validated: !!this.validateTex,
+          }
+        : null,
+      stood: this._stood.map((r) => ({ ...r })),
+      refused: this._refused.map((r) => ({ ...r })),
+      entryUp: round2(this._entrySocket?.up ?? 0),
+      grammar: String(this.entryChars),
       stats: { ...this.stats },
     };
   }

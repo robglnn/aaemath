@@ -1,0 +1,87 @@
+(node:60992) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[
+  {
+    "id": "leaf9-span",
+    "ink": [
+      12.59,
+      63.97,
+      206.29
+    ],
+    "collisionGroundY": 51.18,
+    "terrainGroundY": 51.18,
+    "drawnBelow": [
+      {
+        "object": "vs.terrain.keel",
+        "y": -26.3,
+        "metresBelowInk": 90.27,
+        "material": "vs.flat.terrain.keel",
+        "side": 0
+      }
+    ]
+  },
+  {
+    "id": "leaf9-share",
+    "ink": [
+      12.59,
+      61.77,
+      206.29
+    ],
+    "collisionGroundY": 51.18,
+    "terrainGroundY": 51.18,
+    "drawnBelow": [
+      {
+        "object": "vs.terrain.keel",
+        "y": -26.3,
+        "metresBelowInk": 88.07,
+        "material": "vs.flat.terrain.keel",
+        "side": 0
+      }
+    ]
+  },
+  {
+    "id": "leaf9-working",
+    "ink": [
+      17.45,
+      62.87,
+      206.29
+    ],
+    "collisionGroundY": 51.26,
+    "terrainGroundY": 51.26,
+    "drawnBelow": [
+      {
+        "object": "vs.terrain.keel",
+        "y": -25.25,
+        "metresBelowInk": 88.13,
+        "material": "vs.flat.terrain.keel",
+        "side": 0
+      }
+    ]
+  },
+  {
+    "id": "leaf9-mark",
+    "ink": [
+      31.65,
+      65.31,
+      194.29
+    ],
+    "collisionGroundY": 43.94,
+    "terrainGroundY": 43.66,
+    "drawnBelow": [
+      {
+        "object": "scatter:boulder:lod0",
+        "y": 44.24,
+        "metresBelowInk": 21.07,
+        "material": "p13:stone",
+        "side": 0
+      },
+      {
+        "object": "vs.terrain.keel",
+        "y": -31.95,
+        "metresBelowInk": 97.27,
+        "material": "vs.flat.terrain.keel",
+        "side": 0
+      }
+    ]
+  }
+]

@@ -1,7 +1,8 @@
 import { publish, warn } from "../core/Introspect.js";
 import { signals } from "../core/Signals.js";
-import { itemBank } from "../learn/ItemBank.js";
+import { itemBank, ENTRY_GRAMMAR } from "../learn/ItemBank.js";
 import { Teaching, TEACH } from "../learn/Teaching.js";
+import { validate, getLocale } from "../math/Tex.js";
 
 /**
  * P34 — the presenter, mounted. The assembly point where the engine, the bank and the surface meet.
@@ -12,8 +13,8 @@ import { Teaching, TEACH } from "../learn/Teaching.js";
  * so `session.next()` returns a request with `req.item`, `req.family` and `req.itemRelaxation`
  * already on it.
  *
- * Three things are wired here and nowhere else, because all three cross a boundary a feature module
- * is not allowed to cross:
+ * Five things are wired here and nowhere else, because every one of them crosses a boundary a
+ * feature module is not allowed to cross:
  *
  *   1. THE BANK IS INJECTED. `app/src/learn/ItemBank.js` is P17/P31's; `Teaching.js` never imports it.
  *      Same reason and same shape as `boot/63-learnserve.js`.
@@ -79,6 +80,20 @@ export default {
       place,
       emit: (name, value) => signals.emit(name, value),
       on: (name, fn) => signals.on(name, fn),
+      /**
+       * 4. THE STRICT PIPELINE GATES THE PROSE. `math/Tex.js` is a sibling piece, so `Teaching.js`
+       *    cannot import it any more than it can import the bank; this is where the two are allowed
+       *    to meet. Every localized sentence the presenter stands is typeset here first, in the
+       *    LIVE locale — `getLocale()` and not a captured one, because `ui:locale` can change it
+       *    mid-sitting — and a sentence KaTeX will not set is refused whole rather than standing as
+       *    a hollow mark beside a live question.
+       * 5. THE ACCEPTANCE SET AND THE KEYBOARD ARE ONE OBJECT. `ItemBank.ENTRY_GRAMMAR` is what
+       *    `accepts()[0]` is guaranteed to satisfy; injecting it here is what makes "the bank's own
+       *    first accepted spelling is typeable" a fact about the shipped surface rather than about
+       *    two constants that happen to match today.
+       */
+      validateTex: (tex) => validate(tex, { locale: getLocale(), displayMode: true }).ok,
+      entryChars: ENTRY_GRAMMAR,
     }).attach();
 
     kernel.mount("teaching", teaching);
@@ -110,6 +125,19 @@ export default {
       }
       if (e.key === "Backspace") {
         teaching.erase();
+        return;
+      }
+      /**
+       * THE HINT LADDER, PULLED.
+       *
+       * `?` and `Tab` are the two keys a keyboard offers that `ENTRY_GRAMMAR` does not admit, so
+       * neither can ever eat a character of a response. The rungs themselves are the item's own
+       * three localized hints, which `ItemBank.present()` has returned since P17 and nothing has
+       * ever drawn. Asking marks the response `hinted`, which is what the engine prices.
+       */
+      if (e.key === "?" || e.key === "Tab") {
+        e.preventDefault();
+        teaching.hint();
         return;
       }
       teaching.type(e.key);
@@ -181,18 +209,17 @@ export default {
     }));
 
     kernel.mount("teachwiring", {
-      /** REVIEW HARNESS ONLY — the accepted spelling for the open item. Gameplay never calls it. */
-      expected: () => {
-        const item = teaching.item;
-        if (!item) return null;
-        try {
-          return itemBank.accepts(item)[0] ?? null;
-        } catch {
-          // An answer shape `accepts()` has no case for is a content question, not a reason to make
-          // a measurement run die inside a page.evaluate where the stack would never be read.
-          return null;
-        }
-      },
+      /**
+       * THERE IS NO `expected()` HERE ANY MORE, AND THAT IS THE POINT.
+       *
+       * Round 2 published the open item's accepted spelling on this object so a measurement run
+       * could answer correctly. Both drivers used it, and a run that reads the answer key measures
+       * the harness: it proves the engine can mark a response, and it proves nothing at all about
+       * whether a human being could have produced one from what is on the screen. The hook is gone,
+       * so the only route to a correct answer is the same one a player has — read the rows standing
+       * in the world. `review/measure/P34.mjs` now derives every response from
+       * `probe("mathtex").panels` and nothing else.
+       */
       /** REVIEW HARNESS ONLY — the whole trace, not the tail the probe publishes. */
       trace: () => ({ names: TRACE_NAMES, total: traced, counts: { ...counts }, entries: trace.slice(), cap: TRACE_CAP }),
       /** REVIEW HARNESS ONLY — the trace, cleared, so one run can measure one stretch of play. */

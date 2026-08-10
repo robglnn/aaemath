@@ -1,0 +1,66 @@
+(node:58392) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+============================================================================================
+item var-meaning.seat/generate/1spsl3y  (generate, construction)
+  ASK      (localised, produced by ItemBank.present) : "Cut two sockets under different names that hold the same value."
+  GIVEN    (produced)                                : ["t = 5"]
+  FRAMING  (produced)                                : "A cutter opened this socket at dawn and has not said what goes in it."
+  HINTS    (produced)                                : ["A socket cut for a name, and a charge waiting outside it.","Two names may hold one value. Nothing in the Margin forbids it.","Both sockets are cut. Both are waiting for 5."]
+  ACCEPTED answer                                    : "a = 5; b = 5"
+  ON SCREEN (world panels standing)                  : [{"id":"teach-claim","tex":"t"}]
+============================================================================================
+item var-meaning.seat/repair/ge4h1m  (repair, repair)
+  ASK      (localised, produced by ItemBank.present) : "Name the joint that will not hold, and what it should read."
+  GIVEN    (produced)                                : ["r = 10"]
+  FRAMING  (produced)                                : "A cutter opened this socket at dawn and has not said what goes in it."
+  HINTS    (produced)                                : ["A socket cut for a name, and a charge waiting outside it.","Read down the working. One line does not follow from the one above it.","Line 2 is where the load stops matching."]
+  ACCEPTED answer                                    : "2: r = 10"
+  ON SCREEN (world panels standing)                  : [{"id":"teach-claim","tex":"r"},{"id":"teach-working-0","tex":"1)\\;r = 10"},{"id":"teach-working-1","tex":"2)\\;r = 18"}]
+============================================================================================
+item var-meaning.twin/construct/p1bbch  (construct, pair)
+  ASK      (localised, produced by ItemBank.present) : "Charge both cores."
+  GIVEN    (produced)                                : []
+  FRAMING  (produced)                                : "Ix has been sitting in the empty one for a while, waiting to be told a number."
+  HINTS    (produced)                                : ["A socket cut for a name, and a charge waiting outside it.","The second core has to sit exactly where the first one does.","Together they carry 16, and nothing separates them."]
+  ACCEPTED answer                                    : "x = 8,\\; y = 8"
+  ON SCREEN (world panels standing)                  : [{"id":"teach-claim","tex":"x + y = 16,\\quad x - y = 0"}]
+============================================================================================
+item var-meaning.seat/generate/1gcua5p  (generate, construction)
+  ASK      (localised, produced by ItemBank.present) : "Cut two sockets under different names that hold the same value."
+  GIVEN    (produced)                                : ["w = 12"]
+  FRAMING  (produced)                                : "Ix has been sitting in the empty one for a while, waiting to be told a number."
+  HINTS    (produced)                                : ["A socket cut for a name, and a charge waiting outside it.","Two names may hold one value. Nothing in the Margin forbids it.","Both sockets are cut. Both are waiting for 12."]
+  ACCEPTED answer                                    : "a = 12; b = 12"
+  ON SCREEN (world panels standing)                  : [{"id":"teach-claim","tex":"w"}]
+============================================================================================
+item var-meaning.twin/repair/1ydyr63  (repair, repair)
+  ASK      (localised, produced by ItemBank.present) : "Name the joint that will not hold, and what it should read."
+  GIVEN    (produced)                                : []
+  FRAMING  (produced)                                : "Ix has been sitting in the empty one for a while, waiting to be told a number."
+  HINTS    (produced)                                : ["A socket cut for a name, and a charge waiting outside it.","Read down the working. One line does not follow from the one above it.","Line 2 is where the load stops matching."]
+  ACCEPTED answer                                    : "2: x = 6"
+  ON SCREEN (world panels standing)                  : [{"id":"teach-claim","tex":"x + y = 12,\\quad x - y = 0"},{"id":"teach-working-0","tex":"1)\\;x + y = 12"},{"id":"teach-working-1","tex":"2)\\;x = 4"},{"id":"teach-working-2","tex":"3)\\;y = 8"}]
+============================================================================================
+item expr-anatomy.term/construct/1sj2bvn  (construct, expression)
+  ASK      (localised, produced by ItemBank.present) : "The second term, sign and all."
+  GIVEN    (produced)                                : []
+  FRAMING  (produced)                                : "Ondu props things for a living and knows every one of these by its collar."
+  HINTS    (produced)                                : ["A load standing on one pan. It settles inward-out.","The sign in front belongs to the term that follows it.","4 came away first. What comes away second is carrying its own sign."]
+  ACCEPTED answer                                    : "-7x"
+  ON SCREEN (world panels standing)                  : [{"id":"teach-claim","tex":"4 - 7x"}]
+============================================================================================
+item expr-anatomy.term/construct/117rvci  (construct, expression)
+  ASK      (localised, produced by ItemBank.present) : "The second term, sign and all."
+  GIVEN    (produced)                                : []
+  FRAMING  (produced)                                : "The load has already come apart at its joins; the pieces are lying where they fell."
+  HINTS    (produced)                                : ["A load standing on one pan. It settles inward-out.","The sign in front belongs to the term that follows it.","7 came away first. What comes away second is carrying its own sign."]
+  ACCEPTED answer                                    : "-9x"
+  ON SCREEN (world panels standing)                  : [{"id":"teach-claim","tex":"7 - 9x"}]
+============================================================================================
+item expr-anatomy.term/construct/dk4g92  (construct, expression)
+  ASK      (localised, produced by ItemBank.present) : "The second term, sign and all."
+  GIVEN    (produced)                                : []
+  FRAMING  (produced)                                : "The load has already come apart at its joins; the pieces are lying where they fell."
+  HINTS    (produced)                                : ["A load standing on one pan. It settles inward-out.","The sign in front belongs to the term that follows it.","12 came away first. What comes away second is carrying its own sign."]
+  ACCEPTED answer                                    : "-5x"
+  ON SCREEN (world panels standing)                  : [{"id":"teach-claim","tex":"12 - 5x"}]

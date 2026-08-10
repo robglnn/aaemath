@@ -1,0 +1,274 @@
+(node:31596) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "along": [
+    {
+      "t": 0,
+      "xz": [
+        12,
+        216
+      ],
+      "collisionGroundY": 58.34,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -17.25,
+          "metres": 115.6
+        }
+      ]
+    },
+    {
+      "t": 0.1,
+      "xz": [
+        12.26,
+        215.03
+      ],
+      "collisionGroundY": 57.73,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -18.43,
+          "metres": 116.16
+        }
+      ]
+    },
+    {
+      "t": 0.2,
+      "xz": [
+        12.52,
+        214.06
+      ],
+      "collisionGroundY": 57.12,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -19.61,
+          "metres": 116.73
+        }
+      ]
+    },
+    {
+      "t": 0.3,
+      "xz": [
+        12.78,
+        213.09
+      ],
+      "collisionGroundY": 56.5,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -20.74,
+          "metres": 117.24
+        }
+      ]
+    },
+    {
+      "t": 0.4,
+      "xz": [
+        13.04,
+        212.12
+      ],
+      "collisionGroundY": 55.85,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -21.71,
+          "metres": 117.56
+        }
+      ]
+    },
+    {
+      "t": 0.5,
+      "xz": [
+        13.29,
+        211.14
+      ],
+      "collisionGroundY": 55.19,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -22.64,
+          "metres": 117.83
+        }
+      ]
+    },
+    {
+      "t": 0.6,
+      "xz": [
+        13.55,
+        210.17
+      ],
+      "collisionGroundY": 54.39,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -23.2,
+          "metres": 117.59
+        }
+      ]
+    },
+    {
+      "t": 0.7,
+      "xz": [
+        13.81,
+        209.2
+      ],
+      "collisionGroundY": 53.59,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -23.76,
+          "metres": 117.35
+        }
+      ]
+    },
+    {
+      "t": 0.8,
+      "xz": [
+        14.07,
+        208.23
+      ],
+      "collisionGroundY": 52.78,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -24.33,
+          "metres": 117.11
+        }
+      ]
+    },
+    {
+      "t": 0.9,
+      "xz": [
+        14.33,
+        207.26
+      ],
+      "collisionGroundY": 51.98,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -24.89,
+          "metres": 116.87
+        }
+      ]
+    },
+    {
+      "t": 1,
+      "xz": [
+        14.59,
+        206.29
+      ],
+      "collisionGroundY": 51.18,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -25.27,
+          "metres": 116.45
+        }
+      ]
+    }
+  ],
+  "overSockets": [
+    {
+      "id": "leaf9-span",
+      "from": [
+        12.59,
+        63.97,
+        206.29
+      ],
+      "collisionGroundY": 51.18,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -26.3,
+          "metres": 90.27
+        }
+      ]
+    },
+    {
+      "id": "leaf9-share",
+      "from": [
+        12.59,
+        61.77,
+        206.29
+      ],
+      "collisionGroundY": 51.18,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -26.3,
+          "metres": 88.07
+        }
+      ]
+    },
+    {
+      "id": "leaf9-working",
+      "from": [
+        17.45,
+        62.87,
+        206.29
+      ],
+      "collisionGroundY": 51.26,
+      "drawn": [
+        {
+          "object": "vs.terrain.keel",
+          "y": -25.25,
+          "metres": 88.12
+        }
+      ]
+    },
+    {
+      "id": "leaf9-mark",
+      "from": [
+        31.65,
+        65.31,
+        194.29
+      ],
+      "collisionGroundY": 43.94,
+      "drawn": [
+        {
+          "object": "scatter:boulder:lod0",
+          "y": 44.24,
+          "metres": 21.07
+        },
+        {
+          "object": "vs.terrain.keel",
+          "y": -31.95,
+          "metres": 97.26
+        }
+      ]
+    }
+  ],
+  "terrain": [
+    {
+      "name": "vs.terrain.surface",
+      "triangles": 9443,
+      "bboxY": [
+        -26.1,
+        152.1
+      ],
+      "bboxXZ": [
+        -203.3,
+        -334.8,
+        201.2,
+        308.7
+      ],
+      "side": 0
+    },
+    {
+      "name": "vs.terrain.keel",
+      "triangles": 10253,
+      "bboxY": [
+        -91.6,
+        152.1
+      ],
+      "bboxXZ": [
+        -203.3,
+        -334.8,
+        201.2,
+        308.7
+      ],
+      "side": 0
+    }
+  ]
+}

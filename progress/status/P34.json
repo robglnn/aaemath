@@ -1,9 +1,9 @@
 {
   "id": "P34",
   "state": "critique",
-  "round": 1,
-  "gap": null,
-  "note": "Learning round trip closed end to end. New app/src/learn/Teaching.js + boot/92-teaching.js present the item Scheduler.serve() drew (math:show + learn:present), take a TYPED constructed response, mark it with the shipped ItemBank.check and submit through flow.session -> Scheduler.submit -> Mastery.respond. learn:teach and learn:respond now have consumers; learn:unlock and learn:present drive the per-lesson loader. Proof: review/measure/P34.mjs, 16/16 on the production bundle, 40 cycles driven by real keystrokes. Seams: 18/4 -> 10/3, all six learning+math seams closed. verify --langs=en,es,pl passes.",
+  "round": 2,
+  "gap": "The round trip executes but is unplayable: Teaching._display() stands only item.stem, so ItemBank.present()'s localised ask, given, framing and three hints are computed every cycle and reach nothing on screen (Teaching.js:639 parks them in the probe, 'P21's HUD is what will draw them'). A player sees a floating 't' and must produce 'a = 5; b = 5'. Both proof drivers close the loop only by reading accepts() out of the bank.",
+  "note": "Round 3 rebuild: given/ask/spoken/entry/hints stand in world; accepts()[0] typeable for all 1152 items; answer-key hook deleted and both drivers re-run reading only the screen",
   "evidence": [],
-  "updated": "2026-08-10T20:56:41.690Z"
+  "updated": "2026-08-10T22:23:06.459Z"
 }

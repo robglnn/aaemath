@@ -1,0 +1,142 @@
+(node:62568) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "spawn": {
+    "simTime": 2.417,
+    "lens": [
+      11.15,
+      60.61,
+      219.24
+    ],
+    "frame": [
+      960,
+      540
+    ],
+    "claims": [
+      {
+        "id": "leaf9-span",
+        "ink": [
+          12.59,
+          64.09,
+          206.52
+        ],
+        "socket": [
+          12.59,
+          52.36,
+          206.52
+        ],
+        "drop": 12.73,
+        "grounded": true,
+        "metresFromLens": 15.23,
+        "screenPx": [
+          528,
+          496
+        ],
+        "inFrame": true,
+        "lineOfSightBlockedAt": null
+      },
+      {
+        "id": "leaf9-share",
+        "ink": [
+          12.59,
+          61.89,
+          206.52
+        ],
+        "socket": [
+          12.59,
+          52.36,
+          206.52
+        ],
+        "drop": 10.53,
+        "grounded": true,
+        "metresFromLens": 15.23,
+        "screenPx": [
+          528,
+          496
+        ],
+        "inFrame": true,
+        "lineOfSightBlockedAt": null
+      },
+      {
+        "id": "leaf9-working",
+        "ink": [
+          17.45,
+          62.99,
+          206.52
+        ],
+        "socket": [
+          17.45,
+          52.45,
+          206.52
+        ],
+        "drop": 11.54,
+        "grounded": true,
+        "metresFromLens": 16.38,
+        "screenPx": [
+          689,
+          493
+        ],
+        "inFrame": true,
+        "lineOfSightBlockedAt": null
+      },
+      {
+        "id": "leaf9-mark",
+        "ink": [
+          31.65,
+          65.43,
+          194.52
+        ],
+        "socket": [
+          31.65,
+          44.8,
+          194.52
+        ],
+        "drop": 21.64,
+        "grounded": true,
+        "metresFromLens": 35.8,
+        "screenPx": [
+          830,
+          492
+        ],
+        "inFrame": true,
+        "lineOfSightBlockedAt": 9.54
+      }
+    ]
+  },
+  "afterE": {
+    "simTime": 3.65,
+    "lens": [
+      11.15,
+      60.61,
+      219.24
+    ],
+    "frame": [
+      960,
+      540
+    ],
+    "claims": [
+      {
+        "id": "teach-claim",
+        "ink": [
+          12.59,
+          63.47,
+          205.24
+        ],
+        "socket": [
+          12.59,
+          51.37,
+          205.24
+        ],
+        "drop": 13.1,
+        "grounded": true,
+        "metresFromLens": 16.84,
+        "screenPx": [
+          523,
+          500
+        ],
+        "inFrame": true,
+        "lineOfSightBlockedAt": null
+      }
+    ]
+  }
+}

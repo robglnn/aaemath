@@ -1,0 +1,249 @@
+(node:62808) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+### spawn framing (halted, zero-time A/B, retired via signal)
+{
+ "w": 960,
+ "h": 540,
+ "simTime": 2.433,
+ "camera": [
+  11.15,
+  60.6135,
+  219.2408
+ ],
+ "accentsBefore": {
+  "registered": 4,
+  "active": 4,
+  "pool": 6,
+  "lit": 4,
+  "peakIntensity": 0.58,
+  "ids": [
+   "leaf9-span",
+   "leaf9-share",
+   "leaf9-working",
+   "leaf9-mark"
+  ]
+ },
+ "accentsAfterRetire": {
+  "registered": 0,
+  "active": 0,
+  "pool": 6,
+  "lit": 0,
+  "peakIntensity": 0,
+  "ids": []
+ },
+ "control": {
+  "of": 518400,
+  "any": 0,
+  "ge2": 0,
+  "ge4": 0,
+  "ge8": 0,
+  "ge16": 0,
+  "pctAny": 0,
+  "pctGe8": 0,
+  "maxChannelDelta": 0,
+  "meanChannelDelta": 0,
+  "boxBuf": null,
+  "boxScreenTopLeft": null
+ },
+ "treatment": {
+  "of": 518400,
+  "any": 366,
+  "ge2": 289,
+  "ge4": 143,
+  "ge8": 56,
+  "ge16": 0,
+  "pctAny": 0.0706,
+  "pctGe8": 0.0108,
+  "maxChannelDelta": 14,
+  "meanChannelDelta": 0.00278,
+  "boxBuf": [
+   796,
+   11,
+   883,
+   58
+  ],
+  "boxScreenTopLeft": [
+   796,
+   481,
+   883,
+   528
+  ]
+ },
+ "signalCanRetire": true
+}
+world:resonance payloads seen on the bus: [
+ {
+  "id": "leaf9-span",
+  "position": [
+   12.59,
+   52.362260687729574,
+   206.52250024570296
+  ],
+  "radius": 5,
+  "strength": 1,
+  "active": true
+ },
+ {
+  "id": "leaf9-share",
+  "position": [
+   12.59,
+   52.362260687729574,
+   206.52250024570296
+  ],
+  "radius": 5,
+  "strength": 1,
+  "active": true
+ },
+ {
+  "id": "leaf9-working",
+  "position": [
+   17.45,
+   52.45090813178264,
+   206.52250024570296
+  ],
+  "radius": 5,
+  "strength": 1,
+  "active": true
+ },
+ {
+  "id": "leaf9-mark",
+  "position": [
+   31.65,
+   44.79558827313775,
+   194.52250024570296
+  ],
+  "radius": 5,
+  "strength": 1,
+  "active": true
+ }
+]
+
+accents after resume+0.5s (emitter re-reconciles?): {"registered":0,"active":0,"pool":6,"lit":0,"peakIntensity":0,"ids":[]}
+
+### after pressing E (the state a player is actually in)
+{
+ "w": 960,
+ "h": 540,
+ "simTime": 4.3,
+ "camera": [
+  11.15,
+  60.6135,
+  219.2408
+ ],
+ "accentsBefore": {
+  "registered": 5,
+  "active": 5,
+  "pool": 6,
+  "lit": 5,
+  "peakIntensity": 0.58,
+  "ids": [
+   "teach-ask-0",
+   "teach-ask-1",
+   "teach-claim",
+   "teach-given-0",
+   "teach-entry"
+  ]
+ },
+ "accentsAfterRetire": {
+  "registered": 0,
+  "active": 0,
+  "pool": 6,
+  "lit": 0,
+  "peakIntensity": 0,
+  "ids": []
+ },
+ "control": {
+  "of": 518400,
+  "any": 0,
+  "ge2": 0,
+  "ge4": 0,
+  "ge8": 0,
+  "ge16": 0,
+  "pctAny": 0,
+  "pctGe8": 0,
+  "maxChannelDelta": 0,
+  "meanChannelDelta": 0,
+  "boxBuf": null,
+  "boxScreenTopLeft": null
+ },
+ "treatment": {
+  "of": 518400,
+  "any": 0,
+  "ge2": 0,
+  "ge4": 0,
+  "ge8": 0,
+  "ge16": 0,
+  "pctAny": 0,
+  "pctGe8": 0,
+  "maxChannelDelta": 0,
+  "meanChannelDelta": 0,
+  "boxBuf": null,
+  "boxScreenTopLeft": null
+ },
+ "signalCanRetire": true
+}
+
+### after walking 4 s forward
+{
+ "w": 960,
+ "h": 540,
+ "simTime": 8.8,
+ "camera": [
+  11.15,
+  43.5028,
+  194.7873
+ ],
+ "accentsBefore": {
+  "registered": 0,
+  "active": 0,
+  "pool": 6,
+  "lit": 0,
+  "peakIntensity": 0,
+  "ids": []
+ },
+ "accentsAfterRetire": {
+  "registered": 0,
+  "active": 0,
+  "pool": 6,
+  "lit": 0,
+  "peakIntensity": 0,
+  "ids": []
+ },
+ "control": {
+  "of": 518400,
+  "any": 0,
+  "ge2": 0,
+  "ge4": 0,
+  "ge8": 0,
+  "ge16": 0,
+  "pctAny": 0,
+  "pctGe8": 0,
+  "maxChannelDelta": 0,
+  "meanChannelDelta": 0,
+  "boxBuf": null,
+  "boxScreenTopLeft": null
+ },
+ "treatment": {
+  "of": 518400,
+  "any": 0,
+  "ge2": 0,
+  "ge4": 0,
+  "ge8": 0,
+  "ge16": 0,
+  "pctAny": 0,
+  "pctGe8": 0,
+  "maxChannelDelta": 0,
+  "meanChannelDelta": 0,
+  "boxBuf": null,
+  "boxScreenTopLeft": null
+ },
+ "signalCanRetire": true
+}
+
+errors: [33m0[39m | warnings: [33m14[39m
+
+SUMMARY
+spawn    control      0 | treatment any    366 ge8     56 ge16      0 | max   14 | signalCanRetire [33mtrue[39m
+afterE   control      0 | treatment any      0 ge8      0 ge16      0 | max    0 | signalCanRetire [33mtrue[39m
+walked   control      0 | treatment any      0 ge8      0 ge16      0 | max    0 | signalCanRetire [33mtrue[39m

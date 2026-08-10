@@ -168,7 +168,23 @@ const SIGNAL_NAME_RE = /^[a-z][\w-]*:[\w:-]+$/;
  * wrote a sentence about it. Within a block, entries are separated by `·`, so a marker binds to the
  * name it follows, and a name is the leading `domain:event` token inside a backtick span — the rest
  * of the span is the payload shape, which may itself contain colons (`phase:"start"`).
+ *
+ * ## And what counts as a MARKER
+ *
+ * Not "any ⟨…⟩". `kernel:frame` and `kernel:resize` carried ⟨no subscriber⟩, which passed this gate
+ * while restating the finding and naming nobody: an unsubscribed broadcast that nobody owes the
+ * other half of is a different thing from a hole with an owner, and the document has to say which.
+ * So a marker must be one of exactly two shapes:
+ *
+ *   ⟨pending Pnn⟩            a hole. Names at least one piece that owes the other end.
+ *   ⟨broadcast — no owner⟩   deliberate. Nobody owes anything; the name exists for code outside the
+ *                            hook table, and an audit finding it still unsubscribed should delete it.
+ *
+ * Anything else in angle brackets is treated as unmarked, and says so by name.
  */
+const MARKER_RE = /⟨([^⟩]*)⟩/g;
+const PENDING_RE = /pending\s+P\d/i;
+const BROADCAST_RE = /broadcast/i;
 const DOC = path.join(ROOT, "design/architecture.md");
 
 function vocabulary() {
@@ -184,15 +200,98 @@ function vocabulary() {
     const first = block.split(/\r?\n/)[0];
     if (!/^\*\*[A-Z][A-Za-z]*\*\*[^—\n]*—/.test(first)) continue;
     for (const chunk of block.replace(/\r?\n/g, " ").split("·")) {
-      const marked = /⟨[^⟩]*⟩/.test(chunk);
+      const markers = [...chunk.matchAll(MARKER_RE)].map((m) => m[1]);
+      const kind = markers.some((m) => PENDING_RE.test(m))
+        ? "pending"
+        : markers.some((m) => BROADCAST_RE.test(m))
+          ? "broadcast"
+          : markers.length
+            ? "unrecognised"
+            : null;
       for (const span of chunk.matchAll(/`([^`]+)`/g)) {
         const name = span[1].match(/^([a-z][\w-]*:[\w:-]+)/)?.[1];
         if (!name || !SIGNAL_NAME_RE.test(name)) continue;
-        entries.set(name, { marked: marked || entries.get(name)?.marked === true });
+        const was = entries.get(name);
+        entries.set(name, {
+          kind: kind ?? was?.kind ?? null,
+          marker: markers[0] ?? was?.marker ?? null,
+          marked: kind === "pending" || kind === "broadcast" || was?.marked === true,
+        });
       }
     }
   }
   return entries;
+}
+
+/**
+ * The other half of the gate: `review/measure/seam-effects.json`.
+ *
+ * The vocabulary check above is about names with ONE end. Nothing re-examines a name once it has
+ * two, which is precisely how P36 round 2 passed: `world:resonance` emitted, heard, lighting four
+ * real `PointLight`s, and worth exactly 0 of 518,400 pixels because every one of them hung in clear
+ * air. A tool that measures string pairing will call that closed forever.
+ *
+ * So a name that was one-ended when this wave opened and is two-ended now has to carry a record of
+ * what closing it was worth, measured the only way that resolves a single code value: halt the
+ * realtime loop, render twice at `advance(0)`, diff the drawing buffer with the thing under test
+ * present and absent. The ledger's own header states the rules for each `kind`; this validates them.
+ *
+ * `owed` is deliberately allowed and deliberately loud. Pieces close seams mid-wave and pricing one
+ * costs a browser run; a record naming the owner is the same bargain the vocabulary makes with
+ * ⟨pending Pnn⟩, and it means no piece can quietly benefit from another piece's unpriced closure.
+ */
+const LEDGER = path.join(ROOT, "review/measure/seam-effects.json");
+
+function effects(emits, listens) {
+  if (!fs.existsSync(LEDGER)) {
+    return { read: false, why: `${rel(LEDGER)} is missing; every closed seam is unpriced` };
+  }
+  let doc;
+  try {
+    doc = JSON.parse(fs.readFileSync(LEDGER, "utf8"));
+  } catch (e) {
+    return { read: false, why: `${rel(LEDGER)} is not valid JSON: ${e.message}` };
+  }
+  const baseline = doc.baseline?.oneEnded ?? [];
+  const rows = doc.effects ?? {};
+  const closed = baseline.filter((n) => emits.has(n) && listens.has(n)).sort();
+  const priced = [];
+  const owed = [];
+  const invalid = [];
+  const missing = [];
+  for (const name of closed) {
+    const e = rows[name];
+    if (!e) {
+      missing.push(name);
+      continue;
+    }
+    const bad = (why) => invalid.push(`${name} — ${why}`);
+    const fileHere = (p) => p && fs.existsSync(path.join(ROOT, p));
+    switch (e.kind) {
+      case "pixels":
+      case "state":
+        if (!fileHere(e.script)) bad(`kind "${e.kind}" with no runnable script (${e.script ?? "none"})`);
+        else if (e.control !== 0) bad(`control is ${e.control}, not 0 — the instrument cannot resolve one code value`);
+        else if (!(Number(e.treatment) > 0)) bad(`treatment is ${e.treatment}; a closed seam worth nothing observable is not closed`);
+        else priced.push(`${name} — ${e.kind} ${e.control} → ${e.treatment} (${e.closedBy ?? "?"})`);
+        break;
+      case "hygiene":
+        if (!e.identical) bad(`kind "hygiene" must say what the two paths measured identically`);
+        else priced.push(`${name} — hygiene, no behavioural difference (${e.closedBy ?? "?"})`);
+        break;
+      case "blindspot":
+        if (!e.listenerAt) bad(`kind "blindspot" must give the listener's file:line`);
+        else priced.push(`${name} — never one-ended; listener at ${e.listenerAt}`);
+        break;
+      case "owed":
+        if (!e.owner) bad(`kind "owed" must name the piece that owes the measurement`);
+        else owed.push(`${name} — owed by ${e.owner}`);
+        break;
+      default:
+        bad(`unknown kind "${e.kind ?? "none"}"`);
+    }
+  }
+  return { read: rel(LEDGER), closedSinceBaseline: closed.length, priced, owed, invalid, missing };
 }
 
 let signalReport = null;
@@ -259,8 +358,16 @@ if (has("signals")) {
       // Informational. Two-ended names nobody added to the vocabulary. Not a seam, but the
       // document is the only place the shape of a payload is written down.
       notInVocabulary: allNames.filter((n) => !vocab.has(n)),
+      // A marker the gate does not recognise is worse than none: it reads as an owner and names
+      // nobody. Reported separately so the fix is obvious.
+      unrecognisedMarkers: [...vocab.keys()].filter((n) => vocab.get(n).kind === "unrecognised"),
+      // What each failing entry actually says in angle brackets, so the FAIL line can quote it back
+      // instead of asserting there is no marker when there plainly is one.
+      markerText: Object.fromEntries(unmarked.map((n) => [n, vocab.get(n).marker ?? null])),
     };
   }
+
+  signalReport.effects = effects(emits, listens);
 }
 
 // ---------------------------------------------------------------- report
@@ -301,12 +408,43 @@ if (undeclared) {
     console.error(`  ${n}  — absent from design/architecture.md's signal vocabulary entirely`);
   }
   for (const n of v.unmarked) {
-    console.error(`  ${n}  — listed there with no ⟨pending Pnn⟩ marker, so the document claims both ends exist`);
+    const marker = v.markerText?.[n];
+    console.error(
+      marker
+        ? `  ${n}  — marked ⟨${marker}⟩, which names no owner and is not ⟨broadcast — no owner⟩ either`
+        : `  ${n}  — listed there with no marker at all, so the document claims both ends exist`
+    );
   }
   console.error(
-    "Do one of three things to each: WIRE the other end, REMOVE the name from code and document,\n" +
-      "or mark the entry ⟨pending Pnn⟩ naming the piece that owes the other half."
+    "Do one of these to each: WIRE the other end, REMOVE the name from code and document, mark it\n" +
+      "⟨pending Pnn⟩ naming the piece that owes the other half, or — only if nobody ever will —\n" +
+      "⟨broadcast — no owner⟩."
   );
 }
 
-if (undeclared || (has("check") && problems > 0)) process.exit(1);
+const fx = signalReport?.effects;
+const unpriced = (fx?.missing?.length ?? 0) + (fx?.invalid?.length ?? 0) + (fx?.read === false ? 1 : 0);
+if (fx) {
+  if (fx.read === false) console.error(`\nFAIL — ${fx.why}`);
+  if (fx.missing?.length) {
+    console.error(
+      `\nFAIL — ${fx.missing.length} seam(s) closed during this wave with no measured effect on record:`
+    );
+    for (const n of fx.missing) console.error(`  ${n}  — add an entry to review/measure/seam-effects.json`);
+    console.error(
+      "String pairing is not closure. Drive the shipped app, halt the loop, render twice at\n" +
+        "advance(0), and record control vs treatment — or record it `owed` with your piece's name on it."
+    );
+  }
+  for (const n of fx.invalid ?? []) console.error(`FAIL — ${n}`);
+  if (fx.owed?.length) {
+    console.error(`\n${fx.owed.length} closed seam(s) still unpriced, by declaration:`);
+    for (const n of fx.owed) console.error(`  ${n}`);
+  }
+  if (fx.priced?.length) {
+    console.error(`\n${fx.priced.length} closed seam(s) with an effect on record:`);
+    for (const n of fx.priced) console.error(`  ${n}`);
+  }
+}
+
+if (undeclared || unpriced || (has("check") && problems > 0)) process.exit(1);

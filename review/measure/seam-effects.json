@@ -1,0 +1,159 @@
+{
+  "why": [
+    "tools/seams.mjs measures whether two strings match. That is a real gate and it caught real",
+    "holes, but it cannot tell a closed seam from a closed-looking one: once a name has an emitter",
+    "and a listener it is never examined again. P36 round 2 satisfied it completely — world:resonance",
+    "emitted, heard, and lighting four real PointLights — while the shipped game changed 0 of 518,400",
+    "pixels, because every one of those lights hung in clear air with no surface inside its falloff.",
+    "That is the wave's own dominant failure mode reproduced one level up, inside the tool built to",
+    "detect it.",
+    "",
+    "So this file is the second half of the gate. `baseline.oneEnded` is every signal name the audit",
+    "has ever reported with only one end during this wave; any of those that now has BOTH ends is a",
+    "newly-closed seam, and a newly-closed seam has to say what closing it was worth. The measurement",
+    "shape is fixed on purpose (see `kind` below): halt the realtime loop, render twice at",
+    "k.advance(0) so nothing in the world integrates between reads, and diff the drawing buffer with",
+    "the thing under test present and absent. Control is the two-render noise floor; if it is not",
+    "exactly 0 the instrument cannot resolve a single code value and the treatment number means",
+    "nothing.",
+    "",
+    "kind:",
+    "  pixels    a zero-time A/B on the shipped path. Requires control === 0 and treatment > 0.",
+    "  state     a zero-time observable state delta on the shipped path, for seams that legitimately",
+    "            move no pixels. Requires before !== after and a probe path that a reviewer can read.",
+    "  hygiene   the seam changes no behaviour at all — a declared channel replacing a duck-typed",
+    "            lookup, say. Legitimate, but it must NOT be counted as a player-visible closure, and",
+    "            it must say what the two paths measured identically.",
+    "  blindspot the name was never actually one-ended: the audit's own regex could not see the",
+    "            listener. Requires the listener's file:line, and is a finding about the tool.",
+    "  owed      closed by a piece that has not priced it yet. Names the owner. Reported on every run",
+    "            so it cannot go quiet, in the same spirit as ⟨pending Pnn⟩ in the vocabulary."
+  ],
+  "baseline": {
+    "capturedFrom": [
+      "review/measure/_p35-seams-before.json — the wave-opening audit, 18 emitted / 4 listened",
+      "review/measure/_p36r2-seams-before.json — after the receiver-optional fix, which is when",
+      "world:resonance, camera:focus and camera:fov first became visible to the tool at all"
+    ],
+    "oneEnded": [
+      "audio:cue",
+      "camera:focus",
+      "camera:fov",
+      "camera:probe",
+      "camera:shake",
+      "camera:target",
+      "input:calibrate",
+      "input:capture",
+      "input:context",
+      "input:device",
+      "input:focus",
+      "input:look",
+      "input:rebind",
+      "kernel:frame",
+      "kernel:resize",
+      "learn:present",
+      "learn:respond",
+      "learn:teach",
+      "learn:unlock",
+      "math:hide",
+      "math:show",
+      "player:traverse",
+      "quality:tier",
+      "ui:menu",
+      "world:resonance"
+    ]
+  },
+  "effects": {
+    "world:resonance": {
+      "kind": "pixels",
+      "closedBy": "P36",
+      "round": 3,
+      "script": "review/measure/P36-r3.mjs",
+      "output": "review/measure/P36-r3.txt",
+      "control": 0,
+      "treatment": 412,
+      "units": "pixels changed of 518,400 at 960x540, realtime loop halted, two renders at advance(0)",
+      "note": [
+        "Round 2 closed the string pairing and measured 0. The emitter sent the ink's own position and",
+        "every claim stands 10.7-21.2 m above the ground, so all four accents hung in air: 0 of 26",
+        "sphere casts from any accent found a surface inside its falloff. Round 3 sends the claim's",
+        "socket instead — collision.groundAt under the ink, lifted 1 m — and the same cast now finds",
+        "world at 0.73-0.95 m from every accent, 9-12 directions of 26. The 412 px are one accent",
+        "(leaf9-mark, whose socket lands 0.95 m from a drawn boulder); the three over open flat ground",
+        "are worth under a code value each at 15 m, which is what §5.4's intensity cap buys on a",
+        "horizontal plane — measured directly in review/measure/P36-r3-sweep.mjs.",
+        "",
+        "On the gameplay path (review/measure/P36-r3-play.mjs) the same A/B reads 366 px at spawn and",
+        "0 px after E, because pressing E stands the four claims down and leaves one teaching claim",
+        "whose socket is on that same open ground. The seam is still demonstrably live there, as a",
+        "state delta rather than a pixel one: probe(\"lighting\").accents.registered goes 4 → 1 → 2 as",
+        "world:resonance retires three accents and registers the teaching claim's."
+      ]
+    },
+    "camera:probe": {
+      "kind": "hygiene",
+      "closedBy": "P36",
+      "round": 1,
+      "script": "review/measure/P36.mjs",
+      "output": "review/measure/P36-r3-probe.txt",
+      "identical": "freeDistance 3.272 / allowedDistance 3.272 / camera [11.15, 60.6133, 219.2385] with collisionSource 'signal' (bridge mounted) and 'system' (bridge disposed) — re-run 2026-08-10",
+      "note": [
+        "The rig emits camera:probe 1123 times in eight seconds and nothing answered; boot/30-locomotion.js",
+        "now answers it from CollisionWorld.sphereCast. But _castFree already fell through to",
+        "kernel.get('collision').sphereCast — the same method — so the boom stands in exactly the same",
+        "place either way. This is a declared channel replacing a duck-typed lookup by string name.",
+        "Worth doing and worth nothing in pixels: it must not be counted as a player-visible closure."
+      ]
+    },
+    "camera:shake": {
+      "kind": "blindspot",
+      "listenerAt": "app/src/play/CameraRig.js:474",
+      "note": "Registered through `const on = (name, fn) => this._off.push(signals.on(name, fn))`, so the old /\\.on\\(/ receiver requirement could not see it. Never one-ended; P36 round 1 drove the shipped app and the camera really shakes."
+    },
+    "camera:target": {
+      "kind": "blindspot",
+      "listenerAt": "app/src/play/CameraRig.js:520, app/src/world/Lighting.js:639",
+      "note": "Same alias. Two live subscribers the whole time — the rig follows the body and the light rig reads the same object for its near cascade."
+    },
+    "input:look": {
+      "kind": "blindspot",
+      "listenerAt": "app/src/play/CameraRig.js:422",
+      "note": "Same alias. The mouse has always turned the camera through this name."
+    },
+    "learn:present": {
+      "kind": "owed",
+      "owner": "P34",
+      "note": "Emitter written by P34's teaching wiring; the standing claims stand down and the field is taken over on the shipped path after E. Not priced with a zero-time delta yet."
+    },
+    "math:show": {
+      "kind": "owed",
+      "owner": "P34",
+      "note": "Same chain. Pressing E replaces four standing claims with teach-claim, which is a large pixel delta nobody has measured as control-versus-treatment."
+    },
+    "math:hide": {
+      "kind": "owed",
+      "owner": "P34",
+      "note": "Same chain, retiring end."
+    },
+    "learn:respond": {
+      "kind": "owed",
+      "owner": "P34",
+      "note": "Heard by learn/Mastery.js. Its observable delta is a state one (mastery p moves), not a pixel one."
+    },
+    "learn:teach": {
+      "kind": "owed",
+      "owner": "P34",
+      "note": "Emitted by learn/Scheduler.js, heard by the teaching director."
+    },
+    "learn:unlock": {
+      "kind": "owed",
+      "owner": "P34",
+      "note": "Emitted by learn/Mastery.js."
+    },
+    "quality:tier": {
+      "kind": "owed",
+      "owner": "P35",
+      "note": "P35 wired the post stack to it. Its delta is both pixels and state and neither has been recorded here yet."
+    }
+  }
+}

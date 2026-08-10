@@ -36,10 +36,66 @@
 import fs from "node:fs";
 import path from "node:path";
 import { openGame, ROOT, arg, has } from "../../tools/lib/session.mjs";
+import { answerFromScreen } from "./lib/reader.mjs";
+import { ItemBank, isTypeable } from "../../app/src/learn/ItemBank.js";
 
 const CYCLES = Number(arg("cycles", 36));
 const LANG = arg("lang", "en");
 const WANT_SHOT = has("shot");
+
+/** The shipped sentence table the reader comprehends with. Never an answer, only a phrasing. */
+const STRINGS = (await import(`../../content/items/strings/items-${LANG}.mjs`)).default;
+
+/* ==================================================================================================
+ * PART 0 — THE BANK, OFFLINE. Two facts about the shipped content that are identical on every
+ * machine and every page load, so they are computed here rather than driven through a browser.
+ * ================================================================================================*/
+const bankAudit = await (async () => {
+  const bank = new ItemBank();
+  const dir = new URL("../../content/items/groups/", import.meta.url);
+  let items = 0;
+  const outsideGrammar = [];
+  const refused = [];
+  const stemIsAnswer = { generate: 0, other: 0, total: 0 };
+  const deTexStem = (s) =>
+    String(s ?? "")
+      .replace(/\\left|\\right/g, "")
+      .replace(/\\cdot|\\times/g, "*")
+      .replace(/\\div/g, "/")
+      .replace(/\\quad|\\qquad|\\;|\\,|\\:|\\!/g, " ")
+      .replace(/([A-Za-z0-9)])\^\{?(\d)\}?/g, (m, b, n) => (Number(n) >= 1 && Number(n) <= 4 ? Array(Number(n)).fill(b).join("*") : m))
+      .replace(/[{}]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  let generateItems = 0;
+  for (const f of fs.readdirSync(dir)) {
+    if (f === "index.mjs") continue;
+    const mod = await import(new URL(f, dir));
+    for (const it of mod.default.items) {
+      items += 1;
+      const spelling = bank.accepts(it)[0];
+      if (!isTypeable(spelling)) outsideGrammar.push({ id: it.id, spelling });
+      let r = { correct: false };
+      try {
+        r = bank.check(it, spelling);
+      } catch {
+        r = { correct: false, reason: "threw" };
+      }
+      if (!r.correct) refused.push({ id: it.id, spelling, reason: r.reason });
+      if (it.form === "generate") generateItems += 1;
+      try {
+        if (bank.check(it, deTexStem(it.stem)).correct) {
+          stemIsAnswer.total += 1;
+          if (it.form === "generate") stemIsAnswer.generate += 1;
+          else stemIsAnswer.other += 1;
+        }
+      } catch {
+        /* a stem that is not a response is the normal case */
+      }
+    }
+  }
+  return { items, outsideGrammar, refused, stemIsAnswer, generateItems };
+})();
 
 const KP_IDS = JSON.parse(fs.readFileSync(path.join(ROOT, "content/knowledge-graph.json"), "utf8")).nodes.map((n) => n.id);
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(ROOT, "content/items/manifest.json"), "utf8"));
@@ -102,6 +158,8 @@ const out = await openGame({ built: true, width: 1280, height: 720, lang: LANG }
   let shotTaken = null;
   let occlusion = null;
   let boundary = null;
+  let hinted = null;
+  let framed = null;
   for (let i = 0; i < CYCLES; i += 1) {
     const state = await d.probe("teaching");
     if (state?.phase !== "standing") {
@@ -124,12 +182,36 @@ const out = await openGame({ built: true, width: 1280, height: 720, lang: LANG }
 
     const open = await d.probe("teaching");
     const item = open.item;
-    // A learner who knows the material, with a deliberate slip every fifth item so the wrong side of
-    // every gate is exercised too. The accepted spelling comes from the shipped `ItemBank.accepts`,
-    // which is the same list `tools/bank-audit.mjs` priced the bank with.
+
+    /**
+     * THE RESPONSE IS READ OFF THE SCREEN. THIS IS THE WHOLE PROOF.
+     *
+     * Round 2 typed `teachwiring.expected()` — the shipped bank's own accepted spelling, handed to
+     * the harness through a hook. That measures the engine and nothing else: the presenter stood
+     * `item.stem` alone, so on the bank's commonest opening item a player saw a floating `g` and was
+     * required to type `8`, and the run passed anyway. The hook has been deleted from
+     * `boot/92-teaching.js`, so there is no route to the key at all; every response below is derived
+     * by `lib/reader.mjs` from `probe("mathtex").panels` — the rows the rasterizer actually drew —
+     * and from the shipped sentence table it reads them with. A correct mark now means a human
+     * being could have earned it.
+     *
+     * Every fifth item is answered deliberately wrong so the losing side of every gate is exercised
+     * too; `-999` is a legal spelling of a wrong answer in the same grammar.
+     */
+    const panelsNow = (await d.probe("mathtex"))?.panels ?? [];
+    const read = answerFromScreen({ panels: panelsNow, table: STRINGS });
     const intendCorrect = i % 5 !== 4;
-    const expected = await d.run(() => window.__vs.kernel.get("teachwiring")?.expected?.() ?? null);
-    const typed = intendCorrect ? (expected ?? "0") : "-999";
+    const typed = intendCorrect ? (read.response ?? "0") : "-999";
+
+    /**
+     * Did the question the bank produced reach the glass unchanged? `probe("teaching").prose.ask` is
+     * `ItemBank.text()`'s own return value; `read.screen.askText` is that string recovered from the
+     * `\text{}` the panels were rasterized from. Compared character for character, every cycle, in
+     * whatever locale the run is in.
+     */
+    const askOnScreen = read.screen.askText ?? "";
+    const askFromBank = String(open?.prose?.ask ?? "");
+    const askMatches = askOnScreen.replace(/\s+/g, " ").trim() === askFromBank.replace(/\s+/g, " ").trim();
 
     await d.page.keyboard.type(typed, { delay: 0 });
     // Past the 900 ms anti-guessing floor, on the fixed clock. Below it a correct response is
@@ -150,10 +232,87 @@ const out = await openGame({ built: true, width: 1280, height: 720, lang: LANG }
        * the capture was taken from.
        */
       occlusion = await d.probe("mathocclusion");
+      /**
+       * IS EVERY ROW ACTUALLY IN THE FRAME?
+       *
+       * 0% occluded says nothing has world geometry in front of it. It says nothing at all about a
+       * row standing above the top of the screen, which is exactly what the said claim did at
+       * `up 6.31` while it was above the stem — NDC y 1.04, ink cut off by the viewport, and every
+       * other gate green. So the quad's four corners go through the live camera's own
+       * projection * view matrix here, and the run fails if any of them leaves [-1, 1].
+       */
+      framed = await d.run(() => {
+        const k = window.__vs.kernel;
+        const cam = k.camera;
+        const field = k.get("mathtex");
+        if (!cam || !field) return null;
+        cam.updateMatrixWorld();
+        const vp = cam.projectionMatrix.clone().multiply(cam.matrixWorldInverse);
+        const e = vp.elements;
+        const proj = (x, y, z) => {
+          const w = e[3] * x + e[7] * y + e[11] * z + e[15];
+          return [(e[0] * x + e[4] * y + e[8] * z + e[12]) / w, (e[1] * x + e[5] * y + e[9] * z + e[13]) / w];
+        };
+        let fx = -cam.matrixWorld.elements[8];
+        let fz = -cam.matrixWorld.elements[10];
+        const L = Math.hypot(fx, fz) || 1;
+        fx /= L;
+        fz /= L;
+        const rx = -fz;
+        const rz = fx;
+        const rows = [];
+        for (const [id, p] of field.panels) {
+          const mesh = p.mesh;
+          mesh.updateWorldMatrix(true, false);
+          const el = mesh.matrixWorld.elements;
+          const hw = mesh.scale.x / 2;
+          const hh = mesh.scale.y / 2;
+          const pts = [];
+          for (const sx of [-1, 1]) for (const sy of [-1, 1]) pts.push(proj(el[12] + rx * hw * sx, el[13] + hh * sy, el[14] + rz * hw * sx));
+          const pr = p.probe();
+          rows.push({
+            id,
+            x: [Math.min(...pts.map((v) => v[0])), Math.max(...pts.map((v) => v[0]))].map((v) => Number(v.toFixed(3))),
+            y: [Math.min(...pts.map((v) => v[1])), Math.max(...pts.map((v) => v[1]))].map((v) => Number(v.toFixed(3))),
+            legible: pr.legible,
+            emScreenPx: pr.emScreenPx,
+            strokeEms: pr.strokeEms,
+            strokePx: pr.strokePx,
+            floorPx: pr.legibleFloorPx,
+            em: pr.em,
+          });
+        }
+        return rows;
+      });
+    }
+
+    /**
+     * THE HINT LADDER, PULLED ONCE, THROUGH THE KEYBOARD.
+     *
+     * `ItemBank.present()` has returned three localized hints per item since P17 and until now
+     * nothing drew one. `?` is a key `ENTRY_GRAMMAR` does not admit, so it cannot eat a character of
+     * a response; the rung it stands is read back off `probe("mathtex")` like everything else.
+     */
+    if (!hinted && i === 2) {
+      const beforeHint = (await d.probe("mathtex"))?.panels?.map((p) => p.id) ?? [];
+      await d.page.keyboard.press("?");
+      await sim(d, 0.3);
+      const afterPanels = (await d.probe("mathtex"))?.panels ?? [];
+      const t = await d.probe("teaching");
+      hinted = {
+        beforeHint,
+        afterHint: afterPanels.map((p) => p.id),
+        hintPanel: afterPanels.find((p) => p.id === "teach-hint")?.tex ?? null,
+        hintFromBank: t?.prose?.hints?.[0] ?? null,
+        hintIndex: t?.prose?.hintIndex ?? null,
+        hintShown: t?.item?.hintShown ?? null,
+        hintsShown: t?.stats?.hintsShown ?? 0,
+      };
     }
 
     await d.page.keyboard.press("Enter");
     await sim(d, 2.6); // feedback (1.6) + gap (0.5), with margin for the next present
+    const marked = await d.probe("teaching");
 
     /**
      * THE SITTING BOUNDARY, driven once, halfway through.
@@ -194,6 +353,24 @@ const out = await openGame({ built: true, width: 1280, height: 720, lang: LANG }
       intendCorrect,
       responseOnScreen: standing?.response ?? null,
       standingIds: standing?.standing ?? [],
+      /* what the reader could see, what it made of it, and whether the engine agreed */
+      askKey: read.askKey,
+      strategy: read.strategy,
+      readResponse: read.response,
+      askOnScreen,
+      askFromBank,
+      askMatches,
+      askRows: read.screen.ask.length,
+      givenRows: read.screen.given.length,
+      workingRows: read.screen.working.length,
+      saidRows: read.screen.said.length,
+      entryStanding: read.screen.entry != null,
+      // `learn/Teaching.js` ENTRY_RULE — deliberately decimal-free, see the constant's own comment.
+      entryEmptyRule: read.screen.entry === "\\rule{2em}{1pt}",
+      itemGiven: Array.isArray(open?.stood) ? open.stood.filter((r) => r.kind === "given").length : 0,
+      correct: marked?.lastRespond?.correct ?? null,
+      scored: marked?.lastRespond?.scored ?? null,
+      respondItemId: marked?.lastRespond?.itemId ?? null,
     });
   }
 
@@ -228,6 +405,9 @@ const out = await openGame({ built: true, width: 1280, height: 720, lang: LANG }
     shot: shotTaken,
     occlusion,
     boundary,
+    hinted,
+    framed,
+    bankAudit,
   };
 });
 
@@ -302,6 +482,115 @@ claim(
   complete.length >= 8,
   `${complete.length} complete cycles observed with the chain present -> display -> respond in order ` +
     `(${withMastery.length} of them also carried learn:mastery, ${withHide.length} retired with math:hide)`
+);
+
+/* ================================================================================================
+ * THE ROUND-2 GAP: could a human being have answered any of this?
+ * ==============================================================================================*/
+const played = out.cycles.filter((c) => !c.stopped);
+const meantToBeRight = played.filter((c) => c.intendCorrect);
+const readIt = meantToBeRight.filter((c) => c.readResponse != null);
+const earned = meantToBeRight.filter((c) => c.readResponse != null && c.correct === true);
+const wrongOnPurpose = played.filter((c) => !c.intendCorrect);
+claim(
+  "R1",
+  earned.length >= 5 && earned.length === readIt.length,
+  `THE ANSWER KEY IS GONE AND THE LOOP STILL CLOSES: teachwiring.expected() no longer exists, and ` +
+    `${earned.length} of ${meantToBeRight.length} cycles were answered from probe("mathtex").panels alone ` +
+    `and marked CORRECT by the shipped ItemBank.check (${readIt.length} were readable at all; ` +
+    `${wrongOnPurpose.length} more were answered deliberately wrong to exercise the losing side). ` +
+    `Strategies used: ${JSON.stringify(played.reduce((a, c) => ({ ...a, [c.strategy ?? "?"]: (a[c.strategy ?? "?"] ?? 0) + 1 }), {}))}`
+);
+
+const askShown = played.filter((c) => c.askRows > 0);
+const askSame = played.filter((c) => c.askMatches);
+claim(
+  "R2",
+  askShown.length === played.length && askSame.length === played.length,
+  `the localized question reaches the glass in ${LANG}: ${askShown.length}/${played.length} cycles stood an ask ` +
+    `row, and on ${askSame.length}/${played.length} the string recovered from the rasterized \\text{} was ` +
+    `character-for-character what ItemBank.text() returned — no ⟨ask.reading⟩, no partial render ` +
+    `(e.g. ${JSON.stringify(played[0]?.askOnScreen ?? null)})`
+);
+
+const needGiven = played.filter((c) => c.itemGiven > 0);
+const gotGiven = needGiven.filter((c) => c.givenRows === c.itemGiven);
+claim(
+  "R3",
+  (out.teaching?.stats?.givenRows ?? 0) > 0 && gotGiven.length === needGiven.length,
+  `the charge in the socket is on screen: ${out.teaching?.stats?.givenRows} given rows stood this run, and ` +
+    `${gotGiven.length}/${needGiven.length} of the cycles that carry a given showed every line of it — the ` +
+    `difference between a floating "t" and "t" with "t = 5" under it`
+);
+
+const entryAlways = played.filter((c) => c.entryStanding);
+claim(
+  "R4",
+  entryAlways.length === played.length,
+  `the response slot stands from _present() onward, empty or not: ${entryAlways.length}/${played.length} cycles ` +
+    `had a teach-entry row standing before a key was pressed (${played.filter((c) => c.entryEmptyRule).length} of ` +
+    `them showing the empty rule)`
+);
+
+const h = out.hinted ?? null;
+claim(
+  "R5",
+  !!h && h.hintPanel != null && h.hintFromBank != null && h.hintsShown > 0,
+  `the item's own graded hint ladder reaches the world: "?" stood teach-hint carrying ` +
+    `${JSON.stringify(h?.hintPanel)} against ItemBank.present().hints[0] = ${JSON.stringify(h?.hintFromBank)} ` +
+    `(rung ${h?.hintIndex} of the ladder; the response was then priced as hinted=${h?.hintShown})`
+);
+
+const ba = out.bankAudit;
+claim(
+  "R6",
+  ba.outsideGrammar.length === 0 && ba.refused.length === 0,
+  `the untypeable canonical answer is fixed at the bank: all ${ba.items} committed items now have an ` +
+    `accepts()[0] inside ENTRY_GRAMMAR (${ba.outsideGrammar.length} outside) and the shipped check() marks ` +
+    `every one of them correct (${ba.refused.length} refused). Round 2: "x = 8,\\; y = 8" for a pair, ` +
+    `"2: 4 \\cdot 30" for a repair, 241 items untypeable in total`
+);
+
+const fr = out.framed ?? [];
+const teachFrames = fr.filter((r) => String(r.id).startsWith("teach-"));
+const outside = teachFrames.filter((r) => r.x[0] < -1 || r.x[1] > 1 || r.y[0] < -1 || r.y[1] > 1);
+const illegible = teachFrames.filter((r) => !r.legible);
+
+/**
+ * NO ROW MAY STAND ON ANOTHER ROW.
+ *
+ * `TexPanel.js`'s header calls world geometry in front of a claim "the ninth way to lose a claim";
+ * two of this presenter's own rows overlapping is the same loss with the compositor doing it to
+ * itself, and every other gate is blind to it. It was not hypothetical: the Polish build stood a
+ * `\rule` whose decimals `Tex.localizeTex` had rewritten, KaTeX accepted the result without
+ * complaint, and the entry row covered two lines of working while occlusion read 0%, legibility read
+ * true, NDC read inside the frame and `katex.failed` read 0. Every row shares `forward: 14` and is
+ * yaw-billboarded, so they are coplanar and an NDC box intersection is exact.
+ */
+const overlaps = [];
+for (let i = 0; i < teachFrames.length; i += 1) {
+  for (let j = i + 1; j < teachFrames.length; j += 1) {
+    const a = teachFrames[i];
+    const b = teachFrames[j];
+    const dx = Math.min(a.x[1], b.x[1]) - Math.max(a.x[0], b.x[0]);
+    const dy = Math.min(a.y[1], b.y[1]) - Math.max(a.y[0], b.y[0]);
+    if (dx > 0 && dy > 0) overlaps.push(`${a.id} x ${b.id} (${dx.toFixed(3)} x ${dy.toFixed(3)} NDC)`);
+  }
+}
+claim(
+  "R8",
+  teachFrames.length > 1 && overlaps.length === 0,
+  `no row the presenter stands covers another: ${teachFrames.length} rows compared pairwise in the ` +
+    `billboard plane, ${overlaps.length} overlapping${overlaps.length ? ` — ${overlaps.join("; ")}` : ""}`
+);
+
+claim(
+  "R7",
+  teachFrames.length > 0 && outside.length === 0 && illegible.length === 0,
+  `every row the presenter stands is inside the frame and above the legibility floor: ` +
+    `${teachFrames.length} rows projected through the live camera, ${outside.length} outside NDC [-1,1], ` +
+    `${illegible.length} standing in as the solid mark ` +
+    `(${teachFrames.map((r) => `${r.id} y[${r.y[0]},${r.y[1]}]`).join(" ")})`
 );
 
 claim(
@@ -466,6 +755,39 @@ line(`mastery summary         level1 ${out.mastery?.level1Percent ?? "?"}%  scor
 line(`session                 phase ${out.session?.phase}  items ${out.session?.elapsed?.items}  beats ${out.session?.elapsed?.beats}  close ${out.session?.closeReason}`);
 line(`field                   ${out.mathtex?.panels?.length ?? 0} panels standing: ${JSON.stringify((out.mathtex?.panels ?? []).map((p) => p.id))}`);
 if (out.shot) line(`capture                 ${out.shot}`);
+line("");
+line("-".repeat(98));
+line("WHAT THE READER SAW, PER CYCLE — the response, and where it came from");
+line("-".repeat(98));
+for (const c of out.cycles.filter((x) => !x.stopped).slice(0, 14)) {
+  line(
+    `  ${String(c.i).padStart(2)} ${String(c.kpId).padEnd(16)} ${String(c.form).padEnd(9)} ask=${String(c.askKey).padEnd(22)} ` +
+      `rows[ask ${c.askRows} said ${c.saidRows} given ${c.givenRows} working ${c.workingRows} entry ${c.entryStanding ? 1 : 0}] ` +
+      `-> ${String(c.strategy).padEnd(17)} typed ${JSON.stringify(c.typed).padEnd(20)} ${c.correct ? "CORRECT" : "wrong"}`
+  );
+}
+
+line("");
+line("-".repeat(98));
+line("OPEN FINDING FOR THE CONTENT PIECES — not fixed here, measured here");
+line("-".repeat(98));
+line(
+  `  ${out.bankAudit.stemIsAnswer.generate} of the bank's ${out.bankAudit.generateItems} generate items are marked ` +
+    `CORRECT by the shipped checker when the response is the stem the presenter is standing.`
+);
+line(
+  `  "Author a claim that closes at 35" is asked with an accepted answer already in the frame. The presenter cannot`
+);
+line(
+  `  drop the stem safely — 'reshape' and 'partitionWitness' items are ABOUT the stem — so this is a content or a`
+);
+line(`  checker decision (P17/P18), and it is why lib/reader.mjs answers every ask.gen.* from the ask and never by`);
+line(`  copying the stem: a proof that leaned on the leak would be measuring the leak.`);
+line(
+  `  Also seen: ask.gen.sealCan / ask.gen.gathersTo interpolate the checker's machine spelling into player prose ` +
+    `("... comes to 24*n^-1").`
+);
+
 if (out.finalReport.warnings.length) {
   line("");
   line("warnings from the running page:");
@@ -479,6 +801,9 @@ line(`${claims.length - failed.length}/${claims.length} claims pass${failed.leng
 line("=".repeat(98));
 
 fs.mkdirSync(path.join(ROOT, "review/measure/evidence"), { recursive: true });
-fs.writeFileSync(path.join(ROOT, "review/measure/evidence/P34.json"), JSON.stringify({ claims, ...out }, null, 1));
-line(`evidence: review/measure/evidence/P34.json`);
+// One file per locale: the three-language run is the evidence for R2, and a shared filename would
+// leave only the last one on disk.
+const evidenceFile = LANG === "en" ? "review/measure/evidence/P34.json" : `review/measure/evidence/P34-${LANG}.json`;
+fs.writeFileSync(path.join(ROOT, evidenceFile), JSON.stringify({ claims, ...out }, null, 1));
+line(`evidence: ${evidenceFile}`);
 process.exit(failed.length ? 1 : 0);

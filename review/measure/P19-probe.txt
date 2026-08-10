@@ -1,0 +1,199 @@
+(node:63264) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[
+ {
+  "i": 0,
+  "phase": "standing",
+  "item": {
+   "itemId": "var-meaning.seat/generate/1spsl3y",
+   "kpId": "var-meaning",
+   "form": "generate",
+   "phase": "solo",
+   "mode": "acquire",
+   "family": "var-meaning.seat",
+   "source": "generated",
+   "relaxation": "generated-group-absent",
+   "difficulty": -1.3,
+   "testOut": true,
+   "hintShown": false
+  },
+  "stood": [
+   "ask:\\text{Cut two sockets under different names that}",
+   "ask:\\text{hold the same value.}",
+   "claim:t",
+   "given:t = 5",
+   "entry:\\rule{2.4em}{0.06em}"
+  ],
+  "ask": "Cut two sockets under different names that hold the same value."
+ },
+ {
+  "i": 1,
+  "phase": "standing",
+  "item": {
+   "itemId": "var-meaning.relate/construct/1pvg02w",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "model",
+   "mode": "acquire",
+   "family": "var-meaning.relate",
+   "source": "generated",
+   "relaxation": "generated-group-absent",
+   "difficulty": -1.3,
+   "testOut": false,
+   "hintShown": true
+  },
+  "stood": [
+   "ask:\\text{Write the claim that stands.}",
+   "claim:a,\\; b",
+   "said:\\text{There are 17 crates on my barge for every one}",
+   "said:\\text{on yours.}",
+   "model:a = 17b",
+   "entry:\\rule{2.4em}{0.06em}"
+  ],
+  "ask": "Write the claim that stands."
+ },
+ {
+  "i": 2,
+  "phase": "standing",
+  "item": {
+   "itemId": "var-meaning.twin/construct/p1bbch",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "guided-1",
+   "mode": "acquire",
+   "family": "var-meaning.twin",
+   "source": "catalogue",
+   "relaxation": "exact",
+   "difficulty": -1.9000000000000001,
+   "testOut": false,
+   "hintShown": false
+  },
+  "stood": [
+   "ask:\\text{Charge both cores.}",
+   "claim:x + y = 16,\\quad x - y = 0",
+   "entry:\\rule{2.4em}{0.06em}"
+  ],
+  "ask": "Charge both cores."
+ },
+ {
+  "i": 3,
+  "phase": "standing",
+  "item": {
+   "itemId": "var-meaning.relate/construct/1pv16h8",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "model",
+   "mode": "acquire",
+   "family": "var-meaning.relate",
+   "source": "catalogue",
+   "relaxation": "exact",
+   "difficulty": -1.9000000000000001,
+   "testOut": false,
+   "hintShown": true
+  },
+  "stood": [
+   "ask:\\text{Write the claim that stands.}",
+   "claim:a,\\; b",
+   "said:\\text{There are 13 crates on my barge for every one}",
+   "said:\\text{on yours.}",
+   "model:a = 13b",
+   "entry:\\rule{2.4em}{0.06em}"
+  ],
+  "ask": "Write the claim that stands."
+ },
+ {
+  "i": 4,
+  "phase": "standing",
+  "item": {
+   "itemId": "var-meaning.relate/construct/n5wzld",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "guided-1",
+   "mode": "acquire",
+   "family": "var-meaning.relate",
+   "source": "catalogue",
+   "relaxation": "exact",
+   "difficulty": -2.2,
+   "testOut": false,
+   "hintShown": false
+  },
+  "stood": [
+   "ask:\\text{Write the claim that stands.}",
+   "claim:a,\\; b",
+   "said:\\text{There are 3 crates on my barge for every one}",
+   "said:\\text{on yours.}",
+   "entry:\\rule{2.4em}{0.06em}"
+  ],
+  "ask": "Write the claim that stands."
+ },
+ {
+  "i": 5,
+  "phase": "standing",
+  "item": {
+   "itemId": "var-meaning.twin/construct/1vlr62k",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "guided-1",
+   "mode": "acquire",
+   "family": "var-meaning.twin",
+   "source": "catalogue",
+   "relaxation": "exact",
+   "difficulty": -1.6,
+   "testOut": false,
+   "hintShown": false
+  },
+  "stood": [
+   "ask:\\text{Charge both cores.}",
+   "claim:x + y = 20,\\quad x - y = 0",
+   "entry:\\rule{2.4em}{0.06em}"
+  ],
+  "ask": "Charge both cores."
+ },
+ {
+  "i": 6,
+  "phase": "standing",
+  "item": {
+   "itemId": "var-meaning.twin/construct/g1so14",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "guided-1",
+   "mode": "acquire",
+   "family": "var-meaning.twin",
+   "source": "catalogue",
+   "relaxation": "exact",
+   "difficulty": -2.2,
+   "testOut": false,
+   "hintShown": false
+  },
+  "stood": [
+   "ask:\\text{Charge both cores.}",
+   "claim:x + y = 14,\\quad x - y = 0",
+   "entry:\\rule{2.4em}{0.06em}"
+  ],
+  "ask": "Charge both cores."
+ },
+ {
+  "i": 7,
+  "phase": "standing",
+  "item": {
+   "itemId": "var-meaning.twin/construct/ce162e",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "guided-1",
+   "mode": "acquire",
+   "family": "var-meaning.twin",
+   "source": "catalogue",
+   "relaxation": "exact",
+   "difficulty": -1.9000000000000001,
+   "testOut": false,
+   "hintShown": false
+  },
+  "stood": [
+   "ask:\\text{Charge both cores.}",
+   "claim:x + y = 8,\\quad x - y = 0",
+   "entry:\\rule{2.4em}{0.06em}"
+  ],
+  "ask": "Charge both cores."
+ }
+]
+console errors: []

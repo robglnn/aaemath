@@ -1,0 +1,148 @@
+(node:52432) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "body": [
+    10,
+    59.41,
+    216
+  ],
+  "socket": [
+    12.59,
+    52.18,
+    206.29
+  ],
+  "rows": [
+    {
+      "t": 0,
+      "at": [
+        10,
+        59.35,
+        216
+      ],
+      "groundHit": true,
+      "metresFromBody": 0.05,
+      "pixelsChanged": 2380,
+      "maxChannelDelta": 125
+    },
+    {
+      "t": 0.1,
+      "at": [
+        10.26,
+        58.74,
+        215.03
+      ],
+      "groundHit": true,
+      "metresFromBody": 1.2,
+      "pixelsChanged": 255,
+      "maxChannelDelta": 1
+    },
+    {
+      "t": 0.2,
+      "at": [
+        10.52,
+        58.1,
+        214.06
+      ],
+      "groundHit": true,
+      "metresFromBody": 2.39,
+      "pixelsChanged": 81,
+      "maxChannelDelta": 1
+    },
+    {
+      "t": 0.3,
+      "at": [
+        10.78,
+        57.45,
+        213.09
+      ],
+      "groundHit": true,
+      "metresFromBody": 3.59,
+      "pixelsChanged": 13,
+      "maxChannelDelta": 1
+    },
+    {
+      "t": 0.4,
+      "at": [
+        11.04,
+        56.8,
+        212.12
+      ],
+      "groundHit": true,
+      "metresFromBody": 4.79,
+      "pixelsChanged": 0,
+      "maxChannelDelta": 0
+    },
+    {
+      "t": 0.5,
+      "at": [
+        11.29,
+        56.15,
+        211.14
+      ],
+      "groundHit": true,
+      "metresFromBody": 5.99,
+      "pixelsChanged": 0,
+      "maxChannelDelta": 0
+    },
+    {
+      "t": 0.6,
+      "at": [
+        11.55,
+        55.37,
+        210.17
+      ],
+      "groundHit": true,
+      "metresFromBody": 7.25,
+      "pixelsChanged": 0,
+      "maxChannelDelta": 0
+    },
+    {
+      "t": 0.7,
+      "at": [
+        11.81,
+        54.57,
+        209.2
+      ],
+      "groundHit": true,
+      "metresFromBody": 8.53,
+      "pixelsChanged": 0,
+      "maxChannelDelta": 0
+    },
+    {
+      "t": 0.8,
+      "at": [
+        12.07,
+        53.77,
+        208.23
+      ],
+      "groundHit": true,
+      "metresFromBody": 9.82,
+      "pixelsChanged": 0,
+      "maxChannelDelta": 0
+    },
+    {
+      "t": 0.9,
+      "at": [
+        12.33,
+        52.97,
+        207.26
+      ],
+      "groundHit": true,
+      "metresFromBody": 11.1,
+      "pixelsChanged": 0,
+      "maxChannelDelta": 0
+    },
+    {
+      "t": 1,
+      "at": [
+        12.59,
+        52.18,
+        206.29
+      ],
+      "groundHit": true,
+      "metresFromBody": 12.38,
+      "pixelsChanged": 0,
+      "maxChannelDelta": 0
+    }
+  ]
+}

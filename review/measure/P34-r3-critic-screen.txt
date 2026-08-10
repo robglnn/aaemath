@@ -1,0 +1,316 @@
+(node:62112) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+================================================================================================
+CRITIC DRIVER — built bundle, own bus recorder (emit wrapper installed: true), mode=screen
+================================================================================================
+sim seconds of play: 110.167   cycles driven: 24   console errors: 0
+
+ALL SIGNAL COUNTS SEEN ON THE BUS (every name, not an allow-list):
+{
+ "world:collider": 4,
+ "player:spawn": 1,
+ "player:state": 43,
+ "world:sun": 943,
+ "camera:probe": 6528,
+ "kernel:frame": 3264,
+ "player:land": 14,
+ "audio:cue": 27,
+ "world:resonance": 249,
+ "input:action": 120,
+ "learn:teach": 25,
+ "learn:present": 25,
+ "math:show": 151,
+ "player:jump": 13,
+ "learn:respond": 24,
+ "learn:mastery": 28,
+ "math:hide": 118,
+ "learn:unlock": 4,
+ "learn:session": 8
+}
+
+ORDERED TRACE (learning + math signals only, first 90 entries):
+  t=   1.47  learn:teach    var-meaning          {"phase":"solo"}
+  t=   1.47  learn:present  var-meaning          {"form":"generate","phase":"solo","family":"var-meaning.seat","source":"catalogue","relaxation":"exact"}
+  t=   1.47  math:show      var-meaning          {"id":"teach-ask-0","tex":"\\text{Cut two sockets under different names that}"}
+  t=   1.47  math:show      var-meaning          {"id":"teach-ask-1","tex":"\\text{hold the same value.}"}
+  t=   1.47  math:show      var-meaning          {"id":"teach-claim","tex":"t"}
+  t=   1.47  math:show      var-meaning          {"id":"teach-given-0","tex":"t = 6"}
+  t=   1.47  math:show      var-meaning          {"id":"teach-entry","tex":"\\rule{2em}{1pt}"}
+  t=    2.3  math:show      var-meaning          {"id":"teach-entry","tex":"a = 6; b = 6\\;\\rule{1em}{1pt}"}
+  t=   4.08  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2617,"reason":null}
+  t=   4.08  learn:mastery  var-meaning          {"p":0.79292,"delta":0.44292,"status":"learning"}
+  t=    5.7  math:hide                           {"id":"teach-ask-0"}
+  t=    5.7  math:hide                           {"id":"teach-ask-1"}
+  t=    5.7  math:hide                           {"id":"teach-claim"}
+  t=    5.7  math:hide                           {"id":"teach-given-0"}
+  t=    5.7  math:hide                           {"id":"teach-entry"}
+  t=   6.22  learn:teach    var-meaning          {"phase":"solo"}
+  t=   6.22  learn:present  var-meaning          {"form":"repair","phase":"solo","family":"var-meaning.seat","source":"catalogue","relaxation":"exact"}
+  t=   6.22  math:show      var-meaning          {"id":"teach-ask-0","tex":"\\text{Name the joint that will not hold, and what it}"}
+  t=   6.22  math:show      var-meaning          {"id":"teach-ask-1","tex":"\\text{should read.}"}
+  t=   6.22  math:show      var-meaning          {"id":"teach-claim","tex":"m"}
+  t=   6.22  math:show      var-meaning          {"id":"teach-given-0","tex":"m = 9"}
+  t=   6.22  math:show      var-meaning          {"id":"teach-working-0","tex":"1)\\;m = 9"}
+  t=   6.22  math:show      var-meaning          {"id":"teach-working-1","tex":"2)\\;m = 13"}
+  t=   6.22  math:show      var-meaning          {"id":"teach-entry","tex":"\\rule{2em}{1pt}"}
+  t=   6.87  math:show      var-meaning          {"id":"teach-entry","tex":"2: m = 9\\;\\rule{1em}{1pt}"}
+  t=   8.65  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2433,"reason":null}
+  t=   8.65  learn:mastery  var-meaning          {"p":0.967474,"delta":0.174554,"status":"learning"}
+  t=  10.25  math:hide                           {"id":"teach-ask-0"}
+  t=  10.25  math:hide                           {"id":"teach-ask-1"}
+  t=  10.25  math:hide                           {"id":"teach-claim"}
+  t=  10.25  math:hide                           {"id":"teach-given-0"}
+  t=  10.25  math:hide                           {"id":"teach-working-0"}
+  t=  10.25  math:hide                           {"id":"teach-working-1"}
+  t=  10.25  math:hide                           {"id":"teach-entry"}
+  t=  10.75  learn:teach    var-meaning          {"phase":"solo"}
+  t=  10.75  learn:present  var-meaning          {"form":"construct","phase":"solo","family":"var-meaning.twin","source":"catalogue","relaxation":"exact"}
+  t=  10.75  math:show      var-meaning          {"id":"teach-ask-0","tex":"\\text{Charge both cores.}"}
+  t=  10.75  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 16,\\quad x - y = 0"}
+  t=  10.75  math:show      var-meaning          {"id":"teach-entry","tex":"\\rule{2em}{1pt}"}
+  t=  11.37  math:show      var-meaning          {"id":"teach-entry","tex":"x=8, y=8\\;\\rule{1em}{1pt}"}
+  t=  13.17  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.twin","latencyMs":2417,"reason":null}
+  t=  13.17  learn:mastery  var-meaning          {"p":0.994776,"delta":0.027302,"status":"learning"}
+  t=  14.77  math:hide                           {"id":"teach-ask-0"}
+  t=  14.77  math:hide                           {"id":"teach-claim"}
+  t=  14.77  math:hide                           {"id":"teach-entry"}
+  t=  15.27  learn:teach    var-meaning          {"phase":"solo"}
+  t=  15.27  learn:present  var-meaning          {"form":"generate","phase":"solo","family":"var-meaning.seat","source":"catalogue","relaxation":"exact"}
+  t=  15.27  math:show      var-meaning          {"id":"teach-ask-0","tex":"\\text{Cut two sockets under different names that}"}
+  t=  15.27  math:show      var-meaning          {"id":"teach-ask-1","tex":"\\text{hold the same value.}"}
+  t=  15.27  math:show      var-meaning          {"id":"teach-claim","tex":"m"}
+  t=  15.27  math:show      var-meaning          {"id":"teach-given-0","tex":"m = 4"}
+  t=  15.27  math:show      var-meaning          {"id":"teach-entry","tex":"\\rule{2em}{1pt}"}
+  t=  15.78  math:show      var-meaning          {"id":"teach-entry","tex":"a = 4; b = 4\\;\\rule{1em}{1pt}"}
+  t=  17.57  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.seat","latencyMs":2300,"reason":null}
+  t=  17.57  learn:mastery  var-meaning          {"p":0.999179,"delta":0.004403,"status":"learning"}
+  t=  19.18  math:hide                           {"id":"teach-ask-0"}
+  t=  19.18  math:hide                           {"id":"teach-ask-1"}
+  t=  19.18  math:hide                           {"id":"teach-claim"}
+  t=  19.18  math:hide                           {"id":"teach-given-0"}
+  t=  19.18  math:hide                           {"id":"teach-entry"}
+  t=   19.7  learn:teach    var-meaning          {"phase":"solo"}
+  t=   19.7  learn:present  var-meaning          {"form":"repair","phase":"solo","family":"var-meaning.twin","source":"catalogue","relaxation":"exact"}
+  t=   19.7  math:show      var-meaning          {"id":"teach-ask-0","tex":"\\text{Name the joint that will not hold, and what it}"}
+  t=   19.7  math:show      var-meaning          {"id":"teach-ask-1","tex":"\\text{should read.}"}
+  t=   19.7  math:show      var-meaning          {"id":"teach-claim","tex":"x + y = 22,\\quad x - y = 0"}
+  t=   19.7  math:show      var-meaning          {"id":"teach-working-0","tex":"1)\\;x + y = 22"}
+  t=   19.7  math:show      var-meaning          {"id":"teach-working-1","tex":"2)\\;x = 7"}
+  t=   19.7  math:show      var-meaning          {"id":"teach-working-2","tex":"3)\\;y = 15"}
+  t=   19.7  math:show      var-meaning          {"id":"teach-entry","tex":"\\rule{2em}{1pt}"}
+  t=  20.43  math:show      var-meaning          {"id":"teach-entry","tex":"2: x = 11\\;\\rule{1em}{1pt}"}
+  t=  22.22  learn:respond  var-meaning          {"correct":true,"scored":true,"credited":true,"family":"var-meaning.twin","latencyMs":2517,"reason":null}
+  t=  22.22  learn:mastery  var-meaning          {"p":0.999893,"delta":0.000714,"status":"learning"}
+  t=  22.22  learn:unlock   var-meaning          
+  t=  22.22  learn:mastery  var-meaning          {"p":0.999893,"delta":0,"status":"provisional"}
+  t=  22.22  learn:session                       {"phase":"focus"}
+  t=  22.22  learn:session                       {"phase":"beat"}
+  t=  23.83  math:hide                           {"id":"teach-ask-0"}
+  t=  23.83  math:hide                           {"id":"teach-ask-1"}
+  t=  23.83  math:hide                           {"id":"teach-claim"}
+  t=  23.83  math:hide                           {"id":"teach-working-0"}
+  t=  23.83  math:hide                           {"id":"teach-working-1"}
+  t=  23.83  math:hide                           {"id":"teach-working-2"}
+  t=  23.83  math:hide                           {"id":"teach-entry"}
+  t=  24.35  learn:teach    expr-anatomy         {"phase":"solo"}
+  t=  24.35  learn:present  expr-anatomy         {"form":"construct","phase":"solo","family":"expr-anatomy.term","source":"catalogue","relaxation":"exact"}
+  t=  24.35  math:show      expr-anatomy         {"id":"teach-ask-0","tex":"\\text{The second term, sign and all.}"}
+  t=  24.35  math:show      expr-anatomy         {"id":"teach-claim","tex":"4 - 7x"}
+  t=  24.35  math:show      expr-anatomy         {"id":"teach-entry","tex":"\\rule{2em}{1pt}"}
+  t=  24.83  math:show      expr-anatomy         {"id":"teach-entry","tex":"-7*x\\;\\rule{1em}{1pt}"}
+  t=  26.62  learn:respond  expr-anatomy         {"correct":true,"scored":true,"credited":true,"family":"expr-anatomy.term","latencyMs":2267,"reason":null}
+  ... 293 more
+
+CHAIN present -> math:show -> learn:respond -> learn:mastery, in order: 24 of 25 presentations
+RESPONSES: 24, marked CORRECT by the shipped checker: 24   (every one derived from probe("mathtex").panels — the answer key was never read)
+
+WHAT THE SCREEN SAID AND WHAT THE READER MADE OF IT:
+   0 var-meaning      generate  ask.gen.namesDiffer    author-two-names   rows ["teach-ask-0","teach-ask-1","teach-claim","teach-given-0","teach-entry"]
+       typed "a = 6; b = 6"
+   1 var-meaning      repair    ask.repair             repair-claim       rows ["teach-ask-0","teach-ask-1","teach-claim","teach-given-0","teach-working-0","teach-working-1","teach-entry"]
+       typed "2: m = 9"
+   2 var-meaning      construct ask.pair               solve-system       rows ["teach-ask-0","teach-claim","teach-entry"]
+       typed "x=8, y=8"
+   3 var-meaning      generate  ask.gen.namesDiffer    author-two-names   rows ["teach-ask-0","teach-ask-1","teach-claim","teach-given-0","teach-entry"]
+       typed "a = 4; b = 4"
+   4 var-meaning      repair    ask.repair             repair-claim       rows ["teach-ask-0","teach-ask-1","teach-claim","teach-working-0","teach-working-1","teach-working-2","teach-entry"]
+       typed "2: x = 11"
+   5 expr-anatomy     construct ask.term               second-term        rows ["teach-ask-0","teach-claim","teach-entry"]
+       typed "-7*x"
+   6 expr-anatomy     construct ask.term               second-term        rows ["teach-ask-0","teach-claim","teach-entry"]
+       typed "-9*x"
+   7 expr-anatomy     construct ask.term               second-term        rows ["teach-ask-0","teach-claim","teach-entry"]
+       typed "-5*x"
+   8 expr-anatomy     construct ask.term               second-term        rows ["teach-ask-0","teach-claim","teach-entry"]
+       typed "-6*x"
+   9 expr-anatomy     construct ask.term               second-term        rows ["teach-ask-0","teach-claim","teach-entry"]
+       typed "-8*x"
+  10 oo-numeric       construct ask.reading            evaluate           rows ["teach-ask-0","teach-claim","teach-entry"]
+       typed "12"
+  11 oo-numeric       repair    ask.repair             repair-value       rows ["teach-ask-0","teach-ask-1","teach-claim","teach-working-0","teach-working-1","teach-working-2","teach-entry"]
+       typed "2: 32"
+  12 oo-numeric       generate  ask.gen.loadTo         author-settles-to  rows ["teach-ask-0","teach-ask-1","teach-claim","teach-entry"]
+       typed "2 * 3 + 28"
+  13 oo-numeric       construct ask.reading            evaluate           rows ["teach-ask-0","teach-claim","teach-entry"]
+       typed "10"
+  14 oo-numeric       repair    ask.repair             repair-value       rows ["teach-ask-0","teach-ask-1","teach-claim","teach-working-0","teach-working-1","teach-working-2","teach-entry"]
+       typed "2: 18"
+  15 oo-structure     construct ask.reading            evaluate           rows ["teach-ask-0","teach-claim","teach-given-0","teach-entry"]
+       typed "35"
+
+p(known) BEFORE -> AFTER (only keys that moved):
+  var-meaning                        0.35 -> 0.9998928384405081
+  oo-numeric                         0.35 -> 0.9999089410988462
+  expr-anatomy                       0.35 -> 0.9998378139026344
+  oo-structure                       0.25 -> 0.9991962906818385
+  eval-substitute                    0.25 -> 0.9952668745685987
+  (5 moved of 32 tracked)
+
+scheduler BEFORE: {"sessionMinutes":25,"secondsSpent":0,"itemsThisSession":0,"reviewItemsThisSession":0,"inFlight":[],"blockCount":0,"recentItemIds":0,"noRepeatWindow":40,"recentCells":0,"widestCellWindow":0,"event":null,"probe":null,"reviewCapLift":true,"pullForward":true,"bank":true,"served":0,"servedBySource":{},"
+
+scheduler AFTER : served 25  serveMisses 0  bySource {"catalogue":20,"generated":5}  byRelaxation {"exact":19,"nearest-band":1,"generated-group-absent":5}
+session delivery: {"requests":25,"withItem":25,"withFamily":25,"unserved":0,"bySource":{"catalogue":20,"generated":5},"byRelaxation":{"exact":19,"nearest-band":1,"generated-group-absent":5}}
+mastery stats   : {"items":24,"scoredItems":24,"unscoredItems":0,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":0,"creditsByDistance":{},"ceilingHits":0,"gateOpens":4,"gateOpensByTestOut":4,"testOutsOffered":5,"testOutsByTrigger":{"ability":5},"testOutsPassed":4,"testOutsPassedByTrigger":{"ability":4},"testOutsFailed":0,"testOutItems":24,"certifications":0,"lapses":0}
+itembank loads  : {"demand":3,"prefetch":3,"explicit":3,"suppressed":0}  (at boot: {"demand":0,"prefetch":0,"explicit":3,"suppressed":0})
+
+JS CHUNKS THAT ARRIVED AFTER THE BASELINE SNAPSHOT (name @ startTime ms):
+       985 ms   var-meaning-Ct12kn0-.js
+       985 ms   expr-anatomy-WYJhDm_0.js
+       985 ms   oo-numeric-BjsVHueV.js
+      1008 ms   oo-structure-Bges-2rk.js
+      5657 ms   translate-phrase-C_kymGnj.js
+      5657 ms   props-operations-zMhkLzfH.js
+      5657 ms   eval-substitute-CIy76Axk.js
+      5666 ms   eval-signed-C2UgWZdX.js
+      5667 ms   like-terms-id-BHdbC_9A.js
+
+spawn panels: ["leaf9-span","leaf9-share","leaf9-working","leaf9-mark"]
+final panels: ["teach-ask-0","teach-ask-1","teach-claim","teach-given-0","teach-entry"]
+
+SHOT CONTEXT (what the engine chose vs what stood in the world):
+{
+ "item": {
+  "itemId": "var-meaning.twin/construct/p1bbch",
+  "kpId": "var-meaning",
+  "form": "construct",
+  "phase": "solo",
+  "mode": "acquire",
+  "family": "var-meaning.twin",
+  "source": "catalogue",
+  "relaxation": "exact",
+  "difficulty": -1.3,
+  "testOut": true,
+  "hintShown": false
+ },
+ "typed": "x=8, y=8",
+ "panels": [
+  {
+   "id": "teach-ask-0",
+   "tex": "\\text{Charge both cores.}",
+   "pos": [
+    12.59,
+    64.61,
+    205.21
+   ]
+  },
+  {
+   "id": "teach-claim",
+   "tex": "x + y = 16,\\quad x - y = 0",
+   "pos": [
+    12.59,
+    63.46,
+    205.21
+   ]
+  },
+  {
+   "id": "teach-entry",
+   "tex": "x=8, y=8\\;\\rule{1em}{1pt}",
+   "pos": [
+    12.59,
+    62.16,
+    205.21
+   ]
+  }
+ ],
+ "teaching": {
+  "phase": "standing",
+  "driver": "session",
+  "startedBy": "interact",
+  "simTime": 13.17,
+  "standing": [
+   "teach-ask-0",
+   "teach-claim",
+   "teach-entry"
+  ],
+  "response": "x=8, y=8",
+  "item": {
+   "itemId": "var-meaning.twin/construct/p1bbch",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "phase": "solo",
+   "mode": "acquire",
+   "family": "var-meaning.twin",
+   "source": "catalogue",
+   "relaxation": "exact",
+   "difficulty": -1.3,
+   "testOut": true,
+   "hintShown": false
+  },
+  "announced": {
+   "kpId": "var-meaning",
+   "phase": "solo",
+   "testOut": true,
+   "at": 10.750000000000114
+  },
+  "lastRespond": {
+   "itemId": "var-meaning.seat/repair/9gqe4t",
+   "kpId": "var-meaning",
+   "correct": true,
+   "latencyMs": 2433,
+   "family": "var-meaning.seat",
+   "form": "repair",
+   "phase": "solo",
+   "hinted": false,
+   "scored": true,
+   "credited": true,
+   "reason": null
+  },
+  "prose": {
+   "ask": "Charge both cores.",
+   "spoken": null,
+   "framing": "Ix has been sitting in the empty one for a while, waiting to be told a number.",
+   "hints": [
+    "A socket cut for a name, and a charge waiting outside it.",
+    "The second core has to sit exactly where the first one does.",
+    "Together they carry 16, and nothing separates them."
+   ],
+   "hintIndex": 0,
+   "validated": true
+  },
+  "stood": [
+   {
+    "id": "teach-ask-0",
+    "kind": "ask",
+    "tex": "\\text{Charge both cores.}",
+    "up": 4.01,
+    "em": 0.95
+   },
+   {
+    "id": "teach-claim",
+    "kind": "claim",
+    "tex": "x + y = 16,\\quad x - y = 0",
+    "up": 2.86,
+    "em": 0.88
+   },
+   {
+    "id": "teach-entry",
+    "kind": "entry",
+    "tex": "x=8, y=8\\;\\rule{1em}{1pt}",
+    "up": 1.56,
+    "em": 0.88
+   }
+  ],
+  "refused": [],
+  "entryUp": 1.56,
+  "grammar": 
+evidence: review/measure/evidence/_critic-P34-screen.json

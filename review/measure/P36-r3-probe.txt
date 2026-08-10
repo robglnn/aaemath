@@ -1,0 +1,44 @@
+(node:60696) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+=== camera:probe — CameraRig.js:650 -> boot/30-locomotion.js (NEW) ===
+bridge mounted       {"source":"signal","free":3.272,"allowed":3.272,"cam":[11.15,60.6133,219.2385]}
+bridge disposed      {"source":"system","free":3.272,"allowed":3.272,"cam":[11.15,60.6133,219.2385]}
+
+=== input:look — Input.js:827 -> CameraRig.js:420 ===
+mouse dx +400 px     {"rawLensYawBefore":0,"rawLensYawAfter":-0.88,"delta":-0.88}
+
+=== camera:target — Locomotion.js:1187 -> CameraRig.js:518 / Lighting.js:639 ===
+after 1.5 s running  {"targetSource":"object","followsPlayerAt":[16.548,55.696,210.4055]}
+
+=== camera:shake — Locomotion.js:898/1103 -> CameraRig.js:472 ===
+Locomotion emitted   {"amount":0.2842,"seconds":0.2,"atStep":1110}
+control window       {"maxRollRad":0,"maxYawStepRad":0}
+shake window         {"maxRollRad":0.00123665,"maxYawStepRad":0.000608,"shakeEnabled":true}
+per-step trace       [{"step":0,"roll":0.001237,"trauma":0.2009},{"step":1,"roll":0.00047,"trauma":0.1175},{"step":2,"roll":0.000039,"trauma":0.0342},{"step":3,"roll":0,"trauma":0},{"step":4,"roll":0,"trauma":0},{"step":5,"roll":0,"trauma":0}]
+
+=== input:device / input:focus — live emitters awaiting P21/P22 ===
+   {"signal":"input:device","kind":"pad","style":"xbox","id":"Xbox Wireless Controller (STANDARD GAMEPAD)"}
+   {"signal":"input:focus","focused":false,"reason":"blur"}
+   {"signal":"input:focus","focused":true,"reason":"focus"}
+
+=== every signal that crossed the bus, and whether anything was listening at boot ===
+UNHEARD audio:cue          x   42
+HEARD   camera:mode        x   10
+HEARD   camera:probe       x 2240
+HEARD   camera:shake       x    1
+HEARD   input:action       x    6
+UNHEARD input:device       x    1
+UNHEARD input:focus        x    2
+HEARD   input:look         x    8
+HEARD   input:move         x    6
+UNHEARD kernel:frame       x 1116
+HEARD   player:land        x    3
+HEARD   player:state       x   17
+UNHEARD player:traverse    x    8
+HEARD   world:collider     x    3
+HEARD   world:resonance    x    4
+HEARD   world:sun          x  169
+
+boot listener set: camera:focus, camera:fov, camera:mode, camera:probe, camera:shake, camera:target, input:action, input:look, input:move, learn:mastery, learn:present, learn:respond, learn:session, learn:teach, learn:unlock, math:hide, math:show, player:jump, player:land, player:spawn, player:state, quality:tier, ui:locale, ui:menu, world:collider, world:ready, world:resonance, world:sun
+
+errors: [33m0[39m | warnings: [33m9[39m

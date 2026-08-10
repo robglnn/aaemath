@@ -1,0 +1,226 @@
+(node:55672) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "size": [
+    960,
+    540
+  ],
+  "simTime": 2.3999999999999964,
+  "resonance": {
+    "claims": [
+      {
+        "id": "leaf9-span",
+        "ink": [
+          12.59,
+          63.97,
+          206.29
+        ],
+        "socket": [
+          12.59,
+          52.18,
+          206.29
+        ],
+        "drop": 12.79,
+        "grounded": true
+      },
+      {
+        "id": "leaf9-share",
+        "ink": [
+          12.59,
+          61.77,
+          206.29
+        ],
+        "socket": [
+          12.59,
+          52.18,
+          206.29
+        ],
+        "drop": 10.59,
+        "grounded": true
+      },
+      {
+        "id": "leaf9-working",
+        "ink": [
+          17.45,
+          62.87,
+          206.29
+        ],
+        "socket": [
+          17.45,
+          52.26,
+          206.29
+        ],
+        "drop": 11.61,
+        "grounded": true
+      },
+      {
+        "id": "leaf9-mark",
+        "ink": [
+          31.65,
+          65.31,
+          194.29
+        ],
+        "socket": [
+          31.65,
+          44.94,
+          194.29
+        ],
+        "drop": 21.37,
+        "grounded": true
+      }
+    ],
+    "radius": 5,
+    "strength": 1,
+    "groundLift": 1
+  },
+  "lighting": {
+    "registered": 4,
+    "active": 4,
+    "pool": 6,
+    "lit": 4,
+    "peakIntensity": 0.58,
+    "ids": [
+      "leaf9-span",
+      "leaf9-share",
+      "leaf9-working",
+      "leaf9-mark"
+    ]
+  },
+  "reach": [
+    {
+      "light": "vs.accent.0",
+      "falloff": 5,
+      "at": [
+        12.59,
+        52.18,
+        206.29
+      ],
+      "directionsHit": 9,
+      "ofDirections": 26,
+      "nearestSurfaceMetres": 0.73
+    },
+    {
+      "light": "vs.accent.1",
+      "falloff": 5,
+      "at": [
+        12.59,
+        52.18,
+        206.29
+      ],
+      "directionsHit": 9,
+      "ofDirections": 26,
+      "nearestSurfaceMetres": 0.73
+    },
+    {
+      "light": "vs.accent.2",
+      "falloff": 5,
+      "at": [
+        17.45,
+        52.26,
+        206.29
+      ],
+      "directionsHit": 9,
+      "ofDirections": 26,
+      "nearestSurfaceMetres": 0.73
+    },
+    {
+      "light": "vs.accent.3",
+      "falloff": 5,
+      "at": [
+        31.65,
+        44.94,
+        194.29
+      ],
+      "directionsHit": 12,
+      "ofDirections": 26,
+      "nearestSurfaceMetres": 0.95
+    }
+  ],
+  "control": {
+    "pixelsChanged": 0,
+    "percentChanged": 0,
+    "maxChannelDelta": 0,
+    "meanChannelDelta": 0,
+    "brightest": null,
+    "box": null
+  },
+  "treatment": {
+    "pixelsChanged": 412,
+    "percentChanged": 0.0795,
+    "maxChannelDelta": 22,
+    "meanChannelDelta": 0.0043,
+    "brightest": {
+      "withAccents": [
+        124,
+        107,
+        64
+      ],
+      "without": [
+        113,
+        85,
+        56
+      ]
+    },
+    "box": [
+      789,
+      11,
+      883,
+      58
+    ]
+  },
+  "perAccent": [
+    {
+      "id": "leaf9-span",
+      "pixelsChanged": 0,
+      "percentChanged": 0,
+      "maxChannelDelta": 0,
+      "meanChannelDelta": 0,
+      "brightest": null,
+      "box": null
+    },
+    {
+      "id": "leaf9-share",
+      "pixelsChanged": 0,
+      "percentChanged": 0,
+      "maxChannelDelta": 0,
+      "meanChannelDelta": 0,
+      "brightest": null,
+      "box": null
+    },
+    {
+      "id": "leaf9-working",
+      "pixelsChanged": 0,
+      "percentChanged": 0,
+      "maxChannelDelta": 0,
+      "meanChannelDelta": 0,
+      "brightest": null,
+      "box": null
+    },
+    {
+      "id": "leaf9-mark",
+      "pixelsChanged": 412,
+      "percentChanged": 0.0795,
+      "maxChannelDelta": 22,
+      "meanChannelDelta": 0.0043,
+      "brightest": {
+        "withAccents": [
+          124,
+          107,
+          64
+        ],
+        "without": [
+          113,
+          85,
+          56
+        ]
+      },
+      "box": [
+        789,
+        11,
+        883,
+        58
+      ]
+    }
+  ]
+}
+errors: [33m0[39m | warnings: [33m9[39m

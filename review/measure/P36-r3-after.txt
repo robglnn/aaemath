@@ -1,0 +1,134 @@
+(node:62316) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "size": [
+    960,
+    540
+  ],
+  "simTime": 2.3166666666666633,
+  "accentsOn": [
+    {
+      "n": "vs.accent.0",
+      "i": 0.348,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.1",
+      "i": 0.348,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.2",
+      "i": 0.348,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.3",
+      "i": 0.348,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.4",
+      "i": 0,
+      "d": 6
+    },
+    {
+      "n": "vs.accent.5",
+      "i": 0,
+      "d": 6
+    }
+  ],
+  "accentsOff": [
+    {
+      "n": "vs.accent.0",
+      "i": 0,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.1",
+      "i": 0,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.2",
+      "i": 0,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.3",
+      "i": 0,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.4",
+      "i": 0,
+      "d": 6
+    },
+    {
+      "n": "vs.accent.5",
+      "i": 0,
+      "d": 6
+    }
+  ],
+  "accentsDiag": [
+    {
+      "n": "vs.accent.0",
+      "i": 0.58,
+      "d": 6
+    },
+    {
+      "n": "vs.accent.1",
+      "i": 0,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.2",
+      "i": 0,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.3",
+      "i": 0,
+      "d": 5
+    },
+    {
+      "n": "vs.accent.4",
+      "i": 0,
+      "d": 6
+    },
+    {
+      "n": "vs.accent.5",
+      "i": 0,
+      "d": 6
+    }
+  ],
+  "had": 4,
+  "diagAt": [
+    11.5,
+    60.29,
+    217.5
+  ],
+  "diagGroundHit": true,
+  "control": {
+    "pixelsChanged": 0,
+    "percentChanged": 0,
+    "maxChannelDelta": 0,
+    "meanChannelDelta": 0,
+    "pixelsBrighterInA": 0
+  },
+  "treatment": {
+    "pixelsChanged": 357,
+    "percentChanged": 0.0689,
+    "maxChannelDelta": 9,
+    "meanChannelDelta": 0.00175,
+    "pixelsBrighterInA": 357
+  },
+  "diagnostic": {
+    "pixelsChanged": 7494,
+    "percentChanged": 1.4456,
+    "maxChannelDelta": 17,
+    "meanChannelDelta": 0.05856,
+    "pixelsBrighterInA": 0
+  }
+}
+errors: [33m0[39m | warnings: [33m9[39m

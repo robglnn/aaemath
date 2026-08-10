@@ -1,0 +1,114 @@
+(node:62160) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "spawn": {
+    "simTime": 2.417,
+    "body": [
+      10,
+      59.41,
+      216
+    ],
+    "accents": {
+      "registered": 4,
+      "active": 4,
+      "pool": 6,
+      "lit": 4,
+      "peakIntensity": 0.58,
+      "ids": [
+        "leaf9-span",
+        "leaf9-share",
+        "leaf9-working",
+        "leaf9-mark"
+      ]
+    },
+    "closestAccent": {
+      "light": "vs.accent.0",
+      "metresFromBody": 12.09,
+      "falloff": 5
+    },
+    "control": {
+      "pixelsChanged": 0,
+      "percentChanged": 0,
+      "maxChannelDelta": 0,
+      "meanChannelDelta": 0
+    },
+    "treatment": {
+      "pixelsChanged": 366,
+      "percentChanged": 0.0706,
+      "maxChannelDelta": 14,
+      "meanChannelDelta": 0.00278
+    }
+  },
+  "afterE": {
+    "simTime": 3.617,
+    "body": [
+      10,
+      59.41,
+      216
+    ],
+    "accents": {
+      "registered": 1,
+      "active": 1,
+      "pool": 6,
+      "lit": 1,
+      "peakIntensity": 0.58,
+      "ids": [
+        "teach-claim"
+      ]
+    },
+    "closestAccent": {
+      "light": "vs.accent.0",
+      "metresFromBody": 13.68,
+      "falloff": 5
+    },
+    "control": {
+      "pixelsChanged": 0,
+      "percentChanged": 0,
+      "maxChannelDelta": 0,
+      "meanChannelDelta": 0
+    },
+    "treatment": {
+      "pixelsChanged": 0,
+      "percentChanged": 0,
+      "maxChannelDelta": 0,
+      "meanChannelDelta": 0
+    }
+  },
+  "walked": {
+    "simTime": 7.617,
+    "body": [
+      10,
+      43.54,
+      193.79
+    ],
+    "accents": {
+      "registered": 2,
+      "active": 2,
+      "pool": 6,
+      "lit": 2,
+      "peakIntensity": 0.58,
+      "ids": [
+        "teach-claim",
+        "teach-entry"
+      ]
+    },
+    "closestAccent": {
+      "light": "vs.accent.0",
+      "metresFromBody": 14.11,
+      "falloff": 5
+    },
+    "control": {
+      "pixelsChanged": 0,
+      "percentChanged": 0,
+      "maxChannelDelta": 0,
+      "meanChannelDelta": 0
+    },
+    "treatment": {
+      "pixelsChanged": 0,
+      "percentChanged": 0,
+      "maxChannelDelta": 0,
+      "meanChannelDelta": 0
+    }
+  }
+}
+errors: [33m0[39m | warnings: [33m11[39m

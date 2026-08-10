@@ -140,13 +140,22 @@ Emitted by `boot/60-mathtex.js`, which reconciles the claims actually standing i
 frame, in `after()`, so the position it sends is the transform that was rendered rather than the one
 a payload asked for. Read the result at `__vs.probe("lighting").accents`: `registered` is what this
 signal put in the map, `lit` is how many pool lights carry non-zero intensity as a consequence.
+`__vs.probe("mathresonance")` says where each claim's light went and how far it had to fall to get
+there.
 
-Known and measured (`review/measure/P36-spill.mjs`): the accents are live, but **at spawn nothing is
-inside their falloff.** Every standing claim is 10.7 – 21.2 m above the ground beneath it and the
-closest a lit accent came to the body in 14 s of running was 6.61 m, against a 6 m cap. P15 stands
-claims on bare sky so their ink is 0.0% occluded; §5.4 caps an accent at 6 m so it marks the world
-rather than lighting it. Both rules are right and together they mean a claim's spill lands on
-nothing at the distances this level uses. The signal is not the open question — the composition is.
+**The position it sends is the claim's socket, not its ink**, and that distinction is the whole
+feature. A standing claim is 10.7 – 21.2 m above the ground beneath it — P15 stands claims on bare
+sky so their ink is 0.0% occluded — so an accent at the ink has no surface inside §5.4's 6 m cap in
+*any* direction, and round 2 shipped exactly that: emitted, heard, four `PointLight`s lit, and worth
+0 of 518,400 pixels. `world.md` §2.1 already says what a claim is — a live statement standing at a
+socket — and the socket is on the ground, so the light pools there: `collision.groundAt` under the
+ink, lifted a metre. The ink keeps its height and its occlusion figure and neither rule moves.
+
+Measured, `review/measure/P36-r3.mjs`, loop halted and both frames rendered at `advance(0)`: control
+0 px, treatment 412 px, and 9 – 12 of 26 sphere casts from every accent now find world at
+0.73 – 0.95 m, against 0 of 26 before. The number is on record in `review/measure/seam-effects.json`,
+which `tools/seams.mjs` reads as a gate — a name this project calls closed has to say what closing it
+was worth, because round 2 satisfied every check the audit had while lighting nothing.
 
 **Learning** — `learn:present {itemId, kpId, form}` · `learn:respond {itemId, correct, latencyMs, response}` ·
 `learn:mastery {kpId, p, delta}` · `learn:teach {kpId, phase:"model"|"guided"|"solo"}` ·
@@ -179,8 +188,14 @@ or more per minute of ordinary play, all of it into nothing, because `app/src/au
 exist yet. The controller is not at fault: it is doing exactly what a controller should, which is
 report what happened and let the mixer decide what it sounds like.
 
-**Kernel** — `kernel:frame {dt, alpha, simTime}` ⟨no subscriber⟩ ·
-`kernel:resize {width, height}` ⟨no subscriber⟩
+**Kernel** — `kernel:frame {dt, alpha, simTime}` ⟨broadcast — no owner⟩ ·
+`kernel:resize {width, height}` ⟨broadcast — no owner⟩
+
+The marker is not decoration. ⟨pending Pnn⟩ means *a hole with an owner*; these two have no owner
+and never will, and the ⟨no subscriber⟩ they used to carry passed the audit while restating the
+finding and naming nobody. `tools/seams.mjs` now reads the two shapes apart and rejects any other
+text in angle brackets, so "unsubscribed on purpose" and "somebody owes the other half" can never
+again be spelled the same way.
 
 Both are broadcasts for code that is **not** a mounted system, and nothing in `app/src` subscribes
 to either — a mounted system gets the same information from its `frame(dt, alpha)` and

@@ -186,35 +186,95 @@ export default {
      * Reconciled in `after()`, after every `frame()` hook, so the transform read is the one that
      * was rendered. Emits only on a change: appear, move more than 5 cm, or disappear.
      *
-     * ## Measured — including the part that is not good news
+     * ## The light goes at the socket, not at the ink — and that cost a round to learn
      *
-     * `review/measure/P36-spill.mjs` drives the shipped app and reports where these lights land.
-     * The seam works: four accents registered, four pool lights at intensity 0.348, each sitting on
-     * its claim's rendered position; remove this bridge and all four go to zero with the claims
-     * still standing. **But every claim at spawn stands 10.7 – 21.2 m above the ground beneath it,
-     * and the closest a lit accent came to the body in fourteen seconds of running was 6.61 m** —
-     * so with §5.4's 6 m radius cap, nothing is inside the falloff and the spill currently lands on
-     * nothing.
+     * The first version of this bridge sent the ink's own world position, which is the obvious
+     * thing to send and is worth **exactly zero pixels**. Every claim at spawn stands 10.7 – 21.2 m
+     * above the ground beneath it, because P15 stands claims on bare sky so their ink is 0.0%
+     * occluded (`review/measure/P15.mjs` claim O1), and §5.4 caps an accent at 6 m so it marks the
+     * world rather than lighting it. Sphere-cast 26 directions out of an accent parked at the ink
+     * and *nothing is inside its falloff in any direction*. A critic measured the consequence the
+     * only way it can honestly be measured — halt the loop, render twice at `advance(0)`, read the
+     * drawing buffer — and deleting all four accents in place changed 0 of 518,400 pixels, while
+     * the same rig with one accent a metre above the ground moved 7,491. The receiving half was
+     * never the problem. §5.4's own sentence is "**the spill** is the proof it is a light rather
+     * than a painted decal", and anti-pattern 15 is "an emitter with no spill is a painted decal":
+     * a `PointLight` in clear air 11 m up satisfies the letter of the rule and fails the rule.
      *
-     * That is not a wiring fault and it is not fixable from here. It is two rules meeting: P15
-     * stands every claim on bare sky because a claim with world geometry in front of its ink can be
-     * read wrong (`review/measure/P15.mjs` claim O1 enforces 0.0% occlusion), and §5.4 caps an
-     * accent at 6 m so that it marks the world rather than lighting it. A claim that is never
-     * within 6 m of a surface can never spill on one. Whoever owns level composition or the accent
-     * radius policy has that decision; raising `radius` past 6 here would only be clamped by
-     * `Lighting.addAccent`, and moving the claims is P15's call and has a measured reason.
+     * So the position this sends is the claim's **socket** — `collision.groundAt(x, z)` under the
+     * ink, lifted `groundLift` so the falloff sphere cuts the surface instead of grazing it. That
+     * is not a workaround for the cap, it is what `world.md` §2.1 already says a claim *is*: a live
+     * statement standing at a socket. The socket is on the ground; the resonance pools there. The
+     * ink keeps its measured height and its 0.0% occlusion, the light lands on rock, and neither
+     * rule has to move.
+     *
+     * The ray is cast downward **from the ink**, so the surface found is always the one beneath
+     * that claim rather than whatever roof happens to be over it. It is re-cast only when the ink
+     * moves — four raycasts once, at the quarter-second where `TexField._resolveAnchors` places
+     * the standing claims, and none thereafter.
+     *
+     * ## What it is worth, measured, including the part that is still small
+     *
+     * Same instrument, same session, after the change (`review/measure/P36-r3.mjs`):
+     *
+     *   control (two renders, nothing touched)      0 px          — the instrument resolves one code value
+     *   treatment (every accent removed in place)   412 px, Δ22   — what the seam is worth in the spawn frame
+     *   reach (26 sphere casts per accent)          9–12 of 26 hit, nearest surface 0.73–0.95 m
+     *
+     * The reach line is the one that matters most: the identical cast in round 2 found *no surface
+     * in any direction from any accent*. Every accent now has world inside its falloff.
+     *
+     * All 412 of those pixels come from one accent — `leaf9-mark`, whose socket lands 0.95 m from a
+     * drawn boulder. The other three sockets sit on open, near-horizontal ground 15 m from the lens
+     * and are worth under one code value each, which is not a wiring fault either: a point light a
+     * metre above a flat plane lights a small disc at grazing incidence, and §5.4's cap decides how
+     * bright that disc may be. `review/measure/P36-r3-sweep.mjs` prices exactly that — one accent, a
+     * metre above the ground, walked out from the body: 255 px at 1.2 m, 13 px at 3.6 m, 0 past
+     * 4.8 m. A standing rock beside the light is a far better receiver than the floor under it.
+     *
+     * The cap is not being cheated to get the number. In the delivered frame the facet this
+     * brightens most moves from Y 0.103 to Y 0.152 — an accent contribution of 0.049 against the
+     * Y 0.10 §5.4 allows a facet one metre out.
+     *
+     * On the gameplay path (`review/measure/P36-r3-play.mjs`) the same A/B reads 366 px at spawn and
+     * **0 px after E**: pressing E stands the four claims down and leaves one teaching claim, whose
+     * socket is on that same open ground. The seam is still live there and says so as a state delta
+     * rather than a pixel one — `probe("lighting").accents.registered` goes 4 → 1 → 2 as this block
+     * retires three accents with `{active:false}` and registers the teaching claim's.
+     *
+     * One trail deliberately left marked, because it cost three browser runs: a `THREE.Raycaster`
+     * cast straight down finds no drawn triangle at any of these sockets, which reads exactly like
+     * "the renderer draws nothing there". It is an instrument fault — `vs.terrain.surface` is not
+     * raycastable at all, and the identical cast two metres from the body, over ground the avatar is
+     * demonstrably standing on, also finds only the keel 80 m below (`review/measure/P36-r3-drawn.mjs`
+     * is that control). Do not conclude anything about drawn geometry from that cast.
+     *
+     * The 412 is recorded in `review/measure/seam-effects.json`, which `tools/seams.mjs` reads as a
+     * gate: a seam this project calls closed has to carry a measured effect, because string pairing
+     * is exactly what round 2 satisfied while lighting nothing.
      */
     const RESONANCE = {
-      // §5.4 caps accent radius at 6 m; a claim is ink, not a crystal core, so it stands under
-      // that. `strength` is a 0..1 fraction of the cap `Lighting._assignAccents` already applies
-      // (`intensity = strength * 0.58`, set so a rock facet one metre away cannot pass Y 0.10).
+      // §5.4 caps accent radius at 6 m; a claim is ink, not a crystal core, so it stands under that.
       radius: 5,
-      strength: 0.6,
+      // Full budget, not a fraction of it. `Lighting._assignAccents` turns this into
+      // `intensity = strength * 0.58`, and the 0.58 is itself §5.4's cap — the value at which a
+      // rock facet one metre away sits exactly at the Y 0.10 that separates *marking* the world
+      // from *lighting* it. Round 2 sent 0.6 "because a claim is ink, not a crystal core", which
+      // spent 40% of the only budget this feature has on nothing: `review/measure/P36-r3-sweep.mjs`
+      // parks a 0.6 accent a metre above the ground at ten points out from the body and measures
+      // the ground it lights moving by **one code value** — 255 px at 1.2 m, 13 px at 3.6 m, zero
+      // beyond 4.8 m. At the cap the brightest pixel any accent moves is 22/255, and the facet it
+      // moves goes from Y 0.103 to Y 0.152 — an accent contribution of 0.049 against §5.4's 0.10.
+      strength: 1,
       // Below this, a re-emit is noise: `math:show` is idempotent and a claim that has resolved
       // its anchor does not move again.
       moveEpsilon: 0.05,
+      // How far above the surface the accent sits. A point light *on* the plane it lights spills
+      // over a vanishing area; one metre up is the height the critic's own diagnostic used and it
+      // puts a ~4.9 m radius of ground inside a 5 m falloff.
+      groundLift: 1.0,
     };
-    const litClaims = new Map(); // panel id -> last announced [x, y, z]
+    const litClaims = new Map(); // panel id -> { ink: [x,y,z], at: [x,y,z] }
     const claimPosition = (panel) => {
       const mesh = panel?.mesh;
       if (!mesh) return null;
@@ -225,26 +285,45 @@ export default {
       const e = mesh.matrixWorld.elements;
       return [e[12], e[13], e[14]];
     };
+    /**
+     * The claim's socket: straight down from the ink to the first surface, lifted clear of it.
+     * Falls back to the ink itself when there is no collision world yet or nothing below — an
+     * accent that lights nothing is still better than a claim that silently stops resonating,
+     * and `__vs.probe("mathtex")` reports which case each claim is in.
+     */
+    const spillPoint = (ink) => {
+      const g = kernel.get("collision")?.groundAt?.(ink[0], ink[2], ink[1] + 0.05);
+      if (!g?.hit) return { at: ink, grounded: false, drop: 0 };
+      return {
+        at: [ink[0], g.y + RESONANCE.groundLift, ink[2]],
+        grounded: true,
+        drop: ink[1] - g.y,
+      };
+    };
     kernel.mount("mathresonance", {
       after() {
         const standing = new Set();
         for (const [id, panel] of field.panels) {
-          const at = claimPosition(panel);
-          if (!at) continue;
+          // A view anchor that has not resolved yet has no world position worth lighting: the
+          // mesh is still at the field's origin and would pool light on whatever stands there.
+          if (panel?.anchor) continue;
+          const ink = claimPosition(panel);
+          if (!ink) continue;
           standing.add(id);
           const was = litClaims.get(id);
           if (
             was &&
-            Math.abs(was[0] - at[0]) < RESONANCE.moveEpsilon &&
-            Math.abs(was[1] - at[1]) < RESONANCE.moveEpsilon &&
-            Math.abs(was[2] - at[2]) < RESONANCE.moveEpsilon
+            Math.abs(was.ink[0] - ink[0]) < RESONANCE.moveEpsilon &&
+            Math.abs(was.ink[1] - ink[1]) < RESONANCE.moveEpsilon &&
+            Math.abs(was.ink[2] - ink[2]) < RESONANCE.moveEpsilon
           ) {
             continue;
           }
-          litClaims.set(id, at);
+          const spill = spillPoint(ink);
+          litClaims.set(id, { ink, at: spill.at, grounded: spill.grounded, drop: spill.drop });
           signals.emit("world:resonance", {
             id,
-            position: at,
+            position: spill.at,
             radius: RESONANCE.radius,
             strength: RESONANCE.strength,
             active: true,
@@ -263,6 +342,22 @@ export default {
     });
 
     publish("mathtex", () => field.probe());
+    // What `world:resonance` is actually asking for, per claim: where the ink is, where its socket
+    // is, and how far the light had to fall to reach a surface. `grounded:false` means the claim is
+    // standing over nothing and its accent is back at the ink, lighting air — the exact state this
+    // whole block exists to make visible rather than silent.
+    publish("mathresonance", () => ({
+      claims: [...litClaims.entries()].map(([id, e]) => ({
+        id,
+        ink: e.ink.map((v) => +v.toFixed(2)),
+        socket: e.at.map((v) => +v.toFixed(2)),
+        drop: +(e.drop ?? 0).toFixed(2),
+        grounded: !!e.grounded,
+      })),
+      radius: RESONANCE.radius,
+      strength: RESONANCE.strength,
+      groundLift: RESONANCE.groundLift,
+    }));
     // Deliberately a probe of its own, and deliberately not folded into `mathtex`. It fires
     // one camera-to-ink ray per sample against every depth-writing mesh in the scene, which is
     // a couple of hundred milliseconds in the spawn frame — an instrument, not something

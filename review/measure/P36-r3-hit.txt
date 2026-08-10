@@ -1,0 +1,101 @@
+(node:51384) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "lens": [
+    11.15,
+    60.61,
+    219.24
+  ],
+  "rows": [
+    {
+      "id": "leaf9-span",
+      "socket": [
+        12.59,
+        52.36,
+        206.52
+      ],
+      "socketMetresFromLens": 15.23,
+      "drawnHere": [
+        {
+          "object": "vs.terrain.keel",
+          "metres": 252.96,
+          "material": "MeshLambertMaterial",
+          "materialName": "vs.flat.terrain.keel"
+        }
+      ],
+      "nearestDrawnMinusSocket": 237.73
+    },
+    {
+      "id": "leaf9-share",
+      "socket": [
+        12.59,
+        52.36,
+        206.52
+      ],
+      "socketMetresFromLens": 15.23,
+      "drawnHere": [
+        {
+          "object": "vs.terrain.keel",
+          "metres": 252.96,
+          "material": "MeshLambertMaterial",
+          "materialName": "vs.flat.terrain.keel"
+        }
+      ],
+      "nearestDrawnMinusSocket": 237.73
+    },
+    {
+      "id": "leaf9-working",
+      "socket": [
+        17.45,
+        52.45,
+        206.52
+      ],
+      "socketMetresFromLens": 16.38,
+      "drawnHere": [
+        {
+          "object": "scatter:tuft:lod1",
+          "metres": 38.52,
+          "material": "MeshLambertMaterial",
+          "materialName": "p13:flora"
+        },
+        {
+          "object": "vs.terrain.keel",
+          "metres": 237.32,
+          "material": "MeshLambertMaterial",
+          "materialName": "vs.flat.terrain.keel"
+        }
+      ],
+      "nearestDrawnMinusSocket": 22.15
+    },
+    {
+      "id": "leaf9-mark",
+      "socket": [
+        31.65,
+        44.8,
+        194.52
+      ],
+      "socketMetresFromLens": 35.8,
+      "drawnHere": [
+        {
+          "object": "scatter:tuft:lod0",
+          "metres": 8.13,
+          "material": "MeshLambertMaterial",
+          "materialName": "p13:flora"
+        },
+        {
+          "object": "scatter:boulder:lod0",
+          "metres": 37.06,
+          "material": "MeshLambertMaterial",
+          "materialName": "p13:stone"
+        },
+        {
+          "object": "vs.terrain.keel",
+          "metres": 170.9,
+          "material": "MeshLambertMaterial",
+          "materialName": "vs.flat.terrain.keel"
+        }
+      ],
+      "nearestDrawnMinusSocket": -27.67
+    }
+  ]
+}

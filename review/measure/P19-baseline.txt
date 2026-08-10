@@ -1,0 +1,99 @@
+(node:54428) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "counts": {
+    "learn:teach": 1,
+    "learn:present": 1,
+    "math:show": 15
+  },
+  "firstEvents": [
+    {
+      "n": "learn:teach",
+      "t": 2.55,
+      "d": "var-meaning"
+    },
+    {
+      "n": "learn:present",
+      "t": 2.55,
+      "d": "var-meaning.seat/generate/1spsl3y"
+    },
+    {
+      "n": "math:show",
+      "t": 2.55,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.55,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.55,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.55,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.55,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.93,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 6.07,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 7.53,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 8.57,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 9.92,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 11.05,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 12.38,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 13.52,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 14.85,
+      "d": "var-meaning"
+    }
+  ]
+}
+
+learn:present 1 · math:show 15 · learn:respond 0 · learn:mastery 0
+No complete cycle observed in this window.

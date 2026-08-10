@@ -1058,19 +1058,31 @@ function now() {
 }
 
 /**
- * Put an expression into a DOM element. The KaTeX HTML is hidden from assistive technology
- * and the container carries the spoken form, so a screen reader reads the mathematics and
- * never the notation.
+ * Put an already-decided record into a DOM element. The KaTeX HTML is hidden from assistive
+ * technology and the container carries the spoken form, so a screen reader reads the
+ * mathematics and never the notation.
+ *
+ * Split out from `renderInto` because a record is not always the one `render` would produce
+ * from the source. `TexPanel` refuses claims for reasons this file cannot see — ink extent,
+ * raster size — and when it does, the accessible register has to show *that* record and not
+ * the one the source would have earned. A critic caught the divergence: a 2,000-character
+ * claim the world had already refused was still reading `"1 plus 1 plus 1 plus…"` out of the
+ * live DOM. Property 1 at the top of this file says the two must never differ, so the caller
+ * that made the decision passes the decision in.
  */
-export function renderInto(el, tex, opts = {}) {
-  const rec = render(tex, opts);
-  if (!el) return rec;
+export function applyRecord(el, rec) {
+  if (!el || !rec) return rec;
   el.setAttribute("role", "math");
   el.setAttribute("aria-label", rec.speech);
   el.setAttribute("data-vs-tex", rec.ok ? "ok" : "fallback");
   el.setAttribute("lang", rec.locale);
   el.innerHTML = `<span aria-hidden="true">${rec.html}</span>`;
   return rec;
+}
+
+/** The common case: typeset a source and show whatever that produced. */
+export function renderInto(el, tex, opts = {}) {
+  return applyRecord(el, render(tex, opts));
 }
 
 export function texStats() {

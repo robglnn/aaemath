@@ -14,22 +14,140 @@
       219.25
     ],
     "fov": 62,
-    "horizonRow": 367.3
+    "horizonRow": 367.3,
+    "focalPx": 748.9
   },
   "carryRun": {
-    "geometrySamplesVisible": 278,
-    "samplesInsideNearBand": 121,
-    "samplesPaintedCarryCyan": 26,
-    "paintedFractionInsideNearBand": 0.215,
-    "topRow": 498,
-    "bottomRow": 697,
+    "geometrySamplesVisible": 542,
+    "samplesInsideNearBand": 307,
+    "samplesPaintedCarryCyan": 301,
+    "paintedFractionInsideNearBand": 0.98,
+    "topRow": 488,
+    "bottomRow": 806,
     "horizonRow": 367.3,
-    "rowsBelowHorizon": 130.7,
+    "rowsBelowHorizon": 120.7,
     "allowedRowsBelowHorizon": 135,
-    "worstVerticalGapRows": 8,
-    "unpaintedPixelMedianHue": 30,
-    "unpaintedPixelMedianSat": 0.31,
+    "worstVerticalGapRows": 16,
+    "unpaintedPixelMedianHue": 41.67,
+    "unpaintedPixelMedianSat": 0.42,
     "frameHeight": 900
+  },
+  "river": {
+    "ours": {
+      "area": 117076,
+      "x0": 609,
+      "x1": 1599,
+      "y0": 432,
+      "y1": 821,
+      "maxVerticalRun": 271,
+      "rows": 390,
+      "cols": 991,
+      "frame": [
+        1600,
+        900
+      ],
+      "areaPpm": 81302.8,
+      "rowShare": 0.433,
+      "runShare": 0.3011
+    },
+    "reference": {
+      "area": 245682,
+      "x0": 0,
+      "x1": 2361,
+      "y0": 0,
+      "y1": 173,
+      "maxVerticalRun": 172,
+      "rows": 174,
+      "cols": 2362,
+      "frame": [
+        2752,
+        1536
+      ],
+      "areaPpm": 58121.1,
+      "rowShare": 0.113,
+      "runShare": 0.112
+    }
+  },
+  "heroForm": {
+    "shard": {
+      "id": "hero.0",
+      "leaf": [
+        -159,
+        -18
+      ],
+      "radius": 12,
+      "height": 56,
+      "distance": 67,
+      "bearingOffAxisDeg": 25.8,
+      "authoredBandElevationsDeg": [
+        -7.93,
+        8.01,
+        24.26,
+        44.12
+      ],
+      "screenBox": [
+        199,
+        0,
+        649,
+        742
+      ]
+    },
+    "samplesOnShard": 29586,
+    "shadowSamples": 12379,
+    "shadowBands": [
+      {
+        "band": 0,
+        "n": 2469,
+        "medianY": 0.1819
+      },
+      {
+        "band": 1,
+        "n": 1535,
+        "medianY": 0.1992
+      },
+      {
+        "band": 2,
+        "n": 8262,
+        "medianY": 0.2014
+      },
+      {
+        "band": 3,
+        "n": 113,
+        "medianY": 0.0276
+      }
+    ],
+    "litBands": [
+      {
+        "band": 0,
+        "n": 947,
+        "medianY": 0.0227
+      },
+      {
+        "band": 1,
+        "n": 4763,
+        "medianY": 0.0218
+      },
+      {
+        "band": 2,
+        "n": 6113,
+        "medianY": 0.0235
+      },
+      {
+        "band": 3,
+        "n": 5384,
+        "medianY": 0.0801
+      }
+    ],
+    "shadowBandSpreadRatio": 7.297,
+    "shadowWorstAdjacentDelta": 0.0109,
+    "litBandSpreadRatio": 3.674,
+    "largestSingleValueShare": 0.303,
+    "rockShader": {
+      "compiled": true,
+      "hasTerrainGrade": true,
+      "hasTerrainBackHemisphereGrade": true,
+      "hasMaterialsTurnedTerm": false
+    }
   },
   "massif": {
     "summitY": 149.4,
@@ -62,10 +180,17 @@
       "lipEdges": 405,
       "indexed": false,
       "flatNormalFraction": 1,
-      "underTriangles": 10253
+      "underTriangles": 10253,
+      "shoulders": {
+        "checked": 26,
+        "violations": 0,
+        "worstAdjacentDeltaDeg": 14.89,
+        "minSeparationDeg": 12,
+        "widestSpreadUsed": 1
+      }
     },
     "landmarks": {
-      "spires": 16,
+      "spires": 10,
       "boulders": 62,
       "certaintyClusters": 90,
       "vantisTowers": 98,
@@ -73,8 +198,8 @@
       "horizonLeaves": 7
     },
     "triangles": {
-      "rock": 1922,
-      "carries": 956,
+      "rock": 1630,
+      "carries": 3012,
       "built": 676,
       "certainties": 5200,
       "archipelago": 962,
@@ -92,9 +217,9 @@
   },
   "frameCensus": {
     "measured": {
-      "cyanPct": 12.78,
-      "darkPct": 37.22,
-      "meanY": 0.215
+      "cyanPct": 12.96,
+      "darkPct": 26.78,
+      "meanY": 0.257
     },
     "reference": {
       "cyanPct": 9.54,
@@ -114,8 +239,8 @@
       "id": "S2",
       "claim": "facets are big enough to count at gameplay distance",
       "verdict": "PASS",
-      "medianEdgeMetres": 7.26,
-      "p10EdgeMetres": 4.75,
+      "medianEdgeMetres": 7.33,
+      "p10EdgeMetres": 4.79,
       "threshold": ">= 4.0 m median triangle edge"
     },
     {
@@ -143,36 +268,27 @@
       "claim": "the Bollard and the Second Lip never share a frame",
       "verdict": "FAIL",
       "reachableStandsSwept": 2283,
-      "framingsHoldingBoth": 3,
-      "framingsHoldingBothIncludingUnreachableCliffFaces": 23,
+      "framingsHoldingBoth": 2,
+      "framingsHoldingBothIncludingUnreachableCliffFaces": 19,
       "halfDiagonalFovDeg": 51,
       "worstCase": [
         {
           "eye": [
-            -136,
-            103,
-            234
+            -80,
+            97,
+            248
           ],
-          "sepDeg": 90,
-          "slopeDeg": 28
+          "sepDeg": 99,
+          "slopeDeg": 44
         },
         {
           "eye": [
-            -136,
-            105,
-            234
+            -80,
+            101,
+            248
           ],
-          "sepDeg": 90,
-          "slopeDeg": 28
-        },
-        {
-          "eye": [
-            -136,
-            109,
-            234
-          ],
-          "sepDeg": 90,
-          "slopeDeg": 28
+          "sepDeg": 98,
+          "slopeDeg": 44
         }
       ],
       "threshold": "0 framings, over every reachable stand at eye heights 1.7/4/8 m"
@@ -187,13 +303,17 @@
     {
       "id": "C3",
       "claim": "the ravine cannot be walked or jumped",
-      "verdict": "FAIL",
-      "narrowestGapMetres": 2,
-      "narrowestAtWorldX": -141,
-      "subTwoMetreCracksIgnored": 1,
-      "widestSuchCrackMetres": 0.5,
+      "verdict": "PASS",
+      "narrowestRavineGapMetres": 28.5,
+      "narrowestAtWorldX": -135,
+      "widestGapNOTinTheRavineMetres": 4.5,
+      "widestSuchGapAt": [
+        -147,
+        167
+      ],
+      "subTwoMetreCracksOutsideTheRavine": 1,
       "measuredSpanGapMetres": 58,
-      "threshold": ">= 16 m at its narrowest (locomotion's best jump is far under this)"
+      "threshold": ">= 16 m at the ravine's narrowest line (locomotion's best jump is far under this). Gaps outside the ravine's own band are reported separately and are not this claim"
     },
     {
       "id": "K1",
@@ -207,13 +327,13 @@
         },
         {
           "id": "standingHouse",
-          "distance": 151,
-          "subtendDeg": 7.95
+          "distance": 149,
+          "subtendDeg": 8.08
         },
         {
           "id": "knuckle",
-          "distance": 293,
-          "subtendDeg": 7.82
+          "distance": 289,
+          "subtendDeg": 7.91
         },
         {
           "id": "secondLip",
@@ -222,8 +342,8 @@
         },
         {
           "id": "certaintyField",
-          "distance": 481,
-          "subtendDeg": 14.21
+          "distance": 482,
+          "subtendDeg": 14.2
         },
         {
           "id": "vantis",
@@ -239,22 +359,22 @@
       "id": "K2",
       "claim": "no dead space on the walkable surface",
       "verdict": "FAIL",
-      "walkableSamples": 2321,
-      "samplesFurtherThan90mFromAnything": 558,
-      "worstDistanceToAnything": 160,
+      "walkableSamples": 2291,
+      "samplesFurtherThan90mFromAnything": 5,
+      "worstDistanceToAnything": 96,
       "threshold": "every walkable sample within 90 m of a published anchor"
     },
     {
       "id": "K3",
       "claim": "real verticality across the walkable surface",
       "verdict": "PASS",
-      "walkableHeightRangeMetres": 131.7,
-      "fractionOfSurfaceBetween8And40Deg": 0.499,
+      "walkableHeightRangeMetres": 132,
+      "fractionOfSurfaceBetween8And40Deg": 0.635,
       "slopeBins": [
-        1082,
-        669,
-        490,
-        80
+        743,
+        743,
+        711,
+        94
       ],
       "threshold": ">= 70 m of height, >= 25% of the surface between 8° and 40°"
     },
@@ -280,20 +400,20 @@
     {
       "id": "K5",
       "claim": "the hero carry walks the eye from the foreground to the horizon",
-      "verdict": "FAIL",
+      "verdict": "PASS",
       "measuredOnArrivalFrame": {
-        "geometrySamplesVisible": 278,
-        "samplesInsideNearBand": 121,
-        "samplesPaintedCarryCyan": 26,
-        "paintedFractionInsideNearBand": 0.215,
-        "topRow": 498,
-        "bottomRow": 697,
+        "geometrySamplesVisible": 542,
+        "samplesInsideNearBand": 307,
+        "samplesPaintedCarryCyan": 301,
+        "paintedFractionInsideNearBand": 0.98,
+        "topRow": 488,
+        "bottomRow": 806,
         "horizonRow": 367.3,
-        "rowsBelowHorizon": 130.7,
+        "rowsBelowHorizon": 120.7,
         "allowedRowsBelowHorizon": 135,
-        "worstVerticalGapRows": 8,
-        "unpaintedPixelMedianHue": 30,
-        "unpaintedPixelMedianSat": 0.31,
+        "worstVerticalGapRows": 16,
+        "unpaintedPixelMedianHue": 41.67,
+        "unpaintedPixelMedianSat": 0.42,
         "frameHeight": 900
       },
       "threshold": "the river's own unoccluded triangles must reach below 2/3 frame height and up to within 15% of frame height of the horizon row, with no vertical gap over 6% of frame height, and >= 60% of the ones inside 250 m must actually read as cyan in the capture"
@@ -302,19 +422,172 @@
       "id": "K6",
       "claim": "no carry is buried in its own channel",
       "verdict": "PASS",
-      "minRibbonClearanceOverGroundMetres": 0.45,
+      "minRibbonClearanceOverGroundMetres": 0.9,
       "threshold": ">= 0.2 m, measured at every ribbon cross-section against the ground the terrain built"
+    },
+    {
+      "id": "K7",
+      "claim": "the river is a connected body, not a strip light",
+      "verdict": "PASS",
+      "measuredOnArrivalFrame": {
+        "ours": {
+          "area": 117076,
+          "x0": 609,
+          "x1": 1599,
+          "y0": 432,
+          "y1": 821,
+          "maxVerticalRun": 271,
+          "rows": 390,
+          "cols": 991,
+          "frame": [
+            1600,
+            900
+          ],
+          "areaPpm": 81302.8,
+          "rowShare": 0.433,
+          "runShare": 0.3011
+        },
+        "reference": {
+          "area": 245682,
+          "x0": 0,
+          "x1": 2361,
+          "y0": 0,
+          "y1": 173,
+          "maxVerticalRun": 172,
+          "rows": 174,
+          "cols": 2362,
+          "frame": [
+            2752,
+            1536
+          ],
+          "areaPpm": 58121.1,
+          "rowShare": 0.113,
+          "runShare": 0.112
+        }
+      },
+      "threshold": "largest connected accent-cyan component >= 5000 px, spanning >= 110 rows, and >= 20 px thick on its thickest column. Last round: 665 px, 30 rows, 1-4 px. The reference's own river is measured the same way and printed beside it"
+    },
+    {
+      "id": "S5",
+      "claim": "the big near form reads as several planes, not one cut-out",
+      "verdict": "FAIL",
+      "measuredOnArrivalFrame": {
+        "shard": {
+          "id": "hero.0",
+          "leaf": [
+            -159,
+            -18
+          ],
+          "radius": 12,
+          "height": 56,
+          "distance": 67,
+          "bearingOffAxisDeg": 25.8,
+          "authoredBandElevationsDeg": [
+            -7.93,
+            8.01,
+            24.26,
+            44.12
+          ],
+          "screenBox": [
+            199,
+            0,
+            649,
+            742
+          ]
+        },
+        "samplesOnShard": 29586,
+        "shadowSamples": 12379,
+        "shadowBands": [
+          {
+            "band": 0,
+            "n": 2469,
+            "medianY": 0.1819
+          },
+          {
+            "band": 1,
+            "n": 1535,
+            "medianY": 0.1992
+          },
+          {
+            "band": 2,
+            "n": 8262,
+            "medianY": 0.2014
+          },
+          {
+            "band": 3,
+            "n": 113,
+            "medianY": 0.0276
+          }
+        ],
+        "litBands": [
+          {
+            "band": 0,
+            "n": 947,
+            "medianY": 0.0227
+          },
+          {
+            "band": 1,
+            "n": 4763,
+            "medianY": 0.0218
+          },
+          {
+            "band": 2,
+            "n": 6113,
+            "medianY": 0.0235
+          },
+          {
+            "band": 3,
+            "n": 5384,
+            "medianY": 0.0801
+          }
+        ],
+        "shadowBandSpreadRatio": 7.297,
+        "shadowWorstAdjacentDelta": 0.0109,
+        "litBandSpreadRatio": 3.674,
+        "largestSingleValueShare": 0.303,
+        "rockShader": {
+          "compiled": true,
+          "hasTerrainGrade": true,
+          "hasTerrainBackHemisphereGrade": true,
+          "hasMaterialsTurnedTerm": false
+        }
+      },
+      "threshold": ">= 3 shadow-side inclination bands holding >= 15 samples each, brightest:darkest band median luminance >= 1.25, every adjacent pair >= 4% apart, and no single 2%-wide luminance bin holding more than 55% of the shard's pixels"
+    },
+    {
+      "id": "S6",
+      "claim": "every shoulder profile the world built separates its bands by at least 12 deg",
+      "verdict": "PASS",
+      "profilesBuilt": 26,
+      "violations": 0,
+      "worstAdjacentBandGapDeg": 14.89,
+      "requiredDeg": 12,
+      "slopeSpreadWidenedTo": 1,
+      "threshold": "the shipped world builds > 0 shoulder profiles, none violates the rule, and the worst adjacent band gap across all of them is >= the module's own minimum"
+    },
+    {
+      "id": "S7",
+      "claim": "the grade that paints the shipped rock is the one this piece owns and it grades the back hemisphere",
+      "verdict": "PASS",
+      "compiledFragmentShaderOfVsLevelRock": {
+        "compiled": true,
+        "hasTerrainGrade": true,
+        "hasTerrainBackHemisphereGrade": true,
+        "hasMaterialsTurnedTerm": false
+      },
+      "note": "Materials.js's §3.4 rotation is NOT in this program: the `authored` archetype sets grade:false and neither VS_TINT nor VS_KEYSHADOW, so that block is never emitted for this mesh. A colour finding about the spires is a finding about Terrain.js's GLSL_GRADE",
+      "threshold": "the level.rock program contains Terrain.js's graded shadow term (vsShadeTint / vsBack)"
     },
     {
       "id": "P1",
       "claim": "near lit rock matches the reference's lit rock",
       "verdict": "FAIL",
       "measured": {
-        "n": 7471,
-        "Y": 0.035,
-        "hue": 80,
-        "sat": 0.315,
-        "v": 0.212
+        "n": 6491,
+        "Y": 0.039,
+        "hue": 115.7,
+        "sat": 0.306,
+        "v": 0.227
       },
       "reference": {
         "hex": "#B8834D",
@@ -327,7 +600,13 @@
       "id": "P2",
       "claim": "near shadowed rock is the reference's blue shadow, not a dark orange",
       "verdict": "FAIL",
-      "measured": null,
+      "measured": {
+        "n": 1653,
+        "Y": 0.183,
+        "hue": 27.9,
+        "sat": 0.571,
+        "v": 0.616
+      },
       "reference": {
         "hex": "#1B2B32",
         "Y": 0.022,
@@ -339,7 +618,7 @@
       "id": "P3",
       "claim": "the lit:shadow luminance ratio sits in the reference's band",
       "verdict": "FAIL",
-      "measuredRatio": 0,
+      "measuredRatio": 0.21,
       "referenceRatio": [
         4.15,
         5.47
@@ -350,11 +629,11 @@
       "id": "P4",
       "claim": "the frame is inside the performance budget",
       "verdict": "PASS",
-      "drawCalls": 138,
-      "triangles": 147430,
-      "programs": 20,
+      "drawCalls": 139,
+      "triangles": 138168,
+      "programs": 23,
       "threshold": "<= 320 draws, <= 1.6M triangles, <= 90 programs"
     }
   ],
-  "summary": "10/17 claims pass"
+  "summary": "15/21 claims pass"
 }

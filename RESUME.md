@@ -168,6 +168,27 @@ hemisphere, so every turned face converges on the same shadow value regardless o
 is no value ladder on shadowed faces at all. This is why L1/L2 could only ever measure 2 distinct lit
 values against the LADDER's declared five steps.
 
+### Round 3: closing the guess exploit opened a coverage hole — UNRESOLVED, act on this
+
+The engine now reports, through its own warning channel:
+> `CONTENT: "eq-special-cases" has NO mastery-eligible form left after the bank audit and can never be
+> certified`
+
+Re-pricing guess rates against the shipped bank disqualified every item form for that knowledge point.
+The integrity fix is right; the consequence is that a Level 1 knowledge point became **impossible to
+master**, which fails L4 coverage just as surely as the exploit failed L5.
+
+**This needs a CONTENT fix, not an engine fix.** `eq-special-cases` needs at least one genuinely
+low-guess form authored for it — a construct/entry form rather than a select form — so it can be
+certified honestly. Do not solve it by relaxing the guess threshold; that reopens the exploit.
+
+Check for other knowledge points in the same state before building anything new:
+run the game and read `__vs.report().warnings` for further `CONTENT:` lines.
+
+Also outstanding from the same round: P16's audit sampled `collectBankSample` at 4.5% catalogue /
+95.5% generator, which is not the population the player is actually served — the prices it computed
+describe a distribution nobody sees.
+
 ### The meta-lesson: two builders' proof scripts were themselves broken
 - `review/measure/P09.mjs:290` references `belowHits`, never declared in the page-evaluate scope. The
   script dies with a ReferenceError before printing a single claim — so claims S1–S4, C1–C3, K1–K3 and

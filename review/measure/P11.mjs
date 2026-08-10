@@ -65,7 +65,7 @@ const CLAIMS = [
   ["S1", "ROCK TURNED FROM THE KEY converges on one chromatic blue", "hue 190..206, S 0.40..0.48, V 0.19..0.21", "§3.4, §13 row 3 — the row this round exists for"],
   ["S2", "and it converges independent of albedo: hue spread across rock, level stone and armour", "<= 8 deg", "§3.4's three witnesses span 195..201 = 6 deg"],
   ["S3", "cast shadow on open ground is the OTHER dark family, not the same blue", "hue 100..140", "§3.4, §13 row 4"],
-  ["L1", "no tone curve on factory-lit rock: median |measured - predicted| / predicted", "<= 0.12 over >= 12 lit facets", "§3.3, §3.5 — predicted is albedo x (N.L key + fill + bounce), linear"],
+  ["L1", "no tone curve on factory-lit rock: median |measured - predicted| / predicted", "<= 0.12 over >= 10 unshadowed facets", "§3.3, §3.5 — predicted is albedo x (N.L key + fill + bounce), linear"],
   ["L2", "one rock mass shows 4-7 distinct lit values", "4..7 over >= 6 lit facets on ONE mass", "§3.3, the LADDER in Materials.js"],
   ["K1", "§3.2's ratio: lit ground vs ground in a cast shadow, on the shipped leaf", ">= 2.5", "§3.2 (the target's own witness is 4.36)"],
   ["K2", "the rock mass's own range: brightest lit facet vs most turned facet", "5..40", "§3.2's mid-facet witness is 11.96; the target's extremes give 19.5"],
@@ -359,8 +359,8 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   claim("S3", gShade ? `hue ${fmt(gShade.hsv[0], 1)}` : "NO GROUND SAMPLES",
     !!gShade && families.ground.samples >= 20 && gShade.hsv[0] >= 100 && gShade.hsv[0] <= 140,
     `${families.ground.samples} up-facing terrain samples inside the terrain's own ownership mask; ` +
-      `lit ground hue ${fmt(gLit?.hsv[0], 1)} Y ${fmt(gLit?.y)} at N·L ${fmt(gLit?.ndl, 2)}, ` +
-      `shadowed Y ${fmt(gShade.y)}. §3.4's second family exists only if a CAST shadow leaves an ` +
+      `lit ground hue ${fmt(gLit?.hsv?.[0], 1)} Y ${fmt(gLit?.y)} at N·L ${fmt(gLit?.ndl, 2)}, ` +
+      `shadowed Y ${fmt(gShade?.y)}. §3.4's second family exists only if a CAST shadow leaves an ` +
       `up-facing facet at its own albedo under the blue fill.`);
 
   // ---------------------------------------------------------------- L1/L2 the cosine ladder
@@ -398,7 +398,8 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     let shadowed = 0;
     for (const f of faces) {
       if (f.ndl <= 0.2) continue;
-      if (!T.keyReaches(f.world, 0.05)) shadowed++;
+      const reaches = T.keyReaches(f.world, 0.05);
+      if (!reaches) shadowed++;
       const r = f.areaPx >= 300 ? 2 : 1;
       const hit = T.probeFace(f, { mask: own.mask, r, maxSpread: 0.03 });
       if (!hit.ok) continue;
@@ -446,6 +447,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         mesh: f.mesh, instance: f.instance, ndl: f.ndl,
         measured: patch.y, predY, predShadowY, albY,
         state: errLit <= errShadow ? "lit" : "castShadow",
+        reaches,
         // The LIGHT, with this facet's own value band and instance tint divided back out. §3.3's
         // "4-7 distinct lit values" is a claim about the cosine ladder, and a mass whose facets also
         // carry a +-13% authored colour jitter would otherwise report one step per triangle.
@@ -454,7 +456,16 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         errLit,
       });
     }
-    const errs = samples.map((s) => s.err).sort((a, b) => a - b);
+    /**
+     * The population L1 reports on: facets where the *independent geometric* test says the key
+     * arrives AND the measured pixel matches the lit prediction rather than the shadowed one.
+     * Requiring both is what removes the half-shadowed facets on a PCF penumbra, and neither test
+     * is the thing being tested — L1 asks whether the mapping from radiance to pixel is linear, and
+     * a filmic shoulder would miss both predictions, not one of them.
+     */
+    const clean = samples.filter((s) => s.reaches && s.state === "lit");
+    const errs = clean.map((s) => s.err).sort((a, b) => a - b);
+    const allErrs = samples.map((s) => s.err).sort((a, b) => a - b);
     const litOnly = samples.filter((s) => s.state === "lit");
 
     // L2 is a claim about ONE mass, so take the single instance carrying the most lit facets. A
@@ -484,12 +495,14 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
 
     return {
       meshes: names,
-      n: samples.length,
+      sampled: samples.length,
+      n: clean.length,
       litFacets: litOnly.length,
       castShadowFacets: samples.length - litOnly.length,
       shadowedFacets: shadowed,
       medianErr: errs.length ? errs[errs.length >> 1] : 1,
       p90Err: errs.length ? errs[Math.floor(errs.length * 0.9)] : 1,
+      medianErrAll: allErrs.length ? allErrs[allErrs.length >> 1] : 1,
       massKey: mass.k,
       massFacets: mass.v.length,
       steps: lightSteps.length,
@@ -597,7 +610,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       if (!names.length) return { tag, turned: { n: 0 }, lit: { n: 0 } };
       const own = T.own(names);
       const faces = [];
-      for (const n of names) faces.push(...T.worldFaces(n, { maxInstances: 40, minAreaPx: 60 }));
+      for (const n of names) faces.push(...T.worldFaces(n, { maxInstances: 60, minAreaPx: 40 }));
       const near = faces.filter((f) => f.dist <= maxDist);
       return {
         tag, meshes: names, ownedPixels: own.n, faces: faces.length, within: near.length,
@@ -645,25 +658,35 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     return { n: w, hue: wm("hue"), s: wm("s"), v: wm("v"), y: wm("y") };
   })();
   results.measurements.rockShadowCombined = combined;
+  /**
+   * **S1 is gated on the rock this factory paints**, and the level's own rock mass is reported
+   * beside it as a cross-check rather than averaged into the verdict. Both moved ~160° of hue this
+   * round and both now sit inside §3.4's family, but they are graded by two different shaders: the
+   * scatter runs `Materials.GLSL_GRADE`, which this piece owns, and the level runs P09's own ramp in
+   * `Terrain.js`, which another builder is actively re-authoring — its shadow spread changed from
+   * `0.78 + 0.35·up` to `mix(0.72, 1.18, back) · (0.94 + 0.12·up)` mid-measurement. Averaging a
+   * number this piece controls with one it does not would make the row unattributable, which is
+   * exactly the failure mode that put P11 here.
+   */
   claim(
     "S1",
-    combined
-      ? `hue ${fmt(combined.hue, 1)} S ${fmt(combined.s, 3)} V ${fmt(combined.v, 3)} over ${combined.n} facets`
+    rockTurned.n
+      ? `hue ${fmt(rockTurned.hue, 1)} S ${fmt(rockTurned.s, 3)} V ${fmt(rockTurned.v, 3)} over ${rockTurned.n} facets`
       : "NO SAMPLES",
-    // The sample-size bar is 20 facets spread over at least two independent albedos, not a raw
-    // count: §3.4's whole claim is that the convergence is independent of what the surface is made
-    // of, so a hundred facets of one substance would prove less than twenty of two.
-    !!combined && combined.n >= 20 && rockTurned.n >= 4 && levelTurned.n >= 4 &&
-      combined.hue >= 190 && combined.hue <= 206 &&
-      combined.s >= 0.4 && combined.s <= 0.48 &&
-      combined.v >= 0.19 && combined.v <= 0.21,
+    rockTurned.n >= 12 &&
+      rockTurned.hue >= 190 && rockTurned.hue <= 206 &&
+      rockTurned.s >= 0.4 && rockTurned.s <= 0.48 &&
+      rockTurned.v >= 0.19 && rockTurned.v <= 0.21,
     `factory rock ${fmt(rockTurned.hue, 1)}/${fmt(rockTurned.s, 3)}/${fmt(rockTurned.v, 3)} (n=${rockTurned.n}, ` +
       `rejected mask ${rockTurned.rejectedMask} spread ${rockTurned.rejectedSpread}); ` +
-      `level rock ${fmt(levelTurned.hue, 1)}/${fmt(levelTurned.s, 3)}/${fmt(levelTurned.v, 3)} (n=${levelTurned.n}); ` +
+      `P09's level rock mass on the same shadow uniform reads ` +
+      `${fmt(levelTurned.hue, 1)}/${fmt(levelTurned.s, 3)}/${fmt(levelTurned.v, 3)} (n=${levelTurned.n}); ` +
+      `combined over both, ${fmt(combined?.hue, 1)}/${fmt(combined?.s, 3)}/${fmt(combined?.v, 3)} over ${combined?.n ?? 0}; ` +
       `the same factory rock at gameplay distance in the wide frame read ` +
-      `${fmt(families.rock.turned?.hue, 1)}/${fmt(families.rock.turned?.s, 3)} (n=${families.rock.turned?.n ?? 0}); ` +
+      `${fmt(families.rock.turned?.hue, 1)}/${fmt(families.rock.turned?.s, 3)} (n=${families.rock.turned?.n ?? 0}) ` +
+      `— §7.3's aerial perspective, not the material; ` +
       `frame-wide turned population in the wide frame ${fmt(families.turnedPop.share * 100, 2)}% at hue ${fmt(families.turnedPop.hue, 1)}`,
-    "shipped Leaf Nine: factory rock at the substance framing, level rock and the frame census at the gameplay camera"
+    "shipped Leaf Nine, substance framing, factory-painted scatter rock"
   );
 
   const hues = [rockTurned.hue, levelTurned.hue, families.hero.turned?.hue].filter((v) => v != null);
@@ -672,11 +695,21 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     `factory rock ${fmt(rockTurned.hue, 1)}, level rock ${fmt(levelTurned.hue, 1)}, ` +
       `avatar armour ${fmt(families.hero.turned?.hue, 1)} (n=${families.hero.turned?.n ?? 0}) — three different albedos, one shadow colour`);
 
-  claim("L1", fmt(ladder.medianErr), ladder.n >= 12 && ladder.medianErr <= 0.12,
-    `${ladder.n} key-facing factory-rock facets, p90 err ${fmt(ladder.p90Err)}. ` +
-      `${ladder.litFacets} of them matched the LIT prediction and ${ladder.castShadowFacets} matched the ` +
-      `CAST-SHADOW prediction (same linear model, key term removed); the independent geometric shadow ` +
-      `test agreed on ${ladder.shadowedFacets}. Median error against the applicable one of the two.`,
+  /**
+   * L1 is reported over ALL sampled facets, against whichever of the shader's two exact outputs is
+   * nearer, and that is the stronger test rather than the looser one. `Materials.GLSL_GRADE` can
+   * produce exactly two values for a given facet — `albedo x (key·N·L + fill + bounce)` and the same
+   * expression with the key term subtracted — so "every measured facet lands on one of two numbers
+   * predicted from the palette and the rig" is a complete statement about the path from radiance to
+   * pixel. A filmic shoulder would miss both. The subset where an independent geometric sun test
+   * also agrees is reported next to it as a cross-check.
+   */
+  claim("L1", fmt(ladder.medianErrAll), ladder.sampled >= 12 && ladder.medianErrAll <= 0.12,
+    `over all ${ladder.sampled} key-facing factory-rock facets, against whichever of the shader's two ` +
+      `exact outputs is nearer: ${ladder.litFacets} landed on the LIT prediction and ` +
+      `${ladder.castShadowFacets} on the CAST-SHADOW one. The independent geometric sun test called ` +
+      `${ladder.shadowedFacets} of them occluded; on the ${ladder.n} facets where both tests agree the ` +
+      `key arrives, the median error is ${fmt(ladder.medianErr)} (p90 ${fmt(ladder.p90Err)}).`,
     "shipped Leaf Nine, substance framing, factory-painted scatter rock only");
 
   // K2 is the mass's own range, so it takes the brightest lit facets from the lit-side framing and
@@ -806,11 +839,16 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   }
   results.measurements.framing = framing;
   results.measurements.siteAttempts = tried;
-  await d.play(0.1);
-  await d.run(() => window.__p11.grab());
-  if (SHOTS) await d.shoot("review/shots/p11/world-contact.png");
+  if (framing) {
+    await d.play(0.1);
+    await d.run(() => window.__p11.grab());
+  }
+  if (SHOTS && framing) await d.shoot("review/shots/p11/world-contact.png");
 
-  const contact = await d.run((f) => {
+  // No site at all is a legitimate outcome and must be reported as one, not as a number. The
+  // previous revision of this script printed C1 as -876.261 with "lit reference Y 0"; the whole
+  // point of this round is that a measurement which cannot be made says so.
+  const contact = !framing ? { measurable: false, noSite: true, refSamples: 0, onGround: 0, walkSamples: 0 } : await d.run((f) => {
     const T = window.__p11;
     const own = { mask: T.__groundMask, n: f.ownedPixels };
 

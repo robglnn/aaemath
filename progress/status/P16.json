@@ -1,9 +1,9 @@
 {
   "id": "P16",
-  "state": "critique",
-  "round": 1,
-  "gap": "eq-special-cases|construct measures 0.335 blind on the SHIPPED bank - above the content file's own maxTrueGuess 0.30 - yet is priced at modelled 0.10 and is fully mastery-eligible; the derivePricing rejection machinery has no answer-space axis and P16.mjs U30 absorbs it via a KNOWN_HOT_CELLS allowlist while the sensitivity arm stops at 0.10",
-  "note": "Re-priced against the shipped bank at generator-family granularity: 23 families + 6 whole cells refused, 80 cells re-priced upward, eq-special-cases reported unmasterable. P16.mjs rebuilt with LIVE arms that have no rate parameter (real items via ItemBank.select, real strings, verdicts from ItemBank.check). 24/24 claims, 36/36 assertions, verify PASSED.",
+  "state": "building",
+  "round": 2,
+  "gap": "The bank audit prices a population the player is never served: collectBankSample is 4.5% catalogue / 95.5% generator, while ItemBank.select() serves 97.2% catalogue. On the served stream 40 of 69 scored cells have an out-of-sample blind rate above the engine's own modelled guess, and expr-anatomy|repair (0.462) and eval-signed|generate (0.494) breach maxTrueGuess at the 95% lower bound while still scored and mastery-eligible. P16.mjs drawCell reproduces the same inversion, which is why U29/U30/U34 pass.",
+  "note": "Re-pricing on the served distribution: audit sample must come through ItemBank.select() with a global 40-item window, not per-cell exclusion",
   "evidence": [],
-  "updated": "2026-08-10T14:18:17.951Z"
+  "updated": "2026-08-10T14:41:42.842Z"
 }

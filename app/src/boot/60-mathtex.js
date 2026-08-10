@@ -24,25 +24,43 @@ import { TexField, ensureMathFonts, setMaxAnisotropy } from "../math/TexPanel.js
  * one. Open readings, per §2.1 — an unknown on the near pan, the site's own measurement on
  * the far pan. `kpId` ties each to `content/knowledge-graph.json` so a teaching director can
  * take these over rather than replace them.
+ *
+ * ## Where they stand, and why it is not a taste call
+ *
+ * These anchors used to put both claims at `right -2.7`, which at `forward 14` is straight
+ * through the avatar's shoulder and the rock spire behind it. The result was measured, not
+ * suspected: 26.9% of `leaf9-share`'s ink was cut away by world geometry, taking the whole
+ * `\frac{1}{2}` denominator and most of the fraction bar with it, so the first mathematics a
+ * player ever saw read `1 ⁻ x = 4` — a well-formed *false* statement produced by the
+ * compositor. `TexPanel.js`'s header spends four gates making sure the rasterizer can never
+ * do that to a claim; letting the world do it instead is the same lie with a different
+ * mechanism.
+ *
+ * So the pair now stands to the *right* of the subject and above the horizon line, which is
+ * where `reference/target-lowpoly.png` puts its equation block: entirely on the smooth upper
+ * sky gradient, crossed by nothing. `leaf9-working` moves out with them to stay clear of the
+ * wider `right 1.6` column. The rule this encodes, and the one `review/measure/P15.mjs`
+ * claim O1 enforces every run: **a standing claim's ink is 0.0% occluded.** Not "mostly
+ * visible" — a claim with something in front of it is a claim that may be read wrong.
  */
 const STANDING_CLAIMS = [
   {
     id: "leaf9-span",
     kpId: "eq-one-add",
     tex: "x + 3 = 7",
-    anchor: { right: -2.7, up: 2.0, forward: 14 },
+    anchor: { right: 1.6, up: 2.6, forward: 14 },
     em: 0.66,
   },
   {
     id: "leaf9-share",
     kpId: "eq-one-mult",
     tex: "\\frac{1}{2}x = 4",
-    anchor: { right: -2.7, up: 0.5, forward: 14 },
+    anchor: { right: 1.6, up: 1.1, forward: 14 },
     em: 0.66,
   },
   {
     id: "leaf9-working",
-    anchor: { right: 3.0, up: 1.3, forward: 14 },
+    anchor: { right: 5.6, up: 1.9, forward: 14 },
     em: 0.55,
     working: { slope: 0.62, intercept: 0.02, xTicks: 10, yTicks: 8 },
   },
@@ -53,7 +71,9 @@ const STANDING_CLAIMS = [
     id: "leaf9-mark",
     kpId: "ineq-one-step",
     tex: "2x + 1 \\ge 9",
-    anchor: { right: 22.0, up: 2.6, forward: 42 },
+    // Pushed further out than it used to be so it clears the working's plot on screen as
+    // well as in the world: the pair moving right brought the whole block into its column.
+    anchor: { right: 25.5, up: 2.2, forward: 42 },
     em: 1.1,
   },
 ];
@@ -117,6 +137,12 @@ export default {
     signals.on("learn:present", standDown);
 
     publish("mathtex", () => field.probe());
+    // Deliberately a probe of its own, and deliberately not folded into `mathtex`. It fires
+    // one camera-to-ink ray per sample against every depth-writing mesh in the scene, which
+    // is ~190 ms in the spawn frame — an instrument, not something `__vs.report()` should pay
+    // for on every call. `review/measure/P15.mjs` claim O1 reads it and fails the run if any
+    // standing claim has world geometry in front of its ink.
+    publish("mathocclusion", () => field.occlusionReport());
     publish("tex", () => ({ ...texStats(), failures: texFailures() }));
   },
 };

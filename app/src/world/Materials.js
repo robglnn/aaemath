@@ -411,6 +411,14 @@ const GLSL_GRADE = /* glsl */ `
 			// albedo under the blue fill, i.e. green, i.e. the other half of the bimodal dark end.
 			float vsTurned = 1.0 - smoothstep( -uVsTune.z, uVsTune.z * 4.0, vsNdL );
 			vec3 vsShade = uVsShadowTint;
+			// vsTurned saturates at exactly 1.0 for every face with N.L <= -KNEE, i.e. the whole
+			// back hemisphere, so on its own §3.4 makes 94% of every shadow-side face the single
+			// constant uVsShadowTint however that face is inclined. This grades it by HOW FAR the
+			// face is turned instead of only by the fact that it is: 0.72 -> 1.18 is a 1.64x spread,
+			// four to five distinct value bands where there was one. Pure N.L on a world-fixed key —
+			// it cannot follow the camera, and as a scalar on the tint it cannot move hue or
+			// saturation off the 198 the shadow family holds.
+			vsShade *= mix( 0.72, 1.18, smoothstep( -0.85, -0.02, vsNdL ) );
 
 			#ifdef VS_RIM
 				// The separator that keeps a faceted silhouette off the sky.

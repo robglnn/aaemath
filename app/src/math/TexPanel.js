@@ -36,7 +36,7 @@
  * "Size the texture from the ink" is the right idea and, on its own, an unbounded allocation:
  * the ink is a function of the content, so a long enough claim asks for an arbitrarily large
  * canvas and gets it. This file therefore never derives an allocation from content without a
- * cap in front of it. There are four gates, cheapest first, each bounding a *different*
+ * cap in front of it. There are seven gates, cheapest first, each bounding a *different*
  * quantity, and the first two live in `Tex.js` because they have to run before this file is
  * reached at all:
  *
@@ -45,12 +45,26 @@
  *     because a 15-deep nested fraction crashes the renderer during layout and there is no
  *     result left to measure afterwards.
  *  3. **Ink extent, in ems** — `RASTER_CAPS.maxInkEms{Wide,Tall}`, checked after layout.
- *     Bounds the *world* size of the quad, which the raster size does not: a claim scaled down
- *     to fit a texture still stands as many ems wide as it did, and a legible-but-300-metre
- *     billboard is not a claim, it is an attack with better manners.
+ *     Bounds the extent of the quad *in ems*, which the raster size does not: a claim scaled
+ *     down to fit a texture still stands as many ems wide as it did.
  *  4. **Canvas size** — `RASTER_CAPS.maxEdge` and `maxPixels`, checked before `canvas.width`
  *     is assigned, and then again as an unconditional clamp on the assignment itself. Bounds
  *     the allocation.
+ *  5. **World size per em** — `RASTER_CAPS.maxEmWorld`, clamped in the constructor. Gate 3
+ *     bounds the claim in ems and `em` is the metres-per-em conversion, so without this the
+ *     product is still unbounded: `math:show {tex:'x + 3 = 7', em:100000}` measured a quad of
+ *     503776 x 104557 world units. A legible-but-300-metre billboard is not a claim, it is an
+ *     attack with better manners, and it is gate 5 and not gate 3 that stops it.
+ *  6. **Tick counts on a working** — `RASTER_CAPS.maxWorkingTicks`. `rasterizeWorking`'s
+ *     `xTicks`/`yTicks` arrive from the same caller-controlled `math:show` payload the `tex`
+ *     does, and they are loop bounds. Measured before the clamp, in the shipped game: 1e4
+ *     ticks cost 11 ms, 1e5 cost 99.9 ms and 1e6 cost 2045.1 ms of frozen main thread —
+ *     linear, so 1e8 is a ~200 s hang. The `tex` half of that signal was bounded and the
+ *     `working` half was not.
+ *  7. **Standing panels** — `MAX_PANELS`. Every individual raster can sit inside the cap while
+ *     the *field* still breaks the frame budget: 400 distinct `math:show` ids measured 407
+ *     panels, 32.3 MiB of texels, 408 textures and 494 draw calls, against
+ *     `design/architecture.md`'s ceiling of 320 draw calls and 120 textures.
  *
  * Gate 4 first tries to **scale down**: re-lay the same expression out at a smaller font so
  * the whole of it survives at lower texel density. Only if even `minFontPx` will not fit does
@@ -67,9 +81,35 @@
  * claims rasterize to 323x65, 239x164, 256x256 and 359x69 at 1600x900 (measured, see
  * `review/measure/P15.mjs` claim H6). Gates 3 and 4 exist for content that does not exist yet
  * and for anything that ever reaches `math:show` from outside this piece.
+ *
+ * ## The eighth way to truncate a claim: the world in front of it
+ *
+ * Seven gates make sure this pipeline never draws a fragment of a claim, and for one round
+ * the compositor cheerfully did it anyway. In the shipped spawn frame, 26.9% of
+ * `leaf9-share`'s ink was cut away by the avatar's arm and a rock spire — the entire
+ * `\frac{1}{2}` denominator and two thirds of the fraction bar — so `\frac{1}{2}x = 4` read
+ * on screen as `1 ⁻ x = 4`. The material was `depthTest:true` by default, and nothing in the
+ * process knew or said so.
+ *
+ * Two things changed, and both were needed:
+ *
+ *  - **`depthTest:false`, with the existing `renderOrder = 5`.** Mathematics floats in front,
+ *    which is the target's reading of ink standing unadorned in world space, and which makes
+ *    "a claim is drawn whole or not at all" a property of the renderer rather than a hope
+ *    about level layout. The alternative — keep depth and test occlusion every frame — was
+ *    measured and rejected: a camera-to-ink ray against the shipped scene costs 1.20 ms
+ *    (140 rays, 50 depth-writing meshes, 33.8k triangles), so a 35-sample check per panel is
+ *    a 170 ms stall. That is not a per-frame budget; it is a probe.
+ *  - **`occludedPct`, published per panel from `probe()`.** Floating in front hides bad
+ *    placement rather than fixing it, so the placement is measured anyway, geometrically and
+ *    independently of what the depth buffer did: rays from the camera to ink-weighted points
+ *    on the quad, against every mesh in the scene that writes depth. `review/measure/P15.mjs`
+ *    claim O1 fails the run if any standing claim reads above 0. A capture with a claim
+ *    standing behind a spire now fails a gate instead of being signed off by eye.
  */
 import * as THREE from "three";
-import { render, renderInto, getLocale, refusedRecord } from "./Tex.js";
+import { introspect } from "../core/Introspect.js";
+import { render, applyRecord, getLocale, refusedRecord } from "./Tex.js";
 
 // ---------------------------------------------------------------- hidden layout host
 
@@ -406,6 +446,13 @@ function inkBounds(items) {
  * is 2048² — 16 MiB of RGBA — and is the tighter of the two for anything large in both axes;
  * a 4096² canvas would be 64 MiB for one claim, which is not a bound worth calling a bound.
  * `minFontPx` is where scaling-down gives up and refusal takes over.
+ *
+ * `maxEmWorld` is 4 metres per em, which is a claim about eight metres tall standing at the
+ * cap — large enough for anything a level could want written on a cliff, and 25,000x smaller
+ * than the 100,000 an unclamped `math:show` was measured producing. `minEmWorld` is 0.02 so a
+ * zero or negative `em` cannot collapse a quad to nothing or invert it. `maxWorkingTicks`
+ * bounds the two loops in `rasterizeWorking`; 64 ticks on a 4-em axis is already an
+ * unreadable comb, so the cap costs the art nothing.
  */
 export const RASTER_CAPS = Object.freeze({
   maxEdge: 4096,
@@ -413,7 +460,22 @@ export const RASTER_CAPS = Object.freeze({
   maxInkEmsWide: 48,
   maxInkEmsTall: 24,
   minFontPx: 8,
+  maxEmWorld: 4,
+  minEmWorld: 0.02,
+  maxWorkingTicks: 64,
 });
+
+/**
+ * Every caller-controlled number in this file goes through here before it is used as a loop
+ * bound, an allocation or a world size. `Number()` first so a string "1e9" is a number and not
+ * a silently-passing NaN, and `Number.isFinite` so NaN and ±Infinity land on the fallback
+ * instead of poisoning the arithmetic downstream.
+ */
+function clampNum(value, lo, hi, fallback) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(hi, Math.max(lo, n));
+}
 
 const rasterStats = {
   rasters: 0,
@@ -490,6 +552,24 @@ function layoutTex(html, fontPx, color) {
 // size bucket: a panel that re-rasterizes as the player walks toward it must not turn one
 // bad claim into an unbounded error log.
 const reportedRefusals = new Set();
+
+/** Gate 3, as a pure test, so the panel and the accessible register apply the same one. */
+function extentBound(emsWide, emsTall) {
+  if (emsWide <= RASTER_CAPS.maxInkEmsWide && emsTall <= RASTER_CAPS.maxInkEmsTall) return null;
+  return {
+    reason: "ink-extent",
+    emsWide: Number(emsWide.toFixed(1)),
+    emsTall: Number(emsTall.toFixed(1)),
+  };
+}
+
+function extentError(bound) {
+  return (
+    `claim geometry out of bounds: ${bound.emsWide.toFixed(1)}x${bound.emsTall.toFixed(1)} ems, cap ` +
+    `${RASTER_CAPS.maxInkEmsWide}x${RASTER_CAPS.maxInkEmsTall}`
+  );
+}
+
 function refuseOnce(tex, locale, displayMode, error) {
   const key = `${locale}|${error}|${String(tex).slice(0, 80)}`;
   const first = !reportedRefusals.has(key);
@@ -526,22 +606,10 @@ export function rasterizeTex(tex, { locale = getLocale(), displayMode = true, fo
   // between the two never decides anything.
   {
     const r = box.getBoundingClientRect();
-    const emsWide = r.width / usedFontPx;
-    const emsTall = r.height / usedFontPx;
-    if (emsWide > RASTER_CAPS.maxInkEmsWide || emsTall > RASTER_CAPS.maxInkEmsTall) {
-      bound = {
-        reason: "ink-extent",
-        emsWide: Number(emsWide.toFixed(1)),
-        emsTall: Number(emsTall.toFixed(1)),
-      };
+    bound = extentBound(r.width / usedFontPx, r.height / usedFontPx);
+    if (bound) {
       rasterStats.refusedGeometry++;
-      record = refuseOnce(
-        tex,
-        record.locale,
-        displayMode,
-        `claim geometry out of bounds: ${emsWide.toFixed(1)}x${emsTall.toFixed(1)} ems, cap ` +
-          `${RASTER_CAPS.maxInkEmsWide}x${RASTER_CAPS.maxInkEmsTall}`
-      );
+      record = refuseOnce(tex, record.locale, displayMode, extentError(bound));
       box = attachTex(record.html, usedFontPx, color);
     }
   }
@@ -690,6 +758,43 @@ export function rasterizeTex(tex, { locale = getLocale(), displayMode = true, fo
   };
 }
 
+/**
+ * The record a claim is going to get, decided before anything is drawn.
+ *
+ * This exists because of a divergence a critic read straight out of the live DOM. A
+ * 2,000-character claim that the world refuses on ink extent — `bound {reason:'ink-extent',
+ * emsWide:2082.8}`, hollow stand-in shown, source withheld — still had its full spoken form,
+ * `"1 plus 1 plus 1 plus…"`, sitting in the accessible register, because the register was
+ * built from `Tex.render` alone and `render` only knows gates 1 and 2. `Tex.js`'s own opening
+ * promise is that the screen-reader user receives exactly what the sighted player receives.
+ * A claim refused for its geometry and read aloud in full is that promise broken.
+ *
+ * So the extent gate moves in front of both consumers, and both ask this. It is measured at a
+ * fixed `GATE_FONT_PX` because ems are scale-free, and cached on (locale, mode, source),
+ * because a field re-syncing its register on a locale change must not re-lay-out every claim.
+ */
+const GATE_FONT_PX = 64;
+const extentDecisions = new Map();
+
+export function resolveRecord(tex, { locale = getLocale(), displayMode = true } = {}) {
+  const record = render(tex, { locale, displayMode });
+  // Gates 1 and 2 already refused it; there is nothing left to lay out.
+  if (!record.ok) return record;
+  const src = String(tex ?? "");
+  const key = `${record.locale}|${displayMode ? "d" : "i"}|${src.length}|${src.slice(0, 160)}`;
+  let ems = extentDecisions.get(key);
+  if (!ems) {
+    const r = attachTex(record.html, GATE_FONT_PX, "#ffffff").getBoundingClientRect();
+    ems = { wide: r.width / GATE_FONT_PX, tall: r.height / GATE_FONT_PX };
+    host().textContent = "";
+    if (extentDecisions.size > 400) extentDecisions.clear();
+    extentDecisions.set(key, ems);
+  }
+  const bound = extentBound(ems.wide, ems.tall);
+  if (!bound) return record;
+  return refuseOnce(tex, record.locale, displayMode, extentError(bound));
+}
+
 /** Record the largest canvas this process has ever allocated, so the cap is measurable. */
 function noteCanvas(canvas) {
   rasterStats.maxCanvasWidth = Math.max(rasterStats.maxCanvasWidth, canvas.width);
@@ -713,17 +818,29 @@ function noteCanvas(canvas) {
 export function rasterizeWorking({
   pixels = 512,
   color = "#ffffff",
-  xTicks = 10,
-  yTicks = 8,
-  slope = 0.62,
-  intercept = 0.02,
-  stroke = 0.016,
-  step = 0.0,
+  xTicks: xTicksIn = 10,
+  yTicks: yTicksIn = 8,
+  slope: slopeIn = 0.62,
+  intercept: interceptIn = 0.02,
+  stroke: strokeIn = 0.016,
+  step: stepIn = 0.0,
 } = {}) {
+  // Every one of these arrives from the caller-controlled `working` half of a `math:show`
+  // payload, and the two tick counts are loop bounds. `pixels` was clamped and they were not,
+  // which made the same public signal that cannot allocate an unbounded canvas able to spin
+  // an unbounded loop instead: 1e6 ticks measured 2045.1 ms of frozen main thread.
+  const xTicks = Math.round(clampNum(xTicksIn, 0, RASTER_CAPS.maxWorkingTicks, 10));
+  const yTicks = Math.round(clampNum(yTicksIn, 0, RASTER_CAPS.maxWorkingTicks, 8));
+  // The rest cannot hang the loop, but they can push every rectangle off the canvas and leave
+  // a blank square that looks like a broken raster rather than a bad argument.
+  const slope = clampNum(slopeIn, -8, 8, 0.62);
+  const intercept = clampNum(interceptIn, -1, 1, 0.02);
+  const stroke = clampNum(strokeIn, 0.002, 0.2, 0.016);
+  const step = clampNum(stepIn, 0, 1, 0);
   // Square by construction, so the area cap binds before the edge cap does: 2048² is the
   // largest working this may allocate however large a `pixels` a caller asks for.
   const squareCap = Math.min(RASTER_CAPS.maxEdge, Math.floor(Math.sqrt(RASTER_CAPS.maxPixels)));
-  const size = Math.min(squareCap, Math.max(64, Math.round(pixels) || 64));
+  const size = Math.min(squareCap, Math.max(64, Math.round(clampNum(pixels, 64, squareCap, 512))));
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
@@ -845,7 +962,12 @@ export class TexPanel {
     this.kpId = kpId;
     this.tex = tex;
     this.locale = locale;
-    this.em = em;
+    // Gate 5. `em` is world metres per em and it arrives from `math:show` like everything
+    // else here, so the quad's world size is `em` times an ems extent that gate 3 bounds —
+    // a product, and a product with one unbounded factor is unbounded. Unclamped, an
+    // `em:100000` was measured standing 503,776 x 104,557 metres.
+    this.em = clampNum(em, RASTER_CAPS.minEmWorld, RASTER_CAPS.maxEmWorld, 0.55);
+    this.emRequested = Number(em);
     // A view anchor, in metres right / up / ahead of where the player arrives. Level geometry
     // owns socket positions, and until it hands them over, hard world coordinates are a bet on
     // somebody else's terrain — one that this piece has already lost once, when the world was
@@ -860,6 +982,11 @@ export class TexPanel {
     this.material = new THREE.MeshBasicMaterial({
       transparent: true,
       depthWrite: false,
+      // A depth-tested claim is a claim any nearer mesh may amputate mid-glyph, and half of
+      // `\frac{1}{2}x = 4` is `1 ⁻ x = 4` — well-formed, false, and drawn by us. Seven gates
+      // in this file exist so the rasterizer can never do that; this is the line that stops
+      // the compositor doing it instead. See the file header.
+      depthTest: false,
       // ACES would pull pure white down to a grey; the target's ink is 254/255 and stays
       // there. Tone mapping is for the world, not for the notation standing in it.
       toneMapped: false,
@@ -888,13 +1015,36 @@ export class TexPanel {
     this._emScreenPx = 0;
     this._rasters = 0;
     this._texelsPerPixel = 0;
+    // The occlusion measurement, filled in by `measureOcclusion`; null until something asks.
+    this._occlusion = null;
+    this._inkSamples = null;
+    this._inkSamplesAt = -1;
     this.record = null;
     this.speech = "";
     this.ok = false;
+    this._resolve();
   }
 
   get object3D() {
     return this.mesh;
+  }
+
+  /**
+   * Decide what this claim *is* before it is ever drawn, so the world, the spoken form and the
+   * accessible register cannot disagree about it. A working states nothing, so it has no
+   * record and nothing to say.
+   */
+  _resolve() {
+    if (this.working) {
+      this.record = null;
+      this.ok = true;
+      this.speech = "";
+      return;
+    }
+    this.record = resolveRecord(this.tex, { locale: this.locale, displayMode: this.displayMode });
+    this.ok = this.record.ok;
+    this.speech = this.record.speech;
+    this.mesh.userData.vsTex = { id: this.id, kpId: this.kpId, speech: this.speech, ok: this.ok };
   }
 
   setTex(tex, { kpId } = {}) {
@@ -903,6 +1053,7 @@ export class TexPanel {
     if (kpId !== undefined) this.kpId = kpId;
     this._bucket = 0;
     this._cooldown = 0;
+    this._resolve();
   }
 
   setLocale(locale) {
@@ -910,6 +1061,7 @@ export class TexPanel {
     this.locale = locale;
     this._bucket = 0;
     this._cooldown = 0;
+    this._resolve();
   }
 
   _rasterize(bucket) {
@@ -953,9 +1105,16 @@ export class TexPanel {
     this._fontPx = pxPerEm;
     this._bucket = bucket;
     this._rasters++;
-    this.record = out.record ?? null;
-    this.ok = this.working ? true : !!out.record?.ok;
-    this.speech = out.record?.speech ?? "";
+    // `_resolve` already ran every gate this claim can meet, so this normally confirms what
+    // the panel and its register already agree on. If it ever does not — a raster-size
+    // refusal, which H7 argues is unreachable while the ink gate holds — the register is told,
+    // rather than being left describing a claim the world stopped showing.
+    const rec = out.record ?? null;
+    const changed = !this.working && rec && (rec.ok !== this.ok || rec.speech !== this.speech);
+    this.record = this.working ? null : rec;
+    this.ok = this.working ? true : !!rec?.ok;
+    this.speech = rec?.speech ?? "";
+    if (changed) this.onRecord?.(this);
     // One texel of the raster covers exactly one em/bucket of world, so the quad is the ink.
     this.mesh.scale.set(this.em * this._widthPerEm, this.em * this._heightPerEm, 1);
     // The accessible name rides on the object so a HUD or a caption system can read it off
@@ -1012,6 +1171,125 @@ export class TexPanel {
     }
   }
 
+  /**
+   * Where the ink actually is on this quad, as points in local space.
+   *
+   * The claim is white on transparent, so the alpha channel *is* the ink. The texture is
+   * downsampled into a small fixed grid once per raster — `drawImage` into a 24x12 canvas,
+   * one `getImageData` of 288 pixels, rather than reading back up to 16 MiB — and the cells
+   * that carry ink become the sample set. Ink-weighted and not uniform on purpose: a claim is
+   * mostly empty quad, and "40% of the rectangle is behind a rock" says nothing about whether
+   * the mathematics is readable. The critic's pixel measurement counted ink; so does this.
+   *
+   * The threshold is relative to the strongest cell rather than absolute, because a thin
+   * glyph downsampled a hundred to one covers a cell far below any fixed alpha you would pick.
+   */
+  _samplePoints() {
+    if (this._inkSamples && this._inkSamplesAt === this._rasters) return this._inkSamples;
+    const img = this._texture?.image;
+    if (!img || !img.width || !img.height) return null;
+    const out = [];
+    try {
+      const c = inkScratch();
+      const ctx = c.getContext("2d", { willReadFrequently: true });
+      ctx.clearRect(0, 0, INK_GRID_W, INK_GRID_H);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "low";
+      ctx.drawImage(img, 0, 0, INK_GRID_W, INK_GRID_H);
+      const px = ctx.getImageData(0, 0, INK_GRID_W, INK_GRID_H).data;
+      let peak = 0;
+      for (let i = 3; i < px.length; i += 4) peak = Math.max(peak, px[i]);
+      const floor = Math.max(4, peak * 0.25);
+      for (let y = 0; y < INK_GRID_H; y++) {
+        for (let x = 0; x < INK_GRID_W; x++) {
+          if (px[(y * INK_GRID_W + x) * 4 + 3] < floor) continue;
+          // Local space on a unit plane: +x right, +y up, and the texture's y runs down.
+          out.push([(x + 0.5) / INK_GRID_W - 0.5, 0.5 - (y + 0.5) / INK_GRID_H]);
+        }
+      }
+    } catch {
+      // A tainted or zero-sized canvas: fall through to the uniform grid below rather than
+      // reporting "no occlusion" for a claim nobody measured.
+    }
+    let points = out;
+    if (!points.length) {
+      points = [];
+      for (let y = 0; y < 5; y++) {
+        for (let x = 0; x < 7; x++) points.push([(x + 0.5) / 7 - 0.5, (y + 0.5) / 5 - 0.5]);
+      }
+    }
+    // Bounded work per probe: an even stride through the ink cells, never more than the cap.
+    if (points.length > MAX_OCCLUSION_SAMPLES) {
+      const stride = points.length / MAX_OCCLUSION_SAMPLES;
+      const thinned = [];
+      for (let i = 0; i < MAX_OCCLUSION_SAMPLES; i++) thinned.push(points[Math.floor(i * stride)]);
+      points = thinned;
+    }
+    this._inkSamples = points;
+    this._inkSamplesAt = this._rasters;
+    return points;
+  }
+
+  /**
+   * How much of this claim's ink has world geometry in front of it, in percent.
+   *
+   * Geometric and not pixel-based, which matters: the material is `depthTest:false`, so the
+   * depth buffer no longer eats a badly-placed claim and a pixel diff would read 0 whatever
+   * the level did. This asks the question the depth buffer stopped asking — is there anything
+   * between the camera and the mathematics — and answers it in the shipped scene.
+   *
+   * Called from `probe()` and never from `frame()`. Measured on this machine, in the shipped
+   * spawn scene: 1.20 ms per ray against 50 depth-writing meshes and 33.8k triangles. That is
+   * a measuring instrument, not a frame budget, and pretending otherwise is how a piece ships
+   * a 170 ms stall to buy a number nobody reads during play.
+   */
+  measureOcclusion(camera, occluders, raycaster) {
+    const points = this._samplePoints();
+    if (!points || !points.length || !occluders.length) {
+      this._occlusion = null;
+      return null;
+    }
+    this.mesh.updateMatrixWorld(true);
+    // Cull once per panel instead of once per ray. Every ray in this loop runs down the same
+    // short corridor — from the camera to a quad a few metres across — so a mesh whose
+    // bounding sphere misses that corridor cannot be hit by any of them. `design/
+    // architecture.md` requires probes to be cheap, and a ray against all 50 depth-writing
+    // meshes in the spawn scene costs 1.20 ms where a ray against the handful that are
+    // actually near the corridor costs a fraction of that.
+    const centre = _v3c.copy(this.mesh.position);
+    const reach = 0.5 * Math.hypot(this.mesh.scale.x, this.mesh.scale.y);
+    const near = [];
+    for (const o of occluders) {
+      if (distanceToSegment(o.c, camera.position, centre) <= o.r + reach) near.push(o.obj);
+    }
+    if (!near.length) {
+      this._occlusion = { pct: 0, blocked: 0, samples: points.length };
+      return this._occlusion;
+    }
+    const p = _v3a;
+    const dir = _v3b;
+    let blocked = 0;
+    for (const [lx, ly] of points) {
+      p.set(lx, ly, 0);
+      this.mesh.localToWorld(p);
+      dir.copy(p).sub(camera.position);
+      const dist = dir.length();
+      if (dist < 0.05) continue;
+      raycaster.set(camera.position, dir.divideScalar(dist));
+      raycaster.near = 0.01;
+      // Stop short of the quad itself so a mesh coplanar with it is not counted as in front.
+      raycaster.far = dist - 0.02;
+      if (raycaster.intersectObjects(near, false).length) blocked++;
+    }
+    this._occlusion = {
+      pct: Number(((blocked / points.length) * 100).toFixed(1)),
+      blocked,
+      samples: points.length,
+      candidates: near.length,
+    };
+    return this._occlusion;
+  }
+
   probe() {
     return {
       id: this.id,
@@ -1022,6 +1300,15 @@ export class TexPanel {
       speech: this.speech,
       locale: this.locale,
       em: Number(this.em.toFixed(3)),
+      // What the caller asked for, beside what gate 5 allowed, so a clamped `em` is visible
+      // rather than silently different from the payload that produced it.
+      emRequested: Number.isFinite(this.emRequested) ? this.emRequested : null,
+      emClamped: Number.isFinite(this.emRequested) ? this.emRequested !== this.em : true,
+      // The share of this claim's ink with world geometry in front of it, as of the last
+      // measurement. `null` means nothing has measured it yet — never read that as zero.
+      occludedPct: this._occlusion ? this._occlusion.pct : null,
+      occlusionSamples: this._occlusion ? this._occlusion.samples : 0,
+      depthTest: this.material.depthTest,
       worldSize: [Number(this.mesh.scale.x.toFixed(3)), Number(this.mesh.scale.y.toFixed(3))],
       texturePx: this._bucket,
       fontPx: this._fontPx,
@@ -1047,12 +1334,48 @@ function UNIT_PLANE() {
   return unitPlane;
 }
 
+// The occlusion probe's working set. Module-level and reused: a measurement that allocates
+// per sample is a measurement that changes what it is measuring.
+const INK_GRID_W = 24;
+const INK_GRID_H = 12;
+const MAX_OCCLUSION_SAMPLES = 24;
+const _v3a = new THREE.Vector3();
+const _v3b = new THREE.Vector3();
+const _v3c = new THREE.Vector3();
+const _v3d = new THREE.Vector3();
+const _v3e = new THREE.Vector3();
+
+/** Shortest distance from a point to the segment [a,b]. Used to cull the occlusion probe. */
+function distanceToSegment(p, a, b) {
+  const ab = _v3d.copy(b).sub(a);
+  const len2 = ab.lengthSq();
+  const t = len2 > 1e-9 ? Math.max(0, Math.min(1, _v3e.copy(p).sub(a).dot(ab) / len2)) : 0;
+  return _v3e.copy(a).addScaledVector(ab, t).distanceTo(p);
+}
+let inkScratchCanvas = null;
+function inkScratch() {
+  if (!inkScratchCanvas) {
+    inkScratchCanvas = document.createElement("canvas");
+    inkScratchCanvas.width = INK_GRID_W;
+    inkScratchCanvas.height = INK_GRID_H;
+  }
+  return inkScratchCanvas;
+}
+
 let MAX_ANISO = 1;
 export function setMaxAnisotropy(value) {
   MAX_ANISO = Math.max(1, value || 1);
 }
 
 // ---------------------------------------------------------------- the field
+
+/**
+ * The most claims that may stand at once. Gate 7 — see the file header. Thirty-two is roughly
+ * ten times the densest authored scene (Leaf Nine stands four) and leaves the field's whole
+ * contribution to the frame at 32 draw calls and 32 textures against
+ * `design/architecture.md`'s 320 and 120.
+ */
+export const MAX_PANELS = 32;
 
 /**
  * The mounted system: a bag of standing claims, a locale, and the two signals the rest of
@@ -1070,13 +1393,20 @@ export class TexField {
     this.driven = false;
     this.anchored = false;
     this.register = null;
+    this._shownSeq = 0;
+    this.evictions = 0;
+    this._warnedEvictions = false;
+    this._raycaster = new THREE.Raycaster();
+    this._occlusionAt = -Infinity;
+    this._occlusionMs = 0;
+    this._occluderCount = 0;
   }
 
   /**
    * A claim painted into a texture is invisible to assistive technology — a canvas has no
    * accessibility tree. So every standing claim also exists as a real `role="math"` element,
    * visually hidden but present to a screen reader, carrying the localized spoken form. It
-   * is the same `Tex.renderInto` path a HUD would use, which is why the DOM half of this
+   * is the same `Tex.applyRecord` path a HUD would use, which is why the DOM half of this
    * pipeline is exercised by the shipped game rather than only by a test.
    */
   _register() {
@@ -1091,8 +1421,15 @@ export class TexField {
     return el;
   }
 
+  /**
+   * The register entry for a panel is written from *the panel's own record*, which is the
+   * record the world is showing — never from the source string again. `TexPanel._resolve`
+   * runs every gate this pipeline has before the panel is even added, so a claim refused for
+   * its geometry says "unreadable claim" here exactly as it does in the world, and a claim
+   * that stands says what it stands for.
+   */
   _syncRegister(panel) {
-    if (panel.working) return;
+    if (panel.working || !panel.record) return;
     const parent = this._register();
     let el = parent.querySelector(`[data-claim="${CSS.escape(panel.id)}"]`);
     if (!el) {
@@ -1100,7 +1437,7 @@ export class TexField {
       el.setAttribute("data-claim", panel.id);
       parent.appendChild(el);
     }
-    renderInto(el, panel.tex, { locale: panel.locale, displayMode: panel.displayMode });
+    applyRecord(el, panel.record);
   }
 
   add(spec) {
@@ -1108,13 +1445,38 @@ export class TexField {
     if (existing) {
       existing.setTex(spec.tex, { kpId: spec.kpId });
       existing.setLocale(spec.locale ?? this.locale);
+      existing.shownAt = ++this._shownSeq;
       this._syncRegister(existing);
       return existing;
     }
+    // Gate 7. Every raster can be inside its own cap while the field as a whole is not:
+    // 400 ids measured 407 panels, 408 GPU textures and 494 draw calls against
+    // `design/architecture.md`'s 120 and 320. A standing claim is a thing the player reads,
+    // and thirty-two unread claims are not a teaching surface, they are a leak — so the
+    // least-recently-shown one stands down to make room, the same stand-down a learning
+    // engine taking over the field performs.
+    while (this.panels.size >= MAX_PANELS) {
+      let oldest = null;
+      for (const p of this.panels.values()) if (!oldest || p.shownAt < oldest.shownAt) oldest = p;
+      if (!oldest) break;
+      this.evictions++;
+      this.remove(oldest.id);
+    }
     const panel = new TexPanel({ ...spec, locale: spec.locale ?? this.locale });
+    panel.shownAt = ++this._shownSeq;
+    panel.onRecord = (p) => this._syncRegister(p);
     this.panels.set(panel.id, panel);
     this.root.add(panel.object3D);
     this._syncRegister(panel);
+    // Warned once, not thrown and not once per eviction: dropping a claim is a level-design
+    // or content bug worth a line in the report, and a warning per drop would be the same
+    // unbounded growth one function up. The running total lives in `probe().evictions`.
+    if (this.evictions && !this._warnedEvictions) {
+      this._warnedEvictions = true;
+      introspect.warnings.push(
+        `math: the field stands at most ${MAX_PANELS} claims at once; the least-recently-shown claim stood down to make room (see probe evictions)`
+      );
+    }
     return panel;
   }
 
@@ -1190,12 +1552,123 @@ export class TexField {
     this.register = null;
   }
 
+  /**
+   * Everything in the scene that could stand between the camera and a claim: a mesh that is
+   * visible and writes depth. A mesh with `depthWrite:false` cannot amputate a depth-tested
+   * claim and is not counted — which is the same criterion the depth buffer itself uses, so
+   * the number means what a reader of it will assume it means. Our own quads are excluded,
+   * since a claim occluding a claim is a layout question, not a world one.
+   */
+  _occluders() {
+    const scene = this.kernel?.scene;
+    if (!scene) return [];
+    scene.updateMatrixWorld();
+    const out = [];
+    scene.traverse((o) => {
+      if (!o.isMesh || !o.visible) return;
+      if (typeof o.name === "string" && o.name.startsWith("tex:")) return;
+      const m = Array.isArray(o.material) ? o.material[0] : o.material;
+      if (!m || m.depthWrite === false || m.colorWrite === false) return;
+      const g = o.geometry;
+      if (!g) return;
+      if (!g.boundingSphere) g.computeBoundingSphere();
+      // Three.js skips its local-space AABB reject entirely when `boundingBox` is null, and
+      // nothing else in the engine computes one — the renderer only ever needs the sphere for
+      // frustum culling. So without this line every ray that passes a terrain chunk's
+      // bounding *sphere* goes on to test all of its triangles, which is the difference
+      // between a 232 ms probe and a 4 ms one, measured on the shipped spawn scene.
+      if (!g.boundingBox) g.computeBoundingBox();
+      const s = g.boundingSphere;
+      if (!s || !Number.isFinite(s.radius)) return;
+      // The world-space bounding sphere, computed once per measurement rather than once per
+      // ray, so the per-panel cull below is a handful of dot products.
+      out.push({
+        obj: o,
+        c: s.center.clone().applyMatrix4(o.matrixWorld),
+        r: s.radius * o.matrixWorld.getMaxScaleOnAxis(),
+      });
+    });
+    return out;
+  }
+
+  /**
+   * Measure every panel's occlusion against the world, at most once per `interval` simulated
+   * seconds.
+   *
+   * Never called from `frame()` and — after the cost was measured rather than guessed — never
+   * from `probe()` either. A camera-to-ink ray against the shipped spawn scene costs 2.58 ms,
+   * and the two terrain meshes are 1.6 ms of that on their own (`vs.terrain.surface` 9,443
+   * triangles at 0.86 ms, `vs.terrain.keel` 10,253 at 0.75 ms); Three's own bounding-sphere
+   * and bounding-box rejects cannot help, because the corridor from the eye to a claim
+   * fourteen metres ahead is inside the terrain's bounds by construction. Twenty-four samples
+   * across four panels is therefore ~190 ms, and `design/architecture.md` says probes must be
+   * cheap. So this is an instrument with its own name — `__vs.probe("mathocclusion")` — and
+   * `probe()` reports what it last measured without paying for it again.
+   */
+  measureOcclusion({ force = false, interval = 0.4 } = {}) {
+    const camera = this.kernel?.camera;
+    if (!camera) return null;
+    const t = this.kernel?.simTime ?? 0;
+    if (!force && t - this._occlusionAt < interval) return this._occlusionAt;
+    this._occlusionAt = t;
+    const t0 = performance.now();
+    camera.updateMatrixWorld(true);
+    const occluders = this._occluders();
+    for (const panel of this.panels.values()) panel.measureOcclusion(camera, occluders, this._raycaster);
+    // Published, because "probes must be cheap" is a rule this one has to keep rather than
+    // assert: if this number ever grows into a frame, the probe is the thing that says so.
+    this._occlusionMs = Number((performance.now() - t0).toFixed(1));
+    this._occluderCount = occluders.length;
+    return t;
+  }
+
+  /**
+   * The expensive one, published separately as `mathocclusion` so that nothing reads it by
+   * accident. This is the gate: every standing claim must read 0.0, and `P15.mjs` claim O1
+   * fails the run if any does not.
+   */
+  occlusionReport() {
+    this.measureOcclusion({ force: true });
+    const panels = [...this.panels.values()].map((p) => ({
+      id: p.id,
+      kind: p.working ? "working" : "claim",
+      occludedPct: p._occlusion ? p._occlusion.pct : null,
+      samples: p._occlusion ? p._occlusion.samples : 0,
+      candidates: p._occlusion ? (p._occlusion.candidates ?? 0) : 0,
+      position: p.mesh.position.toArray().map((v) => Number(v.toFixed(2))),
+    }));
+    const measured = panels.filter((p) => p.occludedPct !== null);
+    return {
+      at: Number.isFinite(this._occlusionAt) ? Number(this._occlusionAt.toFixed(2)) : null,
+      ms: this._occlusionMs,
+      occluders: this._occluderCount,
+      worstOccludedPct: measured.length ? Math.max(...measured.map((p) => p.occludedPct)) : null,
+      panels,
+    };
+  }
+
   probe() {
+    // Reports the last occlusion measurement; deliberately does not take one. See
+    // `measureOcclusion` for the milliseconds behind that sentence, and read a `null`
+    // `occludedPct` as "nobody has measured this yet" — never as zero.
+    const panels = [...this.panels.values()].map((p) => p.probe());
+    const measured = panels.filter((p) => p.occludedPct !== null);
     return {
       locale: this.locale,
       driven: this.driven,
       registered: this.register ? this.register.children.length : 0,
-      panels: [...this.panels.values()].map((p) => p.probe()),
+      panels,
+      maxPanels: MAX_PANELS,
+      evictions: this.evictions,
+      // The headline: the worst-occluded claim standing in the world right now. A gate can
+      // read this one number and refuse a frame where mathematics is being cut in half.
+      worstOccludedPct: measured.length ? Math.max(...measured.map((p) => p.occludedPct)) : null,
+      occlusionAt: Number.isFinite(this._occlusionAt) ? Number(this._occlusionAt.toFixed(2)) : null,
+      occlusionMs: this._occlusionMs,
+      occluders: this._occluderCount,
+      // Where the number comes from, named in the probe itself, so a reader who finds
+      // `occludedPct: null` knows what to call rather than assuming zero.
+      occlusionProbe: "mathocclusion",
       fonts: mathFontState(),
       raster: rasterStatistics(),
     };

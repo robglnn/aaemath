@@ -42,7 +42,7 @@ const W = (aX, aZ) => [aZ, -aX];
 
 const route = JSON.parse(process.argv[2]);
 const width = Number(process.argv[3] ?? 44);
-const widthAt = (t) => width * (0.5 + 0.72 * Math.sin(Math.PI * Math.pow(t, 0.72)));
+const widthAt = (t) => width * (0.48 + 0.70 * Math.sin(Math.PI * Math.pow(t, 0.9)));
 const brim = Number(process.argv[4] ?? 2.6);
 
 let total = 0;
@@ -64,8 +64,8 @@ for (let i = 0; i < route.length; i++) {
   const dist = Math.hypot(flat, dy);
   const offAxis = (Math.atan2(dx, -dz) * 180) / Math.PI;
   const depr = (Math.atan2(-dy, flat) * 180) / Math.PI;
-  const row = horizonRow + Math.atan2(-dy, flat) * pxPerRad;
-  const col = CAM.W / 2 + Math.atan2(dx, -dz) * pxPerRadX;
+  const row = horizonRow + Math.tan(Math.atan2(-dy, flat)) * pxPerRad;
+  const col = CAM.W / 2 + Math.tan(Math.atan2(dx, -dz)) * pxPerRadX;
   // segment tangent in plan (world)
   const j = i === route.length - 1 ? i - 1 : i;
   const seg = [W(route[j + 1][0], route[j + 1][1])[0] - W(route[j][0], route[j][1])[0],

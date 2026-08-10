@@ -96,7 +96,18 @@ const BOUNCE_ELEVATION_DEG = -40; // §3.1: "up, from -40deg"
  * Anything above that and the shadow family stops being one family, which §3.3 forbids.
  */
 const RIM_GAIN = 0.28;
-const RIM_ELEVATION_DEG = 11;
+/**
+ * 55° and not 11°, and the reason is what the rim is *for*.
+ *
+ * At 11° the anti-sun direction is nearly horizontal, so `dot(N, uVsRim.xyz)` is dominated by
+ * `cos(azimuth difference)` — which is identical for every horizontal band on a given face of a
+ * spire. Measured band-to-band spread on a four-band shard was ~0.09 of dot, which after
+ * `RIM_GAIN` is under a 5% change in value: below one 8-bit histogram bin. The term was reading
+ * *which side of the rock a face is on* when the thing worth reading is *how far that face is
+ * tilted*. At 55° the same four bands separate by ~0.30. `RIM_GAIN` is unchanged, so the 1.28x
+ * shadow-family ceiling derived above still binds.
+ */
+const RIM_ELEVATION_DEG = 55;
 const RIM_AZIMUTH_OFFSET_DEG = 180;
 
 /** §5.4 — every emitter carries a real PointLight, capped at 6 m so the accent marks and never lights. */

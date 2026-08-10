@@ -262,6 +262,9 @@ export const PAL = {
   // anyway: `#8EFDE2` at the edge, `#D5FDF6` down the middle.
   carry: 0x7adcc8,
   carryCore: 0xc9f6ec,
+  // The bank wall of a carry: the same teal walked down two stops, so a river carries its own
+  // value structure — foot, body, core — instead of being one bright shape with no interior.
+  carryBank: 0x2f7a72,
   crystal: 0x8fe0d2,
   crystalHot: 0xc0f2e6,
   hazeBase: 0xd89a5e, // the colour distance turns into: warm, and darker than the sky
@@ -348,10 +351,32 @@ const GLSL_GRADE = /* glsl */ `
 		// Lit faces keep a real spread of value, so a spire reads as several planes and not as one
 		// silhouette: square-on to Lethis is full albedo, grazing is the floor.
 		vec3 vsLitCol = vsAlb * mix( uVsGrade.x, 1.0, pow( vsKey, 0.6 ) );
-		// Shaded faces travel to the authored blue-grey; an up-facing shadow keeps a little more of
-		// the sky in it than a down-facing one.
+
+		/**
+		 * **The shadow side is graded by HOW FAR a face is turned from the key, not just by the
+		 * fact that it is turned.** This line is the whole of a critic's biggest finding.
+		 *
+		 * What was here computed 'uVsShade * ( 0.78 + 0.35 * vsUp )', and 'vsUp' is
+		 * 'N.y * 0.5 + 0.5'. Every wall band of a spire is within a few degrees of vertical, so
+		 * 'vsUp' sat between 0.47 and 0.70 for all of them: an 8% spread, well under one histogram
+		 * bin. 'smoothstep(-0.035, 0.035, N.L)' had already collapsed to exactly 0 for the entire
+		 * back hemisphere, so nothing downstream could tell a face leaning 4 degrees out of the key
+		 * from one leaning 44 degrees out of it. Every shoulder ring, every flare, every extra
+		 * triangle spent on the silhouette of a spire rendered as ONE flat value with hairline
+		 * seams in it — geometry the renderer physically could not express.
+		 *
+		 * 'vsBack' is the missing term: 0 for a face square away from Lethis, 1 at the terminator.
+		 * 0.72 -> 1.18 is a 1.64x spread, which at the shadow family's measured luminance opens
+		 * four to five distinct value bands where there was one.
+		 *
+		 * It is pure N·L on a world-fixed key. No view vector appears in it, so it cannot follow the
+		 * camera and cannot draw a Fresnel rim; and it scales 'uVsShade' as a scalar, so it can move
+		 * value and can never move the shadow family off hue 198.
+		 */
 		float vsUp = clamp( vsN.y * 0.5 + 0.5, 0.0, 1.0 );
-		vec3 vsShadeCol = mix( vsAlb * 0.06, uVsShade * ( 0.78 + 0.35 * vsUp ), uVsGrade.y );
+		float vsBack = smoothstep( -0.85, -0.02, vsNdL );
+		vec3 vsShadeTint = uVsShade * mix( 0.72, 1.18, vsBack ) * ( 0.94 + 0.12 * vsUp );
+		vec3 vsShadeCol = mix( vsAlb * 0.06, vsShadeTint, uVsGrade.y );
 
 		vec3 vsCol = mix( vsShadeCol, vsLitCol, vsLit );
 		vsCol = mix( vsCol, vsAlb, uVsGrade.w ) * uVsLevel;
@@ -547,30 +572,128 @@ export function pushTri(out, a, b, c) {
  * planes meeting at hard edges — and every spire, boulder and shard in the level is one of these.
  */
 /**
- * The default shoulder profile for anything tall enough that its side elevation is a big read.
+ * The shoulder profile for anything tall enough that its side elevation is a big read — **derived
+ * per shard, never typed.**
  *
- * Three rings, and the reason there are three is *inclination*, not count. A ring set whose radius
- * falls monotonically — `[[0.46,0.86],[0.78,0.52]]`, the old default here — gives four wall bands
- * that all lean the same way, so all four take the same N·L and the spire renders as one uniform
- * value with hairline seams in it. That is exactly the "single-plane cutout" a critic measured at
- * 420×420 px on the left of the arrival frame.
+ * A hard-won lesson lives in this block. The first version of it was a literal ring set,
+ * `[[0.24,1.06],[0.55,0.8],[0.82,0.34]]`, with a comment claiming its four wall bands "lean four
+ * different ways". They do not. Band inclination is a function of the *aspect ratio* — the four
+ * bands of that set on the hero shard (radius 16, height 64, taper 0.11) have normal elevations of
+ * −3.6°, +11.8°, +23.1° and +17.7°: the top two are 5.4° apart AND the run is non-monotonic, so the
+ * cap is shallower than the shoulder under it and the two merge into one plane. One typed ring set
+ * cannot be right for a 16×64 spire and a 13×26 boulder at the same time, because the same radii
+ * describe different slopes on different aspects.
  *
- * These four bands lean four different ways: a flared skirt that turns slightly *outward*, a near
- * vertical shaft, a steep shoulder and a cap. Square-on to Lethis they span roughly 0.35 of N·L,
- * which the grade curve in `GLSL_GRADE` opens into four separate values.
+ * So the *inclinations* are authored and the radii are solved for.
+ *
+ *   `BAND_H`  what share of the height each of the four wall bands gets. Sums to 1.
+ *   `BAND_S`  what each band's normal slope (as a tangent) is offset from the shard's own mean
+ *             slope. Sums to **zero** under `BAND_H` weighting, and that is the whole trick: the
+ *             weighted mean slope is then exactly `radius(1 − taper) / height` whatever the aspect,
+ *             so the solved ring set always lands on the authored base radius and the authored cap
+ *             radius, and only the *distribution* of slope between them is imposed.
+ *
+ * The result is monotonic, cap-steepest, and adjacent bands differ by 13–20° of normal elevation
+ * over every aspect this level builds. `bandElevationsDeg()` recomputes that from the emitted ring
+ * set by an independent path and `shard()` refuses to build a profile that fails it.
  */
-export const SHOULDERS = [
-  [0.24, 1.06],
-  [0.55, 0.8],
-  [0.82, 0.34],
-];
+const BAND_H = [0.35, 0.34, 0.21, 0.1];
+const BAND_S = [-0.33, -0.05, 0.26, 0.779];
 
-/** Height above which a shard gets `SHOULDERS` when the caller did not author its own rings. */
+/** Height above which a shard gets the shoulder profile when the caller did not author its own. */
 export const SHOULDER_MIN_HEIGHT = 20;
+
+/**
+ * The minimum difference in normal elevation between two consecutive wall bands, in degrees.
+ *
+ * Not a taste number. `GLSL_GRADE`'s shadow term spans 0.72→1.18 of the shadow tint over N·L from
+ * −0.85 to −0.02; at the arrival frame's key that is ≈0.9% of value per degree of inclination, so
+ * bands 12° apart differ by ≈11% — comfortably more than one 8-bit histogram bin, which is the
+ * definition of "reads as two planes rather than one".
+ */
+export const SHOULDER_MIN_SEPARATION_DEG = 12;
+
+/** Live audit of every shoulder profile this module has emitted. The terrain probe publishes it. */
+export const shoulderAudit = { checked: 0, violations: 0, worstAdjacentDeltaDeg: Infinity, widestSpreadUsed: 1 };
+
+/** The four wall bands' outward-normal elevations, in degrees, recomputed from a ring set. */
+export function bandElevationsDeg(radius, height, taper, rings) {
+  const levels = [
+    { h: 0, r: radius },
+    ...rings.map((r) => ({ h: r[0] * height, r: r[1] * radius })),
+    { h: height, r: radius * taper },
+  ];
+  const out = [];
+  for (let i = 0; i < levels.length - 1; i++) {
+    const dh = Math.max(levels[i + 1].h - levels[i].h, 1e-6);
+    const dr = levels[i + 1].r - levels[i].r;
+    out.push((Math.atan2(-dr, dh) * 180) / Math.PI);
+  }
+  return out;
+}
+
+/** Smallest gap between consecutive band elevations. Negative means the run is non-monotonic. */
+export function worstBandSeparationDeg(elev) {
+  let worst = Infinity;
+  for (let i = 1; i < elev.length; i++) worst = Math.min(worst, elev[i] - elev[i - 1]);
+  return worst;
+}
+
+function ringsAtSpread(radius, height, taper, spread) {
+  const mean = (radius * (1 - taper)) / Math.max(height, 1e-6);
+  const rings = [];
+  let r = radius;
+  let h = 0;
+  for (let i = 0; i < BAND_H.length - 1; i++) {
+    const dh = BAND_H[i] * height;
+    r -= (mean + spread * BAND_S[i]) * dh;
+    h += dh;
+    rings.push([h / height, r / radius]);
+  }
+  return rings;
+}
+
+/**
+ * Solve the ring set for one shard. Widens the slope spread until the separation rule holds, which
+ * only ever bites on an aspect ratio this level does not currently build.
+ */
+export function shoulderRings(radius, height, taper) {
+  let spread = 1;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const rings = ringsAtSpread(radius, height, taper, spread);
+    if (worstBandSeparationDeg(bandElevationsDeg(radius, height, taper, rings)) >= SHOULDER_MIN_SEPARATION_DEG) {
+      shoulderAudit.widestSpreadUsed = Math.max(shoulderAudit.widestSpreadUsed, spread);
+      return rings;
+    }
+    spread *= 1.22;
+  }
+  return ringsAtSpread(radius, height, taper, spread);
+}
 
 export function shard({ x = 0, y = 0, z = 0, radius = 4, height = 10, sides = 5, taper = 0.18, lean = [0, 0], rings = null, seed = 1, jag = 0.3 }) {
   const out = [];
-  if (rings == null) rings = height >= SHOULDER_MIN_HEIGHT ? SHOULDERS : [];
+  if (rings == null) {
+    rings = height >= SHOULDER_MIN_HEIGHT ? shoulderRings(radius, height, taper) : [];
+    if (rings.length) {
+      // The assertion the last round did not have. It recomputes the emitted profile's band
+      // inclinations from the ring set — not from the solver's own intermediate values — and
+      // refuses to hand back a spire the shading model cannot express. A silent regression here
+      // costs a whole review round, so it is loud.
+      const elev = bandElevationsDeg(radius, height, taper, rings);
+      const worst = worstBandSeparationDeg(elev);
+      shoulderAudit.checked++;
+      shoulderAudit.worstAdjacentDeltaDeg = Math.min(shoulderAudit.worstAdjacentDeltaDeg, Number(worst.toFixed(2)));
+      if (!(worst >= SHOULDER_MIN_SEPARATION_DEG)) {
+        shoulderAudit.violations++;
+        throw new Error(
+          `Terrain.shard: shoulder profile for radius ${radius} height ${height} taper ${taper} emits band ` +
+            `normal elevations [${elev.map((v) => v.toFixed(1)).join(", ")}]°, worst adjacent gap ` +
+            `${worst.toFixed(1)}° < ${SHOULDER_MIN_SEPARATION_DEG}°. Bands that close must not be built: ` +
+            `they merge into one plane and every triangle spent on them is wasted.`
+        );
+      }
+    }
+  }
   const ringPts = (r, h, tw) => {
     const pts = [];
     for (let i = 0; i < sides; i++) {
@@ -1075,6 +1198,17 @@ export class Terrain {
       indexed: this.topGeometry.index !== null,
       flatNormalFraction: Number((flatFaces / sample).toFixed(3)),
       underTriangles: this.underGeometry.getAttribute("position").count / 3,
+      // Every shoulder profile this module emitted for the shipped world, and the worst gap
+      // between two consecutive band inclinations across all of them. `violations` can only be
+      // non-zero if the assertion in `shard()` was removed.
+      shoulders: {
+        checked: shoulderAudit.checked,
+        violations: shoulderAudit.violations,
+        worstAdjacentDeltaDeg:
+          shoulderAudit.worstAdjacentDeltaDeg === Infinity ? null : shoulderAudit.worstAdjacentDeltaDeg,
+        minSeparationDeg: SHOULDER_MIN_SEPARATION_DEG,
+        widestSpreadUsed: Number(shoulderAudit.widestSpreadUsed.toFixed(3)),
+      },
     };
   }
 

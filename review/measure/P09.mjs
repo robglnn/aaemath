@@ -215,10 +215,22 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     // at the mask boundary, where the grid's own jitter can leave a hairline crack. They are
     // counted and reported as `pinholes` so they cannot hide, but the claim is about the ravine,
     // and a 0.5 m crack in the floor is not a place a player chooses to jump.
+    //
+    // **A gap is only the ravine's if it is where the ravine is.** The old version took the
+    // narrowest gap anywhere on the line and called it the ravine's width, and duly reported 2.0 m
+    // at world x −141 — a crack at the leaf's own outline, nowhere near the fracture, which failed
+    // a claim about the ravine using a fact about something else. Every gap is now classified by
+    // whether its midpoint lies inside the ravine's authored band, both classes are reported, and
+    // C3 is judged on the ravine's. The other class stays visible so a second chasm cannot hide in
+    // it.
+    const ravineCentreAt = (aZ) => 176 + 26 * Math.sin(aZ * 0.0122) + 13 * Math.sin(aZ * 0.031 + 2.0);
+    const ravineHalfAt = (aZ) => 17 + 4.5 * Math.sin(aZ * 0.0185 + 1.1) + 2.5 * Math.sin(aZ * 0.047);
     let narrowest = Infinity;
     let narrowestAt = null;
     let pinholes = 0;
     let widestPinhole = 0;
+    let widestNonRavineGap = 0;
+    let widestNonRavineAt = null;
     for (let x = -210; x <= 210; x += 3) {
       let run = 0;
       let sawSolid = false;
@@ -226,8 +238,15 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       for (let z = -260; z <= -95; z += 0.5) {
         if (terrain.isSolid(x, z)) {
           if (run > 0 && sawSolid) {
-            if (run < 2) { pinholes++; widestPinhole = Math.max(widestPinhole, run); }
-            else best = Math.min(best, run);
+            // z = −aX, so the gap just closed spans aX from −z to −z + run; its midpoint:
+            const midAX = -z + run / 2;
+            const inRavine = Math.abs(midAX - ravineCentreAt(x)) <= ravineHalfAt(x) + 6;
+            if (!inRavine) {
+              if (run < 2) { pinholes++; widestPinhole = Math.max(widestPinhole, run); }
+              if (run > widestNonRavineGap) { widestNonRavineGap = run; widestNonRavineAt = [x, Math.round(midAX)]; }
+            } else if (run < best) {
+              best = run;
+            }
           }
           run = 0;
           sawSolid = true;
@@ -251,11 +270,12 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     });
 
     // --- K2 no dead space, K3 verticality ---------------------------------------------
-    const features = [
-      A.bollard, A.barge, A.kindness, A.standingHouse, A.standingHouseSocket, A.weir,
-      A.terrace, A.knuckle, A.spanNear, A.spanFar, A.secondLip, A.certaintyField,
-      A.ridgeThing, A.edgewake, A.lowLip, A.cutters, A.brow,
-    ].filter(Boolean);
+    // Every published anchor that is a *place* — the whole point of K2 is that the level names
+    // somewhere worth walking to within 90 m of anywhere a player can stand, so the list is taken
+    // from the level's own published anchors rather than re-typed here and allowed to drift.
+    const features = Object.entries(A)
+      .filter(([k, v]) => k !== "span" && k !== "vantis" && k !== "spawn" && v && Number.isFinite(v.x))
+      .map(([, v]) => v);
     let walkable = 0;
     let farFromAnything = 0;
     let worstDeadSpace = 0;
@@ -280,10 +300,18 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       }
     }
 
-    // --- P: which pixels are this piece's terrain, and what is each one? ---------------
-    // March a ray through a grid of screen pixels against the heightfield, so the colour
-    // claims below are made about surfaces this piece owns and about facets whose orientation
-    // relative to Lethis is known — rather than about whatever happened to be in frame.
+    // --- P: which pixels are this piece's surfaces, and what is each one? --------------
+    //
+    // **Cast against the collision world, not against the heightfield.** The previous version
+    // marched every screen ray against `terrain.groundAt`, which knows only the walkable surface.
+    // The spires, the boulders and the built stone — the biggest and darkest reads in the arrival
+    // frame, and the exact things a critic measured as "one uniform dark value across 420x420 px"
+    // — were invisible to it. That is why P2 reported `measured: null` for a whole round: the
+    // sampler never hit a single face turned away from Lethis, because the walkable surface has
+    // almost none. The collision world holds `p09:leaf-nine`, `p09:rock` and `p09:built` and
+    // nothing else, so every hit below is still a surface this piece owns, and `raycast` returns
+    // the hit triangle's own normal, so N·L is exact rather than interpolated off a heightfield.
+    //
     // Built by hand from the camera matrix; no library, and no debug global in shipped code.
     const cam = K.camera;
     cam.updateMatrixWorld();
@@ -293,45 +321,135 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     const tanH = Math.tan((cam.fov * Math.PI) / 360);
     const eyeP = [e[12], e[13], e[14]];
     const sun = L.sun?.toLight ?? [0.87, 0.19, -0.46];
+    /**
+     * **Unprojected through the camera's own matrices, not rebuilt from its fov.**
+     *
+     * A hand-rolled `right*cx + up*cy + forward` ray builder is the kind of code that is wrong in
+     * one axis and still looks plausible in every summary: it produced a set of samples whose N·L
+     * anti-correlated with rendered luminance by 8x on the hero shard — geometrically impossible,
+     * since the shader and the collision world both orient their normal toward the camera and both
+     * read the same `uVsSun`. Round-tripping through `unproject` means the sampler and `scr()`
+     * below are exact inverses of one another by construction, and `projectorRoundTrip` proves it
+     * on real world points every run.
+     */
+    const _ray = cam.position.clone();
+    const rayDir = (pxl, py) => {
+      _ray.set((pxl / W) * 2 - 1, -((py / H) * 2 - 1), 0.5).unproject(cam);
+      _ray.sub(cam.position).normalize();
+      return [_ray.x, _ray.y, _ray.z];
+    };
+    const hitOut = {};
+    const castPixel = (pxl, py, maxDist) => {
+      const [dx, dy, dz] = rayDir(pxl, py);
+      const r = collision.raycast(eyeP[0], eyeP[1], eyeP[2], dx, dy, dz, maxDist, hitOut);
+      if (!r.hit) return null;
+      return {
+        x: pxl, y: py,
+        d: Number(r.t.toFixed(1)),
+        ndl: Number((r.nx * sun[0] + r.ny * sun[1] + r.nz * sun[2]).toFixed(3)),
+        up: Number(r.ny.toFixed(3)),
+        wx: r.x, wy: r.y, wz: r.z,
+      };
+    };
     const samples = [];
-    for (let py = 6; py < H; py += 8) {
-      for (let pxl = 6; pxl < W; pxl += 8) {
-        const ndcx = (pxl / W) * 2 - 1;
-        const ndcy = -((py / H) * 2 - 1);
-        const cx = ndcx * tanH * cam.aspect;
-        const cy = ndcy * tanH;
-        // camera space (cx, cy, −1) through the world rotation columns of matrixWorld
-        let dx = e[0] * cx + e[4] * cy - e[8];
-        let dy = e[1] * cx + e[5] * cy - e[9];
-        let dz = e[2] * cx + e[6] * cy - e[10];
-        const dl = Math.hypot(dx, dy, dz) || 1;
-        dx /= dl; dy /= dl; dz /= dl;
-        let t = 1;
-        let hitT = -1;
-        let prev = 1;
-        for (let i = 0; i < 260; i++) {
-          const step = 0.35 + t * 0.02;
-          prev = t;
-          t += step;
-          if (t > 900) break;
-          const g = terrain.groundAt(eyeP[0] + dx * t, eyeP[2] + dz * t);
-          if (Number.isFinite(g) && eyeP[1] + dy * t < g) { hitT = t; break; }
+    for (let py = 5; py < H; py += 9) {
+      for (let pxl = 5; pxl < W; pxl += 9) {
+        const s = castPixel(pxl, py, 900);
+        if (s) samples.push(s);
+      }
+    }
+
+    // The sampler checks itself: cast a ray at a screen position, then project the world point it
+    // hit straight back. If those two disagree by more than a pixel the whole pixel analysis below
+    // is measuring somewhere other than where it says it is, which is exactly the class of silent
+    // harness bug that cost this piece a round.
+    const projRT = { checked: 0, worstPx: 0 };
+    {
+      const v = cam.position.clone();
+      for (const s of samples) {
+        if (projRT.checked >= 400) break;
+        if (s.d < 4) continue;
+        v.set(s.wx, s.wy, s.wz).project(cam);
+        const backX = ((v.x + 1) / 2) * W;
+        const backY = ((1 - v.y) / 2) * H;
+        projRT.worstPx = Math.max(projRT.worstPx, Math.hypot(backX - s.x, backY - s.y));
+        projRT.checked++;
+      }
+      projRT.worstPx = Number(projRT.worstPx.toFixed(3));
+    }
+
+    // --- the near hero shard, band by band ---------------------------------------------
+    //
+    // The claim a critic demolished this piece on: "the left spire is one uniform dark value
+    // across a 420x420 px region with a single hairline seam". This measures exactly that, on the
+    // shipped arrival frame, on the shard the shipped arrival camera actually holds.
+    //
+    // Bands are the shard's own authored wall bands, identified by the *inclination of the face
+    // that was hit* rather than by its height — a face is in band k if its normal elevation is
+    // nearer band k's authored elevation than any other's. Grouping by inclination is the whole
+    // point: it is the quantity the shading model was blind to.
+    const shards = L.heroShards ?? [];
+    let heroBandSamples = [];
+    let heroPick = null;
+    for (const sh of shards) {
+      if (!sh.bands?.length) continue;
+      const dxs = sh.x - eyeP[0];
+      const dzs = sh.z - eyeP[2];
+      const flat = Math.hypot(dxs, dzs);
+      const off = Math.abs(
+        Math.atan2(dxs, dzs) - Math.atan2(-e[8] / (Math.hypot(e[8], e[10]) || 1), -e[10] / (Math.hypot(e[8], e[10]) || 1))
+      );
+      const offDeg = (Math.min(off, Math.PI * 2 - off) * 180) / Math.PI;
+      const score = sh.height / Math.max(flat, 1) - offDeg / 90;
+      if (!heroPick || score > heroPick.score) heroPick = { ...sh, distance: Math.round(flat), offDeg: Number(offDeg.toFixed(1)), score };
+    }
+    if (heroPick) {
+      const reach = heroPick.radius * 1.6 + 8;
+      // Only the shard's own projected bounding box is scanned. Casting the whole frame at 3 px
+      // is 160,000 rays and long enough that Vite's dev server can reload the page underneath the
+      // evaluate — which is a measurement that destroys itself, exactly the failure mode this
+      // piece was pulled up for last round.
+      const project = (wx, wy, wz) => {
+        const v = cam.position.clone();
+        v.set(wx, wy, wz).project(cam);
+        return [((v.x + 1) / 2) * W, ((1 - v.y) / 2) * H, v.z];
+      };
+      let bx0 = W, bx1 = 0, by0 = H, by1 = 0;
+      for (let k = 0; k < 24; k++) {
+        const a = (k / 8) * Math.PI * 2;
+        const f = Math.floor(k / 8) / 2; // 0, 0.5, 1 up the shard
+        const rr = heroPick.radius * (1 - 0.6 * f) * 1.35;
+        const p = project(
+          heroPick.x + heroPick.lean[0] * f + Math.cos(a) * rr,
+          heroPick.y + heroPick.height * f,
+          heroPick.z + heroPick.lean[1] * f + Math.sin(a) * rr
+        );
+        if (p[2] > 1) continue;
+        bx0 = Math.min(bx0, p[0]); bx1 = Math.max(bx1, p[0]);
+        by0 = Math.min(by0, p[1]); by1 = Math.max(by1, p[1]);
+      }
+      bx0 = Math.max(0, Math.floor(bx0) - 4); bx1 = Math.min(W - 1, Math.ceil(bx1) + 4);
+      by0 = Math.max(0, Math.floor(by0) - 4); by1 = Math.min(H - 1, Math.ceil(by1) + 4);
+      heroPick.screenBox = [bx0, by0, bx1, by1];
+      for (let py = by0; py <= by1; py += 3) {
+        for (let pxl = bx0; pxl <= bx1; pxl += 3) {
+          const s = castPixel(pxl, py, 400);
+          if (!s) continue;
+          // The lean displaces the axis with height, so the axis is tested at the hit's own height.
+          const f = Math.max(0, Math.min(1, (s.wy - heroPick.y) / Math.max(heroPick.height, 1e-3)));
+          const axX = heroPick.x + heroPick.lean[0] * f;
+          const axZ = heroPick.z + heroPick.lean[1] * f;
+          if (Math.hypot(s.wx - axX, s.wz - axZ) > reach) continue;
+          if (s.wy < heroPick.y - 1 || s.wy > heroPick.y + heroPick.height + 1) continue;
+          const elevDeg = (Math.asin(Math.max(-1, Math.min(1, s.up))) * 180) / Math.PI;
+          let band = 0;
+          let best = Infinity;
+          heroPick.bands.forEach((b, k) => {
+            const dd = Math.abs(b - elevDeg);
+            if (dd < best) { best = dd; band = k; }
+          });
+          heroBandSamples.push({ x: pxl, y: py, band, elevDeg: Number(elevDeg.toFixed(1)), ndl: s.ndl, d: s.d });
         }
-        if (hitT < 0) continue;
-        // bisect once for a clean facet read
-        let lo = prev;
-        let hi = hitT;
-        for (let i = 0; i < 12; i++) {
-          const mid = (lo + hi) / 2;
-          const g = terrain.groundAt(eyeP[0] + dx * mid, eyeP[2] + dz * mid);
-          if (Number.isFinite(g) && eyeP[1] + dy * mid < g) hi = mid; else lo = mid;
-        }
-        const hx = eyeP[0] + dx * hi;
-        const hz = eyeP[2] + dz * hi;
-        const n = terrain.normalAt(hx, hz);
-        if (!n) continue;
-        const ndl = n.x * sun[0] + n.y * sun[1] + n.z * sun[2];
-        samples.push({ x: pxl, y: py, d: Number(hi.toFixed(1)), ndl: Number(ndl.toFixed(3)), up: Number(n.y.toFixed(3)) });
       }
     }
 
@@ -430,8 +548,20 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         position: [eyeP[0], eyeP[1], eyeP[2]].map((v) => Number(v.toFixed(2))),
         fov: Number(cam.fov.toFixed(2)),
         horizonRow: Number(horizonRow.toFixed(1)),
+        focalPx: Number((H / (2 * tanH)).toFixed(1)),
       },
       massif,
+      projectorRoundTrip: projRT,
+      hero: heroPick
+        ? {
+            id: heroPick.id, leaf: heroPick.leaf, radius: heroPick.radius, height: heroPick.height,
+            distance: heroPick.distance, bearingOffAxisDeg: heroPick.offDeg,
+            authoredBandElevationsDeg: heroPick.bands,
+            screenBox: heroPick.screenBox ?? null,
+          }
+        : null,
+      heroBandSamples,
+      rockShader: L.rockShader ?? null,
       carrySamples,
       carryClearance: L.carryClearance ?? null,
       terrain: t,
@@ -460,7 +590,15 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         worstCase,
         halfDiagDeg: Math.round((halfDiag * 360) / Math.PI / 2),
       },
-      ravine: { narrowestGap: Number(narrowest.toFixed(1)), atX: narrowestAt, spanGap: A.span.gap, pinholes, widestPinhole },
+      ravine: {
+        narrowestGap: Number(narrowest.toFixed(1)),
+        atX: narrowestAt,
+        spanGap: A.span.gap,
+        pinholes,
+        widestPinhole,
+        widestNonRavineGap: Number(widestNonRavineGap.toFixed(1)),
+        widestNonRavineAt,
+      },
       landmarks,
       space: {
         walkable,
@@ -520,6 +658,146 @@ const stat = (arr) => {
 };
 const lit = stat(buckets.lit);
 const shadow = stat(buckets.shadow);
+
+// ------------------------------------------------------- the hero shard, band by band, in pixels
+//
+// Answers the finding this piece was rejected on, in the terms it was made in: is the biggest near
+// form one flat value, or does it resolve into planes? Samples are the shard's own faces, found by
+// raycasting the shipped arrival camera into the collision world, and grouped by the *inclination*
+// of the face that was hit.
+const bandStat = (arr) => {
+  if (!arr.length) return null;
+  const a = arr.slice().sort((p, q) => p - q);
+  return round(a[Math.floor(a.length / 2)], 4);
+};
+const heroBands = [];
+let heroShadowSamples = 0;
+const heroAllY = [];
+for (const s of M.heroBandSamples ?? []) {
+  const [r, g, b] = px(img, Math.min(img.width - 1, Math.round(s.x * scaleX)), Math.min(img.height - 1, Math.round(s.y * scaleY)));
+  const Y = lum(r, g, b);
+  heroAllY.push(Y);
+  heroBands[s.band] ??= { band: s.band, lit: [], shadow: [] };
+  if (s.ndl < -0.02) { heroBands[s.band].shadow.push(Y); heroShadowSamples++; }
+  else heroBands[s.band].lit.push(Y);
+}
+const heroShadowBands = heroBands
+  .filter(Boolean)
+  .map((b) => ({ band: b.band, n: b.shadow.length, medianY: bandStat(b.shadow) }))
+  .filter((b) => b.n >= 15)
+  .sort((a, b) => a.band - b.band);
+const heroLitBands = heroBands
+  .filter(Boolean)
+  .map((b) => ({ band: b.band, n: b.lit.length, medianY: bandStat(b.lit) }))
+  .filter((b) => b.n >= 15)
+  .sort((a, b) => a.band - b.band);
+const spreadOf = (bands) => {
+  const ys = bands.map((b) => b.medianY).filter((v) => Number.isFinite(v) && v > 0);
+  return ys.length >= 2 ? round(Math.max(...ys) / Math.min(...ys), 3) : null;
+};
+const worstAdjacentOf = (bands) => {
+  let worst = Infinity;
+  for (let i = 1; i < bands.length; i++) {
+    const a = bands[i - 1].medianY;
+    const b = bands[i].medianY;
+    if (!(a > 0) || !(b > 0)) continue;
+    worst = Math.min(worst, Math.abs(b - a) / Math.max(a, b));
+  }
+  return Number.isFinite(worst) ? round(worst, 4) : null;
+};
+// "One uniform value" in one number: the share of the shard's own pixels that fall inside the
+// single most populated 2%-of-range luminance bin. A flat cut-out scores near 1.0.
+let largestSingleValueShare = null;
+if (heroAllY.length > 40) {
+  const lo = Math.min(...heroAllY);
+  const hi = Math.max(...heroAllY);
+  const bins = new Array(50).fill(0);
+  for (const y of heroAllY) bins[Math.min(49, Math.max(0, Math.floor(((y - lo) / Math.max(hi - lo, 1e-6)) * 50)))]++;
+  largestSingleValueShare = round(Math.max(...bins) / heroAllY.length, 3);
+}
+const heroForm = {
+  shard: M.hero,
+  samplesOnShard: (M.heroBandSamples ?? []).length,
+  shadowSamples: heroShadowSamples,
+  shadowBands: heroShadowBands,
+  litBands: heroLitBands,
+  shadowBandSpreadRatio: spreadOf(heroShadowBands),
+  shadowWorstAdjacentDelta: worstAdjacentOf(heroShadowBands),
+  litBandSpreadRatio: spreadOf(heroLitBands),
+  largestSingleValueShare,
+  rockShader: M.rockShader,
+};
+
+// -------------------------------------------------- the river as a connected body, not a highlight
+//
+// The critic's own metric, and it is the right one: the largest connected run of accent cyan in
+// the frame. A river reads as a river when it is one big connected shape; a strip light reads as a
+// scatter of slivers. Measured identically on our capture and on `reference/target-lowpoly.png`,
+// then compared per unit of frame area so two different capture sizes can be argued about.
+function accentComponents(image) {
+  const w = image.width;
+  const h = image.height;
+  const mask = new Uint8Array(w * h);
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      const [r, g, b] = px(image, x, y);
+      const [hu, sa, v] = hsv(r, g, b);
+      if (hu >= 150 && hu <= 205 && sa >= 0.22 && v >= 0.28) mask[y * w + x] = 1;
+    }
+  const seen = new Uint8Array(w * h);
+  const stack = new Int32Array(w * h);
+  let best = { area: 0, x0: 0, x1: 0, y0: 0, y1: 0, maxVerticalRun: 0, rows: 0 };
+  for (let i = 0; i < mask.length; i++) {
+    if (!mask[i] || seen[i]) continue;
+    let sp = 0;
+    stack[sp++] = i;
+    seen[i] = 1;
+    let area = 0;
+    let x0 = w, x1 = -1, y0 = h, y1 = -1;
+    const cols = new Map();
+    while (sp > 0) {
+      const p = stack[--sp];
+      const y = (p / w) | 0;
+      const x = p - y * w;
+      area++;
+      if (x < x0) x0 = x;
+      if (x > x1) x1 = x;
+      if (y < y0) y0 = y;
+      if (y > y1) y1 = y;
+      const c = cols.get(x);
+      if (!c) cols.set(x, [y, y, 1]);
+      else { c[0] = Math.min(c[0], y); c[1] = Math.max(c[1], y); c[2]++; }
+      if (x > 0 && mask[p - 1] && !seen[p - 1]) { seen[p - 1] = 1; stack[sp++] = p - 1; }
+      if (x < w - 1 && mask[p + 1] && !seen[p + 1]) { seen[p + 1] = 1; stack[sp++] = p + 1; }
+      if (y > 0 && mask[p - w] && !seen[p - w]) { seen[p - w] = 1; stack[sp++] = p - w; }
+      if (y < h - 1 && mask[p + w] && !seen[p + w]) { seen[p + w] = 1; stack[sp++] = p + w; }
+    }
+    if (area > best.area) {
+      // The thickest the body gets on any one screen column — the number that separates a body
+      // from a hairline, and the one that measured 1–4 px last round.
+      let thickest = 0;
+      for (const [, c] of cols) thickest = Math.max(thickest, c[2]);
+      best = { area, x0, x1, y0, y1, maxVerticalRun: thickest, rows: y1 - y0 + 1, cols: x1 - x0 + 1 };
+    }
+  }
+  return {
+    ...best,
+    frame: [w, h],
+    areaPpm: round((1e6 * best.area) / (w * h), 1),
+    rowShare: round(best.rows / h, 3),
+    runShare: round(best.maxVerticalRun / h, 4),
+  };
+}
+const river = accentComponents(img);
+let refRiver = null;
+try {
+  refRiver = accentComponents(readPNG(path.resolve(ROOT, "reference/target-lowpoly.png")));
+} catch {
+  refRiver = null;
+}
+// Both measured the same way, both expressed as a share of their own frame, so a 1600x900 capture
+// and a 2752x1536 reference can be compared without either being rescaled.
+const riverVsReference = { ours: river, reference: refRiver };
 
 // whole-frame census, for comparison with the reference's own
 let cyan = 0, dark = 0, sumY = 0, total = 0;
@@ -661,12 +939,14 @@ claim("C2", "they are the two ends of one body about 600 m long", M.arches.separ
   threshold: "500–700 m",
 });
 claim("C3", "the ravine cannot be walked or jumped", M.ravine.narrowestGap >= 16, {
-  narrowestGapMetres: M.ravine.narrowestGap,
+  narrowestRavineGapMetres: M.ravine.narrowestGap,
   narrowestAtWorldX: M.ravine.atX,
-  subTwoMetreCracksIgnored: M.ravine.pinholes,
-  widestSuchCrackMetres: M.ravine.widestPinhole,
+  widestGapNOTinTheRavineMetres: M.ravine.widestNonRavineGap,
+  widestSuchGapAt: M.ravine.widestNonRavineAt,
+  subTwoMetreCracksOutsideTheRavine: M.ravine.pinholes,
   measuredSpanGapMetres: M.ravine.spanGap,
-  threshold: ">= 16 m at its narrowest (locomotion's best jump is far under this)",
+  threshold:
+    ">= 16 m at the ravine's narrowest line (locomotion's best jump is far under this). Gaps outside the ravine's own band are reported separately and are not this claim",
 });
 const bands = new Set(M.landmarks.map((l) => Math.floor(Math.log10(Math.max(l.distance, 1)) * 2)));
 const legible = M.landmarks.filter((l) => l.subtendDeg >= 0.6);
@@ -724,6 +1004,59 @@ claim("K6", "no carry is buried in its own channel", M.carryClearance !== null &
   minRibbonClearanceOverGroundMetres: M.carryClearance,
   threshold: ">= 0.2 m, measured at every ribbon cross-section against the ground the terrain built",
 });
+claim(
+  "K7",
+  "the river is a connected body, not a strip light",
+  river.area >= 5000 && river.rows >= 110 && river.maxVerticalRun >= 20,
+  {
+    measuredOnArrivalFrame: riverVsReference,
+    threshold:
+      "largest connected accent-cyan component >= 5000 px, spanning >= 110 rows, and >= 20 px thick on its thickest column. Last round: 665 px, 30 rows, 1-4 px. The reference's own river is measured the same way and printed beside it",
+  }
+);
+claim(
+  "S5",
+  "the big near form reads as several planes, not one cut-out",
+  !!M.hero &&
+    heroForm.shadowBands.length >= 3 &&
+    heroForm.shadowBandSpreadRatio !== null &&
+    heroForm.shadowBandSpreadRatio >= 1.25 &&
+    heroForm.shadowWorstAdjacentDelta !== null &&
+    heroForm.shadowWorstAdjacentDelta >= 0.04 &&
+    heroForm.largestSingleValueShare !== null &&
+    heroForm.largestSingleValueShare <= 0.55,
+  {
+    measuredOnArrivalFrame: heroForm,
+    threshold:
+      ">= 3 shadow-side inclination bands holding >= 15 samples each, brightest:darkest band median luminance >= 1.25, every adjacent pair >= 4% apart, and no single 2%-wide luminance bin holding more than 55% of the shard's pixels",
+  }
+);
+const sh = M.terrain.shoulders ?? {};
+claim(
+  "S6",
+  "every shoulder profile the world built separates its bands by at least 12 deg",
+  sh.checked > 0 && sh.violations === 0 && (sh.worstAdjacentDeltaDeg ?? -1) >= (sh.minSeparationDeg ?? 12),
+  {
+    profilesBuilt: sh.checked,
+    violations: sh.violations,
+    worstAdjacentBandGapDeg: sh.worstAdjacentDeltaDeg,
+    requiredDeg: sh.minSeparationDeg,
+    slopeSpreadWidenedTo: sh.widestSpreadUsed,
+    threshold:
+      "the shipped world builds > 0 shoulder profiles, none violates the rule, and the worst adjacent band gap across all of them is >= the module's own minimum",
+  }
+);
+claim(
+  "S7",
+  "the grade that paints the shipped rock is the one this piece owns and it grades the back hemisphere",
+  !!M.rockShader?.compiled && M.rockShader.hasTerrainGrade === true && M.rockShader.hasTerrainBackHemisphereGrade === true,
+  {
+    compiledFragmentShaderOfVsLevelRock: M.rockShader,
+    note:
+      "Materials.js's §3.4 rotation is NOT in this program: the `authored` archetype sets grade:false and neither VS_TINT nor VS_KEYSHADOW, so that block is never emitted for this mesh. A colour finding about the spires is a finding about Terrain.js's GLSL_GRADE",
+    threshold: "the level.rock program contains Terrain.js's graded shadow term (vsShadeTint / vsBack)",
+  }
+);
 claim("P1", "near lit rock matches the reference's lit rock", !!lit && Math.abs(lit.Y - REF.rockLit.Y) <= 0.09 && Math.abs(lit.hue - REF.rockLit.h) <= 14, {
   measured: lit,
   reference: REF.rockLit,
@@ -758,6 +1091,8 @@ const out = {
   bootProblems: M.problems,
   camera: M.camera,
   carryRun,
+  river: riverVsReference,
+  heroForm,
   massif: M.massif,
   world: {
     terrain: M.terrain,

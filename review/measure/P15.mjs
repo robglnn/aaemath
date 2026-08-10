@@ -184,6 +184,30 @@ function contactSheet(file, images, ground = [214, 148, 84]) {
 const lum = (r, g, b) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
 /**
+ * Count near-white pixels in a rectangle — the claims are the only pure-white thing in the
+ * frame. Deliberately the *same* rule (`min >= 232`, `max - min <= 14`) the critic's probe
+ * used to measure 476 visible ink px against 651 real ones, so the before and after numbers
+ * for the occlusion finding are the same measurement and not two similar ones.
+ */
+function inkPixels(img, rect) {
+  const x0 = Math.max(0, Math.floor(rect.x0));
+  const y0 = Math.max(0, Math.floor(rect.y0));
+  const x1 = Math.min(img.width, Math.ceil(rect.x1));
+  const y1 = Math.min(img.height, Math.ceil(rect.y1));
+  let n = 0;
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
+      const i = (y * img.width + x) * img.channels;
+      const r = img.data[i];
+      const g = img.data[i + 1];
+      const b = img.data[i + 2];
+      if (Math.min(r, g, b) >= 232 && Math.max(r, g, b) - Math.min(r, g, b) <= 14) n++;
+    }
+  }
+  return n;
+}
+
+/**
  * Measure one rectangle of an image the way the reference was measured:
  * how bright the ink is, how far the sky next to the ink differs from the sky away from it,
  * and how many pixels the ink takes to stop being ink.
@@ -898,6 +922,130 @@ async function hostileClaims(d, shots) {
   };
 }
 
+/**
+ * The four quantities a critic found still unbounded, driven in the SHIPPED game through the
+ * SHIPPED `math:show` signal — the same public vocabulary `design/architecture.md` publishes
+ * and therefore the same reach any other piece has. Nothing is stubbed and no scene is
+ * spawned; this is Leaf Nine with hostile payloads emitted into it.
+ *
+ * Run after `hostileClaims`, because the panel-count attack deliberately fills the field and
+ * evicts whatever was standing.
+ */
+async function stressClaims(d) {
+  // ---- gate 6: the working's tick counts, which are loop bounds.
+  //
+  // Called on the shipped module in the shipped page — the same instance the running game
+  // holds — because a `math:show` round trip measures a frame, and what is under test is one
+  // function's cost. The signal path is exercised straight afterwards.
+  const ticks = await d.run(async (url) => {
+    const m = await import(url);
+    const rows = [];
+    for (const n of [10, 1e4, 1e5, 1e6]) {
+      const t0 = performance.now();
+      const r = m.rasterizeWorking({ pixels: 256, xTicks: n, yTicks: n });
+      rows.push({ n, ms: Number((performance.now() - t0).toFixed(1)), w: r.canvas.width, h: r.canvas.height });
+    }
+    return rows;
+  }, TEX_PANEL_URL);
+
+  const emit = (id, spec) =>
+    d.run(
+      ([panelId, payload]) => {
+        const k = window.__vs.kernel;
+        const fwd = k.camera.position.clone();
+        k.camera.getWorldDirection(fwd);
+        const at = k.camera.position.clone().addScaledVector(fwd, 12);
+        at.y = k.camera.position.y + 1;
+        k.signals.emit("math:show", { id: panelId, at: [at.x, at.y, at.z], ...payload });
+      },
+      [id, spec]
+    );
+
+  const wall0 = Date.now();
+  await emit("p15-ticks", { em: 0.5, working: { slope: 0.6, xTicks: 1e6, yTicks: 1e6 } });
+  await d.play(0.6);
+  const ticksWallMs = Date.now() - wall0;
+  const ticksPanel = await d.run(() => window.__vs.probe("mathtex").panels.find((p) => p.id === "p15-ticks") ?? null);
+
+  // ---- gate 5: `em`, the metres-per-em conversion.
+  await emit("p15-em", { tex: "x + 3 = 7", em: 100000 });
+  await d.play(0.6);
+  const emPanel = await d.run(() => window.__vs.probe("mathtex").panels.find((p) => p.id === "p15-em") ?? null);
+
+  // ---- the a11y divergence: refused by the world, still read out in full to a screen reader.
+  //
+  // 1,601 characters, so it is well *inside* `MAX_TEX_LENGTH` and gates 1 and 2 pass it. It is
+  // the ink-extent gate that refuses it, and that gate used to live only on the world side.
+  const wideTex = `${"1 + ".repeat(400)}1`;
+  await emit("p15-a11y", { tex: wideTex, em: 0.6 });
+  await d.play(0.6);
+  const a11yRow = await d.run(
+    ([id, needle]) => {
+      const panel = window.__vs.probe("mathtex").panels.find((p) => p.id === id) ?? null;
+      const el = document.querySelector(`#vs-claim-register [data-claim="${id}"]`);
+      const label = el?.getAttribute("aria-label") ?? null;
+      return {
+        panel,
+        label,
+        state: el?.getAttribute("data-vs-tex") ?? null,
+        present: !!el,
+        labelChars: label ? label.length : 0,
+        labelReadsSource: !!label && label.includes(needle),
+        registerText: (el?.innerText ?? "").slice(0, 80),
+      };
+    },
+    ["p15-a11y", "plus 1 plus 1 plus"]
+  );
+
+  // ---- gate 7: how many claims may stand at once.
+  const budget = await d.run(async (url) => {
+    const m = await import(url);
+    const k = window.__vs.kernel;
+    const t0 = performance.now();
+    for (let i = 0; i < 400; i++) {
+      k.signals.emit("math:show", {
+        id: `p15-flood-${i}`,
+        tex: "x + 3 = 7",
+        at: [k.camera.position.x + (i % 20) * 0.6, k.camera.position.y + 1, k.camera.position.z - 8 - Math.floor(i / 20)],
+        em: 0.35,
+      });
+    }
+    return { emitMs: Number((performance.now() - t0).toFixed(1)), cap: m.MAX_PANELS };
+  }, TEX_PANEL_URL);
+  await d.play(0.8);
+  const flood = await d.run(() => {
+    const field = window.__vs.probe("mathtex");
+    const info = window.__vs.kernel.renderer.info;
+    let texels = 0;
+    for (const p of field.panels) if (p.textureSize) texels += p.textureSize[0] * p.textureSize[1];
+    return {
+      panels: field.panels.length,
+      maxPanels: field.maxPanels,
+      evictions: field.evictions,
+      registered: field.registered,
+      texels,
+      mib: Number(((texels * 4) / (1024 * 1024)).toFixed(2)),
+      textures: info.memory.textures,
+      calls: info.render.calls,
+      triangles: info.render.triangles,
+    };
+  });
+
+  await d.run(() => window.__vs.kernel.signals.emit("math:hide", {}));
+  await d.play(1.0);
+  const alive = await d.run(() => {
+    const r = window.__vs.report();
+    return {
+      simTime: window.__vs.stats().simTime ?? window.__vs.kernel.simTime,
+      fatal: r.fatal,
+      ready: r.ready,
+      unexpectedErrors: window.__vs.errors.filter((e) => !/KaTeX refused a claim/.test(String(e))),
+    };
+  });
+
+  return { ticks, ticksWallMs, ticksPanel, emPanel, a11y: a11yRow, budget, flood, alive };
+}
+
 async function browserClaims() {
   const { openGame } = await import(pathToFileURL(path.join(ROOT, "tools/lib/session.mjs")).href);
   fs.mkdirSync(SHOTS, { recursive: true });
@@ -926,6 +1074,7 @@ async function browserClaims() {
   };
 
   const regions = [];
+  const occlusionRows = [];
   const panelRows = [];
   const a11yRows = [];
   const leakRows = [];
@@ -933,6 +1082,7 @@ async function browserClaims() {
   let cacheRow = null;
   let fallbackRow = null;
   let hostileRows = null;
+  let stressRows = null;
 
   for (const size of SIZES) {
     for (const lang of LANGS) {
@@ -945,6 +1095,12 @@ async function browserClaims() {
       // changes the sky behind the mathematics and nothing about the mathematics.
       await session({ width: size.w, height: size.h, lang, tier: TIER }, async (d) => {
         await d.play(1.2);
+
+        // Take the occlusion measurement first, so the `mathtex` probe read a line below
+        // carries a fresh number rather than a null. It is its own probe because it costs
+        // ~190 ms of raycasting — see `TexPanel.measureOcclusion`.
+        const occlusion = await d.probe("mathocclusion");
+        occlusionRows.push({ label, ...occlusion });
 
         const report = await d.report();
         const mathtex = report.probes?.mathtex ?? null;
@@ -1010,6 +1166,60 @@ async function browserClaims() {
             continue;
           }
           regions.push({ label, id: r.id, ...region });
+        }
+
+        // ---- the occlusion proof, in pixels, on the shipped spawn frame.
+        //
+        // The claim material is `depthTest:false`, so a critic's "turn depth off and see what
+        // appears" probe now measures nothing by construction — which would be gaming the
+        // instrument if that were the whole answer. This is the inverse and strictly stronger
+        // test: put the depth test *back*, re-render the same spawn frame, and count the ink.
+        // If the placement is genuinely clear of the world, the two frames carry the same ink
+        // and the material flag is belt to the anchors' braces. If a claim is standing through
+        // a spire, restoring depth eats it and this number says by how much.
+        if (lang === LANGS[0] && size === SIZES[0] && img && !clip) {
+          const flipped = await d.run(() => {
+            let n = 0;
+            window.__vs.kernel.scene.traverse((o) => {
+              if (!(o.name || "").startsWith("tex:")) return;
+              o.material.depthTest = true;
+              o.material.needsUpdate = true;
+              n++;
+            });
+            return n;
+          });
+          await d.play(1 / 30);
+          const depthShot = path.join(SHOTS, "depth-restored.png");
+          const depthOk = await shootRetry(d, path.relative(ROOT, depthShot).replace(/\\/g, "/"));
+          await d.run(() => {
+            window.__vs.kernel.scene.traverse((o) => {
+              if (!(o.name || "").startsWith("tex:")) return;
+              o.material.depthTest = false;
+              o.material.needsUpdate = true;
+            });
+          });
+          if (depthOk) {
+            const img2 = readPng(depthShot);
+            const rows = [];
+            for (const r of rects) {
+              if (r.behind) continue;
+              const box = { x0: r.x0 - 2, y0: r.y0 - 2, x1: r.x1 + 2, y1: r.y1 + 2 };
+              const shipped = inkPixels(img, box);
+              const depthOn = inkPixels(img2, box);
+              rows.push({
+                id: r.id,
+                shipped,
+                depthOn,
+                eatenPct: shipped > 0 ? Number((((shipped - depthOn) / shipped) * 100).toFixed(1)) : 0,
+              });
+            }
+            data.occlusionPixels = {
+              meshesFlipped: flipped,
+              shippedShot: path.relative(ROOT, shot),
+              depthShot: path.relative(ROOT, depthShot),
+              rows,
+            };
+          }
         }
 
         // Cache + fallback are done once, on the smallest EN run, and after the pictures.
@@ -1080,11 +1290,14 @@ async function browserClaims() {
           fallbackRow = { ...fb, ...fbAfter, ink: fbInk };
 
           hostileRows = await hostileClaims(d, SHOTS);
+          stressRows = await stressClaims(d);
         }
       });
     }
   }
 
+  data.stress = stressRows;
+  data.occlusion = occlusionRows;
   data.panels = panelRows;
   data.regions = regions;
   data.a11y = a11yRows;
@@ -1168,6 +1381,95 @@ async function browserClaims() {
     claim("C14f", "the stand-in announces itself as unreadable rather than reading out notation",
       "localized fallback phrase", fallbackRow.panel?.speech ?? null,
       !!fallbackRow.panel && fallbackRow.panel.ok === false && !/[\\{}]/.test(fallbackRow.panel.speech || "x"));
+  }
+
+  // ---- O1-O3 — is the mathematics reaching the player whole?
+  //
+  // Measured on the SHIPPED spawn frame of Leaf Nine, in every locale and at both sizes: the
+  // real dev-server page, the real boot modules, the real `leaf9-*` claims placed by
+  // `app/src/boot/60-mathtex.js`, the real terrain, scatter and avatar. Nothing is spawned.
+  const standing = occlusionRows.flatMap((r) =>
+    (r.panels ?? []).filter((p) => p.id.startsWith("leaf9-")).map((p) => ({ label: r.label, ...p }))
+  );
+  const unmeasured = standing.filter((p) => p.occludedPct === null || p.samples < 8);
+  const worstOccl = standing.length ? Math.max(...standing.map((p) => p.occludedPct ?? 100)) : null;
+  claim("O1", "no standing claim has world geometry in front of its ink, in any locale or size",
+    "0.0% occluded, every claim really sampled",
+    worstOccl === null ? "not measured" : `${worstOccl}% worst of ${standing.length} panel-runs, ${standing[0]?.samples ?? 0} ink samples each`,
+    standing.length >= 4 * LANGS.length * SIZES.length && worstOccl === 0 && unmeasured.length === 0,
+    standing.filter((p) => (p.occludedPct ?? 100) > 0).map((p) => `${p.label} ${p.id} ${p.occludedPct}%`).join(" | ") ||
+      (unmeasured.length ? `unsampled: ${unmeasured.map((p) => `${p.label} ${p.id}`).join(", ")}` : null));
+
+  // The same number, read back off the cheap probe, so `mathtex.panels[].occludedPct` is
+  // proved to carry the measurement rather than merely to have a key for it.
+  const carried = panelRows.filter((p) => p.id.startsWith("leaf9-") && p.occludedPct !== null).length;
+  claim("O1b", "the per-panel probe carries the occlusion number, not just a field for it",
+    `${4 * LANGS.length * SIZES.length} panel-runs report a number`, carried,
+    carried >= 4 * LANGS.length * SIZES.length);
+
+  const occl = data.occlusionPixels;
+  if (occl) {
+    const worstEaten = occl.rows.length ? Math.max(...occl.rows.map((r) => r.eatenPct)) : null;
+    claim("O2", "restoring the depth test to the shipped frame changes no claim's ink: the anchors are clear, not just the material",
+      "<= 1.0% of ink lost with depth on",
+      occl.rows.map((r) => `${r.id} ${r.shipped}->${r.depthOn} px (${r.eatenPct}%)`).join(", "),
+      occl.rows.length >= 4 && worstEaten !== null && worstEaten <= 1.0,
+      `${occl.shippedShot} vs ${occl.depthShot}`);
+  }
+
+  const floaty = panelRows.filter((p) => p.depthTest === false).length;
+  claim("O3", "the claim material never lets a nearer mesh amputate a claim mid-glyph",
+    "depthTest false on every panel", `${floaty}/${panelRows.length}`, panelRows.length > 0 && floaty === panelRows.length);
+
+  // ---- T1-T5 — the caller-controlled numbers that were not bounded, in the shipped game.
+  if (stressRows) {
+    const { ticks, ticksPanel, emPanel, a11y, flood, alive: stressAlive } = stressRows;
+    const worstTickMs = Math.max(...ticks.map((t) => t.ms));
+    const tickSizesEqual = ticks.every((t) => t.w === ticks[0].w && t.h === ticks[0].h);
+    claim("T1a", "a working's tick counts no longer set the loop bound: 1e6 ticks costs what 10 ticks costs",
+      "<= 20 ms at every count, same canvas",
+      ticks.map((t) => `${t.n}:${t.ms}ms ${t.w}x${t.h}`).join(" "),
+      worstTickMs <= 20 && tickSizesEqual,
+      "before the clamp, measured by the critic on this same scene: 1e4 11 ms, 1e5 99.9 ms, 1e6 2045.1 ms");
+    claim("T1b", "the same attack through the shipped math:show signal leaves a bounded working standing",
+      "panel present, texture inside the cap, frame not stalled",
+      ticksPanel
+        ? `${ticksPanel.textureSize?.join("x")} texture, ${stressRows.ticksWallMs} ms wall for emit+36 frames`
+        : "no panel",
+      !!ticksPanel && !!ticksPanel.textureSize && ticksPanel.textureSize[0] <= 4096 && ticksPanel.textureSize[1] <= 4096);
+
+    claim("T2", "em is metres per em and is bounded, so 48 bounded ems cannot make an unbounded billboard",
+      "em <= 4, quad <= 192 x 96 m",
+      emPanel ? `asked ${emPanel.emRequested}, got ${emPanel.em}, quad ${emPanel.worldSize?.join(" x ")} m` : "no panel",
+      !!emPanel && emPanel.em <= 4 && emPanel.emClamped === true &&
+        emPanel.worldSize[0] <= 192 && emPanel.worldSize[1] <= 96,
+      "before the clamp: em 100000 produced a 503776.042 x 104557.292 m quad");
+
+    claim("T3a", "the field itself is bounded, not only each raster in it",
+      `<= ${flood.maxPanels} panels after 400 distinct math:show ids`,
+      `${flood.panels} panels, ${flood.evictions} evictions, ${flood.registered} register entries`,
+      flood.panels <= flood.maxPanels && flood.evictions > 0);
+    claim("T3b", "the flooded field stays inside architecture.md's frame budget",
+      "<= 320 draw calls, <= 120 textures",
+      `${flood.calls} calls, ${flood.textures} textures, ${flood.mib} MiB of claim texels`,
+      flood.calls <= 320 && flood.textures <= 120,
+      "before the cap: 407 panels, 494 calls, 408 textures, 32.3 MiB");
+
+    claim("T4", "a claim the world refuses is refused to the screen-reader user too",
+      "register reads the fallback, never the source",
+      a11y.panel
+        ? `panel ok=${a11y.panel.ok} bound=${a11y.panel.bound?.reason ?? null} | register "${a11y.label}" (${a11y.labelChars} chars, state ${a11y.state})`
+        : "no panel",
+      !!a11y.panel && a11y.panel.ok === false && a11y.present === true &&
+        a11y.state === "fallback" && a11y.labelReadsSource === false && a11y.labelChars <= 60 &&
+        a11y.label === a11y.panel.speech,
+      "before: bound {reason:'ink-extent', emsWide:2082.8} in the world, aria-label '1 plus 1 plus 1 plus…' in the DOM");
+
+    claim("T5", "the game survives the four bound attacks: clock advancing, no crash, no error but the refusals",
+      "fatal null, ready, 0 unexpected errors",
+      `fatal=${stressAlive.fatal} ready=${stressAlive.ready} sim=${stressAlive.simTime?.toFixed?.(2)} unexpected=${stressAlive.unexpectedErrors.length}`,
+      !stressAlive.fatal && stressAlive.ready && stressAlive.unexpectedErrors.length === 0,
+      stressAlive.unexpectedErrors.slice(0, 2).join(" | ") || null);
   }
 
   // ---- H1-H8 — the hostile inputs, in the shipped world (Leaf Nine, EN, 1600x900).

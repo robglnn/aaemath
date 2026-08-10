@@ -721,14 +721,17 @@ export class Lighting {
    * hidden, no material is swapped. The systems that would fight for the camera are detached for the
    * life of the run and the world underneath is exactly the one the player walks on.
    */
-  reviewCamera({ pos, look, fov = 50, detach = true } = {}) {
-    if (detach) {
-      for (const name of ["camera", "locomotion", "traversal"]) {
-        const sys = this.kernel.byName.get(name);
-        const i = sys ? this.kernel.systems.indexOf(sys) : -1;
-        if (i >= 0) this.kernel.systems.splice(i, 1);
+  reviewCamera({ pos, look, fov = 50, detach = ["camera"] } = {}) {
+    // Only the camera rig by default. Locomotion and the avatar stay mounted on purpose: a claim
+    // about where a body meets the ground is worth nothing if the body has been frozen out of the
+    // simulation that decides where its feet are.
+    for (const name of detach === true ? ["camera", "locomotion", "traversal"] : detach || []) {
+      const sys = this.kernel.byName.get(name);
+      const i = sys ? this.kernel.systems.indexOf(sys) : -1;
+      if (i >= 0) {
+        this.kernel.systems.splice(i, 1);
+        (this._detached ??= []).push(name);
       }
-      this._detached = true;
     }
     const cam = this.kernel.camera;
     if (pos) cam.position.set(pos[0], pos[1], pos[2]);
@@ -739,7 +742,7 @@ export class Lighting {
     this._fitShadowCameras();
     return {
       scene: "shipped",
-      detachedSystems: !!this._detached,
+      detachedSystems: this._detached ?? [],
       position: [cam.position.x, cam.position.y, cam.position.z],
       fov: cam.fov,
     };

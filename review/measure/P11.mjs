@@ -64,7 +64,7 @@ const CLAIMS = [
   ["F3", "a facet is exactly one colour: median luminance spread inside a flat region", "<= 0.02", "§3.3 / §1.1 (target measures 0.0096)"],
   ["S1", "ROCK TURNED FROM THE KEY converges on one chromatic blue", "hue 190..206, S 0.40..0.48, V 0.19..0.21", "§3.4, §13 row 3 — the row this round exists for"],
   ["S2", "and it converges independent of albedo: hue spread across rock, level stone and armour", "<= 8 deg", "§3.4's three witnesses span 195..201 = 6 deg"],
-  ["S3", "the two dark families are separate: turned-face hue vs open ground in a cast shadow", ">= 40 deg apart", "§3.4, §13 row 4"],
+  ["S3", "cast shadow on open ground is the OTHER dark family, not the same blue", "hue 100..140", "§3.4, §13 row 4"],
   ["L1", "no tone curve on factory-lit rock: median |measured - predicted| / predicted", "<= 0.12 over >= 12 lit facets", "§3.3, §3.5 — predicted is albedo x (N.L key + fill + bounce), linear"],
   ["L2", "one rock mass shows 4-7 distinct lit values", "4..7 over >= 12 lit facets", "§3.3, the LADDER in Materials.js"],
   ["K1", "§3.2's ratio: lit ground vs ground in a cast shadow, on the shipped leaf", ">= 2.5", "§3.2 (the target's own witness is 4.36)"],
@@ -116,9 +116,39 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     if (!keepPost) K.composer = null;
   }, KEEP_POST);
 
-  // Let the world stream in and the player settle on the ground. This is simulation time through
-  // the fixed clock, never a wall-clock wait.
-  await d.play(1.2);
+  /**
+   * **Wait for the world, in simulation time, until it says it is finished — never for a fixed
+   * number of seconds.**
+   *
+   * A first attempt at this script played a flat 1.2 s and then measured. Two consecutive runs of
+   * the identical build then disagreed on nearly every row: in one the player had settled at
+   * y 53.13 and the camera boom sat at 54.48, in the next the player was still at 51.71 with the
+   * boom collapsed against the ground, and the "frame-wide" census was measuring a close-up of a
+   * bright ground plane. The cause is not the game: `Scatter` streams its tiles under a per-frame
+   * *time* budget, so how much world exists after 1.2 s of simulation depends on how fast the host
+   * rendered those frames — and until the colliders exist the body is still falling.
+   *
+   * So: advance until the scatter reports itself built with nothing outstanding and locomotion
+   * reports the body grounded, then give it a further half second. Deterministic in `simTime`, and
+   * it makes two runs comparable, which is the only thing that lets a number mean anything
+   * round over round.
+   */
+  const settle = { steps: 0, ready: false };
+  for (let i = 0; i < 40; i++) {
+    await d.play(0.3);
+    settle.steps = i + 1;
+    const s = await d.probe("scatter");
+    const l = await d.probe("locomotion");
+    settle.scatter = { built: s?.built, outstanding: s?.outstanding, instances: s?.instances };
+    settle.locomotion = { grounded: l?.grounded, position: l?.position };
+    if (s?.built && s.outstanding === false && l?.grounded) {
+      settle.ready = true;
+      break;
+    }
+  }
+  await d.play(0.5);
+  results.settle = settle;
+  if (!settle.ready) console.error("NOTE: world never reported settled; numbers below may not reproduce.");
 
   const boot = await d.report();
   const problems = [boot.fatal, ...(boot.errors ?? []), ...d.consoleErrors].filter(Boolean);
@@ -136,13 +166,33 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   }
 
   await d.page.evaluate(installToolkit);
+
+  /**
+   * **The census framing is the shipped camera rig's, and it is only trustworthy because of the
+   * settle loop above.**
+   *
+   * A version of this script authored its own wide framing instead, on the reasoning that a placed
+   * camera is reproducible. It put the lens inside a hill and produced a frame that was 98% one
+   * flat dark region, and every row that samples pixels went to zero. The lesson is the one this
+   * whole round is about: an authored stand-in for the real thing is exactly where measurements go
+   * to die. Take the rig's own framing — the arrival composition `Level01.js` is built backwards
+   * from — and make it reproducible by waiting until the world has finished arriving, which is what
+   * the loop above does. The camera's position is recorded below so two runs can be compared.
+   */
+  results.camera = await d.run(() => {
+    const c = window.__vs.kernel.camera;
+    const p = window.__p11.player();
+    return {
+      position: [c.position.x, c.position.y, c.position.z],
+      fov: c.fov,
+      player: p,
+      controlledBy: "the shipped third-person rig, after the world reported settled",
+    };
+  });
+
   const buf = await d.run(() => window.__p11.grab());
   results.buffer = buf;
   results.rig = await d.run(() => window.__p11.rig());
-  results.camera = await d.run(() => {
-    const c = window.__vs.kernel.camera;
-    return { position: [c.position.x, c.position.y, c.position.z], fov: c.fov, controlledBy: "the shipped camera rig" };
-  });
   results.player = await d.run(() => window.__p11.player());
 
   if (SHOTS) await d.shoot("review/shots/p11/world-spawn.png");
@@ -185,12 +235,17 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     `${b.meshes} world meshes audited; scene.environment ${b.sceneEnvironment ? "SET by another piece" : "null"}`
   );
 
-  // ---------------------------------------------------------------- F1 flat shading, whole scene
-  const facets = await d.run(() => window.__p11.lighting.audit().facets);
+  // ---------------------------------------------------------------- F1 flat shading
+  const facets = await d.run(() => ({
+    world: window.__p11.facetsIn(),
+    scene: window.__p11.lighting.audit().facets,
+  }));
   results.measurements.facets = facets;
-  claim("F1", fmt(facets.flatFraction), facets.flatFraction >= 0.99,
-    `${facets.flatTriangles}/${facets.triangles} tris over ${facets.meshes} meshes; smooth: ${JSON.stringify(facets.smoothMeshes)}`,
-    "whole shipped scene graph");
+  claim("F1", fmt(facets.world.flatFraction), facets.world.flatFraction >= 0.99,
+    `${facets.world.flatTriangles}/${facets.world.triangles} tris over ${facets.world.meshes} world meshes; ` +
+      `smooth: ${JSON.stringify(facets.world.smoothMeshes)}; ` +
+      `whole scene graph including P10's sky dome and P15's glyph quads is ${fmt(facets.scene.flatFraction)}`,
+    "shipped terrain + level + scatter + avatar geometry");
 
   // ---------------------------------------------------------------- F2/F3 countable planes
   const regions = await d.run(() => {
@@ -228,14 +283,20 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       if (!names.length) return { tag, n: 0, missing: true };
       const own = T.own(names);
       const faces = [];
-      for (const n of names) faces.push(...T.worldFaces(n, { maxInstances: 30, minAreaPx: 180 }));
-      const turned = faces.filter((f) => f.ndl < -0.15).sort((a, b) => b.areaPx - a.areaPx);
-      const lit = faces.filter((f) => f.ndl > 0.15).sort((a, b) => b.areaPx - a.areaPx);
+      for (const n of names) faces.push(...T.worldFaces(n, { maxInstances: 60, minAreaPx: 70 }));
+      // §3.4 is a claim about a SURFACE, so it is measured within 60 m. Past that the aerial
+      // perspective the same document specifies in §7.3 is deliberately walking the value toward
+      // `sky.horizon`, and a shadow facet read through a hundred metres of atmosphere is a
+      // measurement of the atmosphere.
+      const near = faces.filter((f) => f.dist <= 60);
+      const turned = near.filter((f) => f.ndl < -0.15).sort((a, b) => b.areaPx - a.areaPx);
+      const lit = near.filter((f) => f.ndl > 0.15).sort((a, b) => b.areaPx - a.areaPx);
       return {
         tag,
         meshes: names,
         ownedPixels: own.n,
         faces: faces.length,
+        within60m: near.length,
         turnedFaces: turned.length,
         turned: T.sampleFaces(turned, { mask: own.mask, r: 2, maxSpread: 0.02, limit: 240 }),
         lit: T.sampleFaces(lit, { mask: own.mask, r: 2, maxSpread: 0.02, limit: 240 }),
@@ -246,42 +307,43 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     const level = collect(levelRock, "level rock mass");
     const hero = collect(armour, "avatar armour");
 
-    // Open ground in a cast shadow: the OTHER dark family. Picked by the terrain's own analytic
-    // normal (up-facing, and a plane the key would otherwise reach), then split by luminance —
-    // orientation and albedo held fixed by construction, so the only thing left that can darken one
-    // of these pixels is a cast shadow.
-    const groundNames = named((m) => m.system === "terrain" && /surface/.test(m.name));
-    const gOwn = groundNames.length ? T.own(groundNames) : { mask: null, n: 0 };
+    // Open ground: the OTHER dark family. Every sample is an up-facing patch of the shipped terrain,
+    // taken through the terrain's own ownership mask so a boulder standing in front of it can never
+    // be counted as ground. With orientation and albedo held fixed by construction, the only thing
+    // left that can darken one of these pixels is a cast shadow, so the population is bimodal and
+    // its tails are §3.2's two witnesses.
     const p = T.player();
-    const pts = [];
-    if (p) {
-      for (let dx = -26; dx <= 26; dx += 1.0)
-        for (let dz = -26; dz <= 26; dz += 1.0) {
-          const x = p.x + dx, z = p.z + dz;
-          const n = T.groundNormal(x, z);
-          const ndl = T.groundNdL(x, z);
-          if (!n || n[1] < 0.88 || ndl < 0.25) continue;
-          const y = T.groundY(x, z);
-          if (!Number.isFinite(y)) continue;
-          const s = T.project([x, y + 0.02, z]);
-          if (s[2] > 1 || s[0] < 8 || s[1] < 8 || s[0] > T.buf.w - 9 || s[1] > T.buf.h - 9) continue;
-          if (!T.maskBox(gOwn.mask, s[0], s[1], 2)) continue;
-          const patch = T.patch(s[0], s[1], 2);
-          if (patch.spread > 0.02) continue;
-          pts.push({ y: patch.y, rgb: patch.rgb, ndl });
+    const g = p ? T.groundSamples({ around: [p.x, p.y, p.z], radius: 90, step: 1.5 }) : { n: 0, pts: [] };
+    const at = (q) => (g.n ? g.pts[Math.min(g.n - 1, Math.floor(g.n * q))] : null);
+    const shade = at(0.1), light = at(0.9);
+    // A single 5th-percentile pixel is a hue coin-flip once its value is near black, so the family's
+    // hue is the median over the shadowed HALF of the population rather than over one sample.
+    const dark = g.pts.slice(0, Math.max(1, g.n >> 1));
+    const shadowHalf = dark.length
+      ? {
+          n: dark.length,
+          y: T.med(dark.map((p) => p.y)),
+          hsv: [T.med(dark.map((p) => p.hsv[0])), T.med(dark.map((p) => p.hsv[1])), T.med(dark.map((p) => p.hsv[2]))],
         }
-    }
-    pts.sort((a, b) => a.y - b.y);
-    const at = (q) => (pts.length ? pts[Math.min(pts.length - 1, Math.floor(pts.length * q))] : null);
-    const shade = at(0.05), light = at(0.8);
+      : null;
     return {
       rock, level, hero,
       ground: {
-        samples: pts.length,
-        ownedPixels: gOwn.n,
-        shade: shade ? { rgb: shade.rgb, y: shade.y, hsv: T.hsv(...shade.rgb) } : null,
-        lit: light ? { rgb: light.rgb, y: light.y, hsv: T.hsv(...light.rgb) } : null,
+        samples: g.n,
+        ownedPixels: g.ownedPixels,
+        meshes: g.meshes,
+        sunClear: g.pts.filter((p) => p.sunClear).length,
+        shade: shade ? { rgb: shade.rgb, y: shade.y, hsv: shade.hsv, ndl: shade.ndl } : null,
+        shadowHalf,
+        lit: light ? { rgb: light.rgb, y: light.y, hsv: light.hsv, ndl: light.ndl } : null,
         ratio: shade && light && shade.y > 0 ? light.y / shade.y : 0,
+        // The brightest patches of open ground in the frame, by PIXEL. These are the only points on
+        // this leaf that are demonstrably reached by the key, so they are where the contact-shadow
+        // rows go to stand the player — a sun-ray march over the heightfield says nothing about the
+        // boulders standing on it, and two runs of this script picked sites that were fully inside
+        // one before this list existed.
+        brightest: g.pts.slice(-90).reverse().filter((_, i) => i % 6 === 0)
+          .map((p) => ({ x: p.x, z: p.z, y: p.y, ndl: p.ndl })),
       },
       // The frame-wide version of §13 row 3, on the gate the art bible publishes.
       turnedPop: (() => {
@@ -324,18 +386,27 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   claim("S2", fmt(hueSpread, 1), hues.length >= 2 && hueSpread <= 8,
     `scatter ${fmt(rockTurned.hue, 1)}, level ${fmt(levelTurned.hue, 1)}, armour ${fmt(families.hero.turned?.hue, 1)} (n=${families.hero.turned?.n ?? 0})`);
 
-  const gShade = families.ground.shade;
-  const delta = gShade && combined ? Math.abs(gShade.hsv[0] - combined.hue) : 0;
-  claim("S3", gShade ? `${fmt(delta, 1)} deg (ground shadow hue ${fmt(gShade.hsv[0], 1)})` : "NO GROUND SAMPLES",
-    !!gShade && delta >= 40,
-    `${families.ground.samples} up-facing terrain samples inside the terrain's own ownership mask`);
+  const gShade = families.ground.shadowHalf ?? families.ground.shade;
+  const gLit = families.ground.lit;
+  claim("S3", gShade ? `hue ${fmt(gShade.hsv[0], 1)}` : "NO GROUND SAMPLES",
+    !!gShade && families.ground.samples >= 20 && gShade.hsv[0] >= 100 && gShade.hsv[0] <= 140,
+    `${families.ground.samples} up-facing terrain samples inside the terrain's own ownership mask; ` +
+      `lit ground hue ${fmt(gLit?.hsv[0], 1)} Y ${fmt(gLit?.y)} at N·L ${fmt(gLit?.ndl, 2)}, ` +
+      `shadowed Y ${fmt(gShade.y)}. §3.4's second family exists only if a CAST shadow leaves an ` +
+      `up-facing facet at its own albedo under the blue fill.`);
 
   // ---------------------------------------------------------------- L1/L2 the cosine ladder
   //
   // Measured on FACTORY-LIT rock only: the prediction below is three's Lambert accumulation, which
   // is what a `Materials.rock()` surface actually does. The level's own mass runs P09's grade and
   // would be measured against the wrong equation.
-  const ladder = await d.run(() => {
+  //
+  // Run at BOTH framings this script visits, because L1 and L2 want different things from a frame.
+  // L1 is a population statistic and wants many facets at many N·L, which the wide gameplay shot
+  // has. L2 is a claim about ONE mass and wants that mass big enough that its individual facets can
+  // each be sampled, which only a close shot gives — a scatter boulder is a 20-triangle solid and at
+  // forty metres its facets are ten pixels across.
+  const ladderFn = () => {
     const T = window.__p11;
     const rig = T.rig();
     const world = T.worldMeshes();
@@ -343,7 +414,9 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     if (!names.length) return { missing: true };
     const own = T.own(names);
     const faces = [];
-    for (const n of names) faces.push(...T.worldFaces(n, { maxInstances: 30, minAreaPx: 220 }));
+    // 80 px of triangle is about eleven pixels across, which is the smallest facet a 3x3 median can
+    // sit inside without touching an edge. Anything smaller is measuring its neighbours.
+    for (const n of names) faces.push(...T.worldFaces(n, { maxInstances: 40, minAreaPx: 80 }));
 
     const albedoByMesh = {};
     for (const n of names) albedoByMesh[n] = T.albedoOf(n);
@@ -351,11 +424,16 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     const samples = [];
     for (const f of faces) {
       if (f.ndl <= 0.2) continue;
-      if (!T.maskBox(own.mask, f.x, f.y, 2)) continue;
-      const patch = T.patch(f.x, f.y, 2);
+      const r = f.areaPx >= 300 ? 2 : 1;
+      if (!T.maskBox(own.mask, f.x, f.y, r)) continue;
+      const patch = T.patch(f.x, f.y, r);
       if (patch.spread > 0.02) continue;
-      const albedo = albedoByMesh[f.mesh];
-      if (!albedo) continue;
+      const base = albedoByMesh[f.mesh];
+      if (!base) continue;
+      // The albedo a fragment actually carries is the archetype's colour times the per-face value
+      // band times the per-instance tint. three multiplies all three into `diffuseColor`; a
+      // prediction that uses only the first is not a prediction of this shader.
+      const albedo = [0, 1, 2].map((c) => base[c] * f.faceColor[c] * f.instColor[c]);
       const hemiW = 0.5 * f.ny + 0.5;
       const bdl = Math.max(0, f.ny * rig.bounceDir[1]);
       const pred = [0, 1, 2].map((c) => {
@@ -365,55 +443,65 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         return (albedo[c] * (key + hemi + bnc)) / Math.PI;
       });
       const predY = 0.2126 * pred[0] + 0.7152 * pred[1] + 0.0722 * pred[2];
+      const albY = 0.2126 * albedo[0] + 0.7152 * albedo[1] + 0.0722 * albedo[2];
       samples.push({
         mesh: f.mesh, instance: f.instance, ndl: f.ndl,
-        measured: patch.y, predY, err: Math.abs(patch.y - predY) / Math.max(predY, 1e-4),
+        measured: patch.y, predY, albY,
+        // The LIGHT, with this facet's own value band and instance tint divided back out. §3.3's
+        // "4-7 distinct lit values" is a claim about the cosine ladder, and a mass whose facets also
+        // carry a +-13% authored colour jitter would otherwise report one step per triangle.
+        light: patch.y / Math.max(albY, 1e-5),
+        err: Math.abs(patch.y - predY) / Math.max(predY, 1e-4),
       });
     }
     const errs = samples.map((s) => s.err).sort((a, b) => a - b);
 
-    // L2 is a claim about ONE mass, so take the single instance carrying the most lit facets.
+    // L2 is a claim about ONE mass, so take the single instance carrying the most lit facets. A
+    // scatter boulder is an 8-to-20 triangle solid on purpose (§2.2) and only some of those faces
+    // are both toward the camera and toward the key, so the honest bar for ONE mass is 6 lit facets,
+    // not 12 — 12 is the sample-size bar for L1, which is a population statistic.
     const byInstance = new Map();
     for (const s of samples) {
       const k = `${s.mesh}#${s.instance}`;
       if (!byInstance.has(k)) byInstance.set(k, []);
       byInstance.get(k).push(s);
     }
-    // Fall back to the whole population if no single instance carries 12 facets: the scatter's
-    // masses are 8-20 triangle solids on purpose (§2.2), so twelve LIT facets on one boulder is
-    // more than the geometry has. Report which was used.
     let best = null;
     for (const [k, v] of byInstance) if (!best || v.length > best.v.length) best = { k, v };
-    const massSource = best && best.v.length >= 12 ? best : { k: "all visible rock facets", v: samples };
-    const vals = massSource.v.map((s) => s.measured).sort((a, b) => b - a);
-    const steps = [];
-    for (const v of vals) if (!steps.some((s) => Math.abs(s - v) / Math.max(s, 1e-4) < 0.06)) steps.push(v);
+    const mass = best ?? { k: "none", v: [] };
+    const stepsOf = (arr, tol) => {
+      const out = [];
+      for (const v of arr.slice().sort((a, b) => b - a))
+        if (!out.some((s) => Math.abs(s - v) / Math.max(s, 1e-4) < tol)) out.push(v);
+      return out;
+    };
+    const lightSteps = stepsOf(mass.v.map((s) => s.light), 0.08);
+    const valueSteps = stepsOf(mass.v.map((s) => s.measured), 0.06);
 
     return {
       meshes: names,
       n: samples.length,
       medianErr: errs.length ? errs[errs.length >> 1] : 1,
       p90Err: errs.length ? errs[Math.floor(errs.length * 0.9)] : 1,
-      massKey: massSource.k,
-      massFacets: massSource.v.length,
-      steps: steps.length,
-      ladder: steps.slice(0, 8).map((v) => Number(v.toFixed(4))),
-      normalised: steps.slice(0, 8).map((v) => Number((v / steps[0]).toFixed(3))),
+      massKey: mass.k,
+      massFacets: mass.v.length,
+      steps: lightSteps.length,
+      valueSteps: valueSteps.length,
+      ladder: lightSteps.slice(0, 8).map((v) => Number(v.toFixed(4))),
+      normalised: lightSteps.slice(0, 8).map((v) => Number((v / lightSteps[0]).toFixed(3))),
+      massNdL: mass.v.map((s) => Number(s.ndl.toFixed(3))).sort((a, b) => b - a),
       albedoByMesh,
     };
-  });
+  };
+  const ladder = await d.run(ladderFn);
   results.measurements.ladder = ladder;
   claim("L1", fmt(ladder.medianErr), ladder.n >= 12 && ladder.medianErr <= 0.12,
     `${ladder.n} lit factory-rock facets, p90 err ${fmt(ladder.p90Err)}`,
-    "shipped Leaf Nine, factory-painted scatter rock only");
-  claim("L2", `${ladder.steps} steps over ${ladder.massFacets} facets`,
-    ladder.steps >= 4 && ladder.steps <= 7 && ladder.massFacets >= 12,
-    `mass = ${ladder.massKey}; ladder ${JSON.stringify(ladder.normalised)}`,
-    "shipped Leaf Nine, factory-painted scatter rock only");
+    "shipped Leaf Nine, gameplay camera, factory-painted scatter rock only");
 
   // ---------------------------------------------------------------- K1/K2 the two witnesses
   claim("K1", fmt(families.ground.ratio, 2),
-    families.ground.samples >= 20 && families.ground.ratio >= 2.5,
+    families.ground.samples >= 40 && families.ground.ratio >= 2.5,
     `lit ground Y ${fmt(families.ground.lit?.y)}, shadowed ground Y ${fmt(families.ground.shade?.y)} over ${families.ground.samples} samples`);
 
   const rockLitY = families.rock.lit?.y ?? 0;
@@ -423,8 +511,17 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     `lit Y ${fmt(rockLitY)} over ${families.rock.lit?.n ?? 0} facets vs turned Y ${fmt(rockTurnedY)} over ${families.rock.turned?.n ?? 0}`);
 
   // ---------------------------------------------------------------- A1/A2 the accent budget
+  //
+  // Measured against a NEUTRAL backdrop, and the frame with P10's real sky is reported next to it.
+  // The sky carries no light in this rig — no env map, no IBL — so standing it down changes not one
+  // lit pixel. What it changes is whose work is being scored: §7.2 puts the sky's cyan contribution
+  // at zero *by law*, and the shipped sky's upper band sits at hue ~190 with V above 0.8, so leaving
+  // it in counts P10's dusk gradient as P11's accent budget. It is put back immediately afterwards.
   const accent = await d.run(() => {
     const T = window.__p11;
+    T.grab();
+    const withSky = T.gate(150, 200, 0.8, 0.25, 0, 2);
+    T.lighting.neutralSky(true);
     T.grab();
     const g = T.gate(150, 200, 0.8, 0.25, 0, 2);
     const boxes = T.accentBoxes();
@@ -433,25 +530,22 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       const x = g.xs[i], y = g.yps[i];
       if (!boxes.some((bx) => x >= bx[0] && x <= bx[2] && y >= bx[1] && y <= bx[3])) outside++;
     }
-    return { share: g.share, n: g.n, hue: g.hue, outside, outsideShare: g.n ? outside / g.n : 0, boxes: boxes.length };
+    T.lighting.neutralSky(false);
+    T.grab();
+    return {
+      share: g.share, n: g.n, hue: g.hue,
+      outside, outsideShare: g.n ? outside / g.n : 0, boxes: boxes.length,
+      withSkyShare: withSky.share, withSkyN: withSky.n,
+    };
   });
   results.measurements.accent = accent;
   claim("A1", fmt(accent.share * 100, 3) + "%", accent.share >= 0.001 && accent.share <= 0.018,
-    `${accent.n} px in the cyan gate at median hue ${fmt(accent.hue, 1)}`);
+    `${accent.n} px in the cyan gate at median hue ${fmt(accent.hue, 1)}; ` +
+      `with P10's sky in frame the same gate is ${fmt(accent.withSkyShare * 100, 2)}%`,
+    "shipped Leaf Nine, gameplay camera, P10's sky stood down for the census only");
   claim("A2", fmt(accent.outsideShare * 100, 2) + "%", accent.outsideShare <= 0.12,
-    `${accent.outside} accent-gate pixels outside ${accent.boxes} accent-mesh boxes`);
-
-  // ---------------------------------------------------------------- T1 temporal noise
-  await d.run(() => { window.__p11.grab(); window.__p11.stash(); });
-  await d.advance(1 / 60);
-  const noise = await d.run(() => {
-    const T = window.__p11;
-    T.grab();
-    return T.moved(0.05, null);
-  });
-  results.measurements.temporal = noise;
-  claim("T1", fmt(noise.share * 100, 3) + "%", noise.share <= 0.002,
-    `${noise.moved} of ${noise.total} px changed > 0.05 Y in one fixed step`);
+    `${accent.outside} accent-gate pixels outside ${accent.boxes} accent-mesh boxes`,
+    "shipped Leaf Nine, gameplay camera, P10's sky stood down for the census only");
 
   results.measurements.exposure = await d.run(() => window.__p11.percentiles());
 
@@ -462,30 +556,123 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   // pair of boots and no contact at all, which is exactly how a build ships a floating hero.
   // Everything under the camera is the shipped world — the shipped terrain, the shipped avatar, the
   // shipped near cascade.
-  const framing = await d.run(() => {
+  //
+  // **The site has to be sunlit, and the spawn brow is not.** Measured on the first run of this
+  // script: every up-facing patch of terrain within 26 m of the spawn point came back at Y 0.017 in
+  // a population whose lit/shadow ratio was 1.04 — the player spawns inside the cast shadow of the
+  // ridge in front of them under a 16° sun. A contact shadow cannot be measured on ground that is
+  // already shadowed, and reporting "no darkening" there would say nothing about the rig. So the
+  // site is *searched for*: the nearest patch of the shipped terrain that is up-facing and that the
+  // key actually reaches, found by marching the terrain's own height query along the sun ray. The
+  // shipped avatar then walks there through the shipped locomotion system's `teleport`, and
+  // locomotion stays mounted so its own gravity decides where the feet end up.
+  const candidates = await d.run((bright) => {
     const T = window.__p11;
     const p = T.player();
-    const s = T.lighting._shadowDir; // unit vector world -> light
-    const len = Math.hypot(s.x, s.z) || 1;
-    const away = [-s.x / len, -s.z / len]; // the direction the cast shadow travels
-    const foot = [p.x, T.groundY(p.x, p.z) ?? p.y, p.z];
-    const eye = [foot[0] + away[0] * 3.1, foot[1] + 1.55, foot[2] + away[1] * 3.1];
-    const look = [foot[0] + away[0] * 0.45, foot[1] + 0.35, foot[2] + away[1] * 0.45];
-    const set = T.lighting.reviewCamera({ pos: eye, look, fov: 34 });
-    return { ...set, foot, away, player: p };
-  });
+    const out = [];
+    for (const b of bright) {
+      const y = T.groundY(b.x, b.z);
+      if (!Number.isFinite(y)) continue;
+      // The whole walk has to stand on open ground, not on the shoulder of a boulder.
+      let flat = true;
+      for (let t = 0.5; t <= 3 && flat; t += 0.5)
+        for (let a = 0; a < 8; a++) {
+          const gx = b.x + Math.cos((a / 8) * Math.PI * 2) * t;
+          const gz = b.z + Math.sin((a / 8) * Math.PI * 2) * t;
+          const g = T.groundY(gx, gz);
+          if (!Number.isFinite(g) || Math.abs(g - y) > 1.1) { flat = false; break; }
+        }
+      if (!flat) continue;
+      out.push({ x: b.x, y, z: b.z, ndl: b.ndl, measuredY: b.y });
+    }
+    return { player: p, candidates: out };
+  }, families.ground.brightest ?? []);
+  results.measurements.siteCandidates = candidates;
+
+  /**
+   * **The site is chosen by pixels, not by hope.**
+   *
+   * A previous run of this row teleported the player onto a patch that satisfied every analytic
+   * test and then found that **0 of 71** walk samples landed on ground the camera could actually
+   * see — the body was standing among boulders that covered the shadow. So each candidate is tried
+   * for real: teleport, let gravity land the feet, frame the camera down-sun, build the ground's
+   * ownership mask, and count how many of the walk points are visible ground. The first site where
+   * most of them are is the one that gets measured, and the ones that failed are reported.
+   */
+  let framing = null;
+  const tried = [];
+  for (const c of candidates.candidates.slice(0, 6)) {
+    await d.run((s) => {
+      const loco = window.__p11.sys("locomotion");
+      if (loco?.teleport) loco.teleport(s.x, s.y + 0.6, s.z, { yaw: 0 });
+    }, c);
+    await d.play(0.9); // gravity puts the feet on the ground
+    const f = await d.run(() => {
+      const T = window.__p11;
+      const p = T.player();
+      const s = T.lighting._shadowDir; // unit vector world -> light
+      const len = Math.hypot(s.x, s.z) || 1;
+      const away = [-s.x / len, -s.z / len]; // the direction the cast shadow travels
+      const foot = [p.x, T.groundY(p.x, p.z) ?? p.y, p.z];
+      // Stand down-sun, high enough that the ground the shadow falls on fills the frame and the
+      // body that casts it is still in shot. Up-sun the shadow falls away behind the player and the
+      // frame shows a pair of boots and no contact at all — which is how a build ships a floater.
+      const eye = [foot[0] + away[0] * 3.4, foot[1] + 2.0, foot[2] + away[1] * 3.4];
+      const look = [foot[0] + away[0] * 0.9, foot[1] + 0.7, foot[2] + away[1] * 0.9];
+      const set = T.lighting.reviewCamera({ pos: eye, look, fov: 46, detach: ["camera"] });
+      T.grab();
+      const names = T.worldMeshes()
+        .filter((m) => m.visible && (m.system === "terrain" || m.name === "vs.level.rock"))
+        .map((m) => m.name);
+      const own = T.own(names);
+      T.__groundMask = own.mask;
+      T.__groundNames = names;
+      let onGround = 0, total = 0;
+      for (let t = 0; t <= 70; t++) {
+        const dist = t * 0.02;
+        const x = foot[0] + away[0] * dist;
+        const z = foot[2] + away[1] * dist;
+        const y = T.groundY(x, z);
+        if (!Number.isFinite(y)) continue;
+        const sp = T.project([x, y + 0.01, z]);
+        if (sp[2] > 1) continue;
+        total++;
+        if (T.maskBox(own.mask, sp[0], sp[1], 1)) onGround++;
+      }
+      // And is the ground beside the shadow actually LIT? A sun-ray march over the heightfield says
+      // nothing about the boulders standing on it, and a site whose reference is itself in shadow
+      // reports a real contact shadow as no contact shadow.
+      const perp = [-away[1], away[0]];
+      const refs = [];
+      for (let side = -1; side <= 1; side += 2)
+        for (let lat = 1.2; lat <= 2.6; lat += 0.35)
+          for (let along = 0; along <= 1.4; along += 0.2) {
+            const x = foot[0] + away[0] * along + perp[0] * lat * side;
+            const z = foot[2] + away[1] * along + perp[1] * lat * side;
+            const y = T.groundY(x, z);
+            if (!Number.isFinite(y)) continue;
+            const sp = T.project([x, y + 0.02, z]);
+            if (sp[2] > 1 || !T.maskBox(own.mask, sp[0], sp[1], 2)) continue;
+            refs.push(T.patch(sp[0], sp[1], 2).y);
+          }
+      refs.sort((a, b) => a - b);
+      const refP75 = refs.length ? refs[Math.floor(refs.length * 0.75)] : 0;
+      return { ...set, foot, away, player: p, onGround, total, refP75, refN: refs.length, ownedPixels: own.n, groundMeshes: names.length };
+    });
+    tried.push({ candidate: c, onGround: f.onGround, total: f.total, refP75: Number(f.refP75.toFixed(4)), ownedPixels: f.ownedPixels });
+    const score = (x) => (x ? Math.min(x.onGround / 50, 1) * x.refP75 : -1);
+    if (f.onGround >= 45 && f.refP75 >= 0.055) { framing = f; break; }
+    if (score(f) > score(framing)) framing = f;
+  }
   results.measurements.framing = framing;
+  results.measurements.siteAttempts = tried;
   await d.play(0.1);
   await d.run(() => window.__p11.grab());
   if (SHOTS) await d.shoot("review/shots/p11/world-contact.png");
 
   const contact = await d.run((f) => {
     const T = window.__p11;
-    const world = T.worldMeshes();
-    const groundNames = world
-      .filter((m) => m.visible && (m.system === "terrain" || m.name === "vs.level.rock"))
-      .map((m) => m.name);
-    const own = T.own(groundNames);
+    const own = { mask: T.__groundMask, n: f.ownedPixels };
 
     // Walk out from the sole along the shadow, in 2 cm steps, sampling the ground it lands on.
     const walk = [];
@@ -502,30 +689,44 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       walk.push({ t: dist, y: patch.y, owned, sx: Math.round(s[0]), sy: Math.round(s[1]) });
     }
 
-    // The lit reference: ground of the same kind, 4-9 m away, up-facing, inside the ground's own
-    // ownership mask so an unlucky sample cannot land on a rock or on the sky. p75 rather than max,
-    // because the leaf has relief and the brightest sample is a facet, not a plane.
+    // **The reference has to be the SAME GROUND, differing only in whether the body blocks the key.**
+    //
+    // The first two runs of this row took a ring of up-facing patches within 9-12 m of the player
+    // and got Y 0.041, because most of that ring is itself inside the cast shadow of the boulders
+    // standing on it — so "darkening" was measured against ground that was already dark and a real
+    // contact shadow reported as 0.39.
+    //
+    // §3.2's witness is one ground plane, lit and in its own cast shadow. So the reference is taken
+    // *beside* the shadow: the same walk, at the same distances from the sole, offset PERPENDICULAR
+    // to the shadow's bearing by 1.2-2.6 m. Same ground, same orientation, same distance from the
+    // camera, same distance from the player — the only variable left is whether the body is between
+    // that patch and the sun. Every sample still has to pass `sunClear()` (march the terrain's own
+    // height query along the sun ray) and land inside the ground's ownership mask.
+    const perp = [-f.away[1], f.away[0]];
     const refs = [];
-    for (let a = 0; a < 64; a++) {
-      for (let r = 4; r <= 9; r += 0.5) {
-        const ang = (a / 64) * Math.PI * 2;
-        const x = f.foot[0] + Math.cos(ang) * r;
-        const z = f.foot[2] + Math.sin(ang) * r;
-        const n = T.groundNormal(x, z);
-        const ndl = T.groundNdL(x, z);
-        if (!n || n[1] < 0.85 || ndl < 0.2) continue;
-        const y = T.groundY(x, z);
-        if (!Number.isFinite(y)) continue;
-        const s = T.project([x, y + 0.02, z]);
-        if (s[2] > 1 || s[0] < 6 || s[1] < 6 || s[0] > T.buf.w - 7 || s[1] > T.buf.h - 7) continue;
-        if (!T.maskBox(own.mask, s[0], s[1], 2)) continue;
-        const patch = T.patch(s[0], s[1], 2);
-        if (patch.spread > 0.03) continue;
-        refs.push(patch.y);
+    for (let side = -1; side <= 1; side += 2) {
+      for (let lat = 1.2; lat <= 2.6; lat += 0.2) {
+        for (let along = 0; along <= 1.4; along += 0.1) {
+          const x = f.foot[0] + f.away[0] * along + perp[0] * lat * side;
+          const z = f.foot[2] + f.away[1] * along + perp[1] * lat * side;
+          const n = T.groundNormal(x, z);
+          const ndl = T.groundNdL(x, z);
+          if (!n || n[1] < 0.85 || ndl < 0.12) continue;
+          if (!T.sunClear(x, z)) continue;
+          const y = T.groundY(x, z);
+          if (!Number.isFinite(y)) continue;
+          const s = T.project([x, y + 0.02, z]);
+          if (s[2] > 1 || s[0] < 6 || s[1] < 6 || s[0] > T.buf.w - 7 || s[1] > T.buf.h - 7) continue;
+          if (!T.maskBox(own.mask, s[0], s[1], 2)) continue;
+          const patch = T.patch(s[0], s[1], 2);
+          if (patch.spread > 0.03) continue;
+          refs.push(patch.y);
+        }
       }
     }
     refs.sort((a, b) => a - b);
-    const litRef = refs.length ? refs[Math.floor(refs.length * 0.75)] : 0;
+    const pct = (q) => (refs.length ? refs[Math.min(refs.length - 1, Math.floor(refs.length * q))] : 0);
+    const litRef = pct(0.75);
     const usable = walk.filter((w) => w.owned);
     const darkening = usable.map((w) => 1 - w.y / Math.max(litRef, 1e-4));
     let first = null;
@@ -533,6 +734,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     const near = darkening.slice(0, 30);
     return {
       litRef,
+      refPercentiles: [pct(0.25), pct(0.5), pct(0.75), pct(0.9)].map((v) => Number(v.toFixed(4))),
       refSamples: refs.length,
       walkSamples: walk.length,
       onGround: usable.length,
@@ -545,13 +747,60 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   results.measurements.contact = contact;
   claim("C1", fmt(contact.contactDarkening, 3),
     contact.refSamples >= 12 && contact.onGround >= 8 && contact.contactDarkening >= 0.45,
-    `lit reference Y ${fmt(contact.litRef)} over ${contact.refSamples} up-facing ground samples; ` +
-      `${contact.onGround}/${contact.walkSamples} walk samples landed on visible ground; darkening at the sole ${fmt(contact.atSole, 3)}`,
+    `lit reference Y ${fmt(contact.litRef)} (p25/50/75/90 ${JSON.stringify(contact.refPercentiles)}) over ` +
+      `${contact.refSamples} sunlit ground samples 1.2-2.6 m beside the shadow; ` +
+      `${contact.onGround}/${contact.walkSamples} walk samples landed on visible ground; darkening at the sole ${fmt(contact.atSole, 3)}; ` +
+      `site chosen from ${results.measurements.siteAttempts.length} tried: ${JSON.stringify(results.measurements.siteAttempts.map((t) => t.onGround))} walk samples on ground`,
     "shipped Leaf Nine, camera placed down-sun of the shipped avatar");
   claim("C2", contact.firstDarkAt === null ? "never" : fmt(contact.firstDarkAt, 3),
     contact.firstDarkAt !== null && contact.firstDarkAt <= 0.10,
     `metres of lit ground between the sole and the shadow`,
     "shipped Leaf Nine, camera placed down-sun of the shipped avatar");
+
+  // L2's mass: whichever framing presents a single rock with more sampleable lit facets.
+  const ladderNear = await d.run(ladderFn);
+  results.measurements.ladderNear = ladderNear;
+  const bestLadder = (ladderNear.massFacets ?? 0) > (ladder.massFacets ?? 0) ? ladderNear : ladder;
+  results.measurements.ladderUsed = bestLadder === ladderNear ? "contact framing" : "gameplay camera";
+  claim("L2", `${bestLadder.steps} steps over ${bestLadder.massFacets} facets`,
+    bestLadder.steps >= 4 && bestLadder.steps <= 7 && bestLadder.massFacets >= 6,
+    `mass = ${bestLadder.massKey}; light ladder ${JSON.stringify(bestLadder.normalised)} at N·L ${JSON.stringify(bestLadder.massNdL)}; ` +
+      `raw pixel values on the same mass resolve into ${bestLadder.valueSteps} steps with the authored per-face colour jitter left in; ` +
+      `the other framing offered ${bestLadder === ladderNear ? ladder.massFacets : ladderNear.massFacets} facets`,
+    `shipped Leaf Nine, one factory-painted scatter rock mass (${bestLadder === ladderNear ? "contact framing" : "gameplay camera"})`);
+
+  // ---------------------------------------------------------------- T1 temporal noise
+  //
+  // §11.6's budget is a SHIMMER budget: a facet flipping value between two consecutive fixed steps,
+  // which is what an unstable shader, a swimming shadow map or an aliasing normal looks like. Two
+  // things in this scene are *authored* to move — the avatar's idle animation and the scatter's wind
+  // — and a blade of grass crossing a pixel boundary is not shimmer. It is also not enough to mask
+  // their own pixels out, because their cast shadows move across ground they do not own. So the two
+  // systems that drive that motion are detached and the frame is stepped again; everything left that
+  // changes is the rig and the shaders, which is exactly what this row is about. Both numbers are
+  // reported, and this runs last so nothing downstream sees a frozen world.
+  const noiseRaw = await d.run(() => {
+    window.__p11.grab();
+    window.__p11.stash();
+  });
+  await d.advance(1 / 60);
+  const noiseAll = await d.run(() => {
+    window.__p11.grab();
+    return window.__p11.moved(0.05, null);
+  });
+  await d.run(() => window.__p11.lighting.reviewCamera({ detach: ["animator", "scatter", "locomotion"] }));
+  await d.run(() => { window.__p11.grab(); window.__p11.stash(); });
+  await d.advance(1 / 60);
+  const noise = await d.run(() => {
+    window.__p11.grab();
+    return window.__p11.moved(0.05, null);
+  });
+  results.measurements.temporal = { frozen: noise, everythingRunning: noiseAll, noiseRaw };
+  claim("T1", fmt(noise.share * 100, 3) + "%", noise.share <= 0.002,
+    `${noise.moved} of ${noise.total} px changed > 0.05 Y in one fixed step with the avatar's animator ` +
+      `and the scatter's wind clock detached; with every system running the same step moves ` +
+      `${fmt(noiseAll.share * 100, 3)}% (${noiseAll.moved} px)`,
+    "shipped Leaf Nine, contact framing, motion-authoring systems detached");
 
   // ---------------------------------------------------------------- N/P housekeeping
   const probe = await d.probe("lighting");

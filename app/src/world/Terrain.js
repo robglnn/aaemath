@@ -452,6 +452,10 @@ export function flatMaterial(key, opts = {}) {
   });
   mat.userData.vsUniforms = local;
   mat.userData.vsEmissive = (opts.unlit ?? 0) > 0.5; // P12's bloom mask reads this flag
+  // A carry and a certainty field are §7.2 accents — the only saturated things in this world — and
+  // the factory's `vsAccent` flag is how every downstream census finds them. Without it P11's own
+  // accent-leak row counted six hundred metres of luminous teal river as cyan that had escaped.
+  mat.userData.vsAccent = mat.userData.vsEmissive;
 
   _matCache.set(key, mat);
   return mat;

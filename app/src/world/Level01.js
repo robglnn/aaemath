@@ -118,14 +118,26 @@ function pad(aX, aZ, x0, x1, z0, z1, f) {
 // surface class; the visible surface is the ribbon, and the ribbon rides the ground.
 export const CARRIES = [
   {
-    // The subject of the arrival frame. Starts 23 m in front of the brow, low in frame and wide,
-    // and runs 400 m down the leaf, narrowing, to pour off the east lip into open sky.
+    // The subject of the arrival frame: born at the brow's foot ~55 m in front of the player,
+    // running 360 m down the leaf and pouring off the east lip into open sky.
+    //
+    // 55 m and 26 m wide, not 4 m and 34 m wide. At the head the first version put the ribbon
+    // under the camera, where a 34 m slab subtends most of the lower frame and reads as a
+    // swimming pool — a shape with no vanishing point cannot walk an eye anywhere. Set back, the
+    // same ribbon converges, and convergence is the whole mechanism.
+    //
+    // `brim` is 2.6 m rather than 0.45 because the mid-leaf is not just talus — it is talus plus
+    // several thousand scatter props, none of which are colliders. The river measured as fully
+    // unoccluded by the collision world and painted cyan in 8 pixels out of 119, which is the
+    // signature of something in front of it that physics cannot see. A carry is syrup-thick and
+    // brimming; standing it proud of its bank is in character and it is the only lever this piece
+    // owns against a mesh another piece scatters.
     id: "carry.spine",
-    width: 34,
-    depth: 1.6,
-    brim: 0.45,
+    width: 30,
+    depth: 1.8,
+    brim: 2.6,
     hero: true,
-    pts: [[-194, 16], [-152, 28], [-106, 18], [-58, 34], [-8, 46], [42, 66], [84, 100], [118, 138], [150, 178]],
+    pts: [[-158, 20], [-124, 14], [-96, 30], [-52, 34], [-8, 46], [42, 66], [84, 100], [118, 138], [150, 178]],
   },
   {
     id: "carry.low",
@@ -163,7 +175,11 @@ export const CARRIES = [
 
 /** The ravine's centreline and half-width. It wanders, because a fracture is not a saw cut. */
 const ravineCentre = (aZ) => 176 + 26 * Math.sin(aZ * 0.0122) + 13 * Math.sin(aZ * 0.031 + 2.0);
-const ravineHalf = (aZ) => 12 + 4.5 * Math.sin(aZ * 0.0185 + 1.1) + 2.5 * Math.sin(aZ * 0.047);
+// The constant is 17 and not 12 because C3 — "the ravine cannot be walked or jumped" — is measured
+// at the ravine's *narrowest* line, not its average, and the two sine terms subtract 7 m at their
+// worst. At 12 the pinch closed to a jumpable gap and Beat 3 lost the only thing that makes the
+// span matter.
+const ravineHalf = (aZ) => 17 + 4.5 * Math.sin(aZ * 0.0185 + 1.1) + 2.5 * Math.sin(aZ * 0.047);
 
 export const LEAF = {
   id: "leaf-nine",
@@ -199,11 +215,15 @@ export const LEAF = {
     // --- the head: a bowl behind a brow -------------------------------------------------
     // The brow is the hero vantage AND the reason the Bollard is never in the same shot as the
     // Second Lip. It is load-bearing twice over.
+    // 30 m and +20 m, not 40.5 and +12.5. The brow's second job is to keep the Bollard's crown
+    // below the skyline from every stand down-leaf of it, and at the old numbers the crown sat
+    // 14 m *above* the brow crest — so it peeked over, and `review/measure/P09.mjs` swept 2634
+    // camera stands and found 21 that held both ends of the body at once.
     const bowl = pad(aX, aZ, -336, -264, -140, 165, 24);
-    h = lerp(h, 40.5, bowl * 0.95);
+    h = lerp(h, 30, bowl * 0.95);
     protect = Math.max(protect, bowl * 0.9);
     const brow = pad(aX, aZ, -260, -206, -170, 180, 20);
-    h += brow * 12.5;
+    h += brow * 20;
     protect = Math.max(protect, brow * 0.5);
 
     // --- the crest: the angular spires that frame the left of every arrival shot -------
@@ -228,8 +248,12 @@ export const LEAF = {
     const wob2 = Math.sin(aZ * 0.021) * 14 + Math.sin(aZ * 0.052 + 1.3) * 6;
     h += scarp(-136, -112, -74, -40, 11, wob2);
     h += scarp(120, 140, 150, 168, 8, wob2 * 0.6);
+    // The knuckle is 8 m taller than it was, and the reason is C1 rather than taste: the sightline
+    // from the crest summit down to the Second Lip passes over this pad at about 40 m, and at
+    // 14 + 20·ridged the knuckle topped out just under that. It is the only thing standing between
+    // the two ends of the body along that particular line.
     const knuckle = pad(aX, aZ, 26, 106, -96, -8, 22);
-    h += knuckle * (14 + ridged(aX * 0.026, aZ * 0.026, 517, 3) * 20);
+    h += knuckle * (22 + ridged(aX * 0.026, aZ * 0.026, 517, 3) * 26);
     rough = lerp(rough, 1.9, knuckle);
 
     // --- the middle terrace: where the leaf opens out and the traffic crosses ----------
@@ -250,6 +274,28 @@ export const LEAF = {
     const ridgeF = pad(aX, aZ, 214, 336, -218, -92, 26);
     h += ridgeF * 28;
     rough = lerp(rough, 1.7, ridgeF);
+
+    // --- the Cutwater: the question the horizon asks ------------------------------------
+    //
+    // The arrival frame had no subject and no far read. `heightRange >= 70 m` was passing on a
+    // distant edge nobody looks at, which is a statistic about the surface and not a fact about
+    // the picture — so this is authored *from the spawn eye outwards*: a peak 90 m above brow
+    // height, 474 m out on a bearing 14° left of down-leaf, standing 10.5° of screen height above
+    // the horizon at the moment the player takes control.
+    //
+    // It is a peak and not a plateau on purpose. `pow(1 − r, 0.72)` puts every facet within six
+    // metres of the apex past 65°, which keeps it off the list of places a player can stand — and
+    // that matters, because a standable 139 m summit is a camera position from which the Bollard
+    // and the Second Lip would share a frame, and world.md §12 says they never may.
+    //
+    // The leaf's own outline cuts its down-leaf flank: the mountain is sheared off mid-slope and
+    // there is nothing under the cut. That is the strongest statement of world.md §2.3 in the
+    // level, and it is free — the lip wall was going to be built there anyway.
+    const cutR = clamp01(Math.hypot((aX - 244) / 66, (aZ + 104) / 52));
+    const cutwater = Math.pow(1 - cutR, 0.72);
+    h += cutwater * 153;
+    rough = lerp(rough, 2.2, cutwater);
+    protect = Math.max(protect, cutwater * 0.82);
     const rim = pad(aX, aZ, 296, 352, -232, 232, 18);
     h += rim * 9;
 
@@ -258,8 +304,15 @@ export const LEAF = {
       const { d } = distToPolyline(aX, aZ, c.pts);
       if (d > c.width * 2.0) continue;
       const w = 1 - smoothstep(c.width * 0.5, c.width * 1.8, d);
+      // **The carve is held off the brow.** `carry.spine` is born at the brow's foot, twenty-odd
+      // metres in front of where the player is put down, and at full strength its channel took
+      // sixteen metres off the crest the arrival frame is composed from — the spawn ended up
+      // standing *in* the river at 38.5 m instead of on the brow at 55, which flattened the whole
+      // shot and then hid the river behind its own bank. The ribbon still rides over the brow,
+      // because `ribbonTris` follows the ground; only the excavation stops.
+      const cut = w * (1 - brow * 0.88);
       const floor = baseY(aX) - c.depth;
-      h = lerp(h, Math.min(h, floor), w);
+      h = lerp(h, Math.min(h, floor), cut);
       protect = Math.max(protect, w);
       if (w > 0.2) mat = 2;
       thick = lerp(thick, 0.72, w);
@@ -332,7 +385,17 @@ function archTris(out, { x, y, z, span, height, thick, depth, rot = 0, segs = 9,
   return out;
 }
 
-/** A ribbon of faceted quads along a leaf-space polyline — a carry's surface. */
+/**
+ * A ribbon of faceted quads along a leaf-space polyline — a carry's surface.
+ *
+ * `yAt(worldPoints, aX, t)` is handed **every world corner of the cross-section it is about to
+ * emit** and returns one height for all of them. That signature is the fix for the bug that made
+ * every carry in this level invisible: the old one took `aX` alone and answered `baseY(aX) − 1.5`,
+ * a height on the leaf's abstract tilted plane. The terrace sits above that plane and the certainty
+ * field sits eight metres below it, so the same expression buried the river in one place and
+ * floated it in the other. Sampling the built ground at the ribbon's own corners and taking the
+ * highest of them means the surface can only ever sit *on* the channel, never in it.
+ */
 function ribbonTris(out, pts, widthAt, yAt, along = 5) {
   let total = 0;
   for (let i = 1; i < pts.length; i++) total += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
@@ -363,16 +426,14 @@ function ribbonTris(out, pts, widthAt, yAt, along = 5) {
   for (let s = 0; s < samples.length - 1; s++) {
     const a = samples[s];
     const b = samples[s + 1];
-    const side = (p, sign) => {
-      const aX = p.px + p.nx * sign;
-      const aZ = p.pz + p.nz * sign;
-      const w = W(aX, aZ);
-      return [w[0], yAt(p.px, p.t), w[1]];
-    };
-    const a0 = side(a, -1);
-    const a1 = side(a, 1);
-    const b0 = side(b, -1);
-    const b1 = side(b, 1);
+    const xz = (p, sign) => W(p.px + p.nx * sign, p.pz + p.nz * sign);
+    const corners = [xz(a, -1), xz(a, 1), xz(b, -1), xz(b, 1)];
+    const ya = yAt(corners.slice(0, 2).concat([W(a.px, a.pz)]), a.px, a.t);
+    const yb = yAt(corners.slice(2, 4).concat([W(b.px, b.pz)]), b.px, b.t);
+    const a0 = [corners[0][0], ya, corners[0][1]];
+    const a1 = [corners[1][0], ya, corners[1][1]];
+    const b0 = [corners[2][0], yb, corners[2][1]];
+    const b1 = [corners[3][0], yb, corners[3][1]];
     const am = [(a0[0] + a1[0]) / 2, a0[1] + 0.12, (a0[2] + a1[2]) / 2];
     const bm = [(b0[0] + b1[0]) / 2, b0[1] + 0.12, (b0[2] + b1[2]) / 2];
     // Split down the middle so a carry has a bright core lane and two cooler banks.
@@ -454,6 +515,34 @@ export class Level01 {
     const spires = [];
     const rock = [];
 
+    /**
+     * A spire may only stand where the leaf is solid all the way round its widest ring.
+     *
+     * Without this, `crestLine[0]` (radius 28 at aX −282) hung its skirt out past the head lip,
+     * and a downward probe from 400 m found a rock floor at y 48 in a place world.md §2.3 says is
+     * open sky — S4's `belowHits`. Shrinking is preferred to skipping: the composition wants a
+     * spire there, it just may not want that much of one.
+     */
+    const fitRadius = (aX, aZ, r) => {
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const test = r * Math.pow(0.84, attempt) * 1.06;
+        let clear = true;
+        for (let k = 0; k < 8 && clear; k++) {
+          const a = (k / 8) * Math.PI * 2;
+          const [x, z] = W(aX + Math.cos(a) * test, aZ + Math.sin(a) * test);
+          if (!this.terrain.isSolid(x, z)) clear = false;
+        }
+        if (clear) {
+          if (attempt > 0) this.spiresTrimmed++;
+          return r * Math.pow(0.84, attempt);
+        }
+      }
+      this.spiresSkipped++;
+      return 0;
+    };
+    this.spiresTrimmed = 0;
+    this.spiresSkipped = 0;
+
     // Three shards standing free, close enough to the brow to cut the left edge of the arrival
     // frame. Without a hard silhouette inside forty metres the shot is a landscape photograph
     // and not a place someone is standing in.
@@ -470,16 +559,24 @@ export class Level01 {
       [-186, 42, 7, 22, 75],
       [-160, 60, 5, 15, 76],
     ];
-    for (const [aX, aZ, r, h, s] of hero) {
+    // `sides: 7` and no `rings` — which means `shard()`'s `SHOULDERS` profile, because these are
+    // the largest single objects in the arrival frame and the old ring set gave them one value.
+    // A critic measured the left spire as one uniform dark tone across 420×420 px with a single
+    // hairline seam in it: four bands all leaning the same way take the same N·L, so subdividing
+    // a cone changes the triangle count and nothing else. `SHOULDERS` changes the *inclination*
+    // band to band, which is what makes a value band.
+    hero.forEach(([aX, aZ, r0, h, s], i) => {
       const [x, z] = W(aX, aZ);
+      const r = fitRadius(aX, aZ, r0);
+      if (r <= 0) return;
       spires.push(
         ...shard({
           x, y: this.groundA(aX, aZ) - 4, z,
-          radius: r, height: h, sides: 5, taper: 0.11,
-          lean: [-4, -5], rings: [[0.46, 0.86], [0.78, 0.52]], seed: s, jag: 0.4,
+          radius: r, height: h, sides: 6 + (i % 2), taper: 0.11,
+          lean: [-4, -5], seed: s, jag: 0.4,
         })
       );
-    }
+    });
 
     // The crest behind them: eleven more, in three depth ranks, so the left edge has overlap.
     const crestLine = [
@@ -488,16 +585,17 @@ export class Level01 {
       [-172, -104, 13, 26], [-158, -138, 17, 42], [-140, -164, 15, 34],
       [-126, -108, 11, 22], [-108, -142, 13, 28],
     ];
-    crestLine.forEach(([aX, aZ, r, h], i) => {
+    crestLine.forEach(([aX, aZ, r0, h], i) => {
       const [x, z] = W(aX, aZ);
+      const r = fitRadius(aX, aZ, r0);
+      if (r <= 0) return;
       spires.push(
         ...shard({
           x, y: this.groundA(aX, aZ) - 5, z,
           radius: r, height: h,
-          sides: 5 + (i % 3),
+          sides: 6 + (i % 2),
           taper: 0.1 + (i % 4) * 0.06,
           lean: [-3 + (i % 3) * 3, -4 - (i % 5) * 2],
-          rings: [[0.42, 0.86], [0.74, 0.5]],
           seed: 200 + i,
           jag: 0.36,
         })
@@ -506,9 +604,11 @@ export class Level01 {
 
     // A counterweight on the right so the arrival frame is not lopsided, and a marker on the
     // knuckle so the mid-leaf has something to aim at.
-    for (const [aX, aZ, r, h, s] of [[-206, 92, 10, 26, 81], [-176, 128, 7, 18, 82], [70, -54, 13, 30, 83], [88, -30, 8, 19, 84]]) {
+    for (const [aX, aZ, r0, h, s] of [[-206, 92, 10, 26, 81], [-176, 128, 7, 18, 82], [70, -54, 13, 30, 83], [88, -30, 8, 19, 84]]) {
       const [x, z] = W(aX, aZ);
-      spires.push(...shard({ x, y: this.groundA(aX, aZ) - 4, z, radius: r, height: h, sides: 6, taper: 0.14, lean: [3, 4], rings: [[0.5, 0.82]], seed: s, jag: 0.38 }));
+      const r = fitRadius(aX, aZ, r0);
+      if (r <= 0) continue;
+      spires.push(...shard({ x, y: this.groundA(aX, aZ) - 4, z, radius: r, height: h, sides: 7, taper: 0.14, lean: [3, 4], seed: s, jag: 0.38 }));
     }
 
     // Boulders. Fewer and bigger than the first pass: at gameplay distance a hundred small
@@ -527,7 +627,21 @@ export class Level01 {
       // the fastest way to turn five hundred metres of readable recession into a gravel pit.
       if (slope < 0.09) continue;
       if (hash2i(i, 3, 5503) > slope * 1.6) continue;
-      const r = 1.8 + hash2i(i, 4, 5504) * (2.6 + slope * 9);
+      // **Talus does not gather in a river.** Every carry clears its own banks, and the hero
+      // carry clears a wider margin than the rest. This is the difference between a river and a
+      // rumour of one: the arrival frame's mid-leaf was a continuous wall of boulders with the
+      // ribbon showing through it in thirty-pixel slivers, and no amount of widening or raising
+      // the ribbon fixes an object standing in front of it.
+      let inChannel = false;
+      for (const c of CARRIES) {
+        if (distToPolyline(aX, aZ, c.pts).d < c.width * (c.hero ? 1.55 : 1.05)) { inChannel = true; break; }
+      }
+      if (inChannel) continue;
+      // Size falls off toward the brow. A 13 m boulder 40 m from the spawn is not a landmark, it
+      // is a blindfold: the arrival frame is composed over five hundred metres and the foreground
+      // is the one part of it that can cancel the other four hundred and sixty.
+      const nearSpawn = clamp01((Math.hypot(aX + 216, aZ - 10) - 40) / 110);
+      const r = 1.8 + hash2i(i, 4, 5504) * (2.6 + slope * 9) * (0.34 + 0.66 * nearSpawn);
       rock.push(
         ...shard({
           x, y: y - r * 0.5, z,
@@ -543,7 +657,7 @@ export class Level01 {
       placed++;
     }
     this.boulderCount = placed;
-    this.spireCount = hero.length + crestLine.length + 4;
+    this.spireCount = hero.length + crestLine.length + 4 - this.spiresSkipped;
 
     const geo = mergeFacets([
       facetGeometry(new Float32Array(spires), (cx, cy, cz, nx, ny, nz, ti) => this._rockColor(ny, ti)),
@@ -570,14 +684,28 @@ export class Level01 {
 
   _composeCarries() {
     const tris = [];
+    this.carrySurface = [];
     for (const c of CARRIES) {
+      const brim = c.brim ?? 0.45;
       ribbonTris(
         tris,
         c.pts,
         (t) => c.width * (0.72 + 0.13 * Math.sin(t * 9.1) + 0.07 * Math.sin(t * 21)),
         // The surface sits high in its channel — a carry is syrup-thick and brimming, and a
-        // river sunk five metres into a slot is invisible from anywhere but directly above it.
-        (aX) => baseY(aX) - 1.5,
+        // river sunk into a slot is invisible from anywhere but directly above it. `brim` is
+        // measured from the *highest* ground under the cross-section, so no part of the ribbon
+        // can end up below the bank beside it however the pads above shaped that stretch.
+        (corners, aX) => {
+          let top = -Infinity;
+          for (const [x, z] of corners) {
+            const g = this.terrain.groundAt(x, z);
+            if (Number.isFinite(g) && g > top) top = g;
+          }
+          if (!Number.isFinite(top)) top = baseY(aX) - c.depth;
+          const y = top + brim;
+          this.carrySurface.push({ id: c.id, aX: Math.round(aX), y: Number(y.toFixed(2)), ground: Number(top.toFixed(2)) });
+          return y;
+        },
         7
       );
     }
@@ -915,6 +1043,13 @@ export class Level01 {
       weir: at(-30, 78),
       terrace: at(24, 20),
       knuckle: at(66, -52),
+      // The Cutwater's summit, and the two ends of the hero carry. These are published because
+      // they are places, not because K2 counts them: the head of the river is 23 m in front of
+      // where the player is put down, and its mouth is where the leaf stops and the water does
+      // not.
+      cutwater: at(244, -104),
+      carryHead: at(-194, 16),
+      carryMouth: at(150, 178),
       spanNear: at(nearX - 1.5, spanZ),
       spanFar: at(farX + 1.5, spanZ),
       secondLip: at(268, 26),
@@ -966,7 +1101,24 @@ export class Level01 {
       id: LEAF.id,
       downLeaf: [0, 0, -1],
       anchors: this.anchors,
-      carries: CARRIES.map((c) => ({ id: c.id, uphill: !!c.uphill })),
+      // `pts` and `width` go out so `review/measure/P09.mjs` can pick this piece's own hero river
+      // out of the merged carry mesh and measure where it lands on screen, rather than trusting a
+      // colour range that the certainty field shares.
+      carries: CARRIES.map((c) => ({
+        id: c.id,
+        uphill: !!c.uphill,
+        hero: !!c.hero,
+        width: c.width,
+        brim: c.brim ?? 0.45,
+        pts: c.pts,
+      })),
+      // The smallest clearance any ribbon cross-section has over the ground it rides. Negative
+      // means a carry is buried, which is the failure that made every river in this level
+      // invisible for a whole round.
+      carryClearance: this.carrySurface?.length
+        ? Number(Math.min(...this.carrySurface.map((s) => s.y - s.ground)).toFixed(3))
+        : null,
+      spires: { placed: this.spireCount, trimmed: this.spiresTrimmed, skipped: this.spiresSkipped },
       landmarks: {
         spires: this.spireCount,
         boulders: this.boulderCount,

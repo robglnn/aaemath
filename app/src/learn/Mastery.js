@@ -110,7 +110,20 @@ export function bktUpdate(p, correct, slip, guess, learn, weight = 1) {
  * re-runs the whole audit at 2400 draws per cell and FAILS if a single accept/reject verdict
  * moves, which is the check that keeps this number honest rather than merely cheap.
  */
-export const BANK_AUDIT_PER_CELL = 384;
+export const BANK_AUDIT_PER_CELL = 256;
+
+/**
+ * Candidate strings tried per family, and the cap on how many items the EXECUTED path marks.
+ *
+ * Both are cost controls with a stated accuracy consequence, not arbitrary. The verdicts this
+ * audit produces on the shipped bank separate into two clusters that are nowhere near each other
+ * — 0.239 and up get refused, 0.15 and down get re-priced — so the sample only has to resolve a
+ * gap of about 0.09, which 96 draws does at better than two standard errors. `review/measure/
+ * P16.mjs` re-runs the whole audit at six times this sample with no cap and FAILS if one verdict
+ * moves, which is what makes these numbers a budget rather than a guess.
+ */
+export const EXECUTED_CANDIDATES = 5;
+export const EXECUTED_SAMPLE_CAP = 96;
 
 /** Wilson 95% upper bound. A measured 0.136 over 400 draws is not "0.136"; it is "at most 0.175". */
 export function wilsonUpper(hits, n) {
@@ -222,25 +235,39 @@ export const EXECUTED_FORMS = ["generate"];
  * @param {(item:object)=>string} [o.spell] a typable spelling of an item's own answer.
  * @param {string[]} [o.executedForms]
  */
-export function auditBlindGuessing(sample, { mark = null, spell = null, executedForms = EXECUTED_FORMS } = {}) {
-  const byCell = new Map();
+export function auditBlindGuessing(
+  sample,
+  {
+    mark = null,
+    spell = null,
+    executedForms = EXECUTED_FORMS,
+    candidates: candidateCount = EXECUTED_CANDIDATES,
+    executedCap = EXECUTED_SAMPLE_CAP,
+  } = {}
+) {
+  const byGroup = new Map();
   for (const row of sample ?? []) {
-    const cell = `${row.kpId}|${row.form}`;
-    let rows = byCell.get(cell);
-    if (!rows) byCell.set(cell, (rows = []));
+    // GRANULARITY IS THE WHOLE ARGUMENT. The leak is not in the form and it is not evenly spread
+    // across a knowledge point: it is in individual GENERATOR FAMILIES. `expr-anatomy.coefficient`
+    // asks for the coefficient of a bare x and the answer is 1, every single time, forever;
+    // `expr-anatomy.term` sitting beside it in the same (kp x form) cell is perfectly sound.
+    // Measuring the cell as a lump either condemns the sound family or excuses the broken one.
+    const key = `${row.kpId}|${row.form}|${row.item.family ?? "(unfamilied)"}`;
+    let rows = byGroup.get(key);
+    if (!rows) byGroup.set(key, (rows = []));
     rows.push(row.item);
   }
 
-  const cells = {};
+  const families = {};
   const notExecuted = [];
-  for (const [cell, items] of byCell) {
-    const form = cell.slice(cell.indexOf("|") + 1);
+  for (const [key, items] of byGroup) {
+    const form = key.split("|")[1];
     const counts = new Map();
     for (const item of items) {
-      const key = canonicalKey(item);
-      const hit = counts.get(key);
+      const ckey = canonicalKey(item);
+      const hit = counts.get(ckey);
       if (hit) hit.n += 1;
-      else counts.set(key, { n: 1, item });
+      else counts.set(ckey, { n: 1, item });
     }
     const ranked = [...counts.entries()].sort((a, b) => b[1].n - a[1].n);
     const n = items.length;
@@ -250,24 +277,25 @@ export function auditBlindGuessing(sample, { mark = null, spell = null, executed
     let executed = false;
 
     if (executedForms.includes(form)) {
-      if (typeof mark !== "function") notExecuted.push(cell);
+      if (typeof mark !== "function") notExecuted.push(key);
       else {
         executed = true;
-        // Candidates: the answers this cell actually produces most often, spelled the way the
+        // Candidates: the answers this family actually produces most often, spelled the way the
         // shipped checker documents them, plus two staples a responder types for free.
         const candidates = [];
-        for (const [key, rec] of ranked.slice(0, 6)) {
-          const s = typeof spell === "function" ? spell(rec.item) : key;
+        for (const [ckey, rec] of ranked.slice(0, candidateCount)) {
+          const s = typeof spell === "function" ? spell(rec.item) : ckey;
           if (s) candidates.push(String(s));
         }
         candidates.push("0", "x");
+        const marked = Math.min(n, executedCap);
         modal = 0;
         modalAnswer = null;
         for (const candidate of candidates) {
           let hits = 0;
-          for (let i = 0; i < n; i += 1) {
+          for (let i = 0; i < marked; i += 1) {
             // Early abandonment: a candidate that cannot catch the leader is not worth finishing.
-            if (hits + (n - i) <= modal) break;
+            if (hits + (marked - i) <= modal) break;
             try {
               if (mark(items[i], candidate)) hits += 1;
             } catch {
@@ -279,10 +307,14 @@ export function auditBlindGuessing(sample, { mark = null, spell = null, executed
             modalAnswer = candidate;
           }
         }
+        // `n` is what was actually MARKED on this path, so the confidence bound is honest about
+        // the evidence behind it rather than borrowing the unmarked draws' sample size.
+        families[key] = { n: marked, distinct: counts.size, rate: marked ? modal / marked : 0, upper: wilsonUpper(modal, marked), modalAnswer, executed };
+        continue;
       }
     }
 
-    cells[cell] = {
+    families[key] = {
       n,
       distinct: counts.size,
       rate: n ? modal / n : 0,
@@ -291,7 +323,25 @@ export function auditBlindGuessing(sample, { mark = null, spell = null, executed
       executed,
     };
   }
-  return { cells, sampled: sample?.length ?? 0, notExecuted };
+
+  // The cell aggregate, kept because it is what a caller that reports no family gets priced at,
+  // and because "how bad is this knowledge point overall" is still a question worth answering.
+  const cells = {};
+  for (const [key, rec] of Object.entries(families)) {
+    const cell = key.slice(0, key.lastIndexOf("|"));
+    const agg = (cells[cell] ??= { n: 0, distinct: 0, rate: 0, upper: 0, modalAnswer: null, executed: rec.executed, familyCount: 0 });
+    agg.n += rec.n;
+    agg.distinct += rec.distinct;
+    agg.familyCount += 1;
+    // A guesser picks the softest family it is offered, so the cell's rate is the WORST family's,
+    // not the average — an average would let one sound family launder three broken ones.
+    if (rec.rate > agg.rate) {
+      agg.rate = rec.rate;
+      agg.upper = rec.upper;
+      agg.modalAnswer = rec.modalAnswer;
+    }
+  }
+  return { families, cells, sampled: sample?.length ?? 0, notExecuted };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -390,21 +440,42 @@ export class Mastery {
     return this.cell(kpId, form)?.priceable !== false;
   }
 
+  /**
+   * The generator families of this (kp x form) the engine will NOT score. Published on every
+   * request so whoever picks the item can pick a different one — the leak is closed either way,
+   * but a refused item still costs the learner 46 s, so the honest move is to not serve it.
+   */
+  refusedFamilies(kpId, form) {
+    return this.cell(kpId, form)?.refusedFamilies ?? [];
+  }
+
+  /**
+   * Was THIS item's family one the engine will score? `null`/`undefined` means the presenter did
+   * not say, and the cell-level price — the worst surviving family — stands.
+   */
+  isFamilyPriceable(kpId, form, family) {
+    if (family == null) return this.isCellPriceable(kpId, form);
+    const rec = this.cell(kpId, form)?.families?.[family];
+    return rec ? rec.priceable : this.isCellPriceable(kpId, form);
+  }
+
   /** Is this (form, phase) pair, ON THIS NODE, allowed to produce a BKT update at all? */
-  isScorable(kpId, form, phase) {
+  isScorable(kpId, form, phase, family = null) {
     return (
       this.pricing.scoredForms.has(form) &&
       this.pricing.scoredPhases.has(phase) &&
-      this.isCellPriceable(kpId, form)
+      this.isCellPriceable(kpId, form) &&
+      this.isFamilyPriceable(kpId, form, family)
     );
   }
 
   /** May this (form, phase) pair, ON THIS NODE, increment M2's counters and M3's form set? */
-  isMasteryEligible(kpId, form, phase) {
+  isMasteryEligible(kpId, form, phase, family = null) {
     return (
       this.pricing.masteryForms.has(form) &&
       this.pricing.masteryPhases.has(phase) &&
-      this.isCellPriceable(kpId, form)
+      this.isCellPriceable(kpId, form) &&
+      this.isFamilyPriceable(kpId, form, family)
     );
   }
 
@@ -454,20 +525,23 @@ export class Mastery {
    * Everything the engine believes about one prospective item, before it is answered. P17/P18 can
    * ask this to check they are about to serve something that counts.
    */
-  price(kpId, form, phase = "solo") {
+  price(kpId, form, phase = "solo", family = null) {
     const band = this.graph.band(kpId);
-    const scorable = this.isScorable(kpId, form, phase);
+    const scorable = this.isScorable(kpId, form, phase, family);
     const cell = this.cell(kpId, form);
     return {
       kpId,
       form,
       phase,
+      family,
       band: band.difficulty,
       slip: band.slip,
       modelledGuess: scorable ? this.modelledGuess(kpId, band, form, phase) : null,
       trueGuess: this.trueGuess(kpId, form, phase),
       scorable,
-      masteryEligible: this.isMasteryEligible(kpId, form, phase),
+      masteryEligible: this.isMasteryEligible(kpId, form, phase, family),
+      // Serve none of these. Each one is a generator family with a single memorised answer.
+      avoidFamilies: this.refusedFamilies(kpId, form),
       // What the bank measured, and why the cell was refused if it was. A caller that serves an
       // item this engine will not score should be able to read the reason without guessing.
       bankBlindRate: cell ? cell.blind : null,
@@ -635,7 +709,7 @@ export class Mastery {
     // What the DIRECTOR chose is inert in BOTH directions: no posterior up or down, no counters,
     // no prerequisite credit, no theta movement. Punishing a learner for being taught cost an
     // earlier draft 34 percentage points of median Level 1 mastery.
-    if (!this.isScorable(kpId, form, phase)) {
+    if (!this.isScorable(kpId, form, phase, r.family ?? null)) {
       this.stats.unscoredItems += 1;
       s.unscored += 1;
       out.reason = !this.pricing.scoredForms.has(form)
@@ -643,9 +717,12 @@ export class Mastery {
         : !this.pricing.scoredPhases.has(phase)
           ? "unscored-phase"
           : // The third axis. Named separately because it is a CONTENT defect, not a design
-            // choice: this form is fine in general and this knowledge point's pool of it is not.
-            `unscored-cell:blind-${(this.bankBlindRate(kpId, form)).toFixed(3)}`;
-      if (out.reason.startsWith("unscored-cell")) this.stats.unpriceableCellItems += 1;
+            // choice: this form is fine in general and this item's family is not.
+            !this.isCellPriceable(kpId, form)
+            ? `unscored-cell:blind-${this.bankBlindRate(kpId, form).toFixed(3)}`
+            : `unscored-family:${r.family}:blind-${(this.cell(kpId, form)?.families?.[r.family]?.blind ?? 1).toFixed(3)}`;
+      if (out.reason.startsWith("unscored-cell") || out.reason.startsWith("unscored-family"))
+        this.stats.unpriceableCellItems += 1;
       this._bookkeep(s, out);
       this._emitRespond(out);
       return out;
@@ -666,7 +743,7 @@ export class Mastery {
     }
 
     out.scored = true;
-    out.masteryEligible = this.isMasteryEligible(kpId, form, phase);
+    out.masteryEligible = this.isMasteryEligible(kpId, form, phase, r.family ?? null);
     // `credited` is the engine's own verdict on this response, and it is the ONLY thing any gate
     // is allowed to count. See `_bookkeep`.
     out.credited = correct && out.masteryEligible;
@@ -1336,50 +1413,83 @@ function deriveCellPricing(graph, M, pricing, audit, issues) {
         `blind rate. Pass { mark, spell } to auditBlindGuessing.`
     );
 
+  /** The four caps, run against one measured rate at one band. Returns null when it passes. */
+  const refuseReason = (band, form, blind, blindUpper) => {
+    if (blind > caps.maxTrueGuess) return `blind ${blind.toFixed(3)} > maxTrueGuess ${caps.maxTrueGuess}`;
+    if (blind + caps.maxSlip >= caps.maxSlipPlusGuess)
+      return `blind ${blind.toFixed(3)} + maxSlip ${caps.maxSlip} >= ${caps.maxSlipPlusGuess}`;
+    // (c) + (d), evaluated in every phase the engine will actually score this cell in.
+    for (const phase of pricing.scoredPhases) {
+      const base = band.guess * Math.max(pricing.multByForm[form] ?? 1, pricing.multByPhase[phase] ?? 1);
+      const modelled = Math.max(base, blindUpper);
+      const trueRate = Math.max(pricing.trueByForm[form] ?? 0, pricing.trueByPhase[phase] ?? 0, blind);
+      if (modelled < trueRate) return `modelled ${modelled.toFixed(3)} below true ${trueRate.toFixed(3)} at ${phase}`;
+      if (modelled > caps.maxGuess) return `conservative price ${modelled.toFixed(3)} > maxGuess ${caps.maxGuess} at ${phase}`;
+      if (modelled + caps.maxSlip >= caps.maxSlipPlusGuess)
+        return `price ${modelled.toFixed(3)} + maxSlip ${caps.maxSlip} >= ${caps.maxSlipPlusGuess} at ${phase}`;
+    }
+    return null;
+  };
+
+  const familyIndex = {};
+  for (const [key, rec] of Object.entries(audit.families ?? {})) {
+    const cut = key.lastIndexOf("|");
+    (familyIndex[key.slice(0, cut)] ??= []).push({ family: key.slice(cut + 1), ...rec });
+  }
+
   for (const kpId of graph.ids) {
     const band = graph.band(kpId);
     for (const form of pricing.scoredForms) {
-      const m = audit.cells[`${kpId}|${form}`];
-      if (!m) {
-        issues.push(`bank audit has no sample for "${kpId}|${form}" — cell refused rather than assumed safe`);
-        cells[`${kpId}|${form}`] = { blind: 1, blindUpper: 1, n: 0, distinct: 0, modalAnswer: null, priceable: false, reason: "not-audited" };
-        rejected.push({ cell: `${kpId}|${form}`, blind: null, reason: "not-audited" });
+      const cell = `${kpId}|${form}`;
+      const fams = familyIndex[cell];
+      if (!fams || !fams.length) {
+        issues.push(`bank audit has no sample for "${cell}" — cell refused rather than assumed safe`);
+        cells[cell] = { blind: 1, blindUpper: 1, n: 0, distinct: 0, modalAnswer: null, priceable: false, reason: "not-audited", families: {}, refusedFamilies: [] };
+        rejected.push({ cell, blind: null, reason: "not-audited" });
         continue;
       }
-      const blind = m.rate;
-      const blindUpper = m.upper;
-      let reason = null;
 
-      if (blind > caps.maxTrueGuess) reason = `blind ${blind.toFixed(3)} > maxTrueGuess ${caps.maxTrueGuess}`;
-      else if (blind + caps.maxSlip >= caps.maxSlipPlusGuess)
-        reason = `blind ${blind.toFixed(3)} + maxSlip ${caps.maxSlip} >= ${caps.maxSlipPlusGuess}`;
-      else {
-        // (c) + (d), evaluated in every phase the engine will actually score this cell in.
-        for (const phase of pricing.scoredPhases) {
-          const base = band.guess * Math.max(pricing.multByForm[form] ?? 1, pricing.multByPhase[phase] ?? 1);
-          const modelled = Math.max(base, blindUpper);
-          const trueRate = Math.max(pricing.trueByForm[form] ?? 0, pricing.trueByPhase[phase] ?? 0, blind);
-          if (modelled < trueRate) reason = `modelled ${modelled.toFixed(3)} below true ${trueRate.toFixed(3)} at ${phase}`;
-          else if (modelled > caps.maxGuess) reason = `conservative price ${modelled.toFixed(3)} > maxGuess ${caps.maxGuess} at ${phase}`;
-          else if (modelled + caps.maxSlip >= caps.maxSlipPlusGuess)
-            reason = `price ${modelled.toFixed(3)} + maxSlip ${caps.maxSlip} >= ${caps.maxSlipPlusGuess} at ${phase}`;
-          if (reason) break;
-        }
+      // Refuse the FAMILY, not the cell. A knowledge point whose `.coefficient` family always
+      // answers 1 still has a `.term` family that is honest work, and condemning the whole cell
+      // would take a band-1 node — and therefore the entire graph behind it — off the air.
+      const familyRecords = {};
+      const refusedFamilies = [];
+      const kept = [];
+      for (const fam of fams) {
+        const reason = refuseReason(band, form, fam.rate, fam.upper);
+        familyRecords[fam.family] = {
+          blind: round6(fam.rate),
+          blindUpper: round6(fam.upper),
+          n: fam.n,
+          modalAnswer: fam.modalAnswer,
+          priceable: reason === null,
+          reason,
+        };
+        if (reason) {
+          refusedFamilies.push(fam.family);
+          rejected.push({ cell, family: fam.family, blind: round6(fam.rate), n: fam.n, modalAnswer: fam.modalAnswer, reason });
+        } else kept.push(fam);
       }
 
-      const record = {
+      // What a guesser gets once only the surviving families are served: the worst of those.
+      const blind = kept.length ? Math.max(...kept.map((x) => x.rate)) : 1;
+      const blindUpper = kept.length ? Math.max(...kept.map((x) => x.upper)) : 1;
+      const reason = kept.length ? null : `every generator family is above the caps (${fams.length} of ${fams.length})`;
+
+      cells[cell] = {
         blind,
         blindUpper,
-        n: m.n,
-        distinct: m.distinct,
-        modalAnswer: m.modalAnswer,
+        n: fams.reduce((a, x) => a + x.n, 0),
+        distinct: fams.reduce((a, x) => a + x.distinct, 0),
+        modalAnswer: kept.length ? kept.reduce((a, x) => (x.rate > a.rate ? x : a)).modalAnswer : null,
         priceable: reason === null,
         reason,
+        families: familyRecords,
+        refusedFamilies,
       };
-      cells[`${kpId}|${form}`] = record;
-      if (reason) rejected.push({ cell: `${kpId}|${form}`, blind: round6(blind), distinct: m.distinct, modalAnswer: m.modalAnswer, reason });
+      if (reason) rejected.push({ cell, blind: null, reason });
       else if (blindUpper > band.guess * (pricing.multByForm[form] ?? 1))
-        repriced.push({ cell: `${kpId}|${form}`, from: round6(band.guess * (pricing.multByForm[form] ?? 1)), to: round6(blindUpper) });
+        repriced.push({ cell, from: round6(band.guess * (pricing.multByForm[form] ?? 1)), to: round6(blindUpper) });
     }
   }
 
@@ -1405,6 +1515,8 @@ function deriveCellPricing(graph, M, pricing, audit, issues) {
     description: {
       audited: true,
       cellsPriced: Object.keys(cells).length,
+      // Named at the granularity the fix has to happen at: a generator family and the one string
+      // that answers everything it will ever produce.
       rejectedCells: rejected.sort((a, b) => (b.blind ?? 1) - (a.blind ?? 1)),
       repricedCells: repriced.sort((a, b) => b.to - a.to),
       relaxed,

@@ -1,0 +1,1416 @@
+{
+ "piece": "P15",
+ "when": "2026-08-10T13:49:14.935Z",
+ "langs": [
+  "en"
+ ],
+ "sizes": [
+  "1600x900"
+ ],
+ "summary": {
+  "claims": 49,
+  "passed": 48,
+  "failed": 1
+ },
+ "claims": [
+  {
+   "id": "C1",
+   "claim": "every fixture expression typesets in en/es/pl",
+   "threshold": "0 failures",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C2a",
+   "claim": "malformed TeX is refused by validate()",
+   "threshold": "21 refusals",
+   "value": 21,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C2b",
+   "claim": "a refused expression never returns its source, a katex-error node, or raw TeX",
+   "threshold": "0 leaks",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C3a",
+   "claim": "every expression has a spoken form in every locale",
+   "threshold": "0 missing",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C3b",
+   "claim": "no spoken form contains TeX notation",
+   "threshold": "0 with \\ { } ^ _",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C4",
+   "claim": "ES/PL take a decimal comma, a centre dot and (PL) a colon for division",
+   "threshold": "0 wrong",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C5",
+   "claim": "the plain comparison text is identical in every locale",
+   "threshold": "0 divergent",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C6",
+   "claim": "no banned classroom vocabulary in any player-facing string this piece emits",
+   "threshold": "0 hits (relation readings declared)",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C7",
+   "claim": "1000 renders of one expression typeset it exactly once",
+   "threshold": "typesets == 1",
+   "value": 1,
+   "pass": true,
+   "note": "hits=999 misses=1"
+  },
+  {
+   "id": "H0a",
+   "claim": "a 20000-character claim is refused in every locale",
+   "threshold": "3 refusals",
+   "value": 3,
+   "pass": true,
+   "note": "cap is 2000 characters"
+  },
+  {
+   "id": "H0b",
+   "claim": "the over-length claim never reaches the parser",
+   "threshold": "cost < 20% of typesetting a 1,881-char claim",
+   "value": "0.01 ms vs 19.9 ms",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0c",
+   "claim": "a refused over-length claim is not retained anywhere in the pipeline",
+   "threshold": "record and failure log <= 200 chars",
+   "value": "record 71, worst failure row 71",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0d",
+   "claim": "the refusal shows the stand-in and says so, without notation",
+   "threshold": "ok:false, speech has no \\ { }",
+   "value": "ok=false speech=\"unreadable claim\"",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0e",
+   "claim": "the nesting that crashes the renderer is refused before any HTML is built",
+   "threshold": "refused in all 3 locales, 0 fraction markup, < 2 KB of HTML",
+   "value": "deepFrac15 depth 30: 3/3 refused, 0 frac markup, 188 B | deepFrac60 depth 120: 3/3 refused, 0 frac markup, 188 B",
+   "pass": true,
+   "note": "cap is depth 16; Blink crashes laying out depth 30"
+  },
+  {
+   "id": "H0f",
+   "claim": "the depth cap does not reach real mathematics",
+   "threshold": "all typeset, worst depth well under 16",
+   "value": "4/6/2/3 of 16",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0g",
+   "claim": "every expression in the shipped bank passes every offline gate, in every locale",
+   "threshold": "0 failures",
+   "value": "0 of 8151 checks (2717 expressions, 188 ms)",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0h",
+   "claim": "the caps have real headroom over the content the game actually serves",
+   "threshold": ">= 5x on both length and depth",
+   "value": "length 41/2000, depth 3/16",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H0i",
+   "claim": "the geometry attacks get past every offline gate, so the browser has to stop them",
+   "threshold": "2 of 2 typeset offline",
+   "value": "tallMatrix depth 3 nodes 451 ok=true | wideLine depth 0 nodes 941 ok=true",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C7b",
+   "claim": "the KaTeX raster is a hard-edged alpha mask, not a blurred one",
+   "threshold": "partial-alpha band <= 1.3 px",
+   "value": 0.67,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C7c",
+   "claim": "a raster is produced at a real working resolution",
+   "threshold": ">= 64 px tall",
+   "value": 192,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C8a",
+   "claim": "zero KaTeX failures in every locale and size",
+   "threshold": "0",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C8b",
+   "claim": "zero raw-TeX leaks into visible UI",
+   "threshold": "0 runs leaking",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C8c",
+   "claim": "KaTeX really ran (DOM nodes present in every run)",
+   "threshold": ">= 3",
+   "value": 3,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C9",
+   "claim": "every claim carries role=math with a localized, notation-free aria-label",
+   "threshold": "0 bad rows",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C9b",
+   "claim": "the aria-label language follows the requested locale",
+   "threshold": "has en",
+   "value": "en",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C10",
+   "claim": "no panel is ever magnified: >= 1 texel per device pixel, at 900p and at 4K",
+   "threshold": ">= 1.00",
+   "value": 1.42,
+   "pass": true,
+   "note": "worst: leaf9-share"
+  },
+  {
+   "id": "C12",
+   "claim": "the claim standing ~38 m away is still drawn at a legible size",
+   "threshold": "em >= 12 device px",
+   "value": 17.3,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C13",
+   "claim": "120 frames of play cause no re-typeset and no re-raster",
+   "threshold": "0 new typesets, 0 new rasters",
+   "value": "0 / 0",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14a",
+   "claim": "a malformed claim never produces a katex-error node",
+   "threshold": "0",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14b",
+   "claim": "the malformed source appears nowhere in the document",
+   "threshold": "false",
+   "value": false,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14c",
+   "claim": "no raw TeX reaches the visible UI when a claim is refused",
+   "threshold": "false",
+   "value": false,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14d",
+   "claim": "the refusal is logged to __vs.errors so a build cannot ship it quietly",
+   "threshold": ">= 1 new error naming the refusal",
+   "value": "1: KaTeX refused a claim [en,display]: KaTeX parse error: Unexp",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14e",
+   "claim": "the player sees a typeset stand-in, not an empty space",
+   "threshold": "ink present in the panel's rectangle",
+   "value": 445,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C14f",
+   "claim": "the stand-in announces itself as unreadable rather than reading out notation",
+   "threshold": "localized fallback phrase",
+   "value": "unreadable claim",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H1",
+   "claim": "no hostile claim's texture exceeds the cap in either axis or in area",
+   "threshold": "<= 4096 px per axis, <= 4194304 px total",
+   "value": "long20k 45x44, deepFrac15 45x44, deepFrac60 45x44, tallMatrix 45x44, wideLine 45x44",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H2",
+   "claim": "the largest canvas allocated anywhere in the session is inside the cap",
+   "threshold": "<= 4096 px per axis, <= 4194304 px total, over 11 rasters",
+   "value": "4092x850 = 3478200 px",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H3",
+   "claim": "no hostile claim stalls the game: rasterizing one costs a hitch, not a hang",
+   "threshold": "<= 400 ms of raster time",
+   "value": 20.8,
+   "pass": true,
+   "note": "long20k 6.6ms/1r deepFrac15 0.7ms/1r deepFrac60 1ms/1r tallMatrix 6.2ms/1r wideLine 20.8ms/1r"
+  },
+  {
+   "id": "H4",
+   "claim": "the game survives all four: no crash, clock still advancing, no error but the refusals",
+   "threshold": "fatal null, simTime advanced, 0 unexpected errors",
+   "value": "fatal=null sim 6.67->10.67 unexpected=0",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H4b",
+   "claim": "the frame still renders with the attacks standing in it",
+   "threshold": "ink present in the capture",
+   "value": 1246,
+   "pass": true,
+   "note": "review\\shots\\p15\\measure\\hostile.png"
+  },
+  {
+   "id": "H5",
+   "claim": "every hostile claim is refused visibly, logged, and never shows its source",
+   "threshold": "0 bad rows",
+   "value": "5/5 clean",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H5b",
+   "claim": "each refusal names the bound it broke, so a build cannot ship it quietly",
+   "threshold": "every row logs a 'KaTeX refused' line",
+   "value": "long20k: KaTeX refused a claim [en,display]: expression | deepFrac15: KaTeX refused a claim [en,display]: expression | deepFrac60: KaTeX refused a claim [en,display]: expression | tallMatrix: KaTeX refused a claim [en,display]: claim geom | wideLine: KaTeX refused a claim [en,display]: claim geom",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H6",
+   "claim": "the cap has real headroom: the shipped claims are nowhere near it",
+   "threshold": ">= 10x spare area",
+   "value": "114x (worst shipped raster 36864 px)",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H7",
+   "claim": "no claim the ink-extent gate admits can ever be refused for raster size",
+   "threshold": "48x24 ems at 8 px fits the cap",
+   "value": "384x192 px",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "H8",
+   "claim": "asked for a raster 3000 px per em, the pipeline scales it down and keeps the whole claim",
+   "threshold": "inside the cap, ok:true, bound=scaled",
+   "value": "4092x850 at 812px, bound=scaled, ok=true, 3.3ms",
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C15",
+   "claim": "the ink is pure white, as it is in the target",
+   "threshold": ">= 248.0 (target 254)",
+   "value": 250,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C16",
+   "claim": "no panel, no frame and no glow: the sky 3-5 px from the ink is not darker than the sky 12-20 px away",
+   "threshold": ">= -3.0 (target 5.3)",
+   "value": -3.2,
+   "pass": false,
+   "note": "leaf9-span halo 12.9 on bg gradient 2.2 | leaf9-share halo 3.8 on bg gradient -5.6 | leaf9-working halo -3.2 on bg gradient 0.6 | leaf9-mark halo 1.5 on bg gradient -0.1"
+  },
+  {
+   "id": "C16b",
+   "claim": "the raster this piece draws has no rim, no shadow and no glow of its own",
+   "threshold": "|halo| <= 0.5 in the texture's own alpha",
+   "value": 0,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C17",
+   "claim": "glyph edges are hard: the partial-coverage band is about one pixel wide",
+   "threshold": "<= 2.0 px (target 0.65)",
+   "value": 1.34,
+   "pass": true,
+   "note": null
+  },
+  {
+   "id": "C19",
+   "claim": "the ink stands out at least as well as it does in the target",
+   "threshold": ">= 1.72 (target 1.91)",
+   "value": 1.82,
+   "pass": true,
+   "note": null
+  }
+ ],
+ "data": {
+  "speechSamples": [
+   {
+    "id": "share-half",
+    "locale": "en",
+    "speech": "1 over 2 x equals 4"
+   },
+   {
+    "id": "share-half",
+    "locale": "es",
+    "speech": "1 sobre 2 x igual a 4"
+   },
+   {
+    "id": "share-half",
+    "locale": "pl",
+    "speech": "1 łamane przez 2 x równa się 4"
+   },
+   {
+    "id": "decimals",
+    "locale": "en",
+    "speech": "3 point 5 x equals 10 point 25"
+   },
+   {
+    "id": "decimals",
+    "locale": "es",
+    "speech": "3 coma 5 x igual a 10 coma 25"
+   },
+   {
+    "id": "decimals",
+    "locale": "pl",
+    "speech": "3 przecinek 5 x równa się 10 przecinek 25"
+   },
+   {
+    "id": "signed",
+    "locale": "en",
+    "speech": "negative 3 over 4 x plus 2 equals negative 7"
+   },
+   {
+    "id": "signed",
+    "locale": "es",
+    "speech": "menos 3 sobre 4 x más 2 igual a menos 7"
+   },
+   {
+    "id": "signed",
+    "locale": "pl",
+    "speech": "minus 3 łamane przez 4 x plus 2 równa się minus 7"
+   }
+  ],
+  "conventions": [
+   {
+    "id": "decimal-en",
+    "locale": "en",
+    "out": "3.5",
+    "ok": true
+   },
+   {
+    "id": "decimal-es",
+    "locale": "es",
+    "out": "3{,}5",
+    "ok": true
+   },
+   {
+    "id": "decimal-pl",
+    "locale": "pl",
+    "out": "3{,}5",
+    "ok": true
+   },
+   {
+    "id": "times-en",
+    "locale": "en",
+    "out": "5 \\times 4",
+    "ok": true
+   },
+   {
+    "id": "times-es",
+    "locale": "es",
+    "out": "5 \\cdot 4",
+    "ok": true
+   },
+   {
+    "id": "times-pl",
+    "locale": "pl",
+    "out": "5 \\cdot 4",
+    "ok": true
+   },
+   {
+    "id": "div-pl",
+    "locale": "pl",
+    "out": "6 \\mathbin{:} 2",
+    "ok": true
+   },
+   {
+    "id": "group-en",
+    "locale": "en",
+    "out": "16{,}000",
+    "ok": true
+   },
+   {
+    "id": "group-es",
+    "locale": "es",
+    "out": "16\\,000",
+    "ok": true
+   },
+   {
+    "id": "verbatim-text",
+    "locale": "es",
+    "out": "\\text{3.5 spans}",
+    "ok": true
+   }
+  ],
+  "declaredVocabularyExceptions": [
+   "is less than",
+   "is greater than",
+   "is less than or equal to",
+   "is greater than or equal to",
+   "menor que",
+   "mayor que",
+   "menor o igual que",
+   "mayor o igual que",
+   "mniejsze od",
+   "większe od",
+   "mniejsze lub równe",
+   "większe lub równe"
+  ],
+  "hostileOffline": {
+   "caps": {
+    "MAX_TEX_LENGTH": 2000,
+    "MAX_TEX_DEPTH": 16
+   },
+   "longChars": 20000,
+   "longRefuseMs": 0.008,
+   "wideTypesetMs": 19.9,
+   "deep": [
+    {
+     "id": "deepFrac15",
+     "depth": 30,
+     "refused": 3,
+     "errors": [
+      "expression nested too deeply: depth 30, cap 16"
+     ],
+     "fracMarkup": 0,
+     "htmlBytes": 188
+    },
+    {
+     "id": "deepFrac60",
+     "depth": 120,
+     "refused": 3,
+     "errors": [
+      "expression nested too deeply: depth 120, cap 16"
+     ],
+     "fracMarkup": 0,
+     "htmlBytes": 188
+    }
+   ],
+   "realDeep": [
+    {
+     "tex": "\\frac{\\frac{1}{2}}{\\frac{3}{4}}",
+     "ok": true,
+     "depth": 4
+    },
+    {
+     "tex": "\\sqrt{\\frac{x^{2}+1}{2}}",
+     "ok": true,
+     "depth": 6
+    },
+    {
+     "tex": "\\frac{-3}{4}x + 2 = -7",
+     "ok": true,
+     "depth": 2
+    },
+    {
+     "tex": "\\left|\\frac{x}{2}\\right| = 5",
+     "ok": true,
+     "depth": 3
+    }
+   ],
+   "bank": {
+    "expressions": 2717,
+    "checks": 8151,
+    "failures": 0,
+    "maxChars": 41,
+    "maxDepth": 3,
+    "ms": 188
+   },
+   "attacks": [
+    {
+     "id": "long20k",
+     "chars": 20000,
+     "attacks": "source length",
+     "gate": "1 length"
+    },
+    {
+     "id": "deepFrac15",
+     "chars": 151,
+     "attacks": "parse depth — the measured renderer crash",
+     "gate": "2 depth"
+    },
+    {
+     "id": "deepFrac60",
+     "chars": 601,
+     "attacks": "parse depth",
+     "gate": "2 depth"
+    },
+    {
+     "id": "tallMatrix",
+     "chars": 772,
+     "attacks": "ink height",
+     "gate": "3 ink extent"
+    },
+    {
+     "id": "wideLine",
+     "chars": 1881,
+     "attacks": "ink width",
+     "gate": "3 ink extent"
+    }
+   ]
+  },
+  "reference": {
+   "equation": {
+    "box": [
+     1100,
+     380,
+     1500,
+     680
+    ],
+    "inkCount": 4878,
+    "inkCoverage": 0.0406,
+    "inkLuminance": 254,
+    "nearBgLuminance": 188.6,
+    "farBgLuminance": 183.2,
+    "veryFarBgLuminance": 179.2,
+    "haloDelta": 5.3,
+    "bgGradient": 4,
+    "perimeter": 2167,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 1.91
+   },
+   "working": {
+    "box": [
+     1500,
+     350,
+     1900,
+     690
+    ],
+    "inkCount": 5579,
+    "inkCoverage": 0.041,
+    "inkLuminance": 253.9,
+    "nearBgLuminance": 193.1,
+    "farBgLuminance": 189.8,
+    "veryFarBgLuminance": 187.3,
+    "haloDelta": 3.3,
+    "bgGradient": 2.5,
+    "perimeter": 2616,
+    "edgeWidthPx": 0.58,
+    "contrastRatio": 1.77
+   }
+  },
+  "panels": [
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "kpId": "eq-one-add",
+    "kind": "claim",
+    "tex": "x + 3 = 7",
+    "ok": true,
+    "speech": "x plus 3 equals 7",
+    "locale": "en",
+    "em": 0.66,
+    "worldSize": [
+     3.341,
+     0.674
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     243,
+     49
+    ],
+    "bound": null,
+    "emScreenPx": 33.5,
+    "texelsPerPixel": 1.43,
+    "rasters": 1,
+    "position": [
+     7.74,
+     55.03,
+     203.6
+    ]
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "kpId": "eq-one-mult",
+    "kind": "claim",
+    "tex": "\\frac{1}{2}x = 4",
+    "ok": true,
+    "speech": "1 over 2 x equals 4",
+    "locale": "en",
+    "em": 0.66,
+    "worldSize": [
+     2.461,
+     1.691
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     179,
+     123
+    ],
+    "bound": null,
+    "emScreenPx": 33.9,
+    "texelsPerPixel": 1.42,
+    "rasters": 1,
+    "position": [
+     7.74,
+     53.53,
+     203.6
+    ]
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "kpId": null,
+    "kind": "working",
+    "tex": null,
+    "ok": true,
+    "speech": "",
+    "locale": "en",
+    "em": 0.55,
+    "worldSize": [
+     2.2,
+     2.2
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     192,
+     192
+    ],
+    "bound": null,
+    "emScreenPx": 28.2,
+    "texelsPerPixel": 1.7,
+    "rasters": 1,
+    "position": [
+     13.44,
+     54.33,
+     203.6
+    ]
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "kpId": "ineq-one-step",
+    "kind": "claim",
+    "tex": "2x + 1 \\ge 9",
+    "ok": true,
+    "speech": "2 x plus 1 is greater than or equal to 9",
+    "locale": "en",
+    "em": 1.1,
+    "worldSize": [
+     6.165,
+     1.169
+    ],
+    "texturePx": 48,
+    "fontPx": 48,
+    "textureSize": [
+     269,
+     51
+    ],
+    "bound": null,
+    "emScreenPx": 17.3,
+    "texelsPerPixel": 2.77,
+    "rasters": 2,
+    "position": [
+     32.44,
+     55.63,
+     175.6
+    ]
+   }
+  ],
+  "regions": [
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "box": [
+     521,
+     198,
+     754,
+     290
+    ],
+    "inkCount": 288,
+    "inkCoverage": 0.0134,
+    "inkLuminance": 251.5,
+    "nearBgLuminance": 166.8,
+    "farBgLuminance": 153.9,
+    "veryFarBgLuminance": 151.7,
+    "haloDelta": 12.9,
+    "bgGradient": 2.2,
+    "perimeter": 209,
+    "edgeWidthPx": 1.34,
+    "contrastRatio": 2.66
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "box": [
+     548,
+     254,
+     733,
+     396
+    ],
+    "inkCount": 385,
+    "inkCoverage": 0.0147,
+    "inkLuminance": 250.6,
+    "nearBgLuminance": 129.4,
+    "farBgLuminance": 125.6,
+    "veryFarBgLuminance": 131.3,
+    "haloDelta": 3.8,
+    "bgGradient": -5.6,
+    "perimeter": 305,
+    "edgeWidthPx": 1.17,
+    "contrastRatio": 3.8
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "box": [
+     861,
+     196,
+     1033,
+     367
+    ],
+    "inkCount": 342,
+    "inkCoverage": 0.0116,
+    "inkLuminance": 250.4,
+    "nearBgLuminance": 176.6,
+    "farBgLuminance": 179.8,
+    "veryFarBgLuminance": 179.2,
+    "haloDelta": -3.2,
+    "bgGradient": 0.6,
+    "perimeter": 328,
+    "edgeWidthPx": 1.06,
+    "contrastRatio": 1.91
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "box": [
+     1105,
+     278,
+     1280,
+     352
+    ],
+    "inkCount": 106,
+    "inkCoverage": 0.0082,
+    "inkLuminance": 250,
+    "nearBgLuminance": 184.3,
+    "farBgLuminance": 182.8,
+    "veryFarBgLuminance": 182.9,
+    "haloDelta": 1.5,
+    "bgGradient": -0.1,
+    "perimeter": 104,
+    "edgeWidthPx": 1.06,
+    "contrastRatio": 1.82
+   }
+  ],
+  "a11y": [
+   {
+    "label": "en-1600x900",
+    "count": 3,
+    "rows": [
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "x plus 3 equals 7",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "1 over 2 x equals 4",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     },
+     {
+      "state": "ok",
+      "role": "math",
+      "label": "2 x plus 1 is greater than or equal to 9",
+      "lang": "en",
+      "innerHidden": true,
+      "textHasBackslash": false
+     }
+    ],
+    "katexNodes": 3,
+    "katexErrors": 0
+   }
+  ],
+  "leaks": [
+   {
+    "label": "en-1600x900",
+    "katexFailed": 0,
+    "rawSourceLeak": false,
+    "katexRendered": 3,
+    "katexErrors": 0,
+    "bootProblems": 0
+   }
+  ],
+  "textures": [
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-span",
+    "width": 243,
+    "height": 49,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-span.png",
+    "box": [
+     0,
+     0,
+     243,
+     49
+    ],
+    "inkCount": 1036,
+    "inkCoverage": 0.087,
+    "inkLuminance": 253,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "perimeter": 699,
+    "edgeWidthPx": 0.67,
+    "contrastRatio": 20.65
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-share",
+    "width": 179,
+    "height": 123,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-share.png",
+    "box": [
+     0,
+     0,
+     179,
+     123
+    ],
+    "inkCount": 1210,
+    "inkCoverage": 0.055,
+    "inkLuminance": 253.3,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "perimeter": 805,
+    "edgeWidthPx": 0.67,
+    "contrastRatio": 20.7
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-working",
+    "width": 192,
+    "height": 192,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-working.png",
+    "box": [
+     0,
+     0,
+     192,
+     192
+    ],
+    "inkCount": 2544,
+    "inkCoverage": 0.069,
+    "inkLuminance": 255,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "perimeter": 1428,
+    "edgeWidthPx": 0,
+    "contrastRatio": 21
+   },
+   {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "width": 269,
+    "height": 51,
+    "file": "review\\shots\\p15\\measure\\tex-en-1600x900-leaf9-mark.png",
+    "box": [
+     0,
+     0,
+     269,
+     51
+    ],
+    "inkCount": 1374,
+    "inkCoverage": 0.1002,
+    "inkLuminance": 252.9,
+    "nearBgLuminance": 0,
+    "farBgLuminance": 0,
+    "veryFarBgLuminance": 0,
+    "haloDelta": 0,
+    "bgGradient": 0,
+    "perimeter": 911,
+    "edgeWidthPx": 0.65,
+    "contrastRatio": 20.63
+   }
+  ],
+  "cache": {
+   "framesAdvanced": 120,
+   "typesetsBefore": 3,
+   "typesetsAfter": 3,
+   "rastersBefore": 4,
+   "rastersAfter": 4
+  },
+  "fallback": {
+   "errorsBefore": 0,
+   "source": "\\frac{1}{",
+   "panel": {
+    "id": "p15-malformed",
+    "kpId": null,
+    "kind": "claim",
+    "tex": "\\frac{1}{",
+    "ok": false,
+    "speech": "unreadable claim",
+    "locale": "en",
+    "em": 0.75,
+    "worldSize": [
+     0.684,
+     0.695
+    ],
+    "texturePx": 68,
+    "fontPx": 68,
+    "textureSize": [
+     62,
+     63
+    ],
+    "bound": null,
+    "emScreenPx": 62.7,
+    "texelsPerPixel": 1.08,
+    "rasters": 1,
+    "position": [
+     10.71,
+     53.16,
+     208.92
+    ]
+   },
+   "katexErrors": 0,
+   "sourceInDom": false,
+   "overlayHasBackslash": false,
+   "errorsAfter": 1,
+   "lastError": "KaTeX refused a claim [en,display]: KaTeX parse error: Unexpected end of input in a macro argument, expected '}' at end of input: \\frac{1}{ — source withheld from the world, fallback shown",
+   "rawSourceLeak": false,
+   "ink": {
+    "box": [
+     750,
+     283,
+     850,
+     383
+    ],
+    "inkCount": 445,
+    "inkCoverage": 0.0445,
+    "inkLuminance": 251.9,
+    "nearBgLuminance": 177.9,
+    "farBgLuminance": 175.4,
+    "veryFarBgLuminance": 167.9,
+    "haloDelta": 2.6,
+    "bgGradient": 7.5,
+    "perimeter": 387,
+    "edgeWidthPx": 0.46,
+    "contrastRatio": 2
+   }
+  },
+  "hostile": {
+   "caps": {
+    "maxEdge": 4096,
+    "maxPixels": 4194304,
+    "maxInkEmsWide": 48,
+    "maxInkEmsTall": 24,
+    "minFontPx": 8
+   },
+   "rows": [
+    {
+     "id": "long20k",
+     "attacks": "source length",
+     "chars": 20000,
+     "panel": {
+      "id": "long20k",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "x + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + xx + x",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": null,
+      "emScreenPx": 42.9,
+      "texelsPerPixel": 1.12,
+      "rasters": 1,
+      "position": [
+       7.41,
+       53.06,
+       207.92
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": null,
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 6.6,
+     "wallMs": 91,
+     "newErrors": 1,
+     "lastError": "KaTeX refused a claim [en,display]: expression too long: 20000 characters, cap 2000 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    },
+    {
+     "id": "deepFrac15",
+     "attacks": "parse depth — the measured renderer crash",
+     "chars": 151,
+     "panel": {
+      "id": "deepFrac15",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{2}}}}}}}}}}}}}}}",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": null,
+      "emScreenPx": 44.9,
+      "texelsPerPixel": 1.07,
+      "rasters": 1,
+      "position": [
+       9.61,
+       53.06,
+       207.92
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": null,
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 0.7,
+     "wallMs": 217,
+     "newErrors": 1,
+     "lastError": "KaTeX refused a claim [en,display]: expression nested too deeply: depth 30, cap 16 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    },
+    {
+     "id": "deepFrac60",
+     "attacks": "parse depth",
+     "chars": 601,
+     "panel": {
+      "id": "deepFrac60",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{\\frac{1}{2}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": null,
+      "emScreenPx": 44.9,
+      "texelsPerPixel": 1.07,
+      "rasters": 1,
+      "position": [
+       11.81,
+       53.06,
+       207.92
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": null,
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 1,
+     "wallMs": 58,
+     "newErrors": 1,
+     "lastError": "KaTeX refused a claim [en,display]: expression nested too deeply: depth 120, cap 16 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    },
+    {
+     "id": "tallMatrix",
+     "attacks": "ink height",
+     "chars": 772,
+     "panel": {
+      "id": "tallMatrix",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "\\begin{matrix}1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1 \\\\ 1\\end{matrix}",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": {
+       "reason": "ink-extent",
+       "emsWide": 0.6,
+       "emsTall": 219.8
+      },
+      "emScreenPx": 42.9,
+      "texelsPerPixel": 1.12,
+      "rasters": 1,
+      "position": [
+       14.01,
+       53.06,
+       207.92
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": {
+      "reason": "ink-extent",
+      "emsWide": 0.6,
+      "emsTall": 219.8
+     },
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 6.2,
+     "wallMs": 256,
+     "newErrors": 1,
+     "lastError": "KaTeX refused a claim [en,display]: claim geometry out of bounds: 0.6x219.8 ems, cap 48x24 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    },
+    {
+     "id": "wideLine",
+     "attacks": "ink width",
+     "chars": 1881,
+     "panel": {
+      "id": "wideLine",
+      "kpId": null,
+      "kind": "claim",
+      "tex": "1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1",
+      "ok": false,
+      "speech": "unreadable claim",
+      "locale": "en",
+      "em": 0.6,
+      "worldSize": [
+       0.563,
+       0.55
+      ],
+      "texturePx": 48,
+      "fontPx": 48,
+      "textureSize": [
+       45,
+       44
+      ],
+      "bound": {
+       "reason": "ink-extent",
+       "emsWide": 979.9,
+       "emsTall": 3.5
+      },
+      "emScreenPx": 39.5,
+      "texelsPerPixel": 1.21,
+      "rasters": 1,
+      "position": [
+       16.21,
+       53.06,
+       207.92
+      ]
+     },
+     "textureSize": [
+      45,
+      44
+     ],
+     "bound": {
+      "reason": "ink-extent",
+      "emsWide": 979.9,
+      "emsTall": 3.5
+     },
+     "ok": false,
+     "speech": "unreadable claim",
+     "rasters": 1,
+     "rasterMs": 20.8,
+     "wallMs": 160,
+     "newErrors": 1,
+     "lastError": "KaTeX refused a claim [en,display]: claim geometry out of bounds: 979.9x3.5 ems, cap 48x24 — source withheld from the world, fallback shown",
+     "sourceInDom": false,
+     "katexErrors": 0,
+     "fatal": null
+    }
+   ],
+   "scaleDown": {
+    "ms": 3.3,
+    "width": 4092,
+    "height": 850,
+    "fontPx": 812,
+    "bound": {
+     "reason": "scaled",
+     "fromFontPx": 3000,
+     "toFontPx": 812
+    },
+    "ok": true
+   },
+   "frameInk": {
+    "box": [
+     0,
+     0,
+     1600,
+     900
+    ],
+    "inkCount": 1246,
+    "inkCoverage": 0.0009,
+    "inkLuminance": 251.7,
+    "nearBgLuminance": 173.2,
+    "farBgLuminance": 174.1,
+    "veryFarBgLuminance": 173,
+    "haloDelta": -0.9,
+    "bgGradient": 1.1,
+    "perimeter": 1182,
+    "edgeWidthPx": 0.57,
+    "contrastRatio": 2.03
+   },
+   "shot": "review\\shots\\p15\\measure\\hostile.png",
+   "simBefore": 6.667,
+   "alive": {
+    "simTime": 10.667,
+    "frames": 321,
+    "fatal": null,
+    "ready": true,
+    "raster": {
+     "rasters": 11,
+     "ms": 57.6,
+     "glyphs": 5,
+     "paths": 0,
+     "rules": 0,
+     "unsupportedSvg": 0,
+     "baselineResidual": 0,
+     "maxCanvasWidth": 4092,
+     "maxCanvasHeight": 850,
+     "maxCanvasPixels": 3478200,
+     "scaledDown": 1,
+     "refusedGeometry": 2,
+     "caps": {
+      "maxEdge": 4096,
+      "maxPixels": 4194304,
+      "maxInkEmsWide": 48,
+      "maxInkEmsTall": 24,
+      "minFontPx": 8
+     }
+    },
+    "unexpectedErrors": []
+   },
+   "totalWallMs": 14292
+  }
+ }
+}

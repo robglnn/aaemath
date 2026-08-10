@@ -466,16 +466,24 @@ function fitScale(ink, fontPx) {
  * it into paint instructions. Separated out because the cap may need to run it twice, at two
  * font sizes, and doing that by hand in two places is how the second one drifts.
  */
-function layoutTex(html, fontPx, color) {
+function attachTex(html, fontPx, color) {
   const h = host();
   h.textContent = "";
   const box = document.createElement("div");
   box.style.cssText = `display:inline-block;font-size:${fontPx}px;line-height:1.2;white-space:nowrap;color:${color};`;
   box.innerHTML = html;
   h.appendChild(box);
+  return box;
+}
+
+function collectFrom(box) {
   const stats = { glyphs: 0, paths: 0, rules: 0, wrapped: 0, unsupportedSvg: 0, baselineResidual: 0 };
   const items = collect(box, stats);
   return { items, ink: inkBounds(items), stats };
+}
+
+function layoutTex(html, fontPx, color) {
+  return collectFrom(attachTex(html, fontPx, color));
 }
 
 // A refusal is pushed to `__vs.errors` once per (locale, reason, source) and not once per
@@ -503,14 +511,23 @@ export function rasterizeTex(tex, { locale = getLocale(), displayMode = true, fo
   let record = render(tex, { locale, displayMode });
 
   let usedFontPx = Math.max(RASTER_CAPS.minFontPx, Math.round(fontPx) || RASTER_CAPS.minFontPx);
-  let pass = layoutTex(record.html, usedFontPx, color);
+  let box = attachTex(record.html, usedFontPx, color);
   let bound = null;
 
-  // Gate 3 — the ink's extent in ems, which the raster size does not bound. This is what
-  // keeps a claim from standing hundreds of metres wide in the world.
-  if (pass.ink) {
-    const emsWide = pass.ink.width / usedFontPx;
-    const emsTall = pass.ink.height / usedFontPx;
+  // Gate 3 — the extent of the laid-out box in ems, which the raster size does not bound.
+  // This is what keeps a claim from standing hundreds of metres wide in the world.
+  //
+  // Measured on the *box* and not on the collected ink, and that is a performance decision
+  // with a number behind it. Collecting the ink means a `getComputedStyle` and a
+  // `getBoundingClientRect` for every node, and the whole point of a hostile claim is that it
+  // has a lot of nodes: gating after the walk cost 554 ms on the 1,881-character attack, which
+  // is a visible stall rather than a hitch. The box is one rect read, it is a superset of the
+  // ink by construction, and at a cap of 48 ems against real content of 14 the difference
+  // between the two never decides anything.
+  {
+    const r = box.getBoundingClientRect();
+    const emsWide = r.width / usedFontPx;
+    const emsTall = r.height / usedFontPx;
     if (emsWide > RASTER_CAPS.maxInkEmsWide || emsTall > RASTER_CAPS.maxInkEmsTall) {
       bound = {
         reason: "ink-extent",
@@ -525,9 +542,11 @@ export function rasterizeTex(tex, { locale = getLocale(), displayMode = true, fo
         `claim geometry out of bounds: ${emsWide.toFixed(1)}x${emsTall.toFixed(1)} ems, cap ` +
           `${RASTER_CAPS.maxInkEmsWide}x${RASTER_CAPS.maxInkEmsTall}`
       );
-      pass = layoutTex(record.html, usedFontPx, color);
+      box = attachTex(record.html, usedFontPx, color);
     }
   }
+
+  let pass = collectFrom(box);
 
   // Gate 4 — the allocation. Scale down first so the whole expression survives; refuse only
   // when even `minFontPx` will not fit it. Never truncate: see the file header.

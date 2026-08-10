@@ -261,6 +261,13 @@ function measureRegion(img, rect, { inkMin = 236, alpha = false } = {}) {
   const inkMean = inkLum / inkCount;
   const near = band(3, 5);
   const far = band(12, 20);
+  // A third band, purely as a control. A glow is a local thing: it decays, so it shows up
+  // between "next to the ink" and "a little away" and not between "a little away" and
+  // "further away still". A background *gradient* — a claim standing against a terrain edge
+  // rather than against open sky — shows up in both, equally. Without this band there is no
+  // way to tell the two apart from a single number, and the halo claim below inherits a
+  // property of whatever the world happens to have put behind the mathematics.
+  const veryFar = band(24, 40);
   const bg = far.mean ?? near.mean ?? 0;
 
   // Perimeter and the partial-coverage band, which together give a scale-free measure of how
@@ -316,7 +323,11 @@ function measureRegion(img, rect, { inkMin = 236, alpha = false } = {}) {
     inkLuminance: Number(inkMean.toFixed(1)),
     nearBgLuminance: near.mean === null ? null : Number(near.mean.toFixed(1)),
     farBgLuminance: far.mean === null ? null : Number(far.mean.toFixed(1)),
+    veryFarBgLuminance: veryFar.mean === null ? null : Number(veryFar.mean.toFixed(1)),
     haloDelta: near.mean !== null && far.mean !== null ? Number((near.mean - far.mean).toFixed(1)) : null,
+    // The same statistic one band further out, where no glow could reach. Non-zero here means
+    // the background is sloped and `haloDelta` is measuring the slope, not the mathematics.
+    bgGradient: far.mean !== null && veryFar.mean !== null ? Number((far.mean - veryFar.mean).toFixed(1)) : null,
     perimeter,
     edgeWidthPx: perimeter ? Number((partial / perimeter).toFixed(2)) : null,
     contrastRatio: Number(contrast.toFixed(2)),
@@ -503,12 +514,13 @@ async function offlineClaims() {
     `hits=${st.hits} misses=${st.misses}`);
   resetTex();
 
-  // ---- H0 — the length gate, which is the only one of the three bounds that can be proved
-  // without a browser. Gates 2 and 3 are geometry and need a real layout; they are H1-H5,
-  // measured in the shipped game below.
-  const { MAX_TEX_LENGTH } = Tex;
-  const long = HOSTILE.find((h) => h.id === "long20k");
-  const wide = HOSTILE.find((h) => h.id === "wideLine");
+  // ---- H0 — the two gates that live in `validate()` and therefore run in Node, which is what
+  // lets a content lint catch a bad expression in CI before anybody plays it. Gates 3 and 4
+  // are geometry and need a real layout; they are H1-H8, measured in the shipped game below.
+  const { MAX_TEX_LENGTH, MAX_TEX_DEPTH } = Tex;
+  const byId = (id) => HOSTILE.find((h) => h.id === id);
+  const long = byId("long20k");
+  const wide = byId("wideLine");
 
   let refusedLong = 0;
   const t0 = process.hrtime.bigint();
@@ -538,19 +550,84 @@ async function offlineClaims() {
     "ok:false, speech has no \\ { }", `ok=${longRec.ok} speech="${longRec.speech}"`,
     longRec.ok === false && !!longRec.speech && !/[\\{}^_]/.test(longRec.speech));
 
-  // And the geometry attacks must NOT be caught here — otherwise the length cap would be
-  // doing gates 2 and 3's job and the browser claims below would prove nothing.
-  const geometryPasses = HOSTILE.filter((h) => h.id !== "long20k").filter((h) => validate(h.tex, { locale: "en" }).ok);
-  claim("H0e", "the geometry attacks are legal TeX that the length gate lets through",
-    "3 of 3 typeset", `${geometryPasses.length}/3`, geometryPasses.length === 3,
-    HOSTILE.filter((h) => h.id !== "long20k" && !validate(h.tex, { locale: "en" }).ok)
-      .map((h) => `${h.id}: ${validate(h.tex, { locale: "en" }).error}`).join(" | ") || null);
+  // ---- the depth gate. Its whole justification is that the browser cannot survive laying
+  // out the input, so the refusal must happen before any HTML exists. Both nesting depths
+  // that crash Blink are refused, in every locale, and neither produces markup.
+  const deepRows = ["deepFrac15", "deepFrac60"].map((id) => {
+    const h = byId(id);
+    const perLocale = LOCALES.map((locale) => validate(h.tex, { locale }));
+    const rendered = LOCALES.map((locale) => render(h.tex, { locale }));
+    return {
+      id,
+      depth: perLocale[0].depth,
+      refused: perLocale.filter((v) => !v.ok).length,
+      errors: [...new Set(perLocale.map((v) => v.error))],
+      // The tell that no fraction markup was ever built. `.mfrac` is what a nested fraction
+      // emits; the refused record carries only the hollow stand-in, which is two orders of
+      // magnitude smaller than the 13 KB the real thing produces.
+      fracMarkup: rendered.filter((r) => /mfrac/.test(r.html)).length,
+      htmlBytes: Math.max(...rendered.map((r) => r.html.length)),
+    };
+  });
+  claim("H0e", "the nesting that crashes the renderer is refused before any HTML is built",
+    `refused in all ${LOCALES.length} locales, 0 fraction markup, < 2 KB of HTML`,
+    deepRows.map((r) => `${r.id} depth ${r.depth}: ${r.refused}/${LOCALES.length} refused, ${r.fracMarkup} frac markup, ${r.htmlBytes} B`).join(" | "),
+    deepRows.every((r) => r.refused === LOCALES.length && r.fracMarkup === 0 && r.htmlBytes < 2000),
+    `cap is depth ${MAX_TEX_DEPTH}; Blink crashes laying out depth 30`);
+
+  // ...and the cap must not be eating real mathematics. These are more elaborate than
+  // anything Algebra I asks for and all of them must still typeset.
+  const REAL_DEEP = ["\\frac{\\frac{1}{2}}{\\frac{3}{4}}", "\\sqrt{\\frac{x^{2}+1}{2}}", "\\frac{-3}{4}x + 2 = -7", "\\left|\\frac{x}{2}\\right| = 5"];
+  const realRows = REAL_DEEP.map((tex) => ({ tex, ...validate(tex, { locale: "en" }) }));
+  claim("H0f", "the depth cap does not reach real mathematics",
+    `all typeset, worst depth well under ${MAX_TEX_DEPTH}`,
+    realRows.map((r) => `${r.depth}`).join("/") + ` of ${MAX_TEX_DEPTH}`,
+    realRows.every((r) => r.ok) && Math.max(...realRows.map((r) => r.depth)) <= MAX_TEX_DEPTH / 2,
+    realRows.filter((r) => !r.ok).map((r) => `${r.tex}: ${r.error}`).join(" | ") || null);
+
+  // The whole shipped bank, through every offline gate, in every locale. If a cap added this
+  // round were too tight for the content the game actually serves, this is where it shows.
+  const bankDir = path.join(ROOT, "content", "items", "bank");
+  const bank = [];
+  for (const f of fs.readdirSync(bankDir).filter((f) => f.endsWith(".json"))) {
+    JSON.stringify(JSON.parse(fs.readFileSync(path.join(bankDir, f), "utf8")), (k, v) => {
+      if (k === "tex" && typeof v === "string") bank.push({ id: `${f}:${bank.length}`, tex: v });
+      return v;
+    });
+  }
+  const tBank = process.hrtime.bigint();
+  const bankLint = lintTexBank(bank, { locales: LOCALES });
+  const bankMs = Number(process.hrtime.bigint() - tBank) / 1e6;
+  const bankShape = bank.map((b) => validate(b.tex, { locale: "en" }));
+  const bankDepth = Math.max(0, ...bankShape.map((v) => v.depth ?? 0));
+  const bankChars = Math.max(0, ...bank.map((b) => b.tex.length));
+  claim("H0g", "every expression in the shipped bank passes every offline gate, in every locale",
+    "0 failures", `${bankLint.failures.length} of ${bankLint.checked} checks (${bank.length} expressions, ${bankMs.toFixed(0)} ms)`,
+    bank.length > 100 && bankLint.failures.length === 0,
+    bankLint.failures.slice(0, 3).map((f) => `${f.id}/${f.locale}: ${f.error}`).join(" | ") || null);
+  claim("H0h", "the caps have real headroom over the content the game actually serves",
+    ">= 5x on both length and depth",
+    `length ${bankChars}/${MAX_TEX_LENGTH}, depth ${bankDepth}/${MAX_TEX_DEPTH}`,
+    bankChars > 0 && MAX_TEX_LENGTH / bankChars >= 5 && MAX_TEX_DEPTH / Math.max(1, bankDepth) >= 5);
+
+  // And the two geometry attacks must NOT be caught here — otherwise the length and depth
+  // caps would be carrying the whole argument and the browser claims below would prove nothing.
+  const geometryIds = ["tallMatrix", "wideLine"];
+  const geometryRows = geometryIds.map((id) => ({ id, ...validate(byId(id).tex, { locale: "en" }) }));
+  claim("H0i", "the geometry attacks get past every offline gate, so the browser has to stop them",
+    `${geometryIds.length} of ${geometryIds.length} typeset offline`,
+    geometryRows.map((r) => `${r.id} depth ${r.depth} nodes ${r.nodes} ok=${r.ok}`).join(" | "),
+    geometryRows.every((r) => r.ok));
+
   data.hostileOffline = {
-    cap: MAX_TEX_LENGTH,
+    caps: { MAX_TEX_LENGTH, MAX_TEX_DEPTH },
     longChars: long.tex.length,
     longRefuseMs: Number(longMs.toFixed(3)),
     wideTypesetMs: Number(wideMs.toFixed(1)),
-    sizes: HOSTILE.map((h) => ({ id: h.id, chars: h.tex.length, attacks: h.attacks })),
+    deep: deepRows,
+    realDeep: realRows.map((r) => ({ tex: r.tex, ok: r.ok, depth: r.depth })),
+    bank: { expressions: bank.length, checks: bankLint.checked, failures: bankLint.failures.length, maxChars: bankChars, maxDepth: bankDepth, ms: Number(bankMs.toFixed(0)) },
+    attacks: HOSTILE.map((h) => ({ id: h.id, chars: h.tex.length, attacks: h.attacks, gate: h.gate })),
   };
   resetTex();
 }
@@ -757,6 +834,42 @@ async function hostileClaims(d, shots) {
     };
   }, TEX_PANEL_URL);
 
+  // The depth cap is calibrated against nested fractions, because that is the shape that was
+  // measured crashing the renderer. It would be a poor cap if it were only safe for that one
+  // shape — so every nesting shape this curriculum could plausibly produce is taken to the
+  // deepest instance the cap *admits* and laid out for real. If any of these crashed or
+  // stalled, the cap would be too loose for that shape.
+  const { validate: validateNode } = await import(pathToFileURL(path.join(ROOT, "app/src/math/Tex.js")).href);
+  const SHAPES = {
+    frac: (n) => "\\frac{1}{".repeat(n) + "2" + "}".repeat(n),
+    sqrt: (n) => "\\sqrt{".repeat(n) + "9" + "}".repeat(n),
+    paren: (n) => "\\left(".repeat(n) + "x" + "\\right)".repeat(n),
+    power: (n) => "x" + "^{x".repeat(n) + "}".repeat(n),
+    abs: (n) => "\\left|".repeat(n) + "x" + "\\right|".repeat(n),
+    mixed: (n) => "\\sqrt{\\frac{1}{".repeat(n) + "2" + "}}".repeat(n),
+    overline: (n) => "\\overline{".repeat(n) + "x" + "}".repeat(n),
+  };
+  const shapes = [];
+  for (const [name, make] of Object.entries(SHAPES)) {
+    let deepest = null;
+    for (let n = 1; n <= 60; n++) {
+      const v = validateNode(make(n), { locale: "en", displayMode: true });
+      if (!v.ok) break;
+      deepest = { n, depth: v.depth, tex: make(n) };
+    }
+    if (!deepest) continue;
+    const out = await d.run(
+      async ([tex, url]) => {
+        const m = await import(url);
+        const t = performance.now();
+        const r = m.rasterizeTex(tex, { locale: "en", displayMode: true, fontPx: 96 });
+        return { ms: Number((performance.now() - t).toFixed(1)), width: r.canvas.width, height: r.canvas.height, ok: r.ok };
+      },
+      [deepest.tex, TEX_PANEL_URL]
+    );
+    shapes.push({ name, nesting: deepest.n, depth: deepest.depth, ...out });
+  }
+
   await d.run(() => window.__vs.kernel.signals.emit("math:hide", {}));
   await d.play(1.0);
   const alive = await d.run(() => {
@@ -775,6 +888,7 @@ async function hostileClaims(d, shots) {
   return {
     caps,
     rows,
+    shapes,
     scaleDown,
     frameInk,
     shot: shotOk ? path.relative(ROOT, shot) : null,
@@ -791,14 +905,21 @@ async function browserClaims() {
   // The dev server hot-reloads the page whenever anything under app/ changes, which on a
   // machine with several agents building at once lands mid-session and kills the execution
   // context. Retry the whole session rather than reporting somebody else's save as a failure.
+  //
+  // A reload has two tells, not one. The obvious one is "Execution context was destroyed".
+  // The other is a probe running against a page that has reloaded and is *part way through
+  // booting*, where `window.__vs` exists but the kernel does not yet — that surfaces as a
+  // TypeError about reading a property of undefined, and it cost this script a whole run
+  // before it was in the list.
+  const RELOADED = /Execution context was destroyed|Target closed|navigation|Cannot read properties of undefined|__vs is not defined/i;
   const session = async (opts, body, attempts = 6) => {
     for (let i = 0; i < attempts; i++) {
       try {
         return await openGame(opts, body);
       } catch (err) {
         const msg = String(err?.message || err);
-        if (i === attempts - 1 || !/Execution context was destroyed|Target closed|navigation/i.test(msg)) throw err;
-        console.error(`session restarted after a hot reload (${i + 1}/${attempts})`);
+        if (i === attempts - 1 || !RELOADED.test(msg)) throw err;
+        console.error(`session restarted after a hot reload (${i + 1}/${attempts}): ${msg.split("\n")[0].slice(0, 80)}`);
       }
     }
     return undefined;
@@ -1051,7 +1172,7 @@ async function browserClaims() {
 
   // ---- H1-H8 — the hostile inputs, in the shipped world (Leaf Nine, EN, 1600x900).
   if (hostileRows) {
-    const { caps, rows, scaleDown, alive, frameInk } = hostileRows;
+    const { caps, rows, shapes, scaleDown, alive, frameInk } = hostileRows;
     const inCap = (w, h) => w > 0 && h > 0 && w <= caps.maxEdge && h <= caps.maxEdge && w * h <= caps.maxPixels;
 
     const sized = rows.filter((r) => r.textureSize);
@@ -1113,6 +1234,14 @@ async function browserClaims() {
       `${caps.maxInkEmsWide}x${caps.maxInkEmsTall} ems at ${caps.minFontPx} px fits the cap`,
       `${wCorner}x${hCorner} px`, inCap(wCorner, hCorner));
 
+    // The depth cap was calibrated on one shape. This checks it holds for seven.
+    const shapeBad = shapes.filter((s) => !s.ok || !inCap(s.width, s.height) || s.ms > 400);
+    claim("H9", "every nesting shape, at the deepest the cap admits, lays out safely and inside the cap",
+      `${shapes.length} shapes, all ok, <= 400 ms, inside the cap`,
+      shapes.map((s) => `${s.name} n=${s.nesting}/d=${s.depth} ${s.width}x${s.height} ${s.ms}ms`).join(" "),
+      shapes.length >= 7 && shapeBad.length === 0,
+      shapeBad.length ? `bad: ${shapeBad.map((s) => s.name).join(", ")}` : null);
+
     claim("H8", "asked for a raster 3000 px per em, the pipeline scales it down and keeps the whole claim",
       "inside the cap, ok:true, bound=scaled",
       `${scaleDown.width}x${scaleDown.height} at ${scaleDown.fontPx}px, bound=${scaleDown.bound?.reason}, ok=${scaleDown.ok}, ${scaleDown.ms}ms`,
@@ -1152,9 +1281,29 @@ async function main() {
 
       // No panel, no frame, no glow: the sky beside a glyph must not be darkened. The target's
       // own signed delta is the bar, with a small allowance for a different sky gradient.
+      // The same property, measured where a glow would actually live: this piece's own alpha
+      // raster, before the world is anywhere near it. C16 below reads a *composited* frame, so
+      // it inherits whatever the world put behind the mathematics — a claim standing against a
+      // terrain edge rather than open sky has a sloped background and the slope lands in the
+      // number. This one cannot: the texture is white-on-transparent and nothing else is in
+      // it, so a rim, shadow or glow drawn by this pipeline would be the only thing there.
+      const alphaHalo = data.textures.filter((t) => t.inkCount > 200 && !t.empty);
+      const worstAlphaHalo = alphaHalo.length ? Math.max(...alphaHalo.map((t) => Math.abs(t.haloDelta ?? 99))) : null;
+      claim("C16b", "the raster this piece draws has no rim, no shadow and no glow of its own",
+        "|halo| <= 0.5 in the texture's own alpha", worstAlphaHalo === null ? "n/a" : worstAlphaHalo,
+        worstAlphaHalo !== null && worstAlphaHalo <= 0.5,
+        alphaHalo.length ? null : "no textures captured");
+
       const worstHalo = Math.min(...real.map((r) => r.haloDelta ?? 0));
       claim("C16", "no panel, no frame and no glow: the sky 3-5 px from the ink is not darker than the sky 12-20 px away",
-        `>= -3.0 (target ${ref.equation.haloDelta})`, Number(worstHalo.toFixed(1)), worstHalo >= -3.0);
+        `>= -3.0 (target ${ref.equation.haloDelta})`, Number(worstHalo.toFixed(1)), worstHalo >= -3.0,
+        // Attribution, in the failure line itself, so a critic does not have to take anyone's
+        // word for where a negative number came from. The material is untone-mapped white
+        // under normal alpha blending, which can only ever brighten what is behind it; if
+        // C16b is 0 and this is negative, the darkening is in the background, and
+        // `bgGradient` says whether the background is sloped where it was sampled.
+        `our own raster's alpha halo: ${worstAlphaHalo} | ` +
+          real.map((r) => `${r.id} halo ${r.haloDelta} bgGradient ${r.bgGradient} bg ${r.farBgLuminance}`).join(" | "));
 
       const worstEdge = Math.max(...real.map((r) => r.edgeWidthPx ?? 99));
       claim("C17", "glyph edges are hard: the partial-coverage band is about one pixel wide",

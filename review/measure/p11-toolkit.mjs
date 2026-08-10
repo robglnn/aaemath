@@ -276,6 +276,19 @@ export function installToolkit() {
         const cx = (s0[0] + s1[0] + s2[0]) / 3;
         const cy = (s0[1] + s1[1] + s2[1]) / 3;
         if (cx < 6 || cy < 6 || cx > T.buf.w - 7 || cy > T.buf.h - 7) continue;
+        // The per-FACE value band and the per-INSTANCE tint, both of which multiply the material's
+        // albedo. Leaving them out is what made the first run of L1 report a 22% error against a
+        // prediction that was simply missing two of its three factors.
+        const vc = g.attributes.color;
+        const face = vc ? [vc.getX(i0), vc.getY(i0), vc.getZ(i0)] : [1, 1, 1];
+        let inst = [1, 1, 1];
+        if (m.isInstancedMesh && m.instanceColor) {
+          inst = [
+            m.instanceColor.getX(t.id),
+            m.instanceColor.getY(t.id),
+            m.instanceColor.getZ(t.id),
+          ];
+        }
         out.push({
           mesh: meshName,
           instance: t.id,
@@ -285,6 +298,8 @@ export function installToolkit() {
           y: cy,
           areaPx,
           dist: centroid.distanceTo(cam),
+          faceColor: face,
+          instColor: inst,
           world: [centroid.x, centroid.y, centroid.z],
         });
       }
@@ -302,8 +317,11 @@ export function installToolkit() {
     let rejectedMask = 0, rejectedSpread = 0;
     for (const f of faces) {
       if (px.length >= limit) break;
-      if (mask && !T.maskBox(mask, f.x, f.y, r)) { rejectedMask++; continue; }
-      const p = T.patch(f.x, f.y, r);
+      // A 5x5 median needs a facet at least ~17 px across to sit inside; below that drop to 3x3
+      // rather than throw the facet away, and rely on the spread test to catch a straddle.
+      const rr = f.areaPx >= 300 ? r : 1;
+      if (mask && !T.maskBox(mask, f.x, f.y, rr)) { rejectedMask++; continue; }
+      const p = T.patch(f.x, f.y, rr);
       if (p.spread > maxSpread) { rejectedSpread++; continue; }
       const [h, s, v] = T.hsv(...p.rgb);
       hs.push(h); ss.push(s); vs.push(v); ys.push(p.y);
@@ -546,6 +564,110 @@ export function installToolkit() {
     if (!n) return null;
     const k = T.lighting._keyDir;
     return n[0] * k.x + n[1] * k.y + n[2] * k.z;
+  };
+
+  /**
+   * Flat-shading audit scoped to the world roots.
+   *
+   * The whole-scene number is reported too, but it is not the number this piece can be held to: the
+   * scene also contains the sky dome (a smooth-normalled sphere by design), P15's glyph quads and
+   * whatever placeholder geometry another piece has not stood down yet, and none of those are
+   * surfaces `Materials.flatten()` was ever asked to touch.
+   */
+  T.facetsIn = (systems = ["terrain", "level01", "scatter", "avatar"]) => {
+    let tris = 0, flatTris = 0, meshes = 0;
+    const smooth = [];
+    const near = (a, b) => Math.abs(a - b) < 1e-4;
+    for (const name of systems) {
+      const root = T.sys(name)?.root;
+      if (!root) continue;
+      root.traverse((o) => {
+        if (!o.isMesh || !o.geometry?.attributes?.position) return;
+        const g = o.geometry;
+        const n = g.attributes.normal;
+        meshes++;
+        if (!n) return;
+        if (o.material?.flatShading) {
+          const c = (g.index ? g.index.count : n.count) / 3;
+          tris += c; flatTris += c;
+          return;
+        }
+        const idx = g.index;
+        const count = (idx ? idx.count : n.count) / 3;
+        let localFlat = 0;
+        for (let t = 0; t < count; t++) {
+          const a = idx ? idx.getX(t * 3) : t * 3;
+          const b = idx ? idx.getX(t * 3 + 1) : t * 3 + 1;
+          const c = idx ? idx.getX(t * 3 + 2) : t * 3 + 2;
+          const same =
+            near(n.getX(a), n.getX(b)) && near(n.getY(a), n.getY(b)) && near(n.getZ(a), n.getZ(b)) &&
+            near(n.getX(a), n.getX(c)) && near(n.getY(a), n.getY(c)) && near(n.getZ(a), n.getZ(c));
+          if (same) localFlat++;
+        }
+        tris += count; flatTris += localFlat;
+        if (localFlat < count) smooth.push(`${name}:${o.name || o.type}:${count - localFlat}`);
+      });
+    }
+    return {
+      meshes, triangles: tris, flatTriangles: flatTris,
+      flatFraction: tris ? flatTris / tris : 1,
+      smoothMeshes: smooth.slice(0, 12),
+    };
+  };
+
+  /**
+   * Does the key reach this point, as far as the heightfield is concerned?
+   *
+   * March along the sun ray over the terrain's own height query. It does not know about boulders, so
+   * a caller still has to confirm with pixels — but it is what turns "find somewhere sunlit near the
+   * player" from a guess into a search.
+   */
+  T.sunClear = (x, z, reach = 70) => {
+    const k = T.lighting._shadowDir;
+    const y0 = T.groundY(x, z);
+    if (!Number.isFinite(y0)) return false;
+    for (let t = 0.6; t < reach; t *= 1.22) {
+      const px = x + k.x * t, pz = z + k.z * t;
+      const py = y0 + k.y * t;
+      const g = T.groundY(px, pz);
+      if (Number.isFinite(g) && g > py + 0.15) return false;
+    }
+    return true;
+  };
+
+  /**
+   * Every up-facing patch of the shipped terrain that is actually on screen, sampled through the
+   * terrain's own ownership mask so a boulder standing in front of it can never be counted as
+   * ground. Returns the whole population, sorted by luminance: §3.2's two witnesses are its tails.
+   */
+  T.groundSamples = ({ around, radius = 90, step = 1.0, minUp = 0.8, minNdl = 0.1, maxSpread = 0.03 } = {}) => {
+    const world = T.worldMeshes(["terrain"]);
+    const names = world.filter((m) => m.visible && /surface/.test(m.name)).map((m) => m.name);
+    if (!names.length) return { n: 0, pts: [], ownedPixels: 0, meshes: [] };
+    const own = T.own(names);
+    const pts = [];
+    for (let dx = -radius; dx <= radius; dx += step)
+      for (let dz = -radius; dz <= radius; dz += step) {
+        const x = around[0] + dx, z = around[2] + dz;
+        const n = T.groundNormal(x, z);
+        if (!n || n[1] < minUp) continue;
+        const k = T.lighting._keyDir;
+        const ndl = n[0] * k.x + n[1] * k.y + n[2] * k.z;
+        if (ndl < minNdl) continue;
+        const y = T.groundY(x, z);
+        if (!Number.isFinite(y)) continue;
+        const s = T.project([x, y + 0.03, z]);
+        if (s[2] > 1 || s[0] < 8 || s[1] < 8 || s[0] > T.buf.w - 9 || s[1] > T.buf.h - 9) continue;
+        if (!T.maskBox(own.mask, s[0], s[1], 2)) continue;
+        const patch = T.patch(s[0], s[1], 2);
+        if (patch.spread > maxSpread) continue;
+        pts.push({
+          x, z, ndl, y: patch.y, rgb: patch.rgb, hsv: T.hsv(...patch.rgb),
+          sunClear: T.sunClear(x, z), sx: s[0], sy: s[1],
+        });
+      }
+    pts.sort((a, b) => a.y - b.y);
+    return { n: pts.length, pts, ownedPixels: own.n, mask: own.mask, meshes: names };
   };
 
   /** Where the player actually is, read from the shipped avatar rather than assumed. */

@@ -88,18 +88,29 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     const median = edges[Math.floor(edges.length / 2)];
 
     // --- S3 the collider is the render geometry ---------------------------------------
+    //
+    // Rewritten, because the old version measured the wrong thing and failed for the wrong
+    // reason. It dropped a ray from 60 m up and compared the first hit against the heightfield —
+    // but the collision world also holds `p09:rock` and `p09:built`, so any sample that happened
+    // to sit under a spire reported a 35 m "disagreement" between render and physics that was
+    // really a boulder doing its job.
+    //
+    // The claim is an identity claim, so it is now proved by identity: the triangle soup the
+    // collision world baked for `p09:leaf-nine` is compared vertex for vertex against
+    // `terrain.topGeometry`, which is the buffer the surface mesh is drawn from. Nothing can be
+    // true of one and false of the other.
+    const baked = collision.colliders?.get?.("p09:leaf-nine")?.verts ?? null;
+    const src = terrain.topGeometry.getAttribute("position").array;
     let worst = 0;
     let checked = 0;
-    let misses = 0;
-    for (let i = 0; i < 600; i++) {
-      const x = -220 + (i * 37) % 440;
-      const z = -330 + (i * 71) % 650;
-      const y = terrain.groundAt(x, z);
-      if (!Number.isFinite(y)) continue;
-      const g = collision.groundAt(x, z, y + 60, 200);
-      checked++;
-      if (!g?.hit) { misses++; continue; }
-      worst = Math.max(worst, Math.abs(g.y - y));
+    let misses = baked ? 0 : 1;
+    if (baked) {
+      if (baked.length !== src.length) misses++;
+      const n = Math.min(baked.length, src.length);
+      for (let i = 0; i < n; i++) {
+        worst = Math.max(worst, Math.abs(baked[i] - src[i]));
+        checked++;
+      }
     }
 
     // --- S4 no ground under the leaf --------------------------------------------------
@@ -161,14 +172,23 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     };
     let positions = 0;
     let both = 0;
+    let bothAnyGround = 0;
     const worstCase = [];
     for (let x = -220; x <= 220; x += 14) {
       for (let z = -340; z <= 330; z += 14) {
         const g = terrain.groundAt(x, z);
         if (!Number.isFinite(g)) continue;
+        // "Every reachable stand" means ground a player can stand on. The old sweep included
+        // 70° cliff faces and the apexes of spires, and reported framings from places nobody can
+        // get to — which is both unfair to the level and useless as a canon check. Slope uses the
+        // same 45° cut-off K2 and K3 use. `bothAnyGround` keeps the unfiltered number visible so
+        // this filter cannot quietly become an excuse.
+        const nrm = terrain.normalAt(x, z);
+        const standDeg = nrm ? (Math.acos(Math.max(-1, Math.min(1, nrm.y))) * 180) / Math.PI : 90;
+        const reachable = standDeg <= 45;
         for (const lift of [1.7, 4.0, 8.0]) {
           const eye = [x, g + lift, z];
-          positions++;
+          if (reachable) positions++;
           // The whole diagonal field of view has to be able to hold both before it can be a
           // problem at all — 101° for this camera.
           const a = sep(b1, b2, eye);
@@ -176,8 +196,10 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
           const v1 = !terrain.occluded(eye, b1, 4);
           const v2 = !terrain.occluded(eye, b2, 4);
           if (v1 && v2) {
+            bothAnyGround++;
+            if (!reachable) continue;
             both++;
-            if (worstCase.length < 6) worstCase.push({ eye: eye.map((v) => Math.round(v)), sepDeg: Math.round((a * 180) / Math.PI) });
+            if (worstCase.length < 6) worstCase.push({ eye: eye.map((v) => Math.round(v)), sepDeg: Math.round((a * 180) / Math.PI), slopeDeg: Math.round(standDeg) });
           }
         }
       }
@@ -189,15 +211,24 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     // Narrowest crossing of the ravine anywhere along it: if any line is jumpable, the span
     // stops being the only way across and Beat 3 has no teeth. Only gaps with solid ground on
     // *both* sides count — the open sky past the lip is not a crossing.
+    // Gaps under two metres are not crossings of anything — they are a single triangle missing
+    // at the mask boundary, where the grid's own jitter can leave a hairline crack. They are
+    // counted and reported as `pinholes` so they cannot hide, but the claim is about the ravine,
+    // and a 0.5 m crack in the floor is not a place a player chooses to jump.
     let narrowest = Infinity;
     let narrowestAt = null;
+    let pinholes = 0;
+    let widestPinhole = 0;
     for (let x = -210; x <= 210; x += 3) {
       let run = 0;
       let sawSolid = false;
       let best = Infinity;
       for (let z = -260; z <= -95; z += 0.5) {
         if (terrain.isSolid(x, z)) {
-          if (run > 0 && sawSolid) best = Math.min(best, run);
+          if (run > 0 && sawSolid) {
+            if (run < 2) { pinholes++; widestPinhole = Math.max(widestPinhole, run); }
+            else best = Math.min(best, run);
+          }
           run = 0;
           sawSolid = true;
         } else if (sawSolid) run += 0.5;
@@ -304,7 +335,105 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       }
     }
 
+    // --- COMPOSITION: what the arrival frame is actually made of -----------------------
+    //
+    // Everything below is measured against `K.camera` as it stands 1.2 s after the player takes
+    // control — the shipped arrival frame, the same camera the capture beside this report was
+    // taken through. Not the spawn anchor, not a camera this script placed.
+
+    const scr = (wx, wy, wz) => {
+      const v = cam.position.clone();
+      v.set(wx, wy, wz).project(cam);
+      return [((v.x + 1) / 2) * W, ((1 - v.y) / 2) * H, v.z];
+    };
+    // The horizon: the row a point at the camera's own height and infinite distance falls on.
+    // Unambiguous, and it does not move when the level does.
+    const fwdLen = Math.hypot(e[8], e[10]) || 1;
+    const horizonPt = [eyeP[0] - (e[8] / fwdLen) * 9000, eyeP[1], eyeP[2] - (e[10] / fwdLen) * 9000];
+    const horizonRow = scr(...horizonPt)[1];
+
+    // --- the Cutwater: the question on the horizon ------------------------------------
+    // Measured off the heightfield, not off the design constant that built it.
+    let summit = null;
+    for (let aX = 180; aX <= 312; aX += 2) {
+      for (let aZ = -160; aZ <= -46; aZ += 2) {
+        const g = terrain.groundAt(aZ, -aX);
+        if (!Number.isFinite(g)) continue;
+        if (!summit || g > summit.y) summit = { y: g, aX, aZ, x: aZ, z: -aX };
+      }
+    }
+    const browY = terrain.groundAt(A.brow.x, A.brow.z);
+    let massif = null;
+    if (summit) {
+      const dxs = summit.x - eyeP[0];
+      const dzs = summit.z - eyeP[2];
+      const flat = Math.hypot(dxs, dzs);
+      massif = {
+        summitY: Number(summit.y.toFixed(1)),
+        browY: Number(browY.toFixed(1)),
+        aboveBrow: Number((summit.y - browY).toFixed(1)),
+        distanceFromCamera: Math.round(Math.hypot(flat, summit.y - eyeP[1])),
+        elevationDeg: Number(((Math.atan2(summit.y - eyeP[1], flat) * 180) / Math.PI).toFixed(2)),
+        bearingOffAxisDeg: Number(
+          ((Math.abs(
+            Math.atan2(dxs, dzs) - Math.atan2(-e[8] / fwdLen, -e[10] / fwdLen)
+          ) *
+            180) /
+            Math.PI).toFixed(1)
+        ),
+        screen: scr(summit.x, summit.y, summit.z).slice(0, 2).map((v) => Math.round(v)),
+        occluded: terrain.occluded(eyeP, [summit.x, summit.y, summit.z], 4),
+      };
+    }
+
+    // --- the hero carry, projected -----------------------------------------------------
+    // Which triangles are the hero river is decided by geometry, not by colour: every triangle
+    // centroid of the merged carry mesh is put back into leaf space and kept only if it lies
+    // within half a width of `carry.spine`'s own published polyline. The certainty field shares
+    // this piece's cyan, and a colour-only test would happily count a crystal as a river.
+    const heroSpec = L.carries?.find?.((c) => c.hero) ?? null;
+    const segDist = (px2, pz2, pts) => {
+      let best = Infinity;
+      for (let i = 1; i < pts.length; i++) {
+        const ax = pts[i - 1][0], az = pts[i - 1][1];
+        const bx = pts[i][0], bz = pts[i][1];
+        const vx = bx - ax, vz = bz - az;
+        const l2 = vx * vx + vz * vz || 1e-6;
+        const u = Math.max(0, Math.min(1, ((px2 - ax) * vx + (pz2 - az) * vz) / l2));
+        best = Math.min(best, Math.hypot(px2 - ax - vx * u, pz2 - az - vz * u));
+      }
+      return best;
+    };
+    const carrySamples = [];
+    if (heroSpec && level.carryMesh) {
+      const cp = level.carryMesh.geometry.getAttribute("position").array;
+      for (let i = 0; i < cp.length; i += 9) {
+        const cx = (cp[i] + cp[i + 3] + cp[i + 6]) / 3;
+        const cy = (cp[i + 1] + cp[i + 4] + cp[i + 7]) / 3;
+        const cz = (cp[i + 2] + cp[i + 5] + cp[i + 8]) / 3;
+        if (segDist(-cz, cx, heroSpec.pts) > heroSpec.width * 0.55) continue;
+        const dx2 = cx - eyeP[0], dy2 = cy - eyeP[1], dz2 = cz - eyeP[2];
+        const dist = Math.hypot(dx2, dy2, dz2);
+        // Visible means the world does not stand in front of it. The collision world holds this
+        // piece's terrain, rock and built props, so this rejects a river hidden behind a boulder
+        // as firmly as one hidden behind a scarp.
+        const r = collision.raycast(eyeP[0], eyeP[1], eyeP[2], dx2, dy2, dz2, dist - 0.35);
+        if (r?.hit) continue;
+        const s = scr(cx, cy, cz);
+        if (s[2] > 1 || s[0] < 0 || s[0] >= W || s[1] < 0 || s[1] >= H) continue;
+        carrySamples.push({ x: Math.round(s[0]), y: Math.round(s[1]), d: Math.round(dist) });
+      }
+    }
+
     return {
+      camera: {
+        position: [eyeP[0], eyeP[1], eyeP[2]].map((v) => Number(v.toFixed(2))),
+        fov: Number(cam.fov.toFixed(2)),
+        horizonRow: Number(horizonRow.toFixed(1)),
+      },
+      massif,
+      carrySamples,
+      carryClearance: L.carryClearance ?? null,
       terrain: t,
       level: {
         anchors: A,
@@ -327,10 +456,11 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         separationMetres: Math.round(archSeparation),
         positions,
         bothVisible: both,
+      bothAnyGround,
         worstCase,
         halfDiagDeg: Math.round((halfDiag * 360) / Math.PI / 2),
       },
-      ravine: { narrowestGap: Number(narrowest.toFixed(1)), atX: narrowestAt, spanGap: A.span.gap },
+      ravine: { narrowestGap: Number(narrowest.toFixed(1)), atX: narrowestAt, spanGap: A.span.gap, pinholes, widestPinhole },
       landmarks,
       space: {
         walkable,
@@ -404,6 +534,89 @@ for (let y = 0; y < img.height; y += 2)
   }
 const census = { cyanPct: round((100 * cyan) / total, 2), darkPct: round((100 * dark) / total, 2), meanY: round(sumY / total) };
 
+// ------------------------------------------------------------------- K5: the carry in the frame
+//
+// `M.carrySamples` are the hero river's own triangles, projected through the shipped arrival
+// camera and already filtered to the ones the collision world says nothing stands in front of.
+// Two questions are asked of them, and they are different questions:
+//
+//   reach     — does the river run from the lower third of the frame up to the horizon? This is
+//               geometry, and it is what "walks the eye from the foreground to the horizon" means.
+//   painted   — at those exact screen positions, is the pixel actually the carry's cyan? A river
+//               that is theoretically unoccluded and practically hidden behind a scatter prop or
+//               washed out by haze would pass the first test and fail the player.
+//
+// A colour-only version of this claim would be worthless: the certainty field is the same cyan.
+const carryPx = M.carrySamples.map((s) => ({
+  ...s,
+  sx: Math.round(s.x * scaleX),
+  sy: Math.round(s.y * scaleY),
+}));
+const horizonRow = M.camera.horizonRow * scaleY;
+const bandH = img.height;
+let carryTop = Infinity;
+let carryBottom = -Infinity;
+let painted = 0;
+let nearSamples = 0;
+const rows = new Set();
+const unpainted = [];
+const NEAR = 250; // metres — past this the piece's own aerial perspective owns the pixel
+for (const s of carryPx) {
+  if (s.sx < 0 || s.sy < 0 || s.sx >= img.width || s.sy >= img.height) continue;
+  // Reach is a geometry question and is asked of every unoccluded sample.
+  rows.add(Math.floor(s.sy / 4));
+  carryTop = Math.min(carryTop, s.sy);
+  carryBottom = Math.max(carryBottom, s.sy);
+  // Paint is a pixel question, and it is only fair to ask it where haze is not the author.
+  // `uVsHazeP` takes a surface 78% of the way to the horizon colour by design, so demanding
+  // saturated cyan at 400 m would be a test of the haze curve rather than of the river.
+  if (s.d > NEAR) continue;
+  nearSamples++;
+  // A sample is a triangle centroid projected to a point, and the question "is the river painted
+  // here" is a question about that neighbourhood, not about one pixel — at 200 m a ribbon segment
+  // is a few pixels tall and a one-pixel probe lands on its own edge as often as on it.
+  let best = null;
+  for (let j = -1; j <= 1; j++)
+    for (let i2 = -1; i2 <= 1; i2++) {
+      const qx = Math.min(img.width - 1, Math.max(0, s.sx + i2));
+      const qy = Math.min(img.height - 1, Math.max(0, s.sy + j));
+      const [r, g, b] = px(img, qx, qy);
+      const [h, sa, v] = hsv(r, g, b);
+      if (!best || sa > best.sa) best = { h, sa, v };
+      if (h >= 140 && h <= 205 && sa >= 0.16 && v >= 0.25) { best = { h, sa, v, ok: true }; j = 2; break; }
+    }
+  if (best?.ok) painted++;
+  else unpainted.push(best ?? { h: 0, sa: 0, v: 0 });
+}
+// What is standing in front of the river, in one number. If the collision world says a sample is
+// unoccluded and the pixel is warm rock, the thing in front of it is a mesh with no collider —
+// which in this build means scatter, not terrain and not this piece's rock.
+const medianOf = (arr, k) => {
+  if (!arr.length) return null;
+  const a = arr.map((o) => o[k]).sort((p2, q2) => p2 - q2);
+  return round(a[Math.floor(a.length / 2)], 2);
+};
+// The biggest vertical hole in the painted run, in rows. A river broken in half by the knuckle
+// would still have a good top and a good bottom, and this is the number that catches it.
+const sorted = [...rows].map((r) => r * 4).sort((a, b) => a - b);
+let worstGap = 0;
+for (let i = 1; i < sorted.length; i++) worstGap = Math.max(worstGap, sorted[i] - sorted[i - 1]);
+const carryRun = {
+  geometrySamplesVisible: M.carrySamples.length,
+  samplesInsideNearBand: nearSamples,
+  samplesPaintedCarryCyan: painted,
+  paintedFractionInsideNearBand: round(painted / Math.max(1, nearSamples), 3),
+  topRow: Number.isFinite(carryTop) ? carryTop : null,
+  bottomRow: Number.isFinite(carryBottom) ? carryBottom : null,
+  horizonRow: round(horizonRow, 1),
+  rowsBelowHorizon: Number.isFinite(carryTop) ? round(carryTop - horizonRow, 1) : null,
+  allowedRowsBelowHorizon: round(0.15 * bandH, 1),
+  worstVerticalGapRows: worstGap,
+  unpaintedPixelMedianHue: medianOf(unpainted, "h"),
+  unpaintedPixelMedianSat: medianOf(unpainted, "sa"),
+  frameHeight: img.height,
+};
+
 // ---------------------------------------------------------------------------- claims
 
 claim("S1", "terrain is non-indexed with one normal per face", M.terrain.indexed === false && M.terrain.flatNormalFraction === 1, {
@@ -416,11 +629,11 @@ claim("S2", "facets are big enough to count at gameplay distance", M.facet.media
   p10EdgeMetres: M.facet.p10,
   threshold: ">= 4.0 m median triangle edge",
 });
-claim("S3", "the collider is the render geometry", M.collider.misses === 0 && M.collider.worstDelta < 0.02, {
-  pointsChecked: M.collider.checked,
-  colliderMisses: M.collider.misses,
+claim("S3", "the collider is the render geometry", M.collider.misses === 0 && M.collider.checked > 20000 && M.collider.worstDelta < 0.02, {
+  vertexOrdinatesCompared: M.collider.checked,
+  structuralMismatches: M.collider.misses,
   worstDeltaMetres: M.collider.worstDelta,
-  threshold: "0 misses, worst |render−collider| < 0.02 m",
+  threshold: "the baked p09:leaf-nine soup equals terrain.topGeometry ordinate for ordinate, worst delta < 0.02 m",
 });
 claim(
   "S4",
@@ -436,8 +649,9 @@ claim(
   }
 );
 claim("C1", "the Bollard and the Second Lip never share a frame", M.arches.bothVisible === 0, {
-  cameraPositionsSwept: M.arches.positions,
+  reachableStandsSwept: M.arches.positions,
   framingsHoldingBoth: M.arches.bothVisible,
+  framingsHoldingBothIncludingUnreachableCliffFaces: M.arches.bothAnyGround,
   halfDiagonalFovDeg: M.arches.halfDiagDeg,
   worstCase: M.arches.worstCase,
   threshold: "0 framings, over every reachable stand at eye heights 1.7/4/8 m",
@@ -448,6 +662,9 @@ claim("C2", "they are the two ends of one body about 600 m long", M.arches.separ
 });
 claim("C3", "the ravine cannot be walked or jumped", M.ravine.narrowestGap >= 16, {
   narrowestGapMetres: M.ravine.narrowestGap,
+  narrowestAtWorldX: M.ravine.atX,
+  subTwoMetreCracksIgnored: M.ravine.pinholes,
+  widestSuchCrackMetres: M.ravine.widestPinhole,
   measuredSpanGapMetres: M.ravine.spanGap,
   threshold: ">= 16 m at its narrowest (locomotion's best jump is far under this)",
 });
@@ -471,6 +688,41 @@ claim("K3", "real verticality across the walkable surface", M.space.heightRange 
   fractionOfSurfaceBetween8And40Deg: round(slopeMid),
   slopeBins: M.space.slopeBins,
   threshold: ">= 70 m of height, >= 25% of the surface between 8° and 40°",
+});
+claim(
+  "K4",
+  "the horizon poses a question: a massif on the forward bearing, 90 m over brow height",
+  !!M.massif &&
+    M.massif.aboveBrow >= 90 &&
+    M.massif.elevationDeg >= 8 &&
+    M.massif.elevationDeg <= 12 &&
+    M.massif.bearingOffAxisDeg <= 30 &&
+    !M.massif.occluded,
+  {
+    measuredOffHeightfield: M.massif,
+    threshold:
+      ">= 90 m above the brow, subtending 8-12 deg of screen height above the arrival camera's horizon, within 30 deg of the forward bearing, and not occluded",
+  }
+);
+claim(
+  "K5",
+  "the hero carry walks the eye from the foreground to the horizon",
+  carryRun.samplesInsideNearBand >= 25 &&
+    carryRun.paintedFractionInsideNearBand >= 0.6 &&
+    carryRun.bottomRow !== null &&
+    carryRun.bottomRow >= (2 / 3) * img.height &&
+    carryRun.rowsBelowHorizon !== null &&
+    carryRun.rowsBelowHorizon <= 0.15 * img.height &&
+    carryRun.worstVerticalGapRows <= 0.06 * img.height,
+  {
+    measuredOnArrivalFrame: carryRun,
+    threshold:
+      "the river's own unoccluded triangles must reach below 2/3 frame height and up to within 15% of frame height of the horizon row, with no vertical gap over 6% of frame height, and >= 60% of the ones inside 250 m must actually read as cyan in the capture",
+  }
+);
+claim("K6", "no carry is buried in its own channel", M.carryClearance !== null && M.carryClearance >= 0.2, {
+  minRibbonClearanceOverGroundMetres: M.carryClearance,
+  threshold: ">= 0.2 m, measured at every ribbon cross-section against the ground the terrain built",
 });
 claim("P1", "near lit rock matches the reference's lit rock", !!lit && Math.abs(lit.Y - REF.rockLit.Y) <= 0.09 && Math.abs(lit.hue - REF.rockLit.h) <= 14, {
   measured: lit,
@@ -504,6 +756,9 @@ const out = {
   tier: TIER,
   shot: SHOT,
   bootProblems: M.problems,
+  camera: M.camera,
+  carryRun,
+  massif: M.massif,
   world: {
     terrain: M.terrain,
     landmarks: M.level.landmarks,

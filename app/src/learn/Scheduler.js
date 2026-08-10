@@ -309,6 +309,9 @@ export class Scheduler {
       targetMisconception: s.lastCorrect === false ? s.lastMisconception : null,
       avoidItemIds: this.recentItemIds.slice(),
       sampling: "theta-targeted",
+      // Generator families this node's engine will NOT score, so whoever picks the item can pick
+      // something else. Each one has a single memorised answer; see `Mastery.refusedFamilies`.
+      avoidFamilies: this.mastery.refusedFamilies(kpId, form),
       price: this.mastery.price(kpId, form, phase),
     };
   }
@@ -355,6 +358,7 @@ export class Scheduler {
       sampling: spec.sampling ?? "uniform-over-variant-pool",
       itemIndex: ev.index,
       itemsInEvent: ev.items,
+      avoidFamilies: this.mastery.refusedFamilies(kpId, form),
       price: this.mastery.price(kpId, form, phase),
     };
   }
@@ -381,7 +385,7 @@ export class Scheduler {
 
   /** `wanted`, in order, keeping only what this node's bank pool can be honestly priced at. */
   _scorableForms(kpId, wanted) {
-    return wanted.filter((form) => this.mastery.isScorable(kpId, form, "solo"));
+    return wanted.filter((form) => this.mastery.isScorable(kpId, form, "solo", null));
   }
 
   /** Nearest available variant tier to the target, on the logit scale. P17 owes five tiers per node. */
@@ -495,6 +499,10 @@ export class Scheduler {
       // What the world ACTUALLY did on this item. `req.hinted` is only the default for the phase.
       hinted: typeof outcome.hinted === "boolean" ? outcome.hinted : req.hinted,
       itemId: outcome.itemId ?? null,
+      // Which generator family the presenter actually served. Twenty of the bank's families have
+      // a single memorised answer; the engine refuses those outright, and a presenter that does
+      // not say which family it served is priced at the worst family it was allowed to serve.
+      family: outcome.family ?? null,
       misconception: outcome.misconception ?? null,
       response: outcome.response ?? null,
       exercises: outcome.exercises,

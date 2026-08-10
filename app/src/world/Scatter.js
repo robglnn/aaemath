@@ -615,7 +615,7 @@ const STATIC_PARS = /* glsl */ `
 const FRAG_PARS = /* glsl */ `
   varying float vFade;
   varying float vEyeDist;
-  uniform vec3 uHaze;
+  uniform vec4 uHaze;
   uniform vec3 uHazeColor;
 `;
 
@@ -637,9 +637,19 @@ const STATIC_BODY = /* glsl */ `
  * it converges *part* of the way. The reference's city across the Long Division still holds a
  * measurable value against the sky behind it, which is only true if haze has a ceiling. Exponential
  * in distance, capped at `uHaze.y`.
+ *
+ * **`uHaze.w` is a near plane, and it was measured into existence.** Without it the curve starts at
+ * the lens: a rock fifteen metres away took 2.4 % of `sky.horizon`, and two per cent of a V 1.0
+ * orange laid over a V 0.20 shadow is not a small change — it took a §3.4 shadow facet from
+ * S 0.45 to **S 0.35** and dragged its hue seven degrees warm. That was measured on the shipped
+ * frame: foreground scatter rock read hue 190 / S 0.346 while the level's own rock mass, whose
+ * distance law starts at zero, read 197.6 / 0.400 on the same shadow colour. There is no
+ * atmosphere worth two per cent at fifteen metres; `scene.fog` in this project starts at 42 m and
+ * P09's own curve is flat over the first hundred. Subtracting the near plane before the
+ * exponential leaves everything past the falloff distance where it was.
  */
 const HAZE_TAIL = /* glsl */ `
-  float vsHz = min(uHaze.y, 1.0 - exp(-vEyeDist * uHaze.x)) * uHaze.z;
+  float vsHz = min(uHaze.y, 1.0 - exp(-max(vEyeDist - uHaze.w, 0.0) * uHaze.x)) * uHaze.z;
   gl_FragColor.rgb = mix(gl_FragColor.rgb, uHazeColor, vsHz);
 `;
 
@@ -1013,8 +1023,8 @@ export class Scatter {
       uEye: { value: this._eye },
       uTime: { value: 0 },
       uWind: { value: new THREE.Vector3(0.82, 0.55, 0.055) },
-      // x: 1/falloff metres · y: ceiling · z: master strength
-      uHaze: { value: new THREE.Vector3(1 / 620, 0.78, 1) },
+      // x: 1/falloff metres · y: ceiling · z: master strength · w: near plane, metres
+      uHaze: { value: new THREE.Vector4(1 / 620, 0.78, 1, 34) },
       uHazeColor: { value: col(PAL.horizon) },
     };
 

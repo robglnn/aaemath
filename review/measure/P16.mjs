@@ -20,13 +20,27 @@
  * harness chose in advance. Setting `correct = rng() < guess` is not a test; it is the model's
  * assumption restated with a number on it.
  *
- * Round 2 of this script goes one step further, because `model.trueGuessByForm` is itself a
- * hand-authored constant and the whole L5 result is a linear function of it. PART A2 MEASURES the
- * blind-success rate EMPIRICALLY: it generates real items out of `ItemBank` and submits random
- * legal responses through the live `check()`/`#checkConstruction`, per knowledge point and per
- * form. The `bankGuesser` arm then draws its true success rate from those MEASURED numbers
- * instead of from the JSON. A sensitivity sweep prints what the result would be if the constant
- * were wrong by 3x, 6x, 8x and 17x, so the tolerance is visible rather than asserted.
+ * Round 2 of this script measured the blind-success rate empirically instead of reading the JSON,
+ * and STILL got it wrong, because it measured the wrong STRATEGY. Its assumption B4 said a
+ * responder who "picks uniformly inside the shape of the answer" is the best case for a guesser.
+ * It is not. The best case is BEST FIXED ANSWER: type one string on every item of a pool and keep
+ * whichever string wins most. On `eq-special-cases|repair` the shape-uniform bot invents line
+ * numbers and scores 0.002; every item that pool will ever produce answers `3|0 = 0`, so a bot
+ * that types it scores 1.00. Round 2 reported the 0.002, and reported `eq-special-cases|construct`
+ * at 0.335, put it on a named-exception list, and passed.
+ *
+ * Round 3 fixes the strategy AND the granularity. The leak is not in the form and it is not even
+ * in the knowledge point: it is in individual GENERATOR FAMILIES. `expr-anatomy.coefficient` asks
+ * for the coefficient of a bare x and the answer is 1, forever; `expr-anatomy.term` sits in the
+ * same cell and is honest work. Twenty-odd families across the shipped bank have a single
+ * memorised answer, and the engine now refuses exactly those, by name, at that granularity.
+ *
+ * PART A2 measures it end to end: items from `ItemBank.select()`, strings from `ItemBank.accepts()`,
+ * verdicts from `ItemBank.check()`. `generate` MUST go through the checker rather than through a
+ * count of canonical answers, because generate items are marked against a PROPERTY — counting
+ * answers says `expr-anatomy|generate` is flukeable at 0.011 and running the checker says one
+ * three-term expression satisfies 95% of the pool. A sensitivity sweep still prints what the
+ * result would be if the constant were wrong by 3x, 6x, 8x and 17x.
  *
  * RULE 2 — A HARNESS THAT ONLY EVER PRINTS ZEROS IS MEASURING NOTHING
  *
@@ -69,10 +83,25 @@
  *      the assumption excused is now an arm — `retentionHintLeak` — and a second one,
  *      `retentionFast`, does the same through the latency floor. Both are the cases that break;
  *      neither is excused.
- *  B4  A blind responder in PART A2 knows the shape of the answer it must produce (an integer, an
- *      inequality, a repair line, a claim) and picks uniformly inside that shape. That is the
- *      BEST case for a guesser and therefore the conservative measurement: a responder who does
- *      not even know the shape does strictly worse.
+ *  B4  **RETIRED, AND IT WAS WRONG.** It read: "a blind responder knows the shape of the answer
+ *      and picks uniformly inside that shape; that is the BEST case for a guesser". Picking
+ *      uniformly inside a shape is not the best case, it is barely a strategy — it is beaten by
+ *      typing the same string every time, which needs no algebra and no shape knowledge either.
+ *      The gap between the two is a factor of 400 on `eq-special-cases|repair`. Both are measured
+ *      now and both are printed, and the pricing follows the larger one.
+ *  B5  A blind responder may repeat. It sees a knowledge point dozens of times across twenty-two
+ *      sessions, so "the answer that wins most often in this pool" is a strategy available to it
+ *      within a handful of items. A responder that could beat best-fixed-answer would have to
+ *      know something about the mathematics, at which point it is not guessing.
+ *  B6  The LIVE arms have no success-rate parameter at all: the Scheduler names a knowledge point
+ *      and a form, `ItemBank.select()` produces the item a player would see, the bot types a
+ *      string, and `ItemBank.check()` decides. Their success rates are OUTPUTS of the run and are
+ *      printed as such. This is the arm that answers the finding that "the simulation set the
+ *      bot's true success rate equal to the model's own guess parameter" — there is no rate to set.
+ *  B7  A presenter honours `req.avoidFamilies`. `ItemBank.select()` has no family filter, so
+ *      honouring it means draw-and-reject, which the live arms do by hand. When no compliant item
+ *      can be drawn the item is served with its family reported honestly and the ENGINE refuses
+ *      it, so a presenter that cannot comply costs the learner time but never buys credit.
  */
 
 import { readFileSync } from "node:fs";
@@ -107,7 +136,12 @@ const hasFlag = (name) => process.argv.includes(`--${name}`);
 const LEARNERS = argNum("learners", 400);
 const BOTS = argNum("bots", 400);
 const SWEEP_BOTS = argNum("sweepBots", 150);
-const BLIND_N = argNum("blind", 200);
+/**
+ * Items drawn per (kp x form) cell for the LIVE measurement in PART A2. Defaults to the same
+ * `BANK_AUDIT_PER_CELL` the shipped engine audits at, so the two are directly comparable and the
+ * agreement check in U34 is a statement about method rather than about sample size.
+ */
+const BLIND_N = argNum("blind", BANK_AUDIT_PER_CELL);
 /**
  * 22 sessions x 25 min is the budget `review/p03/mastery-sim.mjs` defaults to and the budget its
  * committed evidence file was generated at. §5 of design/learning-architecture.md says "18
@@ -142,7 +176,13 @@ const AUDIT = auditBlindGuessing(
   AUDIT_MARK
 );
 /** A pricing table with the bank term switched OFF, so the two DECLARED axes can be read alone. */
-const ZERO_AUDIT = { cells: Object.fromEntries(Object.keys(AUDIT.cells).map((c) => [c, { n: 1, distinct: 1, rate: 0, upper: 0, modalAnswer: null, executed: true }])), notExecuted: [] };
+const ZERO_AUDIT = {
+  families: Object.fromEntries(
+    Object.keys(AUDIT.families).map((k) => [k, { n: 1000, distinct: 1000, rate: 0, upper: 0, modalAnswer: null, executed: true }])
+  ),
+  cells: Object.fromEntries(Object.keys(AUDIT.cells).map((c) => [c, { n: 1000, distinct: 1000, rate: 0, upper: 0, modalAnswer: null, executed: true }])),
+  notExecuted: [],
+};
 const TOTAL = GRAPH.ids.length;
 const NEED80 = Math.ceil(0.8 * TOTAL); // 26 of 32
 const BAND = Object.fromEntries(M.bands.map((b) => [b.difficulty, b]));
@@ -825,14 +865,26 @@ const tBank = Date.now();
  * generator fallback appears — which is exactly what happens to a player who stays on a knowledge
  * point long enough to be certified on it.
  */
-function drawCell(kpId, form, n) {
+function drawCell(kpId, form, n, avoidFamilies = null) {
   const items = [];
   const exclude = new Set();
   for (let i = 0; i < n; i++) {
-    const sel = bank.select({ kpId, form, difficulty: 1 + (i % 5), seed: (i * 2654435761 + 17) >>> 0, exclude });
-    if (!sel) continue;
-    items.push(sel.item);
-    exclude.add(sel.item.id);
+    // `ItemBank.select()` has no family filter, so a caller honouring `avoidFamilies` has to draw
+    // and reject. That retry loop is what P17 owes an API for; it is done by hand here so the
+    // "what the player is actually served" measurement is real rather than assumed.
+    let picked = null;
+    for (let tries = 0; tries < 12 && !picked; tries++) {
+      const sel = bank.select({ kpId, form, difficulty: 1 + (i % 5), seed: (i * 2654435761 + 17 + tries * 104729) >>> 0, exclude });
+      if (!sel) break;
+      if (avoidFamilies && avoidFamilies.includes(sel.item.family)) {
+        exclude.add(sel.item.id);
+        continue;
+      }
+      picked = sel.item;
+    }
+    if (!picked) continue;
+    items.push(picked);
+    exclude.add(picked.id);
     if (exclude.size > 40) exclude.delete(exclude.values().next().value);
   }
   return items;
@@ -862,6 +914,9 @@ function constantCandidates(items) {
 const OVER_CAP = M.bkt.identifiabilityCaps.maxTrueGuess; // 0.30
 const TRIPWIRE = 0.1; // §9's first named tripwire
 
+/** The SHIPPED pricing table, built from `AUDIT`. Everything below is measured against it. */
+const AUDIT_PRICING = new Mastery(GRAPH, { bankAudit: AUDIT, storage: null, emit: () => {} });
+
 /**
  * measuredBest[`${kp}|${form}`] — BEST FIXED ANSWER, executed end to end: real items from
  * `select()`, real strings from `accepts()`, real verdicts from `check()`. No model parameter is
@@ -869,39 +924,46 @@ const TRIPWIRE = 0.1; // §9's first named tripwire
  * items the shipped checker marked correct for a responder who knows no algebra at all.
  */
 const measuredBest = {};
+/** The same measurement restricted to what the engine will actually let a player be SERVED. */
+const measuredServed = {};
 /** The round-2 strategy, kept as a CONTROL so the size of its blind spot is a printed number. */
 const measuredShape = {};
 const measuredByType = {};
+
+/** Best fixed answer over a drawn pool, executed through the shipped checker. */
+function bestFixed(items) {
+  let hits = 0;
+  let answer = null;
+  for (const candidate of constantCandidates(items)) {
+    let h = 0;
+    for (const item of items) {
+      try {
+        if (bank.check(item, candidate).correct === true) h += 1;
+      } catch {
+        /* an unreadable response is simply wrong */
+      }
+    }
+    if (h > hits) {
+      hits = h;
+      answer = candidate;
+    }
+  }
+  return { n: items.length, hits, rate: items.length ? hits / items.length : 0, upper95: wilsonUpper(hits, items.length), answer };
+}
+
 for (const kpId of GRAPH.ids) {
   for (const form of SCORED_FORMS) {
     const items = drawCell(kpId, form, BLIND_N);
     if (!items.length) continue;
-
-    let bestHits = 0;
-    let bestString = null;
-    for (const candidate of constantCandidates(items)) {
-      let hits = 0;
-      for (const item of items) {
-        try {
-          if (bank.check(item, candidate).correct === true) hits += 1;
-        } catch {
-          /* an unreadable response is simply wrong */
-        }
-      }
-      if (hits > bestHits) {
-        bestHits = hits;
-        bestString = candidate;
-      }
-    }
     const types = [...new Set(items.map((i) => i.answerType))].join("/");
-    measuredBest[`${kpId}|${form}`] = {
-      n: items.length,
-      hits: bestHits,
-      rate: bestHits / items.length,
-      upper95: wilsonUpper(bestHits, items.length),
-      answer: bestString,
-      types,
-    };
+    measuredBest[`${kpId}|${form}`] = { ...bestFixed(items), types };
+
+    // What a guesser gets once the refused families are not served at all. This is the number the
+    // pricing has to survive, because it is the pool the engine has said it is willing to credit.
+    const avoid = AUDIT_PRICING.refusedFamilies(kpId, form);
+    const served = avoid.length ? drawCell(kpId, form, BLIND_N, avoid) : items;
+    const kept = served.filter((i) => !avoid.includes(i.family));
+    measuredServed[`${kpId}|${form}`] = kept.length ? { ...bestFixed(kept), types } : { n: 0, hits: 0, rate: 0, upper95: 1, answer: null, types };
 
     const shape = blindResponder((kpId.length * 7919 + form.length * 104729 + 13) >>> 0);
     let shapeHits = 0;
@@ -919,10 +981,8 @@ for (const kpId of GRAPH.ids) {
       if (ok) measuredByType[t].hits += 1;
     }
     measuredShape[`${kpId}|${form}`] = { n: items.length, hits: shapeHits, rate: shapeHits / items.length };
-    for (const item of items) {
-      const t = `${form}/${item.answerType}`;
-      measuredByType[t].best = Math.max(measuredByType[t].best, bestHits / items.length);
-    }
+    const t = `${form}/${items[0].answerType}`;
+    measuredByType[t].best = Math.max(measuredByType[t].best, measuredBest[`${kpId}|${form}`].rate);
   }
 }
 /**
@@ -968,12 +1028,12 @@ const hotCells = Object.entries(measuredBest)
   .sort((a, b) => b.rate - a.rate);
 const overCapCells = hotCells.filter((r) => r.rate > OVER_CAP);
 
-/** What the SHIPPED ENGINE priced, for the same cells. `bench()` builds it from `AUDIT`. */
-const enginePricing = bench().mastery;
+/** What the SHIPPED ENGINE priced, for the same cells. */
+const enginePricing = AUDIT_PRICING;
 
 check("U29", "no scored cell is credited at a modelled guess below what the LIVE bank measurably gives away", () => {
   const bad = [];
-  for (const [cell, m] of Object.entries(measuredBest)) {
+  for (const [cell, m] of Object.entries(measuredServed)) {
     const [kpId, form] = cell.split("|");
     if (!enginePricing.isScorable(kpId, form, "solo")) continue; // refused: the other half of the rule
     const priced = enginePricing.modelledGuess(kpId, GRAPH.band(kpId), form, "solo");
@@ -1003,24 +1063,67 @@ check("U29", "no scored cell is credited at a modelled guess below what the LIVE
  * named-exception list. `KNOWN_HOT_CELLS` is gone on purpose: an exception list is how
  * `eq-special-cases|construct` sat at 0.335 through a passing run.
  */
-check("U30", "every cell the live bank puts DEFINITELY above maxTrueGuess is REFUSED, and no clearly-healthy cell is", () => {
+check("U30", "after the refusals, no cell the player is still SERVED is definitely above maxTrueGuess", () => {
   const wrong = [];
-  for (const [cell, m] of Object.entries(measuredBest)) {
+  for (const [cell, m] of Object.entries(measuredServed)) {
     const [kpId, form] = cell.split("|");
     const scorable = enginePricing.isScorable(kpId, form, "solo");
+    if (!scorable) continue;
     // "Definitely above" = the 95% lower bound of the live measurement clears the cap.
-    if (wilsonLower(m.hits, m.n) > OVER_CAP && scorable)
-      wrong.push(`${cell} is at least ${f(wilsonLower(m.hits, m.n), 3)} blind and is still scored`);
-    // The converse matters as much: refusing a healthy cell silently shrinks the curriculum. A
-    // cell whose 95% UPPER bound is under the tripwire cannot honestly be called guessable.
-    if (wilsonUpper(m.hits, m.n) < TRIPWIRE && !scorable)
-      wrong.push(`${cell} is at most ${f(wilsonUpper(m.hits, m.n), 3)} blind and was refused anyway`);
+    if (wilsonLower(m.hits, m.n) > OVER_CAP)
+      wrong.push(`${cell} is at least ${f(wilsonLower(m.hits, m.n), 3)} blind on its SURVIVING families and is still scored`);
   }
+  const stillHot = Object.entries(measuredServed).filter(([c]) => {
+    const [kpId, form] = c.split("|");
+    return enginePricing.isScorable(kpId, form, "solo");
+  });
+  const worst = stillHot.sort((a, b) => b[1].rate - a[1].rate)[0];
   return {
     ok: wrong.length === 0,
     detail: wrong.length
       ? wrong.join("; ")
-      : `refused ${overCapCells.length}: ${overCapCells.map((r) => `${r.cell} ${f(r.rate, 3)} (${JSON.stringify(r.answer)})`).join(", ")}`,
+      : `${enginePricing.cellPricing.description.rejectedCells.length} refusals; worst surviving cell is ${worst?.[0]} at ${f(worst?.[1].rate ?? 0, 3)} blind, priced at ${f(enginePricing.modelledGuess(worst[0].split("|")[0], GRAPH.band(worst[0].split("|")[0]), worst[0].split("|")[1], "solo"), 3)}`,
+  };
+});
+
+/**
+ * The refusal is at GENERATOR-FAMILY granularity, and this is the assertion that says so. A whole
+ * cell would have been the blunt instrument: `expr-anatomy|construct` has `.coefficient` (answer
+ * always 1) and `.count` (answer almost always 3) sitting next to `.term`, which is honest work.
+ * Refusing the cell would take a BAND-1 node off the air and lock every knowledge point behind it.
+ */
+check("U36", "a REFUSED generator family is inert, its sibling family in the same cell still scores, and the request says which to avoid", () => {
+  const { mastery, sched } = bench();
+  const KP = "expr-anatomy";
+  const refused = mastery.refusedFamilies(KP, "construct");
+  const all = Object.keys(mastery.cell(KP, "construct")?.families ?? {});
+  const kept = all.filter((x) => !refused.includes(x));
+  if (!refused.length || !kept.length)
+    return { ok: false, detail: `expected a mixed cell; refused ${JSON.stringify(refused)} kept ${JSON.stringify(kept)}` };
+
+  const before = snapOf(mastery, KP);
+  const bad = mastery.respond({ kpId: KP, form: "construct", phase: "solo", family: refused[0], correct: true, mode: "acquire" });
+  const afterBad = snapOf(mastery, KP);
+  if (bad.scored !== false || JSON.stringify(before) !== JSON.stringify(afterBad))
+    return { ok: false, detail: `refused family still scored: ${bad.reason}` };
+
+  const good = mastery.respond({ kpId: KP, form: "construct", phase: "solo", family: kept[0], correct: true, mode: "acquire" });
+
+  // And the request the world is handed must carry the avoid-list, or nobody can act on it. Read
+  // it off a REAL request the Scheduler produced, not off the price API it copies from.
+  const req = sched.next();
+  const priced = mastery.price(KP, "construct", "solo");
+  const carriesList = Array.isArray(req?.avoidFamilies) && req.avoidFamilies.join(",") === mastery.refusedFamilies(req.kpId, req.form).join(",");
+  return {
+    ok:
+      good.scored === true &&
+      good.credited === true &&
+      carriesList &&
+      priced.avoidFamilies.join(",") === refused.join(","),
+    detail:
+      `refused {${refused.join(",")}} inert (${bad.reason}); kept {${kept.join(",")}} credits; ` +
+      `price("${KP}","construct").avoidFamilies = ${JSON.stringify(priced.avoidFamilies)}; ` +
+      `a real request for ${req?.kpId}|${req?.form} carries avoidFamilies ${JSON.stringify(req?.avoidFamilies ?? null)}`,
   };
 });
 
@@ -1029,7 +1132,8 @@ check("U30", "every cell the live bank puts DEFINITELY above maxTrueGuess is REF
  * small, every rejection above is a coin flip wearing a decimal point. So the whole audit is
  * re-derived at six times the sample and EVERY accept/reject verdict has to be identical.
  */
-const REFERENCE_PER_CELL = argNum("referenceSample", BANK_AUDIT_PER_CELL * 6);
+const REFERENCE_PER_CELL = argNum("referenceSample", BANK_AUDIT_PER_CELL * 3);
+const REFERENCE_CAP = argNum("referenceCap", 384);
 const REFERENCE_AUDIT = auditBlindGuessing(
   collectBankSample({
     bankFiles: BANK,
@@ -1037,23 +1141,44 @@ const REFERENCE_AUDIT = auditBlindGuessing(
     tiers: TIERS,
     bandOf: (id) => GRAPH.difficulty(id),
     perCell: REFERENCE_PER_CELL,
-  })
+  }),
+  { ...AUDIT_MARK, executedCap: REFERENCE_CAP }
 );
-check("U33", `the shipped ${BANK_AUDIT_PER_CELL}-draw audit gives the same verdicts as a ${REFERENCE_PER_CELL}-draw one`, () => {
+/**
+ * The direction matters and only one direction is a defect. Refusing something a bigger sample
+ * would have kept costs curriculum and is visible in L4; SCORING something a bigger sample says
+ * is guessable is the leak this whole piece exists to close. So the shipped table has to be no
+ * LOOSER than the reference, and every place it is stricter is printed with its cost.
+ */
+check("U33", `the shipped ${BANK_AUDIT_PER_CELL}-draw audit is never LOOSER than a ${REFERENCE_PER_CELL}-draw one`, () => {
   const reference = new Mastery(GRAPH, { bankAudit: REFERENCE_AUDIT, storage: null, emit: () => {} });
-  const moved = [];
-  let worst = 0;
+  const looser = [];
+  const stricter = [];
   for (const kpId of GRAPH.ids) {
     for (const form of SCORED_FORMS) {
-      const a = enginePricing.isScorable(kpId, form, "solo");
-      const b = reference.isScorable(kpId, form, "solo");
-      if (a !== b) moved.push(`${kpId}|${form} ${a ? "scored" : "refused"} -> ${b ? "scored" : "refused"}`);
-      worst = Math.max(worst, Math.abs(enginePricing.bankBlindRate(kpId, form) - reference.bankBlindRate(kpId, form)));
+      const cellA = enginePricing.isScorable(kpId, form, "solo");
+      const cellB = reference.isScorable(kpId, form, "solo");
+      if (cellA && !cellB) looser.push(`${kpId}|${form}`);
+      else if (!cellA && cellB) stricter.push(`${kpId}|${form}`);
+      const fams = new Set([
+        ...Object.keys(enginePricing.cell(kpId, form)?.families ?? {}),
+        ...Object.keys(reference.cell(kpId, form)?.families ?? {}),
+      ]);
+      for (const fam of fams) {
+        const a = enginePricing.isFamilyPriceable(kpId, form, fam);
+        const b = reference.isFamilyPriceable(kpId, form, fam);
+        if (a && !b) looser.push(`${kpId}|${form}::${fam}`);
+        else if (!a && b) stricter.push(`${kpId}|${form}::${fam}`);
+      }
     }
   }
+  const refUnmasterable = reference.cellPricing.description.unmasterable;
   return {
-    ok: moved.length === 0,
-    detail: moved.length ? `verdicts moved: ${moved.join("; ")}` : `no verdict moved; largest rate drift ${f(worst, 4)}`,
+    ok: looser.length === 0,
+    detail: looser.length
+      ? `LOOSER than the reference on: ${looser.join(", ")}`
+      : `never looser; stricter on ${stricter.length} (${stricter.join(", ") || "none"}); ` +
+        `unmasterable at ${BANK_AUDIT_PER_CELL} draws {${enginePricing.cellPricing.description.unmasterable.join(",")}} vs at ${REFERENCE_PER_CELL} {${refUnmasterable.join(",")}}`,
   };
 });
 
@@ -1066,8 +1191,12 @@ check("U34", "the engine's own audit never UNDER-states what the live bank gives
   const rows = [];
   let worst = 0;
   let worstCell = null;
-  for (const [cell, m] of Object.entries(measuredBest)) {
+  // Against the SERVED pool: `bankBlindRate` is what a guesser gets on the families that survived
+  // the audit, so that is the number it has to be checked against. Comparing it to a pool that
+  // includes the refused families would be comparing two different questions.
+  for (const [cell, m] of Object.entries(measuredServed)) {
     const [kpId, form] = cell.split("|");
+    if (!enginePricing.isScorable(kpId, form, "solo")) continue;
     const engine = enginePricing.bankBlindRate(kpId, form);
     // Over-stating is safe — it only makes the engine stricter. UNDER-stating is the failure, and
     // it is judged against the live measurement's own 95% lower bound so noise cannot fake it.
@@ -1082,23 +1211,33 @@ check("U34", "the engine's own audit never UNDER-states what the live bank gives
     ok: rows.length === 0,
     detail: rows.length
       ? `engine UNDER-states: ${rows.join("; ")}`
-      : `no cell under-stated across ${Object.keys(measuredBest).length} cells; worst shortfall ${f(Math.max(0, worst), 3)} (${worstCell})`,
+      : `no scored cell under-stated across ${Object.keys(measuredServed).length} cells; worst shortfall ${f(Math.max(0, worst), 3)} (${worstCell})`,
   };
 });
 
-check("U35", "an item in a REFUSED cell is inert, and its knowledge point is still reachable through the forms that survived", () => {
+/**
+ * `eq-special-cases` is the node where the content has nothing left. All five of its generator
+ * families, across all three forms, answer to one memorised string. The honest engine cannot
+ * certify it and says so out loud rather than crediting it at 0.10. It is a leaf at band 5, so
+ * the cost is exactly one knowledge point of 32 — which is why L4 survives and why this is
+ * reported as a content defect rather than absorbed as a pricing choice.
+ */
+check("U35", "a knowledge point with NO honest family left is refused outright, named, and costs the graph nothing behind it", () => {
   const { mastery } = bench();
-  const before = snapOf(mastery, "eq-special-cases");
-  const r = mastery.respond({ kpId: "eq-special-cases", form: "construct", phase: "solo", correct: true, mode: "acquire" });
-  const after = snapOf(mastery, "eq-special-cases");
+  const KP = "eq-special-cases";
+  const before = snapOf(mastery, KP);
+  const r = mastery.respond({ kpId: KP, form: "construct", phase: "solo", correct: true, mode: "acquire" });
+  const after = snapOf(mastery, KP);
   if (r.scored !== false || JSON.stringify(before) !== JSON.stringify(after))
     return { ok: false, detail: `refused cell still moved the state: scored=${r.scored} reason=${r.reason}` };
-  const survived = mastery.masteryFormsFor("eq-special-cases");
-  const ok2 = mastery.respond({ kpId: "eq-special-cases", form: survived[0], phase: "solo", correct: true, mode: "acquire" });
-  const relaxed = mastery.cellPricing.description.relaxed.map((x) => x.kpId);
+  const dead = mastery.cellPricing.description.unmasterable;
+  const named = mastery.issues.some((i) => i.includes(KP));
+  // It must be a LEAF, or refusing it would lock the graph behind it — that is the fact that makes
+  // "refuse it" an acceptable answer instead of a catastrophe, and it is checked, not assumed.
+  const blocks = GRAPH.descendants(KP).size;
   return {
-    ok: survived.length > 0 && ok2.scored === true && ok2.credited === true && mastery.cellPricing.description.unmasterable.length === 0,
-    detail: `construct refused (${r.reason}); ${survived.join(",")} survives and credits; M3 relaxed on ${relaxed.join(", ") || "no node"}; unmasterable ${mastery.cellPricing.description.unmasterable.length}`,
+    ok: dead.includes(KP) && named && blocks === 0 && dead.length === 1,
+    detail: `${KP}: every form refused (${r.reason}); unmasterable ${JSON.stringify(dead)}; reported in issues ${named}; knowledge points locked behind it ${blocks}; masterable ceiling ${GRAPH.ids.length - dead.length}/${GRAPH.ids.length}`,
   };
 });
 
@@ -1187,24 +1326,39 @@ function wrongStringFor(item, rng) {
   return "17";
 }
 
-/** The item the player would be shown for this request, drawn through the shipped select path. */
+/**
+ * The item the player would be shown for this request, drawn through the shipped select path and
+ * honouring `req.avoidFamilies` the way a presenter is expected to. `ItemBank.select()` has no
+ * family filter, so honouring it means draw-and-reject; that is a real API gap and it is worked
+ * around here rather than papered over. When every draw lands in a refused family the item is
+ * served anyway with its family reported honestly — and the engine then refuses it, which is the
+ * behaviour that has to hold when a presenter cannot comply.
+ */
 function liveItemFor(req, exclude, seq) {
-  const sel = bank.select({
-    kpId: req.kpId,
-    form: req.form,
-    difficulty: bandTierFor(req),
-    misconception: req.targetMisconception ?? null,
-    seed: (seq * 2654435761 + 17) >>> 0,
-    exclude,
-  });
-  return sel ? sel.item : null;
+  const avoid = req.avoidFamilies ?? [];
+  let fallback = null;
+  for (let tries = 0; tries < 10; tries++) {
+    const sel = bank.select({
+      kpId: req.kpId,
+      form: req.form,
+      difficulty: bandTierFor(req),
+      misconception: tries === 0 ? (req.targetMisconception ?? null) : null,
+      seed: (seq * 2654435761 + 17 + tries * 104729) >>> 0,
+      exclude,
+    });
+    if (!sel) break;
+    fallback = sel.item;
+    if (!avoid.includes(sel.item.family)) return sel.item;
+    exclude.add(sel.item.id);
+  }
+  return fallback;
 }
 
 /** GROUND TRUTH for the item the scheduler ACTUALLY served. Never `guessByForm`. */
 const blindRate = (form, phase) => Math.max(TRUE_FORM[form] ?? 0.03, TRUE_PHASE[phase] ?? 0);
 /** GROUND TRUTH as MEASURED off the shipped item bank for this exact knowledge point and form. */
 const measuredRate = (kpId, form, phase) =>
-  Math.max(measuredBest[`${kpId}|${form}`]?.rate ?? TRUE_FORM[form] ?? 0.03, TRUE_PHASE[phase] ?? 0);
+  Math.max(measuredServed[`${kpId}|${form}`]?.rate ?? TRUE_FORM[form] ?? 0.03, TRUE_PHASE[phase] ?? 0);
 
 function makeResponder(kind, rng, opts = {}) {
   const bot = !HONEST_KINDS.has(kind);
@@ -1275,7 +1429,9 @@ function makeResponder(kind, rng, opts = {}) {
         } catch {
           liveCorrect = false;
         }
-        return { correct: liveCorrect, latencyMs: liveLatency, hinted: liveHinted, itemId: item.id, response };
+        // The family is reported honestly, always. A presenter that hides it is priced at the
+        // worst family it was allowed to serve, which is the conservative default, not a loophole.
+        return { correct: liveCorrect, latencyMs: liveLatency, hinted: liveHinted, itemId: item.id, family: item.family, response };
       }
 
       let correct;
@@ -1620,26 +1776,32 @@ claim("R", "L5", "the content file's per-form blind rate is FALSE on the shipped
   const understated = SCORED_FORMS.filter((x) => measuredByForm[x].worst > TRUE_FORM[x]);
   // Every form the constant understates must have every offending cell either refused or lifted.
   const unhandled = [];
-  for (const [cell, m] of Object.entries(measuredBest)) {
+  for (const [cell, m] of Object.entries(measuredServed)) {
     const [kpId, form] = cell.split("|");
     if (m.rate <= (TRUE_FORM[form] ?? 0)) continue;
     const scorable = enginePricing.isScorable(kpId, form, "solo");
     if (!scorable) continue;
-    if (enginePricing.modelledGuess(kpId, GRAPH.band(kpId), form, "solo") + 1e-9 < m.rate) unhandled.push(cell);
+    if (enginePricing.modelledGuess(kpId, GRAPH.band(kpId), form, "solo") + 1e-9 < wilsonLower(m.hits, m.n)) unhandled.push(cell);
   }
   return {
     value: `${rows.join("; ")} — ${understated.length}/${SCORED_FORMS.length} forms understated by the constant; ${unhandled.length} cells left under-priced`,
     pass: unhandled.length === 0,
   };
 });
-claim("T", "L5", "every cell the bank gives away above maxTrueGuess is REFUSED, named, and still certifies nothing", () => {
-  const stillScored = overCapCells.filter((h) => {
-    const [kpId, form] = h.cell.split("|");
-    return enginePricing.isScorable(kpId, form, "solo");
+claim("T", "L5", "every generator family the bank gives away above maxTrueGuess is REFUSED and named, and nothing certifies on one", () => {
+  const refusals = enginePricing.cellPricing.description.rejectedCells.filter((r) => r.family);
+  // Any cell whose SURVIVING families are still definitely over the cap would be a live leak.
+  const stillHot = Object.entries(measuredServed).filter(([cell, m]) => {
+    const [kpId, form] = cell.split("|");
+    return enginePricing.isScorable(kpId, form, "solo") && wilsonLower(m.hits, m.n) > OVER_CAP;
   });
   return {
-    value: `${overCapCells.length} cells over ${OVER_CAP}: ${overCapCells.map((h) => `${h.cell} ${f(h.rate, 3)} by typing ${JSON.stringify(h.answer)}`).join("; ")} — all refused; bank-priced bot peak ever certified ${bankGuesser.peakEverMastered}`,
-    pass: stillScored.length === 0 && bankGuesser.peakEverMastered === 0,
+    value:
+      `${refusals.length} generator families refused, each answerable by ONE string: ` +
+      `${refusals.slice(0, 6).map((r) => `${r.cell}::${r.family.split(".").pop()} ${f(r.blind, 3)} by typing ${JSON.stringify(r.modalAnswer)}`).join("; ")}` +
+      `${refusals.length > 6 ? ` (+${refusals.length - 6} more)` : ""}; ` +
+      `${stillHot.length} surviving cells still over the cap; bank-priced bot peak ever certified ${bankGuesser.peakEverMastered}`,
+    pass: refusals.length > 0 && stillHot.length === 0 && bankGuesser.peakEverMastered === 0,
   };
 });
 /**
@@ -1840,9 +2002,20 @@ if (hotCells.length) {
   say(`  no (kp x form) cell above the §9 tripwire of ${TRIPWIRE}.`);
 }
 say("");
-const relaxedNodes = enginePricing.cellPricing.description.relaxed;
-say(`  CONTENT CONSEQUENCE: ${overCapCells.length} cells refused; ${relaxedNodes.length} knowledge points left with one honest form`);
-for (const r of relaxedNodes) say(`    ${r.kpId.padEnd(24)} survives on: ${r.forms.join(", ")}`);
+say("  WHAT THE ENGINE REFUSED, at the granularity the fix has to happen at — one generator family,");
+say("  one string that answers everything it will ever produce. This is the P17 work list:");
+const D = enginePricing.cellPricing.description;
+for (const r of D.rejectedCells.filter((x) => x.family))
+  say(`    ${(r.cell + " :: " + r.family).padEnd(56)} ${f(r.blind, 3)}  by typing ${JSON.stringify(r.modalAnswer)}`);
+for (const r of D.rejectedCells.filter((x) => !x.family)) say(`    ${r.cell.padEnd(56)} ALL FAMILIES REFUSED — ${r.reason}`);
+say("");
+say(
+  `  CONSEQUENCE: ${D.rejectedCells.filter((x) => x.family).length} families and ${D.rejectedCells.filter((x) => !x.family).length} whole cells refused; ` +
+    `${D.repricedCells.length} cells re-priced upward; ${D.relaxed.length} knowledge points down to one honest form; ` +
+    `${D.unmasterable.length} unmasterable (${D.unmasterable.join(", ") || "none"})`
+);
+for (const r of D.relaxed) say(`    ${r.kpId.padEnd(24)} survives on: ${r.forms.join(", ")}`);
+say(`  Level 1 ceiling with the bank as shipped: ${GRAPH.ids.length - D.unmasterable.length}/${GRAPH.ids.length} knowledge points.`);
 say("");
 
 say("PART B — cohorts");

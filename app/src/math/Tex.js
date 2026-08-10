@@ -195,6 +195,9 @@ const WORDS = {
     degrees: "degrees",
     infinity: "infinity",
     pi: "pi",
+    // The bank separates groups of like terms with `\mid`. Named as the mark it is, in the
+    // same idiom as "open parenthesis" — a screen-reader user needs the grouping.
+    verticalBar: "vertical bar",
     fallback: "unreadable claim",
     empty: "empty claim",
   },
@@ -230,6 +233,7 @@ const WORDS = {
     degrees: "grados",
     infinity: "infinito",
     pi: "pi",
+    verticalBar: "barra vertical",
     fallback: "afirmación ilegible",
     empty: "afirmación vacía",
   },
@@ -265,6 +269,7 @@ const WORDS = {
     degrees: "stopni",
     infinity: "nieskończoność",
     pi: "pi",
+    verticalBar: "kreska pionowa",
     fallback: "nieczytelne twierdzenie",
     empty: "puste twierdzenie",
   },
@@ -470,6 +475,12 @@ const OTHER_WORDS = {
   "\\pi": "pi",
   "π": "pi",
   "\\circ": "degrees",
+  // A bare bar, which the bank uses to separate groups of like terms. The absolute-value
+  // reading is not this: that comes from `leftright`, which checks for a bar before it ever
+  // consults this table.
+  "\\mid": "verticalBar",
+  "\\vert": "verticalBar",
+  "|": "verticalBar",
 };
 
 // Nodes that are pure layout: they carry no sound and no character.
@@ -587,6 +598,26 @@ function speakList(nodes, w, c, out) {
   return out;
 }
 
+/**
+ * Push a literal token — unless it is a control sequence this reader has no word for.
+ *
+ * Nothing with a backslash in it may reach an accessible name, and "we listed every symbol
+ * the content uses" is not a guarantee, it is a hope: `\mid` leaked into 288 spoken forms in
+ * the shipped bank and the fixture-based check never saw it, because the fixtures did not use
+ * it. So an unknown command is dropped rather than voiced, and recorded in `UNSPOKEN`, which
+ * `texStats()` publishes — a silent gap that a reviewer can see beats a leak nobody can.
+ */
+function sayLiteral(text, out) {
+  const t = String(text ?? "");
+  if (!t) return out;
+  if (t.startsWith("\\") || /[{}^_]/.test(t)) {
+    UNSPOKEN.add(t);
+    return out;
+  }
+  out.push(t);
+  return out;
+}
+
 function speakNode(n, w, c, out) {
   if (!n) return out;
   if (TRANSPARENT.has(n.type)) return out;
@@ -595,13 +626,14 @@ function speakNode(n, w, c, out) {
     case "atom": {
       const key = REL_WORDS[n.text] ?? BIN_WORDS[n.text] ?? OTHER_WORDS[n.text];
       if (key) out.push(w[key]);
-      else if (n.text) out.push(n.text);
+      else sayLiteral(n.text, out);
       return out;
     }
     case "mathord":
     case "textord": {
       const key = OTHER_WORDS[n.text] ?? REL_WORDS[n.text] ?? BIN_WORDS[n.text];
-      out.push(key ? w[key] : n.text);
+      if (key) out.push(w[key]);
+      else sayLiteral(n.text, out);
       return out;
     }
     case "supsub": {
@@ -657,7 +689,7 @@ function speakNode(n, w, c, out) {
       if (WRAPPERS.includes(n.type)) return speakList(n.body ?? [], w, c, out);
       if (Array.isArray(n.body)) return speakList(n.body, w, c, out);
       if (n.body) return speakNode(n.body, w, c, out);
-      if (n.text) out.push(n.text);
+      if (n.text) sayLiteral(n.text, out);
       UNSPOKEN.add(n.type);
       return out;
     }

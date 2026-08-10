@@ -7,6 +7,43 @@
   "tier": "high",
   "shot": "review\\shots\\p09\\measure.png",
   "bootProblems": [],
+  "camera": {
+    "position": [
+      11.15,
+      60.61,
+      219.25
+    ],
+    "fov": 62,
+    "horizonRow": 367.3
+  },
+  "carryRun": {
+    "geometrySamplesVisible": 278,
+    "samplesInsideNearBand": 121,
+    "samplesPaintedCarryCyan": 26,
+    "paintedFractionInsideNearBand": 0.215,
+    "topRow": 498,
+    "bottomRow": 697,
+    "horizonRow": 367.3,
+    "rowsBelowHorizon": 130.7,
+    "allowedRowsBelowHorizon": 135,
+    "worstVerticalGapRows": 8,
+    "unpaintedPixelMedianHue": 30,
+    "unpaintedPixelMedianSat": 0.31,
+    "frameHeight": 900
+  },
+  "massif": {
+    "summitY": 149.4,
+    "browY": 58.4,
+    "aboveBrow": 91.1,
+    "distanceFromCamera": 484,
+    "elevationDeg": 10.57,
+    "bearingOffAxisDeg": 14.3,
+    "screen": [
+      604,
+      218
+    ],
+    "occluded": false
+  },
   "world": {
     "terrain": {
       "id": "leaf-nine",
@@ -21,14 +58,14 @@
         "z0": -352,
         "z1": 338
       },
-      "surfaceTriangles": 9620,
-      "lipEdges": 408,
+      "surfaceTriangles": 9443,
+      "lipEdges": 405,
       "indexed": false,
       "flatNormalFraction": 1,
-      "underTriangles": 10436
+      "underTriangles": 10253
     },
     "landmarks": {
-      "spires": 21,
+      "spires": 16,
       "boulders": 62,
       "certaintyClusters": 90,
       "vantisTowers": 98,
@@ -36,11 +73,11 @@
       "horizonLeaves": 7
     },
     "triangles": {
-      "rock": 1844,
-      "carries": 784,
+      "rock": 1922,
+      "carries": 956,
       "built": 676,
-      "certainties": 4976,
-      "archipelago": 512,
+      "certainties": 5200,
+      "archipelago": 962,
       "backdrop": 1508
     },
     "backdrop": {
@@ -55,9 +92,9 @@
   },
   "frameCensus": {
     "measured": {
-      "cyanPct": 6.95,
-      "darkPct": 40.03,
-      "meanY": 0.219
+      "cyanPct": 12.8,
+      "darkPct": 37.23,
+      "meanY": 0.215
     },
     "reference": {
       "cyanPct": 9.54,
@@ -77,59 +114,47 @@
       "id": "S2",
       "claim": "facets are big enough to count at gameplay distance",
       "verdict": "PASS",
-      "medianEdgeMetres": 7.2,
-      "p10EdgeMetres": 4.7,
+      "medianEdgeMetres": 7.26,
+      "p10EdgeMetres": 4.75,
       "threshold": ">= 4.0 m median triangle edge"
     },
     {
       "id": "S3",
       "claim": "the collider is the render geometry",
-      "verdict": "FAIL",
-      "pointsChecked": 363,
-      "colliderMisses": 0,
-      "worstDeltaMetres": 35.3315,
-      "threshold": "0 misses, worst |render−collider| < 0.02 m"
+      "verdict": "PASS",
+      "vertexOrdinatesCompared": 84987,
+      "structuralMismatches": 0,
+      "worstDeltaMetres": 0,
+      "threshold": "the baked p09:leaf-nine soup equals terrain.topGeometry ordinate for ordinate, worst delta < 0.02 m"
     },
     {
       "id": "S4",
       "claim": "there is no ground under the leaf, and the ravine is a hole",
-      "verdict": "FAIL",
+      "verdict": "PASS",
       "ravinePointsTested": 400,
       "ravinePointsSolid": 0,
       "voidPointsProbedFrom400m": 895,
-      "voidPointsThatFoundAFloor": 1,
-      "floorSample": [
-        {
-          "x": -135,
-          "z": 309,
-          "y": 48
-        }
-      ],
+      "voidPointsThatFoundAFloor": 0,
+      "floorSample": [],
       "threshold": "0 solid samples on the ravine centreline, 0 colliders found under any hole"
     },
     {
       "id": "C1",
       "claim": "the Bollard and the Second Lip never share a frame",
       "verdict": "FAIL",
-      "cameraPositionsSwept": 2634,
-      "framingsHoldingBoth": 21,
+      "reachableStandsSwept": 2283,
+      "framingsHoldingBoth": 3,
+      "framingsHoldingBothIncludingUnreachableCliffFaces": 23,
       "halfDiagonalFovDeg": 51,
       "worstCase": [
         {
           "eye": [
             -136,
-            99,
+            103,
             234
           ],
-          "sepDeg": 91
-        },
-        {
-          "eye": [
-            -136,
-            101,
-            234
-          ],
-          "sepDeg": 91
+          "sepDeg": 90,
+          "slopeDeg": 28
         },
         {
           "eye": [
@@ -137,31 +162,17 @@
             105,
             234
           ],
-          "sepDeg": 90
+          "sepDeg": 90,
+          "slopeDeg": 28
         },
         {
           "eye": [
-            -122,
-            18,
-            -228
+            -136,
+            109,
+            234
           ],
-          "sepDeg": 90
-        },
-        {
-          "eye": [
-            -122,
-            82,
-            220
-          ],
-          "sepDeg": 99
-        },
-        {
-          "eye": [
-            -122,
-            85,
-            220
-          ],
-          "sepDeg": 99
+          "sepDeg": 90,
+          "slopeDeg": 28
         }
       ],
       "threshold": "0 framings, over every reachable stand at eye heights 1.7/4/8 m"
@@ -177,8 +188,11 @@
       "id": "C3",
       "claim": "the ravine cannot be walked or jumped",
       "verdict": "FAIL",
-      "narrowestGapMetres": 0.5,
-      "measuredSpanGapMetres": 44,
+      "narrowestGapMetres": 2,
+      "narrowestAtWorldX": -141,
+      "subTwoMetreCracksIgnored": 1,
+      "widestSuchCrackMetres": 0.5,
+      "measuredSpanGapMetres": 58,
       "threshold": ">= 16 m at its narrowest (locomotion's best jump is far under this)"
     },
     {
@@ -193,23 +207,23 @@
         },
         {
           "id": "standingHouse",
-          "distance": 150,
-          "subtendDeg": 8
+          "distance": 151,
+          "subtendDeg": 7.95
         },
         {
           "id": "knuckle",
-          "distance": 291,
-          "subtendDeg": 7.85
+          "distance": 293,
+          "subtendDeg": 7.82
         },
         {
           "id": "secondLip",
-          "distance": 490,
+          "distance": 491,
           "subtendDeg": 2.92
         },
         {
           "id": "certaintyField",
-          "distance": 480,
-          "subtendDeg": 14.24
+          "distance": 481,
+          "subtendDeg": 14.21
         },
         {
           "id": "vantis",
@@ -225,8 +239,8 @@
       "id": "K2",
       "claim": "no dead space on the walkable surface",
       "verdict": "FAIL",
-      "walkableSamples": 2570,
-      "samplesFurtherThan90mFromAnything": 604,
+      "walkableSamples": 2321,
+      "samplesFurtherThan90mFromAnything": 558,
       "worstDistanceToAnything": 160,
       "threshold": "every walkable sample within 90 m of a published anchor"
     },
@@ -234,26 +248,73 @@
       "id": "K3",
       "claim": "real verticality across the walkable surface",
       "verdict": "PASS",
-      "walkableHeightRangeMetres": 122.5,
-      "fractionOfSurfaceBetween8And40Deg": 0.56,
+      "walkableHeightRangeMetres": 131.7,
+      "fractionOfSurfaceBetween8And40Deg": 0.499,
       "slopeBins": [
-        1058,
-        793,
-        645,
-        74
+        1082,
+        669,
+        490,
+        80
       ],
       "threshold": ">= 70 m of height, >= 25% of the surface between 8° and 40°"
+    },
+    {
+      "id": "K4",
+      "claim": "the horizon poses a question: a massif on the forward bearing, 90 m over brow height",
+      "verdict": "PASS",
+      "measuredOffHeightfield": {
+        "summitY": 149.4,
+        "browY": 58.4,
+        "aboveBrow": 91.1,
+        "distanceFromCamera": 484,
+        "elevationDeg": 10.57,
+        "bearingOffAxisDeg": 14.3,
+        "screen": [
+          604,
+          218
+        ],
+        "occluded": false
+      },
+      "threshold": ">= 90 m above the brow, subtending 8-12 deg of screen height above the arrival camera's horizon, within 30 deg of the forward bearing, and not occluded"
+    },
+    {
+      "id": "K5",
+      "claim": "the hero carry walks the eye from the foreground to the horizon",
+      "verdict": "FAIL",
+      "measuredOnArrivalFrame": {
+        "geometrySamplesVisible": 278,
+        "samplesInsideNearBand": 121,
+        "samplesPaintedCarryCyan": 26,
+        "paintedFractionInsideNearBand": 0.215,
+        "topRow": 498,
+        "bottomRow": 697,
+        "horizonRow": 367.3,
+        "rowsBelowHorizon": 130.7,
+        "allowedRowsBelowHorizon": 135,
+        "worstVerticalGapRows": 8,
+        "unpaintedPixelMedianHue": 30,
+        "unpaintedPixelMedianSat": 0.31,
+        "frameHeight": 900
+      },
+      "threshold": "the river's own unoccluded triangles must reach below 2/3 frame height and up to within 15% of frame height of the horizon row, with no vertical gap over 6% of frame height, and >= 60% of the ones inside 250 m must actually read as cyan in the capture"
+    },
+    {
+      "id": "K6",
+      "claim": "no carry is buried in its own channel",
+      "verdict": "PASS",
+      "minRibbonClearanceOverGroundMetres": 0.45,
+      "threshold": ">= 0.2 m, measured at every ribbon cross-section against the ground the terrain built"
     },
     {
       "id": "P1",
       "claim": "near lit rock matches the reference's lit rock",
       "verdict": "FAIL",
       "measured": {
-        "n": 8315,
-        "Y": 0.041,
+        "n": 7471,
+        "Y": 0.035,
         "hue": 80,
-        "sat": 0.295,
-        "v": 0.243
+        "sat": 0.315,
+        "v": 0.212
       },
       "reference": {
         "hex": "#B8834D",
@@ -289,11 +350,11 @@
       "id": "P4",
       "claim": "the frame is inside the performance budget",
       "verdict": "PASS",
-      "drawCalls": 139,
-      "triangles": 174815,
+      "drawCalls": 138,
+      "triangles": 147430,
       "programs": 21,
       "threshold": "<= 320 draws, <= 1.6M triangles, <= 90 programs"
     }
   ],
-  "summary": "6/14 claims pass"
+  "summary": "10/17 claims pass"
 }

@@ -18,54 +18,219 @@
     "focalPx": 748.9
   },
   "carryRun": {
-    "geometrySamplesVisible": 542,
-    "samplesInsideNearBand": 307,
-    "samplesPaintedCarryCyan": 0,
-    "paintedFractionInsideNearBand": 0,
-    "topRow": 488,
-    "bottomRow": 806,
+    "geometrySamplesVisible": 262,
+    "samplesInsideNearBand": 212,
+    "samplesPaintedCarryCyan": 202,
+    "paintedFractionInsideNearBand": 0.953,
+    "topRow": 489,
+    "bottomRow": 669,
     "horizonRow": 367.3,
-    "rowsBelowHorizon": 120.7,
+    "rowsBelowHorizon": 121.7,
     "allowedRowsBelowHorizon": 135,
-    "worstVerticalGapRows": 16,
-    "unpaintedPixelMedianHue": 213.33,
-    "unpaintedPixelMedianSat": 0.69,
+    "worstVerticalGapRows": 12,
+    "unpaintedPixelMedianHue": 30.61,
+    "unpaintedPixelMedianSat": 0.58,
     "frameHeight": 900
   },
   "river": {
     "ours": {
-      "area": 0,
-      "x0": 0,
-      "x1": 0,
-      "y0": 0,
-      "y1": 0,
-      "maxVerticalRun": 0,
-      "rows": 0,
+      "area": 23125,
+      "x0": 919,
+      "x1": 1175,
+      "y0": 489,
+      "y1": 672,
+      "maxVerticalRun": 166,
+      "rows": 184,
+      "cols": 257,
       "frame": [
         1600,
         900
       ],
-      "areaPpm": 0,
-      "rowShare": 0,
-      "runShare": 0
+      "areaPctOfFrame": 1.606,
+      "totalAccentPx": 37089,
+      "totalAccentPctOfFrame": 2.58,
+      "meanAccentSat": 0.465,
+      "meanAccentHex": "#519B8B",
+      "rowShare": 0.204,
+      "runShare": 0.1844
     },
-    "reference": {
-      "area": 245682,
-      "x0": 0,
-      "x1": 2361,
-      "y0": 0,
-      "y1": 173,
-      "maxVerticalRun": 172,
-      "rows": 174,
-      "cols": 2362,
+    "referenceRiver": {
+      "area": 16591,
+      "x0": 1724,
+      "x1": 2180,
+      "y0": 908,
+      "y1": 1067,
+      "maxVerticalRun": 95,
+      "rows": 160,
+      "cols": 457,
       "frame": [
         2752,
         1536
       ],
-      "areaPpm": 58121.1,
-      "rowShare": 0.113,
-      "runShare": 0.112
+      "areaPctOfFrame": 0.392,
+      "totalAccentPx": 18866,
+      "totalAccentPctOfFrame": 0.45,
+      "meanAccentSat": 0.436,
+      "meanAccentHex": "#8BF7E4",
+      "rowShare": 0.104,
+      "runShare": 0.0618
+    },
+    "referenceWholeFrame": {
+      "area": 47910,
+      "x0": 672,
+      "x1": 1721,
+      "y0": 0,
+      "y1": 71,
+      "maxVerticalRun": 71,
+      "rows": 72,
+      "cols": 1050,
+      "frame": [
+        2752,
+        1536
+      ],
+      "areaPctOfFrame": 1.133,
+      "totalAccentPx": 101088,
+      "totalAccentPctOfFrame": 2.39,
+      "meanAccentSat": 0.414,
+      "meanAccentHex": "#64A9A3",
+      "rowShare": 0.047,
+      "runShare": 0.0462
+    },
+    "referenceRiverSanity": {
+      "box": [
+        1724,
+        908,
+        2180,
+        1067
+      ],
+      "largestComponentPx": 16591,
+      "meanAccentHex": "#8BF7E4",
+      "meanAccentSat": 0.436,
+      "expected": {
+        "largestComponentPx": 16591,
+        "meanAccentHex": "#8BF7E4",
+        "meanAccentSat": 0.436
+      },
+      "looksLikeTheRiver": true,
+      "whatTheWholeFrameWouldHaveGiven": {
+        "largestComponentPx": 47910,
+        "box": [
+          672,
+          0,
+          1721,
+          71
+        ]
+      }
     }
+  },
+  "carryRender": {
+    "n": 118,
+    "medianSat": 0.5241,
+    "medianValue": 0.651,
+    "medianHue": 166.5169,
+    "medianY": 0.3101,
+    "referenceRiver": {
+      "hex": "#8BF7E4",
+      "sat": 0.436,
+      "Y": 0.784
+    },
+    "measuredOn": "the hero carry's body lane inside 250 m, on the shipped arrival frame"
+  },
+  "keelLadder": {
+    "samples": 0,
+    "towardKey": {
+      "n": 0,
+      "medianY": null
+    },
+    "awayFromKey": {
+      "n": 0,
+      "medianY": null
+    },
+    "towardOverAway": null,
+    "bandsByNdL": [
+      {
+        "ndl": [
+          -1,
+          -0.5
+        ],
+        "n": 0,
+        "medianY": null
+      },
+      {
+        "ndl": [
+          -0.5,
+          -0.2
+        ],
+        "n": 0,
+        "medianY": null
+      },
+      {
+        "ndl": [
+          -0.2,
+          0.05
+        ],
+        "n": 0,
+        "medianY": null
+      },
+      {
+        "ndl": [
+          0.05,
+          0.3
+        ],
+        "n": 0,
+        "medianY": null
+      },
+      {
+        "ndl": [
+          0.3,
+          1
+        ],
+        "n": 0,
+        "medianY": null
+      }
+    ],
+    "bottomRowsOfFrame": {
+      "ours": {
+        "rows": 55,
+        "meanY": 0.0282,
+        "meanHex": "#292C2D"
+      },
+      "reference": {
+        "rows": 94,
+        "meanY": 0.078,
+        "meanHex": "#4A462A"
+      }
+    },
+    "measuredOn": "vs.terrain.keel triangles inside 200 m, projected through the shipped arrival camera"
+  },
+  "rockGrade": {
+    "measuredOn": "p09:rock only, inside 200 m, outside the key's cast shadow, on the shipped arrival frame",
+    "litNdLOver0p5": {
+      "n": 668,
+      "medianY": 0.0193,
+      "medianHue": 198,
+      "warmShare": 0.142,
+      "coolShare": 0.819
+    },
+    "shadowNdLUnderMinus0p08": {
+      "n": 32,
+      "medianY": 0.0274,
+      "medianHue": 198.9474,
+      "warmShare": 0.125,
+      "coolShare": 0.875
+    },
+    "turnedAwayBand": {
+      "n": 20,
+      "medianY": 0.0205,
+      "medianHue": 198.9474,
+      "warmShare": 0.2,
+      "coolShare": 0.8
+    },
+    "litOverShadow": 0.704,
+    "referenceLitOverShadow": [
+      4.15,
+      5.47
+    ]
   },
   "heroForm": {
     "shard": {
@@ -91,35 +256,56 @@
         742
       ]
     },
-    "samplesOnShard": 29587,
-    "warmFamilyBands": [],
-    "coolFamilyBands": [
+    "samplesOnShard": 29731,
+    "warmFamilyBands": [
       {
         "band": 0,
-        "n": 3416,
-        "medianY": 0.0023
+        "n": 89,
+        "medianY": 0.1439
       },
       {
         "band": 1,
-        "n": 6298,
-        "medianY": 0.0023
+        "n": 702,
+        "medianY": 0.0987
       },
       {
         "band": 2,
-        "n": 14375,
-        "medianY": 0.0023
+        "n": 265,
+        "medianY": 0.0459
       },
       {
         "band": 3,
-        "n": 5498,
-        "medianY": 0.0023
+        "n": 1059,
+        "medianY": 0.0954
       }
     ],
-    "warmBandSpreadRatio": null,
-    "coolBandSpreadRatio": 1,
-    "bestFamilyInclinationSpread": 1,
-    "largestSingleValueShare": 1,
-    "valueBinsHolding5pct": 1,
+    "coolFamilyBands": [
+      {
+        "band": 0,
+        "n": 2983,
+        "medianY": 0.0288
+      },
+      {
+        "band": 1,
+        "n": 5514,
+        "medianY": 0.0186
+      },
+      {
+        "band": 2,
+        "n": 13681,
+        "medianY": 0.028
+      },
+      {
+        "band": 3,
+        "n": 3111,
+        "medianY": 0.0278
+      }
+    ],
+    "warmBandSpreadRatio": 3.135,
+    "coolBandSpreadRatio": 1.548,
+    "bestFamilyInclinationSpread": 3.135,
+    "largestSingleValueShare": 0.468,
+    "valueBinsHolding5pct": 3,
     "rockShader": {
       "compiled": true,
       "hasTerrainGrade": true,
@@ -130,20 +316,20 @@
   "sunSideDisagreement": {
     "facesTurnedTowardLethis": {
       "n": 7372,
-      "Y": 0.002,
-      "hue": 213.3,
-      "sat": 0.692,
-      "v": 0.051
+      "Y": 0.022,
+      "hue": 196,
+      "sat": 0.372,
+      "v": 0.192
     },
     "facesTurnedAwayFromLethis": {
       "n": 87,
-      "Y": 0.002,
-      "hue": 213.3,
-      "sat": 0.692,
-      "v": 0.051
+      "Y": 0.029,
+      "hue": 198,
+      "sat": 0.364,
+      "v": 0.216
     },
     "measuredOn": "the hero shard only, above base + 20 m, excluding points in the key's cast shadow",
-    "heroSamplesInCastShadow": 16330,
+    "heroSamplesInCastShadow": 16455,
     "projectorRoundTripWorstPx": 0
   },
   "massif": {
@@ -179,15 +365,17 @@
       "flatNormalFraction": 1,
       "underTriangles": 10253,
       "shoulders": {
-        "checked": 26,
+        "checked": 27,
         "violations": 0,
         "worstAdjacentDeltaDeg": 14.89,
         "minSeparationDeg": 12,
         "widestSpreadUsed": 1
-      }
+      },
+      "paletteMisses": [],
+      "sceneFitTolerance": 0.02
     },
     "landmarks": {
-      "spires": 10,
+      "spires": 11,
       "boulders": 62,
       "certaintyClusters": 90,
       "vantisTowers": 98,
@@ -195,8 +383,8 @@
       "horizonLeaves": 7
     },
     "triangles": {
-      "rock": 1638,
-      "carries": 3012,
+      "rock": 1716,
+      "carries": 2928,
       "built": 676,
       "certainties": 5200,
       "archipelago": 962,
@@ -214,16 +402,37 @@
   },
   "frameCensus": {
     "measured": {
-      "cyanPct": 0,
-      "darkPct": 100,
-      "meanY": 0.002
+      "cyanPct": 15.86,
+      "darkPct": 45.17,
+      "meanY": 0.203
     },
     "reference": {
       "cyanPct": 9.54,
+      "darkPct": 18.57,
       "meanY": 0.273
+    },
+    "bottomRows": {
+      "ours": {
+        "rows": 55,
+        "meanY": 0.0282,
+        "meanHex": "#292C2D"
+      },
+      "reference": {
+        "rows": 94,
+        "meanY": 0.078,
+        "meanHex": "#4A462A"
+      }
     }
   },
   "claims": [
+    {
+      "id": "S0",
+      "claim": "the arrival frame rendered at all",
+      "verdict": "PASS",
+      "frameMeanY": 0.203,
+      "frameDarkPct": 45.17,
+      "threshold": "mean luminance >= 0.02 and under 92% of the frame below Y 0.05 — a black capture is a bug, and every pixel claim below is void without this one"
+    },
     {
       "id": "S1",
       "claim": "terrain is non-indexed with one normal per face",
@@ -236,7 +445,7 @@
       "id": "S2",
       "claim": "facets are big enough to count at gameplay distance",
       "verdict": "PASS",
-      "medianEdgeMetres": 7.27,
+      "medianEdgeMetres": 7.28,
       "p10EdgeMetres": 4.77,
       "threshold": ">= 4.0 m median triangle edge"
     },
@@ -264,7 +473,7 @@
       "id": "C1",
       "claim": "the Bollard and the Second Lip never share a frame",
       "verdict": "PASS",
-      "reachableStandsSwept": 2337,
+      "reachableStandsSwept": 2325,
       "framingsHoldingBoth": 0,
       "framingsHoldingBothIncludingUnreachableCliffFaces": 17,
       "halfDiagonalFovDeg": 51,
@@ -337,7 +546,7 @@
       "id": "K2",
       "claim": "no dead space on the walkable surface",
       "verdict": "PASS",
-      "walkableSamples": 2351,
+      "walkableSamples": 2358,
       "samplesFurtherThan90mFromAnything": 0,
       "worstDistanceToAnything": 86,
       "worstAtWorldXZ": [
@@ -351,13 +560,13 @@
       "id": "K3",
       "claim": "real verticality across the walkable surface",
       "verdict": "PASS",
-      "walkableHeightRangeMetres": 102.1,
-      "fractionOfSurfaceBetween8And40Deg": 0.634,
+      "walkableHeightRangeMetres": 102,
+      "fractionOfSurfaceBetween8And40Deg": 0.684,
       "slopeBins": [
-        781,
-        783,
-        707,
-        80
+        673,
+        861,
+        752,
+        72
       ],
       "threshold": ">= 70 m of height, >= 25% of the surface between 8° and 40°"
     },
@@ -383,20 +592,20 @@
     {
       "id": "K5",
       "claim": "the hero carry walks the eye from the foreground to the horizon",
-      "verdict": "FAIL",
+      "verdict": "PASS",
       "measuredOnArrivalFrame": {
-        "geometrySamplesVisible": 542,
-        "samplesInsideNearBand": 307,
-        "samplesPaintedCarryCyan": 0,
-        "paintedFractionInsideNearBand": 0,
-        "topRow": 488,
-        "bottomRow": 806,
+        "geometrySamplesVisible": 262,
+        "samplesInsideNearBand": 212,
+        "samplesPaintedCarryCyan": 202,
+        "paintedFractionInsideNearBand": 0.953,
+        "topRow": 489,
+        "bottomRow": 669,
         "horizonRow": 367.3,
-        "rowsBelowHorizon": 120.7,
+        "rowsBelowHorizon": 121.7,
         "allowedRowsBelowHorizon": 135,
-        "worstVerticalGapRows": 16,
-        "unpaintedPixelMedianHue": 213.33,
-        "unpaintedPixelMedianSat": 0.69,
+        "worstVerticalGapRows": 12,
+        "unpaintedPixelMedianHue": 30.61,
+        "unpaintedPixelMedianSat": 0.58,
         "frameHeight": 900
       },
       "threshold": "the river's own unoccluded triangles must reach below 2/3 frame height and up to within 15% of frame height of the horizon row, with no vertical gap over 6% of frame height, and >= 60% of the ones inside 250 m must actually read as cyan in the capture"
@@ -411,48 +620,140 @@
     {
       "id": "K7",
       "claim": "the river is a connected body, not a strip light",
-      "verdict": "FAIL",
+      "verdict": "PASS",
       "measuredOnArrivalFrame": {
         "ours": {
-          "area": 0,
-          "x0": 0,
-          "x1": 0,
-          "y0": 0,
-          "y1": 0,
-          "maxVerticalRun": 0,
-          "rows": 0,
+          "area": 23125,
+          "x0": 919,
+          "x1": 1175,
+          "y0": 489,
+          "y1": 672,
+          "maxVerticalRun": 166,
+          "rows": 184,
+          "cols": 257,
           "frame": [
             1600,
             900
           ],
-          "areaPpm": 0,
-          "rowShare": 0,
-          "runShare": 0
+          "areaPctOfFrame": 1.606,
+          "totalAccentPx": 37089,
+          "totalAccentPctOfFrame": 2.58,
+          "meanAccentSat": 0.465,
+          "meanAccentHex": "#519B8B",
+          "rowShare": 0.204,
+          "runShare": 0.1844
         },
-        "reference": {
-          "area": 245682,
-          "x0": 0,
-          "x1": 2361,
-          "y0": 0,
-          "y1": 173,
-          "maxVerticalRun": 172,
-          "rows": 174,
-          "cols": 2362,
+        "referenceRiver": {
+          "area": 16591,
+          "x0": 1724,
+          "x1": 2180,
+          "y0": 908,
+          "y1": 1067,
+          "maxVerticalRun": 95,
+          "rows": 160,
+          "cols": 457,
           "frame": [
             2752,
             1536
           ],
-          "areaPpm": 58121.1,
-          "rowShare": 0.113,
-          "runShare": 0.112
+          "areaPctOfFrame": 0.392,
+          "totalAccentPx": 18866,
+          "totalAccentPctOfFrame": 0.45,
+          "meanAccentSat": 0.436,
+          "meanAccentHex": "#8BF7E4",
+          "rowShare": 0.104,
+          "runShare": 0.0618
+        },
+        "referenceWholeFrame": {
+          "area": 47910,
+          "x0": 672,
+          "x1": 1721,
+          "y0": 0,
+          "y1": 71,
+          "maxVerticalRun": 71,
+          "rows": 72,
+          "cols": 1050,
+          "frame": [
+            2752,
+            1536
+          ],
+          "areaPctOfFrame": 1.133,
+          "totalAccentPx": 101088,
+          "totalAccentPctOfFrame": 2.39,
+          "meanAccentSat": 0.414,
+          "meanAccentHex": "#64A9A3",
+          "rowShare": 0.047,
+          "runShare": 0.0462
+        },
+        "referenceRiverSanity": {
+          "box": [
+            1724,
+            908,
+            2180,
+            1067
+          ],
+          "largestComponentPx": 16591,
+          "meanAccentHex": "#8BF7E4",
+          "meanAccentSat": 0.436,
+          "expected": {
+            "largestComponentPx": 16591,
+            "meanAccentHex": "#8BF7E4",
+            "meanAccentSat": 0.436
+          },
+          "looksLikeTheRiver": true,
+          "whatTheWholeFrameWouldHaveGiven": {
+            "largestComponentPx": 47910,
+            "box": [
+              672,
+              0,
+              1721,
+              71
+            ]
+          }
         }
       },
-      "threshold": "largest connected accent-cyan component >= 5000 px, spanning >= 110 rows, and >= 20 px thick on its thickest column. Last round: 665 px, 30 rows, 1-4 px. The reference's own river is measured the same way and printed beside it"
+      "threshold": "largest connected accent-cyan component >= 0.4% of the frame, spanning >= 12% of its rows, >= 2.2% of frame height thick on its thickest column — AND the reference column it is printed beside has to actually be the reference's river (x[1724,2180] y[908,1067], 16,591 px, #8BF7E4), not the teal band across the top of its sky, which is what this claim used to compare us against"
+    },
+    {
+      "id": "K8",
+      "claim": "cyan is an accent, not the frame",
+      "verdict": "PASS",
+      "largestComponentPctOfFrame": 1.606,
+      "totalAccentPctOfFrame": 2.58,
+      "meanAccentSat": 0.465,
+      "meanAccentHex": "#519B8B",
+      "reference": {
+        "riverComponentPctOfFrame": 0.392,
+        "wholeFrameAccentPct": 2.39,
+        "riverMeanAccentSat": 0.436,
+        "riverMeanAccentHex": "#8BF7E4"
+      },
+      "gate": "hue 150-205, S >= 0.35, V >= 0.3",
+      "threshold": "largest connected accent component <= 1.74% of the frame (25,000 px at 1600x900) and total accent <= 3.5%. Last round: 7.0% in one component, 8.30% total, against the reference's 0.39% and 2.39%"
+    },
+    {
+      "id": "K9",
+      "claim": "the river's body renders at the reference river's saturation",
+      "verdict": "FAIL",
+      "measuredOnArrivalFrame": {
+        "n": 118,
+        "medianSat": 0.5241,
+        "medianValue": 0.651,
+        "medianHue": 166.5169,
+        "medianY": 0.3101,
+        "referenceRiver": {
+          "hex": "#8BF7E4",
+          "sat": 0.436,
+          "Y": 0.784
+        },
+        "measuredOn": "the hero carry's body lane inside 250 m, on the shipped arrival frame"
+      },
+      "threshold": "the hero carry's body lane must render at S 0.42-0.50 in the capture (the reference river measures S 0.436). Last round it rendered at S 0.93 while the palette constant said 0.45 — so this is measured off the pixel, never off the constant"
     },
     {
       "id": "S5",
       "claim": "the big near form reads as several planes, not one cut-out",
-      "verdict": "FAIL",
+      "verdict": "PASS",
       "measuredOnArrivalFrame": {
         "shard": {
           "id": "hero.0",
@@ -477,35 +778,56 @@
             742
           ]
         },
-        "samplesOnShard": 29587,
-        "warmFamilyBands": [],
-        "coolFamilyBands": [
+        "samplesOnShard": 29731,
+        "warmFamilyBands": [
           {
             "band": 0,
-            "n": 3416,
-            "medianY": 0.0023
+            "n": 89,
+            "medianY": 0.1439
           },
           {
             "band": 1,
-            "n": 6298,
-            "medianY": 0.0023
+            "n": 702,
+            "medianY": 0.0987
           },
           {
             "band": 2,
-            "n": 14375,
-            "medianY": 0.0023
+            "n": 265,
+            "medianY": 0.0459
           },
           {
             "band": 3,
-            "n": 5498,
-            "medianY": 0.0023
+            "n": 1059,
+            "medianY": 0.0954
           }
         ],
-        "warmBandSpreadRatio": null,
-        "coolBandSpreadRatio": 1,
-        "bestFamilyInclinationSpread": 1,
-        "largestSingleValueShare": 1,
-        "valueBinsHolding5pct": 1,
+        "coolFamilyBands": [
+          {
+            "band": 0,
+            "n": 2983,
+            "medianY": 0.0288
+          },
+          {
+            "band": 1,
+            "n": 5514,
+            "medianY": 0.0186
+          },
+          {
+            "band": 2,
+            "n": 13681,
+            "medianY": 0.028
+          },
+          {
+            "band": 3,
+            "n": 3111,
+            "medianY": 0.0278
+          }
+        ],
+        "warmBandSpreadRatio": 3.135,
+        "coolBandSpreadRatio": 1.548,
+        "bestFamilyInclinationSpread": 3.135,
+        "largestSingleValueShare": 0.468,
+        "valueBinsHolding5pct": 3,
         "rockShader": {
           "compiled": true,
           "hasTerrainGrade": true,
@@ -519,7 +841,7 @@
       "id": "S6",
       "claim": "every shoulder profile the world built separates its bands by at least 12 deg",
       "verdict": "PASS",
-      "profilesBuilt": 26,
+      "profilesBuilt": 27,
       "violations": 0,
       "worstAdjacentBandGapDeg": 14.89,
       "requiredDeg": 12,
@@ -543,7 +865,13 @@
       "id": "P1",
       "claim": "the warm family on this piece's rock matches the reference's lit rock",
       "verdict": "FAIL",
-      "measured": null,
+      "measured": {
+        "n": 2720,
+        "Y": 0.083,
+        "hue": 29.5,
+        "sat": 0.354,
+        "v": 0.376
+      },
       "reference": {
         "hex": "#B8834D",
         "Y": 0.27,
@@ -557,11 +885,11 @@
       "claim": "the cool family on this piece's rock is the reference's blue shadow, not a dark orange",
       "verdict": "PASS",
       "measured": {
-        "n": 10038,
-        "Y": 0.002,
-        "hue": 213.3,
-        "sat": 0.692,
-        "v": 0.051
+        "n": 5306,
+        "Y": 0.026,
+        "hue": 197.1,
+        "sat": 0.382,
+        "v": 0.204
       },
       "reference": {
         "hex": "#1B2B32",
@@ -577,20 +905,20 @@
       "measured": {
         "facesTurnedTowardLethis": {
           "n": 7372,
-          "Y": 0.002,
-          "hue": 213.3,
-          "sat": 0.692,
-          "v": 0.051
+          "Y": 0.022,
+          "hue": 196,
+          "sat": 0.372,
+          "v": 0.192
         },
         "facesTurnedAwayFromLethis": {
           "n": 87,
-          "Y": 0.002,
-          "hue": 213.3,
-          "sat": 0.692,
-          "v": 0.051
+          "Y": 0.029,
+          "hue": 198,
+          "sat": 0.364,
+          "v": 0.216
         },
         "measuredOn": "the hero shard only, above base + 20 m, excluding points in the key's cast shadow",
-        "heroSamplesInCastShadow": 16330,
+        "heroSamplesInCastShadow": 16455,
         "projectorRoundTripWorstPx": 0
       },
       "threshold": "outside the key's cast shadow and outside P13's foliage hue band, faces with N.L > 0.12 must render at least 1.5x brighter than faces with N.L < -0.08, over >= 150 samples each, measured on this piece's own surfaces through the shipped arrival camera"
@@ -599,7 +927,7 @@
       "id": "P3",
       "claim": "the warm:cool luminance ratio sits in the reference's band",
       "verdict": "FAIL",
-      "measuredRatio": 0,
+      "measuredRatio": 3.19,
       "referenceRatio": [
         4.15,
         5.47
@@ -607,14 +935,130 @@
       "threshold": "3.2–11.0 (the reference measures 4.15 and 5.47 on two different rocks; the upper bound is loosened from 9 because our warm family is sampled over the whole near field rather than on one rock)"
     },
     {
+      "id": "P6",
+      "claim": "the keel under the frame is a value ladder, not a flat bar",
+      "verdict": "FAIL",
+      "measuredOnArrivalFrame": {
+        "samples": 0,
+        "towardKey": {
+          "n": 0,
+          "medianY": null
+        },
+        "awayFromKey": {
+          "n": 0,
+          "medianY": null
+        },
+        "towardOverAway": null,
+        "bandsByNdL": [
+          {
+            "ndl": [
+              -1,
+              -0.5
+            ],
+            "n": 0,
+            "medianY": null
+          },
+          {
+            "ndl": [
+              -0.5,
+              -0.2
+            ],
+            "n": 0,
+            "medianY": null
+          },
+          {
+            "ndl": [
+              -0.2,
+              0.05
+            ],
+            "n": 0,
+            "medianY": null
+          },
+          {
+            "ndl": [
+              0.05,
+              0.3
+            ],
+            "n": 0,
+            "medianY": null
+          },
+          {
+            "ndl": [
+              0.3,
+              1
+            ],
+            "n": 0,
+            "medianY": null
+          }
+        ],
+        "bottomRowsOfFrame": {
+          "ours": {
+            "rows": 55,
+            "meanY": 0.0282,
+            "meanHex": "#292C2D"
+          },
+          "reference": {
+            "rows": 94,
+            "meanY": 0.078,
+            "meanHex": "#4A462A"
+          }
+        },
+        "measuredOn": "vs.terrain.keel triangles inside 200 m, projected through the shipped arrival camera"
+      },
+      "threshold": "vs.terrain.keel's toward-key : away-from-key median luminance >= 1.5x over >= 40 samples each, and the bottom 6% of the frame's rows must mean at least Y 0.035. Last round: ratio 1.02, bottom rows Y 0.018 against the reference's 0.078"
+    },
+    {
+      "id": "P7",
+      "claim": "faces of this piece's rock turned away from the key are the cool family",
+      "verdict": "FAIL",
+      "measuredOnArrivalFrame": {
+        "measuredOn": "p09:rock only, inside 200 m, outside the key's cast shadow, on the shipped arrival frame",
+        "litNdLOver0p5": {
+          "n": 668,
+          "medianY": 0.0193,
+          "medianHue": 198,
+          "warmShare": 0.142,
+          "coolShare": 0.819
+        },
+        "shadowNdLUnderMinus0p08": {
+          "n": 32,
+          "medianY": 0.0274,
+          "medianHue": 198.9474,
+          "warmShare": 0.125,
+          "coolShare": 0.875
+        },
+        "turnedAwayBand": {
+          "n": 20,
+          "medianY": 0.0205,
+          "medianHue": 198.9474,
+          "warmShare": 0.2,
+          "coolShare": 0.8
+        },
+        "litOverShadow": 0.704,
+        "referenceLitOverShadow": [
+          4.15,
+          5.47
+        ]
+      },
+      "threshold": "in the N·L [-0.5,-0.2) band no more than 35% of p09:rock's unshadowed near pixels may read warm (hue 8-58), and lit (N·L > 0.5) : shadow (N·L < -0.08) median luminance must be at least 3.2 — the reference measures 4.15-5.47. Last round: warmShare 0.86 and a ratio of 1.82"
+    },
+    {
+      "id": "S8",
+      "claim": "every colour this world asks the tonemap for is a colour it can reach",
+      "verdict": "PASS",
+      "paletteMisses": [],
+      "tolerance": 0.02,
+      "threshold": "sceneRGB()'s fit reports zero colours outside its own tolerance and zero channels pinned on its clamp. PAL.carry was #7ADCC8, which needs a negative red to invert, so red pinned and a river authored at S 0.45 shipped at S 0.93 — the fit knew and nothing was reading it"
+    },
+    {
       "id": "P4",
       "claim": "the frame is inside the performance budget",
       "verdict": "PASS",
-      "drawCalls": 138,
-      "triangles": 151457,
-      "programs": 21,
+      "drawCalls": 139,
+      "triangles": 154532,
+      "programs": 22,
       "threshold": "<= 320 draws, <= 1.6M triangles, <= 90 programs"
     }
   ],
-  "summary": "16/22 claims pass"
+  "summary": "22/28 claims pass"
 }

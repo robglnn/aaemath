@@ -1,0 +1,872 @@
+P16 — mastery engine: measured proof of L4 and L5
+====================================================================================================
+engine under test: app/src/learn/{Graph,Mastery,Scheduler,ItemBank}.js   content: content/knowledge-graph.json
+graph: {"nodes":32,"edges":48,"roots":2,"leaves":4,"longestChain":11,"bands":{"1":3,"2":11,"3":8,"4":7,"5":3},"maxDescendants":30}
+gate: P >= 0.95, >= 6 scored (>= 3 at band), >= 2 forms, then 3/4 CREDITED AND P >= 0.95 at a check >= 12 h and >= 1 session later
+budget: 22 sessions x 25 min, one session per day. Bots: 60/arm, learners: 60/cohort. 75.4s
+
+TRUE blind-success rates the bots draw from (ground truth, never the model's guess):
+  declared by form:  construct 0.03   repair 0.03   generate 0.02   select4 0.25   judge2 0.5
+  declared by phase: solo 0   guided-1 0.08   guided-2 0.17   guided-3 0.85   model 0.7
+  MEASURED on the SCHEDULER-DRIVEN SERVED STREAM: 8634 items over 12 runs x 22 sessions, 20.6% catalogue / 79.4% generated, 73383 ms
+     best fixed answer, pooled:   construct 0.1000   repair 0.0746   generate 0.0705
+     best fixed answer, WORST kp: construct 0.1000 (oo-numeric|construct)   repair 0.1104 (oo-numeric|repair)   generate 0.0836 (var-meaning|generate)
+     chosen on one half of the stream and SCORED ON THE OTHER, so none of these is an in-sample maximum.
+  for contrast, the model's own belief at band 3: construct 0.070   repair 0.070   generate 0.042   select4 0.238   judge2 0.420
+
+PART A — deterministic engine assertions
+----------------------------------------------------------------------------------------------------
+  PASS  U1  Graph validates the real content and rejects a cyclic graph, naming the loop
+             2-cycle: var-meaning <- expr-anatomy <- var-meaning | 3-cycle: var-meaning <- like-terms-id <- oo-structure <- var-meaning | self-loop: eq-two-step <- eq-two-step
+  PASS  U2  prerequisite closure, frontier and topological order are correct
+             frontier at t0 = var-meaning,oo-numeric
+  PASS  U3  a judge2 item is INERT: p, scored, atBand, forms and theta all unchanged
+             scored=false reason=unscored-form p 0.2500 -> 0.2500
+  PASS  U4  a select4 item is INERT, correct or wrong
+             unscored=8
+  PASS  U5  an unscored PHASE (model / guided-2 / guided-3) is inert in BOTH directions
+  PASS  U6  guided-1 IS scorable but is NOT mastery-eligible (M2/M3 counters stay put)
+             p 0.1800 -> 0.5134, scored 0 -> 0, credited=false
+  PASS  U7  the two axes compose by MAX, never by product
+             b1 construct/guided-1 0.1000, b1 generate/guided-1 0.1000 (product would be 0.0600), true construct/guided-3 0.85, b3 generate/solo 0.0700; third axis on eq-both-sides|construct: declared 0.080, measured blind 0.300, priced 0.300
+  PASS  U8  an over-cap form is REJECTED from the scored path, never clamped
+             judge2 would model at 0.4200 vs maxGuess 0.3; scored forms {construct,repair,generate}, scored phases {solo,guided-1}
+  PASS  U9  the derived scorable matrix is exactly {construct,repair,generate} x {solo,guided-1}, and every issue is a NAMED content defect
+             scorable 6/25 (construct,generate,repair x guided-1,solo); mastery-eligible 3/25 (construct,generate,repair x solo); 5 issue(s), all CONTENT reports
+  PASS  U10  latency floor: a fast CORRECT answer buys nothing; a fast WRONG one is scored exactly like a slow one
+             fast+right 0.1800 -> 0.1800 scored=0 (not-scored-upward:latency-floor); slow+right -> 0.5134 scored=1; fast+wrong 0.2290 == slow+wrong 0.2290 scored=1
+  PASS  U11  hinted CORRECT is refused upward; hinted WRONG is scored exactly like an unhinted one
+             hint+right 0.1800 -> 0.1800 scored=0 (not-scored-upward:hinted); unhinted+right -> 0.5134; hint+wrong 0.2290 == unhinted+wrong 0.2290
+  PASS  U12  M2 counters are docked on a lapse (scored -3, atBand -2) and the ladder resets
+             scored 3, atBand 1, status learning, ladder -1
+  PASS  U13  M4 is a CONJUNCTION: 3-of-4 with the posterior below threshold does not certify
+             p=0.90&3/4 -> false; p=0.97&3/4 -> true; p=0.97&2/4 -> false
+  PASS  U14  the form cycle is a RUNNING index on the M2 counter, never restarted at `construct`
+             construct,construct,generate,construct,repair,generate
+  PASS  U15  the all-wrong BKT floor invariant: one correct from the floor never clears 0.95
+             worst cell band 1 relearn: floor 0.3494, +1 correct 0.9375
+  PASS  U16  state round-trips: snapshot -> restore reproduces the probe byte for byte
+             probe hash c98d2ebe5779d8f7 vs c98d2ebe5779d8f7
+  PASS  U17  determinism: the same seed reproduces the same state exactly
+             seed 777 -> fa753f7712282c53 twice; seed 778 -> 4d25b4c5d7ba8d12
+  PASS  U18  a fake localStorage round-trips a session (state resumes)
+             p 0.3500 -> 0.3500
+  PASS  U19  M4 baseline: four honest, unhinted, unhurried corrects DO certify
+             status mastered, lapses 0, credited 4/4
+  PASS  U20  M4 refuses a HINTED correct: four hinted corrects certify NOTHING and lapse the node
+             status learning, lapses 1, refusedUpward 4, reasons not-scored-upward:hinted, M2 docked to 3
+  PASS  U21  M4 refuses a SUB-LATENCY-FLOOR correct: four 100 ms corrects certify NOTHING
+             status learning, lapses 1, refusedUpward 4, reasons not-scored-upward:latency-floor
+  PASS  U22  M4 refuses a SCAFFOLDED correct: retention forced to guided-1 is scorable but not credited
+             status learning, lapses 1, scored 4/4 but credited 0/4
+  PASS  U23  CONTROL: the round-1 counting rule DOES certify the hinted arm — this harness can see the leak
+             round-1 rule (M4 counts outcome.correct) -> mastered; shipped rule (M4 counts result.credited) -> learning
+  PASS  U24  there is exactly ONE retention tally: the Scheduler keeps no `right` counter of its own
+             scheduler event keys {index,items,kpId,mode}; mastery tally served 2 right 2 refusedRight 0
+  PASS  U25  an ABANDONED retention check is a lapse, not a free re-roll
+             served 3 then abandoned: provisional -> learning, lapses 0 -> 1, M2 docked 6 -> 3
+  PASS  U26  Scheduler state survives persist -> hydrate: open check, no-repeat window and inFlight
+             event {"kpId":"var-meaning","mode":"retention","items":4,"index":1}, recentItemIds 6, tally {"mode":"retention","items":4,"served":1,"right":1,"refusedRight":0}, inFlight [var-meaning]
+  PASS  U27  a snapshot with NO Scheduler half lapses the orphaned retention check
+             restored without a scheduler half: status learning, lapses 1, M2 6 -> 3
+  PASS  U28  the `mastery` probe carries `inFlight[]` at the TOP level, as §8 requirement 11 names it
+             inFlight [var-meaning], openEvents [{"kpId":"var-meaning","mode":"retention","served":2,"right":2,"of":4}]
+  PASS  U29  no scored cell is credited at a modelled guess below what the SERVED stream measurably gives away
+             5 scored cells with n>=30 on the SERVED stream (8634 items, 20.6% catalogue); 87 refusals; 5 re-priced upward; none credited below its measured blind rate
+  PASS  U30  after the refusals, no cell the player is still SERVED is definitely above maxTrueGuess
+             87 refusals; worst surviving cell is oo-numeric|repair at 0.110 blind (lo 0.085, "2: 12 + 10"), priced at 0.268
+  PASS  U38  no FAMILY the engine still scores is definitely above maxTrueGuess on the served stream
+             5 scored families with n>=30 on the served stream; none above 0.3
+  PASS  U39  every item the Scheduler serves was in the population the audit priced
+             all 1780 committed items served (47 distinct) are in the audit's census, and all 10 served families are in the table. Shares differ by horizon, not population: audit 64.0% catalogue over 29754 draws (160/cell), stream 20.6% catalogue over 8634 items served across 12 runs
+  PASS  U42  items the Scheduler still serves from a REFUSED family are inert, on the real stream
+             1328 of 8634 served items (15.4%) came from a refused family and none of them is scorable; oo-numeric|repair|oo-numeric.divmul answered correctly: scored=false reason=unscored-family:oo-numeric.divmul:blind-0.348, state unchanged
+  PASS  U37  the COMMITTED bank-audit table is exactly what a fresh audit of content/items produces
+             161 family groups identical; fingerprint d6e2537d; version 2; sample 29754 items, 64.0% catalogue
+  PASS  U40  the audit window, the Scheduler's published window and the content file's are one number
+             content 40; audit table 40; Mastery BANK_AUDIT_WINDOW 40; Scheduler probe 40; a real request carries avoidItemIds (0 ids)
+  PASS  U41  every committed catalogue pool whose modal answer beats maxTrueGuess is REFUSED by the engine
+             27 committed pools (of 1152 items in 32 files) repeat one answer more than 0.3 of the time; all 27 refused. Separately, 5 pools hold fewer than 4 items, so no answer distribution can put them under the cap: oo-numeric|construct|oo-numeric.divmul n=3, oo-structure|repair|oo-structure.coefsq n=3, oo-structure|repair|oo-structure.juxt n=3, eval-signed|construct|eval-signed.square n=3, eval-signed|generate|eval-signed.sumneg n=3
+  PASS  U33  the shipped 192-draw audit is never LOOSER than a 384-draw one
+             SKIPPED (--fast)
+  PASS  U36  a REFUSED family is inert, its sibling family in the same cell still scores, and the request says which to avoid
+             var-meaning|repair: refused {var-meaning.seat} inert (unscored-family:var-meaning.seat:blind-0.309); kept {var-meaning.relate,var-meaning.twin} credits; price().avoidFamilies = ["var-meaning.seat"]; a real request for var-meaning|generate carries avoidFamilies []
+  PASS  U34  the engine's PRICE dominates the served blind rate on every scored cell, and the two methods agree
+             5 scored cells; price dominates the served floor on all of them; 0 differ by more than 0.05 (none); worst method gap 0.000 — null
+  FAIL  U35  a knowledge point with NO honest family left is refused outright, named, and costs the graph nothing behind it
+             eq-special-cases: every form refused (unscored-cell:blind-1.000); unmasterable ["expr-anatomy","props-operations","eq-special-cases"]; reported in issues true; knowledge points locked behind it 0; masterable ceiling 29/32
+  PASS  U31  the review ladder after certification is 1, 2, 5, 11, 24, 45, 45, 45 days (§3, growth 2.2, cap 45)
+             1, 2, 5, 11, 24, 45, 45, 45 days
+  PASS  U32  12 hours of idle time inside ONE session never produces a retention item (§3 needs an intervening session)
+             100 days idle inside session 1: no retention item, node still provisional
+
+PART A2 — blind success measured on the stream the SCHEDULER actually serves
+----------------------------------------------------------------------------------------------------
+  Strategy: type ONE string on every item of a (knowledge point x form) cell and keep the best.
+  Population: Scheduler.next() -> req.avoidItemIds -> ItemBank.select(). Nothing here draws items by hand.
+  The string is chosen on half the stream and scored on the other half; the verdict is ItemBank.check().
+
+  audit table mixture 64.0% catalogue vs served stream 20.6% catalogue
+
+  form/answerType               n served  worst cell
+  construct/integer                  101      0.1188
+  repair/repair                     4304      0.1031
+  generate/construction             4229      0.0883
+
+  cells above the §9 tripwire of 0.1, with the string that does it and what the ENGINE did about it:
+    cell                                 blind     n  by typing               engine verdict
+    oo-numeric|repair                   0.1104   480  "2: 12 + 10"            re-priced 0.050 -> 0.268
+
+  WHAT THE ENGINE REFUSED, at the granularity the fix has to happen at — one generator family,
+  one string that answers everything it will ever produce. This is the P17 work list:
+    expr-anatomy|construct :: expr-anatomy.count             1.000  by typing "3"
+    expr-anatomy|construct :: expr-anatomy.coefficient       1.000  by typing "1"
+    expr-anatomy|repair :: expr-anatomy.count                1.000  by typing "2: 3"
+    expr-anatomy|repair :: expr-anatomy.coefficient          1.000  by typing "2: 1"
+    expr-anatomy|generate :: expr-anatomy.count              1.000  by typing "9x + 2y - 8"
+    oo-structure|generate :: oo-structure.negsq              1.000  by typing "-x^{2}"
+    eval-substitute|generate :: eval-substitute.twice        1.000  by typing "x^{2} + x"
+    eval-signed|generate :: eval-signed.square               1.000  by typing "x^{2}"
+    props-operations|construct :: props-operations.identity  1.000  by typing "x"
+    props-operations|repair :: props-operations.identity     1.000  by typing "2: 0 + x"
+    props-operations|generate :: props-operations.identity   1.000  by typing "x + 9x \\cdot 0"
+    like-terms-id|generate :: like-terms-id.xy               1.000  by typing "10x"
+    like-terms-id|generate :: like-terms-id.pow              1.000  by typing "10x"
+    props-equality|construct :: props-equality.zero          1.000  by typing "-2x = 0"
+    props-equality|repair :: props-equality.zero             1.000  by typing "2: -x = 0"
+    eq-special-cases|construct :: eq-special-cases.always    1.000  by typing "always"
+    eq-special-cases|construct :: eq-special-cases.refusal   1.000  by typing "none"
+    eq-special-cases|repair :: eq-special-cases.always       1.000  by typing "3: 0 = 0"
+    eq-special-cases|generate :: eq-special-cases.always     1.000  by typing "5\\left(x + 2\\right) = 5x + 10"
+    eq-special-cases|generate :: eq-special-cases.refusal    1.000  by typing "4x - 3 = 4x - 1"
+    props-operations|repair :: props-operations.regroup      0.625  by typing "2: 14 - 14"
+    expr-anatomy|repair :: expr-anatomy.term                 0.529  by typing "2: -9x"
+    eval-substitute|generate :: eval-substitute.concat       0.525  by typing "6 + n"
+    eval-signed|repair :: eval-signed.sumneg                 0.522  by typing "2: \\left(-6\\right) + \\left(-2\\right)"
+    oo-structure|generate :: oo-structure.coefsq             0.500  by typing "3x^{2}"
+    oo-structure|generate :: oo-structure.juxt               0.500  by typing "5x"
+    eval-signed|generate :: eval-signed.minusneg             0.500  by typing "9 - x"
+    var-meaning|construct :: var-meaning.seat                0.493  by typing "3"
+    var-meaning|construct :: var-meaning.relate              0.424  by typing "a = 4b"
+    oo-structure|repair :: oo-structure.juxt                 0.411  by typing "2: 12 \\cdot 6"
+    oo-structure|repair :: oo-structure.coefsq               0.400  by typing "2: 3 \\cdot 2^{2}"
+    eq-one-mult|construct :: eq-one-mult.mult                0.391  by typing "4"
+    ineq-two-step|construct :: ineq-two-step.inclusive       0.387  by typing "x \\ge 6"
+    eval-substitute|construct :: eval-substitute.concat      0.381  by typing "15"
+    distribute-numeric|construct :: distribute-numeric.product 0.380  by typing "72"
+    eval-signed|generate :: eval-signed.sumneg               0.375  by typing "x - 11"
+    eq-one-mult|construct :: eq-one-mult.fraction            0.375  by typing "12"
+    eq-model-context|construct :: eq-model-context.members   0.375  by typing "9"
+    eq-one-mult|repair :: eq-one-mult.mult                   0.370  by typing "2: x = 9"
+    eval-signed|construct :: eval-signed.square              0.365  by typing "169"
+    ineq-negative-flip|repair :: ineq-negative-flip.subneg   0.363  by typing "2: x > -2"
+    oo-numeric|repair :: oo-numeric.addsub                   0.350  by typing "2: 5 + 6"
+    expr-anatomy|construct :: expr-anatomy.term              0.350  by typing "-8x"
+    eq-both-sides|generate :: eq-both-sides.core             0.350  by typing "3x + 1 = 2x + 4"
+    oo-numeric|repair :: oo-numeric.divmul                   0.348  by typing "2: 8 \\cdot 6"
+    oo-numeric|construct :: oo-numeric.divmul                0.343  by typing "10"
+    eq-distribute|generate :: eq-distribute.core             0.342  by typing "2\\left(x + 8\\right) = 26"
+    oo-structure|construct :: oo-structure.negsq             0.338  by typing "-81"
+    oo-structure|construct :: oo-structure.juxt              0.333  by typing "12"
+    eval-substitute|repair :: eval-substitute.concat         0.333  by typing "3: 17"
+    eval-substitute|repair :: eval-substitute.coefficient    0.333  by typing "2: 7 \\cdot 7"
+    props-operations|construct :: props-operations.regroup   0.333  by typing "36"
+    props-operations|generate :: props-operations.regroup    0.333  by typing "35 - \\left(3 + 7\\right)"
+    eq-model-context|construct :: eq-model-context.span      0.333  by typing "9"
+    var-meaning|construct :: var-meaning.twin                0.329  by typing "x = 9,\\; y = 9"
+    eval-substitute|construct :: eval-substitute.coefficient 0.323  by typing "66"
+    eval-substitute|generate :: eval-substitute.coefficient  0.323  by typing "11x"
+    eval-substitute|repair :: eval-substitute.twice          0.319  by typing "2: 18^{2} + 18"
+    props-operations|construct :: props-operations.commute   0.319  by typing "-3x + 6"
+    props-operations|repair :: props-operations.commute      0.319  by typing "2: -8x + 8"
+    props-operations|generate :: props-operations.commute    0.319  by typing "-9x + 4"
+    eq-combine-side|generate :: eq-combine-side.core         0.317  by typing "3x + 5x + 1 = 41"
+    var-meaning|repair :: var-meaning.seat                   0.309  by typing "2: g = 11"
+    oo-structure|construct :: oo-structure.coefsq            0.306  by typing "24"
+    ineq-one-step|repair :: ineq-one-step.negconstant        0.304  by typing "2: x < 12"
+    translate-order|repair :: translate-order.subtractfrom   0.302  by typing "2: 14 - n"
+    var-meaning|construct                                    ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    expr-anatomy|construct                                   ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    expr-anatomy|repair                                      ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    expr-anatomy|generate                                    ALL FAMILIES REFUSED — every generator family is above the caps (1 of 1)
+    oo-structure|construct                                   ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    oo-structure|generate                                    ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    eval-substitute|repair                                   ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    eval-substitute|generate                                 ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    eval-signed|generate                                     ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    props-operations|construct                               ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    props-operations|repair                                  ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    props-operations|generate                                ALL FAMILIES REFUSED — every generator family is above the caps (3 of 3)
+    like-terms-id|generate                                   ALL FAMILIES REFUSED — every generator family is above the caps (2 of 2)
+    eq-one-mult|construct                                    ALL FAMILIES REFUSED — every generator family is above the caps (2 of 2)
+    eq-combine-side|generate                                 ALL FAMILIES REFUSED — every generator family is above the caps (1 of 1)
+    eq-distribute|generate                                   ALL FAMILIES REFUSED — every generator family is above the caps (1 of 1)
+    eq-both-sides|generate                                   ALL FAMILIES REFUSED — every generator family is above the caps (1 of 1)
+    eq-special-cases|construct                               ALL FAMILIES REFUSED — every generator family is above the caps (2 of 2)
+    eq-special-cases|repair                                  ALL FAMILIES REFUSED — every generator family is above the caps (1 of 1)
+    eq-special-cases|generate                                ALL FAMILIES REFUSED — every generator family is above the caps (2 of 2)
+    eq-model-context|construct                               ALL FAMILIES REFUSED — every generator family is above the caps (2 of 2)
+
+  CONSEQUENCE: 66 families and 21 whole cells refused; 75 cells re-priced upward; 2 knowledge points down to one honest form; 3 unmasterable (expr-anatomy, props-operations, eq-special-cases)
+    oo-structure             survives on: repair
+    eval-substitute          survives on: construct
+  Level 1 ceiling with the bank as shipped: 29/32 knowledge points.
+
+PART B — cohorts
+----------------------------------------------------------------------------------------------------
+cohort                              n sess     p10  median     p90   >=80% certified  peak   items unscored  refused
+median learner                     60   22    6.3%    6.3%    6.3%    0.0%     2.000     2     720        7        0
+mixed population (long)            60   24    6.3%    6.3%    6.3%    0.0%     2.000     2     785        8        0
+LIVE median learner                40   22    6.3%    6.3%    6.3%    0.0%     2.000     2     720      119        0
+LIVE blind guesser                 40   22    0.0%    0.0%    0.0%    0.0%     0.000     0     979      214        0
+LIVE hint-abuser (100% right)      40   22    0.0%    0.0%    0.0%    0.0%     0.000     0     728      397      331
+patient guessing bot               60   22    0.0%    0.0%    0.0%    0.0%     0.000     0     907      232        0
+bank-priced guessing bot           60   22    0.0%    0.0%    0.0%    0.0%     0.000     0     901      233        0
+mashing bot                        60   22    0.0%    0.0%    0.0%    0.0%     0.000     0     912      236       25
+form-hunting bot                   60   22    0.0%    0.0%    0.0%    0.0%     0.000     0     770      770        0
+hint-abusing bot                   60   22    0.0%    0.0%    0.0%    0.0%     0.000     0     899      238        0
+hint-leak bot (acquisition)        60   22    0.0%    0.0%    0.0%    0.0%     0.000     0     554      125        0
+retention hint-leak bot            60   22    0.0%    0.0%    0.0%    0.0%     0.000     0     448       50      142
+retention speed bot                60   22    0.0%    0.0%    0.0%    0.0%     0.000     0     449       50      155
+^ SAME arm, round-1 M4 rule        60   22    6.3%    6.3%    6.3%    0.0%     2.000     2     719        8        7
+median, §4.1 rules OFF             60   22    6.3%    6.3%    6.3%    0.0%     2.000     2      48        7        0
+median, prereq clock reset OFF     60   22    6.3%    6.3%    6.3%    0.0%     2.000     2     720        7        0
+
+  median learner: mean theta 0.92, retention pass rate 95.2%, median sessions to 80% 999, median scored opportunities to 80% n/a
+
+  LIVE arms — every answer a real string, marked by ItemBank.check(). No rate parameter exists in this loop:
+    median learner     raw item accuracy   91.6% (26416/28854)   certified   2.000/32   peak ever  2   gate opens 2.00
+    blind guesser      raw item accuracy    5.2% (2025/39148)   certified   0.000/32   peak ever  0   gate opens 0.05
+    hint-abuser        raw item accuracy  100.0% (29120/29120)   certified   0.000/32   peak ever  0   gate opens 0.00
+
+  sensitivity of L5 to the hand-authored `trueGuessByForm.construct = 0.03`:
+    forced blind rate   certified/32   >=80% of runs
+      0.03                 0.000          0.0%
+      0.1                  0.000          0.0%
+      0.17                 0.000          0.0%
+      0.25                 0.080          0.0%
+      0.5                  1.200          0.0%
+
+  Level 1 is gated by mastery, not by a clock, so the honest question is how LONG to 80%:
+    session   hours   median learner: median %   share >= 80%      mixed population: median %   share >= 80%
+      12     5.0                    6.3%           0.0%                         6.3%           0.0%
+      16     6.7                    6.3%           0.0%                         6.3%           0.0%
+      18     7.5                    6.3%           0.0%                         6.3%           0.0%
+      20     8.3                    6.3%           0.0%                         6.3%           0.0%
+      22     9.2                    6.3%           0.0%                         6.3%           0.0%
+      24     10.0                                                                6.3%           0.0%
+
+§7 — the three laundering routes, re-verified against the code as it stands
+====================================================================================================
+  ROUTE 1. hinted / scaffolded items credited at the SAME guess parameter as unconstrained ones
+     closed by : guided-1 is scorable but never mastery-eligible (U6 PASS); a hinted correct is refused UPWARD while a hinted wrong is scored normally (U11 PASS); a retention item forced to guided-1 scores but is not credited (U22 PASS); the phase multiplier composes by MAX, never product (U7 PASS)
+     control   : the LIVE hint-abuser answers 100.0% of real items correctly through ItemBank.check() and certifies 0.000/32, refusing 331 items per run; the acquisition-leak arm unlocks 2.0/32 nodes, so the detector is live
+  ROUTE 2. a CIRCULAR bot proof — true success rate set equal to the model's own guess parameter
+     closed by : the LIVE arms have no rate at all: item from ItemBank.select(), string from the bot, verdict from ItemBank.check(). The guesser's 5.2% (2025/39148) is an OUTPUT. PART A2 derives every blind rate from the shipped bank per generator family, and the engine refuses 87 of them
+     control   : the sensitivity sweep certifies 1.20/32 at a forced blind rate of 0.5, so a bot that really could guess would show up here
+  ROUTE 3. M4's retention count reading raw `outcome.correct` and ignoring the scaffold discount
+     closed by : Scheduler.submit keeps NO tally (U24 PASS); the single tally lives in Mastery._bookkeep and counts result.credited; four hinted corrects certify nothing and lapse the node (U20 PASS), four 100 ms corrects the same (U21 PASS), four honest ones DO certify (U19 PASS)
+     control   : LegacyCountingScheduler restores that one line and the IDENTICAL arm certifies 2.00/32 (0.0% of runs past 80%) against 0.0000 under the shipped rule
+  All three closed: YES; all three controls non-zero: YES
+
+PART C — claims
+====================================================================================================
+  FAIL  [L4   ] A. median learner: median Level 1 mastery at 22 sessions x 25 min >= 80%
+             measured: 6.3% (p10 6.3%, 0.0% of learners at >= 80%)
+  FAIL  [L4   ] A2. median learner: median number of sessions to reach 80% of Level 1 <= 20 (8.3 h of play)
+             measured: median 999 sessions; 0.0% of learners reach 80% inside the 22-session budget
+  FAIL  [L4   ] B. mixed-ability population: share at >= 80% mastery by 24 sessions >= 90%
+             measured: 0.0%
+  FAIL  [L4   ] C. median SCORED OPPORTUNITIES consumed by the time 80% of Level 1 is certified is 480-600 (§8's real row)
+             measured: n/a scored opportunities to 26/32 certified (0.0% of learners get there; whole-budget total is 713)
+  PASS  [L5   ] D. patient guessing bot: mean knowledge points certified < 0.01 of 32
+             measured: 0.0000 (max 0, peak ever 0)
+  PASS  [L5   ] E. mashing bot (half its answers under the latency floor): mean certified < 0.01
+             measured: 0.0000 (max 0)
+  PASS  [L5   ] F. hint-abusing bot (idles for maximum scaffolding on every item): 0 certified
+             measured: 0.0000 (max 0, gate opened on 0.317 nodes/run)
+  PASS  [L5   ] G. hint-LEAK bug arm (P18 leaks help into solo during ACQUISITION): < 0.1 of 32 certified, none near the bar
+             measured: 0.0000 certified/run (max 0, 0.0% of runs at >= 80%), gate opened 43.8x/run on 2.0/32 nodes
+  PASS  [L5   ] N. retention hint-leak arm (acquires honestly, reads the hint on every M4 item): EXACTLY 0 certified
+             measured: 0.0000 certified/run (max 0); 142 refusedUpward and 42.0 lapses per run; 44.0 gate opens (it does reach M4)
+  PASS  [L5   ] O. retention speed arm (acquires honestly, commits every M4 item in 100 ms): EXACTLY 0 certified
+             measured: 0.0000 certified/run (max 0); 155 refusedUpward and 42.0 lapses per run; 44.0 gate opens
+  FAIL  [L5   ] P. CONTROL: the round-1 M4 counting rule certifies the SAME arm on >= 20 of 32 — the harness can see the leak
+             measured: round-1 rule: 2.00/32 certified per run (max 2, 0.0% of runs at >= 80%); shipped rule on the identical arm: 0.0000
+  PASS  [L5   ] Q. blind bot priced off the REAL ItemBank (measured per kp x form, not the JSON): mean certified < 0.01
+             measured: 0.0000 (max 0, peak ever 0); measured rates: construct 0.1000, repair 0.0746, generate 0.0705
+  PASS  [L5   ] R. the content file's per-form blind rate is FALSE on the shipped bank, and the engine prices the measurement instead
+             measured: construct: declared 0.03, pooled 0.1000, WORST CELL 0.100 at oo-numeric|construct; repair: declared 0.03, pooled 0.0746, WORST CELL 0.110 at oo-numeric|repair; generate: declared 0.02, pooled 0.0705, WORST CELL 0.084 at var-meaning|generate — 3/3 forms understated by the constant; 0 cells left under-priced at n>=30
+  PASS  [L5   ] T. every generator family the bank gives away above maxTrueGuess is REFUSED and named, and nothing certifies on one
+             measured: 66 generator families refused, each answerable by ONE string: expr-anatomy|construct::count 1.000 by typing "3"; expr-anatomy|construct::coefficient 1.000 by typing "1"; expr-anatomy|repair::count 1.000 by typing "2: 3"; expr-anatomy|repair::coefficient 1.000 by typing "2: 1"; expr-anatomy|generate::count 1.000 by typing "9x + 2y - 8"; oo-structure|generate::negsq 1.000 by typing "-x^{2}" (+60 more); 0 surviving cells still over the cap; bank-priced bot peak ever certified 0
+  PASS  [L5   ] V. LIVE bank, no rate parameter: the blind guesser certifies NOTHING and its measured success is an output
+             measured: guesser answered 2025/39148 items right on the real bank (5.2%, decided by ItemBank.check) and certified 0.0000/32 (max 0, peak ever 0, gate opened on 0.050 nodes/run)
+  PASS  [L5   ] W. LIVE bank: a hint-abuser that answers EVERY item correctly certifies nothing
+             measured: raw success 100.0% (29120/29120 items, every one of them marked correct by ItemBank.check); certified 0.0000/32, peak ever 0, refused upward 331 items/run
+  FAIL  [L4   ] X. LIVE bank: the median learner still reaches >= 80% of Level 1 with the real checker marking every answer
+             measured: median 6.3%, p10 6.3%, 0.0% of learners at >= 80%; raw item accuracy 91.6%
+  PASS  [L5   ] S. sensitivity: the gate holds at 3x the assumed blind rate (§9's first tripwire, 0.10)
+             measured: certified/32 at forced blind rate: 0.03 -> 0.000, 0.1 -> 0.000, 0.17 -> 0.000, 0.25 -> 0.080, 0.5 -> 1.200
+  FAIL  [L5   ] L. control arm: the harness can SEE a leak — the bug arm opens the gate on most of the graph, the shipped rules on none of it
+             measured: leak arm unlocks 2.0/32 nodes per run (6.3% of the graph, 7x the shipped hint-abuse arm); shipped hint-abuse arm unlocks 0.30/32; guessing bot 0.17/32; form-hunting bot 0.00/32
+  PASS  [L5   ] H. form-hunting bot (judge2/select4 on every item): 0 certified AND `scored` never increments
+             measured: certified 0, max M2 counter 0, unscored items/run 770
+  FAIL  [L5   ] I. retention check pass rate for real learners is 80-95% (a gate, not a formality)
+             measured: 95.2%
+  FAIL  [L4   ] J. §4.1 is load-bearing: turning BOTH selection rules off costs >= 6 knowledge points
+             measured: 2.0 certified with the rules, 2.0 without
+  FAIL  [L4   ] M. L4 does not depend on the §1.2 prerequisite spacing-clock reset (the rule that can only flatter it)
+             measured: 6.3% with the rule, 6.3% without (mean certified 2.0 vs 2.0)
+  FAIL  [L2/L5] K. every deterministic engine assertion passes (42 checks)
+             measured: 41/42
+
+PART D — §8 conformance table, measured on this engine
+====================================================================================================
+  MISS  median learner, mastered % at 18 sessions        target 90-96%                             measured 6.3%
+  MISS  mixed population, share >= 80% at 24 sessions    target >= 95%                             measured 0.0%
+  MISS  retention check pass rate, real learners         target 85-92%                             measured 95.2%
+  HIT   patient guessing bot, mean KPs certified         target < 0.01 of 32                       measured 0.0000
+  HIT   bot served judge2/select4, KPs certified         target exactly 0, `scored` never increments measured 0 certified, max M2 counter 0
+  MISS  median scored opportunities to 80% mastery       target 480-600                            measured never reached
+
+  DECLARED MISS — stated, not widened:
+    median learner, mastered % at 18 sessions: measured 6.3% against 90-96%.
+      §8's row is stated against an 18-session budget; §5 of the same document, and
+      review/p03/mastery-sim.mjs, both run 22. On 18 sessions this engine's median learner holds 6.3%
+      with 0.0% of learners past 80%, and lands inside the 90-96% band at session >22. The row is not
+      reproduced by the design's OWN script either: `node review/p03/mastery-sim.mjs --sessions=18
+      --learners=200` measures the median learner at 71.9%, and the committed evidence at
+      review/p03/evidence/mastery-sim.txt line 107 reads "by session 18 (7.5 h of play): 24.3% of
+      learners have >= 80% mastery" with line 113 putting the median at 20 sessions to 80%. This
+      engine is AHEAD of the reference on that row (6.3% against 71.9%) and still misses the band. The
+      honest conclusion is that §8's 18-session row is stated against the wrong budget and belongs at
+      20+ sessions. That is a P03 content defect to fix in the document, not a reason to move P16's
+      own bar or to widen a band.
+
+RESULT: FAIL — 13/24 claims, 41/42 assertions, §8 conformance 2/6 rows (+1 declared miss; run with --strict to fail on it)
+
+JSON TABLE
+{
+  "result": "FAIL",
+  "claims": [
+    {
+      "id": "A",
+      "gate": "L4",
+      "statement": "median learner: median Level 1 mastery at 22 sessions x 25 min >= 80%",
+      "value": "6.3% (p10 6.3%, 0.0% of learners at >= 80%)",
+      "pass": false
+    },
+    {
+      "id": "A2",
+      "gate": "L4",
+      "statement": "median learner: median number of sessions to reach 80% of Level 1 <= 20 (8.3 h of play)",
+      "value": "median 999 sessions; 0.0% of learners reach 80% inside the 22-session budget",
+      "pass": false
+    },
+    {
+      "id": "B",
+      "gate": "L4",
+      "statement": "mixed-ability population: share at >= 80% mastery by 24 sessions >= 90%",
+      "value": "0.0%",
+      "pass": false
+    },
+    {
+      "id": "C",
+      "gate": "L4",
+      "statement": "median SCORED OPPORTUNITIES consumed by the time 80% of Level 1 is certified is 480-600 (§8's real row)",
+      "value": "n/a scored opportunities to 26/32 certified (0.0% of learners get there; whole-budget total is 713)",
+      "pass": false
+    },
+    {
+      "id": "D",
+      "gate": "L5",
+      "statement": "patient guessing bot: mean knowledge points certified < 0.01 of 32",
+      "value": "0.0000 (max 0, peak ever 0)",
+      "pass": true
+    },
+    {
+      "id": "E",
+      "gate": "L5",
+      "statement": "mashing bot (half its answers under the latency floor): mean certified < 0.01",
+      "value": "0.0000 (max 0)",
+      "pass": true
+    },
+    {
+      "id": "F",
+      "gate": "L5",
+      "statement": "hint-abusing bot (idles for maximum scaffolding on every item): 0 certified",
+      "value": "0.0000 (max 0, gate opened on 0.317 nodes/run)",
+      "pass": true
+    },
+    {
+      "id": "G",
+      "gate": "L5",
+      "statement": "hint-LEAK bug arm (P18 leaks help into solo during ACQUISITION): < 0.1 of 32 certified, none near the bar",
+      "value": "0.0000 certified/run (max 0, 0.0% of runs at >= 80%), gate opened 43.8x/run on 2.0/32 nodes",
+      "pass": true
+    },
+    {
+      "id": "N",
+      "gate": "L5",
+      "statement": "retention hint-leak arm (acquires honestly, reads the hint on every M4 item): EXACTLY 0 certified",
+      "value": "0.0000 certified/run (max 0); 142 refusedUpward and 42.0 lapses per run; 44.0 gate opens (it does reach M4)",
+      "pass": true
+    },
+    {
+      "id": "O",
+      "gate": "L5",
+      "statement": "retention speed arm (acquires honestly, commits every M4 item in 100 ms): EXACTLY 0 certified",
+      "value": "0.0000 certified/run (max 0); 155 refusedUpward and 42.0 lapses per run; 44.0 gate opens",
+      "pass": true
+    },
+    {
+      "id": "P",
+      "gate": "L5",
+      "statement": "CONTROL: the round-1 M4 counting rule certifies the SAME arm on >= 20 of 32 — the harness can see the leak",
+      "value": "round-1 rule: 2.00/32 certified per run (max 2, 0.0% of runs at >= 80%); shipped rule on the identical arm: 0.0000",
+      "pass": false
+    },
+    {
+      "id": "Q",
+      "gate": "L5",
+      "statement": "blind bot priced off the REAL ItemBank (measured per kp x form, not the JSON): mean certified < 0.01",
+      "value": "0.0000 (max 0, peak ever 0); measured rates: construct 0.1000, repair 0.0746, generate 0.0705",
+      "pass": true
+    },
+    {
+      "id": "R",
+      "gate": "L5",
+      "statement": "the content file's per-form blind rate is FALSE on the shipped bank, and the engine prices the measurement instead",
+      "value": "construct: declared 0.03, pooled 0.1000, WORST CELL 0.100 at oo-numeric|construct; repair: declared 0.03, pooled 0.0746, WORST CELL 0.110 at oo-numeric|repair; generate: declared 0.02, pooled 0.0705, WORST CELL 0.084 at var-meaning|generate — 3/3 forms understated by the constant; 0 cells left under-priced at n>=30",
+      "pass": true
+    },
+    {
+      "id": "T",
+      "gate": "L5",
+      "statement": "every generator family the bank gives away above maxTrueGuess is REFUSED and named, and nothing certifies on one",
+      "value": "66 generator families refused, each answerable by ONE string: expr-anatomy|construct::count 1.000 by typing \"3\"; expr-anatomy|construct::coefficient 1.000 by typing \"1\"; expr-anatomy|repair::count 1.000 by typing \"2: 3\"; expr-anatomy|repair::coefficient 1.000 by typing \"2: 1\"; expr-anatomy|generate::count 1.000 by typing \"9x + 2y - 8\"; oo-structure|generate::negsq 1.000 by typing \"-x^{2}\" (+60 more); 0 surviving cells still over the cap; bank-priced bot peak ever certified 0",
+      "pass": true
+    },
+    {
+      "id": "V",
+      "gate": "L5",
+      "statement": "LIVE bank, no rate parameter: the blind guesser certifies NOTHING and its measured success is an output",
+      "value": "guesser answered 2025/39148 items right on the real bank (5.2%, decided by ItemBank.check) and certified 0.0000/32 (max 0, peak ever 0, gate opened on 0.050 nodes/run)",
+      "pass": true
+    },
+    {
+      "id": "W",
+      "gate": "L5",
+      "statement": "LIVE bank: a hint-abuser that answers EVERY item correctly certifies nothing",
+      "value": "raw success 100.0% (29120/29120 items, every one of them marked correct by ItemBank.check); certified 0.0000/32, peak ever 0, refused upward 331 items/run",
+      "pass": true
+    },
+    {
+      "id": "X",
+      "gate": "L4",
+      "statement": "LIVE bank: the median learner still reaches >= 80% of Level 1 with the real checker marking every answer",
+      "value": "median 6.3%, p10 6.3%, 0.0% of learners at >= 80%; raw item accuracy 91.6%",
+      "pass": false
+    },
+    {
+      "id": "S",
+      "gate": "L5",
+      "statement": "sensitivity: the gate holds at 3x the assumed blind rate (§9's first tripwire, 0.10)",
+      "value": "certified/32 at forced blind rate: 0.03 -> 0.000, 0.1 -> 0.000, 0.17 -> 0.000, 0.25 -> 0.080, 0.5 -> 1.200",
+      "pass": true
+    },
+    {
+      "id": "L",
+      "gate": "L5",
+      "statement": "control arm: the harness can SEE a leak — the bug arm opens the gate on most of the graph, the shipped rules on none of it",
+      "value": "leak arm unlocks 2.0/32 nodes per run (6.3% of the graph, 7x the shipped hint-abuse arm); shipped hint-abuse arm unlocks 0.30/32; guessing bot 0.17/32; form-hunting bot 0.00/32",
+      "pass": false
+    },
+    {
+      "id": "H",
+      "gate": "L5",
+      "statement": "form-hunting bot (judge2/select4 on every item): 0 certified AND `scored` never increments",
+      "value": "certified 0, max M2 counter 0, unscored items/run 770",
+      "pass": true
+    },
+    {
+      "id": "I",
+      "gate": "L5",
+      "statement": "retention check pass rate for real learners is 80-95% (a gate, not a formality)",
+      "value": "95.2%",
+      "pass": false
+    },
+    {
+      "id": "J",
+      "gate": "L4",
+      "statement": "§4.1 is load-bearing: turning BOTH selection rules off costs >= 6 knowledge points",
+      "value": "2.0 certified with the rules, 2.0 without",
+      "pass": false
+    },
+    {
+      "id": "M",
+      "gate": "L4",
+      "statement": "L4 does not depend on the §1.2 prerequisite spacing-clock reset (the rule that can only flatter it)",
+      "value": "6.3% with the rule, 6.3% without (mean certified 2.0 vs 2.0)",
+      "pass": false
+    },
+    {
+      "id": "K",
+      "gate": "L2/L5",
+      "statement": "every deterministic engine assertion passes (42 checks)",
+      "value": "41/42",
+      "pass": false
+    }
+  ],
+  "conformance": [
+    {
+      "row": "median learner, mastered % at 18 sessions",
+      "target": "90-96%",
+      "value": "6.3%",
+      "hit": false,
+      "declaredMiss": "§8's row is stated against an 18-session budget; §5 of the same document, and review/p03/mastery-sim.mjs, both run 22. On 18 sessions this engine's median learner holds 6.3% with 0.0% of learners past 80%, and lands inside the 90-96% band at session >22. The row is not reproduced by the design's OWN script either: `node review/p03/mastery-sim.mjs --sessions=18 --learners=200` measures the median learner at 71.9%, and the committed evidence at review/p03/evidence/mastery-sim.txt line 107 reads \"by session 18 (7.5 h of play): 24.3% of learners have >= 80% mastery\" with line 113 putting the median at 20 sessions to 80%. This engine is AHEAD of the reference on that row (6.3% against 71.9%) and still misses the band. The honest conclusion is that §8's 18-session row is stated against the wrong budget and belongs at 20+ sessions. That is a P03 content defect to fix in the document, not a reason to move P16's own bar or to widen a band."
+    },
+    {
+      "row": "mixed population, share >= 80% at 24 sessions",
+      "target": ">= 95%",
+      "value": "0.0%",
+      "hit": false,
+      "declaredMiss": null
+    },
+    {
+      "row": "retention check pass rate, real learners",
+      "target": "85-92%",
+      "value": "95.2%",
+      "hit": false,
+      "declaredMiss": null
+    },
+    {
+      "row": "patient guessing bot, mean KPs certified",
+      "target": "< 0.01 of 32",
+      "value": "0.0000",
+      "hit": true,
+      "declaredMiss": null
+    },
+    {
+      "row": "bot served judge2/select4, KPs certified",
+      "target": "exactly 0, `scored` never increments",
+      "value": "0 certified, max M2 counter 0",
+      "hit": true,
+      "declaredMiss": null
+    },
+    {
+      "row": "median scored opportunities to 80% mastery",
+      "target": "480-600",
+      "value": "never reached",
+      "hit": false,
+      "declaredMiss": null
+    }
+  ],
+  "measuredBlindByForm": {
+    "construct": {
+      "n": 50,
+      "hits": 5,
+      "pooledRate": 0.1,
+      "upper95": 0.2136,
+      "worstCellRate": 0.1,
+      "worstCell": "oo-numeric|construct"
+    },
+    "repair": {
+      "n": 1488,
+      "hits": 111,
+      "pooledRate": 0.0746,
+      "upper95": 0.08907,
+      "worstCellRate": 0.11042,
+      "worstCell": "oo-numeric|repair"
+    },
+    "generate": {
+      "n": 2114,
+      "hits": 149,
+      "pooledRate": 0.07048,
+      "upper95": 0.08219,
+      "worstCellRate": 0.08365,
+      "worstCell": "var-meaning|generate"
+    }
+  },
+  "measuredBlindHotCells": [
+    {
+      "cell": "oo-numeric|repair",
+      "rate": 0.11042,
+      "byTyping": "2: 12 + 10",
+      "types": "repair",
+      "n": 480,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.05,
+      "modelledGuessAfter": 0.26829
+    }
+  ],
+  "sensitivitySweep": [
+    {
+      "forcedBlindRate": 0.03,
+      "meanCertified": 0,
+      "shareAt80": 0
+    },
+    {
+      "forcedBlindRate": 0.1,
+      "meanCertified": 0,
+      "shareAt80": 0
+    },
+    {
+      "forcedBlindRate": 0.17,
+      "meanCertified": 0,
+      "shareAt80": 0
+    },
+    {
+      "forcedBlindRate": 0.25,
+      "meanCertified": 0.08,
+      "shareAt80": 0
+    },
+    {
+      "forcedBlindRate": 0.5,
+      "meanCertified": 1.2,
+      "shareAt80": 0
+    }
+  ],
+  "cohorts": {
+    "median": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 6.25,
+      "shareAt80": 0,
+      "meanCertified": 2,
+      "maxCertified": 2,
+      "peakEverCertified": 2,
+      "maxM2Counter": 7,
+      "meanUnscoredItems": 7.4,
+      "meanRefusedUpward": 0,
+      "meanLapses": 0.1,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0.9524
+    },
+    "mixedLong": {
+      "n": 60,
+      "sessions": 24,
+      "medianPercent": 6.25,
+      "shareAt80": 0,
+      "meanCertified": 2,
+      "maxCertified": 2,
+      "peakEverCertified": 2,
+      "maxM2Counter": 8,
+      "meanUnscoredItems": 7.8,
+      "meanRefusedUpward": 0,
+      "meanLapses": 0.13,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0.9375
+    },
+    "liveMedian": {
+      "n": 40,
+      "sessions": 22,
+      "medianPercent": 6.25,
+      "shareAt80": 0,
+      "meanCertified": 2,
+      "maxCertified": 2,
+      "peakEverCertified": 2,
+      "maxM2Counter": 8,
+      "meanUnscoredItems": 119,
+      "meanRefusedUpward": 0,
+      "meanLapses": 0,
+      "medianScoredTo80": null,
+      "retentionPassRate": 1
+    },
+    "liveGuesser": {
+      "n": 40,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 10,
+      "meanUnscoredItems": 213.6,
+      "meanRefusedUpward": 0,
+      "meanLapses": 0.05,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0
+    },
+    "liveHintAbuser": {
+      "n": 40,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 0,
+      "meanUnscoredItems": 397,
+      "meanRefusedUpward": 331,
+      "meanLapses": 0,
+      "medianScoredTo80": null,
+      "retentionPassRate": null
+    },
+    "guesser": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 147,
+      "meanUnscoredItems": 231.9,
+      "meanRefusedUpward": 0,
+      "meanLapses": 0.17,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0
+    },
+    "bankGuesser": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 163,
+      "meanUnscoredItems": 233.4,
+      "meanRefusedUpward": 0,
+      "meanLapses": 1.2,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0
+    },
+    "masher": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 149,
+      "meanUnscoredItems": 236.2,
+      "meanRefusedUpward": 24.8,
+      "meanLapses": 0.07,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0
+    },
+    "formHunter": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 0,
+      "meanUnscoredItems": 769.6,
+      "meanRefusedUpward": 0,
+      "meanLapses": 0,
+      "medianScoredTo80": null,
+      "retentionPassRate": null
+    },
+    "hintAbuser": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 151,
+      "meanUnscoredItems": 237.7,
+      "meanRefusedUpward": 0,
+      "meanLapses": 0.3,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0
+    },
+    "hintLeak": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 35,
+      "meanUnscoredItems": 125.2,
+      "meanRefusedUpward": 0,
+      "meanLapses": 41.82,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0
+    },
+    "retentionHintLeak": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 9,
+      "meanUnscoredItems": 50,
+      "meanRefusedUpward": 141.7,
+      "meanLapses": 42,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0
+    },
+    "retentionFast": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 8,
+      "meanUnscoredItems": 50.4,
+      "meanRefusedUpward": 154.8,
+      "meanLapses": 42,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0
+    },
+    "legacyRetention": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 6.25,
+      "shareAt80": 0,
+      "meanCertified": 2,
+      "maxCertified": 2,
+      "peakEverCertified": 2,
+      "maxM2Counter": 9,
+      "meanUnscoredItems": 7.5,
+      "meanRefusedUpward": 7.5,
+      "meanLapses": 0.22,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0.9023
+    },
+    "ablated": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 6.25,
+      "shareAt80": 0,
+      "meanCertified": 2,
+      "maxCertified": 2,
+      "peakEverCertified": 2,
+      "maxM2Counter": 7,
+      "meanUnscoredItems": 7.5,
+      "meanRefusedUpward": 0,
+      "meanLapses": 0.12,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0.9449
+    },
+    "noClockReset": {
+      "n": 60,
+      "sessions": 22,
+      "medianPercent": 6.25,
+      "shareAt80": 0,
+      "meanCertified": 2,
+      "maxCertified": 2,
+      "peakEverCertified": 2,
+      "maxM2Counter": 7,
+      "meanUnscoredItems": 7.4,
+      "meanRefusedUpward": 0,
+      "meanLapses": 0.1,
+      "medianScoredTo80": null,
+      "retentionPassRate": 0.9524
+    }
+  }
+}

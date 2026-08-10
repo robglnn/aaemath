@@ -905,8 +905,21 @@ const MAX_CACHE = 600;
 const FAILURES = [];
 const STATS = { requests: 0, hits: 0, misses: 0, typesets: 0, failures: 0, evictions: 0, typesetMs: 0 };
 
-/** The visible stand-in for an expression that would not typeset. Never the source. */
-export const FALLBACK_TEX = "\\square";
+/**
+ * The visible stand-in for an expression that would not typeset. Never the source.
+ *
+ * **Filled, not hollow, and that is a measurement rather than a taste call.** This was
+ * `\square` for three rounds, and `\square` is four thin rules: measured off this pipeline's
+ * own rasterizer at 512 px per em, its strokes are 0.049 em, exactly as thin as the `\ge`
+ * relation bar `TexPanel`'s legibility floor exists to protect. A mark whose whole job is to
+ * survive being drawn small was the one glyph in the font guaranteed not to — a refused claim
+ * shrank into blank sky and the refusal announced itself to nobody. `\blacksquare` is solid:
+ * measured on the same rasterizer at 128 px per em, `\square` fills 17.0% of its box and
+ * `\blacksquare` fills 79.1%, so the mark now loses contrast to a mip chain at the same rate a
+ * filled rectangle does, which is to say not at all. `review/measure/P15.mjs` claim C14g holds
+ * that coverage above 0.5 every run.
+ */
+export const FALLBACK_TEX = "\\blacksquare";
 
 let fallbackHtml = null;
 function safeFallbackHtml() {
@@ -914,8 +927,8 @@ function safeFallbackHtml() {
   try {
     fallbackHtml = katex.renderToString(FALLBACK_TEX, settings(false));
   } catch {
-    // KaTeX itself is broken. Still not the source string.
-    fallbackHtml = '<span class="vs-tex-hollow">□</span>';
+    // KaTeX itself is broken. Still not the source string, and still solid.
+    fallbackHtml = '<span class="vs-tex-mark">■</span>';
   }
   return fallbackHtml;
 }

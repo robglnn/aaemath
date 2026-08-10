@@ -3,7 +3,7 @@ import { signals } from "../core/Signals.js";
 import { publish } from "../core/Introspect.js";
 // `world/Materials.js` is a shared world service — the one place a substance and the world's shadow
 // colour are defined — and world modules import it directly, exactly as `world/Lighting.js` does.
-import { materials, shared as rigUniforms } from "./Materials.js";
+import { materials, shared as rigUniforms, castShadowRatio } from "./Materials.js";
 
 /**
  * Terrain — the faceted low-poly heightfield Leaf Nine is cut out of, and the flat-shading
@@ -331,11 +331,17 @@ export const PAL = {
    * gate) and is chosen so the *rendered* pixel lands where the reference's river measures:
    * `#8BF7E4`, S 0.436, over `reference/target-lowpoly.png` x[1724,2180] y[908,1067].
    *
-   *   carry      renders #6CC0B0  S 0.44  V 0.75    (ref river S 0.436)
-   *   carryCore  renders #BFE9DE  S 0.18  V 0.91    (ref core   #D5FDF6)
-   *   carryBank  renders #417F74  S 0.49  V 0.50
+   *   carry      isolated #7ECDBD  S 0.39     in frame S 0.46  (ref river S 0.436)
+   *   carryCore  isolated #BFE9DE  S 0.18  V 0.91                (ref core #D5FDF6)
+   *   carryBank  isolated #417F74  S 0.49  V 0.50
+   *
+   * The body is authored at S 0.39 and not at the target 0.44 because the carry material runs at
+   * `unlit: 0.55`, so 45% of a cool shadow tint is mixed into every facet — which lowers the red
+   * channel more than the green and the blue and therefore *raises* saturation. Authored at 0.44 it
+   * measured 0.524 in the shipped frame. The number that counts is the one off the capture, which
+   * is why K9 reads the pixel and never the constant.
    */
-  carry: 0x6cc0b0,
+  carry: 0x7ecdbd,
   carryCore: 0xbfe9de,
   // The bank wall of a carry: the same teal walked down two stops, so a river carries its own
   // value structure — foot, body, core — instead of being one bright shape with no interior.
@@ -387,6 +393,24 @@ export const flatShared = {
    * makes "one shadow family in this world" a property of the code instead of two files agreeing.
    */
   uVsShade: rigUniforms.uVsShadowTint,
+  /**
+   * **§3.4's OTHER dark family, and it only started mattering the moment cast shadows existed.**
+   *
+   * `uVsShade` is what a face TURNED FROM the key converges on. It is the wrong answer for a face
+   * that is still pointing at the sky and has merely lost the key to a cast shadow: that face keeps
+   * its own albedo under the blue hemisphere fill, which is why olive ground in a cast shadow lands
+   * on `ground.shadow` `#223522` — hue 120, seventy-nine degrees from the turned family's 198. The
+   * two together are what makes the dark end of this frame bimodal instead of one navy wash.
+   *
+   * The grade below used one colour for both, which was invisible for as long as the terrain
+   * received no cast shadows at all — it had nothing to be wrong about. Fixing the rig so it does
+   * turned every cast shadow on the leaf hue 204, and a critic had already confirmed the ground
+   * shadow reading 120 in an earlier round, so it was a regression the moment it worked.
+   *
+   * `Materials.castShadowRatio()` is `ground.shadow / ground.lit` on the exact two pixels §3.2 and
+   * §3.4 are written from — a division, not a typed tint. Re-sample the palette and it re-derives.
+   */
+  uVsCastFill: { value: new THREE.Vector3(...castShadowRatio()) },
 };
 
 const GLSL_PARS = /* glsl */ `
@@ -396,6 +420,7 @@ uniform vec3  uVsHaze;
 uniform vec3  uVsHazeSun;
 uniform vec2  uVsHazeP;
 uniform vec3  uVsShade;
+uniform vec3  uVsCastFill; // §3.4's cast-shadow family: ground.shadow / ground.lit, per channel
 uniform vec4  uVsGrade;   // x lit floor, y shadow authoring, z terminator half width, w unlit
 uniform vec2  uVsDist;    // x virtual-distance multiplier, y extra haze bias
 `;
@@ -428,7 +453,13 @@ const GLSL_GRADE = /* glsl */ `
 		if ( dot( vsN, vsToCam ) < 0.0 ) vsN = -vsN;
 
 		float vsNdL = dot( vsN, uVsSun );
-		float vsLit = smoothstep( -uVsGrade.z, uVsGrade.z, vsNdL ) * vsFlatShadow();
+		// The two darknesses are separated here, because they are different physical facts and §3.4
+		// gives them different colours. vsFace is geometry: how far this facet is turned away from
+		// the key, 0 at the terminator and 1 in the back hemisphere. vsCast is the shadow map: does
+		// the key arrive at all. A facet can be either, both, or neither.
+		float vsFace = smoothstep( -uVsGrade.z, uVsGrade.z, vsNdL );
+		float vsCast = vsFlatShadow();
+		float vsLit = vsFace * vsCast;
 		float vsKey = clamp( vsNdL, 0.0, 1.0 );
 
 		vec3 vsAlb = diffuseColor.rgb;
@@ -462,7 +493,16 @@ const GLSL_GRADE = /* glsl */ `
 		vec3 vsShadeTint = uVsShade * mix( 0.72, 1.18, vsBack ) * ( 0.94 + 0.12 * vsUp );
 		vec3 vsShadeCol = mix( vsAlb * 0.06, vsShadeTint, uVsGrade.y );
 
-		vec3 vsCol = mix( vsShadeCol, vsLitCol, vsLit );
+		// **§3.4's second family: a facet that still faces the sky and only lost the key to a cast
+		// shadow keeps its own colour under the blue fill.** It is the lit colour times the measured
+		// ground.shadow / ground.lit ratio, so an olive shelf in a cast shadow renders hue ~124 and
+		// the frame's dark end is two families seventy-nine degrees apart instead of one navy wash.
+		// Mixed by vsFace, so a facet that is BOTH turned and cast-shadowed still converges on the
+		// turned family, which is what a critic measures when they sample the back of a spire.
+		vec3 vsCastCol = vsLitCol * uVsCastFill;
+		vec3 vsDarkCol = mix( vsShadeCol, vsCastCol, vsFace );
+
+		vec3 vsCol = mix( vsDarkCol, vsLitCol, vsLit );
 		vsCol = mix( vsCol, vsAlb, uVsGrade.w ) * uVsLevel;
 
 		// Aerial perspective, owned here rather than by scene.fog, so this piece's distance

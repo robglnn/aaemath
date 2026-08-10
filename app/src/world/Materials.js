@@ -414,11 +414,16 @@ const GLSL_GRADE = /* glsl */ `
 			// vsTurned saturates at exactly 1.0 for every face with N.L <= -KNEE, i.e. the whole
 			// back hemisphere, so on its own §3.4 makes 94% of every shadow-side face the single
 			// constant uVsShadowTint however that face is inclined. This grades it by HOW FAR the
-			// face is turned instead of only by the fact that it is: 0.72 -> 1.18 is a 1.64x spread,
+			// face is turned instead of only by the fact that it is: 0.68 -> 1.12 is a 1.65x spread,
 			// four to five distinct value bands where there was one. Pure N.L on a world-fixed key —
 			// it cannot follow the camera, and as a scalar on the tint it cannot move hue or
 			// saturation off the 198 the shadow family holds.
-			vsShade *= mix( 0.72, 1.18, smoothstep( -0.85, -0.02, vsNdL ) );
+			//
+			// The pair was 0.72 -> 1.18, the same ratio about a 5% higher centre, and measured a
+			// median turned-rock V of 0.212 against §13 row 3's window of 0.19-0.21. The SPREAD is
+			// what opens the value bands and it is deliberately unchanged; only the centre moved, so
+			// L2's ladder is untouched and the family lands back inside its own window.
+			vsShade *= mix( 0.68, 1.12, smoothstep( -0.85, -0.02, vsNdL ) );
 
 			#ifdef VS_RIM
 				// The separator that keeps a faceted silhouette off the sky.
@@ -1064,6 +1069,35 @@ export function contactShadowMultiplier() {
   const shadow = roleColor("ground.shadow");
   const enc = (v) => (v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - 0.055);
   return ["r", "g", "b"].map((c) => Math.min(1, enc(shadow[c]) / Math.max(enc(lit[c]), 1e-4)));
+}
+
+/**
+ * **What a CAST shadow does to a lit surface, per channel, in scene-linear — §3.4's second family.**
+ *
+ * The bimodal dark end is the mechanism the whole two-value look rests on, and it is two *different*
+ * operations rather than one colour used twice:
+ *
+ *   - a face **turned from the key** converges on `rock.shadow` `#1B2C33`, hue 198, whatever its
+ *     albedo, because almost nothing reaches it but the anti-sun sky;
+ *   - a face **still pointing at the sky that merely lost the key to a cast shadow** does not
+ *     converge at all. It keeps its own albedo under the blue hemisphere fill, which is why olive
+ *     ground in a cast shadow lands on `ground.shadow` `#223522` — hue 120, seventy-nine degrees
+ *     away from the other family.
+ *
+ * `Materials.GLSL_GRADE` gets that for free: it subtracts exactly the key's contribution where the
+ * map says the key does not arrive and leaves the fill behind. A module that authors its own ramp
+ * has no key term to subtract, so it needs the ratio explicitly — and the ratio is not typed, it is
+ * `ground.shadow / ground.lit` on the two pixels §3.2 and §3.4 are both written from. Re-sample the
+ * palette and it re-derives.
+ *
+ * Returned linear because that is the space a shader multiplies a lit colour in;
+ * `contactShadowMultiplier()` is the same division taken in display space, for the one surface that
+ * multiplies the framebuffer instead.
+ */
+export function castShadowRatio() {
+  const lit = roleColor("ground.lit");
+  const shadow = roleColor("ground.shadow");
+  return ["r", "g", "b"].map((c) => Math.min(1, shadow[c] / Math.max(lit[c], 1e-5)));
 }
 
 /**

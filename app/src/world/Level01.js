@@ -125,7 +125,7 @@ function pad(aX, aZ, x0, x1, z0, z1, f) {
 // down and narrows again at both ends — a river shaped like a cigar. A shape that gets wider as
 // it recedes has no vanishing point, and a shape with no vanishing point cannot walk an eye
 // anywhere; it just sits in the frame being big.
-const DEFAULT_TAPER = [0.92, 0.5];
+const DEFAULT_TAPER = [0.9, 0.48];
 export const CARRIES = [
   {
     /**
@@ -175,42 +175,61 @@ export const CARRIES = [
      * connected component under 1.7% of the frame, total cyan under 3.5%.
      */
     id: "carry.spine",
-    width: 14,
+    width: 10,
     // Multipliers on `width` at the head and at the mouth. Monotone: a river that widens on its
     // way to the horizon has no vanishing point, and a shape with no vanishing point cannot walk
-    // an eye anywhere. 14 x 1.29 = 18.1 m at the near end, 14 x 0.57 = 8.0 m at the far end.
-    taper: [1.29, 0.57],
+    // an eye anywhere. 10 x 1.3 = 13 m at the near end, 10 x 0.6 = 6 m at the far end.
+    taper: [1.3, 0.6],
     depth: 2.2,
     brim: 1.2,
     hero: true,
-    // The head is 62 m out and 24° off the axis, not 29 m out and under the camera. Both numbers
-    // are composition: at 29 m the widest part of a 36 m ribbon subtends 40% of the frame and
-    // reads as a lagoon the player is standing in, and a shape with no vanishing point cannot walk
-    // an eye anywhere. Set back and entering from the right, the same ribbon converges — and
-    // convergence is the entire mechanism.
+    /**
+     * **The head is 83 m out, and the number is arithmetic rather than taste.**
+     *
+     * A ribbon of width `w` at distance `d` covers `w·focal/d` pixels across, and the screen area
+     * it sweeps therefore grows as the *square* of how far down the frame its near end reaches.
+     * The head used to sit 56 m out at row 797 of 900, and no width small enough to fix that is
+     * still a river: at 56 m even a 6 m stream is 80 px across, and the run from row 660 to row
+     * 797 alone accounted for more pixels than the reference river's entire body.
+     *
+     * `target-lowpoly.png` puts its river in rows 908–1067 of 1536 — 59% to 69% of frame height,
+     * the lower-middle, never the extreme foreground. This head lands at about row 665 of 900,
+     * which is 74%, and the ribbon runs from there to the horizon. It is a river the player walks
+     * *down to*, not one they are standing in.
+     *
+     * The first two points still cross the view axis at 63° rather than running down it. That is
+     * the other half of the arithmetic: a ribbon's projected height is `w·sin(φ)·sin(δ)/d`, and at
+     * φ = 8° it throws away 86% of its own width.
+     */
     pts: [
-      [-168, 34], [-150, 62], [-124, 48], [-100, 6], [-68, -22],
+      [-140, 28], [-126, 56], [-100, 6], [-68, -22],
       [-30, -8], [10, 32], [46, 78], [88, 44], [126, 78], [160, 56],
     ],
   },
   {
     id: "carry.low",
-    width: 30,
+    width: 22,
     depth: 1.8,
     brim: 0.9,
     pts: [[-268, -104], [-214, -96], [-150, -78], [-64, -58], [24, -40], [104, -22], [150, -10]],
   },
   {
+    // Its mouth used to reach aX −150, sixty-nine metres from the arrival camera and near the
+    // middle of the frame — close enough that its own accent-cyan touched the hero carry's and the
+    // two merged into one connected component, which is how a 14 m ribbon still measured as a
+    // 79,000 px plate. It now stops at aX −118, a hundred metres out, and the eye reads two
+    // rivers instead of one delta. It is also nearer the Standing House claim it flows uphill
+    // toward, which is what it was for.
     id: "carry.middle",
-    width: 26,
+    width: 18,
     depth: 1.6,
     brim: 0.9,
     uphill: true,
-    pts: [[172, 128], [104, 114], [36, 98], [-30, 78], [-92, 56], [-132, 32], [-150, 16]],
+    pts: [[172, 128], [104, 114], [36, 98], [-30, 78], [-92, 56], [-118, 22]],
   },
   {
     id: "carry.high",
-    width: 24,
+    width: 18,
     depth: 1.6,
     brim: 0.9,
     pts: [[-262, 112], [-186, 136], [-92, 146], [4, 138], [90, 124], [148, 108]],
@@ -221,7 +240,7 @@ export const CARRIES = [
     // *world*, not in the composition. Re-aimed onto the hero carry's own bearing so the pick-up
     // is on the same line the eye was already travelling.
     id: "carry.field",
-    width: 26,
+    width: 18,
     depth: 1.6,
     brim: 0.9,
     pts: [[212, 50], [248, 36], [286, 44], [320, 30]],
@@ -1307,7 +1326,10 @@ export class Level01 {
       // where the player is put down, and its mouth is where the leaf stops and the water does
       // not.
       cutwater: at(244, -104),
-      carryHead: at(-192, 22),
+      // On the hero carry's own polyline, not near it: these are published as places, and K2 reads
+      // them as the things a player walks to. `carryHead` was left at aX −192 when the route moved
+      // and named a point fifty metres off the river.
+      carryHead: at(-140, 28),
       carryBend: at(-68, -24),
       carryFord: at(10, 32),
       carryMouth: at(160, 56),
@@ -1388,6 +1410,11 @@ export class Level01 {
         uphill: !!c.uphill,
         hero: !!c.hero,
         width: c.width,
+        // Published because `width` alone no longer describes the ribbon: the section tapers along
+        // the polyline, so anything measuring "is this triangle part of the hero carry" needs the
+        // widest section the ribbon ever presents, not the authored base.
+        taper: c.taper ?? DEFAULT_TAPER,
+        maxWidth: Number(carryMaxWidth(c).toFixed(2)),
         brim: c.brim ?? 0.45,
         pts: c.pts,
       })),

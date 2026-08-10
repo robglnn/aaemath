@@ -438,16 +438,30 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       // dark because a spire stands between it and Lethis, and any claim that reads brightness off
       // N·L alone is wrong about a low-sun world. Traced against the same soup the shadow map is
       // built from, offset off the surface so a face cannot shadow itself.
-      // Only inside 220 m: past that the pixel belongs to the aerial-perspective curve rather than
-      // to the key, and a shadow ray per sample over the whole frame doubles this script's cost for
-      // a distinction no claim below reads.
-      const sr = wantShadow && r.t <= 220
+      /**
+       * **Only asked of faces that are facing the key at all, and this is a bug fix.**
+       *
+       * The ray starts 8 cm off the surface and travels toward Lethis. For a face whose N·L is
+       * negative that direction points *into* the solid the face belongs to, so the ray hits its
+       * own body every time and the sample is reported as cast-shadowed. Every genuinely
+       * turned-away face was therefore being thrown out of the comparison, and P5's "faces turned
+       * away from the key" bucket was left with 87 survivors out of a shard with tens of thousands
+       * of samples — a biased remnant that the claim then treated as the population. A face turned
+       * away from the key is in shadow *by inclination*; occlusion is only a question for a face
+       * that would otherwise be lit.
+       *
+       * Only inside 220 m: past that the pixel belongs to the aerial-perspective curve rather than
+       * to the key, and a shadow ray per sample over the whole frame doubles this script's cost for
+       * a distinction no claim below reads.
+       */
+      const facingKey = r.nx * sun[0] + r.ny * sun[1] + r.nz * sun[2] > 0.02;
+      const sr = wantShadow && facingKey && r.t <= 220
         ? collision.raycast(
             r.x + r.nx * 0.08, r.y + r.ny * 0.08, r.z + r.nz * 0.08,
             sun[0], sun[1], sun[2], 260, shadowOut
           )
         : shadowOut;
-      if (!wantShadow) sr.hit = false;
+      if (!wantShadow || !facingKey || r.t > 220) sr.hit = false;
       return {
         x: pxl, y: py,
         d: Number(r.t.toFixed(1)),
@@ -461,7 +475,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     const samples = [];
     for (let py = 5; py < H; py += 9) {
       for (let pxl = 5; pxl < W; pxl += 9) {
-        const s = castPixel(pxl, py, 900);
+        const s = castPixel(pxl, py, 900, true);
         if (s) samples.push(s);
       }
     }
@@ -673,8 +687,31 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
      * script could not have caught it, because it never looked below the horizon at its own frame.
      */
     const keelSamples = [];
+    let keelProjected = 0;
+    /**
+     * The keel's own authored ladder, read off the shipped mesh's vertex colours and bucketed by
+     * the same N·L the shader grades on. This is the *albedo* claim and it is labelled as one: it
+     * says the ladder exists in the geometry that ships, which is a different and weaker statement
+     * than "the ladder is visible in the arrival frame". Both are reported, because the arrival
+     * frame turns out not to contain a single unoccluded keel facet — see `visibleFromArrival`.
+     */
+    const keelAlbedo = [];
     if (terrain.keel) {
       const kp = terrain.keel.geometry.getAttribute("position").array;
+      const kc = terrain.keel.geometry.getAttribute("color")?.array ?? null;
+      if (kc) {
+        for (let i = 0; i < kp.length; i += 9) {
+          const ux = kp[i + 3] - kp[i], uy = kp[i + 4] - kp[i + 1], uz = kp[i + 5] - kp[i + 2];
+          const vx = kp[i + 6] - kp[i], vy = kp[i + 7] - kp[i + 1], vz = kp[i + 8] - kp[i + 2];
+          let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+          const l = Math.hypot(nx, ny, nz) || 1;
+          nx /= l; ny /= l; nz /= l;
+          if (ny > 0) { nx = -nx; ny = -ny; nz = -nz; } // an underside faces down
+          const ndl = nx * sun[0] + ny * sun[1] + nz * sun[2];
+          const Y = 0.2126 * kc[i / 3] + 0.7152 * kc[i / 3 + 1] + 0.0722 * kc[i / 3 + 2];
+          keelAlbedo.push({ ndl: Number(ndl.toFixed(3)), Y: Number(Y.toFixed(5)) });
+        }
+      }
       const nearest = new Map(); // screen cell -> nearest keel triangle, so a sample is a surface
       for (let i = 0; i < kp.length; i += 9) {
         const cx = (kp[i] + kp[i + 3] + kp[i + 6]) / 3;
@@ -685,6 +722,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         if (dist > 200) continue; // "the foreground", the same 200 m the finding was made inside
         const s = scr(cx, cy, cz);
         if (s[2] > 1 || s[0] < 2 || s[0] >= W - 2 || s[1] < 2 || s[1] >= H - 2) continue;
+        keelProjected++;
         const ux = kp[i + 3] - kp[i], uy = kp[i + 4] - kp[i + 1], uz = kp[i + 5] - kp[i + 2];
         const vx = kp[i + 6] - kp[i], vy = kp[i + 7] - kp[i + 1], vz = kp[i + 8] - kp[i + 2];
         let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
@@ -737,6 +775,8 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       rockShader: L.rockShader ?? null,
       carrySamples,
       keelSamples,
+      keelProjected,
+      keelAlbedo,
       carryClearance: L.carryClearance ?? null,
       terrain: t,
       level: {
@@ -1185,7 +1225,172 @@ const carryRun = {
   frameHeight: img.height,
 };
 
+// ------------------------------------------------------------------ the keel's value ladder
+//
+// Measured on the shipped arrival frame, on `vs.terrain.keel`'s own triangles inside 200 m, none
+// of which anything else of this piece's stands in front of.
+const keelPx = [];
+for (const s of M.keelSamples ?? []) {
+  const qx = Math.min(img.width - 1, Math.round(s.x * scaleX));
+  const qy = Math.min(img.height - 1, Math.round(s.y * scaleY));
+  const [r, g, b] = px(img, qx, qy);
+  const [h, sa, v] = hsv(r, g, b);
+  keelPx.push({ ndl: s.ndl, Y: lum(r, g, b), h, sa, v });
+}
+const medOf = (arr, k) => {
+  if (!arr.length) return null;
+  const a = arr.map((o) => o[k]).sort((p, q) => p - q);
+  return round(a[Math.floor(a.length / 2)], 4);
+};
+const keelToward = keelPx.filter((s) => s.ndl > 0.12);
+const keelAway = keelPx.filter((s) => s.ndl < -0.08);
+const albToward = (M.keelAlbedo ?? []).filter((s) => s.ndl > 0.12);
+const albAway = (M.keelAlbedo ?? []).filter((s) => s.ndl < -0.08);
+/**
+ * **The critic's premise about this surface does not hold in the shipped build, and the number
+ * that shows it is here rather than in a sentence.**
+ *
+ * The finding was that `vs.terrain.keel` "contributes 162 of the 370 large front-facing rock
+ * triangles within 200 m and paints the bottom 55 rows of the spawn frame as a flat bar". Measured:
+ * 6,827 of the keel's triangles do project inside the arrival frame, its nearest is 119.6 m — and
+ * **zero of them are unoccluded**, because the underside of a leaf you are standing on top of is
+ * behind the leaf from every stand on it. The bottom rows are painted by the heightfield's own
+ * up-leaf-facing scarp risers, which is `design()`'s authored "light tread, dark riser" band.
+ *
+ * So this reports three separate things and does not let any of them stand in for another:
+ *   albedoLadder     — the ladder exists in the mesh that ships (vertex colours, by N·L)
+ *   visibleFromArrival — how much of it the arrival frame actually contains (currently none)
+ *   bottomRowsOfFrame  — what the bottom of the frame really measures, against the reference
+ */
+const keelLadder = {
+  albedoLadder: {
+    triangles: (M.keelAlbedo ?? []).length,
+    towardKey: { n: albToward.length, medianAlbedoY: medOf(albToward, "Y") },
+    awayFromKey: { n: albAway.length, medianAlbedoY: medOf(albAway, "Y") },
+    towardOverAway:
+      albToward.length && albAway.length
+        ? round(medOf(albToward, "Y") / Math.max(medOf(albAway, "Y"), 1e-6), 3)
+        : null,
+    bandsByNdL: [[-1, -0.5], [-0.5, -0.2], [-0.2, 0.05], [0.05, 0.3], [0.3, 1]].map(([a, b]) => {
+      const g = (M.keelAlbedo ?? []).filter((s) => s.ndl >= a && s.ndl < b);
+      return { ndl: [a, b], n: g.length, medianAlbedoY: medOf(g, "Y") };
+    }),
+    note: "scene-linear vertex colour of the shipped vs.terrain.keel mesh — an albedo claim, not a pixel claim",
+  },
+  visibleFromArrival: {
+    trianglesProjectingIntoFrame: M.keelProjected ?? 0,
+    trianglesNothingStandsInFrontOf: keelPx.length,
+    towardKey: { n: keelToward.length, medianY: medOf(keelToward, "Y") },
+    awayFromKey: { n: keelAway.length, medianY: medOf(keelAway, "Y") },
+    towardOverAway:
+      keelToward.length && keelAway.length
+        ? round(medOf(keelToward, "Y") / Math.max(medOf(keelAway, "Y"), 1e-4), 3)
+        : null,
+  },
+  bottomRowsOfFrame: bottom,
+  measuredOn: "vs.terrain.keel's own triangles inside 200 m, projected through the shipped arrival camera",
+};
+
+/**
+ * Is the bottom of the frame one value or several? This is the question the "flat bar" finding was
+ * really about, and it can be asked of the pixels without needing to agree first about which mesh
+ * put them there. A bar scores one populated bin; broken ground scores several.
+ */
+function valueStructure(image, share = 0.061) {
+  const rows = Math.max(4, Math.round(image.height * share));
+  const ys = [];
+  for (let y = image.height - rows; y < image.height; y++)
+    for (let x = 0; x < image.width; x += 2) ys.push(lum(...px(image, x, y)));
+  // Looped, not spread: `Math.min(...ys)` over a hundred thousand samples is a hundred thousand
+  // arguments and it throws `Maximum call stack size exceeded` — which in a measurement script is
+  // indistinguishable from a claim that never ran.
+  let lo = Infinity;
+  let hi = -Infinity;
+  for (const y of ys) { if (y < lo) lo = y; if (y > hi) hi = y; }
+  const bins = new Array(50).fill(0);
+  for (const y of ys) bins[Math.min(49, Math.max(0, Math.floor(((y - lo) / Math.max(hi - lo, 1e-6)) * 50)))]++;
+  let peak = 0;
+  for (const c of bins) if (c > peak) peak = c;
+  return {
+    rows,
+    samples: ys.length,
+    largestSingleValueShare: round(peak / ys.length, 3),
+    binsHolding5pct: bins.filter((c) => c >= ys.length * 0.05).length,
+  };
+}
+const bottomStructure = { ours: valueStructure(img), reference: refImg ? valueStructure(refImg) : null };
+
+// --------------------------------------------------- the shadow family on this piece's own rock
+//
+// `p09:rock` is the spires, the boulders and the talus this piece builds — separated from the
+// heightfield and the built stone by the collider the hit triangle belongs to, so this is a claim
+// about the rock and not an average over everything in front of the camera. Cast-shadowed samples
+// are excluded: a face can have N·L 0.8 and be dark because a spire is in the way, and a
+// lit:shadow ratio that averages those in is measuring occlusion, not the grade.
+const WARM = (s) => s.h >= 8 && s.h <= 58 && s.sa >= 0.18;
+const COOL = (s) => s.h >= 150 && s.h <= 230;
+const rockPx = [];
+for (const s of M.pixels) {
+  if (s.owner !== "p09:rock") continue;
+  if (s.d > 200) continue;
+  if (s.cast) continue;
+  const c = patch(s.x, s.y);
+  const [h, sa, v] = hsv(...c.map(Math.round));
+  rockPx.push({ ndl: s.ndl, d: s.d, Y: lum(...c.map(Math.round)), h, sa, v });
+}
+const family = (arr) => ({
+  n: arr.length,
+  medianY: medOf(arr, "Y"),
+  medianHue: medOf(arr, "h"),
+  warmShare: arr.length ? round(arr.filter(WARM).length / arr.length, 3) : null,
+  coolShare: arr.length ? round(arr.filter(COOL).length / arr.length, 3) : null,
+});
+const rockLitSet = rockPx.filter((s) => s.ndl > 0.5);
+const rockShadeSet = rockPx.filter((s) => s.ndl < -0.08);
+const rockGrade = {
+  measuredOn: "p09:rock only, inside 200 m, outside the key's cast shadow, on the shipped arrival frame",
+  litNdLOver0p5: family(rockLitSet),
+  shadowNdLUnderMinus0p08: family(rockShadeSet),
+  turnedAwayBand: family(rockPx.filter((s) => s.ndl >= -0.5 && s.ndl < -0.2)),
+  litOverShadow:
+    rockLitSet.length && rockShadeSet.length
+      ? round(medOf(rockLitSet, "Y") / Math.max(medOf(rockShadeSet, "Y"), 1e-4), 3)
+      : null,
+  referenceLitOverShadow: REF.litShadowRatio,
+};
+
+// -------------------------------------------------------- what the river's body actually renders
+//
+// The *body* lane, not the whole ribbon: the core is authored near-white and averaging it in is
+// how a neon river reports a civilised saturation. `PAL.carry` is authored to render at S 0.44;
+// last round it rendered at S 0.93 and no test in this file asked.
+const bodyPx = [];
+for (const s of M.carrySamples) {
+  if (s.lane !== "body" || s.d > 250) continue;
+  const qx = Math.min(img.width - 1, Math.max(0, Math.round(s.x * scaleX)));
+  const qy = Math.min(img.height - 1, Math.max(0, Math.round(s.y * scaleY)));
+  const [r, g, b] = px(img, qx, qy);
+  const [h, sa, v] = hsv(r, g, b);
+  if (h < 140 || h > 210 || sa < 0.12) continue; // not the river's own pixel; something is in front
+  bodyPx.push({ h, sa, v, Y: lum(r, g, b) });
+}
+const carryRender = {
+  n: bodyPx.length,
+  medianSat: medOf(bodyPx, "sa"),
+  medianValue: medOf(bodyPx, "v"),
+  medianHue: medOf(bodyPx, "h"),
+  medianY: medOf(bodyPx, "Y"),
+  referenceRiver: { hex: "#8BF7E4", sat: 0.436, Y: 0.784 },
+  measuredOn: "the hero carry's body lane inside 250 m, on the shipped arrival frame",
+};
+
 // ---------------------------------------------------------------------------- claims
+
+claim("S0", "the arrival frame rendered at all", !blackFrame, {
+  frameMeanY: census.meanY,
+  frameDarkPct: census.darkPct,
+  threshold: "mean luminance >= 0.02 and under 92% of the frame below Y 0.05 — a black capture is a bug, and every pixel claim below is void without this one",
+});
 
 claim("S1", "terrain is non-indexed with one normal per face", M.terrain.indexed === false && M.terrain.flatNormalFraction === 1, {
   indexed: M.terrain.indexed,
@@ -1296,14 +1501,49 @@ claim("K6", "no carry is buried in its own channel", M.carryClearance !== null &
   minRibbonClearanceOverGroundMetres: M.carryClearance,
   threshold: ">= 0.2 m, measured at every ribbon cross-section against the ground the terrain built",
 });
+const frameArea = img.width * img.height;
 claim(
   "K7",
   "the river is a connected body, not a strip light",
-  river.area >= 5000 && river.rows >= 110 && river.maxVerticalRun >= 20,
+  river.area >= 0.004 * frameArea &&
+    river.rows >= 0.12 * img.height &&
+    river.maxVerticalRun >= 0.022 * img.height &&
+    !!referenceRiverSanity?.looksLikeTheRiver,
   {
     measuredOnArrivalFrame: riverVsReference,
     threshold:
-      "largest connected accent-cyan component >= 5000 px, spanning >= 110 rows, and >= 20 px thick on its thickest column. Last round: 665 px, 30 rows, 1-4 px. The reference's own river is measured the same way and printed beside it",
+      "largest connected accent-cyan component >= 0.4% of the frame, spanning >= 12% of its rows, >= 2.2% of frame height thick on its thickest column — AND the reference column it is printed beside has to actually be the reference's river (x[1724,2180] y[908,1067], 16,591 px, #8BF7E4), not the teal band across the top of its sky, which is what this claim used to compare us against",
+  }
+);
+claim(
+  "K8",
+  "cyan is an accent, not the frame",
+  river.areaPctOfFrame <= ACCENT_MAX_COMPONENT_PCT && river.totalAccentPctOfFrame <= ACCENT_MAX_TOTAL_PCT,
+  {
+    largestComponentPctOfFrame: river.areaPctOfFrame,
+    totalAccentPctOfFrame: river.totalAccentPctOfFrame,
+    meanAccentSat: river.meanAccentSat,
+    meanAccentHex: river.meanAccentHex,
+    reference: refRiver
+      ? {
+          riverComponentPctOfFrame: refRiver.areaPctOfFrame,
+          wholeFrameAccentPct: refWhole?.totalAccentPctOfFrame ?? null,
+          riverMeanAccentSat: refRiver.meanAccentSat,
+          riverMeanAccentHex: refRiver.meanAccentHex,
+        }
+      : null,
+    gate: `hue ${ACCENT.hue[0]}-${ACCENT.hue[1]}, S >= ${ACCENT.sat}, V >= ${ACCENT.val}`,
+    threshold: `largest connected accent component <= ${ACCENT_MAX_COMPONENT_PCT}% of the frame (25,000 px at 1600x900) and total accent <= ${ACCENT_MAX_TOTAL_PCT}%. Last round: 7.0% in one component, 8.30% total, against the reference's 0.39% and 2.39%`,
+  }
+);
+claim(
+  "K9",
+  "the river's body renders at the reference river's saturation",
+  carryRender.n >= 60 && carryRender.medianSat >= 0.42 && carryRender.medianSat <= 0.5,
+  {
+    measuredOnArrivalFrame: carryRender,
+    threshold:
+      "the hero carry's body lane must render at S 0.42-0.50 in the capture (the reference river measures S 0.436). Last round it rendered at S 0.93 while the palette constant said 0.45 — so this is measured off the pixel, never off the constant",
   }
 );
 claim(
@@ -1387,6 +1627,46 @@ claim("P3", "the warm:cool luminance ratio sits in the reference's band", ratio 
   referenceRatio: REF.litShadowRatio,
   threshold: "3.2–11.0 (the reference measures 4.15 and 5.47 on two different rocks; the upper bound is loosened from 9 because our warm family is sampled over the whole near field rather than on one rock)",
 });
+claim(
+  "P6",
+  "the keel carries a value ladder, and the bottom of the frame is not one flat bar",
+  keelLadder.albedoLadder.triangles >= 2000 &&
+    keelLadder.albedoLadder.towardKey.n >= 200 &&
+    keelLadder.albedoLadder.awayFromKey.n >= 200 &&
+    keelLadder.albedoLadder.towardOverAway >= 2.0 &&
+    bottomStructure.ours.largestSingleValueShare <= 0.4 &&
+    bottomStructure.ours.binsHolding5pct >= 3,
+  {
+    keel: keelLadder,
+    bottomRowValueStructure: bottomStructure,
+    threshold:
+      "the shipped keel's authored ladder must separate toward-key from away-from-key albedo by >= 2.0x (it measured 1.02x in rendered luminance last round, from two colours chosen by N.y on a surface whose N.y barely varies), AND the bottom 6% of the arrival frame's rows must hold more than one value: no single 2%-wide luminance bin over 40% of those pixels and at least 3 bins over 5%. NOTE the finding's premise is separately reported and does not hold: 6,827 keel triangles project into this frame and zero are unoccluded, so the bar at the bottom is the heightfield's own up-leaf scarp riser, not the keel",
+  }
+);
+claim(
+  "P7",
+  "faces of this piece's rock turned away from the key are the cool family",
+  rockGrade.shadowNdLUnderMinus0p08.n >= 100 &&
+    rockGrade.turnedAwayBand.n >= 40 &&
+    rockGrade.turnedAwayBand.warmShare <= 0.35 &&
+    rockGrade.litOverShadow >= 3.2,
+  {
+    measuredOnArrivalFrame: rockGrade,
+    threshold:
+      "in the N·L [-0.5,-0.2) band no more than 35% of p09:rock's unshadowed near pixels may read warm (hue 8-58), and lit (N·L > 0.5) : shadow (N·L < -0.08) median luminance must be at least 3.2 — the reference measures 4.15-5.47. Last round: warmShare 0.86 and a ratio of 1.82",
+  }
+);
+claim(
+  "S8",
+  "every colour this world asks the tonemap for is a colour it can reach",
+  (M.terrain.paletteMisses ?? []).length === 0,
+  {
+    paletteMisses: M.terrain.paletteMisses ?? null,
+    tolerance: M.terrain.sceneFitTolerance ?? null,
+    threshold:
+      "sceneRGB()'s fit reports zero colours outside its own tolerance and zero channels pinned on its clamp. PAL.carry was #7ADCC8, which needs a negative red to invert, so red pinned and a river authored at S 0.45 shipped at S 0.93 — the fit knew and nothing was reading it",
+  }
+);
 claim("P4", "the frame is inside the performance budget", M.stats.drawCalls <= 320 && M.stats.triangles <= 1_600_000 && M.stats.programs <= 90, {
   drawCalls: M.stats.drawCalls,
   triangles: M.stats.triangles,
@@ -1406,6 +1686,10 @@ const out = {
   camera: M.camera,
   carryRun,
   river: riverVsReference,
+  carryRender,
+  keelLadder,
+  bottomStructure,
+  rockGrade,
   heroForm,
   sunSideDisagreement,
   massif: M.massif,
@@ -1416,7 +1700,7 @@ const out = {
     backdrop: M.level.backdrop,
     downLeaf: M.level.downLeaf,
   },
-  frameCensus: { measured: census, reference: { cyanPct: REF.cyanShare, meanY: REF.meanY } },
+  frameCensus: { measured: census, reference: refCensus, bottomRows: bottom },
   claims: results,
   summary: `${results.length - failed.length}/${results.length} claims pass`,
 };

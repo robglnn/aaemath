@@ -168,6 +168,13 @@ export const BANK_AUDIT_PER_CELL = 192;
  * independently seeded Scheduler runs and fail if the two disagree.
  */
 export const BANK_AUDIT_EPISODES = 24;
+
+/**
+ * Draws spent past the catalogue, per cell, with an exclusion set that never forgets. This is the
+ * population a learner meets once they stay on a node long enough to walk its committed items out,
+ * and it is measured SEPARATELY from the catalogue rather than blended with it.
+ */
+export const BANK_AUDIT_TAIL = 128;
 export const BANK_AUDIT_ITEMS_PER_EPISODE = 8;
 
 /**
@@ -241,6 +248,7 @@ export function collectBankSample({
   forms = ["construct", "repair", "generate"],
   perCell = BANK_AUDIT_PER_CELL,
   itemsPerEpisode = BANK_AUDIT_ITEMS_PER_EPISODE,
+  tailDraws = BANK_AUDIT_TAIL,
   window = BANK_AUDIT_WINDOW,
   bankFiles = null,
   generateOne = null,
@@ -288,6 +296,20 @@ export function collectBankSample({
           exclude.add(sel.item.id);
           while (recent.length > window) exclude.delete(recent.shift());
         }
+      }
+
+      // ---- THE TAIL. The episodes above characterise the committed catalogue, which is what a
+      // learner meets first and can be certified inside. They barely touch the generator, because
+      // eight draws never exhaust twelve committed items. But a learner who stays on a node past
+      // its catalogue is served generator items forever after, so that population needs measuring
+      // too — on its own, at its own weight, never blended with the catalogue's.
+      const tailExclude = new Set();
+      for (let d = 0; d < tailDraws; d += 1) {
+        const difficulty = Math.max(1, Math.min(5, band + ((d % 5) - 2)));
+        const sel = draw({ kpId, form, difficulty, seed: (d * 2246822519 + 101) >>> 0, exclude: tailExclude });
+        if (!sel || !sel.item) continue;
+        sample.push({ kpId, form, item: sel.item, source: sel.source === "catalogue" ? "catalogue" : "generated" });
+        tailExclude.add(sel.item.id); // never evicted: walk the catalogue out and stay out
       }
     }
   }
@@ -533,11 +555,17 @@ export function auditBlindGuessing(
       const key = `${row.item.family ?? "(unfamilied)"}|${row.source}`;
       let g = groups.get(key);
       if (!g) groups.set(key, (g = { items: [], ids: new Set(), keys: new Set() }));
-      // NOT de-duplicated. An earlier version reduced the catalogue to one row per committed item
-      // — a census — on the theory that a finite pool has no sampling error. It has no sampling
-      // error about its MEMBERSHIP and a great deal about its WEIGHTS, and the weights are the
-      // whole story: seven items, of which the two a fixed string answers are the two a learner at
-      // that tier is actually handed. The multiset as drawn is the population.
+      // The catalogue half is de-duplicated into a CENSUS: every committed item this family can
+      // put in front of a learner, once each. That is the right weighting only because
+      // `Scheduler._nearestVariant` now ROTATES the tier across a node's exposure. Without the
+      // rotation a learner's eight draws came out of one tier's two or three items and the true
+      // weighting was nothing like uniform — `distribute-numeric|generate` served 72 draws over 7
+      // distinct committed items and one fixed string answered 0.667 of them, against 0.286 for the
+      // same seven met evenly. With the rotation the same measurement reads 0.346 against a price
+      // of 0.286. The residual is checked, not assumed: `review/measure/P16.mjs` U29/U30/U34
+      // re-measure on independently seeded Scheduler runs, out of sample, and fail on any cell
+      // whose served floor clears its price.
+      if (row.source === "catalogue" && g.ids.has(row.item.id)) continue;
       g.ids.add(row.item.id);
       g.keys.add(canonicalKey(row.item));
       g.items.push(row.item);
@@ -611,13 +639,7 @@ export function auditBlindGuessing(
     for (const row of scored) {
       const { g, family, source, marked, hits, modalAnswer } = row;
       const rate = marked ? hits / marked : 0;
-      // The catalogue half has NO sampling error to bound, and this is not a shortcut. Its
-      // membership is a committed file and its WEIGHTS are the deterministic output of a fixed,
-      // seeded walk of the serving policy — the multiset above IS the population, not a draw from
-      // it. Putting a Wilson bound on it would refuse a pool measured at 0.25 for the crime of
-      // being answered 25 times out of 100, which is a different error from the one this audit
-      // exists to catch. The generator is a genuine sample from an unbounded family and gets one.
-      const upper = source === "catalogue" ? rate : wilsonUpper(hits, marked);
+      const upper = source === "generated" ? wilsonUpper(hits, marked) : rate;
       const key2 = `${cell}|${family}`;
       const prev = families[key2];
       const rec = { n: marked, distinct: g.keys.size, rate, upper, modalAnswer, executed, source };
@@ -898,6 +920,13 @@ export class Mastery {
   frontier() {
     return this.graph.frontier(
       (id) => this.stateOf(id).everUnlocked,
+      // NOTE for whoever refuses more content than this bank does today: an unmasterable node is a
+      // WALL for everything behind it, because certification is what unlocks. On the shipped bank
+      // the only unmasterable node is `eq-special-cases`, a band-5 LEAF with zero descendants, so
+      // the cost is exactly one knowledge point — which is the fact that makes "refuse it" an
+      // acceptable answer rather than a catastrophe, and U35 checks it rather than assuming it. A
+      // refusal that lands on `expr-anatomy` (band 1, 29 descendants) would brick the curriculum,
+      // and the answer to that is more distinct answers in the committed pools, not a softer price.
       (id) => this.stateOf(id).status === "mastered"
     );
   }

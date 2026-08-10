@@ -82,7 +82,39 @@
  * `review/measure/P15.mjs` claim H6). Gates 3 and 4 exist for content that does not exist yet
  * and for anything that ever reaches `math:show` from outside this piece.
  *
- * ## The eighth way to truncate a claim: the world in front of it
+ * ## Gate 8: drawn whole is not the same as drawn readable
+ *
+ * Seven gates stand between a claim and being drawn *partially*, and for three rounds there
+ * were none at all against a claim being drawn *below legibility* — which costs exactly the
+ * same thing, mathematical meaning, by a different route. A stroke thinner than one device
+ * pixel is not a faint stroke; it is averaged out of existence by the mip chain, and what
+ * reaches the player is a different and well-formed statement.
+ *
+ * It was measured in the shipped frame, not imagined. `2x + 1 \ge 9` standing at `leaf9-mark`
+ * rendered 16.8 device pixels per em at 1600x900 and 13.4 at 1280x720. The relation bar of
+ * `\ge` is 0.0488 em thick — measured off this file's own rasterizer at 512 px per em, where
+ * it is 25 px, the same as the horizontal stroke of `+`; a `\frac` rule is thicker at 0.0664
+ * em. At 16.8 px per em that bar is 0.82 device px. Its peak luminance fell from 255.0 at
+ * 3840x2160 to 223.9 over a 189.7 background at 1600x900 — 47% of the stroke's contrast gone —
+ * and a critic read the claim off the shipped capture as `2x + 1 > 9`. The pipeline drew every
+ * pixel of that claim and still told a lie.
+ *
+ * So: `LEGIBILITY`. A claim whose thinnest meaningful stroke would land under
+ * `minStrokePx` device pixels is not presented as readable. It shows the same solid mark a
+ * refused claim shows, and returns to itself when the player is close enough to read it —
+ * with `regainRatio` of hysteresis so standing on the boundary cannot thrash the rasterizer.
+ * `strokeEms` is 0.045, deliberately a little thinner than the 0.0488 the font actually draws,
+ * so the floor errs strict; `P15.mjs` claim C12b re-measures the real bar every run and fails
+ * if the constant ever becomes optimistic.
+ *
+ * Two things this gate deliberately does *not* do. It does not touch the accessible register:
+ * distance is a property of where the player is standing, not of the claim, and a screen
+ * reader is not standing anywhere — so the spoken form stays the claim's own. And it does not
+ * apply to a working, because a working states nothing; a plot drawn too small is a plot you
+ * cannot read, never a plot that says something false. Its stroke is measured and published
+ * all the same, so a level that stands one too far away can be caught.
+ *
+ * ## The ninth way to lose a claim: the world in front of it
  *
  * Seven gates make sure this pipeline never draws a fragment of a claim, and for one round
  * the compositor cheerfully did it anyway. In the shipped spawn frame, 26.9% of
@@ -117,7 +149,7 @@
  */
 import * as THREE from "three";
 import { introspect } from "../core/Introspect.js";
-import { render, applyRecord, getLocale, refusedRecord } from "./Tex.js";
+import { render, applyRecord, getLocale, refusedRecord, FALLBACK_TEX } from "./Tex.js";
 
 // ---------------------------------------------------------------- hidden layout host
 
@@ -474,6 +506,37 @@ export const RASTER_CAPS = Object.freeze({
 });
 
 /**
+ * Gate 8 — the legibility floor. See the file header for the measurement behind every number.
+ *
+ * `minStrokePx` is 1.5 device pixels and not 1.0 because one pixel is the point at which a
+ * stroke *starts* losing contrast to the mip chain, not the point at which it survives: the
+ * `\ge` bar measured 0.82 device px in the shipped frame and had already lost 47% of its
+ * contrast. `strokeEms` is 0.045 against a font that draws 0.0488, so the floor is a little
+ * stricter than the glyph needs. `floorPx` is the quotient, published rather than left to be
+ * recomputed, so a reviewer asserts against the same 33.3 the code enforces.
+ *
+ * `regainRatio` is the hysteresis. Without it a player standing exactly on the boundary
+ * re-rasterizes the panel every frame, which is the same thrash the size ladder's cooldown
+ * exists to prevent, with a bigger flicker.
+ */
+export const LEGIBILITY = Object.freeze({
+  minStrokePx: 1.5,
+  strokeEms: 0.045,
+  floorPx: 1.5 / 0.045,
+  regainRatio: 1.12,
+});
+
+/**
+ * A working's stroke is not a font's, it is its own `stroke` argument, and the square is four
+ * ems to a side by definition — so a stroke of 0.016 of the square is 0.064 of an em, thicker
+ * than any glyph in the notation. Measured and published; not gated, because a working states
+ * nothing that could be misread.
+ */
+function workingStrokeEms(working) {
+  return 4 * clampNum(working?.stroke, 0.002, 0.2, 0.016);
+}
+
+/**
  * Every caller-controlled number in this file goes through here before it is used as a loop
  * bound, an allocation or a world size. `Number()` first so a string "1e9" is a number and not
  * a silently-passing NaN, and `Number.isFinite` so NaN and ±Infinity land on the fallback
@@ -824,6 +887,18 @@ export function resolveRecord(tex, { locale = getLocale(), displayMode = true } 
   return refuseOnce(tex, record.locale, displayMode, extentError(bound));
 }
 
+/**
+ * A source string as it may appear in a probe: the same 120-character bound `Tex.js` puts on
+ * its failure log, for the same reason. `__vs.probe("mathtex")` is the report a reviewer,
+ * another agent or a crash handler reads, and a probe that hands back a 20,000-character attack
+ * string in full is the attack succeeding one layer further out.
+ */
+const PROBE_TEX_CHARS = 120;
+function probeTex(tex) {
+  const src = String(tex ?? "");
+  return src.length > PROBE_TEX_CHARS ? `${src.slice(0, PROBE_TEX_CHARS)}… (${src.length} chars)` : src;
+}
+
 /** Record the largest canvas this process has ever allocated, so the cap is measurable. */
 function noteCanvas(canvas) {
   rasterStats.maxCanvasWidth = Math.max(rasterStats.maxCanvasWidth, canvas.width);
@@ -1056,6 +1131,13 @@ export class TexPanel {
     this._emScreenPx = 0;
     this._rasters = 0;
     this._texelsPerPixel = 0;
+    // Gate 8. `_strokeEms` is the thinnest stroke this panel's content actually draws, and
+    // `_standIn` is whether the mark is up in place of the claim because the player is too far
+    // away to read it. A working is measured and never gated — see the file header.
+    this._strokeEms = working ? workingStrokeEms(working) : LEGIBILITY.strokeEms;
+    this._floorPx = LEGIBILITY.minStrokePx / this._strokeEms;
+    this._standIn = false;
+    this._warnedIllegible = false;
     // The occlusion measurement, filled in by `measureOcclusion`; null until something asks.
     this._occlusion = null;
     this._inkCells = null;
@@ -1107,15 +1189,26 @@ export class TexPanel {
   }
 
   _rasterize(bucket) {
+    // Gate 8. Below the legibility floor the panel paints the solid mark instead of the claim:
+    // the same stand-in a refused claim gets, for the same reason — what would reach the player
+    // otherwise is notation with a stroke missing, which is a different statement.
+    const standIn = this._standIn && !this.working;
     // A "working" is square by construction, so its em is its whole side.
-    const out = this.working
-      ? rasterizeWorking({ ...this.working, pixels: Math.round(bucket * 4) })
-      : rasterizeTex(this.tex, {
+    const out = standIn
+      ? rasterizeTex(FALLBACK_TEX, {
           locale: this.locale,
           displayMode: this.displayMode,
           fontPx: bucket,
           rim: this.rim,
-        });
+        })
+      : this.working
+        ? rasterizeWorking({ ...this.working, pixels: Math.round(bucket * 4) })
+        : rasterizeTex(this.tex, {
+            locale: this.locale,
+            displayMode: this.displayMode,
+            fontPx: bucket,
+            rim: this.rim,
+          });
 
     const tex = new THREE.CanvasTexture(out.canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
@@ -1152,10 +1245,14 @@ export class TexPanel {
     // the panel and its register already agree on. If it ever does not — a raster-size
     // refusal, which H7 argues is unreachable while the ink gate holds — the register is told,
     // rather than being left describing a claim the world stopped showing.
-    const rec = out.record ?? null;
-    const changed = !this.working && rec && (rec.ok !== this.ok || rec.speech !== this.speech);
+    //
+    // A gate-8 stand-in is the exception, and deliberately so: `out.record` there describes the
+    // *mark*, and adopting it would tell the screen-reader user that the claim is unreadable
+    // because the camera is a long way from it. The claim's own record stands.
+    const rec = standIn ? this.record : (out.record ?? null);
+    const changed = !this.working && !standIn && rec && (rec.ok !== this.ok || rec.speech !== this.speech);
     this.record = this.working ? null : rec;
-    this.ok = this.working ? true : !!rec?.ok;
+    this.ok = this.working || standIn ? this.ok : !!rec?.ok;
     this.speech = rec?.speech ?? "";
     if (changed) this.onRecord?.(this);
     // One texel of the raster covers exactly one em/bucket of world, so the quad is the ink.
@@ -1178,6 +1275,24 @@ export class TexPanel {
     // Measured against the size the texture was really laid out at, so a capped raster reports
     // itself as the softer thing it is rather than as the bucket it was denied.
     this._texelsPerPixel = needed > 0 ? (this._fontPx || this._bucket) / needed : 0;
+
+    // Gate 8 — the legibility floor, and the only gate in this file that is a function of where
+    // the player is standing rather than of what the claim is. `needed * strokeEms` is the
+    // width of this claim's thinnest stroke in device pixels; under `minStrokePx` the mip chain
+    // averages it away and the player reads a statement we did not draw. Asymmetric on purpose:
+    // it takes `regainRatio` more than the floor to come back, so a player standing on the
+    // boundary does not re-rasterize the panel every frame.
+    if (!this.working) {
+      const illegible = this._standIn ? needed < this._floorPx * LEGIBILITY.regainRatio : needed < this._floorPx;
+      if (illegible !== this._standIn) {
+        this._standIn = illegible;
+        // Straight into the raster branch below rather than waiting out the cooldown: this is a
+        // correctness switch, not a sharpness one.
+        this._bucket = 0;
+        this._cooldown = 0;
+        if (illegible) this._noteIllegible();
+      }
+    }
 
     const want = Math.max(BUCKETS[0], needed * 1.02);
     if (!this._bucket) {
@@ -1212,6 +1327,22 @@ export class TexPanel {
       this._age += dt;
       this.material.opacity = Math.min(1, this._age / this.fadeIn);
     }
+  }
+
+  /**
+   * A claim standing where it cannot be read is a level-design fact, not a runtime error, so
+   * this is a warning and not a line in `__vs.errors` — and it is pushed once per panel, never
+   * once per crossing, because a player walking back and forth across the floor would otherwise
+   * write an unbounded log. `MAX_PANELS` bounds the total either way.
+   */
+  _noteIllegible() {
+    if (this._warnedIllegible) return;
+    this._warnedIllegible = true;
+    introspect.warnings.push(
+      `math: claim "${this.id}" reads ${this._emScreenPx.toFixed(1)} device px per em, under the ` +
+        `${this._floorPx.toFixed(0)} px legibility floor — its thinnest stroke would be ` +
+        `${(this._emScreenPx * this._strokeEms).toFixed(2)} px, so the mark stands until the player is closer`
+    );
   }
 
   /**
@@ -1324,7 +1455,12 @@ export class TexPanel {
       id: this.id,
       kpId: this.kpId,
       kind: this.working ? "working" : "claim",
-      tex: this.working ? null : this.tex,
+      // Truncated for exactly the reason `Tex.refusedRecord` truncates its own failure log: a
+      // 20,000-character claim went in through `math:show` and all 20,000 characters came back
+      // out of `__vs.probe("mathtex")`, which makes the probe a denial of service against
+      // whoever is reading the report. The length is kept, because that is the part of an
+      // oversize source anyone needs.
+      tex: this.working ? null : probeTex(this.tex),
       ok: this.ok,
       speech: this.speech,
       locale: this.locale,
@@ -1346,6 +1482,15 @@ export class TexPanel {
       bound: this._bound,
       emScreenPx: Number(this._emScreenPx.toFixed(1)),
       texelsPerPixel: Number(this._texelsPerPixel.toFixed(2)),
+      // Gate 8, as three numbers a reviewer can check against each other: how thin this
+      // content's thinnest stroke is in ems, how many device pixels of it survive at the size
+      // the panel is being drawn at right now, and the floor that has to clear. `legible:false`
+      // means the solid mark is standing in the claim's place until the player is closer.
+      strokeEms: this._strokeEms,
+      strokePx: Number((this._emScreenPx * this._strokeEms).toFixed(2)),
+      legibleFloorPx: Number(this._floorPx.toFixed(1)),
+      legible: !this._standIn,
+      standIn: this._standIn ? "distance" : null,
       rasters: this._rasters,
       position: this.mesh.position.toArray().map((v) => Number(v.toFixed(2))),
     };

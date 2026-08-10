@@ -44,47 +44,61 @@ import { TexField, ensureMathFonts, setMaxAnisotropy } from "../math/TexPanel.js
  * something in front of it is a claim that may be read wrong.
  *
  * The exact heights are a measurement too, not a nudge. The dusk sky is *banded* — hard-edged
- * cloud slabs and a step in the gradient — and the first placement put `x + 3 = 7` straddling
- * one of those steps, which reads in `P15.mjs` claim C16 as a −8.4 halo: the sky 3–5 px from
- * the ink measurably darker than the sky 12–20 px away, which is the signature this piece
- * exists to never produce. It was the sky and not our raster (C16b measures our own alpha
- * halo at 0), but a claim standing across a hard sky edge is still a claim fighting its
- * background. The block was moved onto the flat part of the gradient by predicting the C16
- * statistic for every candidate position against a claim-free capture of the same frame, and
- * these heights sit in the middle of a plateau where a ±10 px error still measures positive.
+ * cloud slabs and a step in the gradient — and a claim standing across one of those steps
+ * reads in `P15.mjs` claim C16 as a negative halo: the sky 3–5 px from the ink measurably
+ * darker than the sky 12–20 px away, which is the signature this piece exists to never
+ * produce. It is the sky and not our raster (C16b measures our own alpha halo at 0), but a
+ * claim fighting its background is still a claim fighting its background. Every height below
+ * was chosen by taking a claim-free capture of this same frame, sliding each claim's real ink
+ * mask up and down it a pixel at a time, and reading the C16 statistic out of the bare sky at
+ * every offset. The numbers in the comments are from `review/measure/_skysweep` on the current
+ * sky plate; when the sky changes, that sweep is the thing to re-run, not this paragraph.
+ *
+ * ## And the sizes are a measurement, not a taste call either
+ *
+ * `em` here is metres per em, and it decides — through the camera — how many device pixels a
+ * stroke of this notation is drawn with. `TexPanel`'s gate 8 refuses to present a claim whose
+ * thinnest stroke lands under 1.5 device px, which works out at 33.3 device px per em. G7
+ * requires the game to be readable at 1280x720, so that is the size these have to clear, and
+ * at 1280x720 the previous `em: 0.66` measured 30.1 px per em — under the floor, with the
+ * `\ge` relation bar of `leaf9-mark` down at 0.65 px and read off the shipped capture by a
+ * critic as `>`. The values below put every standing claim above the floor with margin at the
+ * smallest size the bar names.
  */
 const STANDING_CLAIMS = [
   {
     id: "leaf9-span",
     kpId: "eq-one-add",
     tex: "x + 3 = 7",
-    anchor: { right: 1.44, up: 2.27, forward: 14 },
-    em: 0.66,
+    anchor: { right: 1.44, up: 2.86, forward: 14 },
+    em: 0.88,
   },
   {
     id: "leaf9-share",
     kpId: "eq-one-mult",
     tex: "\\frac{1}{2}x = 4",
-    anchor: { right: 1.44, up: 0.77, forward: 14 },
-    em: 0.66,
+    anchor: { right: 1.44, up: 0.66, forward: 14 },
+    em: 0.88,
   },
   {
     id: "leaf9-working",
-    anchor: { right: 5.44, up: 1.57, forward: 14 },
-    em: 0.55,
+    anchor: { right: 6.3, up: 1.76, forward: 14 },
+    em: 0.73,
     working: { slope: 0.62, intercept: 0.02, xTicks: 10, yTicks: 8 },
   },
   {
     // Standing a long way off, and well clear of the others on screen, so "readable at
     // gameplay distance" is a thing a reviewer can look at rather than a thing this file
-    // claims.
+    // claims. It used to stand at `forward: 42, em: 1.1`, which is where "a long way off"
+    // stopped being a composition idea and became an illegible claim: 16.8 device px per em
+    // at 1600x900 and 13.4 at 1280x720, against gate 8's floor of 33.3. Halving the distance
+    // and doubling the metres-per-em keeps it the furthest claim in the frame — nearly twice
+    // the distance of the pair — and puts it over the floor at every size the bar names.
     id: "leaf9-mark",
     kpId: "ineq-one-step",
     tex: "2x + 1 \\ge 9",
-    // Pushed further out than it used to be so it clears the working's plot on screen as
-    // well as in the world: the pair moving right brought the whole block into its column.
-    anchor: { right: 27.4, up: 1.47, forward: 42 },
-    em: 1.1,
+    anchor: { right: 20.5, up: 4.2, forward: 26 },
+    em: 2.1,
   },
 ];
 

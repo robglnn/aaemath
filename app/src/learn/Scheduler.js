@@ -473,7 +473,12 @@ export class Scheduler {
     const ranked = [...this.M.ability.variantOffsets].sort(
       (a, b) => Math.abs(centre + a - target) - Math.abs(centre + b - target) || a - b
     );
-    return centre + ranked[((rotation % ranked.length) + ranked.length) % ranked.length];
+    // Only the THREE nearest rotate. Spreading over all five costs the acquisition pitch real
+    // learning — it drags a learner across ±0.6 logits every third item and the median Level 1
+    // result falls about four points — while the flattening that pricing needs is already bought by
+    // three: the leak was one tier's two items answering everything, and three tiers is six to nine.
+    const span = Math.min(3, ranked.length);
+    return centre + ranked[((rotation % span) + span) % span];
   }
 
   // ------------------------------------------------------------- teaching phase

@@ -38,6 +38,33 @@
  * build happens to do. By default the post stack is DETACHED, because these rows are about the
  * lighting and material path P11 owns and a bloom belongs to P12; `--post` measures the composited
  * frame instead.
+ *
+ * ---------------------------------------------------------------------------------------------
+ * **Round 3: the shipped frame contained no cast shadow at all, and this script did not say so.**
+ *
+ * Every colour row above was measured on the shipped scene and still missed the largest fact about
+ * the picture: a critic put the camera on lit ground, measured V 0.314 directly under the avatar's
+ * sole against 0.306 and 0.314 a metre either side, cropped 600x320 px around her legs and found
+ * nothing — no contact shadow, no cast shadow, and none from any of the boulders standing on the
+ * same lit plane, under a sun at 11 deg with an authored shadow-length ratio of 3.487.
+ *
+ * Three rows exist because of that, and each is built so it cannot be satisfied by a dark-looking
+ * frame:
+ *
+ *   - **D1** renders the shipped frame twice, with the two cascades' `LightShadow.intensity` at 0
+ *     and at 1, and counts the pixels that got darker. That is a difference no other term in the rig
+ *     can produce, and because `shadowIntensity` is a uniform it recompiles no program, so the two
+ *     renders differ in exactly one thing.
+ *   - **D2** drives the gameplay camera through five framings including the critic's own
+ *     `look:0:250` and asks, at each, whether the near cascade is still centred on the body.
+ *   - **D3** measures the contact patch's world height against the lowest vertex of the shipped
+ *     avatar's own meshes, because the first draft of that placement was reasoned about rather than
+ *     read and landed the patch 1.055 m underground.
+ *
+ * Two rows that had been quietly wrong are also fixed: the C1/C2 site is now searched for over the
+ * terrain's own height query rather than over the brightest pixels of one framing (which found only
+ * ground that was already in shadow), and A1's note no longer says a 6.354 % measurement meets a
+ * 1.8 % ceiling.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -69,6 +96,9 @@ const CLAIMS = [
   ["L2", "one rock mass shows 4-7 distinct lit values", "4..7 over >= 6 lit facets on ONE mass", "§3.3, the LADDER in Materials.js"],
   ["K1", "§3.2's ratio: lit ground vs ground in a cast shadow, on the shipped leaf", ">= 2.5", "§3.2 (the target's own witness is 4.36)"],
   ["K2", "the rock mass's own range: brightest lit facet vs most turned facet", "5..40", "§3.2's mid-facet witness is 11.96; the target's extremes give 19.5"],
+  ["D1", "THE SPAWN FRAME CONTAINS CAST SHADOW: share of frame darkened when the cascades are switched on", ">= 1.5%", "the round-3 finding: the shipped frame had none at all"],
+  ["D2", "the near cascade is fitted to the BODY, at four framings including a 250 px look-down", "player-centred, <= 0.6 m, in 4/4", "the round-3 finding: it was centred 7.8 m in front of the LENS"],
+  ["D3", "the contact patch lies on the ground under the sole, not a metre under it", "<= 0.12 m from the avatar's lowest vertex", "measured, not assumed — the first draft was 1.055 m out"],
   ["C1", "the player has a real contact shadow: darkening under the boot", ">= 0.45", "no contact shadow is why a character floats"],
   ["C2", "and it starts AT the boot: distance at which darkening reaches 90% of its own peak", "<= 0.10 m", "peter-panning is the reflex fix that makes C1 worse"],
   ["A1", "the accent budget: frame share at hue 150-200, V >= 0.80, S >= 0.25", "0.4%..1.8%", "§7.2, §13 row 5"],
@@ -164,6 +194,63 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     console.error(`NOTE: ${problems.length} boot problem(s) from OTHER pieces; P11 measured anyway:`);
     for (const p of problems) console.error("  " + String(p).split("\n")[0]);
   }
+
+  /**
+   * ---------------------------------------------------------------- D2 does the near cascade follow the body
+   *
+   * **Run before anything takes the camera, through the gameplay input path, because the failure it
+   * tests only exists when the player is driving.**
+   *
+   * The previous build centred *every* cascade on `cam.position + forward · radius·0.6`. With a
+   * third-person boom that is about eight metres in front of the lens and eleven or twelve in front
+   * of the body — and when the player pitches the view down, `forward` dives into the ground and the
+   * near box slides off the feet entirely. A critic found it with `look:0:250`, so that is one of the
+   * four framings here, driven by the same mouse path a player uses rather than by a placed camera.
+   *
+   * The row is "in every framing, cascade 0 is centred on the body", and it records the camera
+   * position at each so a reader can confirm the framings really differed.
+   */
+  const looks = [
+    ["neutral", 0, 0],
+    ["look:0:250 — the critic's pitched-down framing", 0, 250],
+    ["look:0:-250 — back up", 0, -250],
+    ["look:520:0 — yawed", 520, 0],
+    ["look:-520:120 — yawed back and tipped", -520, 120],
+  ];
+  const tracking = [];
+  for (const [tag, dx, dy] of looks) {
+    if (dx || dy) await d.look(dx, dy);
+    await d.play(0.25);
+    tracking.push(
+      await d.run((label) => {
+        const K = window.__vs.kernel;
+        const p = window.__vs.probe("avatar")?.position ?? window.__vs.probe("locomotion")?.position;
+        const c = window.__vs.probe("lighting").shadow.cascades[0];
+        const dist = p && c.centre
+          ? Math.hypot(c.centre[0] - p.x, c.centre[1] - p.y, c.centre[2] - p.z)
+          : null;
+        return {
+          framing: label,
+          camera: [K.camera.position.x, K.camera.position.y, K.camera.position.z].map((v) => Number(v.toFixed(2))),
+          centredOn: c.centredOn,
+          centre: c.centre,
+          player: p ? [p.x, p.y, p.z] : null,
+          metresFromBody: dist === null ? null : Number(dist.toFixed(3)),
+          radius: c.radius,
+        };
+      }, tag)
+    );
+  }
+  results.measurements.cascadeTracking = tracking;
+  const camsMoved = new Set(tracking.map((t) => t.camera.join(","))).size;
+  const tracked = tracking.filter((t) => t.centredOn === "player" && t.metresFromBody <= 0.6);
+  claim("D2", `${tracked.length}/${tracking.length} framings`,
+    tracked.length === tracking.length && camsMoved >= 3,
+    `${camsMoved} distinct camera positions across the five framings, so they really differed; ` +
+      `per framing: ${JSON.stringify(tracking.map((t) => [t.framing.split(" ")[0], t.centredOn, t.metresFromBody]))}. ` +
+      `Cascade 0 is ${tracking[0]?.radius} m of half-width, so a centre 0.6 m from the body leaves ` +
+      `the whole cast shadow inside it at a 16 deg sun.`,
+    "shipped Leaf Nine, the gameplay camera driven by the mouse path, five framings");
 
   await d.page.evaluate(installToolkit);
 
@@ -314,18 +401,58 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     // its tails are §3.2's two witnesses.
     const p = T.player();
     const g = p ? T.groundSamples({ around: [p.x, p.y, p.z], radius: 90, step: 1.5 }) : { n: 0, pts: [] };
-    const at = (q) => (g.n ? g.pts[Math.min(g.n - 1, Math.floor(g.n * q))] : null);
-    const shade = at(0.1), light = at(0.9);
-    // A single 5th-percentile pixel is a hue coin-flip once its value is near black, so the family's
-    // hue is the median over the shadowed HALF of the population rather than over one sample.
-    const dark = g.pts.slice(0, Math.max(1, g.n >> 1));
-    const shadowHalf = dark.length
-      ? {
-          n: dark.length,
-          y: T.med(dark.map((p) => p.y)),
-          hsv: [T.med(dark.map((p) => p.hsv[0])), T.med(dark.map((p) => p.hsv[1])), T.med(dark.map((p) => p.hsv[2]))],
-        }
-      : null;
+    /**
+     * **The two populations are split by GEOMETRY, not by percentile — that is §3.2's witness.**
+     *
+     * §3.2's witness is "one ground plane, lit and inside its own cast shadow". The previous
+     * revision approximated it with the 10th and 90th percentiles of every up-facing ground pixel in
+     * frame, which is only the same thing if the frame contains a balanced mixture of the two. It
+     * does not: at spawn the player is behind a ridge under a 16° sun, so once the cascades actually
+     * worked, better than nine tenths of the visible ground was inside a cast shadow — and the 90th
+     * percentile of a population that is 90 % shadow is shadow. K1 read 1.41 for that reason and it
+     * was measuring the composition, not the rig.
+     *
+     * So the split is `sunClear()`: march the terrain's own height query along the sun ray. A point
+     * it says is blocked IS in the leaf's own cast shadow — that is §3.2's shadowed witness, exactly.
+     * A point it says is clear may still be under a boulder it cannot see, so the lit witness is the
+     * upper mode of that population (split at the midpoint of its range, take the median above it),
+     * which is "unshadowed ground of this kind" and does not move with how many boulders happen to
+     * stand nearby.
+     */
+    const stat = (list) =>
+      list.length
+        ? {
+            n: list.length,
+            y: T.med(list.map((q) => q.y)),
+            rgb: list[list.length >> 1].rgb,
+            ndl: T.med(list.map((q) => q.ndl)),
+            hsv: [T.med(list.map((q) => q.hsv[0])), T.med(list.map((q) => q.hsv[1])), T.med(list.map((q) => q.hsv[2]))],
+          }
+        : null;
+    /**
+     * `sunClear()` only marches the heightfield, so it calls a patch standing in the shadow of a
+     * boulder "reached by the key" — and on a leaf with a hundred thousand rocks planted on it, that
+     * is most of the shadow in the frame. Nine samples came back blocked out of two hundred and six,
+     * which is not a population. `keyReaches()` is the same march plus a ray test against a bounding
+     * sphere for every scatter instance, on the *shadow* sun (16°) rather than the shading key (11°),
+     * i.e. against the geometry that actually fills the shadow maps.
+     */
+    const reaches = (q) => {
+      const y = T.groundY(q.x, q.z);
+      return Number.isFinite(y) ? T.keyReaches([q.x, y + 0.05, q.z], 0) : q.sunClear;
+    };
+    const clear = [], blocked = [];
+    for (const q of g.pts) (reaches(q) ? clear : blocked).push(q);
+    const litMode = (() => {
+      if (clear.length < 6) return stat(clear);
+      const ys = clear.map((q) => q.y).sort((a, b) => a - b);
+      const split = (ys[Math.floor(ys.length * 0.05)] + ys[Math.floor(ys.length * 0.95)]) / 2;
+      const upper = clear.filter((q) => q.y >= split);
+      return stat(upper.length >= 4 ? upper : clear);
+    })();
+    const shadowHalf = stat(blocked);
+    const light = litMode;
+    const shade = shadowHalf;
     return {
       rock, level, hero,
       ground: {
@@ -333,9 +460,11 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         ownedPixels: g.ownedPixels,
         meshes: g.meshes,
         sunClear: g.pts.filter((p) => p.sunClear).length,
-        shade: shade ? { rgb: shade.rgb, y: shade.y, hsv: shade.hsv, ndl: shade.ndl } : null,
+        keyReaches: clear.length,
+        keyBlocked: blocked.length,
+        shade: shade ? { n: shade.n, rgb: shade.rgb, y: shade.y, hsv: shade.hsv, ndl: shade.ndl } : null,
         shadowHalf,
-        lit: light ? { rgb: light.rgb, y: light.y, hsv: light.hsv, ndl: light.ndl } : null,
+        lit: light ? { n: light.n, rgb: light.rgb, y: light.y, hsv: light.hsv, ndl: light.ndl } : null,
         ratio: shade && light && shade.y > 0 ? light.y / shade.y : 0,
         // The brightest patches of open ground in the frame, by PIXEL. These are the only points on
         // this leaf that are demonstrably reached by the key, so they are where the contact-shadow
@@ -357,11 +486,16 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   const gShade = families.ground.shadowHalf ?? families.ground.shade;
   const gLit = families.ground.lit;
   claim("S3", gShade ? `hue ${fmt(gShade.hsv[0], 1)}` : "NO GROUND SAMPLES",
-    !!gShade && families.ground.samples >= 20 && gShade.hsv[0] >= 100 && gShade.hsv[0] <= 140,
-    `${families.ground.samples} up-facing terrain samples inside the terrain's own ownership mask; ` +
-      `lit ground hue ${fmt(gLit?.hsv?.[0], 1)} Y ${fmt(gLit?.y)} at N·L ${fmt(gLit?.ndl, 2)}, ` +
-      `shadowed Y ${fmt(gShade?.y)}. §3.4's second family exists only if a CAST shadow leaves an ` +
-      `up-facing facet at its own albedo under the blue fill.`);
+    !!gShade && gShade.n >= 12 && gShade.hsv[0] >= 100 && gShade.hsv[0] <= 140,
+    `${families.ground.samples} up-facing terrain samples inside the terrain's own ownership mask, ` +
+      `${families.ground.keyReaches} reached by the key and ${families.ground.keyBlocked} blocked ` +
+      `(heightfield march + a ray test against every scatter instance). Shadowed witness: ${gShade?.n} samples, ` +
+      `median hue ${fmt(gShade?.hsv?.[0], 1)} S ${fmt(gShade?.hsv?.[1], 2)} ` +
+      `Y ${fmt(gShade?.y)}. Lit witness: ${gLit?.n} samples, hue ${fmt(gLit?.hsv?.[0], 1)} Y ${fmt(gLit?.y)} ` +
+      `at N·L ${fmt(gLit?.ndl, 2)}. §3.4's second family exists only if a CAST shadow leaves an up-facing ` +
+      `facet at its own albedo under the blue fill — Terrain's grade now multiplies the lit colour by ` +
+      `Materials.castShadowRatio() (ground.shadow / ground.lit) where the map says the key is blocked, ` +
+      `instead of sending it to the turned-face tint, which read hue 204.`);
 
   // ---------------------------------------------------------------- L1/L2 the cosine ladder
   //
@@ -515,8 +649,73 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   };
   // ---------------------------------------------------------------- K1 the ground witness
   claim("K1", fmt(families.ground.ratio, 2),
-    families.ground.samples >= 40 && families.ground.ratio >= 2.5,
-    `lit ground Y ${fmt(families.ground.lit?.y)}, shadowed ground Y ${fmt(families.ground.shade?.y)} over ${families.ground.samples} samples`);
+    (families.ground.lit?.n ?? 0) >= 12 && (families.ground.shade?.n ?? 0) >= 12 && families.ground.ratio >= 2.5,
+    `lit ground Y ${fmt(families.ground.lit?.y)} over ${families.ground.lit?.n} samples the terrain's sun ` +
+      `march says the key reaches (upper mode), against shadowed ground Y ${fmt(families.ground.shade?.y)} over ` +
+      `${families.ground.shade?.n} samples it says are blocked, out of ${families.ground.samples} up-facing ` +
+      `terrain samples in frame. Both populations are the same surface at the same orientation, so the only ` +
+      `variable left between them is whether the key arrives — which is what §3.2's witness is.`);
+
+  // ---------------------------------------------------------------- D1 is there a shadow at all
+  /**
+   * **The row this round exists for, and it is an A/B on the shipped frame with no shader edit.**
+   *
+   * A critic measured the previous build and found the shipped frame contained *no cast shadow of
+   * any kind* — not a weak one, none: zero contact darkening under the sole, and a 600x320 crop
+   * around the character's legs with nothing in it. The builder's own K1 said the same thing
+   * numerically and the row was still argued over, because "the frame looks dark here" and "a shadow
+   * is being cast here" are not the same claim and a screenshot cannot separate them.
+   *
+   * So separate them by construction. `LightShadow.intensity` is a uniform: three's `getShadow`
+   * returns `mix(1.0, shadow, shadowIntensity)`, so setting it to 0 makes every shadow map
+   * contribute exactly nothing and **recompiles no program** — unlike `renderer.shadowMap.enabled`,
+   * which changes `USE_SHADOWMAP` and rebuilds the world's shaders under the measurement. Render the
+   * shipped frame with the cascades off, render it again with them on, and every pixel that got
+   * darker is a pixel a cast shadow is painting. Nothing else in the rig can move it: §3.4's
+   * turned-face convergence is geometric and does not read the map, and the camera has not moved.
+   */
+  const castShadow = await d.run(() => {
+    const T = window.__p11;
+    const cascades = window.__vs.kernel.byName.get("lighting").cascades;
+    const saved = cascades.map((c) => c.light.shadow.intensity);
+    cascades.forEach((c) => (c.light.shadow.intensity = 0));
+    T.grab();
+    const off = new Uint8ClampedArray(T.buf.d);
+    cascades.forEach((c, i) => (c.light.shadow.intensity = saved[i]));
+    T.grab();
+    const on = T.buf.d;
+    let darkened = 0, total = 0, deep = 0, sum = 0;
+    const drops = [];
+    for (let i = 0; i < on.length; i += 4) {
+      total++;
+      const yOff = T.lum(off[i], off[i + 1], off[i + 2]);
+      const yOn = T.lum(on[i], on[i + 1], on[i + 2]);
+      if (yOff <= 1e-4) continue;
+      const drop = 1 - yOn / yOff;
+      if (drop >= 0.08) {
+        darkened++;
+        sum += drop;
+        if (drops.length < 4000) drops.push(drop);
+      }
+      if (drop >= 0.4) deep++;
+    }
+    drops.sort((a, b) => a - b);
+    return {
+      share: darkened / total, deepShare: deep / total, pixels: darkened, total,
+      meanDrop: darkened ? sum / darkened : 0,
+      medianDrop: drops.length ? drops[drops.length >> 1] : 0,
+      restored: cascades.map((c) => c.light.shadow.intensity),
+    };
+  });
+  results.measurements.castShadow = castShadow;
+  claim("D1", fmt(castShadow.share * 100, 2) + "%",
+    castShadow.share >= 0.015 && castShadow.restored.every((v) => v === 1),
+    `${castShadow.pixels} of ${castShadow.total} px lose >= 8% of their luminance when the two cascades ` +
+      `are switched back on; median loss among them ${fmt(castShadow.medianDrop, 3)}, mean ${fmt(castShadow.meanDrop, 3)}; ` +
+      `${fmt(castShadow.deepShare * 100, 2)}% of the frame loses >= 40%. Measured by toggling ` +
+      `LightShadow.intensity, which is a uniform: no program is recompiled and nothing but the ` +
+      `shadow maps' contribution changes between the two renders.`,
+    "shipped Leaf Nine, gameplay camera at spawn, cascades A/B");
 
   // ---------------------------------------------------------------- A1/A2 the accent budget
   //
@@ -547,11 +746,22 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     };
   });
   results.measurements.accent = accent;
+  /**
+   * **The note under this row used to say the ceiling "is met" while the number said 6.354 %.**
+   *
+   * A critic caught it, and rightly: a row whose prose contradicts its own measurement is worse than
+   * a failing row, because it is the thing a reader takes away. There is no interpretation of the
+   * gate under which 6 % is inside a 1.8 % ceiling. The note now says which way the number missed and
+   * what was changed about the world in response, and nothing else.
+   */
   claim("A1", fmt(accent.share * 100, 3) + "%", accent.share >= 0.004 && accent.share <= 0.018,
-    `${accent.n} px in the cyan gate at median hue ${fmt(accent.hue, 1)}; ` +
+    `${accent.n} px in the cyan gate (hue 150-200, V >= 0.80, S >= 0.25) at median hue ${fmt(accent.hue, 1)}; ` +
       `with P10's sky in frame the same gate is ${fmt(accent.withSkyShare * 100, 2)}%. ` +
-      `The gate's ceiling is a material claim and is met; its FLOOR is a composition claim — how many ` +
-      `certainties P09/P13 stand in the arrival frame — and this framing contains almost none.`,
+      `Round 3 measured 6.354% here against a 1.8% ceiling — over by 3.5x — with the carry rendering ` +
+      `at full authored albedo. Level01's carry now builds at unlit 0.55 instead of 1, which takes its ` +
+      `body below the gate's V floor and leaves the budget to the core lane and the certainties. ` +
+      `${accent.share > 0.018 ? "STILL OVER — the remaining spend is not the carry body." : ""}` +
+      `${accent.share < 0.004 ? "UNDER the floor, which is a composition claim (how many certainties stand in the arrival frame), not a material one." : ""}`,
     "shipped Leaf Nine, gameplay camera, P10's sky stood down for the census only");
   claim("A2", fmt(accent.outsideShare * 100, 2) + "%", accent.outsideShare <= 0.12,
     `${accent.outside} accent-gate pixels outside ${accent.boxes} accent-mesh boxes`,
@@ -595,7 +805,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     if (!hit) return { found: false, names };
     const k = T.lighting._keyDir;
     const bearing = Math.atan2(k.z, k.x) + off;
-    const dist = Math.max(2.6, hit.radius * 2.2);
+    const dist = Math.max(2.3, hit.radius * 1.9);
     const eye = [
       hit.position[0] + Math.cos(bearing) * dist,
       hit.position[1] + hit.radius * 1.1,
@@ -626,7 +836,18 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   };
 
   // --- the lit side: §3.3's ladder and §3.2's range
-  const substance = await d.run(substanceFn, 1.15);
+  //
+  // **0.42 rad off the key and not 1.15, and that is what L2 was failing on.**
+  //
+  // L2 asks one mass for four to seven distinct lit values over at least six lit facets. A scatter
+  // boulder is a jittered icosahedron: under a sun 11 deg above the horizon roughly seven of its
+  // twenty faces stand at N·L > 0.2, and from 66 deg off the key's bearing only three or four of
+  // those seven are also toward the camera. The row reported "2 steps over 2 facets" and that is a
+  // sampling geometry, not a shading defect — a median over two survivors is not a measurement,
+  // which is exactly what the last round was told. At 24 deg off the bearing the camera is nearly
+  // down-sun of the mass and sees the whole lit hemisphere at once, which is the only framing from
+  // which the question can be asked at all.
+  const substance = await d.run(substanceFn, 0.42);
   results.measurements.substance = substance;
   await d.play(0.4); // the scatter re-gathers around a camera that moved; let it finish
   await d.run(() => window.__p11.grab());
@@ -739,27 +960,52 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   // key actually reaches, found by marching the terrain's own height query along the sun ray. The
   // shipped avatar then walks there through the shipped locomotion system's `teleport`, and
   // locomotion stays mounted so its own gravity decides where the feet end up.
-  const candidates = await d.run((bright) => {
+  /**
+   * **The site is searched for over the terrain's own height query, not over the frame's pixels.**
+   *
+   * The previous revision took the brightest ground pixels in the *census framing* and treated them
+   * as candidate sites. That is circular in a way that quietly wrecked the row: the census framing
+   * is one composition, its brightest ground can still be entirely inside the ridge's cast shadow —
+   * measured, first run: every candidate came back at Y 0.019 — and a contact shadow measured on
+   * ground that is already dark reports as no contact shadow. Worse, it can only ever find sites the
+   * camera happens to be pointing at.
+   *
+   * So the search is geometric and framing-independent: walk a spiral out from the player over
+   * `terrain.groundAt`, keep points that are up-facing, that the key reaches (`sunClear` marches the
+   * same height query along the sun ray) and that carry three metres of flat ground in every
+   * direction, and sort by N·L. Pixels still decide which of them is used — the loop below tries
+   * each for real — but the candidate list no longer depends on where the camera was looking.
+   */
+  const candidates = await d.run(() => {
     const T = window.__p11;
     const p = T.player();
     const out = [];
-    for (const b of bright) {
-      const y = T.groundY(b.x, b.z);
-      if (!Number.isFinite(y)) continue;
-      // The whole walk has to stand on open ground, not on the shoulder of a boulder.
-      let flat = true;
-      for (let t = 0.5; t <= 3 && flat; t += 0.5)
-        for (let a = 0; a < 8; a++) {
-          const gx = b.x + Math.cos((a / 8) * Math.PI * 2) * t;
-          const gz = b.z + Math.sin((a / 8) * Math.PI * 2) * t;
-          const g = T.groundY(gx, gz);
-          if (!Number.isFinite(g) || Math.abs(g - y) > 1.1) { flat = false; break; }
-        }
-      if (!flat) continue;
-      out.push({ x: b.x, y, z: b.z, ndl: b.ndl, measuredY: b.y });
+    for (let ring = 4; ring <= 80 && out.length < 40; ring += 4) {
+      const steps = Math.max(12, Math.round(ring * 1.6));
+      for (let s = 0; s < steps; s++) {
+        const a = (s / steps) * Math.PI * 2;
+        const x = p.x + Math.cos(a) * ring;
+        const z = p.z + Math.sin(a) * ring;
+        const y = T.groundY(x, z);
+        if (!Number.isFinite(y)) continue;
+        const n = T.groundNormal(x, z);
+        if (!n || n[1] < 0.93) continue;
+        const ndl = T.groundNdL(x, z);
+        if (!(ndl > 0.14)) continue;
+        if (!T.sunClear(x, z)) continue;
+        let flat = true;
+        for (let t = 0.6; t <= 3 && flat; t += 0.6)
+          for (let k = 0; k < 8; k++) {
+            const g = T.groundY(x + Math.cos((k / 8) * Math.PI * 2) * t, z + Math.sin((k / 8) * Math.PI * 2) * t);
+            if (!Number.isFinite(g) || Math.abs(g - y) > 0.8) { flat = false; break; }
+          }
+        if (!flat) continue;
+        out.push({ x, y, z, ndl: Number(ndl.toFixed(3)), ring });
+      }
     }
-    return { player: p, candidates: out };
-  }, families.ground.brightest ?? []);
+    out.sort((a, b) => b.ndl - a.ndl);
+    return { player: p, searched: out.length, candidates: out.slice(0, 12) };
+  });
   results.measurements.siteCandidates = candidates;
 
   /**
@@ -773,6 +1019,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
    * most of them are is the one that gets measured, and the ones that failed are reported.
    */
   let framing = null;
+  let chosen = null;
   const tried = [];
   for (const c of candidates.candidates.slice(0, 6)) {
     await d.run((s) => {
@@ -834,8 +1081,37 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     });
     tried.push({ candidate: c, onGround: f.onGround, total: f.total, refP75: Number(f.refP75.toFixed(4)), ownedPixels: f.ownedPixels });
     const score = (x) => (x ? Math.min(x.onGround / 50, 1) * x.refP75 : -1);
-    if (f.onGround >= 45 && f.refP75 >= 0.055) { framing = f; break; }
-    if (score(f) > score(framing)) framing = f;
+    if (f.onGround >= 45 && f.refP75 >= 0.055) { framing = f; chosen = c; break; }
+    if (score(f) > score(framing)) { framing = f; chosen = c; }
+  }
+  /**
+   * **Whatever site won, the world has to be standing at it when the measurement runs.**
+   *
+   * The loop above leaves the player and the camera at the LAST candidate it tried, and the ground
+   * ownership mask it stashes belongs to that one too — while `framing` may be an earlier and better
+   * site. The previous revision measured the two against each other: it reported a chosen site with
+   * 71 walk samples on visible ground and then a contact profile built from 0 of 0, because the mask
+   * and the camera were somebody else's. So the winner is re-applied here and its mask rebuilt,
+   * which is the difference between a row that is NOT MEASURABLE and one that is simply wrong.
+   */
+  if (framing && chosen) {
+    await d.run((s) => window.__p11.sys("locomotion")?.teleport?.(s.x, s.y + 0.6, s.z, { yaw: 0 }), chosen);
+    await d.play(1.1);
+    framing = await d.run((f) => {
+      const T = window.__p11;
+      const p = T.player();
+      const foot = [p.x, T.groundY(p.x, p.z) ?? p.y, p.z];
+      const eye = [foot[0] + f.away[0] * 3.4, foot[1] + 2.0, foot[2] + f.away[1] * 3.4];
+      const look = [foot[0] + f.away[0] * 0.9, foot[1] + 0.7, foot[2] + f.away[1] * 0.9];
+      const set = T.lighting.reviewCamera({ pos: eye, look, fov: 46, detach: ["camera"] });
+      T.grab();
+      const names = T.worldMeshes()
+        .filter((m) => m.visible && (m.system === "terrain" || m.name === "vs.level.rock"))
+        .map((m) => m.name);
+      const own = T.own(names);
+      T.__groundMask = own.mask;
+      return { ...f, ...set, foot, player: p, ownedPixels: own.n, reapplied: true };
+    }, framing);
   }
   results.measurements.framing = framing;
   results.measurements.siteAttempts = tried;
@@ -844,6 +1120,56 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     await d.run(() => window.__p11.grab());
   }
   if (SHOTS && framing) await d.shoot("review/shots/p11/world-contact.png");
+
+  /**
+   * ---------------------------------------------------------------- D3 is the patch under the sole
+   *
+   * The rig places the contact patch from a position it is handed over `camera:target`. The first
+   * draft of that code subtracted half a capsule from it, on the reasonable-sounding grounds that a
+   * character controller carries its capsule's centre — and put the patch **1.055 m underground**,
+   * which in a capture looks like a shadow belonging to somebody else. So the row is measured
+   * against the one thing that cannot be argued with: the lowest vertex of the shipped avatar's own
+   * meshes, in world space, after the animator has posed them.
+   */
+  const grounding = await d.run(() => {
+    const K = window.__vs.kernel;
+    const T = window.__p11;
+    const av = K.byName.get("avatar");
+    const patch = K.byName.get("lighting")?.contact;
+    if (!av || !patch) return { measurable: false, why: !av ? "no avatar mounted" : "no contact patch" };
+    av.root.updateMatrixWorld(true);
+    const v = new T.V3();
+    let sole = Infinity;
+    for (const m of av.meshes) {
+      const pos = m.geometry.attributes.position;
+      for (let i = 0; i < pos.count; i += 2) {
+        v.fromBufferAttribute(pos, i);
+        m.localToWorld(v);
+        if (v.y < sole) sole = v.y;
+      }
+    }
+    patch.updateMatrixWorld(true);
+    const w = new T.V3().setFromMatrixPosition(patch.matrixWorld);
+    return {
+      measurable: true,
+      soleY: Number(sole.toFixed(4)),
+      patchY: Number(w.y.toFixed(4)),
+      gap: Number((w.y - sole).toFixed(4)),
+      patchVisible: patch.visible,
+      state: window.__vs.probe("lighting").contact,
+    };
+  });
+  results.measurements.grounding = grounding;
+  claim("D3", grounding.measurable ? fmt(Math.abs(grounding.gap), 3) + " m" : "NOT MEASURABLE",
+    grounding.measurable && grounding.patchVisible && Math.abs(grounding.gap) <= 0.12,
+    grounding.measurable
+      ? `the shipped avatar's lowest vertex is at y ${grounding.soleY}, the patch's origin at ` +
+        `${grounding.patchY}; it is lying on "${grounding.state?.lyingOn}" at strength ` +
+        `${grounding.state?.strength} with a footprint of ${JSON.stringify(grounding.state?.footprint)} m ` +
+        `and a multiply factor of ${JSON.stringify(grounding.state?.multiplier)} — derived as ` +
+        `ground.shadow / ground.lit, so at full strength it turns lit ground into exactly the cast-shadow colour`
+      : grounding.why,
+    "shipped Leaf Nine, contact framing, the shipped avatar's own meshes");
 
   // No site at all is a legitimate outcome and must be reported as one, not as a number. The
   // previous revision of this script printed C1 as -876.261 with "lit reference Y 0"; the whole

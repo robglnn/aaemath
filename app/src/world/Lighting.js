@@ -455,32 +455,60 @@ export class Lighting {
    * at spawn the player is standing on `vs.level.rock`, a collider the heightfield knows nothing
    * about, and snapping to it there would put the patch a metre below the boots.
    */
-  _playerFoot(out) {
+  _playerFoot(out, dt) {
     if (!this._havePlayer) return null;
     if (this._playerObject?.parent) this._playerObject.getWorldPosition(this._playerPoint);
     out.copy(this._playerPoint);
     const foot = out.y;
+
+    /**
+     * **Whether the body is resting is measured, not asked.**
+     *
+     * The obvious source is `player:state.grounded`, and it is the wrong one: that signal fires on
+     * state *transitions*, so after anything that moves a body without changing its action — a
+     * teleport, a respawn, a reviewer standing the player somewhere — the flag is whatever it was
+     * before. Measured: a body standing still on `vs.level.rock` reported `grounded:false`, the
+     * patch was pushed a metre down onto the terrain below, and the row that checks it failed by
+     * exactly that metre.
+     *
+     * The sole's own vertical speed cannot be stale. Low-passed rather than thresholded per frame,
+     * because a jump passes through zero vertical speed at its apex and a patch that snapped back to
+     * the boots for two frames up there would flicker.
+     */
+    const vy = dt > 1e-4 ? (foot - (this._lastFootY ?? foot)) / dt : 0;
+    this._lastFootY = foot;
+    const moving = Math.abs(vy) > 0.5 ? 1 : 0;
+    const k = 1 - Math.exp(-Math.max(dt, 0) * 7);
+    this._airborne = (this._airborne ?? 0) + (moving - (this._airborne ?? 0)) * k;
+    const resting = this._airborne < 0.35;
+
     const g = this.kernel.byName.get("terrain")?.groundAt?.(out.x, out.z);
     const known = Number.isFinite(g);
     let clearance = 0;
     let on = "sole";
-    if (!this._playerGrounded) {
-      // In the air. If the leaf below can be queried the patch stays down there and fades with the
-      // distance, which is what a shadow does; if it cannot, it fades on the fact of being airborne
-      // rather than pretending to know a height.
-      if (known && g < foot) {
+    if (resting) {
+      // Whatever the body is resting ON is the surface, and the sole is where it meets it. The
+      // terrain query is used only to take the collision skin off, and only where the two agree:
+      // at spawn the sole is 1.055 m above `groundAt` because the player is standing on
+      // `vs.level.rock`, a collider the heightfield has never heard of.
+      if (known && foot - g >= -0.05 && foot - g <= CONTACT_SNAP_METRES) {
         out.y = g;
-        clearance = foot - g;
-        on = "terrain (airborne)";
-      } else {
-        clearance = CONTACT_FADE_METRES * 0.6;
-        on = "airborne, no ground query";
+        on = "terrain";
       }
-    } else if (known && foot - g >= -0.05 && foot - g <= CONTACT_SNAP_METRES) {
-      out.y = g;
-      on = "terrain";
+      this._restY = out.y;
+    } else if (known && g < foot) {
+      out.y = Math.max(g, Math.min(this._restY ?? g, foot));
+      clearance = foot - out.y;
+      on = "airborne, over terrain";
+    } else if (this._restY !== undefined && this._restY < foot) {
+      out.y = this._restY;
+      clearance = foot - out.y;
+      on = "airborne, over the last resting height";
+    } else {
+      clearance = CONTACT_FADE_METRES * 0.6;
+      on = "airborne, no surface known";
     }
-    return { clearance, ground: known ? g : null, on };
+    return { clearance, ground: known ? g : null, on, verticalSpeed: vy, airborne: this._airborne };
   }
 
   /**
@@ -488,10 +516,10 @@ export class Lighting {
    * ground, and following the avatar's own camera-fade so a body the rig has made transparent does
    * not leave an opaque shadow behind it.
    */
-  _updateContact() {
+  _updateContact(dt) {
     if (!this.contact) return;
     const p = this._scratchFoot ??= new THREE.Vector3();
-    const hit = this._playerFoot(p);
+    const hit = this._playerFoot(p, Math.max(1e-3, Math.min(0.25, dt || 1 / 60)));
     if (!hit) {
       this.contact.visible = false;
       this._contactState = { visible: false, reason: "no player position on camera:target yet" };
@@ -520,7 +548,9 @@ export class Lighting {
       at: [r4(p.x), r4(p.y), r4(p.z)],
       groundY: hit.ground === null ? null : r4(hit.ground),
       lyingOn: hit.on,
-      grounded: this._playerGrounded,
+      verticalSpeed: r3(hit.verticalSpeed),
+      airborne: r3(hit.airborne),
+      groundedSignal: this._playerGrounded,
       bearingDeg: r3((Math.atan2(-this._shadowDir.x, -this._shadowDir.z) * 180) / Math.PI),
       multiplier: contactShadowMultiplier().map(r4),
       footprint: this.contactGeometry.userData.vsFootprint,
@@ -703,7 +733,7 @@ export class Lighting {
     if (this.dome) this.dome.position.copy(this.kernel.camera.position);
     this._assignAccents();
     this._fitShadowCameras();
-    this._updateContact();
+    this._updateContact(dt);
   }
 
   // -------------------------------------------------------------------------- internals

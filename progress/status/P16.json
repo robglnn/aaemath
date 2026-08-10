@@ -1,9 +1,9 @@
 {
   "id": "P16",
-  "state": "building",
-  "round": 2,
-  "gap": "M4's 3-of-4 retention count is taken from raw outcome.correct in Scheduler.submit (line 466), ignoring the engine's own refusal: a learner who reads the hint or answers under the latency floor on all four retention items still certifies 31.95 of 32 knowledge points while the engine logs 124 refusedUpward events per run",
+  "state": "critique",
+  "round": 1,
+  "gap": "eq-special-cases|construct measures 0.335 blind on the SHIPPED bank - above the content file's own maxTrueGuess 0.30 - yet is priced at modelled 0.10 and is fully mastery-eligible; the derivePricing rejection machinery has no answer-space axis and P16.mjs U30 absorbs it via a KNOWN_HOT_CELLS allowlist while the sensitivity arm stops at 0.10",
   "note": "Round 2: fixing retention-gate credit leak (scored-only counting), probe inFlight, scheduler-state persistence, real-ItemBank blind-rate arm",
   "evidence": [],
-  "updated": "2026-08-10T02:55:54.201Z"
+  "updated": "2026-08-10T05:47:54.632Z"
 }

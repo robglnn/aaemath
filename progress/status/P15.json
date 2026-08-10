@@ -1,9 +1,9 @@
 {
   "id": "P15",
-  "state": "building",
-  "round": 5,
-  "gap": null,
+  "state": "critique",
+  "round": 1,
+  "gap": "A valid-but-oversized expression is never bounded: TexPanel.rasterize sets canvas.width from ink width with no clamp, so a 20000-char claim built a 941284x44 texture (MAX_TEXTURE_EDGE=4096 is only applied to the font bucket, never to the canvas) - exceeds every GPU max texture size; review/measure/P15.mjs only feeds parse-failures and never a hostile-but-valid input",
   "note": "verify PASSED en/es/pl with katex=3 rendered / 0 failed in each. Full measure run in flight for ES/PL pixels.",
   "evidence": [],
-  "updated": "2026-08-10T03:39:12.077Z"
+  "updated": "2026-08-10T05:46:33.698Z"
 }

@@ -15,23 +15,37 @@
  * they are stated in the handoff so P21 and P22 can argue with them rather than discover them.
  */
 
-/** Register → the box it has to survive, in CSS px, and whether it must hold one line. */
+/**
+ * Register → the box it has to survive: a width in CSS px and a **line budget**.
+ *
+ * The line budget is the part that matters and it is a design decision, not a fudge. A HUD chip
+ * and a bark have to be read at a glance while running, so they get one line and the locale has
+ * to fit it. A sign is paint on a board and boards have two courses; a spoken line is a subtitle
+ * and subtitles have always been two lines. Forcing Spanish and Polish onto one line everywhere
+ * would not prove the layout holds — it would force a bad translation, which is the failure this
+ * piece exists to avoid. So the honest contract is: **one line where the read is instant, two
+ * where the read is a sentence**, and every locale measured against that.
+ *
+ * These numbers are the constraint P21, P22 and P23 inherit. Argue with them here.
+ */
+const LINE_PX = 20; // 15px type at 1.28 line-height, rounded up
+
 export const BOXES = [
-  { id: "hud-label", prefix: "ui.hud.", width: 168, single: true, label: "HUD LABEL" },
-  { id: "hud-count", prefix: "ui.count.", width: 168, single: true, label: "HUD COUNT" },
-  { id: "menu", prefix: "ui.menu.", width: 240, single: true, label: "MENU" },
-  { id: "setting", prefix: "ui.setting.", width: 240, single: true, label: "KIT" },
-  { id: "action", prefix: "ui.action.", width: 260, single: true, label: "VERB" },
-  { id: "system", prefix: "sys.", width: 340, single: true, label: "SYSTEM" },
-  { id: "mastery", prefix: "mastery.", width: 340, single: true, label: "RANK" },
-  { id: "ambient", prefix: "amb.", width: 400, single: true, label: "AMBIENT" },
-  { id: "bark", prefix: "ix.bark.", width: 440, single: true, label: "BARK" },
-  { id: "fall", prefix: "fail.", width: 440, single: true, label: "FALL READ" },
-  { id: "sign", prefix: "sign.", width: 400, single: true, label: "SIGNAGE" },
-  { id: "walkon", prefix: "walk.", width: 520, single: true, label: "WALK-ON" },
-  { id: "sennar", prefix: "sennar.", width: 520, single: true, label: "SENNAR" },
-  { id: "dace", prefix: "dace.", width: 520, single: true, label: "DACE" },
-  { id: "camber", prefix: "camber.", width: 520, single: false, maxHeight: 132, label: "CAMBER" },
+  { id: "hud-label", prefix: "ui.hud.", width: 168, lines: 1, label: "HUD LABEL" },
+  { id: "hud-count", prefix: "ui.count.", width: 240, lines: 1, label: "HUD COUNT" },
+  { id: "menu", prefix: "ui.menu.", width: 240, lines: 1, label: "MENU" },
+  { id: "setting", prefix: "ui.setting.", width: 240, lines: 1, label: "KIT" },
+  { id: "action", prefix: "ui.action.", width: 260, lines: 1, label: "VERB" },
+  { id: "system", prefix: "sys.", width: 340, lines: 1, label: "SYSTEM" },
+  { id: "mastery", prefix: "mastery.", width: 340, lines: 1, label: "RANK" },
+  { id: "ambient", prefix: "amb.", width: 400, lines: 1, label: "AMBIENT" },
+  { id: "bark", prefix: "ix.bark.", width: 440, lines: 1, label: "BARK" },
+  { id: "fall", prefix: "fail.", width: 440, lines: 1, label: "FALL READ" },
+  { id: "sign", prefix: "sign.", width: 400, lines: 2, label: "SIGNAGE" },
+  { id: "walkon", prefix: "walk.", width: 520, lines: 2, label: "WALK-ON" },
+  { id: "sennar", prefix: "sennar.", width: 520, lines: 2, label: "SENNAR" },
+  { id: "dace", prefix: "dace.", width: 520, lines: 2, label: "DACE" },
+  { id: "camber", prefix: "camber.", width: 520, lines: 4, label: "CAMBER" },
 ];
 
 const CSS = `
@@ -73,11 +87,12 @@ export function mountLocaleProof(i18n) {
 
     const tag = document.createElement("div");
     tag.className = "tag";
-    tag.textContent = `${box.label} · ${box.width}px`;
+    tag.textContent = `${box.label} · ${box.width}px · ${box.lines}L`;
 
+    const single = box.lines === 1;
     const fit = document.createElement("div");
-    fit.className = `fit ${box.single ? "one" : "many"}`;
-    if (!box.single && box.maxHeight) fit.style.maxHeight = `${box.maxHeight}px`;
+    fit.className = `fit ${single ? "one" : "many"}`;
+    if (!single) fit.style.maxHeight = `${box.lines * LINE_PX}px`;
     fit.textContent = worst.text;
 
     cell.append(tag, fit);
@@ -105,18 +120,26 @@ export function mountLocaleProof(i18n) {
 
   overlay.appendChild(root);
 
-  /** Overflow, in real laid-out pixels, for every box on screen. */
+  /**
+   * Overflow, in real laid-out pixels, for every box on screen — plus the width the worst-case
+   * string actually needs, so a later piece can size to the measurement instead of to a guess.
+   */
   function measure() {
     const vw = window.innerWidth;
     return cells.map(({ box, worst, fit, cell }) => {
       const rect = cell.getBoundingClientRect();
+      const single = box.lines === 1;
       return {
         id: box.id,
         key: worst.key,
         chars: worst.text.length,
         boxWidth: box.width,
-        overflowX: Math.max(0, fit.scrollWidth - fit.clientWidth),
-        overflowY: box.single ? 0 : Math.max(0, fit.scrollHeight - fit.clientHeight),
+        lineBudget: box.lines,
+        // How wide the string would like to be on one line; the useful number for P21.
+        requiredPx: Math.round(fit.scrollWidth),
+        linesUsed: Math.max(1, Math.round(fit.scrollHeight / LINE_PX)),
+        overflowX: single ? Math.max(0, fit.scrollWidth - fit.clientWidth) : 0,
+        overflowY: single ? 0 : Math.max(0, fit.scrollHeight - fit.clientHeight),
         offViewport: Math.max(0, Math.round(rect.right - vw)),
       };
     });

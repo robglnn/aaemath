@@ -209,7 +209,7 @@ function collect(root, stats) {
         holder.appendChild(node);
         stats.wrapped++;
       }
-      pushText(holder, node.data, clip, items, stats);
+      pushText(holder, node.data, childClip, items, stats);
     }
   };
 
@@ -570,6 +570,7 @@ export class TexPanel {
     locale = getLocale(),
     em = 0.55,
     position = [0, 0, 0],
+    anchor = null,
     billboard = "yaw",
     displayMode = true,
     working = null,
@@ -581,6 +582,11 @@ export class TexPanel {
     this.tex = tex;
     this.locale = locale;
     this.em = em;
+    // A view anchor, in metres right / up / ahead of where the player arrives. Level geometry
+    // owns socket positions, and until it hands them over, hard world coordinates are a bet on
+    // somebody else's terrain — one that this piece has already lost once, when the world was
+    // rewritten underneath it and every claim ended up behind the camera.
+    this.anchor = anchor;
     this.billboard = billboard;
     this.displayMode = displayMode;
     this.working = working;

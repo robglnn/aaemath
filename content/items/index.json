@@ -1,0 +1,862 @@
+{
+ "generated": "960 items across 32 knowledge points",
+ "perKp": 30,
+ "seed": 20260809,
+ "kps": {
+  "var-meaning": {
+   "band": 1,
+   "objectClass": "Emitter",
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "misconceptions": [
+    "var-as-label",
+    "var-must-differ",
+    "var-alphabet-value"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 9,
+    "repair": 15,
+    "generate": 6
+   },
+   "itemsPerMisconception": {
+    "var-as-label": 7,
+    "var-must-differ": 17,
+    "var-alphabet-value": 6
+   }
+  },
+  "oo-numeric": {
+   "band": 1,
+   "objectClass": "Bearer",
+   "standards": [
+    "CCSS.6.EE.A.1",
+    "CCSS.6.EE.A.2c",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "misconceptions": [
+    "oo-strict-left-to-right",
+    "oo-mult-before-div",
+    "oo-add-before-sub"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 13,
+    "repair": 13,
+    "generate": 4
+   },
+   "itemsPerMisconception": {
+    "oo-strict-left-to-right": 10,
+    "oo-mult-before-div": 7,
+    "oo-add-before-sub": 9
+   }
+  },
+  "expr-anatomy": {
+   "band": 1,
+   "objectClass": "Bearer",
+   "standards": [
+    "CCSS.6.EE.A.2b",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.912.AR.1.1"
+   ],
+   "misconceptions": [
+    "term-split-at-product",
+    "bare-x-has-no-coefficient",
+    "sign-detached-from-term"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 10,
+    "repair": 15,
+    "generate": 5
+   },
+   "itemsPerMisconception": {
+    "bare-x-has-no-coefficient": 10,
+    "sign-detached-from-term": 10,
+    "term-split-at-product": 5
+   }
+  },
+  "oo-structure": {
+   "band": 2,
+   "objectClass": "Aperture",
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "misconceptions": [
+    "coefficient-under-exponent",
+    "negative-square-sign-lost",
+    "juxtaposition-means-add"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 14,
+    "repair": 12,
+    "generate": 4
+   },
+   "itemsPerMisconception": {
+    "coefficient-under-exponent": 9,
+    "negative-square-sign-lost": 9,
+    "juxtaposition-means-add": 8
+   }
+  },
+  "eval-substitute": {
+   "band": 2,
+   "objectClass": "Emitter",
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2",
+    "VA.A.EO.1"
+   ],
+   "misconceptions": [
+    "substitute-first-occurrence-only",
+    "substitute-by-concatenation",
+    "coefficient-dropped-on-substitution"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 14,
+    "repair": 13,
+    "generate": 3
+   },
+   "itemsPerMisconception": {
+    "substitute-first-occurrence-only": 8,
+    "substitute-by-concatenation": 10,
+    "coefficient-dropped-on-substitution": 9
+   }
+  },
+  "eval-signed": {
+   "band": 3,
+   "objectClass": "Emitter",
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "misconceptions": [
+    "negative-substituted-bare",
+    "double-negative-collapsed-wrong",
+    "two-negatives-make-positive-on-sum"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 11,
+    "repair": 15,
+    "generate": 4
+   },
+   "itemsPerMisconception": {
+    "double-negative-collapsed-wrong": 11,
+    "two-negatives-make-positive-on-sum": 12,
+    "negative-substituted-bare": 3
+   }
+  },
+  "eval-formula": {
+   "band": 3,
+   "objectClass": "Span",
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.3",
+    "VA.A.EO.1"
+   ],
+   "misconceptions": [
+    "values-assigned-by-order",
+    "one-value-for-all-letters",
+    "second-variable-ignored"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 10,
+    "repair": 11,
+    "generate": 9
+   },
+   "itemsPerMisconception": {
+    "second-variable-ignored": 21,
+    "values-assigned-by-order": 21,
+    "one-value-for-all-letters": 21
+   }
+  },
+  "translate-phrase": {
+   "band": 2,
+   "objectClass": "Vessel",
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "misconceptions": [
+    "keyword-without-structure",
+    "no-variable-introduced",
+    "twice-read-as-plus-two"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 11,
+    "repair": 13,
+    "generate": 6
+   },
+   "itemsPerMisconception": {
+    "keyword-without-structure": 14,
+    "no-variable-introduced": 24,
+    "twice-read-as-plus-two": 10
+   }
+  },
+  "translate-order": {
+   "band": 3,
+   "objectClass": "Threshold",
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "misconceptions": [
+    "less-than-reversed",
+    "divided-into-reversed",
+    "subtract-from-reversed"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 14,
+    "repair": 11,
+    "generate": 5
+   },
+   "itemsPerMisconception": {
+    "less-than-reversed": 8,
+    "subtract-from-reversed": 8,
+    "divided-into-reversed": 9
+   }
+  },
+  "props-operations": {
+   "band": 2,
+   "objectClass": "Bearer",
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "misconceptions": [
+    "subtraction-commutes",
+    "regroup-across-subtraction",
+    "identity-swapped"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 15,
+    "repair": 12,
+    "generate": 3
+   },
+   "itemsPerMisconception": {
+    "subtraction-commutes": 9,
+    "regroup-across-subtraction": 9,
+    "identity-swapped": 9
+   }
+  },
+  "like-terms-id": {
+   "band": 2,
+   "objectClass": "Bearer",
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "misconceptions": [
+    "all-variable-terms-alike",
+    "constant-like-variable",
+    "exponent-ignored-in-matching"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 10,
+    "repair": 10,
+    "generate": 10
+   },
+   "itemsPerMisconception": {
+    "all-variable-terms-alike": 20,
+    "constant-like-variable": 20,
+    "exponent-ignored-in-matching": 10
+   }
+  },
+  "like-terms-combine": {
+   "band": 3,
+   "objectClass": "Bearer",
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "misconceptions": [
+    "combine-unlike-terms",
+    "variable-parts-added-too",
+    "sign-left-behind-on-move"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 11,
+    "repair": 9,
+    "generate": 10
+   },
+   "itemsPerMisconception": {
+    "combine-unlike-terms": 20,
+    "variable-parts-added-too": 20,
+    "sign-left-behind-on-move": 20
+   }
+  },
+  "distribute-numeric": {
+   "band": 2,
+   "objectClass": "Aperture",
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "misconceptions": [
+    "distribute-to-first-term-only",
+    "distribute-over-a-product",
+    "distribute-by-adding"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 13,
+    "repair": 11,
+    "generate": 6
+   },
+   "itemsPerMisconception": {
+    "distribute-to-first-term-only": 12,
+    "distribute-by-adding": 12,
+    "distribute-over-a-product": 12
+   }
+  },
+  "distribute-variable": {
+   "band": 3,
+   "objectClass": "Aperture",
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.7.PFA.2"
+   ],
+   "misconceptions": [
+    "variable-multiplied-as-well",
+    "distribute-reaches-variable-only",
+    "coefficients-added-not-multiplied"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 10,
+    "repair": 10,
+    "generate": 10
+   },
+   "itemsPerMisconception": {
+    "variable-multiplied-as-well": 20,
+    "distribute-reaches-variable-only": 20,
+    "coefficients-added-not-multiplied": 20
+   }
+  },
+  "distribute-negative": {
+   "band": 4,
+   "objectClass": "Aperture",
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "misconceptions": [
+    "flip-first-term-only",
+    "leading-minus-dropped",
+    "subtract-before-distributing"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 13,
+    "repair": 11,
+    "generate": 6
+   },
+   "itemsPerMisconception": {
+    "flip-first-term-only": 24,
+    "leading-minus-dropped": 24,
+    "subtract-before-distributing": 12
+   }
+  },
+  "simplify-expression": {
+   "band": 4,
+   "objectClass": "Span",
+   "standards": [
+    "CCSS.7.EE.A.1",
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-SSE.A.2",
+    "TEKS.6.7D",
+    "FL.MA.7.AR.1.1",
+    "VA.8.PFA.1"
+   ],
+   "misconceptions": [
+    "combine-before-distributing",
+    "stops-before-fully-simplified",
+    "over-combines-to-one-term"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 10,
+    "repair": 11,
+    "generate": 9
+   },
+   "itemsPerMisconception": {
+    "combine-before-distributing": 13,
+    "over-combines-to-one-term": 18,
+    "stops-before-fully-simplified": 10
+   }
+  },
+  "equivalent-expressions": {
+   "band": 4,
+   "objectClass": "Span",
+   "standards": [
+    "CCSS.6.EE.A.4",
+    "CCSS.7.EE.A.2",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "misconceptions": [
+    "one-value-proves-equivalence",
+    "different-form-means-different",
+    "counterexample-ignored"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 10,
+    "repair": 10,
+    "generate": 10
+   },
+   "itemsPerMisconception": {
+    "different-form-means-different": 30,
+    "counterexample-ignored": 10,
+    "one-value-proves-equivalence": 10
+   }
+  },
+  "eq-meaning": {
+   "band": 2,
+   "objectClass": "Span",
+   "standards": [
+    "CCSS.6.EE.B.5",
+    "CCSS.HSA-REI.A.1",
+    "TEKS.6.7B",
+    "TEKS.6.10B",
+    "FL.MA.6.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "misconceptions": [
+    "equals-means-compute-now",
+    "solution-never-checked",
+    "equation-true-for-everything"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 10,
+    "repair": 10,
+    "generate": 10
+   },
+   "itemsPerMisconception": {
+    "equation-true-for-everything": 10,
+    "solution-never-checked": 18,
+    "equals-means-compute-now": 2
+   }
+  },
+  "props-equality": {
+   "band": 2,
+   "objectClass": "Vessel",
+   "standards": [
+    "CCSS.HSA-REI.A.1",
+    "CCSS.6.EE.B.5",
+    "VA.A.EI.1"
+   ],
+   "misconceptions": [
+    "operate-on-one-side",
+    "inverse-operations-on-each-side",
+    "divide-by-possible-zero"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 13,
+    "repair": 12,
+    "generate": 5
+   },
+   "itemsPerMisconception": {
+    "operate-on-one-side": 14,
+    "inverse-operations-on-each-side": 14,
+    "divide-by-possible-zero": 11
+   }
+  },
+  "eq-one-add": {
+   "band": 2,
+   "objectClass": "Span",
+   "standards": [
+    "CCSS.6.EE.B.7",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.6.AR.2.2",
+    "VA.6.PFA.3"
+   ],
+   "misconceptions": [
+    "same-operation-not-inverse",
+    "subtraction-order-reversed",
+    "minus-inverted-wrongly"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 11,
+    "repair": 13,
+    "generate": 6
+   },
+   "itemsPerMisconception": {
+    "same-operation-not-inverse": 13,
+    "subtraction-order-reversed": 13,
+    "minus-inverted-wrongly": 11
+   }
+  },
+  "eq-one-mult": {
+   "band": 2,
+   "objectClass": "Bearer",
+   "standards": [
+    "CCSS.6.EE.B.7",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.6.AR.2.3",
+    "VA.6.PFA.3"
+   ],
+   "misconceptions": [
+    "subtract-the-coefficient",
+    "division-order-reversed",
+    "fraction-form-inverted"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 11,
+    "repair": 12,
+    "generate": 7
+   },
+   "itemsPerMisconception": {
+    "subtract-the-coefficient": 10,
+    "division-order-reversed": 10,
+    "fraction-form-inverted": 13
+   }
+  },
+  "eq-two-step": {
+   "band": 3,
+   "objectClass": "Span",
+   "standards": [
+    "CCSS.7.EE.B.4a",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.7.11A",
+    "FL.MA.7.AR.2.2",
+    "VA.7.PFA.3"
+   ],
+   "misconceptions": [
+    "divide-before-clearing-constant",
+    "inverse-order-inverted",
+    "constant-sign-flipped"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 9,
+    "repair": 11,
+    "generate": 10
+   },
+   "itemsPerMisconception": {
+    "divide-before-clearing-constant": 14,
+    "inverse-order-inverted": 15,
+    "constant-sign-flipped": 14
+   }
+  },
+  "eq-combine-side": {
+   "band": 4,
+   "objectClass": "Bearer",
+   "standards": [
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.8.8C",
+    "FL.MA.8.AR.2.1",
+    "VA.8.PFA.4"
+   ],
+   "misconceptions": [
+    "combine-across-the-equals",
+    "one-like-term-dropped",
+    "constant-absorbed-into-coefficient"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 8,
+    "repair": 11,
+    "generate": 11
+   },
+   "itemsPerMisconception": {
+    "combine-across-the-equals": 19,
+    "one-like-term-dropped": 19,
+    "constant-absorbed-into-coefficient": 19
+   }
+  },
+  "eq-distribute": {
+   "band": 4,
+   "objectClass": "Aperture",
+   "standards": [
+    "CCSS.7.EE.B.4a",
+    "CCSS.8.EE.C.7b",
+    "TEKS.A.5A",
+    "FL.MA.8.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "misconceptions": [
+    "distribute-partially-in-equation",
+    "divide-bracket-only",
+    "coefficient-never-undone"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 10,
+    "repair": 10,
+    "generate": 10
+   },
+   "itemsPerMisconception": {
+    "distribute-partially-in-equation": 18,
+    "divide-bracket-only": 18,
+    "coefficient-never-undone": 12
+   }
+  },
+  "eq-both-sides": {
+   "band": 4,
+   "objectClass": "Vessel",
+   "standards": [
+    "CCSS.8.EE.C.7b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.8.8C",
+    "FL.MA.8.AR.2.1",
+    "VA.8.PFA.4"
+   ],
+   "misconceptions": [
+    "moved-without-inverting",
+    "removed-from-one-side-only",
+    "constants-collected-wrong-side"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 6,
+    "repair": 13,
+    "generate": 11
+   },
+   "itemsPerMisconception": {
+    "moved-without-inverting": 19,
+    "removed-from-one-side-only": 19,
+    "constants-collected-wrong-side": 19
+   }
+  },
+  "eq-special-cases": {
+   "band": 5,
+   "objectClass": "Span",
+   "standards": [
+    "CCSS.8.EE.C.7a",
+    "CCSS.HSA-REI.A.1",
+    "TEKS.A.5A",
+    "FL.MA.8.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "misconceptions": [
+    "vanishing-variable-means-zero",
+    "identity-called-no-solution",
+    "contradiction-given-a-solution"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 13,
+    "repair": 5,
+    "generate": 12
+   },
+   "itemsPerMisconception": {
+    "vanishing-variable-means-zero": 18,
+    "identity-called-no-solution": 7,
+    "contradiction-given-a-solution": 6
+   }
+  },
+  "translate-sentence": {
+   "band": 3,
+   "objectClass": "Span",
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "misconceptions": [
+    "produces-expression-not-equation",
+    "sides-merged",
+    "unknown-defined-as-wrong-quantity"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 11,
+    "repair": 9,
+    "generate": 10
+   },
+   "itemsPerMisconception": {
+    "produces-expression-not-equation": 20,
+    "sides-merged": 20,
+    "unknown-defined-as-wrong-quantity": 20
+   }
+  },
+  "eq-model-context": {
+   "band": 5,
+   "objectClass": "Span",
+   "standards": [
+    "CCSS.7.EE.B.4a",
+    "CCSS.HSA-CED.A.1",
+    "CCSS.HSA-CED.A.3",
+    "TEKS.8.8A",
+    "FL.MA.912.AR.2.1",
+    "VA.A.EI.1"
+   ],
+   "misconceptions": [
+    "arithmetic-shortcut-only",
+    "answers-the-wrong-question",
+    "non-viable-solution-accepted"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 12,
+    "repair": 12,
+    "generate": 6
+   },
+   "itemsPerMisconception": {
+    "answers-the-wrong-question": 8,
+    "arithmetic-shortcut-only": 22,
+    "non-viable-solution-accepted": 12
+   }
+  },
+  "ineq-meaning": {
+   "band": 2,
+   "objectClass": "Threshold",
+   "standards": [
+    "CCSS.6.EE.B.8",
+    "CCSS.6.EE.B.5",
+    "TEKS.6.9B",
+    "FL.MA.6.AR.1.2",
+    "VA.6.PFA.4"
+   ],
+   "misconceptions": [
+    "single-value-for-a-set",
+    "endpoint-style-swapped",
+    "reads-symbol-left-to-right-always"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 11,
+    "repair": 10,
+    "generate": 9
+   },
+   "itemsPerMisconception": {
+    "reads-symbol-left-to-right-always": 21,
+    "endpoint-style-swapped": 21,
+    "single-value-for-a-set": 11
+   }
+  },
+  "ineq-one-step": {
+   "band": 3,
+   "objectClass": "Threshold",
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "misconceptions": [
+    "flip-after-adding",
+    "solved-as-equation",
+    "flip-because-a-negative-appeared"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 12,
+    "repair": 12,
+    "generate": 6
+   },
+   "itemsPerMisconception": {
+    "flip-after-adding": 12,
+    "solved-as-equation": 12,
+    "flip-because-a-negative-appeared": 12
+   }
+  },
+  "ineq-negative-flip": {
+   "band": 4,
+   "objectClass": "Threshold",
+   "standards": [
+    "CCSS.HSA-REI.B.3",
+    "CCSS.7.EE.B.4b",
+    "TEKS.A.5B",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "misconceptions": [
+    "no-flip-on-negative-divide",
+    "flip-but-sign-lost",
+    "flip-on-subtracting-a-negative"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 12,
+    "repair": 12,
+    "generate": 6
+   },
+   "itemsPerMisconception": {
+    "no-flip-on-negative-divide": 12,
+    "flip-but-sign-lost": 12,
+    "flip-on-subtracting-a-negative": 12
+   }
+  },
+  "ineq-two-step": {
+   "band": 5,
+   "objectClass": "Threshold",
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-CED.A.1",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.7.11A",
+    "FL.MA.8.AR.2.2",
+    "VA.7.PFA.4"
+   ],
+   "misconceptions": [
+    "flipped-twice",
+    "coefficient-applied-to-constant-only",
+    "strictness-contradicts-context"
+   ],
+   "count": 30,
+   "forms": {
+    "construct": 12,
+    "repair": 12,
+    "generate": 6
+   },
+   "itemsPerMisconception": {
+    "flipped-twice": 9,
+    "coefficient-applied-to-constant-only": 17,
+    "strictness-contradicts-context": 10
+   }
+  }
+ }
+}

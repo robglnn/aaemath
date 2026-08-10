@@ -1,0 +1,2702 @@
+{
+ "kpId": "translate-phrase",
+ "title": "Turning words into an expression",
+ "strand": "translation",
+ "band": 2,
+ "objectClass": "Vessel",
+ "standards": [
+  "CCSS.6.EE.A.2a",
+  "CCSS.6.EE.B.6",
+  "FL.MA.6.AR.1.1",
+  "VA.A.EO.1"
+ ],
+ "misconceptions": [
+  "keyword-without-structure",
+  "no-variable-introduced",
+  "twice-read-as-plus-two"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "translate-phrase.groups/construct/1sjdzzc",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 4,
+     "b": 4
+    },
+    "text": "4 runs of it, and 4 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 4,
+     "b": 4
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "4*n + 4",
+    "tex": "4n + 4"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "1*n + 8",
+     "tex": "4 + n + 4",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "8",
+     "tex": "8",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.groups",
+     "params": {
+      "a": 4,
+      "b": 4
+     },
+     "text": "4 runs is a count against a socket. The 4 is fixed weight standing beside it."
+    },
+    {
+     "key": "hint.state.translate-phrase.groups",
+     "params": {
+      "a": 4,
+      "b": 4
+     },
+     "text": "One socket, one collar of 4, and 4 that never varies."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 4
+   }
+  },
+  {
+   "id": "translate-phrase.twice/construct/1k75i2z",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 6
+    },
+    "text": "Twice what you brought, and 6 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "b": 6
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2*n + 6",
+    "tex": "2n + 6"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "1*n + 8",
+     "tex": "n + 2 + 6",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "8",
+     "tex": "8",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.twice",
+     "params": {
+      "b": 6
+     },
+     "text": "Twice is a count, not a join."
+    },
+    {
+     "key": "hint.state.translate-phrase.twice",
+     "params": {
+      "b": 6
+     },
+     "text": "The socket is riding in a count of two, and 6 is standing beside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 6
+   }
+  },
+  {
+   "id": "translate-phrase.groups/repair/1fn2o65",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 3,
+     "b": 2
+    },
+    "text": "3 runs of it, and 2 more on top."
+   },
+   "working": [
+    "n",
+    "5"
+   ],
+   "brokenBy": "no-variable-introduced",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 2,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|3*n + 2",
+    "tex": "3n + 2",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "2|1*n + 5",
+     "tex": "3 + n + 2",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|5",
+     "tex": "5",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 2
+   }
+  },
+  {
+   "id": "translate-phrase.twice/repair/1la3ynl",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 8
+    },
+    "text": "Twice what you brought, and 8 more on top."
+   },
+   "working": [
+    "n",
+    "10"
+   ],
+   "brokenBy": "no-variable-introduced",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "b": 8,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|2*n + 8",
+    "tex": "2n + 8",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "2|1*n + 10",
+     "tex": "n + 2 + 8",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|10",
+     "tex": "10",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "b": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "b": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 8
+   }
+  },
+  {
+   "id": "translate-phrase.groups/generate/bdrkhe",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 6,
+     "b": 8
+    },
+    "text": "6 runs of it, and 8 more on top."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 6,
+     "b": 8,
+     "target": "6*n + 8",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 6*n + 8."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "6n + 8",
+    "tex": "6n + 8",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "6*n + 8",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 6,
+      "b": 8,
+      "target": "6*n + 8",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 6,
+      "b": 8,
+      "target": "6*n + 8",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 6*n + 8. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 6,
+    "b": 8
+   }
+  },
+  {
+   "id": "translate-phrase.groups/construct/103n5ko",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 7,
+     "b": 7
+    },
+    "text": "7 runs of it, and 7 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 7,
+     "b": 7
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "7*n + 7",
+    "tex": "7n + 7"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "1*n + 14",
+     "tex": "7 + n + 7",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "14",
+     "tex": "14",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.groups",
+     "params": {
+      "a": 7,
+      "b": 7
+     },
+     "text": "7 runs is a count against a socket. The 7 is fixed weight standing beside it."
+    },
+    {
+     "key": "hint.state.translate-phrase.groups",
+     "params": {
+      "a": 7,
+      "b": 7
+     },
+     "text": "One socket, one collar of 7, and 7 that never varies."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 7
+   }
+  },
+  {
+   "id": "translate-phrase.twice/construct/1las8r6",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 3
+    },
+    "text": "Twice what you brought, and 3 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "b": 3
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2*n + 3",
+    "tex": "2n + 3"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "1*n + 5",
+     "tex": "n + 2 + 3",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "5",
+     "tex": "5",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.twice",
+     "params": {
+      "b": 3
+     },
+     "text": "Twice is a count, not a join."
+    },
+    {
+     "key": "hint.state.translate-phrase.twice",
+     "params": {
+      "b": 3
+     },
+     "text": "The socket is riding in a count of two, and 3 is standing beside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 3
+   }
+  },
+  {
+   "id": "translate-phrase.groups/repair/1y6e3b0",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 9,
+     "b": 5
+    },
+    "text": "9 runs of it, and 5 more on top."
+   },
+   "working": [
+    "n",
+    "9 + n + 5"
+   ],
+   "brokenBy": "keyword-without-structure",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 9,
+     "b": 5,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|9*n + 5",
+    "tex": "9n + 5",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "2|1*n + 14",
+     "tex": "9 + n + 5",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|14",
+     "tex": "14",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 9,
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 9,
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.twice/repair/1lba7ut",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 4
+    },
+    "text": "Twice what you brought, and 4 more on top."
+   },
+   "working": [
+    "n",
+    "6"
+   ],
+   "brokenBy": "no-variable-introduced",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "b": 4,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|2*n + 4",
+    "tex": "2n + 4",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "2|1*n + 6",
+     "tex": "n + 2 + 4",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|6",
+     "tex": "6",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "b": 4,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "b": 4,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 4
+   }
+  },
+  {
+   "id": "translate-phrase.groups/generate/kkpvk9",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 8,
+     "b": 5
+    },
+    "text": "8 runs of it, and 5 more on top."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 8,
+     "b": 5,
+     "target": "8*n + 5",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 8*n + 5."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "8n + 5",
+    "tex": "8n + 5",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "8*n + 5",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 8,
+      "b": 5,
+      "target": "8*n + 5",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 8,
+      "b": 5,
+      "target": "8*n + 5",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 8*n + 5. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.groups/construct/1n3wlum",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 5,
+     "b": 7
+    },
+    "text": "5 runs of it, and 7 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 5,
+     "b": 7
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "5*n + 7",
+    "tex": "5n + 7"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "1*n + 12",
+     "tex": "5 + n + 7",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "12",
+     "tex": "12",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.groups",
+     "params": {
+      "a": 5,
+      "b": 7
+     },
+     "text": "5 runs is a count against a socket. The 7 is fixed weight standing beside it."
+    },
+    {
+     "key": "hint.state.translate-phrase.groups",
+     "params": {
+      "a": 5,
+      "b": 7
+     },
+     "text": "One socket, one collar of 5, and 7 that never varies."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 7
+   }
+  },
+  {
+   "id": "translate-phrase.twice/construct/1lba7ut",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 4
+    },
+    "text": "Twice what you brought, and 4 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "b": 4
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2*n + 4",
+    "tex": "2n + 4"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "1*n + 6",
+     "tex": "n + 2 + 4",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "6",
+     "tex": "6",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.twice",
+     "params": {
+      "b": 4
+     },
+     "text": "Twice is a count, not a join."
+    },
+    {
+     "key": "hint.state.translate-phrase.twice",
+     "params": {
+      "b": 4
+     },
+     "text": "The socket is riding in a count of two, and 4 is standing beside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 4
+   }
+  },
+  {
+   "id": "translate-phrase.groups/repair/1m04i2o",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 5,
+     "b": 5
+    },
+    "text": "5 runs of it, and 5 more on top."
+   },
+   "working": [
+    "n",
+    "5 + n + 5"
+   ],
+   "brokenBy": "keyword-without-structure",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "b": 5,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|5*n + 5",
+    "tex": "5n + 5",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "2|1*n + 10",
+     "tex": "5 + n + 5",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|10",
+     "tex": "10",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.groups/generate/1m04i2o",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 5,
+     "b": 5
+    },
+    "text": "5 runs of it, and 5 more on top."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 5,
+     "b": 5,
+     "target": "5*n + 5",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 5*n + 5."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "5n + 5",
+    "tex": "5n + 5",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "5*n + 5",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "target": "5*n + 5",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "target": "5*n + 5",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 5*n + 5. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.groups/repair/1fmkp2i",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 3,
+     "b": 5
+    },
+    "text": "3 runs of it, and 5 more on top."
+   },
+   "working": [
+    "n",
+    "3 + n + 5"
+   ],
+   "brokenBy": "keyword-without-structure",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 5,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|3*n + 5",
+    "tex": "3n + 5",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "2|1*n + 8",
+     "tex": "3 + n + 5",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|8",
+     "tex": "8",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.twice/repair/1k7eykw",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 5
+    },
+    "text": "Twice what you brought, and 5 more on top."
+   },
+   "working": [
+    "n",
+    "n + 2 + 5"
+   ],
+   "brokenBy": "twice-read-as-plus-two",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "b": 5,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|2*n + 5",
+    "tex": "2n + 5",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "2|1*n + 7",
+     "tex": "n + 2 + 5",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|7",
+     "tex": "7",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.groups/generate/1eislak",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 3,
+     "b": 7
+    },
+    "text": "3 runs of it, and 7 more on top."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 3,
+     "b": 7,
+     "target": "3*n + 7",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 3*n + 7."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "3n + 7",
+    "tex": "3n + 7",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "3*n + 7",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 3,
+      "b": 7,
+      "target": "3*n + 7",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 3,
+      "b": 7,
+      "target": "3*n + 7",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 3*n + 7. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 7
+   }
+  },
+  {
+   "id": "translate-phrase.groups/construct/95alt",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 9,
+     "b": 4
+    },
+    "text": "9 runs of it, and 4 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 9,
+     "b": 4
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "9*n + 4",
+    "tex": "9n + 4"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "1*n + 13",
+     "tex": "9 + n + 4",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "13",
+     "tex": "13",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.groups",
+     "params": {
+      "a": 9,
+      "b": 4
+     },
+     "text": "9 runs is a count against a socket. The 4 is fixed weight standing beside it."
+    },
+    {
+     "key": "hint.state.translate-phrase.groups",
+     "params": {
+      "a": 9,
+      "b": 4
+     },
+     "text": "One socket, one collar of 9, and 4 that never varies."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 4
+   }
+  },
+  {
+   "id": "translate-phrase.groups/repair/9253u",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 9,
+     "b": 7
+    },
+    "text": "9 runs of it, and 7 more on top."
+   },
+   "working": [
+    "n",
+    "9 + n + 7"
+   ],
+   "brokenBy": "keyword-without-structure",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 9,
+     "b": 7,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|9*n + 7",
+    "tex": "9n + 7",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "2|1*n + 16",
+     "tex": "9 + n + 7",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|16",
+     "tex": "16",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 9,
+      "b": 7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 9,
+      "b": 7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 7
+   }
+  },
+  {
+   "id": "translate-phrase.twice/repair/1k75i2z",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 6
+    },
+    "text": "Twice what you brought, and 6 more on top."
+   },
+   "working": [
+    "n",
+    "8"
+   ],
+   "brokenBy": "no-variable-introduced",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "b": 6,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|2*n + 6",
+    "tex": "2n + 6",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "2|1*n + 8",
+     "tex": "n + 2 + 6",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|8",
+     "tex": "8",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "b": 6,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "b": 6,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 6
+   }
+  },
+  {
+   "id": "translate-phrase.groups/generate/1fn2o65",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 3,
+     "b": 2
+    },
+    "text": "3 runs of it, and 2 more on top."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 3,
+     "b": 2,
+     "target": "3*n + 2",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 3*n + 2."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "3n + 2",
+    "tex": "3n + 2",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "3*n + 2",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "target": "3*n + 2",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "target": "3*n + 2",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 3*n + 2. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 2
+   }
+  },
+  {
+   "id": "translate-phrase.groups/construct/kkb1yl",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 8,
+     "b": 9
+    },
+    "text": "8 runs of it, and 9 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 8,
+     "b": 9
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "8*n + 9",
+    "tex": "8n + 9"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "1*n + 17",
+     "tex": "8 + n + 9",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "17",
+     "tex": "17",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.groups",
+     "params": {
+      "a": 8,
+      "b": 9
+     },
+     "text": "8 runs is a count against a socket. The 9 is fixed weight standing beside it."
+    },
+    {
+     "key": "hint.state.translate-phrase.groups",
+     "params": {
+      "a": 8,
+      "b": 9
+     },
+     "text": "One socket, one collar of 8, and 9 that never varies."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 9
+   }
+  },
+  {
+   "id": "translate-phrase.twice/construct/1la3ynl",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 8
+    },
+    "text": "Twice what you brought, and 8 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "b": 8
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2*n + 8",
+    "tex": "2n + 8"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "1*n + 10",
+     "tex": "n + 2 + 8",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "10",
+     "tex": "10",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.twice",
+     "params": {
+      "b": 8
+     },
+     "text": "Twice is a count, not a join."
+    },
+    {
+     "key": "hint.state.translate-phrase.twice",
+     "params": {
+      "b": 8
+     },
+     "text": "The socket is riding in a count of two, and 8 is standing beside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 8
+   }
+  },
+  {
+   "id": "translate-phrase.groups/repair/jgiy6n",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 8,
+     "b": 7
+    },
+    "text": "8 runs of it, and 7 more on top."
+   },
+   "working": [
+    "n",
+    "15"
+   ],
+   "brokenBy": "no-variable-introduced",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 8,
+     "b": 7,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|8*n + 7",
+    "tex": "8n + 7",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "2|1*n + 15",
+     "tex": "8 + n + 7",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|15",
+     "tex": "15",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 8,
+      "b": 7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 8,
+      "b": 7,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 7
+   }
+  },
+  {
+   "id": "translate-phrase.groups/generate/9253u",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 9,
+     "b": 7
+    },
+    "text": "9 runs of it, and 7 more on top."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 9,
+     "b": 7,
+     "target": "9*n + 7",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 9*n + 7."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "9n + 7",
+    "tex": "9n + 7",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "9*n + 7",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 9,
+      "b": 7,
+      "target": "9*n + 7",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 9,
+      "b": 7,
+      "target": "9*n + 7",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 9*n + 7. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 7
+   }
+  },
+  {
+   "id": "translate-phrase.twice/construct/1k7eykw",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 5
+    },
+    "text": "Twice what you brought, and 5 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "b": 5
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2*n + 5",
+    "tex": "2n + 5"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "1*n + 7",
+     "tex": "n + 2 + 5",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "7",
+     "tex": "7",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.twice",
+     "params": {
+      "b": 5
+     },
+     "text": "Twice is a count, not a join."
+    },
+    {
+     "key": "hint.state.translate-phrase.twice",
+     "params": {
+      "b": 5
+     },
+     "text": "The socket is riding in a count of two, and 5 is standing beside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.groups/repair/1tn71nh",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 4,
+     "b": 5
+    },
+    "text": "4 runs of it, and 5 more on top."
+   },
+   "working": [
+    "n",
+    "9"
+   ],
+   "brokenBy": "no-variable-introduced",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "b": 5,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|4*n + 5",
+    "tex": "4n + 5",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "2|1*n + 9",
+     "tex": "4 + n + 5",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|9",
+     "tex": "9",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "b": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.2",
+    "params": {},
+    "text": "The can has to be sealed before the sentence finishes."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 5
+   }
+  },
+  {
+   "id": "translate-phrase.groups/construct/9253u",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 9,
+     "b": 7
+    },
+    "text": "9 runs of it, and 7 more on top."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 9,
+     "b": 7
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "9*n + 7",
+    "tex": "9n + 7"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "1*n + 16",
+     "tex": "9 + n + 7",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "16",
+     "tex": "16",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.move.translate-phrase.groups",
+     "params": {
+      "a": 9,
+      "b": 7
+     },
+     "text": "9 runs is a count against a socket. The 7 is fixed weight standing beside it."
+    },
+    {
+     "key": "hint.state.translate-phrase.groups",
+     "params": {
+      "a": 9,
+      "b": 7
+     },
+     "text": "One socket, one collar of 9, and 7 that never varies."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 7
+   }
+  },
+  {
+   "id": "translate-phrase.groups/repair/1fnqy9q",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.groups",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.groups",
+    "params": {
+     "a": 3,
+     "b": 9
+    },
+    "text": "3 runs of it, and 9 more on top."
+   },
+   "working": [
+    "n",
+    "3 + n + 9"
+   ],
+   "brokenBy": "keyword-without-structure",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 9,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|3*n + 9",
+    "tex": "3n + 9",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "keyword-without-structure",
+     "response": "2|1*n + 12",
+     "tex": "3 + n + 9",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|12",
+     "tex": "12",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 9
+   }
+  },
+  {
+   "id": "translate-phrase.twice/repair/1las8r6",
+   "kpId": "translate-phrase",
+   "family": "translate-phrase.twice",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Vessel",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-phrase.twice",
+    "params": {
+     "b": 3
+    },
+    "text": "Twice what you brought, and 3 more on top."
+   },
+   "working": [
+    "n",
+    "n + 2 + 3"
+   ],
+   "brokenBy": "twice-read-as-plus-two",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "b": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|2*n + 3",
+    "tex": "2n + 3",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "twice-read-as-plus-two",
+     "response": "2|1*n + 5",
+     "tex": "n + 2 + 3",
+     "failKey": "fail.said.flat"
+    },
+    {
+     "misconception": "no-variable-introduced",
+     "response": "2|5",
+     "tex": "5",
+     "failKey": "fail.said.nosocket"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Vessel",
+     "params": {},
+     "text": "Tare on the near pan, contents on the far. Rell's balance, and it is level."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "b": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "b": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-phrase.1",
+    "params": {},
+    "text": "A Tare is naming a quantity out loud and does not intend to say it twice."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.6.EE.B.6",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "b": 3
+   }
+  }
+ ]
+}

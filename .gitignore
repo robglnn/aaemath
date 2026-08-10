@@ -4,3 +4,4 @@ review/shots/
 review/tmp/
 *.log
 .DS_Store
+review/.slots/

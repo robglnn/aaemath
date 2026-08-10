@@ -1,0 +1,2414 @@
+{
+ "kpId": "var-meaning",
+ "title": "A letter can hold a number",
+ "strand": "expressions",
+ "band": 1,
+ "objectClass": "Emitter",
+ "standards": [
+  "CCSS.6.EE.A.2",
+  "CCSS.6.EE.B.6",
+  "VA.A.EO.1"
+ ],
+ "misconceptions": [
+  "var-as-label",
+  "var-must-differ",
+  "var-alphabet-value"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "var-meaning.relate/construct/n5wzld",
+   "kpId": "var-meaning",
+   "family": "var-meaning.relate",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "a,\\; b",
+   "given": [],
+   "spoken": {
+    "key": "spoken.var-meaning.relate",
+    "params": {
+     "k": 3
+    },
+    "text": "There are 3 crates on my barge for every one on yours."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "k": 3
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*a + -3*b = 0",
+    "tex": "a = 3b"
+   },
+   "distractors": [
+    {
+     "misconception": "var-as-label",
+     "response": "1*a + -1/3*b = 0",
+     "tex": "3a = b",
+     "failKey": "fail.label"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.var-meaning.relate",
+     "params": {
+      "k": 3
+     },
+     "text": "One barge is the big pile. Put the count of 3 on the small one."
+    },
+    {
+     "key": "hint.state.var-meaning.relate",
+     "params": {
+      "k": 3
+     },
+     "text": "Multiplying the smaller count by 3 is what makes the two pans meet."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "k": 3
+   }
+  },
+  {
+   "id": "var-meaning.twin/construct/g1so14",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y = 14,\\quad x - y = 0",
+   "given": [],
+   "ask": {
+    "key": "ask.pair",
+    "params": {
+     "total": 14,
+     "v": 7
+    },
+    "text": "Charge both cores."
+   },
+   "answerType": "pair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x=7;y=7",
+    "tex": "x = 7,\\; y = 7"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "x=3;y=11",
+     "tex": "x = 3,\\; y = 11",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.var-meaning.twin",
+     "params": {
+      "total": 14,
+      "v": 7
+     },
+     "text": "The second core has to sit exactly where the first one does."
+    },
+    {
+     "key": "hint.state.var-meaning.twin",
+     "params": {
+      "total": 14,
+      "v": 7
+     },
+     "text": "Together they carry 14, and nothing separates them."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 7,
+    "d": 4
+   }
+  },
+  {
+   "id": "var-meaning.seat/repair/175qzrg",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "r",
+   "given": [
+    "r = 9"
+   ],
+   "working": [
+    "r = 9",
+    "r = 18"
+   ],
+   "brokenBy": "var-alphabet-value",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "letter": "r",
+     "v": 9,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "r",
+   "answer": {
+    "canonical": "2|1*r + -9 = 0",
+    "tex": "r = 9",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-alphabet-value",
+     "response": "2|1*r + -18 = 0",
+     "tex": "r = 18",
+     "failKey": "fail.seat.wrongvalue"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "letter": "r",
+      "v": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "letter": "r",
+      "v": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "r",
+    "v": 9
+   }
+  },
+  {
+   "id": "var-meaning.relate/repair/n5wzld",
+   "kpId": "var-meaning",
+   "family": "var-meaning.relate",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "a,\\; b",
+   "given": [],
+   "spoken": {
+    "key": "spoken.var-meaning.relate",
+    "params": {
+     "k": 3
+    },
+    "text": "There are 3 crates on my barge for every one on yours."
+   },
+   "working": [
+    "a,\\; b",
+    "3a = b"
+   ],
+   "brokenBy": "var-as-label",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "k": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*a + -3*b = 0",
+    "tex": "a = 3b",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-as-label",
+     "response": "2|1*a + -1/3*b = 0",
+     "tex": "3a = b",
+     "failKey": "fail.label"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "k": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "k": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "k": 3
+   }
+  },
+  {
+   "id": "var-meaning.twin/repair/1ydyr63",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y = 12,\\quad x - y = 0",
+   "given": [],
+   "working": [
+    "x + y = 12",
+    "x = 4",
+    "y = 8"
+   ],
+   "brokenBy": "var-must-differ",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "total": 12,
+     "v": 6,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -6 = 0",
+    "tex": "x = 6",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "2|1*x + -4 = 0",
+     "tex": "x = 4",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "total": 12,
+      "v": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "total": 12,
+      "v": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 6,
+    "d": 2
+   }
+  },
+  {
+   "id": "var-meaning.seat/generate/18an54u",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "r",
+   "given": [
+    "r = 7"
+   ],
+   "ask": {
+    "key": "ask.gen.namesDiffer",
+    "params": {
+     "letter": "r",
+     "v": 7,
+     "target": "7"
+    },
+    "text": "Cut two sockets under different names that hold the same value."
+   },
+   "answerType": "construction",
+   "unknown": "r",
+   "answer": {
+    "canonical": "a = 7; b = 7",
+    "tex": "a = 7; b = 7",
+    "witness": true
+   },
+   "check": {
+    "kind": "namesDiffer",
+    "value": "7"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "a=7;b=8",
+     "tex": "a = 7,\\; b = 8",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.2",
+     "params": {
+      "letter": "r",
+      "v": 7,
+      "target": "7"
+     },
+     "text": "Two names may hold one value. Nothing in the Margin forbids it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.3",
+     "params": {
+      "letter": "r",
+      "v": 7,
+      "target": "7"
+     },
+     "text": "Both sockets are cut. Both are waiting for 7."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "r",
+    "v": 7
+   }
+  },
+  {
+   "id": "var-meaning.relate/construct/n6bt71",
+   "kpId": "var-meaning",
+   "family": "var-meaning.relate",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "a,\\; b",
+   "given": [],
+   "spoken": {
+    "key": "spoken.var-meaning.relate",
+    "params": {
+     "k": 7
+    },
+    "text": "There are 7 crates on my barge for every one on yours."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "k": 7
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*a + -7*b = 0",
+    "tex": "a = 7b"
+   },
+   "distractors": [
+    {
+     "misconception": "var-as-label",
+     "response": "1*a + -1/7*b = 0",
+     "tex": "7a = b",
+     "failKey": "fail.label"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.var-meaning.relate",
+     "params": {
+      "k": 7
+     },
+     "text": "One barge is the big pile. Put the count of 7 on the small one."
+    },
+    {
+     "key": "hint.state.var-meaning.relate",
+     "params": {
+      "k": 7
+     },
+     "text": "Multiplying the smaller count by 7 is what makes the two pans meet."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "k": 7
+   }
+  },
+  {
+   "id": "var-meaning.twin/construct/p1bbch",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y = 16,\\quad x - y = 0",
+   "given": [],
+   "ask": {
+    "key": "ask.pair",
+    "params": {
+     "total": 16,
+     "v": 8
+    },
+    "text": "Charge both cores."
+   },
+   "answerType": "pair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x=8;y=8",
+    "tex": "x = 8,\\; y = 8"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "x=6;y=10",
+     "tex": "x = 6,\\; y = 10",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.var-meaning.twin",
+     "params": {
+      "total": 16,
+      "v": 8
+     },
+     "text": "The second core has to sit exactly where the first one does."
+    },
+    {
+     "key": "hint.state.var-meaning.twin",
+     "params": {
+      "total": 16,
+      "v": 8
+     },
+     "text": "Together they carry 16, and nothing separates them."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 8,
+    "d": 2
+   }
+  },
+  {
+   "id": "var-meaning.seat/repair/9gqe4t",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "m",
+   "given": [
+    "m = 9"
+   ],
+   "working": [
+    "m = 9",
+    "m = 13"
+   ],
+   "brokenBy": "var-alphabet-value",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "letter": "m",
+     "v": 9,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "m",
+   "answer": {
+    "canonical": "2|1*m + -9 = 0",
+    "tex": "m = 9",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-alphabet-value",
+     "response": "2|1*m + -13 = 0",
+     "tex": "m = 13",
+     "failKey": "fail.seat.wrongvalue"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "letter": "m",
+      "v": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "letter": "m",
+      "v": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "m",
+    "v": 9
+   }
+  },
+  {
+   "id": "var-meaning.relate/repair/m2jpf3",
+   "kpId": "var-meaning",
+   "family": "var-meaning.relate",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "a,\\; b",
+   "given": [],
+   "spoken": {
+    "key": "spoken.var-meaning.relate",
+    "params": {
+     "k": 9
+    },
+    "text": "There are 9 crates on my barge for every one on yours."
+   },
+   "working": [
+    "a,\\; b",
+    "9a = b"
+   ],
+   "brokenBy": "var-as-label",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "k": 9,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*a + -9*b = 0",
+    "tex": "a = 9b",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-as-label",
+     "response": "2|1*a + -1/9*b = 0",
+     "tex": "9a = b",
+     "failKey": "fail.label"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "k": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "k": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "k": 9
+   }
+  },
+  {
+   "id": "var-meaning.twin/repair/xpy43h",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y = 22,\\quad x - y = 0",
+   "given": [],
+   "working": [
+    "x + y = 22",
+    "x = 7",
+    "y = 15"
+   ],
+   "brokenBy": "var-must-differ",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "total": 22,
+     "v": 11,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -11 = 0",
+    "tex": "x = 11",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "2|1*x + -7 = 0",
+     "tex": "x = 7",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "total": 22,
+      "v": 11,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "total": 22,
+      "v": 11,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 11,
+    "d": 4
+   }
+  },
+  {
+   "id": "var-meaning.seat/generate/9gzumq",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "m",
+   "given": [
+    "m = 6"
+   ],
+   "ask": {
+    "key": "ask.gen.namesDiffer",
+    "params": {
+     "letter": "m",
+     "v": 6,
+     "target": "6"
+    },
+    "text": "Cut two sockets under different names that hold the same value."
+   },
+   "answerType": "construction",
+   "unknown": "m",
+   "answer": {
+    "canonical": "a = 6; b = 6",
+    "tex": "a = 6; b = 6",
+    "witness": true
+   },
+   "check": {
+    "kind": "namesDiffer",
+    "value": "6"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "a=6;b=7",
+     "tex": "a = 6,\\; b = 7",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.2",
+     "params": {
+      "letter": "m",
+      "v": 6,
+      "target": "6"
+     },
+     "text": "Two names may hold one value. Nothing in the Margin forbids it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.3",
+     "params": {
+      "letter": "m",
+      "v": 6,
+      "target": "6"
+     },
+     "text": "Both sockets are cut. Both are waiting for 6."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "m",
+    "v": 6
+   }
+  },
+  {
+   "id": "var-meaning.twin/construct/1t5gd5s",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "x + y = 18,\\quad x - y = 0",
+   "given": [],
+   "ask": {
+    "key": "ask.pair",
+    "params": {
+     "total": 18,
+     "v": 9
+    },
+    "text": "Charge both cores."
+   },
+   "answerType": "pair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x=9;y=9",
+    "tex": "x = 9,\\; y = 9"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "x=7;y=11",
+     "tex": "x = 7,\\; y = 11",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.var-meaning.twin",
+     "params": {
+      "total": 18,
+      "v": 9
+     },
+     "text": "The second core has to sit exactly where the first one does."
+    },
+    {
+     "key": "hint.state.var-meaning.twin",
+     "params": {
+      "total": 18,
+      "v": 9
+     },
+     "text": "Together they carry 18, and nothing separates them."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 9,
+    "d": 2
+   }
+  },
+  {
+   "id": "var-meaning.seat/repair/fafirn",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "r",
+   "given": [
+    "r = 15"
+   ],
+   "working": [
+    "r = 15",
+    "r = 18"
+   ],
+   "brokenBy": "var-alphabet-value",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "letter": "r",
+     "v": 15,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "r",
+   "answer": {
+    "canonical": "2|1*r + -15 = 0",
+    "tex": "r = 15",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-alphabet-value",
+     "response": "2|1*r + -18 = 0",
+     "tex": "r = 18",
+     "failKey": "fail.seat.wrongvalue"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "letter": "r",
+      "v": 15,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "letter": "r",
+      "v": 15,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "r",
+    "v": 15
+   }
+  },
+  {
+   "id": "var-meaning.twin/repair/p185ui",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "x + y = 16,\\quad x - y = 0",
+   "given": [],
+   "working": [
+    "x + y = 16",
+    "x = 7",
+    "y = 9"
+   ],
+   "brokenBy": "var-must-differ",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "total": 16,
+     "v": 8,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -8 = 0",
+    "tex": "x = 8",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "2|1*x + -7 = 0",
+     "tex": "x = 7",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "total": 16,
+      "v": 8,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "total": 16,
+      "v": 8,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 8,
+    "d": 1
+   }
+  },
+  {
+   "id": "var-meaning.seat/generate/1uae3tm",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "k",
+   "given": [
+    "k = 20"
+   ],
+   "ask": {
+    "key": "ask.gen.namesDiffer",
+    "params": {
+     "letter": "k",
+     "v": 20,
+     "target": "20"
+    },
+    "text": "Cut two sockets under different names that hold the same value."
+   },
+   "answerType": "construction",
+   "unknown": "k",
+   "answer": {
+    "canonical": "a = 20; b = 20",
+    "tex": "a = 20; b = 20",
+    "witness": true
+   },
+   "check": {
+    "kind": "namesDiffer",
+    "value": "20"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "a=20;b=21",
+     "tex": "a = 20,\\; b = 21",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.2",
+     "params": {
+      "letter": "k",
+      "v": 20,
+      "target": "20"
+     },
+     "text": "Two names may hold one value. Nothing in the Margin forbids it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.3",
+     "params": {
+      "letter": "k",
+      "v": 20,
+      "target": "20"
+     },
+     "text": "Both sockets are cut. Both are waiting for 20."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "k",
+    "v": 20
+   }
+  },
+  {
+   "id": "var-meaning.twin/construct/ce162e",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y = 8,\\quad x - y = 0",
+   "given": [],
+   "ask": {
+    "key": "ask.pair",
+    "params": {
+     "total": 8,
+     "v": 4
+    },
+    "text": "Charge both cores."
+   },
+   "answerType": "pair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x=4;y=4",
+    "tex": "x = 4,\\; y = 4"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "x=3;y=5",
+     "tex": "x = 3,\\; y = 5",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.var-meaning.twin",
+     "params": {
+      "total": 8,
+      "v": 4
+     },
+     "text": "The second core has to sit exactly where the first one does."
+    },
+    {
+     "key": "hint.state.var-meaning.twin",
+     "params": {
+      "total": 8,
+      "v": 4
+     },
+     "text": "Together they carry 8, and nothing separates them."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 4,
+    "d": 1
+   }
+  },
+  {
+   "id": "var-meaning.seat/repair/19xtnlv",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "p",
+   "given": [
+    "p = 8"
+   ],
+   "working": [
+    "p = 8",
+    "p = 16"
+   ],
+   "brokenBy": "var-alphabet-value",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "letter": "p",
+     "v": 8,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "p",
+   "answer": {
+    "canonical": "2|1*p + -8 = 0",
+    "tex": "p = 8",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-alphabet-value",
+     "response": "2|1*p + -16 = 0",
+     "tex": "p = 16",
+     "failKey": "fail.seat.wrongvalue"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "letter": "p",
+      "v": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "letter": "p",
+      "v": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "p",
+    "v": 8
+   }
+  },
+  {
+   "id": "var-meaning.relate/repair/m24vtf",
+   "kpId": "var-meaning",
+   "family": "var-meaning.relate",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "a,\\; b",
+   "given": [],
+   "spoken": {
+    "key": "spoken.var-meaning.relate",
+    "params": {
+     "k": 5
+    },
+    "text": "There are 5 crates on my barge for every one on yours."
+   },
+   "working": [
+    "a,\\; b",
+    "5a = b"
+   ],
+   "brokenBy": "var-as-label",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "k": 5,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*a + -5*b = 0",
+    "tex": "a = 5b",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-as-label",
+     "response": "2|1*a + -1/5*b = 0",
+     "tex": "5a = b",
+     "failKey": "fail.label"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "k": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "k": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "k": 5
+   }
+  },
+  {
+   "id": "var-meaning.twin/repair/g1so14",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y = 14,\\quad x - y = 0",
+   "given": [],
+   "working": [
+    "x + y = 14",
+    "x = 3",
+    "y = 11"
+   ],
+   "brokenBy": "var-must-differ",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "total": 14,
+     "v": 7,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -7 = 0",
+    "tex": "x = 7",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "2|1*x + -3 = 0",
+     "tex": "x = 3",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "total": 14,
+      "v": 7,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "total": 14,
+      "v": 7,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 7,
+    "d": 4
+   }
+  },
+  {
+   "id": "var-meaning.seat/generate/fe6ycm",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "p",
+   "given": [
+    "p = 12"
+   ],
+   "ask": {
+    "key": "ask.gen.namesDiffer",
+    "params": {
+     "letter": "p",
+     "v": 12,
+     "target": "12"
+    },
+    "text": "Cut two sockets under different names that hold the same value."
+   },
+   "answerType": "construction",
+   "unknown": "p",
+   "answer": {
+    "canonical": "a = 12; b = 12",
+    "tex": "a = 12; b = 12",
+    "witness": true
+   },
+   "check": {
+    "kind": "namesDiffer",
+    "value": "12"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "a=12;b=13",
+     "tex": "a = 12,\\; b = 13",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.2",
+     "params": {
+      "letter": "p",
+      "v": 12,
+      "target": "12"
+     },
+     "text": "Two names may hold one value. Nothing in the Margin forbids it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.3",
+     "params": {
+      "letter": "p",
+      "v": 12,
+      "target": "12"
+     },
+     "text": "Both sockets are cut. Both are waiting for 12."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "p",
+    "v": 12
+   }
+  },
+  {
+   "id": "var-meaning.relate/construct/m2jpf3",
+   "kpId": "var-meaning",
+   "family": "var-meaning.relate",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "a,\\; b",
+   "given": [],
+   "spoken": {
+    "key": "spoken.var-meaning.relate",
+    "params": {
+     "k": 9
+    },
+    "text": "There are 9 crates on my barge for every one on yours."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "k": 9
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*a + -9*b = 0",
+    "tex": "a = 9b"
+   },
+   "distractors": [
+    {
+     "misconception": "var-as-label",
+     "response": "1*a + -1/9*b = 0",
+     "tex": "9a = b",
+     "failKey": "fail.label"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.var-meaning.relate",
+     "params": {
+      "k": 9
+     },
+     "text": "One barge is the big pile. Put the count of 9 on the small one."
+    },
+    {
+     "key": "hint.state.var-meaning.relate",
+     "params": {
+      "k": 9
+     },
+     "text": "Multiplying the smaller count by 9 is what makes the two pans meet."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "k": 9
+   }
+  },
+  {
+   "id": "var-meaning.twin/construct/1vlr62k",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y = 20,\\quad x - y = 0",
+   "given": [],
+   "ask": {
+    "key": "ask.pair",
+    "params": {
+     "total": 20,
+     "v": 10
+    },
+    "text": "Charge both cores."
+   },
+   "answerType": "pair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x=10;y=10",
+    "tex": "x = 10,\\; y = 10"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "x=6;y=14",
+     "tex": "x = 6,\\; y = 14",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.var-meaning.twin",
+     "params": {
+      "total": 20,
+      "v": 10
+     },
+     "text": "The second core has to sit exactly where the first one does."
+    },
+    {
+     "key": "hint.state.var-meaning.twin",
+     "params": {
+      "total": 20,
+      "v": 10
+     },
+     "text": "Together they carry 20, and nothing separates them."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 10,
+    "d": 4
+   }
+  },
+  {
+   "id": "var-meaning.seat/repair/faucdb",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "r",
+   "given": [
+    "r = 19"
+   ],
+   "working": [
+    "r = 19",
+    "r = 18"
+   ],
+   "brokenBy": "var-alphabet-value",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "letter": "r",
+     "v": 19,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "r",
+   "answer": {
+    "canonical": "2|1*r + -19 = 0",
+    "tex": "r = 19",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-alphabet-value",
+     "response": "2|1*r + -18 = 0",
+     "tex": "r = 18",
+     "failKey": "fail.seat.wrongvalue"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "letter": "r",
+      "v": 19,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "letter": "r",
+      "v": 19,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "r",
+    "v": 19
+   }
+  },
+  {
+   "id": "var-meaning.twin/repair/1bxnsam",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y = 30,\\quad x - y = 0",
+   "given": [],
+   "working": [
+    "x + y = 30",
+    "x = 12",
+    "y = 18"
+   ],
+   "brokenBy": "var-must-differ",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "total": 30,
+     "v": 15,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -15 = 0",
+    "tex": "x = 15",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "2|1*x + -12 = 0",
+     "tex": "x = 12",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "total": 30,
+      "v": 15,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "total": 30,
+      "v": 15,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 15,
+    "d": 3
+   }
+  },
+  {
+   "id": "var-meaning.seat/generate/1wcx1n2",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "k",
+   "given": [
+    "k = 4"
+   ],
+   "ask": {
+    "key": "ask.gen.namesDiffer",
+    "params": {
+     "letter": "k",
+     "v": 4,
+     "target": "4"
+    },
+    "text": "Cut two sockets under different names that hold the same value."
+   },
+   "answerType": "construction",
+   "unknown": "k",
+   "answer": {
+    "canonical": "a = 4; b = 4",
+    "tex": "a = 4; b = 4",
+    "witness": true
+   },
+   "check": {
+    "kind": "namesDiffer",
+    "value": "4"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "a=4;b=5",
+     "tex": "a = 4,\\; b = 5",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.2",
+     "params": {
+      "letter": "k",
+      "v": 4,
+      "target": "4"
+     },
+     "text": "Two names may hold one value. Nothing in the Margin forbids it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.3",
+     "params": {
+      "letter": "k",
+      "v": 4,
+      "target": "4"
+     },
+     "text": "Both sockets are cut. Both are waiting for 4."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "k",
+    "v": 4
+   }
+  },
+  {
+   "id": "var-meaning.relate/construct/m21qbg",
+   "kpId": "var-meaning",
+   "family": "var-meaning.relate",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "a,\\; b",
+   "given": [],
+   "spoken": {
+    "key": "spoken.var-meaning.relate",
+    "params": {
+     "k": 2
+    },
+    "text": "There are 2 crates on my barge for every one on yours."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "k": 2
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*a + -2*b = 0",
+    "tex": "a = 2b"
+   },
+   "distractors": [
+    {
+     "misconception": "var-as-label",
+     "response": "1*a + -1/2*b = 0",
+     "tex": "2a = b",
+     "failKey": "fail.label"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.var-meaning.relate",
+     "params": {
+      "k": 2
+     },
+     "text": "One barge is the big pile. Put the count of 2 on the small one."
+    },
+    {
+     "key": "hint.state.var-meaning.relate",
+     "params": {
+      "k": 2
+     },
+     "text": "Multiplying the smaller count by 2 is what makes the two pans meet."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "k": 2
+   }
+  },
+  {
+   "id": "var-meaning.seat/repair/fa2wrr",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "r",
+   "given": [
+    "r = 11"
+   ],
+   "working": [
+    "r = 11",
+    "r = 18"
+   ],
+   "brokenBy": "var-alphabet-value",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "letter": "r",
+     "v": 11,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "r",
+   "answer": {
+    "canonical": "2|1*r + -11 = 0",
+    "tex": "r = 11",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-alphabet-value",
+     "response": "2|1*r + -18 = 0",
+     "tex": "r = 18",
+     "failKey": "fail.seat.wrongvalue"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "letter": "r",
+      "v": 11,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "letter": "r",
+      "v": 11,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "r",
+    "v": 11
+   }
+  },
+  {
+   "id": "var-meaning.twin/repair/12ddghv",
+   "kpId": "var-meaning",
+   "family": "var-meaning.twin",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "x + y = 6,\\quad x - y = 0",
+   "given": [],
+   "working": [
+    "x + y = 6",
+    "x = 0",
+    "y = 6"
+   ],
+   "brokenBy": "var-must-differ",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "total": 6,
+     "v": 3,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x + -3 = 0",
+    "tex": "x = 3",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "2|1*x = 0",
+     "tex": "x = 0",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "total": 6,
+      "v": 3,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "total": 6,
+      "v": 3,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.2",
+    "params": {},
+    "text": "Ix has been sitting in the empty one for a while, waiting to be told a number."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "v": 3,
+    "d": 3
+   }
+  },
+  {
+   "id": "var-meaning.seat/generate/1aombvy",
+   "kpId": "var-meaning",
+   "family": "var-meaning.seat",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "k",
+   "given": [
+    "k = 15"
+   ],
+   "ask": {
+    "key": "ask.gen.namesDiffer",
+    "params": {
+     "letter": "k",
+     "v": 15,
+     "target": "15"
+    },
+    "text": "Cut two sockets under different names that hold the same value."
+   },
+   "answerType": "construction",
+   "unknown": "k",
+   "answer": {
+    "canonical": "a = 15; b = 15",
+    "tex": "a = 15; b = 15",
+    "witness": true
+   },
+   "check": {
+    "kind": "namesDiffer",
+    "value": "15"
+   },
+   "distractors": [
+    {
+     "misconception": "var-must-differ",
+     "response": "a=15;b=16",
+     "tex": "a = 15,\\; b = 16",
+     "failKey": "fail.twin"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.2",
+     "params": {
+      "letter": "k",
+      "v": 15,
+      "target": "15"
+     },
+     "text": "Two names may hold one value. Nothing in the Margin forbids it."
+    },
+    {
+     "key": "hint.gen.namesDiffer.3",
+     "params": {
+      "letter": "k",
+      "v": 15,
+      "target": "15"
+     },
+     "text": "Both sockets are cut. Both are waiting for 15."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.var-meaning.1",
+    "params": {},
+    "text": "A cutter opened this socket at dawn and has not said what goes in it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2",
+    "CCSS.6.EE.B.6",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "letter": "k",
+    "v": 15
+   }
+  }
+ ]
+}

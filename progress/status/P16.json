@@ -1,9 +1,9 @@
 {
   "id": "P16",
   "state": "building",
-  "round": 1,
-  "gap": null,
-  "note": "Engine built (Graph/Mastery/Scheduler/boot). Running final evidence: P16.mjs, browser determinism, verify.",
+  "round": 2,
+  "gap": "M4's 3-of-4 retention count is taken from raw outcome.correct in Scheduler.submit (line 466), ignoring the engine's own refusal: a learner who reads the hint or answers under the latency floor on all four retention items still certifies 31.95 of 32 knowledge points while the engine logs 124 refusedUpward events per run",
+  "note": "Round 2: fixing retention-gate credit leak (scored-only counting), probe inFlight, scheduler-state persistence, real-ItemBank blind-rate arm",
   "evidence": [],
-  "updated": "2026-08-10T02:30:16.583Z"
+  "updated": "2026-08-10T02:55:54.201Z"
 }

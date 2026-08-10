@@ -451,8 +451,10 @@ function tuftGeo(detail, seed) {
     const a = (b / blades) * TAU + r() * 1.1;
     const off = r() * 0.26;
     const h = 0.5 + r() * 0.5;
-    const w = 0.06 + r() * 0.05;
-    const lean = 0.1 + r() * 0.3;
+    // Wide enough to be a slab. A blade thin enough to disappear edge-on is a spike, and a field
+    // of spikes reads as black noise rather than as ground cover.
+    const w = 0.1 + r() * 0.09;
+    const lean = 0.08 + r() * 0.24;
     const dx = Math.cos(a);
     const dz = Math.sin(a);
     const nx = -dz * w;
@@ -461,8 +463,8 @@ function tuftGeo(detail, seed) {
     const bz = dz * off;
     const tx = bx + dx * lean * h;
     const tz = bz + dz * lean * h;
-    const tw = 0.42;
-    const f = 0.34 + (h - 0.5) * 0.9 + r() * 0.12;
+    const tw = 0.5;
+    const f = 0.55 + (h - 0.5) * 0.7 + r() * 0.14;
     s.quad(
       [bx - nx, 0, bz - nz],
       [bx + nx, 0, bz + nz],
@@ -568,6 +570,12 @@ function extend(material, key, parts) {
       "#include <common>",
       `#include <common>\n${parts.fragmentPars ?? ""}`
     );
+    if (parts.lightBody) {
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <lights_fragment_end>",
+        `#include <lights_fragment_end>\n${parts.lightBody}`
+      );
+    }
     if (parts.fragmentTail) {
       // MeshDepthMaterial has no fog chunk; `replace` on a missing needle is a no-op, which is
       // exactly the behaviour wanted here.
@@ -600,12 +608,20 @@ const FRAG_PARS = /* glsl */ `
 `;
 
 /**
- * Aerial perspective, applied after three's own fog and gated to zero whenever the scene already
- * has fog. There is exactly one authority for haze at any moment: the world's, if the world has
- * one, and this piece's own only when nothing else is providing depth.
+ * Aerial perspective.
+ *
+ * This piece owns its own, and every material it makes is built with `fog: false`, because three's
+ * linear `Fog` is the wrong law for this target in two ways. It reaches 1.0, which erases the
+ * horizon — and `world.md` is made of horizon questions. And it is a straight ramp, so near objects
+ * lose contrast as fast as far ones.
+ *
+ * The law here is the one `palette.json` states: distant geometry converges on `sky.horizon`, and
+ * it converges *part* of the way. The reference's city across the Long Division still holds a
+ * measurable value against the sky behind it, which is only true if haze has a ceiling. Exponential
+ * in distance, capped at `uHaze.y`.
  */
 const HAZE_TAIL = /* glsl */ `
-  float vsHz = smoothstep(uHaze.x, uHaze.y, vEyeDist) * uHaze.z;
+  float vsHz = min(uHaze.y, 1.0 - exp(-vEyeDist * uHaze.x)) * uHaze.z;
   gl_FragColor.rgb = mix(gl_FragColor.rgb, uHazeColor, vsHz);
 `;
 
@@ -743,10 +759,11 @@ class Surface {
 // ---------------------------------------------------------------------------- the archipelago
 
 const ISLAND_BANDS = [
-  // [distance min, max, altitude min, max, radius scale, structure chance]
-  { d: [175, 300], y: [16, 62], r: [9, 17], build: 0.2, crystal: 0.85 },
-  { d: [330, 620], y: [26, 105], r: [14, 30], build: 0.45, crystal: 0.6 },
-  { d: [660, 1080], y: [-18, 150], r: [26, 62], build: 0.75, crystal: 0.35 },
+  // Three distance bands. Radius grows with distance so an island's angular size stays legible,
+  // but not fast enough to cancel perspective — the archipelago has to *recede*.
+  { d: [300, 480], y: [22, 105], r: [13, 26], build: 0.25, crystal: 0.85 },
+  { d: [520, 830], y: [30, 165], r: [24, 50], build: 0.5, crystal: 0.6 },
+  { d: [880, 1150], y: [-30, 235], r: [44, 92], build: 0.8, crystal: 0.3 },
 ];
 
 /**
@@ -761,10 +778,20 @@ const ISLAND_BANDS = [
  * and ragged underneath because that is a fracture where the false part stopped." Nothing here is a
  * smooth mushroom.
  */
-function buildArchipelago(seed, count) {
+function buildArchipelago(seed, count, overLeaf) {
   const rock = new Soup();
   const crystal = new Soup();
-  const stats = { islands: 0, crystals: 0, structures: 0, dMin: Infinity, dMax: 0, yMin: Infinity, yMax: -Infinity };
+  const stats = {
+    islands: 0,
+    crystals: 0,
+    structures: 0,
+    pushed: 0,
+    dropped: 0,
+    dMin: Infinity,
+    dMax: 0,
+    yMin: Infinity,
+    yMax: -Infinity,
+  };
   const GOLDEN = 2.399963229728653;
 
   for (let i = 0; i < count; i++) {
@@ -772,13 +799,29 @@ function buildArchipelago(seed, count) {
     const bandIx = i % ISLAND_BANDS.length;
     const B = ISLAND_BANDS[bandIx];
     const t = r();
-    const dist = B.d[0] + (B.d[1] - B.d[0]) * t;
+    let dist = B.d[0] + (B.d[1] - B.d[0]) * t;
     const alt = B.y[0] + (B.y[1] - B.y[0]) * r();
     const rad = B.r[0] + (B.r[1] - B.r[0]) * r();
     const az = i * GOLDEN + r() * 0.5;
-    const cx = Math.cos(az) * dist;
-    const cz = Math.sin(az) * dist;
     const yaw = r() * TAU;
+
+    // A leaf floats over nothing (`world.md` §2.3: "Below the leaves is not a lower level"). An
+    // island that overlaps the ground the player is standing on is not a floating island, it is a
+    // ceiling — so push it outward until it clears the leaf, and drop it if it never does.
+    let cx = Math.cos(az) * dist;
+    let cz = Math.sin(az) * dist;
+    let tries = 0;
+    while (overLeaf && overLeaf(cx, cz, rad) && tries < 14) {
+      dist += rad * 1.6 + 24;
+      cx = Math.cos(az) * dist;
+      cz = Math.sin(az) * dist;
+      tries++;
+      stats.pushed++;
+    }
+    if (overLeaf && overLeaf(cx, cz, rad)) {
+      stats.dropped++;
+      continue;
+    }
 
     stats.islands++;
     stats.dMin = Math.min(stats.dMin, dist);
@@ -915,7 +958,11 @@ export class Scatter {
 
     this.surface = new Surface(kernel);
     this.tier = config.tier.id;
-    this.density = opts.density ?? (TIER_SCALE[this.tier] ?? 1);
+    // `?scatter=0` empties every budget and the archipelago with it. It exists so a critic can A/B
+    // the exact pixel cost of this piece against the same frame without it, rather than taking a
+    // builder's word for which dark shapes are whose.
+    this.enabled = q.get("scatter") !== "0";
+    this.density = this.enabled ? opts.density ?? (TIER_SCALE[this.tier] ?? 1) : 0;
 
     this._eye = new THREE.Vector3();
     this._lastGatherEye = new THREE.Vector3(1e9, 1e9, 1e9);
@@ -946,21 +993,30 @@ export class Scatter {
       uEye: { value: this._eye },
       uTime: { value: 0 },
       uWind: { value: new THREE.Vector3(0.82, 0.55, 0.055) },
-      uHaze: { value: new THREE.Vector3(80, 900, 0) },
+      // x: 1/falloff metres · y: ceiling · z: master strength
+      uHaze: { value: new THREE.Vector3(1 / 620, 0.78, 1) },
       uHazeColor: { value: col(PAL.horizon) },
     };
 
     this.categories = this._buildCategories();
     for (const cat of this.categories) for (const l of cat.lods) this.root.add(l.mesh);
 
-    this.islands = this._buildIslands(opts.islands ?? TIER_ISLANDS[this.tier] ?? 34);
+    this.islands = this._buildIslands(this.enabled ? opts.islands ?? TIER_ISLANDS[this.tier] ?? 34 : 0);
 
     this._offReady = signals.on("world:ready", () => this.rebuild());
     this._offSpawn = signals.on("player:spawn", (p) => {
       if (!p?.position) return;
       // Never plant anything inside the player. A 3.4 m clearing is the difference between a spawn
       // and a spawn inside a crystal.
-      this._clearings.push({ x: p.position.x, z: p.position.z, r: 3.4 });
+      //
+      // Both guards here are load-bearing. A respawn loop — which is exactly what a half-built
+      // world produces — would otherwise re-stream every tile in the world on every respawn and
+      // grow an unbounded clearing list that `_inClearing` walks per candidate. Ignore a spawn
+      // that lands inside a clearing we already cut, and keep only the last eight.
+      const { x, z } = p.position;
+      if (this._clearings.some((c) => (c.x - x) ** 2 + (c.z - z) ** 2 < 4)) return;
+      this._clearings.push({ x, z, r: 3.4 });
+      if (this._clearings.length > 8) this._clearings.shift();
       this.rebuild();
     });
   }
@@ -977,10 +1033,12 @@ export class Scatter {
    * on. Roughness 1 with metalness 0 makes the specular lobe negligible, which is what the target
    * wants — there is not one specular highlight anywhere in the reference.
    */
-  _flatMaterial(key, { colour, roughness = 1, emissive = 0x000000, emissiveIntensity = 1, side, fade, wind = 0 }) {
+  _flatMaterial(key, { colour, roughness = 1, emissive = 0x000000, emissiveIntensity = 1, side, wind = 0, bandEmissive = false }) {
     const uniforms = {
       ...this._shared,
-      uFade: { value: new THREE.Vector2(fade[0], fade[1]) },
+      // Filled in per category by `_buildCategories`, which derives the band from the gather
+      // radius so the two can never drift apart.
+      uFade: { value: new THREE.Vector2(1e6, 1e6 + 1) },
     };
     const mat = new THREE.MeshStandardMaterial({
       color: col(colour),
@@ -988,7 +1046,12 @@ export class Scatter {
       metalness: 0,
       emissive: col(emissive),
       emissiveIntensity,
-      flatShading: true,
+      // NOT `flatShading: true`. The normals in these buffers are *already* one per face — see
+      // `faceNormals()` — and `probe().flatShading` measures that rather than trusting a flag.
+      // Deriving them again from screen-space derivatives would be both redundant and worse: a
+      // 3-pixel chip at 90 m straddles a 2x2 quad, the derivative reads across two triangles, and
+      // the facet flips to a garbage normal. Baked normals are exact at every size.
+      flatShading: false,
       vertexColors: true,
       dithering: true,
       side: side ?? THREE.FrontSide,
@@ -999,6 +1062,10 @@ export class Scatter {
       vertexPars: FADE_PARS + (wind ? "attribute float aBend;" : ""),
       vertexBody: fadeBody({ wind: Boolean(wind) }),
       fragmentPars: FRAG_PARS,
+      // The value ladder up a certainty is authored as per-face vertex colour, and three only
+      // applies vertex colour to the *diffuse*. Without this the emissive floor would be a
+      // constant wash across the whole crystal and the bands would wash out with it.
+      lightBody: bandEmissive ? "totalEmissiveRadiance *= vColor;" : null,
       fragmentTail: HAZE_TAIL,
     });
   }
@@ -1026,62 +1093,71 @@ export class Scatter {
     const d = this.density;
     const cap = (n) => Math.max(0, Math.round(n * d));
 
-    const matStone = this._flatMaterial("p13:stone", { colour: PAL.rock, fade: [110, 150] });
-    const matCrystal = this._flatMaterial("p13:crystal", {
-      colour: PAL.crystalHot,
-      roughness: 0.62,
-      // A dim teal floor under the diffuse. The reference's crystals never fall out of hue when
-      // they turn away from the key — they go down in value and stay cyan — and a purely diffuse
-      // cyan under a blue-grey sky fill does not do that on its own.
-      emissive: PAL.crystalFace,
-      emissiveIntensity: 0.17,
-      fade: [170, 215],
-    });
-    const matFlora = this._flatMaterial("p13:flora", {
-      colour: PAL.foliageLit,
-      side: THREE.DoubleSide,
-      fade: [46, 62],
-      wind: 1,
-    });
-    const matLichen = this._flatMaterial("p13:lichen", {
-      colour: PAL.bone,
-      side: THREE.DoubleSide,
-      fade: [52, 70],
-    });
-
-    this._materials = { stone: matStone, crystal: matCrystal, flora: matFlora, lichen: matLichen };
+    /**
+     * Four material *families*, one material object per category.
+     *
+     * Separate objects because the fade band is a uniform and every category fades at its own
+     * distance; one shared object could only hold one band. It costs nothing: all three stone
+     * categories return the same `customProgramCacheKey` and carry identical material parameters,
+     * so three compiles the family once and hands out the same program to all of them.
+     */
+    const FAMILY = {
+      stone: { colour: PAL.rock },
+      crystal: {
+        colour: PAL.crystalFace,
+        roughness: 0.62,
+        /**
+         * A certainty carries its own light, and it has to.
+         *
+         * The palette measures the accent at hue 164–168 and V ≥ 0.92. Solve for the albedo that
+         * produces that under this world's key — a warm dusk sun at `sky.sun` #FFF77D, linear
+         * (1.00, 0.93, 0.21) — and the blue channel comes out at 3.7, i.e. there is no reflectance
+         * that gets there. A purely diffuse cyan under a yellow sun is a *green*, which is exactly
+         * what the first pass measured: hue 142, and a frame-wide cool-accent census of 0.0000
+         * against the reference's 0.0094. So the crystal emits: `crystal.hot` at 0.7 lands the
+         * unlit facet inside the accent gate on its own, and the key adds value on top of it
+         * rather than deciding the hue.
+         */
+        emissive: PAL.crystalHot,
+        emissiveIntensity: 0.7,
+        bandEmissive: true,
+      },
+      flora: { colour: PAL.foliageLit, side: THREE.DoubleSide, wind: 1 },
+      lichen: { colour: PAL.bone, side: THREE.DoubleSide },
+    };
+    this._materials = [];
 
     const specs = [
       {
         id: "crystal",
+        family: "crystal",
         geo: [crystalGeo(true, seed ^ 0x11), crystalGeo(false, seed ^ 0x11)],
-        material: matCrystal,
-        budget: [cap(430), cap(880)],
-        lodDist: 46,
-        gather: 190,
-        spacing: 9.5,
+        budget: [cap(380), cap(760)],
+        lodDist: 58,
+        gather: 260,
+        spacing: 13,
         cluster: "crystal",
         shadow: true,
         solid: true,
       },
       {
         id: "shard",
+        family: "crystal",
         geo: [shardGeo(true, seed ^ 0x22), shardGeo(false, seed ^ 0x22)],
-        material: matCrystal,
         budget: [cap(420), cap(900)],
         lodDist: 34,
-        gather: 130,
+        gather: 150,
         spacing: 9.5,
         cluster: "shard",
         shadow: true,
       },
       {
         id: "boulder",
+        family: "stone",
         geo: [boulderGeo(true, seed ^ 0x33), boulderGeo(false, seed ^ 0x33)],
-        material: matStone,
-        budget: [cap(340), cap(700)],
-        lodDist: 42,
-        gather: 150,
+        budget: [cap(420), cap(820)],
+        lodDist: 52,
+        gather: 185,
         spacing: 5.5,
         cluster: "rock",
         shadow: true,
@@ -1089,33 +1165,33 @@ export class Scatter {
       },
       {
         id: "spire",
+        family: "stone",
         geo: [spireGeo(true, seed ^ 0x44), spireGeo(false, seed ^ 0x44)],
-        material: matStone,
-        budget: [cap(140), cap(260)],
-        lodDist: 62,
-        gather: 200,
-        spacing: 11,
+        budget: [cap(120), cap(220)],
+        lodDist: 84,
+        gather: 280,
+        spacing: 16,
         shadow: true,
         solid: true,
       },
       {
         id: "chip",
+        family: "stone",
         geo: [chipGeo(seed ^ 0x55)],
-        material: matStone,
         budget: [cap(900), 0],
         lodDist: 1e9,
-        gather: 62,
+        gather: 70,
         spacing: 3.1,
         cluster: "flat",
         shadow: false,
       },
       {
         id: "tuft",
+        family: "flora",
         geo: [tuftGeo(true, seed ^ 0x66), tuftGeo(false, seed ^ 0x66)],
-        material: matFlora,
         budget: [cap(2600), cap(3400)],
         lodDist: 26,
-        gather: 55,
+        gather: 58,
         spacing: 2.3,
         cluster: "flat",
         shadow: false,
@@ -1123,8 +1199,8 @@ export class Scatter {
       },
       {
         id: "abouts",
+        family: "flora",
         geo: [aboutsGeo(true, seed ^ 0x77), aboutsGeo(false, seed ^ 0x77)],
-        material: matFlora,
         budget: [cap(900), cap(1200)],
         lodDist: 24,
         gather: 52,
@@ -1135,8 +1211,8 @@ export class Scatter {
       },
       {
         id: "oldtrue",
+        family: "lichen",
         geo: [oldtrueGeo(seed ^ 0x88)],
-        material: matLichen,
         budget: [cap(900), 0],
         lodDist: 1e9,
         gather: 56,
@@ -1145,6 +1221,17 @@ export class Scatter {
         shadow: false,
       },
     ];
+
+    for (const s of specs) {
+      s.material = this._flatMaterial(`p13:${s.family}`, FAMILY[s.family]);
+      // The fade band is derived, never typed. `_gather` streams to `gather` metres and the
+      // per-instance jitter widens the band by up to +11%, so the shrink must be complete by
+      // `gather / 1.12` — which is what makes "no instance ever appears or disappears at full
+      // size" a property of the code rather than a hope about two numbers agreeing.
+      const end = s.gather / 1.12;
+      s.material.userData.fadeUniform.value.set(Math.max(6, end - 28), end);
+      this._materials.push(s.material);
+    }
 
     return specs.map((s, index) => {
       const lods = s.geo.map((geo, li) => {
@@ -1173,9 +1260,49 @@ export class Scatter {
     });
   }
 
+  /** True when any part of a disc of radius `r` at (x, z) stands over solid ground. */
+  _overLeaf(x, z, r) {
+    const s = this._sample2;
+    if (this.surface.sample(x, z, s).hit) return true;
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * TAU + 0.4;
+      if (this.surface.sample(x + Math.cos(a) * r * 1.15, z + Math.sin(a) * r * 1.15, s).hit) return true;
+    }
+    return false;
+  }
+
   _buildIslands(count) {
-    const { rock, crystal, stats } = buildArchipelago(this.seed ^ 0xa11, count);
-    const mk = (geo, mat, name) => {
+    this._islandCount = count;
+    // Non-instanced siblings of the ground materials. Separate objects because the archipelago has
+    // no distance fade — it is *supposed* to be there at a kilometre — and because two more
+    // materials are free next to a 90-program budget.
+    if (!this._islandMats) {
+      this._islandMats = [
+        new THREE.MeshStandardMaterial({
+          color: col(PAL.rock),
+          roughness: 1,
+          metalness: 0,
+          vertexColors: true,
+          dithering: true,
+        }),
+        new THREE.MeshStandardMaterial({
+          color: col(PAL.crystalFace),
+          roughness: 0.62,
+          metalness: 0,
+          emissive: col(PAL.crystalHot),
+          emissiveIntensity: 0.7,
+          vertexColors: true,
+          dithering: true,
+        }),
+      ];
+    }
+    const { rock, crystal, stats } = buildArchipelago(this.seed ^ 0xa11, count, (x, z, r) => this._overLeaf(x, z, r));
+    const mk = (geo, mat, name, existing) => {
+      if (existing) {
+        existing.geometry.dispose();
+        existing.geometry = geo;
+        return existing;
+      }
       const m = new THREE.Mesh(geo, mat);
       m.name = name;
       m.castShadow = false;
@@ -1184,31 +1311,9 @@ export class Scatter {
       this.root.add(m);
       return m;
     };
-    // Non-instanced siblings of the ground materials. Separate objects because the archipelago has
-    // no distance fade — it is *supposed* to be there at 1 km — and because a second material is
-    // free next to a 90-program budget.
-    const rockMat = new THREE.MeshStandardMaterial({
-      color: col(PAL.rock),
-      roughness: 1,
-      metalness: 0,
-      flatShading: true,
-      vertexColors: true,
-      dithering: true,
-    });
-    const crystalMat = new THREE.MeshStandardMaterial({
-      color: col(PAL.crystalHot),
-      roughness: 0.62,
-      metalness: 0,
-      emissive: col(PAL.crystalFace),
-      emissiveIntensity: 0.28,
-      flatShading: true,
-      vertexColors: true,
-      dithering: true,
-    });
-    this._islandMats = [rockMat, crystalMat];
     return {
-      rock: mk(rock, rockMat, "scatter:islands:rock"),
-      crystal: mk(crystal, crystalMat, "scatter:islands:crystal"),
+      rock: mk(rock, this._islandMats[0], "scatter:islands:rock", this.islands?.rock),
+      crystal: mk(crystal, this._islandMats[1], "scatter:islands:crystal", this.islands?.crystal),
       stats: {
         ...stats,
         rockTris: triCount(rock),
@@ -1237,7 +1342,7 @@ export class Scatter {
   _field(x, z, hNorm) {
     const blob = fbm2(x * 0.0165 + 11.3, z * 0.0165 - 4.7, this.seed ^ 0x1c1c, 3);
     const line = 1 - Math.abs(noise2(x * 0.021 - 3.1, z * 0.021 + 8.4, this.seed ^ 0x2d2d) * 2 - 1);
-    return clamp01(ramp(blob, 0.5, 0.8) * (0.55 + 0.45 * (1 - hNorm)) + Math.pow(clamp01(line), 7) * 0.8);
+    return clamp01(ramp(blob, 0.56, 0.84) * (0.55 + 0.45 * (1 - hNorm)) + Math.pow(clamp01(line), 8) * 0.7);
   }
 
   /** Low-frequency region mask: meadow (1) against barren (0). */
@@ -1417,9 +1522,16 @@ export class Scatter {
       const isShard = kind === "shard";
       // One formation in eight is a *great* one. A field of evenly-sized clusters has no subject;
       // the reference's frame is anchored by a single certainty stand taller than a person.
-      const great = !isShard && rr() < 0.13;
-      const n = isShard ? 3 + Math.floor(rr() * 5) : (great ? 7 : 4) + Math.floor(rr() * 6);
-      const heroH = isShard ? 0.5 + rr() * 0.75 : great ? 4.0 + rr() * 3.0 : 1.4 + rr() * 2.3;
+      const great = !isShard && rr() < 0.09;
+      const n = isShard ? 3 + Math.floor(rr() * 5) : (great ? 8 : 4) + Math.floor(rr() * 6);
+      // Biased small on purpose. An unbiased range makes every formation the same size and the
+      // field reads as a row of shark fins; the reference has one stand you would walk toward and
+      // a lot of ankle-height clutter that makes it look tall.
+      const heroH = isShard
+        ? 0.6 + rr() * 0.9
+        : great
+          ? 3.2 + rr() * 2.4
+          : 0.9 + Math.pow(rr(), 1.7) * 2.6;
       const az0 = rr() * TAU;
       for (let k = 0; k < n; k++) {
         const hero = k === 0;
@@ -1430,7 +1542,7 @@ export class Scatter {
         const pz = cz + Math.sin(a) * r;
         this.surface.sample(px, pz, this._sample2);
         if (!this._sample2.hit) continue;
-        const h = hero ? heroH : heroH * (0.26 + rr() * 0.6);
+        const h = hero ? heroH : heroH * (0.14 + Math.pow(rr(), 1.5) * 0.66);
         this._emitOne(cat, px, this._sample2.y, pz, this._sample2, rr, out, {
           hero,
           height: h,
@@ -1506,19 +1618,19 @@ export class Scatter {
         sx = sy * (0.42 + rr() * 0.4);
         break;
       case "boulder":
-        sy = (o.hero ? 0.9 + Math.pow(rr(), 1.6) * 2.6 : 0.4 + Math.pow(rr(), 1.7) * 1.3) * 1.0;
-        sx = sy * (1.0 + rr() * 0.8);
+        sy = o.hero ? 1.3 + Math.pow(rr(), 1.5) * 3.4 : 0.55 + Math.pow(rr(), 1.7) * 1.7;
+        sx = sy * (0.95 + rr() * 0.8);
         break;
       case "spire":
-        sy = 2.0 + Math.pow(rr(), 1.4) * 4.6;
-        sx = sy * (0.16 + rr() * 0.14);
+        sy = 2.2 + Math.pow(rr(), 1.8) * 4.2;
+        sx = sy * (0.17 + rr() * 0.16);
         break;
       case "chip":
-        sy = 0.14 + Math.pow(rr(), 2.0) * 0.5;
-        sx = sy * (1.0 + rr() * 1.4);
+        sy = 0.3 + Math.pow(rr(), 1.8) * 0.85;
+        sx = sy * (0.9 + rr() * 1.1);
         break;
       case "tuft":
-        sy = 0.3 + Math.pow(rr(), 1.3) * 0.62;
+        sy = 0.34 + Math.pow(rr(), 1.3) * 0.72;
         sx = sy * (0.75 + rr() * 0.6);
         break;
       case "abouts":
@@ -1549,13 +1661,13 @@ export class Scatter {
     switch (cat.id) {
       case "crystal":
       case "shard":
-        lum = 0.84 + rr() * 0.3;
-        warm = (rr() - 0.5) * 0.05;
+        lum = 0.72 + Math.pow(rr(), 0.8) * 0.52;
+        warm = (rr() - 0.5) * 0.06;
         break;
       case "tuft":
       case "abouts":
-        lum = 0.62 + Math.pow(rr(), 1.4) * 0.62;
-        warm = (rr() - 0.5) * 0.14;
+        lum = 0.78 + Math.pow(rr(), 1.2) * 0.6;
+        warm = (rr() - 0.5) * 0.16;
         break;
       case "oldtrue":
         lum = 0.68 + rr() * 0.42;
@@ -1581,6 +1693,9 @@ export class Scatter {
 
   rebuild() {
     this.surface.refresh();
+    // The archipelago has to be rebuilt too: which islands stand over the leaf is a question only
+    // the surface can answer, and the surface is exactly what has just changed.
+    if (this.islands) this.islands = this._buildIslands(this._islandCount);
     for (const cat of this.categories) {
       cat.tiles.clear();
       cat.candidates = 0;
@@ -1597,15 +1712,6 @@ export class Scatter {
   frame() {
     // Wind runs on simulation time so `advance()` reproduces the frame exactly.
     this._shared.uTime.value = this.kernel.simTime;
-
-    // Exactly one authority for haze. If the world has fog, this piece adds none.
-    const fog = this.kernel.scene.fog;
-    const haze = this._shared.uHaze.value;
-    if (fog) {
-      haze.z = 0;
-    } else {
-      haze.set(70, Math.max(200, config.tier.drawDistance * 0.85), 1);
-    }
   }
 
   after() {
@@ -1626,11 +1732,14 @@ export class Scatter {
 
     const moved = this._eye.distanceToSquared(this._lastGatherEye);
     this._outstanding = this._streamTiles();
-    if (!this._outstanding && moved < 9 && this._built) return;
-
-    this._lastGatherEye.copy(this._eye);
-    this._gather();
-    this._built = true;
+    if (this._outstanding || moved >= 9 || !this._built) {
+      this._lastGatherEye.copy(this._eye);
+      this._gather();
+      this._built = true;
+    }
+    // Deliberately outside the gather gate. Streaming usually finishes on a frame where the eye
+    // has not moved, and hanging the collider publish off the gather meant it was skipped on
+    // exactly that frame and never reached again.
     if (!this._outstanding) this._publishSolids();
   }
 
@@ -1806,12 +1915,23 @@ export class Scatter {
     }
     if (!best) return null;
     // Stand back on the +X/+Z diagonal so the key (which the rig puts low and warm) rakes across
-    // the facets rather than flattening them.
-    const back = Math.max(3.2, best.h * 1.5);
+    // the facets rather than flattening them. The stance is *sampled*, not assumed: handing a
+    // reviewer a point in mid-air would drop the player into the void and respawn-loop the world.
     const dx = 0.78;
     const dz = 0.63;
+    const s = this._sample2;
+    let pos = null;
+    for (let back = Math.max(3.4, best.h * 1.6); back > 1.4; back -= 0.6) {
+      const px = best.x + dx * back;
+      const pz = best.z + dz * back;
+      if (this.surface.sample(px, pz, s).hit) {
+        pos = [px, s.y + 1.2, pz];
+        break;
+      }
+    }
+    if (!pos) pos = [best.x + dx * 2, best.y + 1.2, best.z + dz * 2];
     return {
-      pos: [Number((best.x + dx * back).toFixed(3)), Number((best.y + 1.1).toFixed(3)), Number((best.z + dz * back).toFixed(3))],
+      pos: pos.map((v) => Number(v.toFixed(3))),
       opts: { heading: [-dx, -dz] },
       target: [Number(best.x.toFixed(3)), Number(best.y.toFixed(3)), Number(best.z.toFixed(3))],
       height: Number(best.h.toFixed(2)),
@@ -1900,7 +2020,7 @@ export class Scatter {
         l.mesh.customDepthMaterial?.dispose();
       }
     }
-    for (const m of Object.values(this._materials ?? {})) m.dispose();
+    for (const m of this._materials ?? []) m.dispose();
     for (const m of this._islandMats ?? []) m.dispose();
     this.islands?.rock?.geometry?.dispose();
     this.islands?.crystal?.geometry?.dispose();

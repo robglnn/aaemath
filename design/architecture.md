@@ -81,6 +81,17 @@ ignore payloads carrying `source:"camera"`.
 `learn:mastery {kpId, p, delta}` · `learn:teach {kpId, phase:"model"|"guided"|"solo"}` ·
 `learn:unlock {kpId}` · `learn:session {phase, summary}`
 
+**Math** (P15) — `math:show {id, tex, at, em, billboard, display, kpId, working}` ·
+`math:hide {id}`
+
+`math:show` stands one expression in world space and is idempotent on `id` — sending it again
+with new `tex` re-typesets that claim in place. `at` is a world position, `em` is the glyph
+size in world units (not the overall height: a fraction is taller than a one-line claim at the
+same `em`, which is what "the same size writing" means). `working: {slope, intercept, xTicks,
+yTicks}` draws a plotted axis instead of an expression. `math:hide` with no `id` clears the
+field. The first `math:show` or `learn:present` retires the claims standing at spawn, so a
+learning system takes the surface over rather than fighting it.
+
 **UI** — `ui:prompt {key, params}` · `ui:toast {key, tone}` · `ui:menu {id, open}` ·
 `ui:locale {locale}`
 

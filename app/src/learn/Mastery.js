@@ -119,6 +119,17 @@ export class Mastery {
       lapses: 0,
     };
 
+    /**
+     * Knowledge points with work open right now — the continuity block and any multi-item
+     * certification event. §8 requirement 11 names `inFlight[]` as a top-level probe field, so it
+     * lives here (learner state, persisted, restored) rather than only on the Scheduler, where a
+     * reload used to drop it. The Scheduler writes it through `setInFlight()`.
+     */
+    this.inFlight = [];
+
+    /** Set by `new Scheduler(this)`. Lets `snapshot()` carry the Scheduler's half of the state. */
+    this._scheduler = null;
+
     this.byKp = new Map();
     for (const id of this.graph.ids) this.byKp.set(id, freshNodeState(this.graph.band(id).prior));
   }
@@ -300,6 +311,9 @@ export class Mastery {
       hinted,
       scored: false,
       masteryEligible: false,
+      // The engine's verdict, not the caller's: `correct` is what the world reported, `credited`
+      // is what the engine is willing to count. Every gate reads this one.
+      credited: false,
       reason: null,
       p: s.p,
       delta: 0,
@@ -324,7 +338,7 @@ export class Mastery {
       this.stats.unscoredItems += 1;
       s.unscored += 1;
       out.reason = this.pricing.scoredForms.has(form) ? "unscored-phase" : "unscored-form";
-      this._bookkeep(s, correct, phase, mode);
+      this._bookkeep(s, out);
       this._emitRespond(out);
       return out;
     }
@@ -338,16 +352,20 @@ export class Mastery {
       this.stats.refusedUpward += 1;
       s.refusedUpward += 1;
       out.reason = fast ? "not-scored-upward:latency-floor" : "not-scored-upward:hinted";
-      this._bookkeep(s, correct, phase, mode);
+      this._bookkeep(s, out);
       this._emitRespond(out);
       return out;
     }
 
     out.scored = true;
+    out.masteryEligible = this.isMasteryEligible(form, phase);
+    // `credited` is the engine's own verdict on this response, and it is the ONLY thing any gate
+    // is allowed to count. See `_bookkeep`.
+    out.credited = correct && out.masteryEligible;
     this.stats.scoredItems += 1;
     // Fire the response before anything moves, so a listener sees respond -> mastery -> unlock in
     // the order the world experiences them.
-    this._bookkeep(s, correct, phase, mode);
+    this._bookkeep(s, out);
     this._emitRespond(out);
 
     // ---- ability, §1.3. Rasch + stochastic approximation with provisional-rating decay.
@@ -364,8 +382,7 @@ export class Mastery {
 
     // ---- M2 / M3 counters. Opportunities, not correct answers: right or wrong, the learner met
     // the skill unaided. Both axes must clear, and only acquisition fills the gate.
-    const eligible = this.isMasteryEligible(form, phase);
-    out.masteryEligible = eligible;
+    const eligible = out.masteryEligible;
     if (mode === "acquire" && eligible) {
       s.scored += 1;
       if (b >= band.logit) s.atBand += 1;
@@ -409,16 +426,39 @@ export class Mastery {
     return out;
   }
 
-  /** Bookkeeping every response does regardless of whether the engine scored it. */
-  _bookkeep(s, correct, phase, mode) {
-    if (mode === "acquire") {
-      s.lastPhase = phase;
-      s.lastCorrect = correct;
-      s.consecutiveWrong = correct ? 0 : s.consecutiveWrong + 1;
+  /**
+   * Bookkeeping every response does regardless of whether the engine scored it.
+   *
+   * ------------------------------------------------------------------------------------------
+   * THE LINE THAT DECIDES WHETHER MASTERY CAN BE BOUGHT
+   *
+   * `out.correct` is what the WORLD reported. `out.credited` is what the ENGINE decided. A
+   * multi-item certification event may only ever tally the second. Round 1 of this piece tallied
+   * `correct` here and again in `Scheduler.submit`, so a learner who idled twelve seconds, read
+   * the hint and typed what it said — or who committed in 100 ms — was refused during acquisition
+   * and then credited identically to an unaided learner at M4, the one transition that decides
+   * the Level 1 percentage. The refusal was computed, logged as `refusedUpward`, and then ignored
+   * exactly where it mattered.
+   *
+   * `credited` is strictly stronger than "scored": it also requires the pair to be
+   * MASTERY-ELIGIBLE, so a retention item that somehow arrived at `guided-1` — scorable, but a
+   * step the world placed for you — buys nothing either. There is exactly one counter now; the
+   * Scheduler reads this one and keeps none of its own, because a duplicate counter is what made
+   * the original bug invisible on inspection.
+   * ------------------------------------------------------------------------------------------
+   */
+  _bookkeep(s, out) {
+    if (out.mode === "acquire") {
+      s.lastPhase = out.phase;
+      s.lastCorrect = out.correct;
+      s.consecutiveWrong = out.correct ? 0 : s.consecutiveWrong + 1;
     }
-    if (s.event) {
+    // Only responses belonging to the open event tally into it. A caller that scores an
+    // acquisition item while a retention check is open cannot pad the check.
+    if (s.event && out.mode === s.event.mode) {
       s.event.served += 1;
-      if (correct) s.event.right += 1;
+      if (out.credited) s.event.right += 1;
+      else if (out.correct) s.event.refusedRight += 1;
     }
   }
 
@@ -492,7 +532,10 @@ export class Mastery {
    */
   beginEvent(kpId, mode, items) {
     const s = this.stateOf(kpId);
-    s.event = { mode, items, served: 0, right: 0 };
+    // `right` counts CREDITED corrects only. `refusedRight` is the same response set the engine
+    // refused, kept so a reviewer can see the refusal happening at the gate instead of inferring
+    // it from a missing increment.
+    s.event = { mode, items, served: 0, right: 0, refusedRight: 0 };
     return s.event;
   }
 
@@ -518,10 +561,13 @@ export class Mastery {
    * who slipped through the threshold on the fourth item; the posterior alone lets 2-of-4 through
    * on a favourable prior.
    */
-  retentionPassed(kpId, right) {
+  retentionPassed(kpId, right = null) {
     const rc = this.M.spacing.retentionCheck;
     const s = this.stateOf(kpId);
-    const okCount = right >= rc.passAtLeast;
+    // Default to the engine's own tally — `s.event.right`, which counts CREDITED corrects and
+    // nothing else. The explicit argument exists so a test can drive the conjunction directly.
+    const credited = right == null ? (s.event?.right ?? 0) : right;
+    const okCount = credited >= rc.passAtLeast;
     const okPosterior = !rc.requiresThresholdAtCheck || s.p >= this.M.bkt.masteryThreshold;
     return okCount && okPosterior;
   }
@@ -569,6 +615,15 @@ export class Mastery {
     this.emit("learn:mastery", { kpId, p: round6(s.p), delta: 0, status: s.status, lapse: reason });
     this.persist();
     return s;
+  }
+
+  /**
+   * The Scheduler writes the currently-open work through here so `inFlight[]` is learner state
+   * that survives a reload, not a field that only exists while one Scheduler object is alive.
+   */
+  setInFlight(ids) {
+    this.inFlight = [...new Set(ids.filter(Boolean))];
+    return this.inFlight;
   }
 
   /** Two lapses inside `withinDays`, §3 rule 5 — the condition the re-entry phase reads. */
@@ -626,12 +681,23 @@ export class Mastery {
       if (Number.isFinite(s.nextEventAt) && s.nextEventAt <= t) due.push({ kpId: id, overdueMinutes: round6(t - s.nextEventAt) });
     }
     due.sort((a, b) => b.overdueMinutes - a.overdueMinutes || (a.kpId < b.kpId ? -1 : 1));
+    // §8 requirement 11 names `inFlight[]` as a TOP-LEVEL field of the `mastery` probe. It used to
+    // survive only because boot/62-learning.js merged the Scheduler's probe in, so a reviewer
+    // reading the spec did not find the field the spec names. It is here now.
+    const openEvent = this.inFlight
+      .map((id) => {
+        const s = this.byKp.get(id);
+        return s?.event ? { kpId: id, mode: s.event.mode, served: s.event.served, right: s.event.right, of: s.event.items } : null;
+      })
+      .filter(Boolean);
     return {
       ...this.summary(),
       session: this.session,
       responses: this.responses,
       dueNow: due.length,
       due: due.slice(0, 8),
+      inFlight: [...this.inFlight],
+      openEvents: openEvent,
       unscoredItems: this.stats.unscoredItems,
       refusedUpward: this.stats.refusedUpward,
       stats: { ...this.stats },
@@ -687,6 +753,11 @@ export class Mastery {
       responses: this.responses,
       session: this.session,
       stats: { ...this.stats },
+      inFlight: [...this.inFlight],
+      // The Scheduler's half of the state. Without it a reload used to drop a half-answered
+      // retention check on the floor — no lapse, no M2 dock, `nextEventAt` still due, so the check
+      // could be re-rolled indefinitely — and reset the no-repeat-within-40 window every time.
+      scheduler: this._scheduler ? this._scheduler.snapshot() : null,
       kps,
     };
   }
@@ -697,6 +768,7 @@ export class Mastery {
     this.responses = snap.responses ?? 0;
     this.session = snap.session ?? 0;
     Object.assign(this.stats, snap.stats ?? {});
+    this.inFlight = [...(snap.inFlight ?? [])];
     for (const id of this.graph.ids) {
       const from = snap.kps?.[id];
       if (!from) continue;
@@ -705,9 +777,36 @@ export class Mastery {
         forms: [...(from.forms ?? [])],
         lapseAt: [...(from.lapseAt ?? [])],
         nextEventAt: from.nextEventAt == null ? Infinity : from.nextEventAt,
+        event: from.event ? { refusedRight: 0, ...from.event } : null,
       });
     }
+    // A snapshot that CARRIES a scheduler block is resumable, whether or not this particular
+    // Mastery has a Scheduler attached (a reviewer round-tripping the state has none). A snapshot
+    // that does not carry one is state that was thrown away mid-check.
+    if (snap.scheduler) this._scheduler?.restore(snap.scheduler);
+    else this._abandonOrphanedChecks(snap.scheduler === undefined ? "legacy-state" : "no-scheduler-state");
     return true;
+  }
+
+  /**
+   * A retention check whose Scheduler half did not come back cannot be resumed, and a check that
+   * cannot be resumed is a check that was abandoned. §3 says a failed retention check is a lapse;
+   * an abandoned one is not cheaper than a failed one, or "close the tab when it is going badly"
+   * becomes a strategy. Consolidation and review carry no gate, so they are simply dropped.
+   */
+  _abandonOrphanedChecks(reason) {
+    const hits = [];
+    for (const id of this.graph.ids) {
+      const s = this.stateOf(id);
+      if (!s.event) continue;
+      const wasRetention = s.event.mode === "retention" && s.event.served > 0;
+      s.event = null;
+      if (wasRetention) {
+        this.lapse(id, `retention-abandoned:${reason}`);
+        hits.push(id);
+      }
+    }
+    return hits;
   }
 
   persist() {

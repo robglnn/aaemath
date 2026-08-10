@@ -443,9 +443,24 @@ if (!OFFLINE) {
     { w: 1280, h: 720 },
   ];
 
+  // Other pieces are being written while this runs, and a Vite HMR reload mid-session destroys
+  // the page's execution context. That is churn, not a finding, so a session gets three tries
+  // before it is allowed to fail the measurement.
+  const attempt = async (fn) => {
+    let last;
+    for (let i = 0; i < 3; i++) {
+      try {
+        return await fn();
+      } catch (err) {
+        last = err;
+      }
+    }
+    throw last;
+  };
+
   for (const lang of LOCALES) {
     for (const size of SIZES) {
-      await openGame(
+      await attempt(() => openGame(
         { lang, width: size.w, height: size.h, query: { i18nproof: "1" } },
         async (d) => {
           await d.play(1.0);
@@ -457,13 +472,22 @@ if (!OFFLINE) {
           foreignErrors[`${lang}@${size.w}`] = (rep.errors ?? []).map((e) => e.split("\n")[0]);
           if (SHOTS && size.w === 1600) {
             const file = `review/shots/p20/${lang}-1600x900.png`;
-            await d.shoot(file);
-            shots.push(path.join(SROOT, file));
+            // Pause the fixed-step clock first. Headless software GL is slow enough that a live
+            // 3D scene can starve the compositor and time the capture out; the layout numbers
+            // above are already taken, and a paused frame is the same frame.
+            await d.run(() => window.__vs?.pause?.(true));
+            try {
+              await d.shoot(file);
+              shots.push(path.join(SROOT, file));
+            } catch (err) {
+              shots.push(`${file} — CAPTURE FAILED: ${String(err).split("\n")[0]}`);
+            }
+            await d.run(() => window.__vs?.pause?.(false));
           }
           const sentinel = await d.run(() => (document.getElementById("overlay")?.innerText ?? "").includes("‹"));
           if (sentinel) throw new Error(`${lang}: a ‹key› sentinel is on screen`);
         }
-      );
+      ));
     }
   }
 

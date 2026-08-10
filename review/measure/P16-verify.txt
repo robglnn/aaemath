@@ -1,0 +1,5 @@
+[en] ready=true fps~5 draws=59 tris=165102 katex=3/0f
+[es] ready=true fps~5 draws=58 tris=164722 katex=3/0f
+[pl] ready=true fps~5 draws=58 tris=164186 katex=3/0f
+
+VERIFY PASSED

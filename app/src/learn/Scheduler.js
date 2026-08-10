@@ -73,7 +73,11 @@ export class Scheduler {
 
     // Mastery reads the same clock, so `provisionalAt` and `nextEventAt` share one time base.
     this.mastery.now = () => this.clock.minutes();
+    // Mastery owns persistence for the whole engine, so it needs a handle on this half of the
+    // state — otherwise a reload drops a half-answered retention check and the no-repeat window.
+    this.mastery._scheduler = this;
 
+    /** The knowledge point the continuity block is on. `mastery.inFlight[]` is the persisted view. */
     this.inFlight = null;
     this.blockCount = 0;
     this.itemsThisSession = 0;
@@ -83,6 +87,15 @@ export class Scheduler {
     this.recentItemIds = [];
     this._event = null;
     this._seq = 0;
+    this._syncInFlight();
+  }
+
+  /**
+   * Publish what is open right now into the learner state, where it is persisted and probed.
+   * Two things can be open at once: a multi-item certification event and the acquisition block.
+   */
+  _syncInFlight() {
+    this.mastery.setInFlight([this._event?.kpId ?? null, this.inFlight]);
   }
 
   // ------------------------------------------------------------------ sessions

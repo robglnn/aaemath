@@ -32,7 +32,6 @@
       "es": "Un riel, una marca en él, y un trinquete apoyado a un lado de la marca.",
       "pl": "Szyna, znacznik na niej i zapadka oparta po jednej stronie znacznika."
     },
-
     "ask.reading": {
       "en": "Let it settle and read it.",
       "es": "Deja que se asiente y léelo.",
@@ -118,16 +117,6 @@
       "es": "Apila una carga de {terms} términos con un peso fijo entre ellos.",
       "pl": "Ułóż ładunek z {terms} członów, z jednym stałym ciężarem wśród nich."
     },
-    "ask.gen.settleAbove": {
-      "en": "Seat a value that leaves the load reading more than {target}.",
-      "es": "Asienta un valor que deje la carga leyendo más de {target}.",
-      "pl": "Osadź wartość, przy której ładunek wskaże więcej niż {target}."
-    },
-    "ask.gen.settleBelow": {
-      "en": "Seat a value that leaves the load reading less than {target}.",
-      "es": "Asienta un valor que deje la carga leyendo menos de {target}.",
-      "pl": "Osadź wartość, przy której ładunek wskaże mniej niż {target}."
-    },
     "ask.gen.sealCan": {
       "en": "Seal a can whose contents come to {target}.",
       "es": "Sella una lata cuyo contenido dé {target}.",
@@ -153,11 +142,6 @@
       "es": "Di una afirmación en el encaje abierto que cierre en {target}.",
       "pl": "Wypowiedz w otwarte gniazdo twierdzenie, które zamyka się na {target}."
     },
-    "ask.gen.separator": {
-      "en": "Find one value of {unknown} where the two decks carry different loads.",
-      "es": "Halla un valor de {unknown} donde los dos tableros lleven cargas distintas.",
-      "pl": "Znajdź jedną wartość {unknown}, przy której oba pomosty niosą inny ładunek."
-    },
     "ask.gen.always": {
       "en": "Author a claim across this gap that is standing before you arrive.",
       "es": "Redacta una afirmación sobre este vacío que ya esté en pie cuando llegues.",
@@ -178,7 +162,6 @@
       "es": "Coloca un riel de cuenta invertida cuyo tramo admitido sea {target}.",
       "pl": "Ustaw szynę o odwróconej krotności, której przepuszczany odcinek to {target}."
     },
-
     "hint.repair.2": {
       "en": "Read down the working. One line does not follow from the one above it.",
       "es": "Baja por el trazado. Una línea no se sigue de la anterior.",
@@ -218,16 +201,6 @@
       "en": "One of the {terms} has to be fixed weight — no socket in it at all.",
       "es": "Uno de los {terms} tiene que ser peso fijo — sin ningún encaje dentro.",
       "pl": "Jeden z {terms} musi być stałym ciężarem — bez żadnego gniazda w środku."
-    },
-    "hint.gen.socketValue.2": {
-      "en": "Seat a value, read the light, and try a colder one if it is not enough.",
-      "es": "Asienta un valor, lee la luz, y prueba uno más frío si no basta.",
-      "pl": "Osadź wartość, odczytaj światło, a jeśli nie starczy, spróbuj zimniejszej."
-    },
-    "hint.gen.socketValue.3": {
-      "en": "The mark to beat is {target}. More than one charge gets past it.",
-      "es": "La marca a superar es {target}. Más de una carga la pasa.",
-      "pl": "Znacznik do pobicia to {target}. Przechodzi go więcej niż jeden ładunek."
     },
     "hint.gen.loadGathersTo.2": {
       "en": "Build it long. It only has to gather short.",
@@ -269,17 +242,6 @@
       "es": "El arco debe admitir {target} y rechazar todo lo demás.",
       "pl": "Łuk musi przepuścić {target} i odrzucić całą resztę."
     },
-    "hint.gen.separatorValue.2": {
-      "en": "Two decks that agree at nothing and at one still agree at nothing and at one.",
-      "es": "Dos tableros que coinciden en cero y en uno siguen coincidiendo en cero y en uno.",
-      "pl": "Dwa pomosty zgodne na zerze i na jedynce nadal są zgodne na zerze i na jedynce."
-    },
-    "hint.gen.separatorValue.3": {
-      "en": "Take {unknown} further out than that and load them both.",
-      "es": "Lleva {unknown} más lejos que eso y carga los dos.",
-      "pl": "Wynieś {unknown} dalej niż to i obciąż oba."
-    },
-
     "closure.always": {
       "en": "an always",
       "es": "un siempre",
@@ -290,7 +252,6 @@
       "es": "un rechazo",
       "pl": "odmowa"
     },
-
     "spoken.var-meaning.relate": {
       "en": "There are {k} crates on my barge for every one on yours.",
       "es": "Hay {k} cajas en mi barcaza por cada una en la tuya.",
@@ -336,7 +297,6 @@
       "es": "{T} de carga que mover, y ningún miembro de este soporte aguanta más de {w}.",
       "pl": "{T} ładunku do przeniesienia, a żaden człon tego dźwigara nie bierze więcej niż {w}."
     },
-
     "fail.sill.sign": {
       "en": "It came over the Sill and did not turn around.",
       "es": "Cruzó el Umbral y no se dio la vuelta.",
@@ -507,7 +467,6 @@
       "es": "El número lo cierra. El sitio no lo acepta.",
       "pl": "Liczba je zamyka. Teren jej nie przyjmie."
     },
-
     "frame.var-meaning.1": {
       "en": "A cutter opened this socket at dawn and has not said what goes in it.",
       "es": "Un cortador abrió este encaje al alba y no ha dicho qué va dentro.",
@@ -828,7 +787,6 @@
       "es": "Si algo volcó por el camino, al levantar la vista el tramo está al otro lado de la marca.",
       "pl": "Jeśli coś się po drodze przewróciło, gdy podniesiesz wzrok, odcinek będzie po drugiej stronie znacznika."
     },
-
     "hint.move.var-meaning.seat": {
       "en": "Shove the charge into the socket cut for {letter}. Nothing else goes in it.",
       "es": "Mete la carga en el encaje abierto para {letter}. Nada más entra ahí.",
@@ -1428,6 +1386,26 @@
       "en": "With the lip gone, {a} members carry {lifted}, and the detent has not moved.",
       "es": "Sin el reborde, {a} miembros llevan {lifted}, y el trinquete no se ha movido.",
       "pl": "Bez wargi {a} członów niesie {lifted}, a zapadka się nie ruszyła."
+    },
+    "ask.gen.loadReadsAt": {
+      "en": "Stack a load in {unknown} that reads {target} when the socket holds {at}.",
+      "es": "Apila una carga en {unknown} que lea {target} cuando el encaje sostenga {at}.",
+      "pl": "Ułóż ładunek w {unknown}, który wskaże {target}, gdy gniazdo trzyma {at}."
+    },
+    "hint.gen.loadReadsAt.2": {
+      "en": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge.",
+      "es": "Una cuenta, una potencia, un peso fijo — vale cualquiera, mientras lea verdadero con esa carga.",
+      "pl": "Krotność, potęga, stały ciężar — każde ujdzie, byle wskazywało prawdę przy tym ładunku."
+    },
+    "hint.gen.loadReadsAt.3": {
+      "en": "Seat {at} in whatever you build and it has to come out at {target}.",
+      "es": "Asienta {at} en lo que construyas y tiene que salir {target}.",
+      "pl": "Osadź {at} w tym, co zbudujesz, i musi wyjść {target}."
+    },
+    "ask.gen.reshape": {
+      "en": "Build a second deck of a different shape that carries the same load at every value.",
+      "es": "Construye un segundo tablero de otra forma que lleve la misma carga en todo valor.",
+      "pl": "Zbuduj drugi pomost o innym kształcie, który niesie ten sam ładunek przy każdej wartości."
     }
   }
 }

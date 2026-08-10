@@ -129,8 +129,8 @@
         "other": "{n} terms"
       },
       "claims": {
-        "one": "{n} claim standing open",
-        "other": "{n} claims standing open"
+        "one": "{n} open claim",
+        "other": "{n} open claims"
       },
       "metres": {
         "one": "{n} metre",

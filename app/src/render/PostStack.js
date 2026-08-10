@@ -186,6 +186,7 @@ export class PostStack {
     this.sunSource = "default";
     this._offSun = signals.on("world:sun", (p) => this._adoptSun(p));
     this._frames = 0;
+    this._glowDrawn = null;
     this._lastDraws = 0;
 
     if (this.installed) this._build();
@@ -330,13 +331,25 @@ export class PostStack {
       // the emitters themselves rather than a pre-blurred copy of them.
       this._sun = sunScreenPosition(this.camera, this.sunDir, this._sunUv);
       sunGlowWeight = this._sun.weight * LOOK.sunGlowStrength;
-      this.sunGlow.render(
-        renderer,
-        this.bloom.brightTarget.texture,
-        this._sun.uv,
-        this._sun.weight > 0 ? 1 : 0,
-        this.sunGlowTarget
-      );
+      if (this._sun.weight > 0) {
+        this.sunGlow.render(
+          renderer,
+          this.bloom.brightTarget.texture,
+          this._sun.uv,
+          1,
+          this.sunGlowTarget
+        );
+        this._glowDrawn = true;
+      } else if (this._glowDrawn !== false) {
+        // Lethis is behind the camera or far off frame. Clear once and stop drawing: 16 taps over a
+        // quarter-resolution target every frame to produce a buffer that is multiplied by zero is
+        // the kind of cost that is invisible on a desktop GPU and decides whether this game runs on
+        // a Chromebook. The clear matters — an uninitialised half-float target can hold NaN, and
+        // NaN * 0 is NaN, which would put black holes in the sky.
+        renderer.setRenderTarget(this.sunGlowTarget);
+        renderer.clear(true, false, false);
+        this._glowDrawn = false;
+      }
       sunGlowTexture = this.sunGlowTarget.texture;
     }
     if (this.effects.bloom) {
@@ -551,6 +564,7 @@ export class PostStack {
     const data = new Uint8Array(w * h * 4);
     this.renderer.readRenderTargetPixels(out, 0, 0, w, h, data);
     this.renderer.setRenderTarget(null);
+    const bloomLevels = this.bloom.levels;
 
     if (prevBloom !== bloom) {
       this.effects.bloom = prevBloom;
@@ -561,7 +575,7 @@ export class PostStack {
     this.size.set(0, 0);
     this.setSize(prev.x, prev.y);
 
-    return { width: w, height: h, data };
+    return { width: w, height: h, data, bloomLevels };
   }
 
   // ------------------------------------------------------------------------------ reporting

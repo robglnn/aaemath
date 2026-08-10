@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { publish } from "../core/Introspect.js";
 import { config } from "../core/Config.js";
 import { signals } from "../core/Signals.js";
-import { SKY_BANDS, UNDER_HEX, SUN, hexToLinear } from "./Sky.js";
+import { SKY_BANDS, UNDER_HEX, SUN, hexToLinear, inverseToneMap } from "./Sky.js";
 
 /**
  * Atmosphere — P10's depth law.
@@ -77,11 +77,11 @@ const D2R = Math.PI / 180;
 
 /** Distance behaviour per tier. Lower tiers get the same law with a cheaper evaluation. */
 const TIER_ATMO = {
-  potato: { flat: 1, near: 40, far: 300, density: 3.2, max: 0.9, desat: 0.55 },
-  low: { flat: 1, near: 45, far: 430, density: 3.2, max: 0.92, desat: 0.6 },
-  medium: { flat: 0, near: 55, far: 620, density: 3.0, max: 0.93, desat: 0.65 },
-  high: { flat: 0, near: 60, far: 880, density: 3.0, max: 0.94, desat: 0.68 },
-  ultra: { flat: 0, near: 65, far: 1150, density: 3.0, max: 0.94, desat: 0.68 },
+  potato: { flat: 1, near: 30, far: 220, density: 3.2, max: 0.9, desat: 0.55 },
+  low: { flat: 1, near: 34, far: 300, density: 3.2, max: 0.92, desat: 0.6 },
+  medium: { flat: 0, near: 38, far: 360, density: 3.0, max: 0.93, desat: 0.65 },
+  high: { flat: 0, near: 42, far: 440, density: 3.0, max: 0.94, desat: 0.68 },
+  ultra: { flat: 0, near: 46, far: 540, density: 3.0, max: 0.94, desat: 0.68 },
 };
 
 /**
@@ -104,15 +104,32 @@ const HEIGHT = { base: -40, scale: 420 };
 
 const f3 = (v) => v.map((c) => c.toFixed(5)).join(", ");
 
-/** sRGB hex -> the triplet the shader will actually be comparing against, given the output space. */
-function encodeForOutput(hex, outputColorSpace) {
+/**
+ * A measured display hex, expressed in whatever space the fog chunk will actually be handed.
+ *
+ * There are exactly two paths and they are a long way apart, which is why this function exists
+ * instead of a constant:
+ *
+ *   * **Straight to the canvas** (`kernel.composer === null`, potato and low): three gives the
+ *     material `toneMapping = renderer.toneMapping` and `outputColorSpace = SRGB`, so by the time
+ *     `<fog_fragment>` runs the colour has already been through ACES and the sRGB transfer
+ *     function. The measured hex *is* the number to blend toward, unchanged.
+ *   * **Into the post stack's HDR target** (medium and up): `WebGLPrograms.getParameters` forces
+ *     `toneMapping = NoToneMapping` and `outputColorSpace = LinearSRGB` for **any** non-null
+ *     render target, so `<fog_fragment>` is handed raw scene-referred radiance and `GradePass`
+ *     applies the curve later. Blending toward a display value there would wash the whole
+ *     distance out. So the target colour is run back through the inverse of the same curve
+ *     `Sky.js` uses, at the same exposure — which is precisely why the two files land on the same
+ *     pixel from opposite sides of the tonemap.
+ *
+ * Getting this backwards is invisible on a low-tier capture and blows the frame out on a high-tier
+ * one, which is exactly the sort of bug that ships. `report().space` says which path is live.
+ */
+function encodeFor(hex, space, exposure, toneMapping) {
+  if (space === "scene") return inverseToneMap(hexToLinear(hex), exposure, toneMapping).rgb;
+  if (space === "linear") return hexToLinear(hex);
   const n = parseInt(hex.replace("#", ""), 16);
-  const srgb = [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
-  // `<fog_fragment>` sits after `<colorspace_fragment>`, so the incoming colour is in the
-  // renderer's output space. On the canvas that is sRGB and the measured hex is already correct;
-  // into a linear render target it is not, and we convert rather than pretend.
-  if (outputColorSpace === THREE.SRGBColorSpace) return srgb;
-  return hexToLinear(hex);
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
 }
 
 /** Warm a colour toward the horizon band, in whatever space it is already in. */
@@ -126,7 +143,9 @@ function warmToward(rgb, horizon, k) {
  */
 function buildChunks(o) {
   const {
-    outputColorSpace,
+    space,
+    exposure,
+    toneMapping,
     sunDir,
     warmth,
     lift,
@@ -139,15 +158,16 @@ function buildChunks(o) {
     glowWideDeg,
   } = o;
 
-  const horizon = encodeForOutput(SKY_BANDS[0].hex, outputColorSpace);
+  const enc = (hex) => encodeFor(hex, space, exposure, toneMapping);
+  const ceiling = space === "scene" ? 24 : 1;
+  const horizon = enc(SKY_BANDS[0].hex);
   const stops = SKY_BANDS.map((b) => ({
     el: b.el * D2R,
-    c: warmToward(encodeForOutput(b.hex, outputColorSpace), horizon, warmth).map((c) =>
-      Math.min(1, c + lift)
-    ),
+    c: warmToward(enc(b.hex), horizon, warmth).map((c) => Math.min(ceiling, c * (1 + lift))),
   }));
-  const under = warmToward(encodeForOutput(UNDER_HEX, outputColorSpace), horizon, warmth);
-  const sunWash = encodeForOutput(SUN.coreHex, outputColorSpace);
+  const under = warmToward(enc(UNDER_HEX), horizon, warmth);
+  // The sun's pale patch, held one stop under the disc so the haze never out-shines the star.
+  const sunWash = enc(SUN.hex).map((c) => Math.min(ceiling, c * 1.05));
 
   // The band chain, fully unrolled: no arrays, no loops, no const-array syntax that only exists
   // in GLSL ES 3.00. It is generated, so unrolling costs nothing to maintain.
@@ -289,15 +309,47 @@ export class Atmosphere {
 
   // -------------------------------------------------------------------------- baking
 
+  /**
+   * Everything that changes what the fog chunk is handed. When this string moves, the baked
+   * constants are wrong and the chunks have to be regenerated — which is a shader recompile, so
+   * it is checked once a frame and acted on only when it actually changes. In practice it moves
+   * twice in a session: once when P11 sets the exposure at boot order 14, and once when P12
+   * installs its composer at order 52.
+   */
+  _pathSignature() {
+    const r = this.kernel.renderer;
+    return [
+      this.kernel.composer ? "hdr" : "canvas",
+      r.toneMapping,
+      (r.toneMappingExposure ?? 1).toFixed(4),
+      r.outputColorSpace,
+      this.timeOfDay.toFixed(4),
+      Math.round(this.sunAzimuthDeg / 4),
+    ].join("|");
+  }
+
+  _space() {
+    const r = this.kernel.renderer;
+    // A composer means the scene goes into a render target, and three forces NoToneMapping +
+    // LinearSRGB for any render target — so the fog chunk sees scene-referred radiance.
+    if (this.kernel.composer) return "scene";
+    if (r.outputColorSpace === THREE.SRGBColorSpace) return "srgb";
+    return "linear";
+  }
+
   _bake() {
     const c = TOD.clear;
     const k = TOD.thick;
     const t = this.timeOfDay;
     const warmth = c.warmth + (k.warmth - c.warmth) * t;
     const lift = c.lift + (k.lift - c.lift) * t;
+    const r = this.kernel.renderer;
+    this.space = this._space();
 
     const chunks = buildChunks({
-      outputColorSpace: this.kernel.renderer.outputColorSpace,
+      space: this.space,
+      exposure: r.toneMappingExposure ?? 1,
+      toneMapping: r.toneMapping,
       sunDir: [this.sunDir.x, this.sunDir.y, this.sunDir.z],
       bandSharp: 0.45, // must match Sky.js's default, or the join is visible
       warmth,
@@ -314,6 +366,7 @@ export class Atmosphere {
     for (const key of CHUNK_KEYS) THREE.ShaderChunk[key] = chunks[key];
     this._bakedSunAzimuth = this.sunAzimuthDeg;
     this._bakeCount = (this._bakeCount ?? 0) + 1;
+    this._bakedSignature = this._pathSignature();
 
     // Anything already compiled has the previous chunks baked in. Materials created before this
     // point exist (Terrain mounts at order 10, two before us), so they are told to recompile.
@@ -360,11 +413,20 @@ export class Atmosphere {
     this.sunAzimuthDeg = Number.isFinite(p.azimuthDeg)
       ? p.azimuthDeg
       : (Math.atan2(this.sunDir.x, this.sunDir.z) * 180) / Math.PI;
-
-    // The rig drifts the bearing by ±8° over a long dusk. Rebaking is a shader recompile, so it
-    // happens on a 4° detent rather than continuously — the haze's pale patch is 17° wide and
+    // The bearing feeds `_pathSignature()` on a 4° detent, so the drift the rig applies over a
+    // long dusk cannot turn into a recompile every frame. The haze's pale patch is 17° wide and
     // could not tell the difference anyway.
-    if (Math.abs(angleDelta(this.sunAzimuthDeg, this._bakedSunAzimuth)) > 4) this._bake();
+  }
+
+  /**
+   * The only per-frame work this system does: notice when the render path underneath it changed
+   * and rebake. No allocation, one string compare in the common case.
+   */
+  frame() {
+    if (this._pathSignature() !== this._bakedSignature) {
+      this._bake();
+      this._applyRange();
+    }
   }
 
   // -------------------------------------------------------------------------- public API
@@ -416,6 +478,10 @@ export class Atmosphere {
       tier: config.tier.id,
       enabled: this.enabled,
       flatFallback: !!this.tier.flat,
+      // Which side of the tonemap the haze constants were baked for. "scene" means a composer is
+      // installed and the chunk sees scene-referred radiance; "srgb" means straight to the canvas.
+      space: this.space,
+      composer: !!this.kernel.composer,
       timeOfDay: r3(this.timeOfDay),
       near: r3(this.fog.near),
       far: r3(this.fog.far),

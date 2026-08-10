@@ -1,0 +1,330 @@
+P16 — mastery engine: measured proof of L4 and L5
+================================================================================================
+engine under test: app/src/learn/{Graph,Mastery,Scheduler}.js   content: content/knowledge-graph.json
+graph: {"nodes":32,"edges":48,"roots":2,"leaves":4,"longestChain":11,"bands":{"1":3,"2":11,"3":8,"4":7,"5":3},"maxDescendants":30}
+gate: P >= 0.95, >= 6 scored (>= 3 at band), >= 2 forms, then 3/4 AND P >= 0.95 at a check >= 12 h and >= 1 session later
+budget: 22 sessions x 25 min, one session per day. Bots: 400/arm, learners: 400/cohort. 40.9s
+
+TRUE blind-success rates the bots draw from (ground truth, never the model's guess):
+  by form:  construct 0.03   repair 0.03   generate 0.02   select4 0.25   judge2 0.5
+  by phase: solo 0   guided-1 0.08   guided-2 0.17   guided-3 0.85   model 0.7
+  for contrast, the model's own belief at band 3: construct 0.070   repair 0.070   generate 0.042   select4 0.238   judge2 0.420
+
+PART A — deterministic engine assertions
+------------------------------------------------------------------------------------------------
+  PASS  U1  Graph validates the real content and rejects a cyclic graph
+             prerequisite relation is CYCLIC: var-meaning <- expr-anatomy <- var-meaning
+  PASS  U2  prerequisite closure, frontier and topological order are correct
+             frontier at t0 = var-meaning,oo-numeric
+  PASS  U3  a judge2 item is INERT: p, scored, atBand, forms and theta all unchanged
+             scored=false reason=unscored-form p 0.2500 -> 0.2500
+  PASS  U4  a select4 item is INERT, correct or wrong
+             unscored=8
+  PASS  U5  an unscored PHASE (model / guided-2 / guided-3) is inert in BOTH directions
+  PASS  U6  guided-1 IS scorable but is NOT mastery-eligible (M2/M3 counters stay put)
+             p 0.1800 -> 0.6638, scored 0 -> 0
+  PASS  U7  the two axes compose by MAX, never by product
+             b1 construct/guided-1 0.1000, b1 generate/guided-1 0.1000 (product would be 0.0600), true construct/guided-3 0.85, b3 generate/solo 0.0700
+  PASS  U8  an over-cap form is REJECTED from the scored path, never clamped
+             judge2 would model at 0.4200 vs maxGuess 0.3; scored forms {construct,repair,generate}, scored phases {solo,guided-1}
+  PASS  U9  the derived scorable matrix is exactly {construct,repair,generate} x {solo,guided-1}
+             scorable 6/25 (construct,generate,repair x guided-1,solo); mastery-eligible 3/25 (construct,generate,repair x solo); issues 0
+  PASS  U10  latency floor: a fast CORRECT answer buys nothing; a fast WRONG one is scored exactly like a slow one
+             fast+right 0.1800 -> 0.1800 scored=0 (not-scored-upward:latency-floor); slow+right -> 0.7872 scored=1; fast+wrong 0.2220 == slow+wrong 0.2220 scored=1
+  PASS  U11  hinted CORRECT is refused upward; hinted WRONG is scored exactly like an unhinted one
+             hint+right 0.1800 -> 0.1800 scored=0 (not-scored-upward:hinted); unhinted+right -> 0.7872; hint+wrong 0.2220 == unhinted+wrong 0.2220
+  PASS  U12  M2 counters are docked on a lapse (scored -3, atBand -2) and the ladder resets
+             scored 3, atBand 1, status learning, ladder -1
+  PASS  U13  M4 is a CONJUNCTION: 3-of-4 with the posterior below threshold does not certify
+             p=0.90&3/4 -> false; p=0.97&3/4 -> true; p=0.97&2/4 -> false
+  PASS  U14  the form cycle is a RUNNING index on the M2 counter, never restarted at `construct`
+             construct,construct,generate,construct,repair,generate
+  PASS  U15  the all-wrong BKT floor invariant: one correct from the floor never clears 0.95
+             worst cell band 1 relearn: floor 0.3494, +1 correct 0.9375
+  PASS  U16  state round-trips: snapshot -> restore reproduces the probe byte for byte
+             probe hash b21e0ce5424598fd vs b21e0ce5424598fd
+  PASS  U17  determinism: the same seed reproduces the same state exactly
+             seed 777 -> 849e5a78bcfd1925 twice; seed 778 -> 6bf5ffa8b1e75099
+  PASS  U18  a fake localStorage round-trips a session (state resumes)
+             p 0.9340 -> 0.9340
+
+PART B — cohorts
+------------------------------------------------------------------------------------------------
+cohort                            n sess     p10  median     p90   >=80% certified  peak   items unscored  refused
+median learner                  400   22   96.9%  100.0%  100.0%  100.0%    31.785    32     778      118        0
+mixed population (long)         400   24   96.9%  100.0%  100.0%   99.5%    31.725    32     843      122        0
+patient guessing bot            400   22    0.0%    0.0%    0.0%    0.0%     0.000     0     870      240        0
+mashing bot                     400   22    0.0%    0.0%    0.0%    0.0%     0.000     0     893      236       23
+form-hunting bot                400   22    0.0%    0.0%    0.0%    0.0%     0.000     0     770      770        0
+hint-abusing bot                400   22    0.0%    0.0%    0.0%    0.0%     0.000     0     869      241        0
+hint-leak bot (P18 bug arm)     400   22    0.0%    0.0%    0.0%    0.0%     0.007     1     766      153        0
+median, §4.1 rules OFF          100   22   68.8%   75.0%   78.1%    6.0%    23.590    27     625      115        0
+median, prereq clock reset OFF  100   22   93.8%  100.0%  100.0%  100.0%    31.400    32     777      118        0
+
+  median learner: mean theta 2.07, retention pass rate 86.2%, median sessions to 80% 18
+
+  Level 1 is gated by mastery, not by a clock, so the honest question is how LONG to 80%:
+    session   hours   median learner: median %   share >= 80%      mixed population: median %   share >= 80%
+      12     5.0                   53.1%           0.0%                        50.0%           0.0%
+      16     6.7                   65.6%           0.3%                        65.6%           5.5%
+      18     7.5                   81.3%          51.5%                        81.3%          50.2%
+      20     8.3                   96.9%          97.8%                        96.9%          85.8%
+      22     9.2                  100.0%         100.0%                       100.0%          97.0%
+      24     10.0                                                              100.0%          99.5%
+
+PART C — claims
+================================================================================================
+  PASS  [L4   ] A. median learner: median Level 1 mastery at 22 sessions x 25 min >= 80%
+             measured: 100.0% (p10 96.9%, 100.0% of learners at >= 80%)
+  PASS  [L4   ] A2. median learner: median number of sessions to reach 80% of Level 1 <= 20 (8.3 h of play)
+             measured: median 18 sessions; at the 18-session mark this engine's median learner holds 81.3% with 51.5% of learners past the bar (review/p03/mastery-sim.mjs --sessions=18 measures 71.9% / 9.0% on the same budget)
+  PASS  [L4   ] B. mixed-ability population: share at >= 80% mastery by 24 sessions >= 90%
+             measured: 99.5%
+  PASS  [L4   ] C. median learner: median scored opportunities used is 480-900 (§8 conformance band)
+             measured: 660 scored of 778 items in 22 sessions
+  PASS  [L5   ] D. patient guessing bot: mean knowledge points certified < 0.01 of 32
+             measured: 0.0000 (max 0, peak ever 0)
+  PASS  [L5   ] E. mashing bot (half its answers under the latency floor): mean certified < 0.01
+             measured: 0.0000 (max 0)
+  PASS  [L5   ] F. hint-abusing bot (idles for maximum scaffolding on every item): 0 certified
+             measured: 0.0000 (max 0, gate opened on 1.830 nodes/run)
+  PASS  [L5   ] G. hint-LEAK bug arm (P18 leaks help into solo, engine never told): < 0.1 of 32 certified, none near the bar
+             measured: 0.0075 certified/run (max 1, 0.0% of runs at >= 80%), gate opened 70.0x/run on 29.9/32 nodes
+  PASS  [L5   ] L. control arm: the harness can SEE a leak — the bug arm opens the gate, the shipped rules do not
+             measured: leak arm unlocks 29.9/32 nodes per run; shipped hint-abuse arm unlocks 0.95/32; guessing bot 0.94/32; form-hunting bot 0.00/32
+  PASS  [L5   ] H. form-hunting bot (judge2/select4 on every item): 0 certified AND `scored` never increments
+             measured: certified 0, max M2 counter 0, unscored items/run 770
+  PASS  [L5   ] I. retention check pass rate for real learners is 80-95% (a gate, not a formality)
+             measured: 86.2%
+  PASS  [L4   ] J. §4.1 is load-bearing: turning BOTH selection rules off costs >= 6 knowledge points
+             measured: 31.8 certified with the rules, 23.6 without
+  PASS  [L4   ] M. L4 does not depend on the §1.2 prerequisite spacing-clock reset (the rule that can only flatter it)
+             measured: 100.0% with the rule, 100.0% without (mean certified 31.8 vs 31.4)
+  PASS  [L2/L5] K. every deterministic engine assertion passes (18 checks)
+             measured: 18/18
+
+RESULT: PASS — 14/14 claims, 18/18 assertions
+
+JSON TABLE
+{
+  "result": "PASS",
+  "claims": [
+    {
+      "id": "A",
+      "gate": "L4",
+      "statement": "median learner: median Level 1 mastery at 22 sessions x 25 min >= 80%",
+      "value": "100.0% (p10 96.9%, 100.0% of learners at >= 80%)",
+      "pass": true
+    },
+    {
+      "id": "A2",
+      "gate": "L4",
+      "statement": "median learner: median number of sessions to reach 80% of Level 1 <= 20 (8.3 h of play)",
+      "value": "median 18 sessions; at the 18-session mark this engine's median learner holds 81.3% with 51.5% of learners past the bar (review/p03/mastery-sim.mjs --sessions=18 measures 71.9% / 9.0% on the same budget)",
+      "pass": true
+    },
+    {
+      "id": "B",
+      "gate": "L4",
+      "statement": "mixed-ability population: share at >= 80% mastery by 24 sessions >= 90%",
+      "value": "99.5%",
+      "pass": true
+    },
+    {
+      "id": "C",
+      "gate": "L4",
+      "statement": "median learner: median scored opportunities used is 480-900 (§8 conformance band)",
+      "value": "660 scored of 778 items in 22 sessions",
+      "pass": true
+    },
+    {
+      "id": "D",
+      "gate": "L5",
+      "statement": "patient guessing bot: mean knowledge points certified < 0.01 of 32",
+      "value": "0.0000 (max 0, peak ever 0)",
+      "pass": true
+    },
+    {
+      "id": "E",
+      "gate": "L5",
+      "statement": "mashing bot (half its answers under the latency floor): mean certified < 0.01",
+      "value": "0.0000 (max 0)",
+      "pass": true
+    },
+    {
+      "id": "F",
+      "gate": "L5",
+      "statement": "hint-abusing bot (idles for maximum scaffolding on every item): 0 certified",
+      "value": "0.0000 (max 0, gate opened on 1.830 nodes/run)",
+      "pass": true
+    },
+    {
+      "id": "G",
+      "gate": "L5",
+      "statement": "hint-LEAK bug arm (P18 leaks help into solo, engine never told): < 0.1 of 32 certified, none near the bar",
+      "value": "0.0075 certified/run (max 1, 0.0% of runs at >= 80%), gate opened 70.0x/run on 29.9/32 nodes",
+      "pass": true
+    },
+    {
+      "id": "L",
+      "gate": "L5",
+      "statement": "control arm: the harness can SEE a leak — the bug arm opens the gate, the shipped rules do not",
+      "value": "leak arm unlocks 29.9/32 nodes per run; shipped hint-abuse arm unlocks 0.95/32; guessing bot 0.94/32; form-hunting bot 0.00/32",
+      "pass": true
+    },
+    {
+      "id": "H",
+      "gate": "L5",
+      "statement": "form-hunting bot (judge2/select4 on every item): 0 certified AND `scored` never increments",
+      "value": "certified 0, max M2 counter 0, unscored items/run 770",
+      "pass": true
+    },
+    {
+      "id": "I",
+      "gate": "L5",
+      "statement": "retention check pass rate for real learners is 80-95% (a gate, not a formality)",
+      "value": "86.2%",
+      "pass": true
+    },
+    {
+      "id": "J",
+      "gate": "L4",
+      "statement": "§4.1 is load-bearing: turning BOTH selection rules off costs >= 6 knowledge points",
+      "value": "31.8 certified with the rules, 23.6 without",
+      "pass": true
+    },
+    {
+      "id": "M",
+      "gate": "L4",
+      "statement": "L4 does not depend on the §1.2 prerequisite spacing-clock reset (the rule that can only flatter it)",
+      "value": "100.0% with the rule, 100.0% without (mean certified 31.8 vs 31.4)",
+      "pass": true
+    },
+    {
+      "id": "K",
+      "gate": "L2/L5",
+      "statement": "every deterministic engine assertion passes (18 checks)",
+      "value": "18/18",
+      "pass": true
+    }
+  ],
+  "cohorts": {
+    "median": {
+      "n": 400,
+      "sessions": 22,
+      "medianPercent": 100,
+      "shareAt80": 1,
+      "meanCertified": 31.785,
+      "maxCertified": 32,
+      "peakEverCertified": 32,
+      "maxM2Counter": 23,
+      "meanUnscoredItems": 118.1,
+      "meanRefusedUpward": 0,
+      "retentionPassRate": 0.8617
+    },
+    "mixedLong": {
+      "n": 400,
+      "sessions": 24,
+      "medianPercent": 100,
+      "shareAt80": 0.995,
+      "meanCertified": 31.725,
+      "maxCertified": 32,
+      "peakEverCertified": 32,
+      "maxM2Counter": 34,
+      "meanUnscoredItems": 121.7,
+      "meanRefusedUpward": 0,
+      "retentionPassRate": 0.8585
+    },
+    "guesser": {
+      "n": 400,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 218,
+      "meanUnscoredItems": 239.9,
+      "meanRefusedUpward": 0,
+      "retentionPassRate": 0
+    },
+    "masher": {
+      "n": 400,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 181,
+      "meanUnscoredItems": 236.2,
+      "meanRefusedUpward": 23,
+      "retentionPassRate": 0
+    },
+    "formHunter": {
+      "n": 400,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 0,
+      "meanUnscoredItems": 770.4,
+      "meanRefusedUpward": 0,
+      "retentionPassRate": null
+    },
+    "hintAbuser": {
+      "n": 400,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0,
+      "maxCertified": 0,
+      "peakEverCertified": 0,
+      "maxM2Counter": 223,
+      "meanUnscoredItems": 241.3,
+      "meanRefusedUpward": 0,
+      "retentionPassRate": 0
+    },
+    "hintLeak": {
+      "n": 400,
+      "sessions": 22,
+      "medianPercent": 0,
+      "shareAt80": 0,
+      "meanCertified": 0.0075,
+      "maxCertified": 1,
+      "peakEverCertified": 1,
+      "maxM2Counter": 12,
+      "meanUnscoredItems": 152.7,
+      "meanRefusedUpward": 0,
+      "retentionPassRate": 0.0002
+    },
+    "ablated": {
+      "n": 100,
+      "sessions": 22,
+      "medianPercent": 75,
+      "shareAt80": 0.06,
+      "meanCertified": 23.59,
+      "maxCertified": 27,
+      "peakEverCertified": 27,
+      "maxM2Counter": 16,
+      "meanUnscoredItems": 115,
+      "meanRefusedUpward": 0,
+      "retentionPassRate": 0.8963
+    },
+    "noClockReset": {
+      "n": 100,
+      "sessions": 22,
+      "medianPercent": 100,
+      "shareAt80": 1,
+      "meanCertified": 31.4,
+      "maxCertified": 32,
+      "peakEverCertified": 32,
+      "maxM2Counter": 18,
+      "meanUnscoredItems": 118.2,
+      "meanRefusedUpward": 0,
+      "retentionPassRate": 0.8633
+    }
+  }
+}

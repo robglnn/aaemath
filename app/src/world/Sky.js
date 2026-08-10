@@ -129,8 +129,8 @@ export const SKY_BANDS = [
   { el: 10.5, hex: "#BC9968" },
   { el: 15.0, hex: "#929576" },
   { el: 20.0, hex: "#6D8E81" },
-  { el: 27.0, hex: "#4F8386" },
-  { el: 90.0, hex: "#407D8D" },
+  { el: 27.0, hex: "#558789" },
+  { el: 90.0, hex: "#4A848B" },
 ];
 
 /**
@@ -182,29 +182,55 @@ const CLOUDS = {
   azCells: 656, // integer cells per turn => the grid wraps with no seam. 360/656 = 0.549°
   elCell: 0.0096, // in dir.y. 0.55° near the horizon, where every cloud in the target lives.
 
+  /**
+   * The deck is sampled in POLAR coordinates around the viewer, and the radius is compressed.
+   * Three problems are solved by that one decision and they are all fatal without it.
+   *
+   *   1. **The seam.** There are an integer number of azimuth cells in a turn and the sample point
+   *      is `(sin az, cos az) · r`, so the field closes on itself exactly. A field addressed by
+   *      `atan()` alone has a visible join behind the player.
+   *   2. **The barcode.** A raw flat deck samples at `deckH / sin(elevation)`, which runs to
+   *      infinity at the skyline: two adjacent elevation cells down there are kilometres apart and
+   *      sample uncorrelated noise, so the bottom of the sky becomes a mat of one-cell stripes.
+   *      `deckH / (sin el + yBias)` caps the furthest sample — the same horizon-limiting trick an
+   *      airmass uses, for the same reason — and `pow(·, radialExp)` compresses what is left, so
+   *      the whole visible band spans about five noise features from skyline to 30°.
+   *   3. **The shape.** Because the sample radius is small (3–8 units), one noise feature subtends
+   *      `1/r` radians of azimuth — 11° at r = 5 — while spanning a fraction of the elevation
+   *      band. That is *exactly* the target's proportion: slabs several times wider than they are
+   *      tall, in a band, with open sky between them. It falls out of the parameterisation instead
+   *      of being dialled in.
+   *
+   * `camParallax` translates the polar plane with the camera so the decks are not painted on the
+   * inside of a lid; at deck altitude it is a very small effect, which is correct.
+   */
   low: {
-    deckH: 1250, // metres above the camera
-    scale: 0.00042, // deck metres -> noise units
+    deckH: 1700, // metres above the camera
+    yBias: 0.085, // caps the deck at ~20 km
+    radialScale: 0.055,
+    radialExp: 0.5,
     aniso: 1.0,
-    wind: [0.0135, -0.0062], // noise units per second (~32 / ~15 m/s on the deck)
-    driftDegPerSec: 0.0, // the low deck's motion is entirely wind on the deck
-    cover: 0.505,
+    azDrift: 0.0031, // rad/s: the whole deck walks past at ~0.18°/s
+    camParallax: 0.0016, // noise units per metre of camera travel
+    cover: 0.556, // higher = more open sky. The target runs ~20-25% coverage.
     core: 0.60,
-    elLow: 0.055, // fade in from 3.2°
-    elHigh: 0.62, // and out by 38°
-    evo: 0.019, // domain-displacement rate: slabs are born and die
+    elLow: 0.075, // fade in from 4.3°
+    elHigh: 0.78, // and out by 51°
+    evo: 0.021, // domain-displacement rate: slabs are born and die
   },
   high: {
-    deckH: 3400,
-    scale: 0.00021,
-    aniso: 3.4, // stretched along the wind => streaks, not stretched blobs
-    wind: [0.0295, 0.004],
-    driftDegPerSec: 0.0,
-    cover: 0.545,
+    deckH: 4200,
+    yBias: 0.15,
+    radialScale: 0.045,
+    radialExp: 0.5,
+    aniso: 2.6, // stretched across the polar plane => streaks, not stretched blobs
+    azDrift: -0.0052, // the other way, and faster: no single shift explains both decks
+    camParallax: 0.0006,
+    cover: 0.585,
     core: 0.625,
-    elLow: 0.12,
-    elHigh: 0.9,
-    evo: 0.011,
+    elLow: 0.17,
+    elHigh: 0.96,
+    evo: 0.013,
   },
 };
 
@@ -406,6 +432,11 @@ float vsBayer8(vec2 fc) {
 
 const NBANDS = SKY_BANDS.length;
 
+/** A deck's parameters, packed into the three vec4s the shader reads. */
+const deckA = (d) => new THREE.Vector4(d.deckH, d.radialScale, d.radialExp, d.cover);
+const deckB = (d) => new THREE.Vector4(d.core, d.elLow, d.elHigh, d.evo);
+const deckC = (d) => new THREE.Vector4(d.yBias, d.aniso, d.azDrift, d.camParallax);
+
 /**
  * The banded gradient as a function of elevation. Exported so `Atmosphere.js` can ask the sky what
  * colour stands behind a distant surface instead of guessing at it.
@@ -481,12 +512,12 @@ uniform float uMotion;
 uniform float uCellAz;      // radians per azimuth cell
 uniform float uCellEl;      // dir.y per elevation cell
 
-uniform vec4  uDeckLow;     // deckH, scale, aniso, cover
-uniform vec4  uDeckLow2;    // core, elLow, elHigh, evo
-uniform vec2  uWindLow;
-uniform vec4  uDeckHigh;
-uniform vec4  uDeckHigh2;
-uniform vec2  uWindHigh;
+uniform vec4  uDeckLowA;    // deckH, radialScale, radialExp, cover
+uniform vec4  uDeckLowB;    // core, elLow, elHigh, evo
+uniform vec4  uDeckLowC;    // yBias, aniso, azDrift, camParallax
+uniform vec4  uDeckHighA;
+uniform vec4  uDeckHighB;
+uniform vec4  uDeckHighC;
 
 uniform vec3  uCloudTop;
 uniform vec3  uCloudBody;
@@ -523,46 +554,45 @@ float vsFbm(vec2 p, int octaves) {
 
 // ------------------------------------------------------------------ cloud decks
 //
-// idx is the INTEGER block address in (azimuth, dir.y). The density is sampled once, at the
-// cell's centre projected onto the deck plane, so the value is constant across the whole block
-// and every boundary in the finished frame is a hard rectangular step.
+// idx is the INTEGER block address: azimuth cell (already in the deck's drifting frame) and
+// elevation cell. The density is sampled ONCE per block, at the block's centre, so the value is
+// constant across the whole block and every boundary in the finished frame is a hard rectangular
+// step — which is the entire point.
+//
+// The sample lives on a polar plane around the viewer whose radius is the horizon-limited deck
+// distance, compressed by a power. See the CLOUDS comment for why all three of those words are
+// load-bearing.
 
-vec3 vsCellDir(vec2 idx) {
-  float az = (idx.x + 0.5) * uCellAz;
-  float y  = (idx.y + 0.5) * uCellEl;
-  float r  = sqrt(max(1.0 - y * y, 1e-6));
-  return vec3(sin(az) * r, y, cos(az) * r);
-}
-
-float vsDeck(vec2 idx, vec4 d, vec4 d2, vec2 wind, float yFloor, int oct) {
-  vec3 cd = vsCellDir(idx);
-  float y = max(cd.y, yFloor);
-  vec2 P = uCamPos.xz + cd.xz * (d.x / y);
-  vec2 q = P * d.y;
-  q.y *= d.z;
-  q -= wind * uTime;
-  // Shapes are BORN AND DIE: a slow second field displaces the domain, so no rigid 2-D shift can
-  // reproduce a later frame from an earlier one. review/measure/P10.mjs measures exactly that.
-  float e = d2.w * uTime;
-  vec2 disp = vec2(vsNoise(q * 0.23 + vec2(e, 3.7)), vsNoise(q * 0.19 + vec2(-e * 0.8, 9.1)));
-  q += (disp - 0.5) * 2.6;
-  return vsFbm(q, oct);
+float vsDeckDensity(vec2 idx, vec4 a, vec4 b, vec4 c, int oct) {
+  float az = (idx.x + 0.5) * uCellAz;              // in the deck's own frame: drift is not added,
+  float y  = max((idx.y + 0.5) * uCellEl, 0.0);    // so the pattern is rigid and the GRID moves.
+  float r  = pow(a.x / (y + c.x), a.z) * a.y;
+  vec2 p = vec2(sin(az), cos(az)) * r + uCamPos.xz * c.w;
+  p.x *= c.y;                                      // anisotropy: streaks for the high deck
+  // Shapes are BORN AND DIE: a slow second field displaces the domain, so no rigid shift of an
+  // earlier frame can reproduce a later one. review/measure/P10.mjs measures exactly that.
+  float e = b.w * uTime;
+  vec2 disp = vec2(vsNoise(p * 0.23 + vec2(e, 3.7)), vsNoise(p * 0.19 + vec2(-e * 0.8, 9.1)));
+  p += (disp - 0.5) * 2.6;
+  return vsFbm(p, oct);
 }
 
 // One deck, returned as (coverage, shadeSelect) where shadeSelect is 0 under-step, 1 body,
 // 2 core, 3 lit top step.
-vec2 vsDeckShade(vec2 idx, vec4 d, vec4 d2, vec2 wind, float yFloor, int oct) {
-  float dens = vsDeck(idx, d, d2, wind, yFloor, oct);
-  float body = step(d.w, dens);
+vec2 vsDeckShade(vec2 idx, vec4 a, vec4 b, vec4 c, int oct) {
+  float dens = vsDeckDensity(idx, a, b, c, oct);
+  float body = step(a.w, dens);
   if (body < 0.5) return vec2(0.0, 1.0);
-  float sel = 1.0 + step(d2.x, dens);              // body -> core
+  float sel = 1.0 + step(b.x, dens);               // body -> core
   #if RIM
-    float below = vsDeck(idx + vec2(0.0, -1.0), d, d2, wind, yFloor, oct);
-    float above = vsDeck(idx + vec2(0.0,  1.0), d, d2, wind, yFloor, oct);
-    // A block with nothing beyond it toward the horizon is the slab's underside; a block with
-    // nothing above it is the slab's lit top. Per-face flat shading on a 2-D field.
-    if (below < d.w) sel = 0.0;
-    else if (above < d.w) sel = 3.0;
+    // Two cells down and two cells up. A block with nothing beyond it toward the horizon is on
+    // the slab's underside; a block with nothing above it is the slab's lit top. Per-face flat
+    // shading on a 2-D field — two cells deep, because a one-cell rim at 0.55° is a hairline and
+    // the target's slabs carry a shadow band you can actually read.
+    float below = vsDeckDensity(idx + vec2(0.0, -2.0), a, b, c, oct);
+    float above = vsDeckDensity(idx + vec2(0.0,  2.0), a, b, c, oct);
+    if (below < a.w) sel = 0.0;
+    else if (above < a.w) sel = 3.0;
   #endif
   return vec2(1.0, sel);
 }
@@ -587,25 +617,30 @@ void main() {
   float ang = acos(clamp(sunFacing, -1.0, 1.0));
 
   // ---- clouds --------------------------------------------------------------------------------
-  vec2 idxAz = vec2(floor(az / uCellAz), 0.0);
+  // The block GRID drifts with each deck's wind and the pattern inside it is rigid, so slabs
+  // translate smoothly across the screen instead of popping one cell at a time. Everything that
+  // is not translation — birth, death, the second deck's opposite bearing — is in the density.
+  float elIdx = floor(dir.y / uCellEl);
 
-  if (dir.y > uDeckLow2.y - 0.02) {
-    vec2 idx = vec2(idxAz.x, floor(dir.y / uCellEl));
-    vec2 sh = vsDeckShade(idx, uDeckLow, uDeckLow2, uWindLow, uDeckLow2.y * 0.72, LOW_OCT);
+  if (dir.y > uDeckLowB.y - 0.03) {
+    float drift = uDeckLowC.z * uTime;
+    vec2 idx = vec2(floor((az - drift) / uCellAz), elIdx);
+    vec2 sh = vsDeckShade(idx, uDeckLowA, uDeckLowB, uDeckLowC, LOW_OCT);
     float cover = sh.x
-      * smoothstep(uDeckLow2.y, uDeckLow2.y + 0.045, dir.y)
-      * (1.0 - smoothstep(uDeckLow2.z, uDeckLow2.z + 0.22, dir.y));
+      * smoothstep(uDeckLowB.y, uDeckLowB.y + 0.075, dir.y)
+      * (1.0 - smoothstep(uDeckLowB.z, uDeckLowB.z + 0.22, dir.y));
     col = mix(col, vsCloudColour(sh.y, sunFacing), clamp(cover * uCloudGain, 0.0, 1.0));
   }
 
   #if DECK2
-  if (dir.y > uDeckHigh2.y - 0.02) {
-    vec2 idx = vec2(idxAz.x, floor(dir.y / uCellEl));
-    vec2 sh = vsDeckShade(idx, uDeckHigh, uDeckHigh2, uWindHigh, uDeckHigh2.y * 0.72, HIGH_OCT);
+  if (dir.y > uDeckHighB.y - 0.03) {
+    float drift = uDeckHighC.z * uTime;
+    vec2 idx = vec2(floor((az - drift) / uCellAz), elIdx);
+    vec2 sh = vsDeckShade(idx, uDeckHighA, uDeckHighB, uDeckHighC, HIGH_OCT);
     float cover = sh.x
-      * smoothstep(uDeckHigh2.y, uDeckHigh2.y + 0.06, dir.y)
-      * (1.0 - smoothstep(uDeckHigh2.z, uDeckHigh2.z + 0.20, dir.y));
-    col = mix(col, vsCloudColour(sh.y, sunFacing) * 1.02, clamp(cover * uCloudGain * 0.92, 0.0, 1.0));
+      * smoothstep(uDeckHighB.y, uDeckHighB.y + 0.09, dir.y)
+      * (1.0 - smoothstep(uDeckHighB.z, uDeckHighB.z + 0.20, dir.y));
+    col = mix(col, vsCloudColour(sh.y, sunFacing) * 1.02, clamp(cover * uCloudGain * 0.9, 0.0, 1.0));
   }
   #endif
 
@@ -716,40 +751,12 @@ export class Sky {
       uCellAz: { value: (2 * Math.PI) / CLOUDS.azCells },
       uCellEl: { value: CLOUDS.elCell },
 
-      uDeckLow: {
-        value: new THREE.Vector4(
-          CLOUDS.low.deckH,
-          CLOUDS.low.scale,
-          CLOUDS.low.aniso,
-          CLOUDS.low.cover
-        ),
-      },
-      uDeckLow2: {
-        value: new THREE.Vector4(
-          CLOUDS.low.core,
-          CLOUDS.low.elLow,
-          CLOUDS.low.elHigh,
-          CLOUDS.low.evo
-        ),
-      },
-      uWindLow: { value: new THREE.Vector2(...CLOUDS.low.wind) },
-      uDeckHigh: {
-        value: new THREE.Vector4(
-          CLOUDS.high.deckH,
-          CLOUDS.high.scale,
-          CLOUDS.high.aniso,
-          CLOUDS.high.cover
-        ),
-      },
-      uDeckHigh2: {
-        value: new THREE.Vector4(
-          CLOUDS.high.core,
-          CLOUDS.high.elLow,
-          CLOUDS.high.elHigh,
-          CLOUDS.high.evo
-        ),
-      },
-      uWindHigh: { value: new THREE.Vector2(...CLOUDS.high.wind) },
+      uDeckLowA: { value: deckA(CLOUDS.low) },
+      uDeckLowB: { value: deckB(CLOUDS.low) },
+      uDeckLowC: { value: deckC(CLOUDS.low) },
+      uDeckHighA: { value: deckA(CLOUDS.high) },
+      uDeckHighB: { value: deckB(CLOUDS.high) },
+      uDeckHighC: { value: deckC(CLOUDS.high) },
 
       uCloudTop: { value: V() },
       uCloudBody: { value: V() },
@@ -854,30 +861,45 @@ export class Sky {
 
   // -------------------------------------------------------------------------- palette
 
-  /** Re-solve every measured stop for the current tonemap. Cheap; runs at setup and on change. */
+  /**
+   * Re-solve every measured stop for the current tonemap. Cheap; runs at setup and on change.
+   *
+   * Two classes of colour live here and they are held to different standards, which is why the
+   * residual is not one number.
+   *
+   *   * **Claim colours** — the seven band stops, the under-sky, the three cloud values. Every one
+   *     of these is a promise that a specific pixel in the finished frame matches a specific pixel
+   *     in `reference/target-lowpoly.png`, so a residual here is a broken promise and it warns.
+   *   * **Accent colours** — the sun's core and the Errata's cut edge. `resonance.core` (#2FE3D6)
+   *     is a saturated teal that ACES simply cannot reach from any non-negative radiance at this
+   *     exposure: the solve drives red to zero and still lands 0.27 short. That is a property of
+   *     the tone curve, not a bug in the sky, and pretending otherwise by warning every boot would
+   *     train everyone to ignore the warning. It is reported per role on the probe instead, so a
+   *     critic can see exactly which colour is out of gamut and by how much.
+   */
   _solveTone() {
     const e = this.exposure;
     const tm = this.toneMapping;
+    this.residuals = {};
     this.maxResidual = 0;
-    const solve = (hex) => {
+    const put = (target, role, hex, claim) => {
       const s = inverseToneMap(hexToLinear(hex), e, tm);
-      this.maxResidual = Math.max(this.maxResidual, s.residual);
-      return s.rgb;
+      this.residuals[role] = Number(s.residual.toFixed(4));
+      if (claim) this.maxResidual = Math.max(this.maxResidual, s.residual);
+      target.set(s.rgb[0], s.rgb[1], s.rgb[2]);
     };
-    const put = (target, hex) => {
-      const rgb = solve(hex);
-      target.set(rgb[0], rgb[1], rgb[2]);
-    };
-    SKY_BANDS.forEach((b, i) => put(this.uniforms.uBandCol.value[i], b.hex));
-    put(this.uniforms.uUnder.value, UNDER_HEX);
-    put(this.uniforms.uCloudTop.value, CLOUD.top);
-    put(this.uniforms.uCloudBody.value, CLOUD.body);
-    put(this.uniforms.uCloudUnder.value, CLOUD.under);
-    put(this.uniforms.uCloudSunward.value, CLOUD.sunward);
-    put(this.uniforms.uSunGlow.value, SUN.hex);
-    put(this.uniforms.uSunCore.value, SUN.coreHex);
-    put(this.uniforms.uErrataCol.value, ERRATA.hex);
-    put(this.uniforms.uErrataEdge.value, ERRATA.edgeHex);
+    SKY_BANDS.forEach((b, i) =>
+      put(this.uniforms.uBandCol.value[i], `band${b.el}`, b.hex, true)
+    );
+    put(this.uniforms.uUnder.value, "under", UNDER_HEX, true);
+    put(this.uniforms.uCloudTop.value, "cloudTop", CLOUD.top, true);
+    put(this.uniforms.uCloudBody.value, "cloudBody", CLOUD.body, true);
+    put(this.uniforms.uCloudUnder.value, "cloudUnder", CLOUD.under, true);
+    put(this.uniforms.uCloudSunward.value, "cloudSunward", CLOUD.sunward, false);
+    put(this.uniforms.uSunGlow.value, "sunGlow", SUN.hex, true);
+    put(this.uniforms.uSunCore.value, "sunCore", SUN.coreHex, false);
+    put(this.uniforms.uErrataCol.value, "errata", ERRATA.hex, true);
+    put(this.uniforms.uErrataEdge.value, "errataEdge", ERRATA.edgeHex, false);
     if (this.maxResidual > 0.004) {
       warn(`Sky: tonemap inversion residual ${this.maxResidual.toFixed(4)} — sky is off-palette`);
     }
@@ -978,7 +1000,10 @@ export class Sky {
 
       toneMapping: this.toneMapping,
       exposure: r3(this.exposure),
+      // Max over the colours that are a claim about a target pixel. Accents are listed separately
+      // because #2FE3D6 is outside what ACES can reach — see _solveTone().
       toneSolveResidual: Number(this.maxResidual.toFixed(6)),
+      toneSolveResiduals: this.residuals,
     };
   }
 

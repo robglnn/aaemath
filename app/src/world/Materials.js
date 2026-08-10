@@ -103,11 +103,28 @@ export function roleColor(name) {
  * is the point: §3.2 says "Change the key and redo the division", and here the division is code.
  */
 export const KEY_HEX = 0xffe3b8;
-export const FILL_SKY_HEX = 0x66b3ff; // §3.1, derived: shadowed linear / lit linear, normalised
 export const FILL_GROUND_HEX = 0x2a1f16;
 export const BOUNCE_HEX = 0x8a5b3e;
 
 const KEY_LINEAR = new THREE.Color().setHex(KEY_HEX, THREE.SRGBColorSpace);
+
+/**
+ * **The one number §3.2 needs and does not state: what N·L a "lit ground plane" was standing at.**
+ *
+ * §3.2's witness is one ground plane at Y 0.1310 lit and 0.0300 in its own cast shadow, and §3.2's
+ * worked albedo divides a *sampled* colour by the key. Those two only agree at one N·L, and that
+ * N·L is not 0.156 — a plane facing straight up under a 9° sun. At 0.156 the implied ground albedo
+ * comes out at (1.20, 0.86, 0.31), and an albedo above 1.0 is not a colour, it is a proof that the
+ * plane was tilted. Look at the target: the courier stands on a faceted ridge and the ground that
+ * reads as "lit ground" is its sun-facing slope, not its top.
+ *
+ * **Authored: 0.342**, which is a facet tilted about 11° toward the key. It is the lowest value that
+ * leaves every derived albedo comfortably under 1.0, and it puts `ground.lit`'s albedo at `#C4B86C`
+ * — a pale ochre sand, which is what the substance is. Raise it and the world's albedos go dark and
+ * chalky; lower it and they clip. Everything else in the rig hangs off it, so it is one constant and
+ * `review/measure/P11.mjs` measures the consequences rather than the constant.
+ */
+export const GROUND_FACET_NDL = 0.342;
 
 const derivedAlbedos = {};
 
@@ -130,14 +147,65 @@ export function albedoFrom(role, multiplier = 1, label = role) {
     rendered.g / KEY_LINEAR.g / multiplier,
     rendered.b / KEY_LINEAR.b / multiplier
   );
+  const over = Math.max(c.r, c.g, c.b);
+  if (over > 1.0) {
+    // An albedo above 1 is not a colour; it means the sampled pixel was standing at a higher N·L
+    // than the multiplier claims. Clamp so nothing renders as a blown white blob, and say so.
+    warn(`Materials: albedo "${label}" from ${role} at N·L ${multiplier} exceeds 1 (${over.toFixed(3)}) — clamped`);
+    c.multiplyScalar(1 / over);
+  }
   derivedAlbedos[label] = {
     from: role,
     sampled: `#${rendered.getHexString(THREE.SRGBColorSpace).toUpperCase()}`,
     ladderStep: multiplier,
     albedo: `#${c.clone().getHexString(THREE.SRGBColorSpace).toUpperCase()}`,
     linear: [r4(c.r), r4(c.g), r4(c.b)],
+    clamped: over > 1 ? r4(over) : undefined,
   };
   return c;
+}
+
+/**
+ * **The fill, derived — colour and intensity together — from the two pixels §3.1 says it came from.**
+ *
+ * §3.1 states both the method and an answer: "take one ground plane, lit and inside its own cast
+ * shadow, and divide the shadowed linear triplet by the lit one … normalise to its maximum channel
+ * and that is `#66B3FF`." **The method is right and the answer does not reproduce §3.4.** Two things
+ * are wrong with the printed hex if you type it:
+ *
+ *  1. The division `shadow / lit` is *not* `fill / key`; it is `fill / (key + fill)`, because the
+ *     lit pixel also contains the fill. Solving properly puts a factor of `r/(1−r)` in.
+ *  2. Fed as an intensity, `#66B3FF` renders `ground.lit`'s albedo in a cast shadow at **hue 144**.
+ *     §3.4's measured value — and §13 row 4's gate — is **hue 120**, over a window of 100–140. The
+ *     typed hex fails the gate the same document publishes.
+ *
+ * So do the division §3.1 describes, on the two roles `design/palette.json` publishes for that pair,
+ * and take the arithmetic over the rounded hex. The cast shadow then lands on `ground.shadow`
+ * `#223522` **by construction**, at hue 120, and `review/measure/P11.mjs` claim S3 checks it on
+ * pixels rather than on this comment.
+ *
+ * Re-sample the palette and the fill re-derives. That is the whole point of doing it in code.
+ */
+export function deriveFill() {
+  const lit = roleColor("ground.lit");
+  const shadow = roleColor("ground.shadow");
+  const ch = (name) => [lit[name], shadow[name], KEY_LINEAR[name]];
+  const t = ["r", "g", "b"].map((name) => {
+    const [L, S, Kc] = ch(name);
+    const r = Math.min(0.985, S / Math.max(L, 1e-6));
+    // fillSky · F = r/(1−r) · keyLinear · K · N·L   with K = PI (see Lighting.KEY_INTENSITY)
+    return (r / (1 - r)) * Kc * Math.PI * GROUND_FACET_NDL;
+  });
+  const intensity = Math.max(...t);
+  const color = new THREE.Color(t[0] / intensity, t[1] / intensity, t[2] / intensity);
+  return {
+    color,
+    intensity,
+    hex: `#${color.clone().getHexString(THREE.SRGBColorSpace).toUpperCase()}`,
+    linear: t.map(r4),
+    method: "shadow/lit on (ground.lit, ground.shadow), solved for fill/(key+fill) — art-direction §3.1",
+    printedInDoc: "#66B3FF",
+  };
 }
 
 /** The albedo that makes a *self-lit* substance travel from `floorRole` to `peakRole` under the key. */
@@ -323,8 +391,14 @@ const ARCHETYPES = {
     tint: TINT.full,
     rim: 1,
   },
+  /**
+   * The walkable shelf. Its albedo is the §3.2 witness itself: `ground.lit` divided by the key at
+   * `GROUND_FACET_NDL`, so a shelf facet tilted that far toward the sun renders *exactly*
+   * `ground.lit` `#78632C`, and the same facet inside a cast shadow renders exactly `ground.shadow`
+   * `#223522`. Those are the two pixels §3.2 and §3.4 are both written from.
+   */
   ground: {
-    albedo: () => albedoFrom("ground.bright", LADDER.lit, "ground"),
+    albedo: () => albedoFrom("ground.lit", GROUND_FACET_NDL, "ground"),
     tint: TINT.full,
     rim: 0.85,
   },
@@ -339,18 +413,19 @@ const ARCHETYPES = {
    */
   metal: {
     albedo: () =>
-      cooled(
-        albedoFrom("stone.bone", LADDER.lit, "metal.base"),
-        0.3,
-        new THREE.Color().setHex(FILL_SKY_HEX, THREE.SRGBColorSpace)
-      ),
+      cooled(albedoFrom("stone.bone", LADDER.lit, "metal.base"), 0.3, deriveFill().color),
     tint: TINT.full,
     rim: 1,
     record: "metal",
   },
-  /** §10.2 — what was answered instead of solved. Nothing bright on it anywhere, and no rotation. */
+  /**
+   * §10.2 — what was answered instead of solved. Nothing bright on it anywhere, and no rotation:
+   * a blue shadow on grey turns it back into rock, which is the fastest way to lose the material.
+   * `world.grey` is a *constructed rendered* value (luminance = the geometric mean of lit and
+   * shadowed ground), so it is divided at the same ground facet the rest of that construction used.
+   */
   grey: {
-    albedo: () => albedoFrom("world.grey", LADDER.lit, "grey"),
+    albedo: () => albedoFrom("world.grey", GROUND_FACET_NDL, "grey"),
     tint: TINT.none,
     rim: 0,
   },
@@ -701,9 +776,17 @@ export function buildBoard(materials) {
   group.name = "vs.materialBoard";
   const marks = {};
 
-  const add = (geo, mat, x, y, z, name) => {
+  /**
+   * The shelf's surface, as a function. Deterministic, gentle and *authored* rather than noise: a
+   * low ridge the courier stands on. Everything on the board is placed through it, because a prop
+   * hovering a centimetre off the ground would break the one measurement this piece exists to make.
+   */
+  const groundAt = (x, z) =>
+    Math.cos(x * 0.16) * 0.62 + Math.sin(-z * 0.21 + 1.1) * 0.5 - Math.abs(z) * 0.02;
+
+  const add = (geo, mat, x, lift, z, name) => {
     const mesh = new THREE.Mesh(flatten(geo), mat);
-    mesh.position.set(x, y, z);
+    mesh.position.set(x, groundAt(x, z) + lift, z);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.name = name;
@@ -711,25 +794,47 @@ export function buildBoard(materials) {
     return mesh;
   };
 
-  // --- the shelf. Flat on top because that was the surface (world.md §2.3).
-  const shelf = add(new THREE.BoxGeometry(34, 2.4, 22), materials.ground(), 0, -1.2, 0, "vs.board.shelf");
-  shelf.castShadow = false;
+  // --- the shelf. Flat on top *as a surface*, but a low-poly shelf is a handful of enormous planes
+  //     (§2.2) and not one quad: the whole ground calibration lives on facets that tilt a little
+  //     toward the key, which is what §3.2's "lit ground plane" actually is. 6 x 4 cells over 34 x 22
+  //     metres is a 5.7 m facet — well over §2.2's 3 m minimum for a walkable shelf.
+  const shelfGeo = new THREE.PlaneGeometry(34, 22, 6, 4);
+  const sp = shelfGeo.attributes.position;
+  for (let i = 0; i < sp.count; i++) {
+    // The plane is authored in its own XY and then laid down: local +y becomes world −z.
+    sp.setZ(i, groundAt(sp.getX(i), -sp.getY(i)));
+  }
+  const shelf = new THREE.Mesh(flatten(shelfGeo), materials.ground());
+  shelf.rotation.x = -Math.PI / 2;
+  shelf.position.set(0, 0, 0);
+  shelf.receiveShadow = true;
+  shelf.name = "vs.board.shelf";
+  group.add(shelf);
+  // the shelf's body, so the frame reads as a leaf and not a floor
+  const rim = new THREE.Mesh(flatten(new THREE.BoxGeometry(34.4, 2.4, 22.4)), materials.ground());
+  rim.position.set(0, -1.2, 0);
+  rim.receiveShadow = true;
+  rim.name = "vs.board.shelfBody";
+  group.add(rim);
   // --- and ragged underneath, because that is a fracture where the false part stopped.
-  const under = add(new THREE.ConeGeometry(15, 9, 7, 1), materials.rock(), 0, -6.6, 0, "vs.board.underside");
+  const under = new THREE.Mesh(flatten(new THREE.ConeGeometry(15, 9, 7, 1)), materials.rock());
+  under.position.set(0, -6.9, 0);
   under.rotation.x = Math.PI;
-  under.receiveShadow = false;
+  under.name = "vs.board.underside";
+  group.add(under);
 
-  // --- foreground spire, left third of frame, five lit planes and one turned (§2.3).
-  const spire = add(new THREE.ConeGeometry(3.1, 15, 6, 2), materials.rock(), -10.5, 7.5, -2.2, "vs.board.spire");
+  // --- foreground spire, left third of frame, five lit planes and one turned (§2.3). Cut in three
+  //     height bands so one mass carries a countable ladder rather than one value per side.
+  const spire = add(new THREE.ConeGeometry(2.6, 9, 6, 3), materials.rock(), -9.2, 4.4, -1.0, "vs.board.spire");
   spire.rotation.y = 0.42;
-  spire.scale.set(1, 1, 0.72);
-  add(new THREE.DodecahedronGeometry(1.9, 0), materials.rock(), -7.2, 0.55, 3.0, "vs.board.boulderA");
-  add(new THREE.DodecahedronGeometry(1.15, 0), materials.stone(), -5.1, 0.3, 4.6, "vs.board.boulderB");
+  spire.scale.set(1, 1, 0.74);
+  add(new THREE.DodecahedronGeometry(1.9, 0), materials.rock(), -6.4, 0.9, 3.4, "vs.board.boulderA");
+  add(new THREE.DodecahedronGeometry(1.15, 0), materials.stone(), -4.4, 0.6, 5.0, "vs.board.boulderB");
 
   // --- a certainty field: two facet values plus a hot core, and a real accent light (§5.4).
   const cluster = new THREE.Group();
   cluster.name = "vs.board.crystal";
-  cluster.position.set(6.4, 0.05, 2.4);
+  cluster.position.set(6.4, groundAt(6.4, 2.4) - 0.05, 2.4);
   const shards = [
     [0, 0, 0, 1.0, 0.0],
     [0.85, 0, 0.4, 0.66, 0.5],
@@ -746,54 +851,55 @@ export function buildBoard(materials) {
     cluster.add(m);
   });
   group.add(cluster);
-  marks.crystal = cluster.position.clone().setY(1.3);
+  marks.crystal = cluster.position.clone().setY(cluster.position.y + 1.3);
 
   // --- a carry, running across the shelf. §5 wants "flat surface facets", not a mirror plane, so
   //     the strip is nudged into facets deterministically before it is flattened: the animated ramp
   //     is the break-up, and this is the geometry it breaks up across.
-  const carryGeo = new THREE.PlaneGeometry(30, 3.1, 22, 3);
+  const carryZ = 6.4;
+  const carryGeo = new THREE.PlaneGeometry(26, 1.9, 20, 2);
   const cp = carryGeo.attributes.position;
   for (let i = 0; i < cp.count; i++) {
     const x = cp.getX(i);
     const y = cp.getY(i);
-    cp.setZ(i, Math.sin(x * 0.9 + y * 2.1) * 0.055 + Math.sin(x * 2.3) * 0.03);
+    // Lie the carry on the shelf's own surface, plus the facet break-up, plus 6 cm of clearance so
+    // two coplanar surfaces never z-fight (anti-pattern 16).
+    cp.setZ(
+      i,
+      groundAt(x, carryZ - y) + 0.06 + Math.sin(x * 0.9 + y * 2.1) * 0.05 + Math.sin(x * 2.3) * 0.028
+    );
   }
   const carry = new THREE.Mesh(flatten(carryGeo), materials.water());
   carry.rotation.x = -Math.PI / 2;
-  carry.rotation.z = 0.06;
-  carry.position.set(1.5, 0.06, 6.6);
+  carry.position.set(0, 0, carryZ);
   carry.receiveShadow = false;
   carry.name = "vs.board.carry";
   group.add(carry);
-  marks.water = new THREE.Vector3(1.5, 0.06, 6.6);
+  marks.water = new THREE.Vector3(2.0, groundAt(2.0, carryZ) + 0.06, carryZ);
 
   // --- grey: what was answered instead of solved. A sagging span with props under it (§10.2).
-  const span = add(new THREE.BoxGeometry(6.2, 0.34, 1.5), materials.grey(), -14.5, 1.6, -6.0, "vs.board.grey");
+  const span = add(new THREE.BoxGeometry(6.2, 0.34, 1.5), materials.grey(), -14.2, 1.7, -6.0, "vs.board.grey");
   span.rotation.z = -0.03;
-  add(new THREE.BoxGeometry(0.34, 1.6, 0.34), materials.stone(), -12.1, 0.75, -6.0, "vs.board.prop");
+  add(new THREE.BoxGeometry(0.34, 1.7, 0.34), materials.stone(), -12.0, 0.85, -6.0, "vs.board.prop");
 
   // --- foliage. Blades, alpha-tested, never a bright green (§7.1).
   for (let i = 0; i < 9; i++) {
     const a = (i / 9) * Math.PI * 2;
-    const blade = add(
-      new THREE.ConeGeometry(0.26, 0.85 + (i % 3) * 0.2, 3, 1),
-      materials.foliage(),
-      -3.4 + Math.cos(a) * 2.6,
-      0.42,
-      5.4 + Math.sin(a) * 1.2,
-      `vs.board.blade.${i}`
-    );
+    const bx = -3.6 + Math.cos(a) * 2.6;
+    const bz = 3.2 + Math.sin(a) * 1.2;
+    const blade = add(new THREE.ConeGeometry(0.26, 0.85 + (i % 3) * 0.2, 3, 1), materials.foliage(), bx, 0.42, bz, `vs.board.blade.${i}`);
     blade.rotation.y = a;
   }
 
   // --- metal: a lighter, cooler albedo and nothing else (§5).
-  add(new THREE.CylinderGeometry(0.55, 0.55, 1.5, 6, 1), materials.metal(), 10.2, 0.75, -3.4, "vs.board.metal");
+  add(new THREE.CylinderGeometry(0.55, 0.55, 1.5, 6, 1), materials.metal(), 9.6, 0.75, -3.4, "vs.board.metal");
 
   // --- the courier. Issued kit, not heroic plate (§10.4): mostly the cool armour value, one warm
   //     key-lit edge, a can at one hip, and a silhouette a shoulder line does not explain.
   const hero = new THREE.Group();
   hero.name = "vs.board.hero";
-  hero.position.set(0, 0, 0);
+  const heroFoot = groundAt(0, 0);
+  hero.position.set(0, heroFoot, 0);
   hero.rotation.y = -0.5;
   const part = (geo, mat, x, y, z, name) => {
     const m = new THREE.Mesh(flatten(geo), mat);
@@ -817,14 +923,20 @@ export function buildBoard(materials) {
   // the can — one hip only, the permitted violation of the taper
   part(new THREE.CylinderGeometry(0.15, 0.15, 0.36, 6, 1), materials.metal(), 0.36, 0.92, -0.16, "hero.can");
   group.add(hero);
-  marks.hero = new THREE.Vector3(0, 0, 0);
-  marks.heroHead = new THREE.Vector3(0, 1.85, 0);
-  marks.rock = new THREE.Vector3(-10.5, 7.5, -2.2);
-  marks.ground = new THREE.Vector3(3.5, 0.02, -1.0);
+  // The measurement script needs exact world points, not approximate ones: the sole of the right
+  // boot, the head, and a patch of open shelf. C1/C2 are only as good as these three numbers.
+  marks.hero = new THREE.Vector3(0, heroFoot, 0);
+  hero.updateMatrixWorld(true);
+  marks.sole = hero.getObjectByName("hero.footR").getWorldPosition(new THREE.Vector3());
+  marks.sole.y = heroFoot + 0.004; // 4 mm above the shelf, directly under the right boot
+  marks.heroHead = new THREE.Vector3(0, heroFoot + 1.85, 0);
+  marks.rock = new THREE.Vector3(-9.2, groundAt(-9.2, -1.0) + 4.4, -1.0);
+  marks.ground = new THREE.Vector3(3.0, groundAt(3.0, -1.0), -1.0);
 
   group.userData.marks = Object.fromEntries(
     Object.entries(marks).map(([k, v]) => [k, [v.x, v.y, v.z]])
   );
+  group.userData.groundAt = [0.16, 0.62, 0.21, 1.1, 0.5, 0.02]; // the coefficients, for a critic
   return group;
 }
 

@@ -1,0 +1,3041 @@
+{
+ "kpId": "translate-sentence",
+ "title": "Turning a sentence into an equation",
+ "strand": "translation",
+ "band": 3,
+ "objectClass": "Span",
+ "standards": [
+  "CCSS.6.EE.B.6",
+  "CCSS.HSA-CED.A.1",
+  "TEKS.6.9A",
+  "FL.MA.6.AR.1.1",
+  "VA.A.EI.1"
+ ],
+ "misconceptions": [
+  "produces-expression-not-equation",
+  "sides-merged",
+  "unknown-defined-as-wrong-quantity"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "translate-sentence.core/repair/1prhckq",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 5,
+     "b": 5,
+     "c": 85
+    },
+    "text": "5 runs of it and 5 spare comes to 85."
+   },
+   "working": [
+    "n",
+    "5 \\cdot 85 + 5 = n"
+   ],
+   "brokenBy": "unknown-defined-as-wrong-quantity",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "b": 5,
+     "c": 85,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -16 = 0",
+    "tex": "5n + 5 = 85",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2|5*n + 5",
+     "tex": "5n + 5",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2|5*n + 90",
+     "tex": "5 + 5n + 85",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "2|1*n + -430 = 0",
+     "tex": "5 \\cdot 85 + 5 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "c": 85,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "c": 85,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 5,
+    "c": 85
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/jrr4rz",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 2,
+     "b": 4,
+     "c": 82
+    },
+    "text": "2 runs of it and 4 spare comes to 82."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 2,
+     "b": 4,
+     "c": 82,
+     "target": "39",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 39."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2n + 4 = 82",
+    "tex": "2n + 4 = 82",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "39",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 2,
+      "b": 4,
+      "c": 82,
+      "target": "39",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 2,
+      "b": 4,
+      "c": 82,
+      "target": "39",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 39 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 4,
+    "c": 82
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/njrv4t",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 3,
+     "b": 8,
+     "c": 32
+    },
+    "text": "3 runs of it and 8 spare comes to 32."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 3,
+     "b": 8,
+     "c": 32
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -8 = 0",
+    "tex": "3n + 8 = 32"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "3*n + 8",
+     "tex": "3n + 8",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "3*n + 40",
+     "tex": "8 + 3n + 32",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -104 = 0",
+     "tex": "3 \\cdot 32 + 8 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 3,
+      "b": 8,
+      "c": 32
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 3,
+      "b": 8,
+      "c": 32
+     },
+     "text": "The near pan is 3 runs and 8 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 8,
+    "c": 32
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/1ie9hyn",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 4,
+     "b": 9,
+     "c": 61
+    },
+    "text": "4 runs of it and 9 spare comes to 61."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 4,
+     "b": 9,
+     "c": 61
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -13 = 0",
+    "tex": "4n + 9 = 61"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "4*n + 9",
+     "tex": "4n + 9",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "4*n + 70",
+     "tex": "9 + 4n + 61",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -253 = 0",
+     "tex": "4 \\cdot 61 + 9 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "c": 61
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "c": 61
+     },
+     "text": "The near pan is 4 runs and 9 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 9,
+    "c": 61
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/1u9wfrl",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 4,
+     "b": 9,
+     "c": 41
+    },
+    "text": "4 runs of it and 9 spare comes to 41."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 4,
+     "b": 9,
+     "c": 41,
+     "target": "8",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 8."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "4n + 9 = 41",
+    "tex": "4n + 9 = 41",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "8",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "c": 41,
+      "target": "8",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "c": 41,
+      "target": "8",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 8 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 9,
+    "c": 41
+   }
+  },
+  {
+   "id": "translate-sentence.core/repair/1kdfdxu",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 30
+    },
+    "text": "2 runs of it and 6 spare comes to 30."
+   },
+   "working": [
+    "n",
+    "2n + 6"
+   ],
+   "brokenBy": "produces-expression-not-equation",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 30,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -12 = 0",
+    "tex": "2n + 6 = 30",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2|2*n + 6",
+     "tex": "2n + 6",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2|2*n + 36",
+     "tex": "6 + 2n + 30",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "2|1*n + -66 = 0",
+     "tex": "2 \\cdot 30 + 6 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 30,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 30,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 6,
+    "c": 30
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/x3p13b",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 4,
+     "b": 9,
+     "c": 25
+    },
+    "text": "4 runs of it and 9 spare comes to 25."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 4,
+     "b": 9,
+     "c": 25,
+     "target": "4",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 4."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "4n + 9 = 25",
+    "tex": "4n + 9 = 25",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "4",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "c": 25,
+      "target": "4",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 4,
+      "b": 9,
+      "c": 25,
+      "target": "4",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 4 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 9,
+    "c": 25
+   }
+  },
+  {
+   "id": "translate-sentence.core/repair/1iim57q",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 5,
+     "b": 5,
+     "c": 45
+    },
+    "text": "5 runs of it and 5 spare comes to 45."
+   },
+   "working": [
+    "n",
+    "5 \\cdot 45 + 5 = n"
+   ],
+   "brokenBy": "unknown-defined-as-wrong-quantity",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "b": 5,
+     "c": 45,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -8 = 0",
+    "tex": "5n + 5 = 45",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2|5*n + 5",
+     "tex": "5n + 5",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2|5*n + 50",
+     "tex": "5 + 5n + 45",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "2|1*n + -230 = 0",
+     "tex": "5 \\cdot 45 + 5 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "c": 45,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "b": 5,
+      "c": 45,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 5,
+    "c": 45
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/1b7pyft",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 9,
+     "b": 3,
+     "c": 66
+    },
+    "text": "9 runs of it and 3 spare comes to 66."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 9,
+     "b": 3,
+     "c": 66
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -7 = 0",
+    "tex": "9n + 3 = 66"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "9*n + 3",
+     "tex": "9n + 3",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "9*n + 69",
+     "tex": "3 + 9n + 66",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -597 = 0",
+     "tex": "9 \\cdot 66 + 3 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 9,
+      "b": 3,
+      "c": 66
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 9,
+      "b": 3,
+      "c": 66
+     },
+     "text": "The near pan is 9 runs and 3 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 3,
+    "c": 66
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/xnsd5i",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 7,
+     "b": 8,
+     "c": 57
+    },
+    "text": "7 runs of it and 8 spare comes to 57."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 7,
+     "b": 8,
+     "c": 57,
+     "target": "7",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 7."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "7n + 8 = 57",
+    "tex": "7n + 8 = 57",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "7",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 7,
+      "b": 8,
+      "c": 57,
+      "target": "7",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 7,
+      "b": 8,
+      "c": 57,
+      "target": "7",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 7 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 8,
+    "c": 57
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/3usz83",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 66
+    },
+    "text": "2 runs of it and 6 spare comes to 66."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 66,
+     "target": "30",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 30."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2n + 6 = 66",
+    "tex": "2n + 6 = 66",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "30",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 66,
+      "target": "30",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 66,
+      "target": "30",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 30 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 6,
+    "c": 66
+   }
+  },
+  {
+   "id": "translate-sentence.core/repair/1ja23rk",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 36
+    },
+    "text": "2 runs of it and 6 spare comes to 36."
+   },
+   "working": [
+    "n",
+    "2 \\cdot 36 + 6 = n"
+   ],
+   "brokenBy": "unknown-defined-as-wrong-quantity",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 36,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -15 = 0",
+    "tex": "2n + 6 = 36",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2|2*n + 6",
+     "tex": "2n + 6",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2|2*n + 42",
+     "tex": "6 + 2n + 36",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "2|1*n + -78 = 0",
+     "tex": "2 \\cdot 36 + 6 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 36,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 36,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 6,
+    "c": 36
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/ldxs3i",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 3,
+     "b": 5,
+     "c": 32
+    },
+    "text": "3 runs of it and 5 spare comes to 32."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 3,
+     "b": 5,
+     "c": 32,
+     "target": "9",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 9."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "3n + 5 = 32",
+    "tex": "3n + 5 = 32",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "9",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "c": 32,
+      "target": "9",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "c": 32,
+      "target": "9",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 9 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 5,
+    "c": 32
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/1wjczw3",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 8,
+     "b": 4,
+     "c": 84
+    },
+    "text": "8 runs of it and 4 spare comes to 84."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 8,
+     "b": 4,
+     "c": 84
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -10 = 0",
+    "tex": "8n + 4 = 84"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "8*n + 4",
+     "tex": "8n + 4",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "8*n + 88",
+     "tex": "4 + 8n + 84",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -676 = 0",
+     "tex": "8 \\cdot 84 + 4 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 8,
+      "b": 4,
+      "c": 84
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 8,
+      "b": 4,
+      "c": 84
+     },
+     "text": "The near pan is 8 runs and 4 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 4,
+    "c": 84
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/1g1ahgl",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 6,
+     "b": 6,
+     "c": 60
+    },
+    "text": "6 runs of it and 6 spare comes to 60."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 6,
+     "b": 6,
+     "c": 60
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -9 = 0",
+    "tex": "6n + 6 = 60"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "6*n + 6",
+     "tex": "6n + 6",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "6*n + 66",
+     "tex": "6 + 6n + 60",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -366 = 0",
+     "tex": "6 \\cdot 60 + 6 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 6,
+      "b": 6,
+      "c": 60
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 6,
+      "b": 6,
+      "c": 60
+     },
+     "text": "The near pan is 6 runs and 6 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 6,
+    "b": 6,
+    "c": 60
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/jkrqng",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 4,
+     "b": 3,
+     "c": 59
+    },
+    "text": "4 runs of it and 3 spare comes to 59."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 4,
+     "b": 3,
+     "c": 59,
+     "target": "14",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 14."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "4n + 3 = 59",
+    "tex": "4n + 3 = 59",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "14",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 4,
+      "b": 3,
+      "c": 59,
+      "target": "14",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 4,
+      "b": 3,
+      "c": 59,
+      "target": "14",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 14 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 3,
+    "c": 59
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/10iytiy",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 5,
+     "b": 2,
+     "c": 17
+    },
+    "text": "5 runs of it and 2 spare comes to 17."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 5,
+     "b": 2,
+     "c": 17
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -3 = 0",
+    "tex": "5n + 2 = 17"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "5*n + 2",
+     "tex": "5n + 2",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "5*n + 19",
+     "tex": "2 + 5n + 17",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -87 = 0",
+     "tex": "5 \\cdot 17 + 2 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 5,
+      "b": 2,
+      "c": 17
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 5,
+      "b": 2,
+      "c": 17
+     },
+     "text": "The near pan is 5 runs and 2 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 2,
+    "c": 17
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/10psajy",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 2,
+     "b": 3,
+     "c": 33
+    },
+    "text": "2 runs of it and 3 spare comes to 33."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 2,
+     "b": 3,
+     "c": 33
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -15 = 0",
+    "tex": "2n + 3 = 33"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2*n + 3",
+     "tex": "2n + 3",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2*n + 36",
+     "tex": "3 + 2n + 33",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -69 = 0",
+     "tex": "2 \\cdot 33 + 3 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 2,
+      "b": 3,
+      "c": 33
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 2,
+      "b": 3,
+      "c": 33
+     },
+     "text": "The near pan is 2 runs and 3 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 3,
+    "c": 33
+   }
+  },
+  {
+   "id": "translate-sentence.core/repair/1az09v5",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 5,
+     "b": 2,
+     "c": 32
+    },
+    "text": "5 runs of it and 2 spare comes to 32."
+   },
+   "working": [
+    "n",
+    "5 \\cdot 32 + 2 = n"
+   ],
+   "brokenBy": "unknown-defined-as-wrong-quantity",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "b": 2,
+     "c": 32,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -6 = 0",
+    "tex": "5n + 2 = 32",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2|5*n + 2",
+     "tex": "5n + 2",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2|5*n + 34",
+     "tex": "2 + 5n + 32",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "2|1*n + -162 = 0",
+     "tex": "5 \\cdot 32 + 2 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "b": 2,
+      "c": 32,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "b": 2,
+      "c": 32,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 2,
+    "c": 32
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/p476w7",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 26
+    },
+    "text": "2 runs of it and 6 spare comes to 26."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 26
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -10 = 0",
+    "tex": "2n + 6 = 26"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2*n + 6",
+     "tex": "2n + 6",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2*n + 32",
+     "tex": "6 + 2n + 26",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -58 = 0",
+     "tex": "2 \\cdot 26 + 6 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 26
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 26
+     },
+     "text": "The near pan is 2 runs and 6 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 6,
+    "c": 26
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/dm97l9",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 2,
+     "b": 4,
+     "c": 40
+    },
+    "text": "2 runs of it and 4 spare comes to 40."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 2,
+     "b": 4,
+     "c": 40,
+     "target": "18",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 18."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2n + 4 = 40",
+    "tex": "2n + 4 = 40",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "18",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 2,
+      "b": 4,
+      "c": 40,
+      "target": "18",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 2,
+      "b": 4,
+      "c": 40,
+      "target": "18",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 18 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 4,
+    "c": 40
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/pz0res",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 5,
+     "b": 4,
+     "c": 79
+    },
+    "text": "5 runs of it and 4 spare comes to 79."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 5,
+     "b": 4,
+     "c": 79
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -15 = 0",
+    "tex": "5n + 4 = 79"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "5*n + 4",
+     "tex": "5n + 4",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "5*n + 83",
+     "tex": "4 + 5n + 79",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -399 = 0",
+     "tex": "5 \\cdot 79 + 4 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 5,
+      "b": 4,
+      "c": 79
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 5,
+      "b": 4,
+      "c": 79
+     },
+     "text": "The near pan is 5 runs and 4 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 4,
+    "c": 79
+   }
+  },
+  {
+   "id": "translate-sentence.core/repair/125f538",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 2,
+     "b": 7,
+     "c": 75
+    },
+    "text": "2 runs of it and 7 spare comes to 75."
+   },
+   "working": [
+    "n",
+    "2 \\cdot 75 + 7 = n"
+   ],
+   "brokenBy": "unknown-defined-as-wrong-quantity",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": 7,
+     "c": 75,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -34 = 0",
+    "tex": "2n + 7 = 75",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2|2*n + 7",
+     "tex": "2n + 7",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2|2*n + 82",
+     "tex": "7 + 2n + 75",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "2|1*n + -157 = 0",
+     "tex": "2 \\cdot 75 + 7 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": 7,
+      "c": 75,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": 7,
+      "c": 75,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 7,
+    "c": 75
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/1gc0jzz",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 8,
+     "b": 5,
+     "c": 61
+    },
+    "text": "8 runs of it and 5 spare comes to 61."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 8,
+     "b": 5,
+     "c": 61
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -7 = 0",
+    "tex": "8n + 5 = 61"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "8*n + 5",
+     "tex": "8n + 5",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "8*n + 66",
+     "tex": "5 + 8n + 61",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -493 = 0",
+     "tex": "8 \\cdot 61 + 5 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 8,
+      "b": 5,
+      "c": 61
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 8,
+      "b": 5,
+      "c": 61
+     },
+     "text": "The near pan is 8 runs and 5 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 5,
+    "c": 61
+   }
+  },
+  {
+   "id": "translate-sentence.core/repair/w5ngl3",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 8,
+     "b": 8,
+     "c": 48
+    },
+    "text": "8 runs of it and 8 spare comes to 48."
+   },
+   "working": [
+    "n",
+    "8n + 8"
+   ],
+   "brokenBy": "produces-expression-not-equation",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 8,
+     "b": 8,
+     "c": 48,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -5 = 0",
+    "tex": "8n + 8 = 48",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2|8*n + 8",
+     "tex": "8n + 8",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2|8*n + 56",
+     "tex": "8 + 8n + 48",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "2|1*n + -392 = 0",
+     "tex": "8 \\cdot 48 + 8 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 8,
+      "b": 8,
+      "c": 48,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 8,
+      "b": 8,
+      "c": 48,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 8,
+    "c": 48
+   }
+  },
+  {
+   "id": "translate-sentence.core/repair/1tzji9x",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 4,
+     "b": 2,
+     "c": 22
+    },
+    "text": "4 runs of it and 2 spare comes to 22."
+   },
+   "working": [
+    "n",
+    "4n + 2"
+   ],
+   "brokenBy": "produces-expression-not-equation",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "b": 2,
+     "c": 22,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -5 = 0",
+    "tex": "4n + 2 = 22",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2|4*n + 2",
+     "tex": "4n + 2",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2|4*n + 24",
+     "tex": "2 + 4n + 22",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "2|1*n + -90 = 0",
+     "tex": "4 \\cdot 22 + 2 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "b": 2,
+      "c": 22,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "b": 2,
+      "c": 22,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 2,
+    "c": 22
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/h6bd71",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 3,
+     "b": 6,
+     "c": 12
+    },
+    "text": "3 runs of it and 6 spare comes to 12."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 3,
+     "b": 6,
+     "c": 12,
+     "target": "2",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 2."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "3n + 6 = 12",
+    "tex": "3n + 6 = 12",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "2",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": 12,
+      "target": "2",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": 12,
+      "target": "2",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 2 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 6,
+    "c": 12
+   }
+  },
+  {
+   "id": "translate-sentence.core/construct/1spblnj",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 8,
+     "b": 9,
+     "c": 65
+    },
+    "text": "8 runs of it and 9 spare comes to 65."
+   },
+   "ask": {
+    "key": "ask.claim",
+    "params": {
+     "a": 8,
+     "b": 9,
+     "c": 65
+    },
+    "text": "Write the claim that stands."
+   },
+   "answerType": "equation",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -7 = 0",
+    "tex": "8n + 9 = 65"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "8*n + 9",
+     "tex": "8n + 9",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "8*n + 74",
+     "tex": "9 + 8n + 65",
+     "failKey": "fail.sill.missing",
+     "responseKind": "expression"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "1*n + -529 = 0",
+     "tex": "8 \\cdot 65 + 9 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.move.translate-sentence.core",
+     "params": {
+      "a": 8,
+      "b": 9,
+      "c": 65
+     },
+     "text": "Build each pan from the words, then hang them across the Sill."
+    },
+    {
+     "key": "hint.state.translate-sentence.core",
+     "params": {
+      "a": 8,
+      "b": 9,
+      "c": 65
+     },
+     "text": "The near pan is 8 runs and 9 spare. The far pan is the one number they said."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 9,
+    "c": 65
+   }
+  },
+  {
+   "id": "translate-sentence.core/repair/1ejydhl",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 9,
+     "b": 4,
+     "c": 85
+    },
+    "text": "9 runs of it and 4 spare comes to 85."
+   },
+   "working": [
+    "n",
+    "9n + 4"
+   ],
+   "brokenBy": "produces-expression-not-equation",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 9,
+     "b": 4,
+     "c": 85,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -9 = 0",
+    "tex": "9n + 4 = 85",
+    "line": 2,
+    "valueKind": "equation"
+   },
+   "distractors": [
+    {
+     "misconception": "produces-expression-not-equation",
+     "response": "2|9*n + 4",
+     "tex": "9n + 4",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "sides-merged",
+     "response": "2|9*n + 89",
+     "tex": "4 + 9n + 85",
+     "failKey": "fail.sill.missing"
+    },
+    {
+     "misconception": "unknown-defined-as-wrong-quantity",
+     "response": "2|1*n + -769 = 0",
+     "tex": "9 \\cdot 85 + 4 = n",
+     "failKey": "fail.said.wrongquantity"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 9,
+      "b": 4,
+      "c": 85,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 9,
+      "b": 4,
+      "c": 85,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.2",
+    "params": {},
+    "text": "The Nine Hundred hand these on mid-line and nobody has ever dropped one."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 4,
+    "c": 85
+   }
+  },
+  {
+   "id": "translate-sentence.core/generate/1xx0gio",
+   "kpId": "translate-sentence",
+   "family": "translate-sentence.core",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Span",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-sentence.core",
+    "params": {
+     "a": 7,
+     "b": 2,
+     "c": 44
+    },
+    "text": "7 runs of it and 2 spare comes to 44."
+   },
+   "ask": {
+    "key": "ask.gen.saidClaim",
+    "params": {
+     "a": 7,
+     "b": 2,
+     "c": 44,
+     "target": "6",
+     "unknown": "n"
+    },
+    "text": "Say a claim into the open socket that closes at 6."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "7n + 2 = 44",
+    "tex": "7n + 2 = 44",
+    "witness": true
+   },
+   "check": {
+    "kind": "claimClosesAt",
+    "unknown": "n",
+    "value": "6",
+    "needs": [
+     "coefficient",
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Span",
+     "params": {},
+     "text": "Two pans across the Sill, and a deck that still has to reach."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.2",
+     "params": {
+      "a": 7,
+      "b": 2,
+      "c": 44,
+      "target": "6",
+      "unknown": "n"
+     },
+     "text": "The far pan is the site. You are authoring the near one."
+    },
+    {
+     "key": "hint.gen.claimClosesAt.3",
+     "params": {
+      "a": 7,
+      "b": 2,
+      "c": 44,
+      "target": "6",
+      "unknown": "n"
+     },
+     "text": "Whatever you write, seating 6 has to leave the Sill level."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-sentence.1",
+    "params": {},
+    "text": "A said claim, spoken into an open socket: two unfinished spans reaching for each other."
+   },
+   "standards": [
+    "CCSS.6.EE.B.6",
+    "CCSS.HSA-CED.A.1",
+    "TEKS.6.9A",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EI.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 2,
+    "c": 44
+   }
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+(node:45672) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+page.evaluate: Execution context was destroyed, most likely because of a navigation
+    at Object.run (C:\dev\math\aaemath\tools\lib\session.mjs:185:30)
+    at C:\dev\math\aaemath\review\measure\P15.mjs:557:34
+    at async openGame (C:\dev\math\aaemath\tools\lib\session.mjs:200:12)
+    at async browserClaims (C:\dev\math\aaemath\review\measure\P15.mjs:507:7)
+    at async main (C:\dev\math\aaemath\review\measure\P15.mjs:724:5) {
+  log: [],
+  name: 'Error'
+}

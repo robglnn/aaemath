@@ -310,6 +310,7 @@ shape({
       sigs: {
         "var-alphabet-value": { canonical: rstr(I(alphaIndex(p.letter))), tex: String(alphaIndex(p.letter)) },
       },
+      unknown: p.letter,
       hint: { letter: p.letter, v: p.v },
       trace: (misc) => {
         const read = misc === "var-alphabet-value" ? alphaIndex(p.letter) : p.v;
@@ -669,10 +670,10 @@ shape({
           : [L(stem, "expr"), L(`${p.a} \\cdot ${p.v}`, "expr"), L(String(p.a * p.v), "expr")],
       traceKind: "expr",
       gen: {
-        kind: "socketValue",
-        check: { kind: "socketValue", expr: cv(p.a), unknown: "x", relation: "greaterThan", value: p.a * p.v },
-        witness: String(p.v + 1),
-        ask: "ask.gen.settleAbove",
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "x", at: p.v, value: p.a * p.v, needs: ["letter"] },
+        witness: cv(p.a),
+        ask: "ask.gen.loadReadsAt",
         sigs: {},
       },
     };
@@ -706,10 +707,10 @@ shape({
           : [L(stem, "expr"), L(`${p.v}^{2} + ${p.v}`, "expr"), L(String(correct), "expr")],
       traceKind: "expr",
       gen: {
-        kind: "socketValue",
-        check: { kind: "socketValue", expr: "x^{2} + x", unknown: "x", relation: "greaterThan", value: correct },
-        witness: String(p.v + 1),
-        ask: "ask.gen.settleAbove",
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "x", at: p.v, value: correct, needs: ["letter"] },
+        witness: "x^{2} + x",
+        ask: "ask.gen.loadReadsAt",
         sigs: {},
       },
     };
@@ -867,10 +868,10 @@ shape({
             ],
       traceKind: "expr",
       gen: {
-        kind: "socketValue",
-        check: { kind: "socketValue", expr: "x + y", unknown: "x", fixed: { y: -p.b }, relation: "lessThan", value: 0 },
-        witness: String(-p.a),
-        ask: "ask.gen.settleBelow",
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "x", at: -p.a, value: -(p.a + p.b), needs: ["letter"] },
+        witness: `x - ${p.b}`,
+        ask: "ask.gen.loadReadsAt",
         sigs: {},
       },
     };
@@ -933,17 +934,10 @@ shape({
       },
       traceKind: "expr",
       gen: {
-        kind: "socketValue",
-        check: {
-          kind: "socketValue",
-          expr: `${cv(p.c, "r")} + ${cv(p.d, "s")}`,
-          unknown: "r",
-          fixed: { s: p.q },
-          relation: "greaterThan",
-          value: correct,
-        },
-        witness: String(p.p + 1),
-        ask: "ask.gen.settleAbove",
+        kind: "loadReadsAt",
+        check: { kind: "loadReadsAt", unknown: "r", at: p.p, value: correct, needs: ["letter"] },
+        witness: `${cv(p.c, "r")} + ${p.d * p.q}`,
+        ask: "ask.gen.loadReadsAt",
         sigs: {},
       },
     };
@@ -967,6 +961,7 @@ shape({
     return {
       stem,
       given: [],
+      unknown: "n",
       spoken: { key: "spoken.translate-phrase.groups", params: { a: p.a, b: p.b } },
       answer: { canonical: canonExpr(`${p.a}n + ${p.b}`), tex: `${cv(p.a, "n")} + ${p.b}` },
       sigs: {
@@ -1021,6 +1016,7 @@ shape({
     return {
       stem,
       given: [],
+      unknown: "n",
       spoken: { key: "spoken.translate-phrase.twice", params: { b: p.b } },
       answer: { canonical: canonExpr(`2n + ${p.b}`), tex: `2n + ${p.b}` },
       sigs: {
@@ -1059,6 +1055,7 @@ shape({
     return {
       stem,
       given: [],
+      unknown: "n",
       spoken: { key: "spoken.translate-order.lessthan", params: { a: p.a } },
       answer: { canonical: canonExpr(`n - ${p.a}`), tex: `n - ${p.a}` },
       sigs: {
@@ -1088,6 +1085,7 @@ shape({
     return {
       stem,
       given: [],
+      unknown: "n",
       spoken: { key: "spoken.translate-order.subtractfrom", params: { a: p.a } },
       answer: { canonical: canonExpr(`${p.a} - n`), tex: `${p.a} - n` },
       sigs: {
@@ -1117,6 +1115,7 @@ shape({
     return {
       stem,
       given: [],
+      unknown: "n",
       spoken: { key: "spoken.translate-order.dividedinto", params: { a: p.a } },
       answer: { canonical: canonExpr(`${p.a}/n`), tex: `\\frac{${p.a}}{n}` },
       sigs: {
@@ -1157,6 +1156,7 @@ shape({
     return {
       stem,
       given: [],
+      unknown: "n",
       spoken: { key: "spoken.translate-sentence.core", params: { a: p.a, b: p.b, c: p.c } },
       answer: {
         canonical: canonEquation(`${p.a}n + ${p.b} = ${p.c}`),
@@ -1197,7 +1197,7 @@ shape({
           kind: "claimClosesAt",
           unknown: "n",
           value: rstr(rat(p.c - p.b, p.a)),
-          needs: ["coefficient", "constant"],
+          needs: ["coefficient", "constantWithUnknown"],
         },
         witness: `${cv(p.a, "n")} + ${p.b} = ${p.c}`,
         ask: "ask.gen.saidClaim",
@@ -1794,7 +1794,7 @@ shape({
           kind: "loadGathersTo",
           target: canonExpr(correct),
           unknown: "x",
-          needs: ["bundle", "twoLikeTerms"],
+          needs: ["bundle"],
         },
         witness: stem,
         ask: "ask.gen.gathersTo",
@@ -1816,7 +1816,7 @@ shape({
     return { a, b };
   },
   build(p) {
-    const stem = `${p.a}\\left(x${plus(p.b)}\\right) \\;\\;\\text{---}\\;\\; ${cv(p.a)} + \\square`;
+    const stem = `${p.a}\\left(x${plus(p.b)}\\right) \\;\\Rightarrow\\; ${cv(p.a)} + \\square`;
     return {
       stem,
       given: [],
@@ -1836,18 +1836,36 @@ shape({
       ],
       traceKind: "expr",
       gen: {
-        kind: "separatorValue",
+        // "Find a value where these two disagree" reads like the right item and is not one:
+        // for a pair that agrees only at 0 and 1, thirty-nine of the forty-one integers in the
+        // slot are correct, so a responder with no knowledge succeeds most of the time. The act
+        // this node is actually about is building the other deck, which is checked and cannot
+        // be reached by luck.
+        kind: "loadGathersTo",
         check: {
-          kind: "separatorValue",
-          e1: `x^{2} + ${p.b}`,
-          e2: `x + ${p.b}`,
+          kind: "loadGathersTo",
+          target: canonExpr(`${p.a}x + ${p.a * p.b}`),
           unknown: "x",
+          needs: ["differentSurface"],
+          surface: `${p.a}(x + ${p.b})`,
         },
-        witness: "2",
-        ask: "ask.gen.separator",
+        witness: `${cv(p.a)} + ${p.a * p.b}`,
+        ask: "ask.gen.reshape",
         sigs: {
-          "one-value-proves-equivalence": { canonical: "1", tex: "1" },
-          "counterexample-ignored": { canonical: "always", tex: "\\text{---}" },
+          "different-form-means-different": {
+            canonical: `surface:${p.a}(x+${p.b})`,
+            tex: `${p.a}\\left(x + ${p.b}\\right)`,
+            surfaceMatch: true,
+          },
+          "counterexample-ignored": {
+            canonical: canonExpr(`${p.a}x + ${p.b}`),
+            tex: `${cv(p.a)} + ${p.b}`,
+          },
+          // A deck that agrees at exactly one value — which is what "I checked one value" buys.
+          "one-value-proves-equivalence": {
+            canonical: canonExpr(String(p.a + p.a * p.b)),
+            tex: String(p.a + p.a * p.b),
+          },
         },
       },
     };
@@ -1894,18 +1912,26 @@ shape({
         "solution-never-checked": { canonical: rstr(I(wrong)), tex: String(wrong) },
       },
       hint: { a: p.a, b: p.b, count: 6 },
+      // A three-line equivalence chain: the claim as it stands, the same claim with the lip
+      // lifted off both pans, and the closed reading. Every line is the same claim, which is
+      // what makes a broken one findable.
       trace: (misc) => {
+        const lifted = L(`x${plus(p.a)}${plus(-p.a)} = ${p.b}${plus(-p.a)}`);
         if (misc === "equals-means-compute-now") {
-          return [L(stem), { tex: `x = ${p.b} = ${p.b - p.a}`, canon: "chain", kind: "raw" }, L(`x = ${p.b - p.a}`)];
+          return [
+            L(stem),
+            { tex: `x = ${p.b} = ${p.b - p.a}`, canon: "chain", kind: "raw" },
+            L(`x = ${p.sol}`),
+          ];
         }
-        const val = misc === "solution-never-checked" ? wrong : p.sol;
-        return [L(stem), L(`x = ${val}`), L(`${val}${plus(p.a)} = ${p.b}`)];
+        if (misc === "solution-never-checked") return [L(stem), lifted, L(`x = ${wrong}`)];
+        return [L(stem), lifted, L(`x = ${p.sol}`)];
       },
       traceKind: "equation",
       chainMisc: "equals-means-compute-now",
       gen: {
         kind: "claimClosesAt",
-        check: { kind: "claimClosesAt", unknown: "x", value: rstr(I(p.sol)), needs: ["constant"] },
+        check: { kind: "claimClosesAt", unknown: "x", value: rstr(I(p.sol)), needs: ["constantWithUnknown"] },
         witness: `x${plus(p.a)} = ${p.b}`,
         ask: "ask.gen.claimClosesAt",
         sigs: {},
@@ -1955,7 +1981,7 @@ shape({
           kind: "claimClosesAt",
           unknown: "x",
           value: rstr(I(p.b - p.a)),
-          needs: ["constant"],
+          needs: ["constantWithUnknown"],
         },
         witness: `x${plus(p.a)} = ${p.b}`,
         ask: "ask.gen.claimClosesAt",
@@ -2037,7 +2063,7 @@ shape({
           kind: "claimClosesAt",
           unknown: "x",
           value: rstr(I(pp.q - pp.p)),
-          needs: ["constant"],
+          needs: ["constantWithUnknown"],
         },
         witness: stem,
         ask: "ask.gen.claimClosesAt",
@@ -2221,7 +2247,7 @@ shape({
           kind: "claimClosesAt",
           unknown: "x",
           value: rstr(correct),
-          needs: ["coefficient", "constant"],
+          needs: ["coefficient", "constantWithUnknown"],
         },
         witness: stem,
         ask: "ask.gen.claimClosesAt",
@@ -2302,7 +2328,7 @@ shape({
           kind: "claimClosesAt",
           unknown: "x",
           value: rstr(correct),
-          needs: ["twoLikeTerms", "constant"],
+          needs: ["twoLikeTerms", "constantWithUnknown"],
         },
         witness: stem,
         ask: "ask.gen.claimClosesAt",
@@ -2581,7 +2607,7 @@ shape({
       unknown: "s",
       gen: {
         kind: "claimClosesAt",
-        check: { kind: "claimClosesAt", unknown: "s", value: rstr(I(p.seg)), needs: ["coefficient", "constant"] },
+        check: { kind: "claimClosesAt", unknown: "s", value: rstr(I(p.seg)), needs: ["coefficient", "constantWithUnknown"] },
         witness: stem,
         ask: "ask.gen.claimClosesAt",
         sigs: {},
@@ -2676,8 +2702,13 @@ shape({
       traceKind: "inequality",
       gen: {
         kind: "markAdmits",
-        check: { kind: "markAdmits", stretch: canonInequality(correct), unknown: "x", needs: [] },
-        witness: stem,
+        check: {
+          kind: "markAdmits",
+          stretch: canonInequality(correct),
+          unknown: "x",
+          needs: ["constantWithUnknown"],
+        },
+        witness: `x - 1 ${p.strict ? ">" : "\ge"} ${p.c - 1}`,
         ask: "ask.gen.markAdmits",
         sigs: {},
       },
@@ -2721,7 +2752,7 @@ shape({
       traceKind: "inequality",
       gen: {
         kind: "markAdmits",
-        check: { kind: "markAdmits", stretch: canonInequality(correct), unknown: "x", needs: ["constant"] },
+        check: { kind: "markAdmits", stretch: canonInequality(correct), unknown: "x", needs: ["constantWithUnknown"] },
         witness: stem,
         ask: "ask.gen.markAdmits",
         sigs: {},
@@ -2914,7 +2945,7 @@ shape({
           kind: "markAdmits",
           stretch: canonInequality(correct),
           unknown: "x",
-          needs: ["negativeCount", "constant"],
+          needs: ["negativeCount", "constantWithUnknown"],
         },
         witness: stem,
         ask: "ask.gen.markAdmitsTurned",
@@ -3011,11 +3042,16 @@ export function separationOK(built) {
   return true;
 }
 
-/** Where the misconception's working first stops matching the true one. */
+/**
+ * Where the misconception's working first stops matching the true one — compared by CANONICAL
+ * value, never by how the line is written. `0 = 0` and `3x + 6 = 3x + 6` are the same claim, so
+ * a line that only looks different is not a broken joint; naming it as one would send a learner
+ * to repair something that was never wrong.
+ */
 function firstDivergence(correctTrace, wrongTrace) {
   const n = Math.min(correctTrace.length, wrongTrace.length);
   for (let i = 0; i < n; i++) {
-    if (correctTrace[i].tex !== wrongTrace[i].tex) return i;
+    if (correctTrace[i].canon !== wrongTrace[i].canon) return i;
   }
   return correctTrace.length === wrongTrace.length ? -1 : n;
 }
@@ -3093,6 +3129,13 @@ export function makeItem(shp, form, params, tier, band) {
       });
     }
     if (!distractors.length) return null;
+    // A rung of the ladder that happens to print the value being asked for is not a scaffold.
+    // The numbers a hint may name are fixed by its template, so the cheap fix is to refuse the
+    // stem rather than to soften the hint. Asserted from outside in review/measure/P17.mjs.
+    for (const v of Object.values(built.hint || {})) {
+      if (typeof v === "number" && String(v) === built.answer.canonical) return null;
+      if (typeof v === "string" && v === built.answer.canonical) return null;
+    }
     return {
       id: itemId(shp.id, form, params),
       ...common,

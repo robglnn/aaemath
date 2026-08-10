@@ -241,25 +241,28 @@ export function sceneColorError(hexDisplay) {
 // against them.
 
 export const PAL = {
-  rockSun: 0xc89055, // a facet square-on to Lethis          ref #B8834D / #C88A4F
-  rockLit: 0xa87a48, // general lit rock                     ref #785C3E … #B8834D
-  rockWarm: 0x936a3f, // lit rock, turned away
-  deck: 0x8a6e36, // flat walkable stone                   ref #7A642B
-  deckPale: 0xb08a4c, // sun-bleached top of the leaf
-  bank: 0x6f6335, // damp stone beside a carry
+  rockSun: 0xbe8850, // a facet square-on to Lethis          renders ≈ ref #B8834D
+  rockLit: 0x8f6a3e, // general lit rock                     renders ≈ ref #785C3E
+  rockWarm: 0x7a5c38, // lit rock, turned away
+  deck: 0x9c7c3e, // flat walkable stone                   renders ≈ ref #7A642B
+  deckPale: 0xb28e4c, // sun-bleached top of the leaf
+  bank: 0x76673a, // damp stone beside a carry
   bone: 0xac8659, // built stone: the house, the arches    palette stone.bone
   boneDark: 0x6d5844,
   glass: 0x2c3a44, // the dark glass of the Bollard
   shadow: 0x1b2c33, // the authored shadow family           ref #1B2B32, hue 198
-  underLit: 0x4a4238, // leaf underside, catching bounce
+  underLit: 0x463f36, // leaf underside, catching bounce
   underDeep: 0x23272c, // leaf underside, deep
-  carry: 0x8fe0d2, // a carry: raw value, unresolved       ref #8EFDE2 (gamut-clamped)
-  carryCore: 0xd8fdf2, // the lit core of a carry              ref #D5FDF6
-  crystal: 0x9ee6d8, // a certainty
-  crystalHot: 0xdefdf4,
-  hazeBase: 0xffb260, // palette sky.horizon
-  hazeSun: 0xffd79a,
-  hazeCool: 0x9bb69a,
+  // The cyan accents. ACES cannot reach the reference's V=1.0 S=0.44 cyan — it is outside the
+  // fit's gamut — so a carry is authored at the most saturated cyan the tonemap *can* hold and
+  // gets its brightness back from a near-white core lane, which is how the reference is built
+  // anyway: `#8EFDE2` at the edge, `#D5FDF6` down the middle.
+  carry: 0x7adcc8,
+  carryCore: 0xc9f6ec,
+  crystal: 0x8fe0d2,
+  crystalHot: 0xc0f2e6,
+  hazeBase: 0xd89a5e, // the colour distance turns into: warm, and darker than the sky
+  hazeSun: 0xf2c083,
   farStone: 0xb28d5f, // a leaf on the horizon, already mostly haze
   vantis: 0xa5865f, // Vantis across the Long Division
   greyProp: 0x6a6a63, // a greyed, propped structure
@@ -278,7 +281,11 @@ export const flatShared = {
   uVsLevel: { value: 1 }, // Lethis relative output / exposure — see the class comment
   uVsHaze: { value: sceneColor(PAL.hazeBase) },
   uVsHazeSun: { value: sceneColor(PAL.hazeSun) },
-  uVsHazeP: { value: new THREE.Vector2(1 / 430, 0.9) }, // 1/falloff metres, ceiling
+  // 1/falloff metres, and the ceiling. Both are measured, not felt: in the reference the city
+  // across the Long Division still holds Y 0.293 against a sky at Y 0.559, so distance is worth
+  // about 78% of the way to the haze colour and no more. Haze that goes to 1.0 erases a horizon
+  // question, and this world is made of horizon questions.
+  uVsHazeP: { value: new THREE.Vector2(1 / 600, 0.78) },
   uVsShade: { value: sceneColor(PAL.shadow) },
 };
 
@@ -325,18 +332,26 @@ const GLSL_GRADE = /* glsl */ `
 		// Shaded faces travel to the authored blue-grey; an up-facing shadow keeps a little more of
 		// the sky in it than a down-facing one.
 		float vsUp = clamp( vsN.y * 0.5 + 0.5, 0.0, 1.0 );
-		vec3 vsShadeCol = mix( vsAlb * 0.085, uVsShade * ( 0.70 + 0.55 * vsUp ), uVsGrade.y );
+		vec3 vsShadeCol = mix( vsAlb * 0.06, uVsShade * ( 0.78 + 0.35 * vsUp ), uVsGrade.y );
 
 		vec3 vsCol = mix( vsShadeCol, vsLitCol, vsLit );
 		vsCol = mix( vsCol, vsAlb, uVsGrade.w ) * uVsLevel;
 
 		// Aerial perspective, owned here rather than by scene.fog, so this piece's distance
 		// structure survives whatever the sky and post stack do later.
+		//
+		// Mixed in sqrt space, and that is the whole difference between this reading as a painted
+		// distance and reading as a flood. Scene-linear radiance of a bright horizon is roughly
+		// twenty times a shadowed rock's, so a 30% linear lerp toward it does not tint the rock —
+		// it replaces it, and the near-middle distance blows out to one flat salt-flat orange.
+		// A perceptual blend behaves the way an artist's does, and sqrt is close enough to the
+		// display curve to be free.
 		float vsD = length( vsToCam ) * uVsDist.x;
 		float vsSunAmt = pow( max( dot( normalize( -vsToCam ), uVsSun ), 0.0 ), 3.0 );
 		vec3 vsHz = mix( uVsHaze, uVsHazeSun, vsSunAmt ) * uVsLevel;
 		float vsH = clamp( uVsHazeP.y * ( 1.0 - exp( -vsD * uVsHazeP.x ) ) + uVsDist.y, 0.0, 0.985 );
-		vsCol = mix( vsCol, vsHz, vsH );
+		vec3 vsMix = mix( sqrt( max( vsCol, 0.0 ) ), sqrt( max( vsHz, 0.0 ) ), vsH );
+		vsCol = vsMix * vsMix;
 
 		outgoingLight = vsCol;
 	}
@@ -367,7 +382,7 @@ export function flatMaterial(key, opts = {}) {
     uVsGrade: {
       value: new THREE.Vector4(
         opts.litFloor ?? 0.42,
-        opts.shade ?? 0.86,
+        opts.shade ?? 0.96,
         opts.terminator ?? 0.035,
         opts.unlit ?? 0
       ),
@@ -947,7 +962,20 @@ export class Terrain {
   _emitCollider() {
     // The collider IS the render geometry — same triangles, same planes, no second evaluation of
     // anything. That makes a render/physics disagreement structurally impossible.
+    //
+    // Emitted twice on purpose. The world mounts at boot order 10 and the collision world is not
+    // constructed until order 30, so a signal sent from this constructor has no listener and
+    // vanishes — the character then spawns onto nothing and falls out of the level, which is
+    // exactly the failure this project's own locomotion warning describes and which no test
+    // catches because nothing errors. `fixed()` re-sends it once every system exists, and
+    // `registerCollider` is keyed by id, so the second send replaces rather than duplicates.
     signals.emit("world:collider", { id: "p09:leaf-nine", geometry: this.topGeometry });
+  }
+
+  fixed() {
+    if (this._colliderSettled) return;
+    this._colliderSettled = true;
+    this._emitCollider();
   }
 
   // -------------------------------------------------------------------------- kernel hooks

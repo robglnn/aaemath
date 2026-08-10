@@ -1,0 +1,2385 @@
+{
+ "kpId": "props-operations",
+ "title": "Licences to rearrange",
+ "strand": "structure",
+ "band": 2,
+ "objectClass": "Bearer",
+ "standards": [
+  "CCSS.6.EE.A.3",
+  "CCSS.7.EE.A.1",
+  "TEKS.6.7D",
+  "FL.MA.6.AR.1.4",
+  "VA.8.PFA.1"
+ ],
+ "misconceptions": [
+  "subtraction-commutes",
+  "regroup-across-subtraction",
+  "identity-swapped"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "props-operations.commute/construct/1n3wlum",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "5 - 7x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 5,
+     "b": 7
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-7*x + 5",
+    "tex": "-7x + 5"
+   },
+   "distractors": [
+    {
+     "misconception": "subtraction-commutes",
+     "response": "7*x + -5",
+     "tex": "7x - 5",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.commute",
+     "params": {
+      "a": 5,
+      "b": 7
+     },
+     "text": "A take-away does not turn freely. Carry the sign with the term."
+    },
+    {
+     "key": "hint.state.props-operations.commute",
+     "params": {
+      "a": 5,
+      "b": 7
+     },
+     "text": "The 7 term is going first, and it was never a positive one."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 7
+   }
+  },
+  {
+   "id": "props-operations.regroup/construct/2wohl0",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "12 - \\left(2 + 6\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 12,
+     "b": 2,
+     "c": 6,
+     "inner": 8
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "4",
+    "tex": "4"
+   },
+   "distractors": [
+    {
+     "misconception": "regroup-across-subtraction",
+     "response": "16",
+     "tex": "16",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.regroup",
+     "params": {
+      "a": 12,
+      "b": 2,
+      "c": 6,
+      "inner": 8
+     },
+     "text": "The whole bundle is coming off, not just the front of it."
+    },
+    {
+     "key": "hint.state.props-operations.regroup",
+     "params": {
+      "a": 12,
+      "b": 2,
+      "c": 6,
+      "inner": 8
+     },
+     "text": "The bundle weighs 8, and all of it is leaving 12."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 12,
+    "b": 2,
+    "c": 6
+   }
+  },
+  {
+   "id": "props-operations.identity/construct/12r0p65",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "5x \\cdot 0 + x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 5
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*x",
+    "tex": "x"
+   },
+   "distractors": [
+    {
+     "misconception": "identity-swapped",
+     "response": "6*x",
+     "tex": "5x + x",
+     "failKey": "fail.slip"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.identity",
+     "params": {
+      "a": 5
+     },
+     "text": "A count of nothing carries nothing, however big the term looks."
+    },
+    {
+     "key": "hint.state.props-operations.identity",
+     "params": {
+      "a": 5
+     },
+     "text": "The 5 term is holding zero of itself. One socket is still standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 5
+   }
+  },
+  {
+   "id": "props-operations.commute/repair/1cnqk3w",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "2 - 6x",
+   "given": [],
+   "working": [
+    "2 - 6x",
+    "6x - 2"
+   ],
+   "brokenBy": "subtraction-commutes",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-6*x + 2",
+    "tex": "-6x + 2",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "subtraction-commutes",
+     "response": "2|6*x + -2",
+     "tex": "6x - 2",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 6
+   }
+  },
+  {
+   "id": "props-operations.regroup/repair/1iadtu0",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "20 - \\left(8 + 3\\right)",
+   "given": [],
+   "working": [
+    "20 - \\left(8 + 3\\right)",
+    "12 + 3",
+    "15"
+   ],
+   "brokenBy": "regroup-across-subtraction",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 20,
+     "b": 8,
+     "c": 3,
+     "inner": 11,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|9",
+    "tex": "20 - 11",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "regroup-across-subtraction",
+     "response": "2|15",
+     "tex": "12 + 3",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 20,
+      "b": 8,
+      "c": 3,
+      "inner": 11,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 20,
+      "b": 8,
+      "c": 3,
+      "inner": 11,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 20,
+    "b": 8,
+    "c": 3
+   }
+  },
+  {
+   "id": "props-operations.identity/repair/11mh5sn",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3x \\cdot 0 + x",
+   "given": [],
+   "working": [
+    "3x \\cdot 0 + x",
+    "3x + x",
+    "4x"
+   ],
+   "brokenBy": "identity-swapped",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x",
+    "tex": "0 + x",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "identity-swapped",
+     "response": "2|4*x",
+     "tex": "3x + x",
+     "failKey": "fail.slip"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3
+   }
+  },
+  {
+   "id": "props-operations.identity/generate/11mh5sn",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3x \\cdot 0 + x",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 3,
+     "target": "1*x",
+     "unknown": "x"
+    },
+    "text": "Seal a can whose contents come to 1*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 3x \\cdot 0",
+    "tex": "x + 3x \\cdot 0",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "1*x",
+    "unknown": "x",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 3,
+      "target": "1*x",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 3,
+      "target": "1*x",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read 1*x. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3
+   }
+  },
+  {
+   "id": "props-operations.commute/construct/a9a8po",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "6 - 2x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 6,
+     "b": 2
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-2*x + 6",
+    "tex": "-2x + 6"
+   },
+   "distractors": [
+    {
+     "misconception": "subtraction-commutes",
+     "response": "2*x + -6",
+     "tex": "2x - 6",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.commute",
+     "params": {
+      "a": 6,
+      "b": 2
+     },
+     "text": "A take-away does not turn freely. Carry the sign with the term."
+    },
+    {
+     "key": "hint.state.props-operations.commute",
+     "params": {
+      "a": 6,
+      "b": 2
+     },
+     "text": "The 2 term is going first, and it was never a positive one."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6,
+    "b": 2
+   }
+  },
+  {
+   "id": "props-operations.regroup/construct/1pzfa2k",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "10 - \\left(7 + 9\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 10,
+     "b": 7,
+     "c": 9,
+     "inner": 16
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-6",
+    "tex": "-6"
+   },
+   "distractors": [
+    {
+     "misconception": "regroup-across-subtraction",
+     "response": "12",
+     "tex": "12",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.regroup",
+     "params": {
+      "a": 10,
+      "b": 7,
+      "c": 9,
+      "inner": 16
+     },
+     "text": "The whole bundle is coming off, not just the front of it."
+    },
+    {
+     "key": "hint.state.props-operations.regroup",
+     "params": {
+      "a": 10,
+      "b": 7,
+      "c": 9,
+      "inner": 16
+     },
+     "text": "The bundle weighs 16, and all of it is leaving 10."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 10,
+    "b": 7,
+    "c": 9
+   }
+  },
+  {
+   "id": "props-operations.identity/construct/12qvc2e",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "6x \\cdot 0 + x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 6
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*x",
+    "tex": "x"
+   },
+   "distractors": [
+    {
+     "misconception": "identity-swapped",
+     "response": "7*x",
+     "tex": "6x + x",
+     "failKey": "fail.slip"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.identity",
+     "params": {
+      "a": 6
+     },
+     "text": "A count of nothing carries nothing, however big the term looks."
+    },
+    {
+     "key": "hint.state.props-operations.identity",
+     "params": {
+      "a": 6
+     },
+     "text": "The 6 term is holding zero of itself. One socket is still standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6
+   }
+  },
+  {
+   "id": "props-operations.commute/repair/14racbn",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "15 - 3x",
+   "given": [],
+   "working": [
+    "15 - 3x",
+    "3x - 15"
+   ],
+   "brokenBy": "subtraction-commutes",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 15,
+     "b": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-3*x + 15",
+    "tex": "-3x + 15",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "subtraction-commutes",
+     "response": "2|3*x + -15",
+     "tex": "3x - 15",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 15,
+      "b": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 15,
+      "b": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 15,
+    "b": 3
+   }
+  },
+  {
+   "id": "props-operations.regroup/repair/hw6a1o",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "17 - \\left(8 + 9\\right)",
+   "given": [],
+   "working": [
+    "17 - \\left(8 + 9\\right)",
+    "9 + 9",
+    "18"
+   ],
+   "brokenBy": "regroup-across-subtraction",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 17,
+     "b": 8,
+     "c": 9,
+     "inner": 17,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|0",
+    "tex": "17 - 17",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "regroup-across-subtraction",
+     "response": "2|18",
+     "tex": "9 + 9",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 17,
+      "b": 8,
+      "c": 9,
+      "inner": 17,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 17,
+      "b": 8,
+      "c": 9,
+      "inner": 17,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 17,
+    "b": 8,
+    "c": 9
+   }
+  },
+  {
+   "id": "props-operations.identity/repair/12qvc2e",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "6x \\cdot 0 + x",
+   "given": [],
+   "working": [
+    "6x \\cdot 0 + x",
+    "6x + x",
+    "7x"
+   ],
+   "brokenBy": "identity-swapped",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 6,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x",
+    "tex": "0 + x",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "identity-swapped",
+     "response": "2|7*x",
+     "tex": "6x + x",
+     "failKey": "fail.slip"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6
+   }
+  },
+  {
+   "id": "props-operations.identity/generate/12qvc2e",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "6x \\cdot 0 + x",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 6,
+     "target": "1*x",
+     "unknown": "x"
+    },
+    "text": "Seal a can whose contents come to 1*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 6x \\cdot 0",
+    "tex": "x + 6x \\cdot 0",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "1*x",
+    "unknown": "x",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 6,
+      "target": "1*x",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 6,
+      "target": "1*x",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read 1*x. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6
+   }
+  },
+  {
+   "id": "props-operations.commute/construct/bd3adt",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "6 - 3x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 6,
+     "b": 3
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-3*x + 6",
+    "tex": "-3x + 6"
+   },
+   "distractors": [
+    {
+     "misconception": "subtraction-commutes",
+     "response": "3*x + -6",
+     "tex": "3x - 6",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.commute",
+     "params": {
+      "a": 6,
+      "b": 3
+     },
+     "text": "A take-away does not turn freely. Carry the sign with the term."
+    },
+    {
+     "key": "hint.state.props-operations.commute",
+     "params": {
+      "a": 6,
+      "b": 3
+     },
+     "text": "The 3 term is going first, and it was never a positive one."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6,
+    "b": 3
+   }
+  },
+  {
+   "id": "props-operations.regroup/construct/xaglt1",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "45 - \\left(6 + 3\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 45,
+     "b": 6,
+     "c": 3,
+     "inner": 9
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "36",
+    "tex": "36"
+   },
+   "distractors": [
+    {
+     "misconception": "regroup-across-subtraction",
+     "response": "42",
+     "tex": "42",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.regroup",
+     "params": {
+      "a": 45,
+      "b": 6,
+      "c": 3,
+      "inner": 9
+     },
+     "text": "The whole bundle is coming off, not just the front of it."
+    },
+    {
+     "key": "hint.state.props-operations.regroup",
+     "params": {
+      "a": 45,
+      "b": 6,
+      "c": 3,
+      "inner": 9
+     },
+     "text": "The bundle weighs 9, and all of it is leaving 45."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 45,
+    "b": 6,
+    "c": 3
+   }
+  },
+  {
+   "id": "props-operations.identity/construct/11ni1w4",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "8x \\cdot 0 + x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 8
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*x",
+    "tex": "x"
+   },
+   "distractors": [
+    {
+     "misconception": "identity-swapped",
+     "response": "9*x",
+     "tex": "8x + x",
+     "failKey": "fail.slip"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.identity",
+     "params": {
+      "a": 8
+     },
+     "text": "A count of nothing carries nothing, however big the term looks."
+    },
+    {
+     "key": "hint.state.props-operations.identity",
+     "params": {
+      "a": 8
+     },
+     "text": "The 8 term is holding zero of itself. One socket is still standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 8
+   }
+  },
+  {
+   "id": "props-operations.commute/repair/jgfsoo",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "8 - 8x",
+   "given": [],
+   "working": [
+    "8 - 8x",
+    "8x - 8"
+   ],
+   "brokenBy": "subtraction-commutes",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 8,
+     "b": 8,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-8*x + 8",
+    "tex": "-8x + 8",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "subtraction-commutes",
+     "response": "2|8*x + -8",
+     "tex": "8x - 8",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 8,
+      "b": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 8,
+      "b": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 8
+   }
+  },
+  {
+   "id": "props-operations.regroup/repair/1m4lefm",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "14 - \\left(9 + 5\\right)",
+   "given": [],
+   "working": [
+    "14 - \\left(9 + 5\\right)",
+    "5 + 5",
+    "10"
+   ],
+   "brokenBy": "regroup-across-subtraction",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 14,
+     "b": 9,
+     "c": 5,
+     "inner": 14,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|0",
+    "tex": "14 - 14",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "regroup-across-subtraction",
+     "response": "2|10",
+     "tex": "5 + 5",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 14,
+      "b": 9,
+      "c": 5,
+      "inner": 14,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 14,
+      "b": 9,
+      "c": 5,
+      "inner": 14,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 14,
+    "b": 9,
+    "c": 5
+   }
+  },
+  {
+   "id": "props-operations.identity/repair/11ni1w4",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "8x \\cdot 0 + x",
+   "given": [],
+   "working": [
+    "8x \\cdot 0 + x",
+    "8x + x",
+    "9x"
+   ],
+   "brokenBy": "identity-swapped",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 8,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x",
+    "tex": "0 + x",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "identity-swapped",
+     "response": "2|9*x",
+     "tex": "8x + x",
+     "failKey": "fail.slip"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 8,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 8,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 8
+   }
+  },
+  {
+   "id": "props-operations.identity/generate/11n5fw8",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "4x \\cdot 0 + x",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 4,
+     "target": "1*x",
+     "unknown": "x"
+    },
+    "text": "Seal a can whose contents come to 1*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 4x \\cdot 0",
+    "tex": "x + 4x \\cdot 0",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "1*x",
+    "unknown": "x",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 4,
+      "target": "1*x",
+      "unknown": "x"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 4,
+      "target": "1*x",
+      "unknown": "x"
+     },
+     "text": "Gathered, it must read 1*x. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4
+   }
+  },
+  {
+   "id": "props-operations.commute/construct/1fmnukh",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3 - 6x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 3,
+     "b": 6
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-6*x + 3",
+    "tex": "-6x + 3"
+   },
+   "distractors": [
+    {
+     "misconception": "subtraction-commutes",
+     "response": "6*x + -3",
+     "tex": "6x - 3",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.commute",
+     "params": {
+      "a": 3,
+      "b": 6
+     },
+     "text": "A take-away does not turn freely. Carry the sign with the term."
+    },
+    {
+     "key": "hint.state.props-operations.commute",
+     "params": {
+      "a": 3,
+      "b": 6
+     },
+     "text": "The 6 term is going first, and it was never a positive one."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 6
+   }
+  },
+  {
+   "id": "props-operations.regroup/construct/1gfh9ea",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "22 - \\left(9 + 6\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 22,
+     "b": 9,
+     "c": 6,
+     "inner": 15
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "7",
+    "tex": "7"
+   },
+   "distractors": [
+    {
+     "misconception": "regroup-across-subtraction",
+     "response": "19",
+     "tex": "19",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.regroup",
+     "params": {
+      "a": 22,
+      "b": 9,
+      "c": 6,
+      "inner": 15
+     },
+     "text": "The whole bundle is coming off, not just the front of it."
+    },
+    {
+     "key": "hint.state.props-operations.regroup",
+     "params": {
+      "a": 22,
+      "b": 9,
+      "c": 6,
+      "inner": 15
+     },
+     "text": "The bundle weighs 15, and all of it is leaving 22."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 22,
+    "b": 9,
+    "c": 6
+   }
+  },
+  {
+   "id": "props-operations.identity/construct/12rdb61",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "9x \\cdot 0 + x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 9
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*x",
+    "tex": "x"
+   },
+   "distractors": [
+    {
+     "misconception": "identity-swapped",
+     "response": "10*x",
+     "tex": "9x + x",
+     "failKey": "fail.slip"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.identity",
+     "params": {
+      "a": 9
+     },
+     "text": "A count of nothing carries nothing, however big the term looks."
+    },
+    {
+     "key": "hint.state.props-operations.identity",
+     "params": {
+      "a": 9
+     },
+     "text": "The 9 term is holding zero of itself. One socket is still standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 9
+   }
+  },
+  {
+   "id": "props-operations.commute/repair/1fn2o65",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3 - 2x",
+   "given": [],
+   "working": [
+    "3 - 2x",
+    "2x - 3"
+   ],
+   "brokenBy": "subtraction-commutes",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 2,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-2*x + 3",
+    "tex": "-2x + 3",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "subtraction-commutes",
+     "response": "2|2*x + -3",
+     "tex": "2x - 3",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 2
+   }
+  },
+  {
+   "id": "props-operations.regroup/repair/1hfmv53",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "14 - \\left(4 + 5\\right)",
+   "given": [],
+   "working": [
+    "14 - \\left(4 + 5\\right)",
+    "10 + 5",
+    "15"
+   ],
+   "brokenBy": "regroup-across-subtraction",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 14,
+     "b": 4,
+     "c": 5,
+     "inner": 9,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|5",
+    "tex": "14 - 9",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "regroup-across-subtraction",
+     "response": "2|15",
+     "tex": "10 + 5",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 14,
+      "b": 4,
+      "c": 5,
+      "inner": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 14,
+      "b": 4,
+      "c": 5,
+      "inner": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.2",
+    "params": {},
+    "text": "You learn which is which with your hands, standing on it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 14,
+    "b": 4,
+    "c": 5
+   }
+  },
+  {
+   "id": "props-operations.identity/repair/11n5fw8",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "4x \\cdot 0 + x",
+   "given": [],
+   "working": [
+    "4x \\cdot 0 + x",
+    "4x + x",
+    "5x"
+   ],
+   "brokenBy": "identity-swapped",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|1*x",
+    "tex": "0 + x",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "identity-swapped",
+     "response": "2|5*x",
+     "tex": "4x + x",
+     "failKey": "fail.slip"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4
+   }
+  },
+  {
+   "id": "props-operations.commute/construct/1ej7ew8",
+   "kpId": "props-operations",
+   "family": "props-operations.commute",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "3 - 3x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 3,
+     "b": 3
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-3*x + 3",
+    "tex": "-3x + 3"
+   },
+   "distractors": [
+    {
+     "misconception": "subtraction-commutes",
+     "response": "3*x + -3",
+     "tex": "3x - 3",
+     "failKey": "fail.sill.sign"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.commute",
+     "params": {
+      "a": 3,
+      "b": 3
+     },
+     "text": "A take-away does not turn freely. Carry the sign with the term."
+    },
+    {
+     "key": "hint.state.props-operations.commute",
+     "params": {
+      "a": 3,
+      "b": 3
+     },
+     "text": "The 3 term is going first, and it was never a positive one."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 3
+   }
+  },
+  {
+   "id": "props-operations.regroup/construct/1dyjsti",
+   "kpId": "props-operations",
+   "family": "props-operations.regroup",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "34 - \\left(2 + 8\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 34,
+     "b": 2,
+     "c": 8,
+     "inner": 10
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "24",
+    "tex": "24"
+   },
+   "distractors": [
+    {
+     "misconception": "regroup-across-subtraction",
+     "response": "40",
+     "tex": "40",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.regroup",
+     "params": {
+      "a": 34,
+      "b": 2,
+      "c": 8,
+      "inner": 10
+     },
+     "text": "The whole bundle is coming off, not just the front of it."
+    },
+    {
+     "key": "hint.state.props-operations.regroup",
+     "params": {
+      "a": 34,
+      "b": 2,
+      "c": 8,
+      "inner": 10
+     },
+     "text": "The bundle weighs 10, and all of it is leaving 34."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 34,
+    "b": 2,
+    "c": 8
+   }
+  },
+  {
+   "id": "props-operations.identity/construct/12qiq2i",
+   "kpId": "props-operations",
+   "family": "props-operations.identity",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "2x \\cdot 0 + x",
+   "given": [],
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 2
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "x",
+   "answer": {
+    "canonical": "1*x",
+    "tex": "x"
+   },
+   "distractors": [
+    {
+     "misconception": "identity-swapped",
+     "response": "3*x",
+     "tex": "2x + x",
+     "failKey": "fail.slip"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.props-operations.identity",
+     "params": {
+      "a": 2
+     },
+     "text": "A count of nothing carries nothing, however big the term looks."
+    },
+    {
+     "key": "hint.state.props-operations.identity",
+     "params": {
+      "a": 2
+     },
+     "text": "The 2 term is holding zero of itself. One socket is still standing."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.props-operations.1",
+    "params": {},
+    "text": "Some joins in this load turn freely. Some are keyed and will not turn at all."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 2
+   }
+  }
+ ]
+}

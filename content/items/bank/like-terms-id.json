@@ -1,0 +1,2672 @@
+{
+ "kpId": "like-terms-id",
+ "title": "Which pieces are the same kind of thing",
+ "strand": "structure",
+ "band": 2,
+ "objectClass": "Bearer",
+ "standards": [
+  "CCSS.HSA-SSE.A.1a",
+  "CCSS.7.EE.A.1",
+  "TEKS.6.7C",
+  "FL.MA.7.AR.1.2",
+  "VA.8.PFA.1"
+ ],
+ "misconceptions": [
+  "all-variable-terms-alike",
+  "constant-like-variable",
+  "exponent-ignored-in-matching"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "like-terms-id.xy/construct/1dtccaw",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 4y \\;\\; 6 \\;\\; 7x \\;\\; 2y",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "3x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2*y,4*y|3*x,7*x|6",
+    "tex": "3x, 7x \\;\\mid\\; 4y, 2y \\;\\mid\\; 6"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "2*y,3*x,4*y,7*x|6",
+     "tex": "3x, 4y, 7x, 2y \\;\\mid\\; 6",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2*y,4*y|3*x,6,7*x",
+     "tex": "3x, 7x, 6 \\;\\mid\\; 4y, 2y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.xy",
+     "params": {
+      "first": "3x",
+      "count": 3
+     },
+     "text": "Same socket, same power, same stack. Everything else is a different kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.xy",
+     "params": {
+      "first": "3x",
+      "count": 3
+     },
+     "text": "3x is in the first stack. Three stacks come out of this in the end."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 4,
+    "c": 6,
+    "d": 7,
+    "e": 2
+   }
+  },
+  {
+   "id": "like-terms-id.pow/construct/3jpoys",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 7x^{2} \\;\\; 2 \\;\\; 4x \\;\\; 6x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "3x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|3*x,4*x|6*x^2,7*x^2",
+    "tex": "3x, 4x \\;\\mid\\; 7x^{2}, 6x^{2} \\;\\mid\\; 2"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "2|3*x,4*x,6*x^2,7*x^2",
+     "tex": "3x, 7x^{2}, 4x, 6x^{2} \\;\\mid\\; 2",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2,3*x,4*x|6*x^2,7*x^2",
+     "tex": "3x, 4x, 2 \\;\\mid\\; 7x^{2}, 6x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.pow",
+     "params": {
+      "first": "3x",
+      "count": 3
+     },
+     "text": "A socket and the same socket under a power are not the same kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.pow",
+     "params": {
+      "first": "3x",
+      "count": 3
+     },
+     "text": "3x is in the first stack. Fixed weight stands on its own."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 7,
+    "c": 2,
+    "d": 4,
+    "e": 6
+   }
+  },
+  {
+   "id": "like-terms-id.xy/repair/1isvht1",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 4y \\;\\; 9 \\;\\; 6x \\;\\; 5y",
+   "given": [],
+   "working": [
+    "3x \\;\\; 4y \\;\\; 9 \\;\\; 6x \\;\\; 5y",
+    "3x, 6x, 9 \\;\\mid\\; 4y, 5y"
+   ],
+   "brokenBy": "constant-like-variable",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "3x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|3*x,6*x|4*y,5*y|9",
+    "tex": "3x, 6x \\;\\mid\\; 4y, 5y \\;\\mid\\; 9",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "2|3*x,4*y,5*y,6*x|9",
+     "tex": "3x, 4y, 6x, 5y \\;\\mid\\; 9",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|3*x,6*x,9|4*y,5*y",
+     "tex": "3x, 6x, 9 \\;\\mid\\; 4y, 5y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 4,
+    "c": 9,
+    "d": 6,
+    "e": 5
+   }
+  },
+  {
+   "id": "like-terms-id.pow/repair/lgoubi",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "4x \\;\\; 3x^{2} \\;\\; 8 \\;\\; 7x \\;\\; 2x^{2}",
+   "given": [],
+   "working": [
+    "4x \\;\\; 3x^{2} \\;\\; 8 \\;\\; 7x \\;\\; 2x^{2}",
+    "4x, 3x^{2}, 7x, 2x^{2} \\;\\mid\\; 8"
+   ],
+   "brokenBy": "exponent-ignored-in-matching",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "4x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|2*x^2,3*x^2|4*x,7*x|8",
+    "tex": "4x, 7x \\;\\mid\\; 3x^{2}, 2x^{2} \\;\\mid\\; 8",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "2|2*x^2,3*x^2,4*x,7*x|8",
+     "tex": "4x, 3x^{2}, 7x, 2x^{2} \\;\\mid\\; 8",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|2*x^2,3*x^2|4*x,7*x,8",
+     "tex": "4x, 7x, 8 \\;\\mid\\; 3x^{2}, 2x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "4x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "4x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 3,
+    "c": 8,
+    "d": 7,
+    "e": 2
+   }
+  },
+  {
+   "id": "like-terms-id.xy/generate/g7bbfb",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "6x \\;\\; 7y \\;\\; 4 \\;\\; 3x \\;\\; 9y",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "6x",
+     "count": 3,
+     "target": "6*x"
+    },
+    "text": "Bring one more term that will stand with 6*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "14x",
+    "tex": "14x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "6*x",
+    "excludes": [
+     "6*x",
+     "7*y",
+     "4",
+     "3*x",
+     "9*y"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "7*y",
+     "tex": "7y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "6x",
+      "count": 3,
+      "target": "6*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "6x",
+      "count": 3,
+      "target": "6*x"
+     },
+     "text": "Same socket, same power as 6*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6,
+    "b": 7,
+    "c": 4,
+    "d": 3,
+    "e": 9
+   }
+  },
+  {
+   "id": "like-terms-id.pow/generate/7oe40f",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 6x^{2} \\;\\; 5 \\;\\; 2x \\;\\; 9x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "3x",
+     "count": 3,
+     "target": "3*x"
+    },
+    "text": "Bring one more term that will stand with 3*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "10x",
+    "tex": "10x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "3*x",
+    "excludes": [
+     "3*x",
+     "6*x^2",
+     "5",
+     "2*x",
+     "9*x^2"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "6*x^2",
+     "tex": "6x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "target": "3*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "target": "3*x"
+     },
+     "text": "Same socket, same power as 3*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 6,
+    "c": 5,
+    "d": 2,
+    "e": 9
+   }
+  },
+  {
+   "id": "like-terms-id.xy/construct/xpj223",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "6x \\;\\; 3y \\;\\; 2 \\;\\; 4x \\;\\; 8y",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "6x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|3*y,8*y|4*x,6*x",
+    "tex": "6x, 4x \\;\\mid\\; 3y, 8y \\;\\mid\\; 2"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "2|3*y,4*x,6*x,8*y",
+     "tex": "6x, 3y, 4x, 8y \\;\\mid\\; 2",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2,4*x,6*x|3*y,8*y",
+     "tex": "6x, 4x, 2 \\;\\mid\\; 3y, 8y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.xy",
+     "params": {
+      "first": "6x",
+      "count": 3
+     },
+     "text": "Same socket, same power, same stack. Everything else is a different kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.xy",
+     "params": {
+      "first": "6x",
+      "count": 3
+     },
+     "text": "6x is in the first stack. Three stacks come out of this in the end."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6,
+    "b": 3,
+    "c": 2,
+    "d": 4,
+    "e": 8
+   }
+  },
+  {
+   "id": "like-terms-id.pow/construct/zsw70s",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "9x \\;\\; 2x^{2} \\;\\; 8 \\;\\; 4x \\;\\; 7x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "9x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2*x^2,7*x^2|4*x,9*x|8",
+    "tex": "9x, 4x \\;\\mid\\; 2x^{2}, 7x^{2} \\;\\mid\\; 8"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "2*x^2,4*x,7*x^2,9*x|8",
+     "tex": "9x, 2x^{2}, 4x, 7x^{2} \\;\\mid\\; 8",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2*x^2,7*x^2|4*x,8,9*x",
+     "tex": "9x, 4x, 8 \\;\\mid\\; 2x^{2}, 7x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.pow",
+     "params": {
+      "first": "9x",
+      "count": 3
+     },
+     "text": "A socket and the same socket under a power are not the same kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.pow",
+     "params": {
+      "first": "9x",
+      "count": 3
+     },
+     "text": "9x is in the first stack. Fixed weight stands on its own."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 2,
+    "c": 8,
+    "d": 4,
+    "e": 7
+   }
+  },
+  {
+   "id": "like-terms-id.xy/repair/1bn5aa9",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "4x \\;\\; 6y \\;\\; 7 \\;\\; 5x \\;\\; 9y",
+   "given": [],
+   "working": [
+    "4x \\;\\; 6y \\;\\; 7 \\;\\; 5x \\;\\; 9y",
+    "4x, 5x, 7 \\;\\mid\\; 6y, 9y"
+   ],
+   "brokenBy": "constant-like-variable",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "4x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|4*x,5*x|6*y,9*y|7",
+    "tex": "4x, 5x \\;\\mid\\; 6y, 9y \\;\\mid\\; 7",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "2|4*x,5*x,6*y,9*y|7",
+     "tex": "4x, 6y, 5x, 9y \\;\\mid\\; 7",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|4*x,5*x,7|6*y,9*y",
+     "tex": "4x, 5x, 7 \\;\\mid\\; 6y, 9y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "4x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "4x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 6,
+    "c": 7,
+    "d": 5,
+    "e": 9
+   }
+  },
+  {
+   "id": "like-terms-id.pow/repair/oqqtxc",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 8x^{2} \\;\\; 9 \\;\\; 5x \\;\\; 7x^{2}",
+   "given": [],
+   "working": [
+    "3x \\;\\; 8x^{2} \\;\\; 9 \\;\\; 5x \\;\\; 7x^{2}",
+    "3x, 8x^{2}, 5x, 7x^{2} \\;\\mid\\; 9"
+   ],
+   "brokenBy": "exponent-ignored-in-matching",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "3x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|3*x,5*x|7*x^2,8*x^2|9",
+    "tex": "3x, 5x \\;\\mid\\; 8x^{2}, 7x^{2} \\;\\mid\\; 9",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "2|3*x,5*x,7*x^2,8*x^2|9",
+     "tex": "3x, 8x^{2}, 5x, 7x^{2} \\;\\mid\\; 9",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|3*x,5*x,9|7*x^2,8*x^2",
+     "tex": "3x, 5x, 9 \\;\\mid\\; 8x^{2}, 7x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 8,
+    "c": 9,
+    "d": 5,
+    "e": 7
+   }
+  },
+  {
+   "id": "like-terms-id.xy/generate/1y6ocyi",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 8y \\;\\; 4 \\;\\; 7x \\;\\; 6y",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "3x",
+     "count": 3,
+     "target": "3*x"
+    },
+    "text": "Bring one more term that will stand with 3*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "12x",
+    "tex": "12x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "3*x",
+    "excludes": [
+     "3*x",
+     "8*y",
+     "4",
+     "7*x",
+     "6*y"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "8*y",
+     "tex": "8y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "target": "3*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "target": "3*x"
+     },
+     "text": "Same socket, same power as 3*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 8,
+    "c": 4,
+    "d": 7,
+    "e": 6
+   }
+  },
+  {
+   "id": "like-terms-id.pow/generate/k0wfb5",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "5x \\;\\; 8x^{2} \\;\\; 7 \\;\\; 9x \\;\\; 2x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "5x",
+     "count": 3,
+     "target": "5*x"
+    },
+    "text": "Bring one more term that will stand with 5*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "14x",
+    "tex": "14x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "5*x",
+    "excludes": [
+     "5*x",
+     "8*x^2",
+     "7",
+     "9*x",
+     "2*x^2"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "8*x^2",
+     "tex": "8x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "5x",
+      "count": 3,
+      "target": "5*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "5x",
+      "count": 3,
+      "target": "5*x"
+     },
+     "text": "Same socket, same power as 5*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 8,
+    "c": 7,
+    "d": 9,
+    "e": 2
+   }
+  },
+  {
+   "id": "like-terms-id.xy/construct/337xy5",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 4y \\;\\; 8 \\;\\; 7x \\;\\; 9y",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "3x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3*x,7*x|4*y,9*y|8",
+    "tex": "3x, 7x \\;\\mid\\; 4y, 9y \\;\\mid\\; 8"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "3*x,4*y,7*x,9*y|8",
+     "tex": "3x, 4y, 7x, 9y \\;\\mid\\; 8",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "3*x,7*x,8|4*y,9*y",
+     "tex": "3x, 7x, 8 \\;\\mid\\; 4y, 9y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.xy",
+     "params": {
+      "first": "3x",
+      "count": 3
+     },
+     "text": "Same socket, same power, same stack. Everything else is a different kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.xy",
+     "params": {
+      "first": "3x",
+      "count": 3
+     },
+     "text": "3x is in the first stack. Three stacks come out of this in the end."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 4,
+    "c": 8,
+    "d": 7,
+    "e": 9
+   }
+  },
+  {
+   "id": "like-terms-id.pow/construct/us6igg",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "9x \\;\\; 5x^{2} \\;\\; 7 \\;\\; 4x \\;\\; 3x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "9x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3*x^2,5*x^2|4*x,9*x|7",
+    "tex": "9x, 4x \\;\\mid\\; 5x^{2}, 3x^{2} \\;\\mid\\; 7"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "3*x^2,4*x,5*x^2,9*x|7",
+     "tex": "9x, 5x^{2}, 4x, 3x^{2} \\;\\mid\\; 7",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "3*x^2,5*x^2|4*x,7,9*x",
+     "tex": "9x, 4x, 7 \\;\\mid\\; 5x^{2}, 3x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.pow",
+     "params": {
+      "first": "9x",
+      "count": 3
+     },
+     "text": "A socket and the same socket under a power are not the same kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.pow",
+     "params": {
+      "first": "9x",
+      "count": 3
+     },
+     "text": "9x is in the first stack. Fixed weight stands on its own."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 5,
+    "c": 7,
+    "d": 4,
+    "e": 3
+   }
+  },
+  {
+   "id": "like-terms-id.xy/repair/z10cto",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "8x \\;\\; 3y \\;\\; 5 \\;\\; 4x \\;\\; 6y",
+   "given": [],
+   "working": [
+    "8x \\;\\; 3y \\;\\; 5 \\;\\; 4x \\;\\; 6y",
+    "8x, 3y, 4x, 6y \\;\\mid\\; 5"
+   ],
+   "brokenBy": "all-variable-terms-alike",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "8x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|3*y,6*y|4*x,8*x|5",
+    "tex": "8x, 4x \\;\\mid\\; 3y, 6y \\;\\mid\\; 5",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "2|3*y,4*x,6*y,8*x|5",
+     "tex": "8x, 3y, 4x, 6y \\;\\mid\\; 5",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|3*y,6*y|4*x,5,8*x",
+     "tex": "8x, 4x, 5 \\;\\mid\\; 3y, 6y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "8x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "8x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 3,
+    "c": 5,
+    "d": 4,
+    "e": 6
+   }
+  },
+  {
+   "id": "like-terms-id.pow/repair/w4fqj8",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "2x \\;\\; 4x^{2} \\;\\; 8 \\;\\; 3x \\;\\; 9x^{2}",
+   "given": [],
+   "working": [
+    "2x \\;\\; 4x^{2} \\;\\; 8 \\;\\; 3x \\;\\; 9x^{2}",
+    "2x, 4x^{2}, 3x, 9x^{2} \\;\\mid\\; 8"
+   ],
+   "brokenBy": "exponent-ignored-in-matching",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "2x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|2*x,3*x|4*x^2,9*x^2|8",
+    "tex": "2x, 3x \\;\\mid\\; 4x^{2}, 9x^{2} \\;\\mid\\; 8",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "2|2*x,3*x,4*x^2,9*x^2|8",
+     "tex": "2x, 4x^{2}, 3x, 9x^{2} \\;\\mid\\; 8",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|2*x,3*x,8|4*x^2,9*x^2",
+     "tex": "2x, 3x, 8 \\;\\mid\\; 4x^{2}, 9x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "2x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "2x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 2,
+    "b": 4,
+    "c": 8,
+    "d": 3,
+    "e": 9
+   }
+  },
+  {
+   "id": "like-terms-id.xy/generate/1vm37wf",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "9x \\;\\; 7y \\;\\; 3 \\;\\; 6x \\;\\; 4y",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "9x",
+     "count": 3,
+     "target": "9*x"
+    },
+    "text": "Bring one more term that will stand with 9*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "17x",
+    "tex": "17x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "9*x",
+    "excludes": [
+     "9*x",
+     "7*y",
+     "3",
+     "6*x",
+     "4*y"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "7*y",
+     "tex": "7y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "9x",
+      "count": 3,
+      "target": "9*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "9x",
+      "count": 3,
+      "target": "9*x"
+     },
+     "text": "Same socket, same power as 9*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 9,
+    "b": 7,
+    "c": 3,
+    "d": 6,
+    "e": 4
+   }
+  },
+  {
+   "id": "like-terms-id.pow/generate/pqt3tf",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Bearer",
+   "stem": "6x \\;\\; 8x^{2} \\;\\; 3 \\;\\; 5x \\;\\; 7x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "6x",
+     "count": 3,
+     "target": "6*x"
+    },
+    "text": "Bring one more term that will stand with 6*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "15x",
+    "tex": "15x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "6*x",
+    "excludes": [
+     "6*x",
+     "8*x^2",
+     "3",
+     "5*x",
+     "7*x^2"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "8*x^2",
+     "tex": "8x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "6x",
+      "count": 3,
+      "target": "6*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "6x",
+      "count": 3,
+      "target": "6*x"
+     },
+     "text": "Same socket, same power as 6*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6,
+    "b": 8,
+    "c": 3,
+    "d": 5,
+    "e": 7
+   }
+  },
+  {
+   "id": "like-terms-id.xy/construct/1m1x357",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 4y \\;\\; 7 \\;\\; 5x \\;\\; 2y",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "3x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2*y,4*y|3*x,5*x|7",
+    "tex": "3x, 5x \\;\\mid\\; 4y, 2y \\;\\mid\\; 7"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "2*y,3*x,4*y,5*x|7",
+     "tex": "3x, 4y, 5x, 2y \\;\\mid\\; 7",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2*y,4*y|3*x,5*x,7",
+     "tex": "3x, 5x, 7 \\;\\mid\\; 4y, 2y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.xy",
+     "params": {
+      "first": "3x",
+      "count": 3
+     },
+     "text": "Same socket, same power, same stack. Everything else is a different kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.xy",
+     "params": {
+      "first": "3x",
+      "count": 3
+     },
+     "text": "3x is in the first stack. Three stacks come out of this in the end."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 4,
+    "c": 7,
+    "d": 5,
+    "e": 2
+   }
+  },
+  {
+   "id": "like-terms-id.pow/construct/h9esqu",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "5x \\;\\; 2x^{2} \\;\\; 6 \\;\\; 7x \\;\\; 8x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "5x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2*x^2,8*x^2|5*x,7*x|6",
+    "tex": "5x, 7x \\;\\mid\\; 2x^{2}, 8x^{2} \\;\\mid\\; 6"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "2*x^2,5*x,7*x,8*x^2|6",
+     "tex": "5x, 2x^{2}, 7x, 8x^{2} \\;\\mid\\; 6",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2*x^2,8*x^2|5*x,6,7*x",
+     "tex": "5x, 7x, 6 \\;\\mid\\; 2x^{2}, 8x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.pow",
+     "params": {
+      "first": "5x",
+      "count": 3
+     },
+     "text": "A socket and the same socket under a power are not the same kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.pow",
+     "params": {
+      "first": "5x",
+      "count": 3
+     },
+     "text": "5x is in the first stack. Fixed weight stands on its own."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 2,
+    "c": 6,
+    "d": 7,
+    "e": 8
+   }
+  },
+  {
+   "id": "like-terms-id.xy/repair/hdu1g6",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "5x \\;\\; 7y \\;\\; 6 \\;\\; 4x \\;\\; 2y",
+   "given": [],
+   "working": [
+    "5x \\;\\; 7y \\;\\; 6 \\;\\; 4x \\;\\; 2y",
+    "5x, 7y, 4x, 2y \\;\\mid\\; 6"
+   ],
+   "brokenBy": "all-variable-terms-alike",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "5x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|2*y,7*y|4*x,5*x|6",
+    "tex": "5x, 4x \\;\\mid\\; 7y, 2y \\;\\mid\\; 6",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "2|2*y,4*x,5*x,7*y|6",
+     "tex": "5x, 7y, 4x, 2y \\;\\mid\\; 6",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|2*y,7*y|4*x,5*x,6",
+     "tex": "5x, 4x, 6 \\;\\mid\\; 7y, 2y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "5x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "5x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 7,
+    "c": 6,
+    "d": 4,
+    "e": 2
+   }
+  },
+  {
+   "id": "like-terms-id.pow/repair/bk3nv9",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "5x \\;\\; 6x^{2} \\;\\; 2 \\;\\; 3x \\;\\; 7x^{2}",
+   "given": [],
+   "working": [
+    "5x \\;\\; 6x^{2} \\;\\; 2 \\;\\; 3x \\;\\; 7x^{2}",
+    "5x, 3x, 2 \\;\\mid\\; 6x^{2}, 7x^{2}"
+   ],
+   "brokenBy": "constant-like-variable",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "5x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|2|3*x,5*x|6*x^2,7*x^2",
+    "tex": "5x, 3x \\;\\mid\\; 6x^{2}, 7x^{2} \\;\\mid\\; 2",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "2|2|3*x,5*x,6*x^2,7*x^2",
+     "tex": "5x, 6x^{2}, 3x, 7x^{2} \\;\\mid\\; 2",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|2,3*x,5*x|6*x^2,7*x^2",
+     "tex": "5x, 3x, 2 \\;\\mid\\; 6x^{2}, 7x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "5x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "5x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 5,
+    "b": 6,
+    "c": 2,
+    "d": 3,
+    "e": 7
+   }
+  },
+  {
+   "id": "like-terms-id.xy/generate/9df7fe",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 4y \\;\\; 6 \\;\\; 5x \\;\\; 2y",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "3x",
+     "count": 3,
+     "target": "3*x"
+    },
+    "text": "Bring one more term that will stand with 3*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "8x",
+    "tex": "8x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "3*x",
+    "excludes": [
+     "3*x",
+     "4*y",
+     "6",
+     "5*x",
+     "2*y"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "4*y",
+     "tex": "4y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "target": "3*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "target": "3*x"
+     },
+     "text": "Same socket, same power as 3*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 4,
+    "c": 6,
+    "d": 5,
+    "e": 2
+   }
+  },
+  {
+   "id": "like-terms-id.pow/generate/zf5p0c",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Bearer",
+   "stem": "3x \\;\\; 7x^{2} \\;\\; 9 \\;\\; 5x \\;\\; 4x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "3x",
+     "count": 3,
+     "target": "3*x"
+    },
+    "text": "Bring one more term that will stand with 3*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "11x",
+    "tex": "11x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "3*x",
+    "excludes": [
+     "3*x",
+     "7*x^2",
+     "9",
+     "5*x",
+     "4*x^2"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "7*x^2",
+     "tex": "7x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "target": "3*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "3x",
+      "count": 3,
+      "target": "3*x"
+     },
+     "text": "Same socket, same power as 3*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 3,
+    "b": 7,
+    "c": 9,
+    "d": 5,
+    "e": 4
+   }
+  },
+  {
+   "id": "like-terms-id.xy/construct/ff8icv",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "4x \\;\\; 2y \\;\\; 7 \\;\\; 6x \\;\\; 8y",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "4x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2*y,8*y|4*x,6*x|7",
+    "tex": "4x, 6x \\;\\mid\\; 2y, 8y \\;\\mid\\; 7"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "2*y,4*x,6*x,8*y|7",
+     "tex": "4x, 2y, 6x, 8y \\;\\mid\\; 7",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2*y,8*y|4*x,6*x,7",
+     "tex": "4x, 6x, 7 \\;\\mid\\; 2y, 8y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.xy",
+     "params": {
+      "first": "4x",
+      "count": 3
+     },
+     "text": "Same socket, same power, same stack. Everything else is a different kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.xy",
+     "params": {
+      "first": "4x",
+      "count": 3
+     },
+     "text": "4x is in the first stack. Three stacks come out of this in the end."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 4,
+    "b": 2,
+    "c": 7,
+    "d": 6,
+    "e": 8
+   }
+  },
+  {
+   "id": "like-terms-id.pow/construct/u2b3iq",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "8x \\;\\; 2x^{2} \\;\\; 5 \\;\\; 6x \\;\\; 3x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.groups",
+    "params": {
+     "first": "8x",
+     "count": 3
+    },
+    "text": "Sort them into weld stacks."
+   },
+   "answerType": "partition",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2*x^2,3*x^2|5|6*x,8*x",
+    "tex": "8x, 6x \\;\\mid\\; 2x^{2}, 3x^{2} \\;\\mid\\; 5"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "2*x^2,3*x^2,6*x,8*x|5",
+     "tex": "8x, 2x^{2}, 6x, 3x^{2} \\;\\mid\\; 5",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2*x^2,3*x^2|5,6*x,8*x",
+     "tex": "8x, 6x, 5 \\;\\mid\\; 2x^{2}, 3x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.move.like-terms-id.pow",
+     "params": {
+      "first": "8x",
+      "count": 3
+     },
+     "text": "A socket and the same socket under a power are not the same kind."
+    },
+    {
+     "key": "hint.state.like-terms-id.pow",
+     "params": {
+      "first": "8x",
+      "count": 3
+     },
+     "text": "8x is in the first stack. Fixed weight stands on its own."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 2,
+    "c": 5,
+    "d": 6,
+    "e": 3
+   }
+  },
+  {
+   "id": "like-terms-id.xy/repair/dl93gd",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "6x \\;\\; 7y \\;\\; 2 \\;\\; 3x \\;\\; 5y",
+   "given": [],
+   "working": [
+    "6x \\;\\; 7y \\;\\; 2 \\;\\; 3x \\;\\; 5y",
+    "6x, 3x, 2 \\;\\mid\\; 7y, 5y"
+   ],
+   "brokenBy": "constant-like-variable",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "6x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|2|3*x,6*x|5*y,7*y",
+    "tex": "6x, 3x \\;\\mid\\; 7y, 5y \\;\\mid\\; 2",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "2|2|3*x,5*y,6*x,7*y",
+     "tex": "6x, 7y, 3x, 5y \\;\\mid\\; 2",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|2,3*x,6*x|5*y,7*y",
+     "tex": "6x, 3x, 2 \\;\\mid\\; 7y, 5y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "6x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "6x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 6,
+    "b": 7,
+    "c": 2,
+    "d": 3,
+    "e": 5
+   }
+  },
+  {
+   "id": "like-terms-id.pow/repair/18o6kbb",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "7x \\;\\; 6x^{2} \\;\\; 5 \\;\\; 3x \\;\\; 4x^{2}",
+   "given": [],
+   "working": [
+    "7x \\;\\; 6x^{2} \\;\\; 5 \\;\\; 3x \\;\\; 4x^{2}",
+    "7x, 3x, 5 \\;\\mid\\; 6x^{2}, 4x^{2}"
+   ],
+   "brokenBy": "constant-like-variable",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "first": "7x",
+     "count": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|3*x,7*x|4*x^2,6*x^2|5",
+    "tex": "7x, 3x \\;\\mid\\; 6x^{2}, 4x^{2} \\;\\mid\\; 5",
+    "line": 2,
+    "valueKind": "partition"
+   },
+   "distractors": [
+    {
+     "misconception": "exponent-ignored-in-matching",
+     "response": "2|3*x,4*x^2,6*x^2,7*x|5",
+     "tex": "7x, 6x^{2}, 3x, 4x^{2} \\;\\mid\\; 5",
+     "failKey": "fail.unlike"
+    },
+    {
+     "misconception": "constant-like-variable",
+     "response": "2|3*x,5,7*x|4*x^2,6*x^2",
+     "tex": "7x, 3x, 5 \\;\\mid\\; 6x^{2}, 4x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "first": "7x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "first": "7x",
+      "count": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.2",
+    "params": {},
+    "text": "The weld stacks are cut and waiting. Nothing wrong will seat in them."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 6,
+    "c": 5,
+    "d": 3,
+    "e": 4
+   }
+  },
+  {
+   "id": "like-terms-id.xy/generate/12fkzw",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.xy",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "8x \\;\\; 3y \\;\\; 2 \\;\\; 6x \\;\\; 7y",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "8x",
+     "count": 3,
+     "target": "8*x"
+    },
+    "text": "Bring one more term that will stand with 8*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "12x",
+    "tex": "12x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "8*x",
+    "excludes": [
+     "8*x",
+     "3*y",
+     "2",
+     "6*x",
+     "7*y"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "3*y",
+     "tex": "3y",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "8x",
+      "count": 3,
+      "target": "8*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "8x",
+      "count": 3,
+      "target": "8*x"
+     },
+     "text": "Same socket, same power as 8*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 8,
+    "b": 3,
+    "c": 2,
+    "d": 6,
+    "e": 7
+   }
+  },
+  {
+   "id": "like-terms-id.pow/generate/16kuohq",
+   "kpId": "like-terms-id",
+   "family": "like-terms-id.pow",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Bearer",
+   "stem": "7x \\;\\; 6x^{2} \\;\\; 9 \\;\\; 3x \\;\\; 5x^{2}",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.standsWith",
+    "params": {
+     "first": "7x",
+     "count": 3,
+     "target": "7*x"
+    },
+    "text": "Bring one more term that will stand with 7*x."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "14x",
+    "tex": "14x",
+    "witness": true
+   },
+   "check": {
+    "kind": "partitionWitness",
+    "mustStandWith": "7*x",
+    "excludes": [
+     "7*x",
+     "6*x^2",
+     "9",
+     "3*x",
+     "5*x^2"
+    ]
+   },
+   "distractors": [
+    {
+     "misconception": "all-variable-terms-alike",
+     "response": "6*x^2",
+     "tex": "6x^{2}",
+     "failKey": "fail.unlike"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Bearer",
+     "params": {},
+     "text": "A load standing on one pan. It settles inward-out."
+    },
+    {
+     "key": "hint.gen.partitionWitness.2",
+     "params": {
+      "first": "7x",
+      "count": 3,
+      "target": "7*x"
+     },
+     "text": "A length stands with a length. Bring a length."
+    },
+    {
+     "key": "hint.gen.partitionWitness.3",
+     "params": {
+      "first": "7x",
+      "count": 3,
+      "target": "7*x"
+     },
+     "text": "Same socket, same power as 7*x. The count is yours to pick."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.like-terms-id.1",
+    "params": {},
+    "text": "Kinds. A length and a weight will not stand together and the socket does not argue about it."
+   },
+   "standards": [
+    "CCSS.HSA-SSE.A.1a",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7C",
+    "FL.MA.7.AR.1.2",
+    "VA.8.PFA.1"
+   ],
+   "params": {
+    "a": 7,
+    "b": 6,
+    "c": 9,
+    "d": 3,
+    "e": 5
+   }
+  }
+ ]
+}

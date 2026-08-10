@@ -9,10 +9,11 @@ import {
   roleHex,
   buildBoard,
   facetAudit,
+  deriveFill,
   KEY_HEX,
-  FILL_SKY_HEX,
   FILL_GROUND_HEX,
   BOUNCE_HEX,
+  GROUND_FACET_NDL,
 } from "./Materials.js";
 import palette from "../../../design/palette.json";
 
@@ -108,8 +109,6 @@ function dirFromAngles(elevationDeg, azimuthDeg, out = new THREE.Vector3()) {
   // Unit vector pointing FROM the world TOWARD the light.
   return out.set(Math.cos(e) * Math.sin(a), Math.sin(e), Math.cos(e) * Math.cos(a)).normalize();
 }
-
-const REC709 = (c) => 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
 
 // ---------------------------------------------------------------------------- stand-in sky
 
@@ -218,40 +217,34 @@ export class Lighting {
   // -------------------------------------------------------------------------- derivation
 
   /**
-   * The rig's intensities, derived from §3.2's measured witness rather than typed.
+   * The rig, derived from measurements rather than typed. Two numbers do all the work and both come
+   * out of `Materials.deriveFill()`, which does §3.1's own division on the two ground pixels §3.2
+   * and §3.4 are written from. The consequences, which `review/measure/P11.mjs` checks on pixels:
    *
-   * §3.1's table says the fill is "0.229 x key". **Read as an intensity ratio between a
-   * `DirectionalLight` and a `HemisphereLight` that number is wrong by a factor of 2.6**, and it is
-   * worth knowing why, because it is the kind of number a critic will check: 0.229 is §3.2's
-   * measured *shadow-to-lit ratio on a ground plane* (Y 0.0300 / 0.1310 = 0.229, i.e. the 4.36
-   * witness written the other way up). An up-facing ground plane only receives sin(9deg) = 0.156 of
-   * the key, so an intensity ratio of 0.229 puts that plane at a lit-to-shadow ratio of 2.29 — half
-   * of what the target measures, and a visibly gloomy frame.
+   *   - an up-facing ground facet inside a cast shadow renders `ground.shadow` `#223522`, hue 120,
+   *     Y 0.030 — §3.4's second family and §13 row 4;
+   *   - the same facet, tilted `GROUND_FACET_NDL` toward the key and lit, renders `ground.lit`
+   *     `#78632C`, Y 0.131 — §3.2's first witness, and their ratio is 4.36 by construction.
    *
-   * So: solve for the fill that reproduces the witness.
-   *
-   *     lit    = K * sin(elev) * Y(key) / PI  +  F * Y(fillSky) / PI
-   *     shadow =                                F * Y(fillSky) / PI
-   *     shadow / lit = 1 / 4.36
-   *
-   * §3.2 also says to calibrate by capturing and measuring, which is what
-   * `review/measure/P11.mjs` claim K1 does against the real frame.
+   * **§3.1's "fill = 0.229 x key" is not an intensity ratio and must not be typed as one.** 0.229 is
+   * the measured *shadow-to-lit ratio on that ground plane* (0.0300 / 0.1310), i.e. the 4.36 witness
+   * written the other way up. Used as an intensity ratio it lands the plane at a lit-to-shadow ratio
+   * of 2.29 — half what the target measures, and a visibly gloomy frame. §3.2 is explicit about
+   * which to trust: "Calibrate by capturing and measuring, never by dividing two light intensities."
    */
   _deriveRig() {
     const key = new THREE.Color().setHex(KEY_HEX, THREE.SRGBColorSpace);
-    const fillSky = new THREE.Color().setHex(FILL_SKY_HEX, THREE.SRGBColorSpace);
     const bounce = new THREE.Color().setHex(BOUNCE_HEX, THREE.SRGBColorSpace);
+    const derived = deriveFill();
     const K = this.keyBase;
-    const sinE = Math.sin(THREE.MathUtils.degToRad(TOD.keyElevationDeg));
-    const shadowShare = 1 / GROUND_SHADOW_RATIO;
-    // F * Y(fillSky) = (shadowShare / (1 - shadowShare)) * K * sin(elev) * Y(key)
-    const fill = ((shadowShare / (1 - shadowShare)) * K * sinE * REC709(key)) / REC709(fillSky);
     return {
       keyIntensity: K,
-      fillIntensity: fill,
-      fillRelative: fill / K,
+      fillIntensity: derived.intensity,
+      fillRelative: derived.intensity / K,
+      fillDerivation: derived,
       bounceIntensity: K * BOUNCE_RELATIVE,
-      colours: { key, fillSky, bounce },
+      colours: { key, fillSky: derived.color, bounce },
+      groundFacetNdL: GROUND_FACET_NDL,
       groundShadowRatioTarget: GROUND_SHADOW_RATIO,
     };
   }
@@ -634,7 +627,13 @@ export class Lighting {
       timeOfDay: r4(this.timeOfDay),
       exposure: 1,
       tonemap: "none",
-      fill: { hex: "#66B3FF", ground: "#2A1F16", relative: r4(this.rig.fillRelative) },
+      fill: {
+        hex: this.rig.fillDerivation.hex,
+        ground: "#2A1F16",
+        relative: r4(this.rig.fillRelative),
+        derivation: this.rig.fillDerivation.method,
+        docPrinted: "#66B3FF",
+      },
       bounce: { hex: "#8A5B3E", relative: BOUNCE_RELATIVE },
       rim: {
         toRim: [r4(this._rimDir.x), r4(this._rimDir.y), r4(this._rimDir.z)],
@@ -714,26 +713,38 @@ export class Lighting {
       });
       this.addAccent("board:carry", new THREE.Vector3(...marks.water), { radius: 6, strength: 0.8 });
     }
-    // The camera rig and the locomotion system will fight us for the frame, and `boot/10-scaffold.js`
-    // is a smooth-shaded placeholder island that would sit in the middle of every measurement. All
-    // three are detached for the life of the measurement run only.
-    for (const name of ["camera", "locomotion", "traversal", "scaffold"]) {
+    // The camera rig and locomotion will fight us for the frame, and every other world piece would
+    // stand its own geometry in front of the board. Detached and hidden for the life of the
+    // measurement run only; nothing here survives a reload.
+    for (const name of ["camera", "locomotion", "traversal"]) {
       const sys = this.kernel.byName.get(name);
-      if (!sys) continue;
-      const i = this.kernel.systems.indexOf(sys);
+      const i = sys ? this.kernel.systems.indexOf(sys) : -1;
       if (i >= 0) this.kernel.systems.splice(i, 1);
-      if (sys.root) sys.root.visible = false;
+    }
+    // Hide by subtraction rather than by a list of names: any piece that mounts geometry after this
+    // was written would otherwise walk into the frame and be measured as if it were P11's.
+    const keep = new Set([this.root, this._board]);
+    for (const name of ["sky", "atmosphere", "weather"]) {
+      const sys = this.kernel.byName.get(name);
+      if (sys?.root) keep.add(sys.root);
+    }
+    this._hidden = [];
+    for (const child of this.scene.children) {
+      if (keep.has(child) || !child.visible || child.isLight) continue;
+      child.visible = false;
+      this._hidden.push(child.name || child.type);
     }
 
     const cam = this.kernel.camera;
+    const g = this._board.userData.marks;
     const views = {
-      // Composed the way the target is: spire cutting the left third, the courier on the shelf,
-      // crystal and carry to the right, horizon high.
-      wide: { pos: [-6.4, 3.4, 15.5], look: [1.2, 2.0, 0.6], fov: 55 },
-      // The one thing the piece has to prove: where the courier meets the ground.
-      contact: { pos: [2.4, 1.15, 4.3], look: [0, 0.55, 0], fov: 34 },
-      // Three substances in one frame, at one scale.
-      substances: { pos: [4.6, 2.1, 11.0], look: [3.6, 0.7, 3.2], fov: 42 },
+      // Composed the way the target is: the spire cutting the left third, the courier standing on
+      // the shelf just right of centre, crystal and carry to the right, horizon high.
+      wide: { pos: [-4.2, 2.9, 13.6], look: [0.6, 1.9, 0.4], fov: 52 },
+      // The one thing this piece has to prove: where the courier meets the ground.
+      contact: { pos: [1.9, 1.05, 3.2], look: [g.hero[0], g.hero[1] + 0.42, g.hero[2]], fov: 30 },
+      // Three substances in one frame, at one scale, on one ground.
+      substances: { pos: [5.4, 2.4, 12.2], look: [4.4, 1.0, 4.2], fov: 40 },
     };
     const v = views[view] ?? views.wide;
     cam.position.set(...v.pos);
@@ -742,7 +753,27 @@ export class Lighting {
     cam.lookAt(...v.look);
     cam.updateMatrixWorld(true);
     this._fitShadowCameras();
-    return { view, marks: this._board.userData.marks };
+    return { view, marks: this._board.userData.marks, hidden: this._hidden };
+  }
+
+  /**
+   * **Reviewer-only.** Swap the sky for a flat neutral backdrop.
+   *
+   * The sky is pure backdrop in this rig — there is no env map and no image-based lighting, so
+   * hiding it changes not one lit pixel. What it does change is which pixels belong to P11: §7.2
+   * puts the sky's cyan contribution at zero *by law*, so measuring this piece's accent budget and
+   * its temporal-noise budget against a neutral backdrop measures P11's surfaces instead of P10's
+   * clouds. `review/measure/P11.mjs` reports both numbers.
+   */
+  neutralSky(on = true) {
+    this._skyRoots ??= ["sky", "atmosphere", "weather"]
+      .map((n) => this.kernel.byName.get(n)?.root)
+      .filter(Boolean);
+    for (const r of this._skyRoots) r.visible = !on;
+    if (this.dome) this.dome.visible = !on;
+    this._savedBackground = this._savedBackground ?? this.scene.background ?? null;
+    this.scene.background = on ? new THREE.Color(0x6e6e6e) : this._savedBackground;
+    return { neutral: on, skyRoots: this._skyRoots.length };
   }
 
   /** Reviewer-only: project a world point to viewport pixels, so a script can name the feet. */

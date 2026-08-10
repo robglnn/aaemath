@@ -43,6 +43,55 @@ async function freePort() {
   });
 }
 
+// --------------------------------------------------------------------------- capture slots
+//
+// Rendering happens through SwiftShader, on the CPU. A dozen review agents each launching a browser
+// and rendering a shadow-cascaded scene at the same time does not give twelve captures at once — it
+// gives twelve captures that each take twelve times as long, and agents start reporting "capture
+// blocked" and misdiagnosing it as a hang. Total throughput is higher when only a few render at a
+// time, so sessions queue for one of a small number of slots.
+//
+// The lock is a directory of slot files created with the "wx" flag, which is atomic across
+// processes. Slots older than the stale window are reclaimed so a killed agent cannot wedge the
+// pipeline — agents in this project do get killed mid-capture.
+
+const LOCK_DIR = path.join(ROOT, "review", ".slots");
+const SLOTS = Number(process.env.VS_CAPTURE_SLOTS || 3);
+const STALE_MS = 15 * 60 * 1000;
+
+async function acquireSlot() {
+  fs.mkdirSync(LOCK_DIR, { recursive: true });
+  const deadline = Date.now() + 45 * 60 * 1000;
+  for (;;) {
+    for (let i = 0; i < SLOTS; i++) {
+      const file = path.join(LOCK_DIR, `slot-${i}.lock`);
+      try {
+        const fd = fs.openSync(file, "wx");
+        fs.writeSync(fd, String(process.pid));
+        fs.closeSync(fd);
+        return () => {
+          try {
+            fs.unlinkSync(file);
+          } catch {
+            /* already reclaimed */
+          }
+        };
+      } catch {
+        try {
+          if (Date.now() - fs.statSync(file).mtimeMs > STALE_MS) fs.unlinkSync(file);
+        } catch {
+          /* raced with another reclaimer */
+        }
+      }
+    }
+    if (Date.now() > deadline) {
+      console.error("capture slots never freed — proceeding unslotted");
+      return () => {};
+    }
+    await new Promise((r) => setTimeout(r, 1500 + Math.floor(Math.random() * 1500)));
+  }
+}
+
 async function waitForHttp(url, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
   for (;;) {
@@ -79,6 +128,7 @@ export async function openGame(opts, body) {
     query = {},
   } = opts || {};
 
+  const releaseSlot = await acquireSlot();
   const port = await freePort();
   const argv = built
     ? ["vite", "preview", "--port", String(port), "--strictPort"]
@@ -201,6 +251,7 @@ export async function openGame(opts, body) {
   } finally {
     await browser?.close().catch(() => {});
     endTree(server.pid);
+    releaseSlot();
   }
 }
 

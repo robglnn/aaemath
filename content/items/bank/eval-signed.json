@@ -1,0 +1,2470 @@
+{
+ "kpId": "eval-signed",
+ "title": "Substituting negatives without losing the sign",
+ "strand": "expressions",
+ "band": 3,
+ "objectClass": "Emitter",
+ "standards": [
+  "CCSS.6.EE.A.2c",
+  "CCSS.7.EE.B.3",
+  "FL.MA.6.AR.1.3",
+  "VA.7.PFA.2"
+ ],
+ "misconceptions": [
+  "negative-substituted-bare",
+  "double-negative-collapsed-wrong",
+  "two-negatives-make-positive-on-sum"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "eval-signed.minusneg/construct/jgfsoo",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "8 - x",
+   "given": [
+    "x = -8"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 8,
+     "b": 8
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "16",
+    "tex": "16"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "0",
+     "tex": "0",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.minusneg",
+     "params": {
+      "a": 8,
+      "b": 8
+     },
+     "text": "You are taking away something that was already inverted."
+    },
+    {
+     "key": "hint.state.eval-signed.minusneg",
+     "params": {
+      "a": 8,
+      "b": 8
+     },
+     "text": "8 is standing, and a cold 8 is coming off it rather than onto it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 8,
+    "b": 8
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/construct/1cnqk3w",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -2",
+    "y = -6"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 2,
+     "b": 6
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-8",
+    "tex": "-8"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "8",
+     "tex": "8",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.sumneg",
+     "params": {
+      "a": 2,
+      "b": 6
+     },
+     "text": "Two cold values joined. Nothing here warms either one."
+    },
+    {
+     "key": "hint.state.eval-signed.sumneg",
+     "params": {
+      "a": 2,
+      "b": 6
+     },
+     "text": "2 cold and 6 cold, and the join between them is a plus."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 6
+   }
+  },
+  {
+   "id": "eval-signed.square/repair/wnh1ur",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -2"
+   ],
+   "working": [
+    "x^{2}",
+    "-2^{2}",
+    "-4"
+   ],
+   "brokenBy": "negative-substituted-bare",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "v": 2,
+     "sq": 4,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|4",
+    "tex": "\\left(-2\\right)^{2}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-substituted-bare",
+     "response": "2|-4",
+     "tex": "-2^{2}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "v": 2,
+      "sq": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "v": 2,
+      "sq": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 2
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/repair/1lz0gh8",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "5 - x",
+   "given": [
+    "x = -9"
+   ],
+   "working": [
+    "5 - x",
+    "5 - 9",
+    "-4"
+   ],
+   "brokenBy": "double-negative-collapsed-wrong",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "b": 9,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|14",
+    "tex": "5 - \\left(-9\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "2|-4",
+     "tex": "5 - 9",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "b": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "b": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": 9
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/repair/bdi3zh",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -6",
+    "y = -7"
+   ],
+   "working": [
+    "x + y",
+    "6 + 7",
+    "13"
+   ],
+   "brokenBy": "two-negatives-make-positive-on-sum",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 6,
+     "b": 7,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-13",
+    "tex": "\\left(-6\\right) + \\left(-7\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "2|13",
+     "tex": "6 + 7",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 6,
+      "b": 7,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 6,
+      "b": 7,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 7
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/generate/bdrkhe",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -6",
+    "y = -8"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 6,
+     "b": 8,
+     "target": -14,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads -14 when the socket holds {at}."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x - 8",
+    "tex": "x - 8",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -6,
+    "value": -14,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 6,
+      "b": 8,
+      "target": -14,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 6,
+      "b": 8,
+      "target": -14,
+      "unknown": "x"
+     },
+     "text": "Seat {at} in whatever you build and it has to come out at -14."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 8
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/construct/1lz0gh8",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "5 - x",
+   "given": [
+    "x = -9"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 5,
+     "b": 9
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "14",
+    "tex": "14"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "-4",
+     "tex": "-4",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.minusneg",
+     "params": {
+      "a": 5,
+      "b": 9
+     },
+     "text": "You are taking away something that was already inverted."
+    },
+    {
+     "key": "hint.state.eval-signed.minusneg",
+     "params": {
+      "a": 5,
+      "b": 9
+     },
+     "text": "5 is standing, and a cold 9 is coming off it rather than onto it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": 9
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/construct/1kpk6zr",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -6",
+    "y = -10"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 6,
+     "b": 10
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-16",
+    "tex": "-16"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "16",
+     "tex": "16",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.sumneg",
+     "params": {
+      "a": 6,
+      "b": 10
+     },
+     "text": "Two cold values joined. Nothing here warms either one."
+    },
+    {
+     "key": "hint.state.eval-signed.sumneg",
+     "params": {
+      "a": 6,
+      "b": 10
+     },
+     "text": "6 cold and 10 cold, and the join between them is a plus."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 10
+   }
+  },
+  {
+   "id": "eval-signed.square/repair/wn4fuv",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -6"
+   ],
+   "working": [
+    "x^{2}",
+    "-6^{2}",
+    "-36"
+   ],
+   "brokenBy": "negative-substituted-bare",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "v": 6,
+     "sq": 36,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|36",
+    "tex": "\\left(-6\\right)^{2}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-substituted-bare",
+     "response": "2|-36",
+     "tex": "-6^{2}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "v": 6,
+      "sq": 36,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "v": 6,
+      "sq": 36,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 6
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/repair/bdeyhi",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "6 - x",
+   "given": [
+    "x = -4"
+   ],
+   "working": [
+    "6 - x",
+    "6 - 4",
+    "2"
+   ],
+   "brokenBy": "double-negative-collapsed-wrong",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 6,
+     "b": 4,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|10",
+    "tex": "6 - \\left(-4\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "2|2",
+     "tex": "6 - 4",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 6,
+      "b": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 6,
+      "b": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 4
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/repair/m8akek",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -13",
+    "y = -2"
+   ],
+   "working": [
+    "x + y",
+    "13 + 2",
+    "15"
+   ],
+   "brokenBy": "two-negatives-make-positive-on-sum",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 13,
+     "b": 2,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-15",
+    "tex": "\\left(-13\\right) + \\left(-2\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "2|15",
+     "tex": "13 + 2",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 13,
+      "b": 2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 13,
+      "b": 2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 13,
+    "b": 2
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/generate/1ekhh5a",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -2",
+    "y = -11"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 2,
+     "b": 11,
+     "target": -13,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads -13 when the socket holds {at}."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x - 11",
+    "tex": "x - 11",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -2,
+    "value": -13,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 2,
+      "b": 11,
+      "target": -13,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 2,
+      "b": 11,
+      "target": -13,
+      "unknown": "x"
+     },
+     "text": "Seat {at} in whatever you build and it has to come out at -13."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 11
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/construct/z6lwts",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "10 - x",
+   "given": [
+    "x = -5"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 10,
+     "b": 5
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "15",
+    "tex": "15"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "5",
+     "tex": "5",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.minusneg",
+     "params": {
+      "a": 10,
+      "b": 5
+     },
+     "text": "You are taking away something that was already inverted."
+    },
+    {
+     "key": "hint.state.eval-signed.minusneg",
+     "params": {
+      "a": 10,
+      "b": 5
+     },
+     "text": "10 is standing, and a cold 5 is coming off it rather than onto it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 10,
+    "b": 5
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/construct/109z702",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -10",
+    "y = -3"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 10,
+     "b": 3
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-13",
+    "tex": "-13"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "13",
+     "tex": "13",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.sumneg",
+     "params": {
+      "a": 10,
+      "b": 3
+     },
+     "text": "Two cold values joined. Nothing here warms either one."
+    },
+    {
+     "key": "hint.state.eval-signed.sumneg",
+     "params": {
+      "a": 10,
+      "b": 3
+     },
+     "text": "10 cold and 3 cold, and the join between them is a plus."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 10,
+    "b": 3
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/repair/tmc99w",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "14 - x",
+   "given": [
+    "x = -5"
+   ],
+   "working": [
+    "14 - x",
+    "14 - 5",
+    "9"
+   ],
+   "brokenBy": "double-negative-collapsed-wrong",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 14,
+     "b": 5,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|19",
+    "tex": "14 - \\left(-5\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "2|9",
+     "tex": "14 - 5",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 14,
+      "b": 5,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 14,
+      "b": 5,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 14,
+    "b": 5
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/repair/a9a8po",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -6",
+    "y = -2"
+   ],
+   "working": [
+    "x + y",
+    "6 + 2",
+    "8"
+   ],
+   "brokenBy": "two-negatives-make-positive-on-sum",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 6,
+     "b": 2,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-8",
+    "tex": "\\left(-6\\right) + \\left(-2\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "2|8",
+     "tex": "6 + 2",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 6,
+      "b": 2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 6,
+      "b": 2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 2
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/construct/1drltdt",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -2",
+    "y = -7"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 2,
+     "b": 7
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-9",
+    "tex": "-9"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "9",
+     "tex": "9",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.sumneg",
+     "params": {
+      "a": 2,
+      "b": 7
+     },
+     "text": "Two cold values joined. Nothing here warms either one."
+    },
+    {
+     "key": "hint.state.eval-signed.sumneg",
+     "params": {
+      "a": 2,
+      "b": 7
+     },
+     "text": "2 cold and 7 cold, and the join between them is a plus."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 7
+   }
+  },
+  {
+   "id": "eval-signed.square/repair/xrim4m",
+   "kpId": "eval-signed",
+   "family": "eval-signed.square",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x^{2}",
+   "given": [
+    "x = -3"
+   ],
+   "working": [
+    "x^{2}",
+    "-3^{2}",
+    "-9"
+   ],
+   "brokenBy": "negative-substituted-bare",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "v": 3,
+     "sq": 9,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|9",
+    "tex": "\\left(-3\\right)^{2}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-substituted-bare",
+     "response": "2|-9",
+     "tex": "-3^{2}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "v": 3,
+      "sq": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "v": 3,
+      "sq": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 3
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/repair/1conct7",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "2 - x",
+   "given": [
+    "x = -9"
+   ],
+   "working": [
+    "2 - x",
+    "2 - 9",
+    "-7"
+   ],
+   "brokenBy": "double-negative-collapsed-wrong",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": 9,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|11",
+    "tex": "2 - \\left(-9\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "2|-7",
+     "tex": "2 - 9",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 9
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/repair/1fmkp2i",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -3",
+    "y = -5"
+   ],
+   "working": [
+    "x + y",
+    "3 + 5",
+    "8"
+   ],
+   "brokenBy": "two-negatives-make-positive-on-sum",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 5,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-8",
+    "tex": "\\left(-3\\right) + \\left(-5\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "2|8",
+     "tex": "3 + 5",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 5,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 5
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/generate/1173l8x",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -7",
+    "y = -2"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 7,
+     "b": 2,
+     "target": -9,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads -9 when the socket holds {at}."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x - 2",
+    "tex": "x - 2",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -7,
+    "value": -9,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 7,
+      "b": 2,
+      "target": -9,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 7,
+      "b": 2,
+      "target": -9,
+      "unknown": "x"
+     },
+     "text": "Seat {at} in whatever you build and it has to come out at -9."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 7,
+    "b": 2
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/construct/1n3wlum",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "5 - x",
+   "given": [
+    "x = -7"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 5,
+     "b": 7
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "12",
+    "tex": "12"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "-2",
+     "tex": "-2",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.minusneg",
+     "params": {
+      "a": 5,
+      "b": 7
+     },
+     "text": "You are taking away something that was already inverted."
+    },
+    {
+     "key": "hint.state.eval-signed.minusneg",
+     "params": {
+      "a": 5,
+      "b": 7
+     },
+     "text": "5 is standing, and a cold 7 is coming off it rather than onto it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": 7
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/construct/z5xmq7",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -10",
+    "y = -2"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 10,
+     "b": 2
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-12",
+    "tex": "-12"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "12",
+     "tex": "12",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.sumneg",
+     "params": {
+      "a": 10,
+      "b": 2
+     },
+     "text": "Two cold values joined. Nothing here warms either one."
+    },
+    {
+     "key": "hint.state.eval-signed.sumneg",
+     "params": {
+      "a": 10,
+      "b": 2
+     },
+     "text": "10 cold and 2 cold, and the join between them is a plus."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 10,
+    "b": 2
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/repair/1i9mpfx",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "11 - x",
+   "given": [
+    "x = -5"
+   ],
+   "working": [
+    "11 - x",
+    "11 - 5",
+    "6"
+   ],
+   "brokenBy": "double-negative-collapsed-wrong",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 11,
+     "b": 5,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|16",
+    "tex": "11 - \\left(-5\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "2|6",
+     "tex": "11 - 5",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 11,
+      "b": 5,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 11,
+      "b": 5,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 11,
+    "b": 5
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/repair/1eij4sn",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -3",
+    "y = -4"
+   ],
+   "working": [
+    "x + y",
+    "3 + 4",
+    "7"
+   ],
+   "brokenBy": "two-negatives-make-positive-on-sum",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 4,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-7",
+    "tex": "\\left(-3\\right) + \\left(-4\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "2|7",
+     "tex": "3 + 4",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 4
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/generate/1drinvu",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -2",
+    "y = -4"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 2,
+     "b": 4,
+     "target": -6,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads -6 when the socket holds {at}."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x - 4",
+    "tex": "x - 4",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": -2,
+    "value": -6,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 2,
+      "b": 4,
+      "target": -6,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 2,
+      "b": 4,
+      "target": -6,
+      "unknown": "x"
+     },
+     "text": "Seat {at} in whatever you build and it has to come out at -6."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 4
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/construct/m8pe08",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "13 - x",
+   "given": [
+    "x = -6"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 13,
+     "b": 6
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "19",
+    "tex": "19"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "7",
+     "tex": "7",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.minusneg",
+     "params": {
+      "a": 13,
+      "b": 6
+     },
+     "text": "You are taking away something that was already inverted."
+    },
+    {
+     "key": "hint.state.eval-signed.minusneg",
+     "params": {
+      "a": 13,
+      "b": 6
+     },
+     "text": "13 is standing, and a cold 6 is coming off it rather than onto it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 13,
+    "b": 6
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/construct/1tn3w5i",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -4",
+    "y = -6"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 4,
+     "b": 6
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-10",
+    "tex": "-10"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "10",
+     "tex": "10",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.move.eval-signed.sumneg",
+     "params": {
+      "a": 4,
+      "b": 6
+     },
+     "text": "Two cold values joined. Nothing here warms either one."
+    },
+    {
+     "key": "hint.state.eval-signed.sumneg",
+     "params": {
+      "a": 4,
+      "b": 6
+     },
+     "text": "4 cold and 6 cold, and the join between them is a plus."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 4,
+    "b": 6
+   }
+  },
+  {
+   "id": "eval-signed.minusneg/repair/1fn2o65",
+   "kpId": "eval-signed",
+   "family": "eval-signed.minusneg",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "3 - x",
+   "given": [
+    "x = -2"
+   ],
+   "working": [
+    "3 - x",
+    "3 - 2",
+    "1"
+   ],
+   "brokenBy": "double-negative-collapsed-wrong",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 2,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|5",
+    "tex": "3 - \\left(-2\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "double-negative-collapsed-wrong",
+     "response": "2|1",
+     "tex": "3 - 2",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.2",
+    "params": {},
+    "text": "A cold value off the Kiln Leaves, still wrapped the way the cutters wrap them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 2
+   }
+  },
+  {
+   "id": "eval-signed.sumneg/repair/m8pe08",
+   "kpId": "eval-signed",
+   "family": "eval-signed.sumneg",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Emitter",
+   "stem": "x + y",
+   "given": [
+    "x = -13",
+    "y = -6"
+   ],
+   "working": [
+    "x + y",
+    "13 + 6",
+    "19"
+   ],
+   "brokenBy": "two-negatives-make-positive-on-sum",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 13,
+     "b": 6,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-19",
+    "tex": "\\left(-13\\right) + \\left(-6\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "two-negatives-make-positive-on-sum",
+     "response": "2|19",
+     "tex": "13 + 6",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Emitter",
+     "params": {},
+     "text": "A socket cut for a name, and a charge waiting outside it."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 13,
+      "b": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 13,
+      "b": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.eval-signed.1",
+    "params": {},
+    "text": "The charge arrives bundled, and the bundle is what keeps its sign."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.7.EE.B.3",
+    "FL.MA.6.AR.1.3",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 13,
+    "b": 6
+   }
+  }
+ ]
+}

@@ -1,0 +1,2424 @@
+{
+ "kpId": "translate-order",
+ "title": "Phrases that refuse to commute",
+ "strand": "translation",
+ "band": 3,
+ "objectClass": "Threshold",
+ "standards": [
+  "CCSS.6.EE.A.2a",
+  "CCSS.HSA-SSE.A.1a",
+  "FL.MA.6.AR.1.1",
+  "VA.A.EO.1"
+ ],
+ "misconceptions": [
+  "less-than-reversed",
+  "divided-into-reversed",
+  "subtract-from-reversed"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "translate-order.lessthan/construct/11mtrsj",
+   "kpId": "translate-order",
+   "family": "translate-order.lessthan",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.lessthan",
+    "params": {
+     "a": 7
+    },
+    "text": "7 less than the count you are holding."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 7
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -7",
+    "tex": "n - 7"
+   },
+   "distractors": [
+    {
+     "misconception": "less-than-reversed",
+     "response": "-1*n + 7",
+     "tex": "7 - n",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.lessthan",
+     "params": {
+      "a": 7
+     },
+     "text": "Whatever is being reduced is the thing that stands first."
+    },
+    {
+     "key": "hint.state.translate-order.lessthan",
+     "params": {
+      "a": 7
+     },
+     "text": "The count is standing. 7 is coming off it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 7
+   }
+  },
+  {
+   "id": "translate-order.subtractfrom/construct/etxxn0",
+   "kpId": "translate-order",
+   "family": "translate-order.subtractfrom",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.subtractfrom",
+    "params": {
+     "a": 15
+    },
+    "text": "Take your count off 15."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 15
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "-1*n + 15",
+    "tex": "15 - n"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-from-reversed",
+     "response": "1*n + -15",
+     "tex": "n - 15",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.subtractfrom",
+     "params": {
+      "a": 15
+     },
+     "text": "The thing you take away from is the thing that stands first."
+    },
+    {
+     "key": "hint.state.translate-order.subtractfrom",
+     "params": {
+      "a": 15
+     },
+     "text": "15 is standing. The count is coming off it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 15
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/construct/eucr8o",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 11
+    },
+    "text": "How many times does your count go into 11."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 11
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "11*n^-1",
+    "tex": "\\frac{11}{n}"
+   },
+   "distractors": [
+    {
+     "misconception": "divided-into-reversed",
+     "response": "1/11*n",
+     "tex": "\\frac{n}{11}",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.dividedinto",
+     "params": {
+      "a": 11
+     },
+     "text": "What is being shared out stands over what it is shared among."
+    },
+    {
+     "key": "hint.state.translate-order.dividedinto",
+     "params": {
+      "a": 11
+     },
+     "text": "11 is the pile. The count is how many hands."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 11
+   }
+  },
+  {
+   "id": "translate-order.lessthan/repair/11mh5sn",
+   "kpId": "translate-order",
+   "family": "translate-order.lessthan",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.lessthan",
+    "params": {
+     "a": 3
+    },
+    "text": "3 less than the count you are holding."
+   },
+   "working": [
+    "n",
+    "3 - n"
+   ],
+   "brokenBy": "less-than-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -3",
+    "tex": "n - 3",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "less-than-reversed",
+     "response": "2|-1*n + 3",
+     "tex": "3 - n",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 3
+   }
+  },
+  {
+   "id": "translate-order.subtractfrom/repair/etxxn0",
+   "kpId": "translate-order",
+   "family": "translate-order.subtractfrom",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.subtractfrom",
+    "params": {
+     "a": 15
+    },
+    "text": "Take your count off 15."
+   },
+   "working": [
+    "n",
+    "n - 15"
+   ],
+   "brokenBy": "subtract-from-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 15,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|-1*n + 15",
+    "tex": "15 - n",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-from-reversed",
+     "response": "2|1*n + -15",
+     "tex": "n - 15",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 15,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 15,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 15
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/repair/fyzg45",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 18
+    },
+    "text": "How many times does your count go into 18."
+   },
+   "working": [
+    "n",
+    "\\frac{n}{18}"
+   ],
+   "brokenBy": "divided-into-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 18,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|18*n^-1",
+    "tex": "\\frac{18}{n}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "divided-into-reversed",
+     "response": "2|1/18*n",
+     "tex": "\\frac{n}{18}",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 18,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 18,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 18
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/generate/1jr1m1k",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 24
+    },
+    "text": "How many times does your count go into 24."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 24,
+     "target": "24*n^-1",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 24*n^-1."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "\\frac{24}{n}",
+    "tex": "\\frac{24}{n}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "24*n^-1",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 24,
+      "target": "24*n^-1",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 24,
+      "target": "24*n^-1",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 24*n^-1. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 24
+   }
+  },
+  {
+   "id": "translate-order.subtractfrom/construct/12qvc2e",
+   "kpId": "translate-order",
+   "family": "translate-order.subtractfrom",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.subtractfrom",
+    "params": {
+     "a": 6
+    },
+    "text": "Take your count off 6."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 6
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "-1*n + 6",
+    "tex": "6 - n"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-from-reversed",
+     "response": "1*n + -6",
+     "tex": "n - 6",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.subtractfrom",
+     "params": {
+      "a": 6
+     },
+     "text": "The thing you take away from is the thing that stands first."
+    },
+    {
+     "key": "hint.state.translate-order.subtractfrom",
+     "params": {
+      "a": 6
+     },
+     "text": "6 is standing. The count is coming off it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 6
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/construct/p55j7h",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 43
+    },
+    "text": "How many times does your count go into 43."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 43
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "43*n^-1",
+    "tex": "\\frac{43}{n}"
+   },
+   "distractors": [
+    {
+     "misconception": "divided-into-reversed",
+     "response": "1/43*n",
+     "tex": "\\frac{n}{43}",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.dividedinto",
+     "params": {
+      "a": 43
+     },
+     "text": "What is being shared out stands over what it is shared among."
+    },
+    {
+     "key": "hint.state.translate-order.dividedinto",
+     "params": {
+      "a": 43
+     },
+     "text": "43 is the pile. The count is how many hands."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 43
+   }
+  },
+  {
+   "id": "translate-order.lessthan/repair/eu134z",
+   "kpId": "translate-order",
+   "family": "translate-order.lessthan",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.lessthan",
+    "params": {
+     "a": 12
+    },
+    "text": "12 less than the count you are holding."
+   },
+   "working": [
+    "n",
+    "12 - n"
+   ],
+   "brokenBy": "less-than-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 12,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -12",
+    "tex": "n - 12",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "less-than-reversed",
+     "response": "2|-1*n + 12",
+     "tex": "12 - n",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 12,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 12,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 12
+   }
+  },
+  {
+   "id": "translate-order.subtractfrom/repair/fxt6wx",
+   "kpId": "translate-order",
+   "family": "translate-order.subtractfrom",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.subtractfrom",
+    "params": {
+     "a": 14
+    },
+    "text": "Take your count off 14."
+   },
+   "working": [
+    "n",
+    "n - 14"
+   ],
+   "brokenBy": "subtract-from-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 14,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|-1*n + 14",
+    "tex": "14 - n",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-from-reversed",
+     "response": "2|1*n + -14",
+     "tex": "n - 14",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 14,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 14,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 14
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/repair/12rdb61",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 9
+    },
+    "text": "How many times does your count go into 9."
+   },
+   "working": [
+    "n",
+    "\\frac{n}{9}"
+   ],
+   "brokenBy": "divided-into-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 9,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|9*n^-1",
+    "tex": "\\frac{9}{n}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "divided-into-reversed",
+     "response": "2|1/9*n",
+     "tex": "\\frac{n}{9}",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 9
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/generate/1sxpo8j",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 56
+    },
+    "text": "How many times does your count go into 56."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 56,
+     "target": "56*n^-1",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 56*n^-1."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "\\frac{56}{n}",
+    "tex": "\\frac{56}{n}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "56*n^-1",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 56,
+      "target": "56*n^-1",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 56,
+      "target": "56*n^-1",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 56*n^-1. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 56
+   }
+  },
+  {
+   "id": "translate-order.lessthan/construct/11n5fw8",
+   "kpId": "translate-order",
+   "family": "translate-order.lessthan",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.lessthan",
+    "params": {
+     "a": 4
+    },
+    "text": "4 less than the count you are holding."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 4
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -4",
+    "tex": "n - 4"
+   },
+   "distractors": [
+    {
+     "misconception": "less-than-reversed",
+     "response": "-1*n + 4",
+     "tex": "4 - n",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.lessthan",
+     "params": {
+      "a": 4
+     },
+     "text": "Whatever is being reduced is the thing that stands first."
+    },
+    {
+     "key": "hint.state.translate-order.lessthan",
+     "params": {
+      "a": 4
+     },
+     "text": "The count is standing. 4 is coming off it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 4
+   }
+  },
+  {
+   "id": "translate-order.subtractfrom/construct/1kuew7u",
+   "kpId": "translate-order",
+   "family": "translate-order.subtractfrom",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.subtractfrom",
+    "params": {
+     "a": 22
+    },
+    "text": "Take your count off 22."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 22
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "-1*n + 22",
+    "tex": "22 - n"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-from-reversed",
+     "response": "1*n + -22",
+     "tex": "n - 22",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.subtractfrom",
+     "params": {
+      "a": 22
+     },
+     "text": "The thing you take away from is the thing that stands first."
+    },
+    {
+     "key": "hint.state.translate-order.subtractfrom",
+     "params": {
+      "a": 22
+     },
+     "text": "22 is standing. The count is coming off it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 22
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/construct/p4nk3u",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 44
+    },
+    "text": "How many times does your count go into 44."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 44
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "44*n^-1",
+    "tex": "\\frac{44}{n}"
+   },
+   "distractors": [
+    {
+     "misconception": "divided-into-reversed",
+     "response": "1/44*n",
+     "tex": "\\frac{n}{44}",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.dividedinto",
+     "params": {
+      "a": 44
+     },
+     "text": "What is being shared out stands over what it is shared among."
+    },
+    {
+     "key": "hint.state.translate-order.dividedinto",
+     "params": {
+      "a": 44
+     },
+     "text": "44 is the pile. The count is how many hands."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 44
+   }
+  },
+  {
+   "id": "translate-order.lessthan/repair/11n5fw8",
+   "kpId": "translate-order",
+   "family": "translate-order.lessthan",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.lessthan",
+    "params": {
+     "a": 4
+    },
+    "text": "4 less than the count you are holding."
+   },
+   "working": [
+    "n",
+    "4 - n"
+   ],
+   "brokenBy": "less-than-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -4",
+    "tex": "n - 4",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "less-than-reversed",
+     "response": "2|-1*n + 4",
+     "tex": "4 - n",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 4
+   }
+  },
+  {
+   "id": "translate-order.subtractfrom/repair/eucr8o",
+   "kpId": "translate-order",
+   "family": "translate-order.subtractfrom",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.subtractfrom",
+    "params": {
+     "a": 11
+    },
+    "text": "Take your count off 11."
+   },
+   "working": [
+    "n",
+    "n - 11"
+   ],
+   "brokenBy": "subtract-from-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 11,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|-1*n + 11",
+    "tex": "11 - n",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-from-reversed",
+     "response": "2|1*n + -11",
+     "tex": "n - 11",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 11,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 11,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 11
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/repair/1kv9hbd",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 29
+    },
+    "text": "How many times does your count go into 29."
+   },
+   "working": [
+    "n",
+    "\\frac{n}{29}"
+   ],
+   "brokenBy": "divided-into-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 29,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|29*n^-1",
+    "tex": "\\frac{29}{n}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "divided-into-reversed",
+     "response": "2|1/29*n",
+     "tex": "\\frac{n}{29}",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 29,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 29,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 29
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/generate/p5ttb2",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 48
+    },
+    "text": "How many times does your count go into 48."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 48,
+     "target": "48*n^-1",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 48*n^-1."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "\\frac{48}{n}",
+    "tex": "\\frac{48}{n}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "48*n^-1",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 48,
+      "target": "48*n^-1",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 48,
+      "target": "48*n^-1",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 48*n^-1. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 48
+   }
+  },
+  {
+   "id": "translate-order.lessthan/construct/12rdb61",
+   "kpId": "translate-order",
+   "family": "translate-order.lessthan",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.lessthan",
+    "params": {
+     "a": 9
+    },
+    "text": "9 less than the count you are holding."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 9
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -9",
+    "tex": "n - 9"
+   },
+   "distractors": [
+    {
+     "misconception": "less-than-reversed",
+     "response": "-1*n + 9",
+     "tex": "9 - n",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.lessthan",
+     "params": {
+      "a": 9
+     },
+     "text": "Whatever is being reduced is the thing that stands first."
+    },
+    {
+     "key": "hint.state.translate-order.lessthan",
+     "params": {
+      "a": 9
+     },
+     "text": "The count is standing. 9 is coming off it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 9
+   }
+  },
+  {
+   "id": "translate-order.subtractfrom/construct/12rdb61",
+   "kpId": "translate-order",
+   "family": "translate-order.subtractfrom",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.subtractfrom",
+    "params": {
+     "a": 9
+    },
+    "text": "Take your count off 9."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 9
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "-1*n + 9",
+    "tex": "9 - n"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-from-reversed",
+     "response": "1*n + -9",
+     "tex": "n - 9",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.subtractfrom",
+     "params": {
+      "a": 9
+     },
+     "text": "The thing you take away from is the thing that stands first."
+    },
+    {
+     "key": "hint.state.translate-order.subtractfrom",
+     "params": {
+      "a": 9
+     },
+     "text": "9 is standing. The count is coming off it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 9
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/construct/1jr1m1k",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 24
+    },
+    "text": "How many times does your count go into 24."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 24
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "24*n^-1",
+    "tex": "\\frac{24}{n}"
+   },
+   "distractors": [
+    {
+     "misconception": "divided-into-reversed",
+     "response": "1/24*n",
+     "tex": "\\frac{n}{24}",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.dividedinto",
+     "params": {
+      "a": 24
+     },
+     "text": "What is being shared out stands over what it is shared among."
+    },
+    {
+     "key": "hint.state.translate-order.dividedinto",
+     "params": {
+      "a": 24
+     },
+     "text": "24 is the pile. The count is how many hands."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 24
+   }
+  },
+  {
+   "id": "translate-order.lessthan/repair/11ni1w4",
+   "kpId": "translate-order",
+   "family": "translate-order.lessthan",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.lessthan",
+    "params": {
+     "a": 8
+    },
+    "text": "8 less than the count you are holding."
+   },
+   "working": [
+    "n",
+    "8 - n"
+   ],
+   "brokenBy": "less-than-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 8,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|1*n + -8",
+    "tex": "n - 8",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "less-than-reversed",
+     "response": "2|-1*n + 8",
+     "tex": "8 - n",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 8
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/generate/etoh53",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 16
+    },
+    "text": "How many times does your count go into 16."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 16,
+     "target": "16*n^-1",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 16*n^-1."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "\\frac{16}{n}",
+    "tex": "\\frac{16}{n}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "16*n^-1",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 16,
+      "target": "16*n^-1",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 16,
+      "target": "16*n^-1",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 16*n^-1. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 16
+   }
+  },
+  {
+   "id": "translate-order.lessthan/construct/eu134z",
+   "kpId": "translate-order",
+   "family": "translate-order.lessthan",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.lessthan",
+    "params": {
+     "a": 12
+    },
+    "text": "12 less than the count you are holding."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 12
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "1*n + -12",
+    "tex": "n - 12"
+   },
+   "distractors": [
+    {
+     "misconception": "less-than-reversed",
+     "response": "-1*n + 12",
+     "tex": "12 - n",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.lessthan",
+     "params": {
+      "a": 12
+     },
+     "text": "Whatever is being reduced is the thing that stands first."
+    },
+    {
+     "key": "hint.state.translate-order.lessthan",
+     "params": {
+      "a": 12
+     },
+     "text": "The count is standing. 12 is coming off it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 12
+   }
+  },
+  {
+   "id": "translate-order.subtractfrom/construct/1kutpti",
+   "kpId": "translate-order",
+   "family": "translate-order.subtractfrom",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.subtractfrom",
+    "params": {
+     "a": 26
+    },
+    "text": "Take your count off 26."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 26
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "-1*n + 26",
+    "tex": "26 - n"
+   },
+   "distractors": [
+    {
+     "misconception": "subtract-from-reversed",
+     "response": "1*n + -26",
+     "tex": "n - 26",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.subtractfrom",
+     "params": {
+      "a": 26
+     },
+     "text": "The thing you take away from is the thing that stands first."
+    },
+    {
+     "key": "hint.state.translate-order.subtractfrom",
+     "params": {
+      "a": 26
+     },
+     "text": "26 is standing. The count is coming off it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 26
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/construct/1u1wlm5",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 54
+    },
+    "text": "How many times does your count go into 54."
+   },
+   "ask": {
+    "key": "ask.load",
+    "params": {
+     "a": 54
+    },
+    "text": "Write the load."
+   },
+   "answerType": "expression",
+   "unknown": "n",
+   "answer": {
+    "canonical": "54*n^-1",
+    "tex": "\\frac{54}{n}"
+   },
+   "distractors": [
+    {
+     "misconception": "divided-into-reversed",
+     "response": "1/54*n",
+     "tex": "\\frac{n}{54}",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.translate-order.dividedinto",
+     "params": {
+      "a": 54
+     },
+     "text": "What is being shared out stands over what it is shared among."
+    },
+    {
+     "key": "hint.state.translate-order.dividedinto",
+     "params": {
+      "a": 54
+     },
+     "text": "54 is the pile. The count is how many hands."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 54
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/repair/11ni1w4",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 8
+    },
+    "text": "How many times does your count go into 8."
+   },
+   "working": [
+    "n",
+    "\\frac{n}{8}"
+   ],
+   "brokenBy": "divided-into-reversed",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 8,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "n",
+   "answer": {
+    "canonical": "2|8*n^-1",
+    "tex": "\\frac{8}{n}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "divided-into-reversed",
+     "response": "2|1/8*n",
+     "tex": "\\frac{n}{8}",
+     "failKey": "fail.said.order"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.1",
+    "params": {},
+    "text": "The arch takes the phrase in the order it was said, and admits whatever that turns out to mean."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 8
+   }
+  },
+  {
+   "id": "translate-order.dividedinto/generate/1u297m1",
+   "kpId": "translate-order",
+   "family": "translate-order.dividedinto",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "n",
+   "given": [],
+   "spoken": {
+    "key": "spoken.translate-order.dividedinto",
+    "params": {
+     "a": 58
+    },
+    "text": "How many times does your count go into 58."
+   },
+   "ask": {
+    "key": "ask.gen.sealCan",
+    "params": {
+     "a": 58,
+     "target": "58*n^-1",
+     "unknown": "n"
+    },
+    "text": "Seal a can whose contents come to 58*n^-1."
+   },
+   "answerType": "construction",
+   "unknown": "n",
+   "answer": {
+    "canonical": "\\frac{58}{n}",
+    "tex": "\\frac{58}{n}",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadGathersTo",
+    "target": "58*n^-1",
+    "unknown": "n",
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.2",
+     "params": {
+      "a": 58,
+      "target": "58*n^-1",
+      "unknown": "n"
+     },
+     "text": "Build it long. It only has to gather short."
+    },
+    {
+     "key": "hint.gen.loadGathersTo.3",
+     "params": {
+      "a": 58,
+      "target": "58*n^-1",
+      "unknown": "n"
+     },
+     "text": "Gathered, it must read 58*n^-1. How it gets there is yours."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.translate-order.2",
+    "params": {},
+    "text": "Say it the other way round and the arch admits the other half of the world."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2a",
+    "CCSS.HSA-SSE.A.1a",
+    "FL.MA.6.AR.1.1",
+    "VA.A.EO.1"
+   ],
+   "params": {
+    "a": 58
+   }
+  }
+ ]
+}

@@ -4,6 +4,7 @@ await openGame({ width: 960, height: 540 }, async (d) => {
   await d.play(2.5);
   const out = await d.run(() => {
     const s = window.__vs.kernel.get("scatter");
+    const loco = window.__vs.kernel.get("locomotion");
     const eye = s._eye;
     const rows = {};
     for (const cat of s.categories) {
@@ -11,9 +12,7 @@ await openGame({ width: 960, height: 540 }, async (d) => {
       let inRange = 0;
       let minD = Infinity;
       let maxD = 0;
-      const tiles = [];
       for (const t of cat.tiles.values()) {
-        tiles.push({ c: t.count, d: Math.sqrt(t._d ?? -1) });
         for (let i = 0; i < t.count; i++) {
           const o = i * 16;
           const dx = t.mat[o + 12] - eye.x;
@@ -26,19 +25,21 @@ await openGame({ width: 960, height: 540 }, async (d) => {
           if (dd <= cat.gather) inRange++;
         }
       }
-      rows[cat.id] = {
-        n,
-        inRange,
-        gather: cat.gather,
-        minD: Number(minD.toFixed(1)),
-        maxD: Number(maxD.toFixed(1)),
-        drawn: cat.lods.map((l) => l.drawn),
-        cap: cat.lods.map((l) => l.capacity),
-        tilesWithContent: tiles.filter((t) => t.c > 0).length,
-        tiles: tiles.length,
-      };
+      rows[cat.id] = `n=${n} inRange=${inRange} tiles=${cat.tiles.size} drawn=${cat.lods.map((l) => l.drawn)} d=${minD.toFixed(0)}..${maxD.toFixed(0)}`;
     }
-    return { eye: [eye.x, eye.y, eye.z], rows };
+    return {
+      surface: s.surface.mode,
+      queries: s.surface.queries,
+      genCalls: s._genCalls,
+      genMs: Number(s._genMs.toFixed(1)),
+      outstanding: s._outstanding,
+      clearings: s._clearings.length,
+      solids: s._solidCount,
+      eye: [eye.x.toFixed(1), eye.y.toFixed(1), eye.z.toFixed(1)],
+      player: loco ? [loco.position.x.toFixed(1), loco.position.y.toFixed(1), loco.position.z.toFixed(1)] : null,
+      islands: s.islands.stats,
+      rows,
+    };
   });
   console.log(JSON.stringify(out, null, 1));
 });

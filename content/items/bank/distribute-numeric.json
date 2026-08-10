@@ -1,0 +1,2696 @@
+{
+ "kpId": "distribute-numeric",
+ "title": "One factor across a whole group",
+ "strand": "structure",
+ "band": 2,
+ "objectClass": "Aperture",
+ "standards": [
+  "CCSS.6.EE.A.3",
+  "CCSS.7.EE.A.1",
+  "TEKS.6.7D",
+  "FL.MA.6.AR.1.4",
+  "VA.7.PFA.2"
+ ],
+ "misconceptions": [
+  "distribute-to-first-term-only",
+  "distribute-over-a-product",
+  "distribute-by-adding"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "distribute-numeric.sum/construct/t5l0lk",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "5\\left(2 + 4\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 5,
+     "b": 2,
+     "c": 4,
+     "first": 10,
+     "second": 20
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "30",
+    "tex": "30"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "14",
+     "tex": "14",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "16",
+     "tex": "16",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.sum",
+     "params": {
+      "a": 5,
+      "b": 2,
+      "c": 4,
+      "first": 10,
+      "second": 20
+     },
+     "text": "The value outside has to reach both wards."
+    },
+    {
+     "key": "hint.state.distribute-numeric.sum",
+     "params": {
+      "a": 5,
+      "b": 2,
+      "c": 4,
+      "first": 10,
+      "second": 20
+     },
+     "text": "The first ward has taken 10. The second is still waiting."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": 2,
+    "c": 4
+   }
+  },
+  {
+   "id": "distribute-numeric.product/construct/c7xbes",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "3\\left(6 \\cdot 6\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 3,
+     "b": 6,
+     "c": 6,
+     "inner": 36
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "108",
+    "tex": "108"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "324",
+     "tex": "324",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.product",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": 6,
+      "inner": 36
+     },
+     "text": "One ward here, not two. The bundle is already a single thing."
+    },
+    {
+     "key": "hint.state.distribute-numeric.product",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": 6,
+      "inner": 36
+     },
+     "text": "Inside settles to 36 before 3 touches it at all."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 6,
+    "c": 6
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/repair/1c3hxkl",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "4\\left(2 + 8\\right)",
+   "given": [],
+   "working": [
+    "4\\left(2 + 8\\right)",
+    "6 + 12",
+    "18"
+   ],
+   "brokenBy": "distribute-by-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "b": 2,
+     "c": 8,
+     "first": 8,
+     "second": 32,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|40",
+    "tex": "8 + 32",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "2|16",
+     "tex": "8 + 8",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "2|18",
+     "tex": "6 + 12",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "b": 2,
+      "c": 8,
+      "first": 8,
+      "second": 32,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "b": 2,
+      "c": 8,
+      "first": 8,
+      "second": 32,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 4,
+    "b": 2,
+    "c": 8
+   }
+  },
+  {
+   "id": "distribute-numeric.product/repair/6h6lvs",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "4\\left(6 \\cdot 5\\right)",
+   "given": [],
+   "working": [
+    "4\\left(6 \\cdot 5\\right)",
+    "24 \\cdot 20",
+    "480"
+   ],
+   "brokenBy": "distribute-over-a-product",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "b": 6,
+     "c": 5,
+     "inner": 30,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|120",
+    "tex": "4 \\cdot 30",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "2|480",
+     "tex": "24 \\cdot 20",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "b": 6,
+      "c": 5,
+      "inner": 30,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "b": 6,
+      "c": 5,
+      "inner": 30,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 4,
+    "b": 6,
+    "c": 5
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/generate/3ev324",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "3\\left(7 + 3\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.lockOpensAt",
+    "params": {
+     "a": 3,
+     "b": 7,
+     "c": 3,
+     "first": 21,
+     "second": 9,
+     "target": 30
+    },
+    "text": "Cut a lock with two wards that opens at 30."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3\\left(7 + 3\\right)",
+    "tex": "3\\left(7 + 3\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": 30,
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": 3,
+      "b": 7,
+      "c": 3,
+      "first": 21,
+      "second": 9,
+      "target": 30
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": 3,
+      "b": 7,
+      "c": 3,
+      "first": 21,
+      "second": 9,
+      "target": 30
+     },
+     "text": "Whatever you stack, it has to settle to 30 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 7,
+    "c": 3
+   }
+  },
+  {
+   "id": "distribute-numeric.product/construct/16ze675",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "6\\left(5 \\cdot 5\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 6,
+     "b": 5,
+     "c": 5,
+     "inner": 25
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "150",
+    "tex": "150"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "900",
+     "tex": "900",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.product",
+     "params": {
+      "a": 6,
+      "b": 5,
+      "c": 5,
+      "inner": 25
+     },
+     "text": "One ward here, not two. The bundle is already a single thing."
+    },
+    {
+     "key": "hint.state.distribute-numeric.product",
+     "params": {
+      "a": 6,
+      "b": 5,
+      "c": 5,
+      "inner": 25
+     },
+     "text": "Inside settles to 25 before 6 touches it at all."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 5,
+    "c": 5
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/repair/1cz4qwo",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "6\\left(5 - 9\\right)",
+   "given": [],
+   "working": [
+    "6\\left(5 - 9\\right)",
+    "30 - 9",
+    "21"
+   ],
+   "brokenBy": "distribute-to-first-term-only",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 6,
+     "b": 5,
+     "c": -9,
+     "first": 30,
+     "second": -54,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-24",
+    "tex": "30 - 54",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "2|21",
+     "tex": "30 - 9",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "2|8",
+     "tex": "11 - 3",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 6,
+      "b": 5,
+      "c": -9,
+      "first": 30,
+      "second": -54,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 6,
+      "b": 5,
+      "c": -9,
+      "first": 30,
+      "second": -54,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 5,
+    "c": -9
+   }
+  },
+  {
+   "id": "distribute-numeric.product/repair/1xeyx8",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "6\\left(2 \\cdot 3\\right)",
+   "given": [],
+   "working": [
+    "6\\left(2 \\cdot 3\\right)",
+    "12 \\cdot 18",
+    "216"
+   ],
+   "brokenBy": "distribute-over-a-product",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 6,
+     "b": 2,
+     "c": 3,
+     "inner": 6,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|36",
+    "tex": "6 \\cdot 6",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "2|216",
+     "tex": "12 \\cdot 18",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 6,
+      "b": 2,
+      "c": 3,
+      "inner": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 6,
+      "b": 2,
+      "c": 3,
+      "inner": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 2,
+    "c": 3
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/generate/vt5iie",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "5\\left(-2 - 6\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.lockOpensAt",
+    "params": {
+     "a": 5,
+     "b": -2,
+     "c": -6,
+     "first": -10,
+     "second": -30,
+     "target": -40
+    },
+    "text": "Cut a lock with two wards that opens at -40."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "5\\left(-2 - 6\\right)",
+    "tex": "5\\left(-2 - 6\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": -40,
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": 5,
+      "b": -2,
+      "c": -6,
+      "first": -10,
+      "second": -30,
+      "target": -40
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": 5,
+      "b": -2,
+      "c": -6,
+      "first": -10,
+      "second": -30,
+      "target": -40
+     },
+     "text": "Whatever you stack, it has to settle to -40 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": -2,
+    "c": -6
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/construct/1fkqub3",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "6\\left(9 - 2\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 6,
+     "b": 9,
+     "c": -2,
+     "first": 54,
+     "second": -12
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "42",
+    "tex": "42"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "52",
+     "tex": "52",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "19",
+     "tex": "19",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.sum",
+     "params": {
+      "a": 6,
+      "b": 9,
+      "c": -2,
+      "first": 54,
+      "second": -12
+     },
+     "text": "The value outside has to reach both wards."
+    },
+    {
+     "key": "hint.state.distribute-numeric.sum",
+     "params": {
+      "a": 6,
+      "b": 9,
+      "c": -2,
+      "first": 54,
+      "second": -12
+     },
+     "text": "The first ward has taken 54. The second is still waiting."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 9,
+    "c": -2
+   }
+  },
+  {
+   "id": "distribute-numeric.product/construct/dbn7ky",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "3\\left(6 \\cdot 4\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 3,
+     "b": 6,
+     "c": 4,
+     "inner": 24
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "72",
+    "tex": "72"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "216",
+     "tex": "216",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.product",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": 4,
+      "inner": 24
+     },
+     "text": "One ward here, not two. The bundle is already a single thing."
+    },
+    {
+     "key": "hint.state.distribute-numeric.product",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": 4,
+      "inner": 24
+     },
+     "text": "Inside settles to 24 before 3 touches it at all."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 6,
+    "c": 4
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/repair/10xogml",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "2\\left(-5 - 3\\right)",
+   "given": [],
+   "working": [
+    "2\\left(-5 - 3\\right)",
+    "-3 - 1",
+    "-4"
+   ],
+   "brokenBy": "distribute-by-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 2,
+     "b": -5,
+     "c": -3,
+     "first": -10,
+     "second": -6,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-16",
+    "tex": "-10 - 6",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "2|-13",
+     "tex": "-10 - 3",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "2|-4",
+     "tex": "-3 - 1",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 2,
+      "b": -5,
+      "c": -3,
+      "first": -10,
+      "second": -6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 2,
+      "b": -5,
+      "c": -3,
+      "first": -10,
+      "second": -6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": -5,
+    "c": -3
+   }
+  },
+  {
+   "id": "distribute-numeric.product/repair/t4wqhz",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "5\\left(2 \\cdot 3\\right)",
+   "given": [],
+   "working": [
+    "5\\left(2 \\cdot 3\\right)",
+    "10 \\cdot 15",
+    "150"
+   ],
+   "brokenBy": "distribute-over-a-product",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "b": 2,
+     "c": 3,
+     "inner": 6,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|30",
+    "tex": "5 \\cdot 6",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "2|150",
+     "tex": "10 \\cdot 15",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "b": 2,
+      "c": 3,
+      "inner": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "b": 2,
+      "c": 3,
+      "inner": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": 2,
+    "c": 3
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/generate/1xndi8k",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "2\\left(2 - 8\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.lockOpensAt",
+    "params": {
+     "a": 2,
+     "b": 2,
+     "c": -8,
+     "first": 4,
+     "second": -16,
+     "target": -12
+    },
+    "text": "Cut a lock with two wards that opens at -12."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2\\left(2 - 8\\right)",
+    "tex": "2\\left(2 - 8\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": -12,
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": 2,
+      "b": 2,
+      "c": -8,
+      "first": 4,
+      "second": -16,
+      "target": -12
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": 2,
+      "b": 2,
+      "c": -8,
+      "first": 4,
+      "second": -16,
+      "target": -12
+     },
+     "text": "Whatever you stack, it has to settle to -12 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 2,
+    "c": -8
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/construct/1lhr1b2",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "3\\left(9 + 7\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 3,
+     "b": 9,
+     "c": 7,
+     "first": 27,
+     "second": 21
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "48",
+    "tex": "48"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "34",
+     "tex": "34",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "22",
+     "tex": "22",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.sum",
+     "params": {
+      "a": 3,
+      "b": 9,
+      "c": 7,
+      "first": 27,
+      "second": 21
+     },
+     "text": "The value outside has to reach both wards."
+    },
+    {
+     "key": "hint.state.distribute-numeric.sum",
+     "params": {
+      "a": 3,
+      "b": 9,
+      "c": 7,
+      "first": 27,
+      "second": 21
+     },
+     "text": "The first ward has taken 27. The second is still waiting."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 9,
+    "c": 7
+   }
+  },
+  {
+   "id": "distribute-numeric.product/construct/1fvg8dt",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "2\\left(6 \\cdot 2\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 2,
+     "inner": 12
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "24",
+    "tex": "24"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "48",
+     "tex": "48",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.product",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 2,
+      "inner": 12
+     },
+     "text": "One ward here, not two. The bundle is already a single thing."
+    },
+    {
+     "key": "hint.state.distribute-numeric.product",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 2,
+      "inner": 12
+     },
+     "text": "Inside settles to 12 before 2 touches it at all."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 6,
+    "c": 2
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/repair/c89xeo",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "3\\left(6 + 2\\right)",
+   "given": [],
+   "working": [
+    "3\\left(6 + 2\\right)",
+    "18 + 2",
+    "20"
+   ],
+   "brokenBy": "distribute-to-first-term-only",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "b": 6,
+     "c": 2,
+     "first": 18,
+     "second": 6,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|24",
+    "tex": "18 + 6",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "2|20",
+     "tex": "18 + 2",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "2|14",
+     "tex": "9 + 5",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": 2,
+      "first": 18,
+      "second": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "b": 6,
+      "c": 2,
+      "first": 18,
+      "second": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "b": 6,
+    "c": 2
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/generate/1a2h99w",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "5\\left(6 + 4\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.lockOpensAt",
+    "params": {
+     "a": 5,
+     "b": 6,
+     "c": 4,
+     "first": 30,
+     "second": 20,
+     "target": 50
+    },
+    "text": "Cut a lock with two wards that opens at 50."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "5\\left(6 + 4\\right)",
+    "tex": "5\\left(6 + 4\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": 50,
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": 5,
+      "b": 6,
+      "c": 4,
+      "first": 30,
+      "second": 20,
+      "target": 50
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": 5,
+      "b": 6,
+      "c": 4,
+      "first": 30,
+      "second": 20,
+      "target": 50
+     },
+     "text": "Whatever you stack, it has to settle to 50 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": 6,
+    "c": 4
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/construct/476xcj",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "5\\left(-1 + 3\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 5,
+     "b": -1,
+     "c": 3,
+     "first": -5,
+     "second": 15
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "10",
+    "tex": "10"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "-2",
+     "tex": "-2",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "12",
+     "tex": "12",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.sum",
+     "params": {
+      "a": 5,
+      "b": -1,
+      "c": 3,
+      "first": -5,
+      "second": 15
+     },
+     "text": "The value outside has to reach both wards."
+    },
+    {
+     "key": "hint.state.distribute-numeric.sum",
+     "params": {
+      "a": 5,
+      "b": -1,
+      "c": 3,
+      "first": -5,
+      "second": 15
+     },
+     "text": "The first ward has taken -5. The second is still waiting."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": -1,
+    "c": 3
+   }
+  },
+  {
+   "id": "distribute-numeric.product/construct/6gibs7",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "4\\left(6 \\cdot 2\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 4,
+     "b": 6,
+     "c": 2,
+     "inner": 12
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "48",
+    "tex": "48"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "192",
+     "tex": "192",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.product",
+     "params": {
+      "a": 4,
+      "b": 6,
+      "c": 2,
+      "inner": 12
+     },
+     "text": "One ward here, not two. The bundle is already a single thing."
+    },
+    {
+     "key": "hint.state.distribute-numeric.product",
+     "params": {
+      "a": 4,
+      "b": 6,
+      "c": 2,
+      "inner": 12
+     },
+     "text": "Inside settles to 12 before 4 touches it at all."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 4,
+    "b": 6,
+    "c": 2
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/repair/1uc3wln",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "4\\left(-1 + 4\\right)",
+   "given": [],
+   "working": [
+    "4\\left(-1 + 4\\right)",
+    "3 + 8",
+    "11"
+   ],
+   "brokenBy": "distribute-by-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "b": -1,
+     "c": 4,
+     "first": -4,
+     "second": 16,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|12",
+    "tex": "-4 + 16",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "2|0",
+     "tex": "-4 + 4",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "2|11",
+     "tex": "3 + 8",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "b": -1,
+      "c": 4,
+      "first": -4,
+      "second": 16,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "b": -1,
+      "c": 4,
+      "first": -4,
+      "second": 16,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 4,
+    "b": -1,
+    "c": 4
+   }
+  },
+  {
+   "id": "distribute-numeric.product/repair/1fl5g7j",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "6\\left(6 \\cdot 4\\right)",
+   "given": [],
+   "working": [
+    "6\\left(6 \\cdot 4\\right)",
+    "36 \\cdot 24",
+    "864"
+   ],
+   "brokenBy": "distribute-over-a-product",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 6,
+     "b": 6,
+     "c": 4,
+     "inner": 24,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|144",
+    "tex": "6 \\cdot 24",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "2|864",
+     "tex": "36 \\cdot 24",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 6,
+      "b": 6,
+      "c": 4,
+      "inner": 24,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 6,
+      "b": 6,
+      "c": 4,
+      "inner": 24,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "b": 6,
+    "c": 4
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/generate/1ood3mq",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "2\\left(7 + 4\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.lockOpensAt",
+    "params": {
+     "a": 2,
+     "b": 7,
+     "c": 4,
+     "first": 14,
+     "second": 8,
+     "target": 22
+    },
+    "text": "Cut a lock with two wards that opens at 22."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2\\left(7 + 4\\right)",
+    "tex": "2\\left(7 + 4\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": 22,
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": 2,
+      "b": 7,
+      "c": 4,
+      "first": 14,
+      "second": 8,
+      "target": 22
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": 2,
+      "b": 7,
+      "c": 4,
+      "first": 14,
+      "second": 8,
+      "target": 22
+     },
+     "text": "Whatever you stack, it has to settle to 22 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 7,
+    "c": 4
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/construct/dnmajj",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "-4\\left(-5 - 2\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": -4,
+     "b": -5,
+     "c": -2,
+     "first": 20,
+     "second": 8
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "28",
+    "tex": "28"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "18",
+     "tex": "18",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "-15",
+     "tex": "-15",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.sum",
+     "params": {
+      "a": -4,
+      "b": -5,
+      "c": -2,
+      "first": 20,
+      "second": 8
+     },
+     "text": "The value outside has to reach both wards."
+    },
+    {
+     "key": "hint.state.distribute-numeric.sum",
+     "params": {
+      "a": -4,
+      "b": -5,
+      "c": -2,
+      "first": 20,
+      "second": 8
+     },
+     "text": "The first ward has taken 20. The second is still waiting."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": -4,
+    "b": -5,
+    "c": -2
+   }
+  },
+  {
+   "id": "distribute-numeric.product/construct/1fvsudp",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "2\\left(6 \\cdot 6\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 2,
+     "b": 6,
+     "c": 6,
+     "inner": 36
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "72",
+    "tex": "72"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "144",
+     "tex": "144",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.product",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 6,
+      "inner": 36
+     },
+     "text": "One ward here, not two. The bundle is already a single thing."
+    },
+    {
+     "key": "hint.state.distribute-numeric.product",
+     "params": {
+      "a": 2,
+      "b": 6,
+      "c": 6,
+      "inner": 36
+     },
+     "text": "Inside settles to 36 before 2 touches it at all."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 6,
+    "c": 6
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/repair/1dkv9iv",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "-3\\left(-6 + 9\\right)",
+   "given": [],
+   "working": [
+    "-3\\left(-6 + 9\\right)",
+    "-9 + 6",
+    "-3"
+   ],
+   "brokenBy": "distribute-by-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": -3,
+     "b": -6,
+     "c": 9,
+     "first": 18,
+     "second": -27,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-9",
+    "tex": "18 - 27",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "2|27",
+     "tex": "18 + 9",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "2|-3",
+     "tex": "-9 + 6",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": -3,
+      "b": -6,
+      "c": 9,
+      "first": 18,
+      "second": -27,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": -3,
+      "b": -6,
+      "c": 9,
+      "first": 18,
+      "second": -27,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": -3,
+    "b": -6,
+    "c": 9
+   }
+  },
+  {
+   "id": "distribute-numeric.product/repair/1bj5sox",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "5\\left(4 \\cdot 3\\right)",
+   "given": [],
+   "working": [
+    "5\\left(4 \\cdot 3\\right)",
+    "20 \\cdot 15",
+    "300"
+   ],
+   "brokenBy": "distribute-over-a-product",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "b": 4,
+     "c": 3,
+     "inner": 12,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|60",
+    "tex": "5 \\cdot 12",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "2|300",
+     "tex": "20 \\cdot 15",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "b": 4,
+      "c": 3,
+      "inner": 12,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "b": 4,
+      "c": 3,
+      "inner": 12,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "b": 4,
+    "c": 3
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/generate/1jyaad6",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "-4\\left(-2 + 5\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.lockOpensAt",
+    "params": {
+     "a": -4,
+     "b": -2,
+     "c": 5,
+     "first": 8,
+     "second": -20,
+     "target": -12
+    },
+    "text": "Cut a lock with two wards that opens at -12."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-4\\left(-2 + 5\\right)",
+    "tex": "-4\\left(-2 + 5\\right)",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadAuthor",
+    "settleTo": -12,
+    "needs": [
+     "bundle"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadAuthor.2",
+     "params": {
+      "a": -4,
+      "b": -2,
+      "c": 5,
+      "first": 8,
+      "second": -20,
+      "target": -12
+     },
+     "text": "Bundle first, then the join outside it. The floor will show you if you stack it the other way."
+    },
+    {
+     "key": "hint.gen.loadAuthor.3",
+     "params": {
+      "a": -4,
+      "b": -2,
+      "c": 5,
+      "first": 8,
+      "second": -20,
+      "target": -12
+     },
+     "text": "Whatever you stack, it has to settle to -12 and nothing else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.1",
+    "params": {},
+    "text": "One value has to reach every ward. Cap a ward to save value and the lock shears across all of them."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": -4,
+    "b": -2,
+    "c": 5
+   }
+  },
+  {
+   "id": "distribute-numeric.sum/construct/147q157",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.sum",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "2\\left(3 + 5\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 2,
+     "b": 3,
+     "c": 5,
+     "first": 6,
+     "second": 10
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "16",
+    "tex": "16"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-to-first-term-only",
+     "response": "11",
+     "tex": "11",
+     "failKey": "fail.partial.open"
+    },
+    {
+     "misconception": "distribute-by-adding",
+     "response": "12",
+     "tex": "12",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.sum",
+     "params": {
+      "a": 2,
+      "b": 3,
+      "c": 5,
+      "first": 6,
+      "second": 10
+     },
+     "text": "The value outside has to reach both wards."
+    },
+    {
+     "key": "hint.state.distribute-numeric.sum",
+     "params": {
+      "a": 2,
+      "b": 3,
+      "c": 5,
+      "first": 6,
+      "second": 10
+     },
+     "text": "The first ward has taken 6. The second is still waiting."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 3,
+    "c": 5
+   }
+  },
+  {
+   "id": "distribute-numeric.product/construct/15bfxbd",
+   "kpId": "distribute-numeric",
+   "family": "distribute-numeric.product",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "2\\left(3 \\cdot 3\\right)",
+   "given": [],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 2,
+     "b": 3,
+     "c": 3,
+     "inner": 9
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "18",
+    "tex": "18"
+   },
+   "distractors": [
+    {
+     "misconception": "distribute-over-a-product",
+     "response": "36",
+     "tex": "36",
+     "failKey": "fail.partial.open"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.distribute-numeric.product",
+     "params": {
+      "a": 2,
+      "b": 3,
+      "c": 3,
+      "inner": 9
+     },
+     "text": "One ward here, not two. The bundle is already a single thing."
+    },
+    {
+     "key": "hint.state.distribute-numeric.product",
+     "params": {
+      "a": 2,
+      "b": 3,
+      "c": 3,
+      "inner": 9
+     },
+     "text": "Inside settles to 9 before 2 touches it at all."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.distribute-numeric.2",
+    "params": {},
+    "text": "A Sufficiency rounder is watching, politely, to see whether you shortcut it."
+   },
+   "standards": [
+    "CCSS.6.EE.A.3",
+    "CCSS.7.EE.A.1",
+    "TEKS.6.7D",
+    "FL.MA.6.AR.1.4",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "b": 3,
+    "c": 3
+   }
+  }
+ ]
+}

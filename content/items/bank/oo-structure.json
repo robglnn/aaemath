@@ -1,0 +1,2433 @@
+{
+ "kpId": "oo-structure",
+ "title": "What binds to what once a letter is in the way",
+ "strand": "expressions",
+ "band": 2,
+ "objectClass": "Aperture",
+ "standards": [
+  "CCSS.6.EE.A.2c",
+  "CCSS.HSA-SSE.A.1b",
+  "TEKS.6.7A",
+  "VA.7.PFA.2"
+ ],
+ "misconceptions": [
+  "coefficient-under-exponent",
+  "negative-square-sign-lost",
+  "juxtaposition-means-add"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "oo-structure.coefsq/construct/rsaq7n",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "3x^{2}",
+   "given": [
+    "x = 4"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 3,
+     "v": 4,
+     "sq": 16
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "48",
+    "tex": "48"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-under-exponent",
+     "response": "144",
+     "tex": "144",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.coefsq",
+     "params": {
+      "a": 3,
+      "v": 4,
+      "sq": 16
+     },
+     "text": "The power binds to the socket alone. The collar is outside it."
+    },
+    {
+     "key": "hint.state.oo-structure.coefsq",
+     "params": {
+      "a": 3,
+      "v": 4,
+      "sq": 16
+     },
+     "text": "The socket squared is 16. Only then does 3 come in."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "v": 4
+   }
+  },
+  {
+   "id": "oo-structure.negsq/construct/wnh1ur",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 2"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 2,
+     "sq": 4
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-4",
+    "tex": "-4"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "4",
+     "tex": "4",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.negsq",
+     "params": {
+      "v": 2,
+      "sq": 4
+     },
+     "text": "Nothing bundles the inversion in with the socket here. Look at what is inside the power."
+    },
+    {
+     "key": "hint.state.oo-structure.negsq",
+     "params": {
+      "v": 2,
+      "sq": 4
+     },
+     "text": "The power reaches 4, and the inversion is still standing outside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 2
+   }
+  },
+  {
+   "id": "oo-structure.juxt/construct/1nxnnxm",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "7x",
+   "given": [
+    "x = 5"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 7,
+     "v": 5
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "35",
+    "tex": "35"
+   },
+   "distractors": [
+    {
+     "misconception": "juxtaposition-means-add",
+     "response": "12",
+     "tex": "12",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.juxt",
+     "params": {
+      "a": 7,
+      "v": 5
+     },
+     "text": "A collar against a socket is a product. There is no join between them."
+    },
+    {
+     "key": "hint.state.oo-structure.juxt",
+     "params": {
+      "a": 7,
+      "v": 5
+     },
+     "text": "7 of them, each one carrying 5."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 7,
+    "v": 5
+   }
+  },
+  {
+   "id": "oo-structure.coefsq/repair/9xtnpl",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "4x^{2}",
+   "given": [
+    "x = 5"
+   ],
+   "working": [
+    "4x^{2}",
+    "\\left(4 \\cdot 5\\right)^{2}",
+    "400"
+   ],
+   "brokenBy": "coefficient-under-exponent",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "v": 5,
+     "sq": 25,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|100",
+    "tex": "4 \\cdot 5^{2}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-under-exponent",
+     "response": "2|400",
+     "tex": "\\left(4 \\cdot 5\\right)^{2}",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "v": 5,
+      "sq": 25,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "v": 5,
+      "sq": 25,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 4,
+    "v": 5
+   }
+  },
+  {
+   "id": "oo-structure.negsq/repair/wndwcs",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 5"
+   ],
+   "working": [
+    "-x^{2}",
+    "\\left(-5\\right)^{2}",
+    "25"
+   ],
+   "brokenBy": "negative-square-sign-lost",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "v": 5,
+     "sq": 25,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-25",
+    "tex": "-\\left(5^{2}\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "2|25",
+     "tex": "\\left(-5\\right)^{2}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "v": 5,
+      "sq": 25,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "v": 5,
+      "sq": 25,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 5
+   }
+  },
+  {
+   "id": "oo-structure.juxt/repair/8toxxr",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "4x",
+   "given": [
+    "x = 7"
+   ],
+   "working": [
+    "4x",
+    "4 + 7",
+    "11"
+   ],
+   "brokenBy": "juxtaposition-means-add",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 4,
+     "v": 7,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|28",
+    "tex": "4 \\cdot 7",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "juxtaposition-means-add",
+     "response": "2|11",
+     "tex": "4 + 7",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 4,
+      "v": 7,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 4,
+      "v": 7,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 4,
+    "v": 7
+   }
+  },
+  {
+   "id": "oo-structure.juxt/generate/av06fq",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "5x",
+   "given": [
+    "x = 3"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 5,
+     "v": 3,
+     "target": 15,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 15 when the socket holds {at}."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "5x",
+    "tex": "5x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 3,
+    "value": 15,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 5,
+      "v": 3,
+      "target": 15,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 5,
+      "v": 3,
+      "target": 15,
+      "unknown": "x"
+     },
+     "text": "Seat {at} in whatever you build and it has to come out at 15."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "v": 3
+   }
+  },
+  {
+   "id": "oo-structure.coefsq/construct/avurj9",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "5x^{2}",
+   "given": [
+    "x = 8"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 5,
+     "v": 8,
+     "sq": 64
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "320",
+    "tex": "320"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-under-exponent",
+     "response": "1600",
+     "tex": "1600",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.coefsq",
+     "params": {
+      "a": 5,
+      "v": 8,
+      "sq": 64
+     },
+     "text": "The power binds to the socket alone. The collar is outside it."
+    },
+    {
+     "key": "hint.state.oo-structure.coefsq",
+     "params": {
+      "a": 5,
+      "v": 8,
+      "sq": 64
+     },
+     "text": "The socket squared is 64. Only then does 5 come in."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "v": 8
+   }
+  },
+  {
+   "id": "oo-structure.juxt/construct/av06fq",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "5x",
+   "given": [
+    "x = 3"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 5,
+     "v": 3
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "15",
+    "tex": "15"
+   },
+   "distractors": [
+    {
+     "misconception": "juxtaposition-means-add",
+     "response": "8",
+     "tex": "8",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.juxt",
+     "params": {
+      "a": 5,
+      "v": 3
+     },
+     "text": "A collar against a socket is a product. There is no join between them."
+    },
+    {
+     "key": "hint.state.oo-structure.juxt",
+     "params": {
+      "a": 5,
+      "v": 3
+     },
+     "text": "5 of them, each one carrying 3."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "v": 3
+   }
+  },
+  {
+   "id": "oo-structure.coefsq/repair/sw0mdt",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "3x^{2}",
+   "given": [
+    "x = 2"
+   ],
+   "working": [
+    "3x^{2}",
+    "\\left(3 \\cdot 2\\right)^{2}",
+    "36"
+   ],
+   "brokenBy": "coefficient-under-exponent",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "v": 2,
+     "sq": 4,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|12",
+    "tex": "3 \\cdot 2^{2}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-under-exponent",
+     "response": "2|36",
+     "tex": "\\left(3 \\cdot 2\\right)^{2}",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "v": 2,
+      "sq": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "v": 2,
+      "sq": 4,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "v": 2
+   }
+  },
+  {
+   "id": "oo-structure.negsq/repair/xr604q",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 7"
+   ],
+   "working": [
+    "-x^{2}",
+    "\\left(-7\\right)^{2}",
+    "49"
+   ],
+   "brokenBy": "negative-square-sign-lost",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "v": 7,
+     "sq": 49,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-49",
+    "tex": "-\\left(7^{2}\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "2|49",
+     "tex": "\\left(-7\\right)^{2}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "v": 7,
+      "sq": 49,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "v": 7,
+      "sq": 49,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 7
+   }
+  },
+  {
+   "id": "oo-structure.juxt/repair/1jzbzdd",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "12x",
+   "given": [
+    "x = 6"
+   ],
+   "working": [
+    "12x",
+    "12 + 6",
+    "18"
+   ],
+   "brokenBy": "juxtaposition-means-add",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 12,
+     "v": 6,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|72",
+    "tex": "12 \\cdot 6",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "juxtaposition-means-add",
+     "response": "2|18",
+     "tex": "12 + 6",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 12,
+      "v": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 12,
+      "v": 6,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 12,
+    "v": 6
+   }
+  },
+  {
+   "id": "oo-structure.juxt/generate/1bpwswq",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "3x",
+   "given": [
+    "x = 12"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 3,
+     "v": 12,
+     "target": 36,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 36 when the socket holds {at}."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "3x",
+    "tex": "3x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 12,
+    "value": 36,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 3,
+      "v": 12,
+      "target": 36,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 3,
+      "v": 12,
+      "target": 36,
+      "unknown": "x"
+     },
+     "text": "Seat {at} in whatever you build and it has to come out at 36."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "v": 12
+   }
+  },
+  {
+   "id": "oo-structure.coefsq/construct/17tne5c",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "6x^{2}",
+   "given": [
+    "x = 2"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 6,
+     "v": 2,
+     "sq": 4
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "24",
+    "tex": "24"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-under-exponent",
+     "response": "144",
+     "tex": "144",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.coefsq",
+     "params": {
+      "a": 6,
+      "v": 2,
+      "sq": 4
+     },
+     "text": "The power binds to the socket alone. The collar is outside it."
+    },
+    {
+     "key": "hint.state.oo-structure.coefsq",
+     "params": {
+      "a": 6,
+      "v": 2,
+      "sq": 4
+     },
+     "text": "The socket squared is 4. Only then does 6 come in."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 6,
+    "v": 2
+   }
+  },
+  {
+   "id": "oo-structure.negsq/construct/wndwcs",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 5"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 5,
+     "sq": 25
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-25",
+    "tex": "-25"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "25",
+     "tex": "25",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.negsq",
+     "params": {
+      "v": 5,
+      "sq": 25
+     },
+     "text": "Nothing bundles the inversion in with the socket here. Look at what is inside the power."
+    },
+    {
+     "key": "hint.state.oo-structure.negsq",
+     "params": {
+      "v": 5,
+      "sq": 25
+     },
+     "text": "The power reaches 25, and the inversion is still standing outside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 5
+   }
+  },
+  {
+   "id": "oo-structure.juxt/construct/8u1jxn",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "4x",
+   "given": [
+    "x = 3"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 4,
+     "v": 3
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "12",
+    "tex": "12"
+   },
+   "distractors": [
+    {
+     "misconception": "juxtaposition-means-add",
+     "response": "7",
+     "tex": "7",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.juxt",
+     "params": {
+      "a": 4,
+      "v": 3
+     },
+     "text": "A collar against a socket is a product. There is no join between them."
+    },
+    {
+     "key": "hint.state.oo-structure.juxt",
+     "params": {
+      "a": 4,
+      "v": 3
+     },
+     "text": "4 of them, each one carrying 3."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 4,
+    "v": 3
+   }
+  },
+  {
+   "id": "oo-structure.coefsq/repair/av06fq",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "5x^{2}",
+   "given": [
+    "x = 3"
+   ],
+   "working": [
+    "5x^{2}",
+    "\\left(5 \\cdot 3\\right)^{2}",
+    "225"
+   ],
+   "brokenBy": "coefficient-under-exponent",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 5,
+     "v": 3,
+     "sq": 9,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|45",
+    "tex": "5 \\cdot 3^{2}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-under-exponent",
+     "response": "2|225",
+     "tex": "\\left(5 \\cdot 3\\right)^{2}",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 5,
+      "v": 3,
+      "sq": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 5,
+      "v": 3,
+      "sq": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "v": 3
+   }
+  },
+  {
+   "id": "oo-structure.negsq/repair/wok5k0",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 9"
+   ],
+   "working": [
+    "-x^{2}",
+    "\\left(-9\\right)^{2}",
+    "81"
+   ],
+   "brokenBy": "negative-square-sign-lost",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "v": 9,
+     "sq": 81,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-81",
+    "tex": "-\\left(9^{2}\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "2|81",
+     "tex": "\\left(-9\\right)^{2}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "v": 9,
+      "sq": 81,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "v": 9,
+      "sq": 81,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 9
+   }
+  },
+  {
+   "id": "oo-structure.juxt/generate/tzkctw",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "stretch",
+   "objectClass": "Aperture",
+   "stem": "11x",
+   "given": [
+    "x = 11"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 11,
+     "v": 11,
+     "target": 121,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 121 when the socket holds {at}."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "11x",
+    "tex": "11x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 11,
+    "value": 121,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 11,
+      "v": 11,
+      "target": 121,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 11,
+      "v": 11,
+      "target": 121,
+      "unknown": "x"
+     },
+     "text": "Seat {at} in whatever you build and it has to come out at 121."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 11,
+    "v": 11
+   }
+  },
+  {
+   "id": "oo-structure.coefsq/construct/swcahi",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "3x^{2}",
+   "given": [
+    "x = 5"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 3,
+     "v": 5,
+     "sq": 25
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "75",
+    "tex": "75"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-under-exponent",
+     "response": "225",
+     "tex": "225",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.coefsq",
+     "params": {
+      "a": 3,
+      "v": 5,
+      "sq": 25
+     },
+     "text": "The power binds to the socket alone. The collar is outside it."
+    },
+    {
+     "key": "hint.state.oo-structure.coefsq",
+     "params": {
+      "a": 3,
+      "v": 5,
+      "sq": 25
+     },
+     "text": "The socket squared is 25. Only then does 3 come in."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "v": 5
+   }
+  },
+  {
+   "id": "oo-structure.negsq/construct/wn4fuv",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 6"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 6,
+     "sq": 36
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-36",
+    "tex": "-36"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "36",
+     "tex": "36",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.negsq",
+     "params": {
+      "v": 6,
+      "sq": 36
+     },
+     "text": "Nothing bundles the inversion in with the socket here. Look at what is inside the power."
+    },
+    {
+     "key": "hint.state.oo-structure.negsq",
+     "params": {
+      "v": 6,
+      "sq": 36
+     },
+     "text": "The power reaches 36, and the inversion is still standing outside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 6
+   }
+  },
+  {
+   "id": "oo-structure.juxt/construct/2ewlg9",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "construct",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "2x",
+   "given": [
+    "x = 3"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 2,
+     "v": 3
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "6",
+    "tex": "6"
+   },
+   "distractors": [
+    {
+     "misconception": "juxtaposition-means-add",
+     "response": "5",
+     "tex": "5",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.juxt",
+     "params": {
+      "a": 2,
+      "v": 3
+     },
+     "text": "A collar against a socket is a product. There is no join between them."
+    },
+    {
+     "key": "hint.state.oo-structure.juxt",
+     "params": {
+      "a": 2,
+      "v": 3
+     },
+     "text": "2 of them, each one carrying 3."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 2,
+    "v": 3
+   }
+  },
+  {
+   "id": "oo-structure.negsq/repair/xrim4m",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 3"
+   ],
+   "working": [
+    "-x^{2}",
+    "\\left(-3\\right)^{2}",
+    "9"
+   ],
+   "brokenBy": "negative-square-sign-lost",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "v": 3,
+     "sq": 9,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-9",
+    "tex": "-\\left(3^{2}\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "2|9",
+     "tex": "\\left(-3\\right)^{2}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "v": 3,
+      "sq": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "v": 3,
+      "sq": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 3
+   }
+  },
+  {
+   "id": "oo-structure.juxt/repair/1ny5n19",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "repair",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "7x",
+   "given": [
+    "x = 2"
+   ],
+   "working": [
+    "7x",
+    "7 + 2",
+    "9"
+   ],
+   "brokenBy": "juxtaposition-means-add",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 7,
+     "v": 2,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|14",
+    "tex": "7 \\cdot 2",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "juxtaposition-means-add",
+     "response": "2|9",
+     "tex": "7 + 2",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 7,
+      "v": 2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 7,
+      "v": 2,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 7,
+    "v": 2
+   }
+  },
+  {
+   "id": "oo-structure.juxt/generate/9qvgnw",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "generate",
+   "difficulty": 1,
+   "tier": "easy",
+   "objectClass": "Aperture",
+   "stem": "5x",
+   "given": [
+    "x = 5"
+   ],
+   "ask": {
+    "key": "ask.gen.loadReadsAt",
+    "params": {
+     "a": 5,
+     "v": 5,
+     "target": 25,
+     "unknown": "x"
+    },
+    "text": "Stack a load in x that reads 25 when the socket holds {at}."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "5x",
+    "tex": "5x",
+    "witness": true
+   },
+   "check": {
+    "kind": "loadReadsAt",
+    "unknown": "x",
+    "at": 5,
+    "value": 25,
+    "needs": [
+     "letter"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.2",
+     "params": {
+      "a": 5,
+      "v": 5,
+      "target": 25,
+      "unknown": "x"
+     },
+     "text": "A count, a power, a fixed weight — any of them will do, so long as it reads true at that charge."
+    },
+    {
+     "key": "hint.gen.loadReadsAt.3",
+     "params": {
+      "a": 5,
+      "v": 5,
+      "target": 25,
+      "unknown": "x"
+     },
+     "text": "Seat {at} in whatever you build and it has to come out at 25."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 5,
+    "v": 5
+   }
+  },
+  {
+   "id": "oo-structure.coefsq/construct/rsnc7j",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "3x^{2}",
+   "given": [
+    "x = 8"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 3,
+     "v": 8,
+     "sq": 64
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "192",
+    "tex": "192"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-under-exponent",
+     "response": "576",
+     "tex": "576",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.coefsq",
+     "params": {
+      "a": 3,
+      "v": 8,
+      "sq": 64
+     },
+     "text": "The power binds to the socket alone. The collar is outside it."
+    },
+    {
+     "key": "hint.state.oo-structure.coefsq",
+     "params": {
+      "a": 3,
+      "v": 8,
+      "sq": 64
+     },
+     "text": "The socket squared is 64. Only then does 3 come in."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "v": 8
+   }
+  },
+  {
+   "id": "oo-structure.negsq/construct/xr95mp",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 4"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "v": 4,
+     "sq": 16
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "-16",
+    "tex": "-16"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "16",
+     "tex": "16",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.negsq",
+     "params": {
+      "v": 4,
+      "sq": 16
+     },
+     "text": "Nothing bundles the inversion in with the socket here. Look at what is inside the power."
+    },
+    {
+     "key": "hint.state.oo-structure.negsq",
+     "params": {
+      "v": 4,
+      "sq": 16
+     },
+     "text": "The power reaches 16, and the inversion is still standing outside it."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 4
+   }
+  },
+  {
+   "id": "oo-structure.juxt/construct/gim17c",
+   "kpId": "oo-structure",
+   "family": "oo-structure.juxt",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "10x",
+   "given": [
+    "x = 12"
+   ],
+   "ask": {
+    "key": "ask.reading",
+    "params": {
+     "a": 10,
+     "v": 12
+    },
+    "text": "Let it settle and read it."
+   },
+   "answerType": "integer",
+   "unknown": "x",
+   "answer": {
+    "canonical": "120",
+    "tex": "120"
+   },
+   "distractors": [
+    {
+     "misconception": "juxtaposition-means-add",
+     "response": "22",
+     "tex": "22",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.move.oo-structure.juxt",
+     "params": {
+      "a": 10,
+      "v": 12
+     },
+     "text": "A collar against a socket is a product. There is no join between them."
+    },
+    {
+     "key": "hint.state.oo-structure.juxt",
+     "params": {
+      "a": 10,
+      "v": 12
+     },
+     "text": "10 of them, each one carrying 12."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 10,
+    "v": 12
+   }
+  },
+  {
+   "id": "oo-structure.coefsq/repair/rs7kpo",
+   "kpId": "oo-structure",
+   "family": "oo-structure.coefsq",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "3x^{2}",
+   "given": [
+    "x = 3"
+   ],
+   "working": [
+    "3x^{2}",
+    "\\left(3 \\cdot 3\\right)^{2}",
+    "81"
+   ],
+   "brokenBy": "coefficient-under-exponent",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "a": 3,
+     "v": 3,
+     "sq": 9,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|27",
+    "tex": "3 \\cdot 3^{2}",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "coefficient-under-exponent",
+     "response": "2|81",
+     "tex": "\\left(3 \\cdot 3\\right)^{2}",
+     "failKey": "fail.load.unsettled"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "a": 3,
+      "v": 3,
+      "sq": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "a": 3,
+      "v": 3,
+      "sq": 9,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.1",
+    "params": {},
+    "text": "The ward is bound tighter than the joins around it, and it lifts as one."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "a": 3,
+    "v": 3
+   }
+  },
+  {
+   "id": "oo-structure.negsq/repair/wn4fuv",
+   "kpId": "oo-structure",
+   "family": "oo-structure.negsq",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "core",
+   "objectClass": "Aperture",
+   "stem": "-x^{2}",
+   "given": [
+    "x = 6"
+   ],
+   "working": [
+    "-x^{2}",
+    "\\left(-6\\right)^{2}",
+    "36"
+   ],
+   "brokenBy": "negative-square-sign-lost",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "v": 6,
+     "sq": 36,
+     "lines": 3,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|-36",
+    "tex": "-\\left(6^{2}\\right)",
+    "line": 2,
+    "valueKind": "expr"
+   },
+   "distractors": [
+    {
+     "misconception": "negative-square-sign-lost",
+     "response": "2|36",
+     "tex": "\\left(-6\\right)^{2}",
+     "failKey": "fail.negative"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Aperture",
+     "params": {},
+     "text": "One lock, several wards. Whatever the outside takes, every ward takes."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "v": 6,
+      "sq": 36,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "v": 6,
+      "sq": 36,
+      "line": 2,
+      "lines": 3
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.oo-structure.2",
+    "params": {},
+    "text": "This hatch was cut by somebody careful about what goes under a power."
+   },
+   "standards": [
+    "CCSS.6.EE.A.2c",
+    "CCSS.HSA-SSE.A.1b",
+    "TEKS.6.7A",
+    "VA.7.PFA.2"
+   ],
+   "params": {
+    "v": 6
+   }
+  }
+ ]
+}

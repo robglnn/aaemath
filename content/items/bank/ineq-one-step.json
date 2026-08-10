@@ -1,0 +1,2560 @@
+{
+ "kpId": "ineq-one-step",
+ "title": "Solving with the order still intact",
+ "strand": "inequalities",
+ "band": 3,
+ "objectClass": "Threshold",
+ "standards": [
+  "CCSS.7.EE.B.4b",
+  "CCSS.HSA-REI.B.3",
+  "TEKS.6.10A",
+  "FL.MA.7.AR.2.1",
+  "VA.6.PFA.4"
+ ],
+ "misconceptions": [
+  "flip-after-adding",
+  "solved-as-equation",
+  "flip-because-a-negative-appeared"
+ ],
+ "count": 30,
+ "items": [
+  {
+   "id": "ineq-one-step.plus/construct/1g7rk0i",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + 6 < 13",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 6,
+     "q": 13,
+     "mark": 7
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 7",
+    "tex": "x < 7"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "x > 7",
+     "tex": "x > 7",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "7",
+     "tex": "7",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.plus",
+     "params": {
+      "p": 6,
+      "q": 13,
+      "mark": 7
+     },
+     "text": "Raise both pans by the same amount. The rail does not turn over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.plus",
+     "params": {
+      "p": 6,
+      "q": 13,
+      "mark": 7
+     },
+     "text": "With 6 lifted off both, the mark is sitting at 7."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 6,
+    "q": 13
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/construct/ysntr",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-4\\right) < 10",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 4,
+     "q": 10,
+     "mark": 14
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 14",
+    "tex": "x < 14"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "x > 14",
+     "tex": "x > 14",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "14",
+     "tex": "14",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.negconstant",
+     "params": {
+      "p": 4,
+      "q": 10,
+      "mark": 14
+     },
+     "text": "A cold value on the rail is not the same as turning the rail over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.negconstant",
+     "params": {
+      "p": 4,
+      "q": 10,
+      "mark": 14
+     },
+     "text": "Only a count can turn the detent, and the count here is one. The mark lands at 14."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 4,
+    "q": 10
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/repair/1f4e9u8",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + 6 < 15",
+   "given": [],
+   "working": [
+    "x + 6 < 15",
+    "x > 9"
+   ],
+   "brokenBy": "flip-after-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 6,
+     "q": 15,
+     "mark": 9,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 9",
+    "tex": "x < 9",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "2|x > 9",
+     "tex": "x > 9",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 6,
+      "q": 15,
+      "mark": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 6,
+      "q": 15,
+      "mark": 9,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 6,
+    "q": 15
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/repair/ruh9rs",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-7\\right) < 12",
+   "given": [],
+   "working": [
+    "x + \\left(-7\\right) < 12",
+    "x > 19"
+   ],
+   "brokenBy": "flip-because-a-negative-appeared",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 7,
+     "q": 12,
+     "mark": 19,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 19",
+    "tex": "x < 19",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "2|x > 19",
+     "tex": "x > 19",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 7,
+      "q": 12,
+      "mark": 19,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 7,
+      "q": 12,
+      "mark": 19,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 7,
+    "q": 12
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/generate/61obzm",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + 2 < 17",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.markAdmits",
+    "params": {
+     "p": 2,
+     "q": 17,
+     "mark": 15,
+     "target": "x < 15",
+     "unknown": "x"
+    },
+    "text": "Set a rail whose admitted stretch is x < 15."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 2 < 17",
+    "tex": "x + 2 < 17",
+    "witness": true
+   },
+   "check": {
+    "kind": "markAdmits",
+    "stretch": "x < 15",
+    "unknown": "x",
+    "needs": [
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.markAdmits.2",
+     "params": {
+      "p": 2,
+      "q": 17,
+      "mark": 15,
+      "target": "x < 15",
+      "unknown": "x"
+     },
+     "text": "Set the mark, then feel which side the detent is on."
+    },
+    {
+     "key": "hint.gen.markAdmits.3",
+     "params": {
+      "p": 2,
+      "q": 17,
+      "mark": 15,
+      "target": "x < 15",
+      "unknown": "x"
+     },
+     "text": "The arch has to admit x < 15 and refuse everything else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 2,
+    "q": 17
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/construct/6uwisr",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + 9 < -7",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 9,
+     "q": -7,
+     "mark": -16
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < -16",
+    "tex": "x < -16"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "x > -16",
+     "tex": "x > -16",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "-16",
+     "tex": "-16",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.plus",
+     "params": {
+      "p": 9,
+      "q": -7,
+      "mark": -16
+     },
+     "text": "Raise both pans by the same amount. The rail does not turn over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.plus",
+     "params": {
+      "p": 9,
+      "q": -7,
+      "mark": -16
+     },
+     "text": "With 9 lifted off both, the mark is sitting at -16."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 9,
+    "q": -7
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/construct/u1yo8a",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-7\\right) < 7",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 7,
+     "q": 7,
+     "mark": 14
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 14",
+    "tex": "x < 14"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "x > 14",
+     "tex": "x > 14",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "14",
+     "tex": "14",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.negconstant",
+     "params": {
+      "p": 7,
+      "q": 7,
+      "mark": 14
+     },
+     "text": "A cold value on the rail is not the same as turning the rail over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.negconstant",
+     "params": {
+      "p": 7,
+      "q": 7,
+      "mark": 14
+     },
+     "text": "Only a count can turn the detent, and the count here is one. The mark lands at 14."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 7,
+    "q": 7
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/repair/1r3ndqg",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + 8 < 13",
+   "given": [],
+   "working": [
+    "x + 8 < 13",
+    "x > 5"
+   ],
+   "brokenBy": "flip-after-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 8,
+     "q": 13,
+     "mark": 5,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 5",
+    "tex": "x < 5",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "2|x > 5",
+     "tex": "x > 5",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 8,
+      "q": 13,
+      "mark": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 8,
+      "q": 13,
+      "mark": 5,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 8,
+    "q": 13
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/repair/6bkxc2",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-6\\right) < 6",
+   "given": [],
+   "working": [
+    "x + \\left(-6\\right) < 6",
+    "x > 12"
+   ],
+   "brokenBy": "flip-because-a-negative-appeared",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 6,
+     "q": 6,
+     "mark": 12,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 12",
+    "tex": "x < 12",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "2|x > 12",
+     "tex": "x > 12",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 6,
+      "q": 6,
+      "mark": 12,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 6,
+      "q": 6,
+      "mark": 12,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 6,
+    "q": 6
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/generate/go6kna",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + 3 < 7",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.markAdmits",
+    "params": {
+     "p": 3,
+     "q": 7,
+     "mark": 4,
+     "target": "x < 4",
+     "unknown": "x"
+    },
+    "text": "Set a rail whose admitted stretch is x < 4."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 3 < 7",
+    "tex": "x + 3 < 7",
+    "witness": true
+   },
+   "check": {
+    "kind": "markAdmits",
+    "stretch": "x < 4",
+    "unknown": "x",
+    "needs": [
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.markAdmits.2",
+     "params": {
+      "p": 3,
+      "q": 7,
+      "mark": 4,
+      "target": "x < 4",
+      "unknown": "x"
+     },
+     "text": "Set the mark, then feel which side the detent is on."
+    },
+    {
+     "key": "hint.gen.markAdmits.3",
+     "params": {
+      "p": 3,
+      "q": 7,
+      "mark": 4,
+      "target": "x < 4",
+      "unknown": "x"
+     },
+     "text": "The arch has to admit x < 4 and refuse everything else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 3,
+    "q": 7
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/construct/8d4fvv",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + 3 < -1",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 3,
+     "q": -1,
+     "mark": -4
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < -4",
+    "tex": "x < -4"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "x > -4",
+     "tex": "x > -4",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "-4",
+     "tex": "-4",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.plus",
+     "params": {
+      "p": 3,
+      "q": -1,
+      "mark": -4
+     },
+     "text": "Raise both pans by the same amount. The rail does not turn over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.plus",
+     "params": {
+      "p": 3,
+      "q": -1,
+      "mark": -4
+     },
+     "text": "With 3 lifted off both, the mark is sitting at -4."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 3,
+    "q": -1
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/construct/19putbq",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-8\\right) < 8",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 8,
+     "q": 8,
+     "mark": 16
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 16",
+    "tex": "x < 16"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "x > 16",
+     "tex": "x > 16",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "16",
+     "tex": "16",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.negconstant",
+     "params": {
+      "p": 8,
+      "q": 8,
+      "mark": 16
+     },
+     "text": "A cold value on the rail is not the same as turning the rail over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.negconstant",
+     "params": {
+      "p": 8,
+      "q": 8,
+      "mark": 16
+     },
+     "text": "Only a count can turn the detent, and the count here is one. The mark lands at 16."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 8,
+    "q": 8
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/repair/1ikblqg",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + 5 < 7",
+   "given": [],
+   "working": [
+    "x + 5 < 7",
+    "x > 2"
+   ],
+   "brokenBy": "flip-after-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 5,
+     "q": 7,
+     "mark": 2,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 2",
+    "tex": "x < 2",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "2|x > 2",
+     "tex": "x > 2",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 5,
+      "q": 7,
+      "mark": 2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 5,
+      "q": 7,
+      "mark": 2,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 5,
+    "q": 7
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/repair/1d83yd4",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-9\\right) < 3",
+   "given": [],
+   "working": [
+    "x + \\left(-9\\right) < 3",
+    "x > 12"
+   ],
+   "brokenBy": "flip-because-a-negative-appeared",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 9,
+     "q": 3,
+     "mark": 12,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 12",
+    "tex": "x < 12",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "2|x > 12",
+     "tex": "x > 12",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 9,
+      "q": 3,
+      "mark": 12,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 9,
+      "q": 3,
+      "mark": 12,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 9,
+    "q": 3
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/generate/e3okns",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + 9 < 18",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.markAdmits",
+    "params": {
+     "p": 9,
+     "q": 18,
+     "mark": 9,
+     "target": "x < 9",
+     "unknown": "x"
+    },
+    "text": "Set a rail whose admitted stretch is x < 9."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 9 < 18",
+    "tex": "x + 9 < 18",
+    "witness": true
+   },
+   "check": {
+    "kind": "markAdmits",
+    "stretch": "x < 9",
+    "unknown": "x",
+    "needs": [
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.markAdmits.2",
+     "params": {
+      "p": 9,
+      "q": 18,
+      "mark": 9,
+      "target": "x < 9",
+      "unknown": "x"
+     },
+     "text": "Set the mark, then feel which side the detent is on."
+    },
+    {
+     "key": "hint.gen.markAdmits.3",
+     "params": {
+      "p": 9,
+      "q": 18,
+      "mark": 9,
+      "target": "x < 9",
+      "unknown": "x"
+     },
+     "text": "The arch has to admit x < 9 and refuse everything else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 9,
+    "q": 18
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/construct/1iker8f",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + 5 < 8",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 5,
+     "q": 8,
+     "mark": 3
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 3",
+    "tex": "x < 3"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "x > 3",
+     "tex": "x > 3",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "3",
+     "tex": "3",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.plus",
+     "params": {
+      "p": 5,
+      "q": 8,
+      "mark": 3
+     },
+     "text": "Raise both pans by the same amount. The rail does not turn over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.plus",
+     "params": {
+      "p": 5,
+      "q": 8,
+      "mark": 3
+     },
+     "text": "With 5 lifted off both, the mark is sitting at 3."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 5,
+    "q": 8
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/construct/1s7in0d",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "construct",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-8\\right) < 12",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 8,
+     "q": 12,
+     "mark": 20
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 20",
+    "tex": "x < 20"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "x > 20",
+     "tex": "x > 20",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "20",
+     "tex": "20",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.negconstant",
+     "params": {
+      "p": 8,
+      "q": 12,
+      "mark": 20
+     },
+     "text": "A cold value on the rail is not the same as turning the rail over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.negconstant",
+     "params": {
+      "p": 8,
+      "q": 12,
+      "mark": 20
+     },
+     "text": "Only a count can turn the detent, and the count here is one. The mark lands at 20."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 8,
+    "q": 12
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/repair/6235la",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + 2 < 13",
+   "given": [],
+   "working": [
+    "x + 2 < 13",
+    "x > 11"
+   ],
+   "brokenBy": "flip-after-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 2,
+     "q": 13,
+     "mark": 11,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 11",
+    "tex": "x < 11",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "2|x > 11",
+     "tex": "x > 11",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 2,
+      "q": 13,
+      "mark": 11,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 2,
+      "q": 13,
+      "mark": 11,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 2,
+    "q": 13
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/repair/fjb8pu",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "repair",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-3\\right) < 10",
+   "given": [],
+   "working": [
+    "x + \\left(-3\\right) < 10",
+    "x > 13"
+   ],
+   "brokenBy": "flip-because-a-negative-appeared",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 3,
+     "q": 10,
+     "mark": 13,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 13",
+    "tex": "x < 13",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "2|x > 13",
+     "tex": "x > 13",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 3,
+      "q": 10,
+      "mark": 13,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 3,
+      "q": 10,
+      "mark": 13,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 3,
+    "q": 10
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/generate/22xdll",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "generate",
+   "difficulty": 2,
+   "tier": "easy",
+   "objectClass": "Threshold",
+   "stem": "x + 4 < 12",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.markAdmits",
+    "params": {
+     "p": 4,
+     "q": 12,
+     "mark": 8,
+     "target": "x < 8",
+     "unknown": "x"
+    },
+    "text": "Set a rail whose admitted stretch is x < 8."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 4 < 12",
+    "tex": "x + 4 < 12",
+    "witness": true
+   },
+   "check": {
+    "kind": "markAdmits",
+    "stretch": "x < 8",
+    "unknown": "x",
+    "needs": [
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.markAdmits.2",
+     "params": {
+      "p": 4,
+      "q": 12,
+      "mark": 8,
+      "target": "x < 8",
+      "unknown": "x"
+     },
+     "text": "Set the mark, then feel which side the detent is on."
+    },
+    {
+     "key": "hint.gen.markAdmits.3",
+     "params": {
+      "p": 4,
+      "q": 12,
+      "mark": 8,
+      "target": "x < 8",
+      "unknown": "x"
+     },
+     "text": "The arch has to admit x < 8 and refuse everything else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 4,
+    "q": 12
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/construct/6bo2u1",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + 6 < 5",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 6,
+     "q": 5,
+     "mark": -1
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < -1",
+    "tex": "x < -1"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "x > -1",
+     "tex": "x > -1",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "-1",
+     "tex": "-1",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.plus",
+     "params": {
+      "p": 6,
+      "q": 5,
+      "mark": -1
+     },
+     "text": "Raise both pans by the same amount. The rail does not turn over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.plus",
+     "params": {
+      "p": 6,
+      "q": 5,
+      "mark": -1
+     },
+     "text": "With 6 lifted off both, the mark is sitting at -1."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 6,
+    "q": 5
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/construct/9h95np",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "construct",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-3\\right) < -3",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 3,
+     "q": -3,
+     "mark": 0
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 0",
+    "tex": "x < 0"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "x > 0",
+     "tex": "x > 0",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "0",
+     "tex": "0",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.negconstant",
+     "params": {
+      "p": 3,
+      "q": -3,
+      "mark": 0
+     },
+     "text": "A cold value on the rail is not the same as turning the rail over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.negconstant",
+     "params": {
+      "p": 3,
+      "q": -3,
+      "mark": 0
+     },
+     "text": "Only a count can turn the detent, and the count here is one. The mark lands at 0."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 3,
+    "q": -3
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/repair/19qm8xa",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + 8 < 0",
+   "given": [],
+   "working": [
+    "x + 8 < 0",
+    "x > -8"
+   ],
+   "brokenBy": "flip-after-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 8,
+     "q": 0,
+     "mark": -8,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < -8",
+    "tex": "x < -8",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "2|x > -8",
+     "tex": "x > -8",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 8,
+      "q": 0,
+      "mark": -8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 8,
+      "q": 0,
+      "mark": -8,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 8,
+    "q": 0
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/repair/1b1q369",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "repair",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-5\\right) < -5",
+   "given": [],
+   "working": [
+    "x + \\left(-5\\right) < -5",
+    "x > 0"
+   ],
+   "brokenBy": "flip-because-a-negative-appeared",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 5,
+     "q": -5,
+     "mark": 0,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 0",
+    "tex": "x < 0",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "2|x > 0",
+     "tex": "x > 0",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 5,
+      "q": -5,
+      "mark": 0,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 5,
+      "q": -5,
+      "mark": 0,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 5,
+    "q": -5
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/generate/9gwjnt",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "generate",
+   "difficulty": 3,
+   "tier": "core",
+   "objectClass": "Threshold",
+   "stem": "x + 3 < -7",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.markAdmits",
+    "params": {
+     "p": 3,
+     "q": -7,
+     "mark": -10,
+     "target": "x < -10",
+     "unknown": "x"
+    },
+    "text": "Set a rail whose admitted stretch is x < -10."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 3 < -7",
+    "tex": "x + 3 < -7",
+    "witness": true
+   },
+   "check": {
+    "kind": "markAdmits",
+    "stretch": "x < -10",
+    "unknown": "x",
+    "needs": [
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.markAdmits.2",
+     "params": {
+      "p": 3,
+      "q": -7,
+      "mark": -10,
+      "target": "x < -10",
+      "unknown": "x"
+     },
+     "text": "Set the mark, then feel which side the detent is on."
+    },
+    {
+     "key": "hint.gen.markAdmits.3",
+     "params": {
+      "p": 3,
+      "q": -7,
+      "mark": -10,
+      "target": "x < -10",
+      "unknown": "x"
+     },
+     "text": "The arch has to admit x < -10 and refuse everything else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 3,
+    "q": -7
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/construct/1r2z3mv",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + 8 < 14",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 8,
+     "q": 14,
+     "mark": 6
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < 6",
+    "tex": "x < 6"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "x > 6",
+     "tex": "x > 6",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "6",
+     "tex": "6",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.plus",
+     "params": {
+      "p": 8,
+      "q": 14,
+      "mark": 6
+     },
+     "text": "Raise both pans by the same amount. The rail does not turn over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.plus",
+     "params": {
+      "p": 8,
+      "q": 14,
+      "mark": 6
+     },
+     "text": "With 8 lifted off both, the mark is sitting at 6."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 8,
+    "q": 14
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/construct/88c5ac",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "construct",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-4\\right) < -7",
+   "given": [],
+   "ask": {
+    "key": "ask.mark",
+    "params": {
+     "p": 4,
+     "q": -7,
+     "mark": -3
+    },
+    "text": "Write the stretch it admits."
+   },
+   "answerType": "inequality",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x < -3",
+    "tex": "x < -3"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "x > -3",
+     "tex": "x > -3",
+     "failKey": "fail.mark.unturned"
+    },
+    {
+     "misconception": "solved-as-equation",
+     "response": "-3",
+     "tex": "-3",
+     "failKey": "fail.mark.level",
+     "responseKind": "value"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.move.ineq-one-step.negconstant",
+     "params": {
+      "p": 4,
+      "q": -7,
+      "mark": -3
+     },
+     "text": "A cold value on the rail is not the same as turning the rail over."
+    },
+    {
+     "key": "hint.state.ineq-one-step.negconstant",
+     "params": {
+      "p": 4,
+      "q": -7,
+      "mark": -3
+     },
+     "text": "Only a count can turn the detent, and the count here is one. The mark lands at -3."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.1",
+    "params": {},
+    "text": "Raise both pans by the same amount and the admitted stretch slides along the rail without turning over."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 4,
+    "q": -7
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/repair/1b1q369",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + 5 < -5",
+   "given": [],
+   "working": [
+    "x + 5 < -5",
+    "x > -10"
+   ],
+   "brokenBy": "flip-after-adding",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 5,
+     "q": -5,
+     "mark": -10,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < -10",
+    "tex": "x < -10",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-after-adding",
+     "response": "2|x > -10",
+     "tex": "x > -10",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 5,
+      "q": -5,
+      "mark": -10,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 5,
+      "q": -5,
+      "mark": -10,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 5,
+    "q": -5
+   }
+  },
+  {
+   "id": "ineq-one-step.negconstant/repair/iyuz9l",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.negconstant",
+   "form": "repair",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + \\left(-2\\right) < 1",
+   "given": [],
+   "working": [
+    "x + \\left(-2\\right) < 1",
+    "x > 3"
+   ],
+   "brokenBy": "flip-because-a-negative-appeared",
+   "ask": {
+    "key": "ask.repair",
+    "params": {
+     "p": 2,
+     "q": 1,
+     "mark": 3,
+     "lines": 2,
+     "line": 2
+    },
+    "text": "Name the joint that will not hold, and what it should read."
+   },
+   "answerType": "repair",
+   "unknown": "x",
+   "answer": {
+    "canonical": "2|x < 3",
+    "tex": "x < 3",
+    "line": 2,
+    "valueKind": "inequality"
+   },
+   "distractors": [
+    {
+     "misconception": "flip-because-a-negative-appeared",
+     "response": "2|x > 3",
+     "tex": "x > 3",
+     "failKey": "fail.mark.unturned"
+    }
+   ],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.repair.2",
+     "params": {
+      "p": 2,
+      "q": 1,
+      "mark": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Read down the working. One line does not follow from the one above it."
+    },
+    {
+     "key": "hint.repair.3",
+     "params": {
+      "p": 2,
+      "q": 1,
+      "mark": 3,
+      "line": 2,
+      "lines": 2
+     },
+     "text": "Line 2 is where the load stops matching."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 2,
+    "q": 1
+   }
+  },
+  {
+   "id": "ineq-one-step.plus/generate/1r3dx8j",
+   "kpId": "ineq-one-step",
+   "family": "ineq-one-step.plus",
+   "form": "generate",
+   "difficulty": 4,
+   "tier": "stretch",
+   "objectClass": "Threshold",
+   "stem": "x + 8 < 10",
+   "given": [],
+   "ask": {
+    "key": "ask.gen.markAdmits",
+    "params": {
+     "p": 8,
+     "q": 10,
+     "mark": 2,
+     "target": "x < 2",
+     "unknown": "x"
+    },
+    "text": "Set a rail whose admitted stretch is x < 2."
+   },
+   "answerType": "construction",
+   "unknown": "x",
+   "answer": {
+    "canonical": "x + 8 < 10",
+    "tex": "x + 8 < 10",
+    "witness": true
+   },
+   "check": {
+    "kind": "markAdmits",
+    "stretch": "x < 2",
+    "unknown": "x",
+    "needs": [
+     "constantWithUnknown"
+    ]
+   },
+   "distractors": [],
+   "hints": [
+    {
+     "key": "hint.look.Threshold",
+     "params": {},
+     "text": "A rail, a mark on it, and a detent sitting on one side of the mark."
+    },
+    {
+     "key": "hint.gen.markAdmits.2",
+     "params": {
+      "p": 8,
+      "q": 10,
+      "mark": 2,
+      "target": "x < 2",
+      "unknown": "x"
+     },
+     "text": "Set the mark, then feel which side the detent is on."
+    },
+    {
+     "key": "hint.gen.markAdmits.3",
+     "params": {
+      "p": 8,
+      "q": 10,
+      "mark": 2,
+      "target": "x < 2",
+      "unknown": "x"
+     },
+     "text": "The arch has to admit x < 2 and refuse everything else."
+    }
+   ],
+   "worldFraming": {
+    "key": "frame.ineq-one-step.2",
+    "params": {},
+    "text": "The Nearlies raise this one whenever the fishing is bad."
+   },
+   "standards": [
+    "CCSS.7.EE.B.4b",
+    "CCSS.HSA-REI.B.3",
+    "TEKS.6.10A",
+    "FL.MA.7.AR.2.1",
+    "VA.6.PFA.4"
+   ],
+   "params": {
+    "p": 8,
+    "q": 10
+   }
+  }
+ ]
+}

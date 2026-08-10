@@ -1,0 +1,12 @@
+P16 determinism — the shipped engine, in the real browser, twice
+====================================================================================
+drive: 400 items, seed 7 -> 400 served across 12 sessions
+state after: theta 0.768676, unlocked 22, provisional 9, mastered 13 (40.625% of Level 1), dueNow 11
+engine gate: scorable construct,generate,repair x guided-1,solo; mastery-eligible construct,generate,repair x solo
+stats: {"items":400,"scoredItems":322,"unscoredItems":78,"refusedUpward":0,"prerequisiteCredits":201,"gateOpens":26,"certifications":13,"lapses":4}
+content issues reported by the engine: none
+
+  run 1: 8243 bytes  sha256 cd5dac59d860213a4ddb68b1
+  run 2: 8243 bytes  sha256 cd5dac59d860213a4ddb68b1
+
+RESULT: PASS — the mastery probe is byte-identical across runs

@@ -610,19 +610,58 @@ export function canonPartition(src) {
   return canon.join("|");
 }
 
+/**
+ * Every reading of a repair response, as `line|canonical`.
+ *
+ * A working carries claims, marks and loads in the same column, and a learner repairing line 3
+ * writes whichever of those that line is. Reading the response in ONE declared kind and giving
+ * up is how a right answer gets marked wrong and, worse, how a wrong one goes undiagnosed.
+ */
+export function canonRepairAll(src, unknown = "x") {
+  const s = String(src).trim();
+  const m = s.match(/^\s*(?:#\s*|line\s*|l[ií]nea\s*|linia\s*)?(\d+)\s*(.*)$/i);
+  if (!m) return [];
+  const line = Number(m[1]);
+  const rest = m[2].replace(/^\s*[:>|=]\s*/, "").trim();
+  if (!rest) return [];
+  const out = [];
+  const push = (fn) => {
+    try {
+      const v = fn();
+      if (v != null && !out.includes(`${line}|${v}`)) out.push(`${line}|${v}`);
+    } catch {
+      /* not this reading */
+    }
+  };
+  push(() => {
+    const st = parseStatement(rest);
+    if (st.kind === "chain") return "chain";
+    throw new Error("not a chain");
+  });
+  push(() => canonEquation(rest));
+  push(() => canonInequality(rest, unknown));
+  push(() => canonExpr(rest));
+  push(() => canonPartition(rest));
+  return out;
+}
+
 /** Canonical form of a repair response: which line, and what it should read. */
 export function canonRepair(src, valueKind = "equation", unknown = "x") {
   const s = String(src).trim();
-  const m = s.match(/^\s*(?:#|line\s*)?(\d+)\s*[:>=|]\s*(.+)$/i);
+  // "3: x = 5", "#3 x = 5", "line 3 = x = 5", "3 | x = 5" — the joint, then what it should read.
+  const m = s.match(/^\s*(?:#\s*|line\s*|l[ií]nea\s*|linia\s*)?(\d+)\s*(.*)$/i);
   if (!m) throw new Error("a repair names the joint and what it should read");
   const line = Number(m[1]);
-  const rest = m[2].trim();
+  const rest = m[2].replace(/^\s*[:>|=]\s*/, "").trim();
+  if (!rest) throw new Error("a repair names the joint and what it should read");
   const value =
     valueKind === "equation"
       ? canonEquation(rest)
       : valueKind === "inequality"
         ? canonInequality(rest, unknown)
-        : canonExpr(rest);
+        : valueKind === "partition"
+          ? canonPartition(rest)
+          : canonExpr(rest);
   return `${line}|${value}`;
 }
 

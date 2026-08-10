@@ -1,0 +1,207 @@
+{
+  "tier": "medium",
+  "width": 1280,
+  "height": 720,
+  "post": false,
+  "measurements": {},
+  "table": [
+    {
+      "id": "F1",
+      "claim": "flat shading is real: fraction of board triangles carrying one normal per face",
+      "threshold": ">= 0.99",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "art-direction §2.1"
+    },
+    {
+      "id": "F2",
+      "claim": "a cliff resolves into countable planes (compact flat regions, tol 2/255, >= 0.02% of frame)",
+      "threshold": ">= 20",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§13 row 1, relaxed from 25 — the board is one shelf, not a vista"
+    },
+    {
+      "id": "F3",
+      "claim": "a facet is exactly one colour: median luminance spread inside a flat region",
+      "threshold": "<= 0.02",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§3.3 / §1.1 (target measures 0.0096)"
+    },
+    {
+      "id": "L1",
+      "claim": "no tone curve: median |measured - predicted| / predicted over >= 12 lit facets",
+      "threshold": "<= 0.08",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§3.3, §3.5 — predicted is albedo x (N.L key + fill + bounce), linear"
+    },
+    {
+      "id": "L2",
+      "claim": "the object shows 4-7 distinct lit values plus a shadow value",
+      "threshold": "4..7",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§3.3"
+    },
+    {
+      "id": "K1",
+      "claim": "§3.2 witness 1 — ground inside its own cast shadow, absolute Y",
+      "threshold": "0.0300 +- 0.010",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§3.2/§3.4 (target Y 0.0300, and the ratio 4.36 follows at N·L 0.342)"
+    },
+    {
+      "id": "K2",
+      "claim": "§3.2 witness 2 — brightest lit rock facet vs the turned facet",
+      "threshold": "10..30",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§3.2's mid-facet witness is 11.96; the target's own extremes give 19.5"
+    },
+    {
+      "id": "S1",
+      "claim": "turned faces converge on one chromatic blue: median hue / S / Y",
+      "threshold": "hue 190..206, S 0.33..0.50, Y 0.020..0.033",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§3.4, §13 row 3"
+    },
+    {
+      "id": "S2",
+      "claim": "and they converge independent of albedo: hue spread across rock, shelf and armour",
+      "threshold": "<= 8 deg",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§3.4's three witnesses span 195..201 = 6 deg"
+    },
+    {
+      "id": "S3",
+      "claim": "cast shadow on open ground is the OTHER family, not the same blue",
+      "threshold": "hue 100..140",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§3.4, §13 row 4"
+    },
+    {
+      "id": "S4",
+      "claim": "the two dark families are genuinely separate",
+      "threshold": ">= 50 deg apart",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§13 row 4 (target 79.2)"
+    },
+    {
+      "id": "C1",
+      "claim": "the courier has a real contact shadow: darkening at the boot",
+      "threshold": ">= 0.45",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "the piece's own claim; no contact shadow is why a character floats"
+    },
+    {
+      "id": "C2",
+      "claim": "and it starts AT the boot: lit gap between the sole and the shadow",
+      "threshold": "<= 0.06 m",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "peter-panning is the reflex fix that makes C1 worse"
+    },
+    {
+      "id": "A1",
+      "claim": "the accent budget: frame share at hue 150-200, V >= 0.80, S >= 0.25",
+      "threshold": "0.4%..1.8%",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§7.2, §13 row 5"
+    },
+    {
+      "id": "A2",
+      "claim": "cyan has not leaked: accent-gate pixels landing outside the accent meshes",
+      "threshold": "<= 3%",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§7.2, §13 row 6"
+    },
+    {
+      "id": "M1",
+      "claim": "three substances, not three tints: rock warm, crystal cyan-bright, water cyan",
+      "threshold": "hues 20..50 / 150..200 / 150..200",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§10.2"
+    },
+    {
+      "id": "M2",
+      "claim": "and water is a different substance from crystal because it MOVES",
+      "threshold": "water >= 4% pixels change, crystal <= 0.5%",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§5 — the carry's animated hard-edged ramp"
+    },
+    {
+      "id": "T1",
+      "claim": "it does not fizz: pixels changing > 0.05 Y in one fixed step, camera static",
+      "threshold": "<= 0.2%",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§11.6, palette.motion.budgets.temporalNoiseCeiling"
+    },
+    {
+      "id": "N1",
+      "claim": "nothing on §5's global ban list is in the board",
+      "threshold": "0 of each",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§5, §12.2 no.18"
+    },
+    {
+      "id": "N2",
+      "claim": "the renderer path is linear: toneMapping is NoToneMapping",
+      "threshold": "== 0",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "§3.5"
+    },
+    {
+      "id": "P1",
+      "claim": "the material factory shares: cache hits vs materials built",
+      "threshold": "hits >= built",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "architecture.md program budget"
+    },
+    {
+      "id": "P2",
+      "claim": "shader programs and draw calls with the board standing",
+      "threshold": "programs <= 90, draws <= 320",
+      "measured": "NOT RUN",
+      "result": "MISSING",
+      "note": "",
+      "source": "architecture.md"
+    }
+  ]
+}

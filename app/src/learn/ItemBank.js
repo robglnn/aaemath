@@ -1,10 +1,10 @@
 /**
  * ItemBank — the item bank the mastery engine is served from.
  *
- * Owned by P17. Four jobs and nothing else:
+ * Owned by P17; the loading half below is P31's. Four jobs and nothing else:
  *
- *   1. LOAD    the committed catalogue (`content/items/bank/*.json`, 768 items) and the
- *              generator families behind it, so the bank cannot run dry mid-session.
+ *   1. LOAD    the committed catalogue and the generator families behind it, so the bank cannot
+ *              run dry mid-session. **One knowledge point at a time, on demand** — see below.
  *   2. INDEX   by knowledge point, form, difficulty band and — the one the teaching director
  *              actually needs — by misconception, because §4 of design/learning-architecture.md
  *              says the item after an error is drawn from variants whose distractor space
@@ -18,9 +18,44 @@
  *
  * No DOM, no three, no kernel state. A pure service, so P16 can drive it in a simulation with
  * no browser at all — which is what makes L4 and L5 measurable offline.
+ *
+ * ------------------------------------------------------------------------------------------
+ * P31 — PER-LESSON LOADING. Why `select()` is still synchronous.
+ * ------------------------------------------------------------------------------------------
+ *
+ * Round 1 imported the whole Algebra I catalogue statically, and it built into a 1.6 MB
+ * (147 kB gzipped) chunk — the largest asset in the game by an order of magnitude, paid for on
+ * every page load before the first item was drawn, on a school Chromebook, over school wifi. A
+ * 15–25 minute session touches two or three knowledge points of the thirty-two.
+ *
+ * So the catalogue is now one chunk per knowledge point (`content/items/groups/`), pulled the
+ * first time a session needs it and cached for the life of the page. Three rules make that safe:
+ *
+ *   1. **The public API does not change shape.** `select`, `forKp`, `fresh`, `meta`, `present`,
+ *      `check`, `accepts`, `stats`, `probe` are the same calls with the same signatures, and
+ *      `select` is still SYNCHRONOUS. Scheduler and Mastery hand `select` around as a plain
+ *      function; making it a promise would have rewritten the pricing audit, the offline
+ *      simulations and every proof script in `review/measure`, to buy nothing.
+ *   2. **Nothing a caller needs before the items is inside the items.** Band, strand, standards,
+ *      misconceptions, object class and item counts come from `manifest.mjs`, which is eager and
+ *      carries no items. So `meta()`, `knowledgePoints()` and `fresh()` all work with ZERO groups
+ *      resident — which is exactly why a cold `select()` can degrade to the generator instead of
+ *      failing.
+ *   3. **A cold or failed group degrades to a real, checkable item and says so.** It never hangs
+ *      and never serves a blank: `select()` answers from the generator, tags the result
+ *      `generated-group-absent` / `generated-group-failed`, starts the load in the background,
+ *      and records the fact in `probe().degraded` where a reviewer and the HUD can read it.
+ *
+ * `await bank.ensure(kpId)` / `bank.ensureLesson(lessonId)` is what a session opener should call,
+ * and after any load the bank prefetches the rest of the lesson during idle time, so the
+ * degraded path is a safety net rather than the normal experience.
+ *
+ * The loaded catalogue is MODULE-LEVEL, shared by every `ItemBank` instance. Committed items are
+ * immutable and identical for everyone; the per-instance state is only what a session generates.
  */
 
-import { BANK, BANK_INDEX, STRINGS } from "../../../content/items/index.mjs";
+import { BANK_INDEX, STRINGS, KP_META, LESSONS } from "../../../content/items/index.mjs";
+import { GROUP_IDS, GROUP_LOADERS } from "../../../content/items/groups/index.mjs";
 import { generateOne, generateForKp, TIERS } from "../../../content/items/generators.mjs";
 import {
   rat,
@@ -90,38 +125,229 @@ function localeNumber(value, locale) {
   return locale === "en" ? s : s.replace(".", ",");
 }
 
+/* ------------------------------------------------------------------ the catalogue store
+ *
+ * P31. One module-level store of loaded groups, shared by every `ItemBank` instance: the
+ * committed items are immutable and identical for everyone, and `review/measure/P16.mjs` alone
+ * constructs four banks in one process. Per-instance state is only what a session GENERATES.
+ */
+
+/** kpId -> { items, byId, byMisconception } for the groups that are resident. */
+const RESIDENT = new Map();
+/** kpId -> Promise, so N concurrent `select()` calls on a cold group cause ONE fetch. */
+const INFLIGHT = new Map();
+/** kpId -> { error, attempts, at }. A group here is degraded, not pending. */
+const FAILED = new Map();
+/** Review-harness only: groups whose chunk is made to refuse to load. See `__faultGroup`. */
+const FAULT = new Set();
+/** Anything the outside world should be told about, in the order it happened. */
+const ISSUES = [];
+
+const KP_IDS = GROUP_IDS.slice();
+const LESSON_OF = new Map();
+for (const lesson of LESSONS) for (const id of lesson.kpIds) LESSON_OF.set(id, lesson);
+
+/**
+ * Somewhere for a host to hear about a degraded group without `ItemBank` importing anything that
+ * assumes a browser. `app/src/boot/62-itembank.js` already publishes `probe()`, so a reviewer sees
+ * `degraded` without any wiring at all; this is for a HUD that wants to say it out loud.
+ */
+export const bankIssues = {
+  list: () => ISSUES.slice(),
+  onIssue: null,
+};
+
+function raise(issue) {
+  ISSUES.push(issue);
+  if (ISSUES.length > 64) ISSUES.shift();
+  try {
+    bankIssues.onIssue?.(issue);
+  } catch {
+    /* a listener that throws is not the bank's problem, and must not take the bank down */
+  }
+}
+
+/**
+ * Index one loaded group. The three fields stripped from the shipped chunk — `kpId`,
+ * `objectClass`, `standards` — are properties of the knowledge point that were repeated on every
+ * item; they are put back here, so an item object handed to a caller is field-for-field what
+ * `content/items/bank/<kpId>.json` holds minus the English `text` snapshots, which the game never
+ * renders (it resolves every string through `STRINGS` and the learner's locale — G3).
+ */
+function indexGroup(kpId, group) {
+  const meta = KP_META[kpId];
+  const items = [];
+  const byId = new Map();
+  const byMisconception = new Map();
+  for (const raw of group.items) {
+    const item = raw;
+    item.kpId = kpId;
+    item.objectClass = meta.objectClass;
+    item.standards = meta.standards;
+    items.push(item);
+    byId.set(item.id, item);
+    // Per DISTRACTOR, not per item: an item naming one misconception twice sits in that pool
+    // twice, which is the round-1 behaviour and what the selection weights were measured against.
+    for (const d of item.distractors) {
+      let pool = byMisconception.get(d.misconception);
+      if (!pool) byMisconception.set(d.misconception, (pool = []));
+      pool.push(item);
+    }
+  }
+  const entry = { items, byId, byMisconception };
+  RESIDENT.set(kpId, entry);
+  FAILED.delete(kpId);
+  return entry;
+}
+
+/**
+ * Load one group. Retries once — a school wifi hiccup on a 4 kB chunk is worth a second attempt
+ * and is not worth failing a lesson over — then gives up loudly and stays given-up until someone
+ * calls `ensure` again, so the degraded path cannot turn into a retry storm.
+ */
+function loadGroup(kpId) {
+  const resident = RESIDENT.get(kpId);
+  if (resident) return Promise.resolve(resident);
+  const pending = INFLIGHT.get(kpId);
+  if (pending) return pending;
+  const loader = GROUP_LOADERS[kpId];
+  if (!loader) {
+    const err = new Error(`no item group for knowledge point "${kpId}"`);
+    FAILED.set(kpId, { error: err.message, attempts: 0, at: Date.now() });
+    raise({ kind: "unknown-group", kpId, error: err.message });
+    return Promise.reject(err);
+  }
+  const fetchOnce = () =>
+    FAULT.has(kpId)
+      ? Promise.reject(new Error(`simulated transport failure loading group "${kpId}"`))
+      : loader().then((mod) => mod.default ?? mod);
+  const attempt = (n) => fetchOnce().catch((err) => (n > 0 ? attempt(n - 1) : Promise.reject(err)));
+  const p = attempt(1)
+    .then((group) => {
+      INFLIGHT.delete(kpId);
+      return indexGroup(kpId, group);
+    })
+    .catch((err) => {
+      INFLIGHT.delete(kpId);
+      const message = String(err?.message || err);
+      FAILED.set(kpId, { error: message, attempts: 2, at: Date.now() });
+      raise({ kind: "group-load-failed", kpId, lesson: LESSON_OF.get(kpId)?.id ?? null, error: message });
+      // Resolved, not rejected: a caller that awaited a lesson must carry on into a degraded but
+      // playable session rather than have the whole session opener reject.
+      return null;
+    });
+  INFLIGHT.set(kpId, p);
+  return p;
+}
+
+/** True when `forKp` can answer from the catalogue for this knowledge point. */
+function isResident(kpId) {
+  return RESIDENT.has(kpId);
+}
+
+/**
+ * Fire-and-forget. Called from the synchronous `select()` path so that a cold knowledge point is
+ * loading by the time the learner has read the item the generator just made.
+ */
+function touch(kpId) {
+  if (RESIDENT.has(kpId) || INFLIGHT.has(kpId) || FAILED.has(kpId)) return;
+  loadGroup(kpId).catch(() => {});
+}
+
+const idle =
+  typeof requestIdleCallback === "function"
+    ? (fn) => requestIdleCallback(fn, { timeout: 2000 })
+    : (fn) => setTimeout(fn, 0);
+
+/**
+ * NODE LOADS EVERYTHING, EAGERLY, AT MODULE INIT.
+ *
+ * Every offline consumer — `tools/bank-audit.mjs`, `review/measure/P16.mjs` and its four critic
+ * scripts, `review/measure/P17.mjs` — constructs an `ItemBank` and immediately draws thousands of
+ * items through the synchronous `select()`. Those runs price the bank a learner actually meets;
+ * if half of them silently fell through to the generator because a chunk had not arrived, every
+ * number in P16's L4/L5 evidence would describe a population nobody is served. Splitting the
+ * catalogue is a DELIVERY decision, and it must not change a single measured value.
+ *
+ * There is no bandwidth to save in Node, so there is nothing to trade: the whole catalogue loads
+ * here, before any consumer's first statement runs. In the browser this branch never executes and
+ * the group chunks are reached only through `GROUP_LOADERS`.
+ */
+const IS_NODE =
+  typeof process !== "undefined" && !!process.versions?.node && typeof window === "undefined";
+if (IS_NODE) await Promise.all(KP_IDS.map((id) => loadGroup(id)));
+
 /* ------------------------------------------------------------------ the bank */
 
 export class ItemBank {
-  #byId = new Map();
-  #byKp = new Map();
-  #byKpMisconception = new Map();
-  #meta = new Map();
+  #generatedById = new Map();
   #generated = 0;
 
   constructor({ locale = "en" } = {}) {
     this.locale = LOCALES.includes(locale) ? locale : "en";
-    for (const file of BANK) {
-      this.#meta.set(file.kpId, {
-        kpId: file.kpId,
-        band: file.band,
-        strand: file.strand,
-        objectClass: file.objectClass,
-        standards: file.standards,
-        misconceptions: file.misconceptions,
-      });
-      const list = [];
-      for (const item of file.items) {
-        this.#byId.set(item.id, item);
-        list.push(item);
-        for (const d of item.distractors) {
-          const key = `${file.kpId}|${d.misconception}`;
-          if (!this.#byKpMisconception.has(key)) this.#byKpMisconception.set(key, []);
-          this.#byKpMisconception.get(key).push(item);
-        }
-      }
-      this.#byKp.set(file.kpId, list);
-    }
+  }
+
+  /* ---------------------------------------------------------------- loading (P31) */
+
+  /**
+   * Make one or more knowledge points servable from the catalogue. Resolves when they are
+   * resident OR have failed for good; it never rejects, because a session opener must always
+   * continue into something playable.
+   *
+   * Returns what actually happened, so a caller can say so:
+   * `{ requested, loaded, alreadyResident, failed: [kpId] }`.
+   */
+  async ensure(kpIds) {
+    const ids = (Array.isArray(kpIds) ? kpIds : [kpIds]).filter((id) => KP_META[id]);
+    const alreadyResident = ids.filter(isResident).length;
+    await Promise.all(ids.map((id) => loadGroup(id).catch(() => null)));
+    const failed = ids.filter((id) => !isResident(id));
+    if (ids.length) this.prefetchAround(ids[ids.length - 1]);
+    return { requested: ids.length, loaded: ids.length - failed.length, alreadyResident, failed };
+  }
+
+  /** Every knowledge point in a lesson, in prerequisite order. The session-opener call. */
+  async ensureLesson(lessonId) {
+    const lesson = LESSONS.find((l) => l.id === lessonId);
+    if (!lesson) return { requested: 0, loaded: 0, alreadyResident: 0, failed: [], lesson: null };
+    const out = await this.ensure(lesson.kpIds);
+    return { ...out, lesson: lesson.id };
+  }
+
+  /**
+   * Warm what the learner is most likely to need next, during idle time, so nobody ever waits
+   * mid-session: the rest of the current lesson first, then the head of the next one. Capped,
+   * because prefetching aggressively enough is just downloading the whole course again with extra
+   * steps — the point of this piece is not to.
+   */
+  prefetchAround(kpId, { ahead = 3 } = {}) {
+    const lesson = LESSON_OF.get(kpId);
+    if (!lesson) return [];
+    const rest = lesson.kpIds.slice(lesson.kpIds.indexOf(kpId) + 1);
+    const nextLesson = LESSONS[LESSONS.indexOf(lesson) + 1];
+    const queue = [...rest, ...(nextLesson ? nextLesson.kpIds.slice(0, 1) : [])]
+      .filter((id) => !RESIDENT.has(id) && !INFLIGHT.has(id) && !FAILED.has(id))
+      .slice(0, ahead);
+    for (const id of queue) idle(() => touch(id));
+    return queue;
+  }
+
+  /** Which lesson a knowledge point belongs to, and the lesson plan itself. */
+  lessons() {
+    return LESSONS;
+  }
+  lessonFor(kpId) {
+    return LESSON_OF.get(kpId) ?? null;
+  }
+
+  /** What is in memory right now. Cheap; the loading half of `probe()` is built out of this. */
+  residency() {
+    return {
+      groups: KP_IDS.length,
+      resident: [...RESIDENT.keys()],
+      loading: [...INFLIGHT.keys()],
+      failed: Object.fromEntries(FAILED),
+    };
   }
 
   setLocale(locale) {
@@ -129,23 +355,56 @@ export class ItemBank {
     return this.locale;
   }
 
+  /**
+   * ALL of them, resident or not. This answers "what does this course cover", and the answer
+   * must not depend on what happens to be in memory — a scheduler that walked only the loaded
+   * knowledge points would quietly stop offering the rest of Algebra I.
+   */
   knowledgePoints() {
-    return [...this.#byKp.keys()];
+    return KP_IDS.slice();
   }
 
+  /**
+   * Band, strand, object class, standards and misconceptions, from the eager manifest. Available
+   * for every knowledge point with zero groups loaded — which is what lets `fresh()` generate a
+   * correct, correctly-tagged item for a knowledge point whose chunk has not arrived.
+   */
   meta(kpId) {
-    return this.#meta.get(kpId) || null;
+    const m = KP_META[kpId];
+    return m
+      ? {
+          kpId: m.kpId,
+          band: m.band,
+          strand: m.strand,
+          objectClass: m.objectClass,
+          standards: m.standards,
+          misconceptions: m.misconceptions,
+        }
+      : null;
   }
 
   item(id) {
-    return this.#byId.get(id) || null;
+    const mine = this.#generatedById.get(id);
+    if (mine) return mine;
+    for (const entry of RESIDENT.values()) {
+      const hit = entry.byId.get(id);
+      if (hit) return hit;
+    }
+    return null;
   }
 
-  /** Everything on one knowledge point, optionally narrowed. Never mutated by callers. */
+  /**
+   * Everything on one knowledge point, optionally narrowed. Never mutated by callers.
+   *
+   * Empty when the group is not resident — deliberately, and it is the caller's business:
+   * `select()` reads `isResident` first and goes to the generator with a relaxation tag that says
+   * so, rather than reporting "the catalogue had nothing" when the truth is "the catalogue had
+   * not arrived". The two are different facts and the audit prices them differently.
+   */
   forKp(kpId, { form = null, difficulty = null, misconception = null, exclude = null } = {}) {
-    let list = misconception
-      ? this.#byKpMisconception.get(`${kpId}|${misconception}`) || []
-      : this.#byKp.get(kpId) || [];
+    const entry = RESIDENT.get(kpId);
+    if (!entry) return [];
+    let list = misconception ? entry.byMisconception.get(misconception) || [] : entry.items;
     if (form) list = list.filter((i) => i.form === form);
     if (difficulty != null) list = list.filter((i) => i.difficulty === difficulty);
     if (exclude) list = list.filter((i) => !has(exclude, i.id));
@@ -169,6 +428,43 @@ export class ItemBank {
     exclude = null,
     seed = null,
   } = {}) {
+    /**
+     * P31 — THE COLD PATH, and why it is not a hang and not a blank.
+     *
+     * `select()` is synchronous because Scheduler, Mastery and every offline audit pass it around
+     * as a plain function. So when this knowledge point's chunk is not in memory there are three
+     * options and only one of them is honest: block (there is no blocking primitive on the main
+     * thread, and a frozen game is the worst possible answer), serve nothing (the caller has
+     * nothing to draw and the session stalls), or serve a REAL generated item on the same
+     * knowledge point at the same band and say, in the returned `relaxation`, that the catalogue
+     * was not consulted.
+     *
+     * The third is what happens. The generators are code and live in the main chunk, the band and
+     * standards come from the eager manifest, so the item is correct, checkable and correctly
+     * tagged — it is simply not one of the thirty-six a human reviewed for this node. The load is
+     * started here, so the next request on this knowledge point is served from the catalogue.
+     *
+     * `generated-group-absent` and `generated-group-failed` are distinct from `generated` on
+     * purpose: "the catalogue was exhausted" and "the catalogue never arrived" are different
+     * facts about a session, and the second one is a delivery bug that must be visible as one.
+     */
+    if (!isResident(kpId)) {
+      if (!KP_META[kpId]) return null;
+      const failure = FAILED.get(kpId);
+      touch(kpId);
+      const cold = this.fresh({ kpId, form, difficulty, seed, exclude, misconception });
+      if (cold) {
+        return {
+          item: cold,
+          source: "generated",
+          relaxation: failure ? "generated-group-failed" : "generated-group-absent",
+        };
+      }
+      // The generator could not satisfy this (kp x form) either. Say nothing rather than
+      // something wrong; `null` is the round-1 contract for "no item", and every caller handles it.
+      return null;
+    }
+
     // A targeted request is exhausted — catalogue AND generator — before the target is dropped.
     // Relaxing the band first and the misconception last is the whole point: §4 says the item
     // after an error is drawn from variants whose distractor space contains that misconception,
@@ -213,9 +509,14 @@ export class ItemBank {
     return fresh ? { item: fresh, source: "generated", relaxation: "generated" } : null;
   }
 
-  /** A brand-new item from the generator families. Deterministic in `seed`. */
+  /**
+   * A brand-new item from the generator families. Deterministic in `seed`.
+   *
+   * Reads its band and standards from the EAGER manifest, never from a loaded group, which is the
+   * whole reason a cold knowledge point still produces a correct item.
+   */
   fresh({ kpId, form = "construct", difficulty = null, seed = null, exclude = null, misconception = null } = {}) {
-    const meta = this.#meta.get(kpId);
+    const meta = KP_META[kpId];
     if (!meta) return null;
     const band = meta.band;
     const tier =
@@ -239,7 +540,7 @@ export class ItemBank {
       if (misconception && !item.distractors.some((d) => d.misconception === misconception)) continue;
       this.#generated++;
       const withStandards = { ...item, standards: meta.standards };
-      this.#byId.set(item.id, withStandards);
+      this.#generatedById.set(item.id, withStandards);
       return withStandards;
     }
     return null;
@@ -587,30 +888,51 @@ export class ItemBank {
 
   /* ---------------------------------------------------------------- reviewer surface */
 
+  /**
+   * The catalogue's shape, for all thirty-two knowledge points, whether or not their chunks are
+   * in memory.
+   *
+   * This deliberately does NOT narrow to what is resident. `minItemsPerKp` and
+   * `minItemsPerMisconception` below are coverage gates — L4 lives on them — and a gate computed
+   * over "whatever happened to be loaded" would read as passing precisely because the thin
+   * knowledge point was absent. The per-knowledge-point counts come from the eager manifest,
+   * which is generated from the same `bank/*.json` the chunks are; `review/measure/P31.mjs`
+   * asserts the manifest's counts equal the loaded groups' counts, item for item.
+   *
+   * `items` is the honest RESIDENT number — memory, not coverage — and is reported next to
+   * `catalogueItems`, which is the coverage number.
+   */
   stats() {
     const perKp = {};
-    for (const [kpId, list] of this.#byKp) {
-      const misc = {};
-      for (const m of this.#meta.get(kpId).misconceptions) {
-        misc[m] = (this.#byKpMisconception.get(`${kpId}|${m}`) || []).length;
-      }
+    let residentItems = 0;
+    for (const kpId of KP_IDS) {
+      const m = KP_META[kpId];
+      const entry = RESIDENT.get(kpId);
+      if (entry) residentItems += entry.items.length;
       perKp[kpId] = {
-        items: list.length,
-        forms: {
-          construct: list.filter((i) => i.form === "construct").length,
-          repair: list.filter((i) => i.form === "repair").length,
-          generate: list.filter((i) => i.form === "generate").length,
-        },
-        bands: [...new Set(list.map((i) => i.difficulty))].sort(),
-        itemsPerMisconception: misc,
+        items: m.count,
+        forms: m.forms,
+        bands: m.bands,
+        itemsPerMisconception: m.itemsPerMisconception,
+        resident: !!entry,
+        lesson: m.lesson,
       };
     }
+    const res = this.residency();
     return {
-      knowledgePoints: this.#byKp.size,
-      items: this.#byId.size,
+      knowledgePoints: KP_IDS.length,
+      items: residentItems + this.#generatedById.size,
+      catalogueItems: KP_IDS.reduce((a, id) => a + KP_META[id].count, 0),
       catalogue: BANK_INDEX.generated,
       generatedThisSession: this.#generated,
       locale: this.locale,
+      groups: {
+        total: res.groups,
+        resident: res.resident.length,
+        loading: res.loading.length,
+        failed: Object.keys(res.failed).length,
+        lessons: LESSONS.length,
+      },
       perKp,
     };
   }
@@ -622,13 +944,23 @@ export class ItemBank {
     const minMisc = Math.min(
       ...Object.values(s.perKp).flatMap((v) => Object.values(v.itemsPerMisconception))
     );
+    const res = this.residency();
     return {
       knowledgePoints: s.knowledgePoints,
       items: s.items,
+      catalogueItems: s.catalogueItems,
       generatedThisSession: s.generatedThisSession,
       locale: this.locale,
       minItemsPerKp: minItems,
       minItemsPerMisconception: minMisc,
+      // P31 — the loading surface. `degraded` is the one that matters: a non-empty list means a
+      // learner is being served generated items on those knowledge points because their chunk
+      // never arrived, and the session is playable but not the session that was authored.
+      groups: `${res.resident.length}/${res.groups} resident, ${res.loading.length} loading`,
+      lessons: LESSONS.length,
+      residentGroups: res.resident,
+      degraded: Object.entries(res.failed).map(([kpId, f]) => `${kpId}: ${f.error}`),
+      issues: ISSUES.length,
       formsPerKp: Object.fromEntries(
         Object.entries(s.perKp).map(([k, v]) => [k, `${v.forms.construct}/${v.forms.repair}/${v.forms.generate}`])
       ),
@@ -864,5 +1196,45 @@ function splitRelation(src) {
 
 /** One bank per session. P16 imports this; nothing else needs to construct its own. */
 export const itemBank = new ItemBank();
+
+/**
+ * ------------------------------------------------------------------ the review harness surface
+ *
+ * P31's proof has to exercise the cold path and the failure path, and it runs in Node, where the
+ * whole catalogue is resident before the first statement executes (see IS_NODE above). Without a
+ * way to evict a group and to make one fail on demand, the two paths that matter most — "the
+ * chunk has not arrived" and "the chunk never will" — could only be argued, not measured.
+ *
+ * These are not gameplay API. Nothing under `app/src/boot/` or `app/src/learn/` calls them;
+ * `review/measure/P31.mjs` does.
+ */
+
+/** Forget a loaded group, so the next `select()` on it takes the cold path. */
+export function __evictGroup(kpId) {
+  RESIDENT.delete(kpId);
+  INFLIGHT.delete(kpId);
+  FAILED.delete(kpId);
+}
+export function __evictAllGroups() {
+  for (const id of KP_IDS) __evictGroup(id);
+  ISSUES.length = 0;
+}
+/** Make a group's chunk refuse to load, the way a dropped connection would. */
+export function __faultGroup(kpId, on = true) {
+  if (on) FAULT.add(kpId);
+  else FAULT.delete(kpId);
+  __evictGroup(kpId);
+}
+/** SOURCE bytes of the resident groups — a build-time estimate. P31 measures the shipped chunks. */
+export function __groupBytesLoaded() {
+  return [...RESIDENT.keys()].reduce(
+    (acc, id) => ({
+      raw: acc.raw + (KP_META[id].sourceBytes?.raw ?? 0),
+      gzip: acc.gzip + (KP_META[id].sourceBytes?.gzip ?? 0),
+    }),
+    { raw: 0, gzip: 0 }
+  );
+}
+export { FAULT as __FAULT };
 
 export { generateForKp, BANK_INDEX };

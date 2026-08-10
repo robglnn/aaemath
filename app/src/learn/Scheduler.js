@@ -119,6 +119,8 @@ export class Scheduler {
      */
     this.recentByCell = new Map();
     this._event = null;
+    /** The open test-out probe: `{ kpId }`, or null. Atomic in the same way a retention check is. */
+    this._probe = null;
     this._seq = 0;
     this._syncInFlight();
   }
@@ -159,7 +161,7 @@ export class Scheduler {
    * Two things can be open at once: a multi-item certification event and the acquisition block.
    */
   _syncInFlight() {
-    this.mastery.setInFlight([this._event?.kpId ?? null, this.inFlight]);
+    this.mastery.setInFlight([this._event?.kpId ?? null, this._probe?.kpId ?? null, this.inFlight]);
   }
 
   // ------------------------------------------------------------------ sessions
@@ -203,6 +205,16 @@ export class Scheduler {
     // are the next four items. Interleaving them would break "sampled uniformly, in one sitting".
     if (this._event && this._event.index < this._event.items) return this._eventRequest();
 
+    // A test-out probe is atomic for a sharper reason: its whole integrity is that it is ONE run of
+    // consecutive unaided items. Letting the selector wander off between item 2 and item 3 would
+    // turn "three in a row" into "three, eventually", which is a different and much weaker claim.
+    if (this._probe) {
+      const req = this._probeRequest();
+      if (req) return req;
+      this._probe = null;
+      this._syncInFlight();
+    }
+
     const pick = this._choose();
     if (!pick) return null;
 
@@ -211,6 +223,18 @@ export class Scheduler {
         this.inFlight = pick.kpId;
         this.blockCount = 0;
         this._syncInFlight();
+      }
+      // The test-out replaces the teaching sequence, so the decision is made HERE, before
+      // `_acquisitionRequest` calls `phaseFor` — that call has side effects (it spends a `model`
+      // budget and moves the fade ladder), and a learner who is about to test out must not be
+      // charged for a demonstration they never saw.
+      if (this.mastery.testOutOffered(pick.kpId)) {
+        this.mastery.beginTestOut(pick.kpId);
+        this._probe = { kpId: pick.kpId };
+        this._syncInFlight();
+        const req = this._probeRequest();
+        if (req) return req;
+        this._probe = null;
       }
       return this._acquisitionRequest(pick.kpId);
     }
@@ -371,6 +395,49 @@ export class Scheduler {
       // something else. Each one has a single memorised answer; see `Mastery.refusedFamilies`.
       avoidFamilies: this.mastery.refusedFamilies(kpId, form),
       price: this.mastery.price(kpId, form, phase),
+    };
+  }
+
+  /**
+   * One item of the open test-out probe, or `null` when the probe is over (passed, failed, or out
+   * of items). Returning `null` on the FIRST wrong answer is the "failing costs almost nothing"
+   * half of the design: a learner who does not know the node pays one item, 46 seconds, and lands
+   * in ordinary teaching with that item's evidence still counted.
+   *
+   * A probe item is an ORDINARY solo acquisition item — same mode, same scoring, same M2/M3
+   * counters — pitched at the standard's own difficulty and never scaffolded. The only new thing in
+   * the system is a second gate that reads a run of them. That is deliberate: it means the probe
+   * cannot be cheaper to answer than the items it replaces, and it means a FAILED probe leaves
+   * real evidence behind instead of being thrown away.
+   */
+  _probeRequest() {
+    const kpId = this._probe.kpId;
+    const t = this.mastery.testOutOf(kpId);
+    if (!t || t.done || t.failed || t.index >= t.items) return null;
+    const form = t.forms[t.index];
+    const difficulty = this.mastery.testOutDifficulty(kpId);
+    // No `phaseFor` call: the probe IS the decision about the phase, and `phaseFor` has side
+    // effects. `learn:teach` still fires so P18 and P24 see a solo item arriving.
+    this.mastery.emit("learn:teach", { kpId, phase: "solo", testOut: true });
+    return {
+      seq: this._seq++,
+      kpId,
+      mode: "acquire",
+      testOut: true,
+      phase: "solo",
+      form,
+      difficulty,
+      seconds: this.M.phases.secondsPerItemByPhase?.solo ?? SECONDS_DEFAULT,
+      hinted: false,
+      targetMisconception: null,
+      avoidItemIds: this._recentFor(kpId, form),
+      sampling: "test-out",
+      itemIndex: t.index,
+      itemsInEvent: t.items,
+      avoidFamilies: this.mastery.refusedFamilies(kpId, form),
+      price: this.mastery.price(kpId, form, "solo"),
+      // The measurement that decided this probe exists at all, published on every item of it.
+      blindPass: t.blindPass,
     };
   }
 
@@ -584,6 +651,9 @@ export class Scheduler {
       misconception: outcome.misconception ?? null,
       response: outcome.response ?? null,
       exercises: outcome.exercises,
+      // The probe flag travels with the REQUEST, never with the caller's outcome. A presenter must
+      // not be able to declare an ordinary item a test-out item after the fact.
+      testOut: req.testOut === true,
     });
 
     // Time is a box, and a scaffolded item does not cost what an unscaffolded one costs.
@@ -598,6 +668,13 @@ export class Scheduler {
     if (req.mode === "acquire") {
       this.blockCount += 1;
       if (this.mastery.status(req.kpId) !== "learning") this.inFlight = null;
+      // `Mastery._noteTestOut` has already settled the probe's own gate inside `respond()`. All the
+      // Scheduler does here is stop pointing at a probe that is over — and, when it FAILED, hand the
+      // learner back the teaching sequence they would have had if the probe had never been offered.
+      if (this._probe && this.mastery.testOutOf(this._probe.kpId)?.done) {
+        if (this.mastery.testOutOf(this._probe.kpId).failed) this._reenterAfterProbe(this._probe.kpId);
+        this._probe = null;
+      }
       this._syncInFlight();
     } else if (this._event) {
       this._event.index += 1;
@@ -674,6 +751,31 @@ export class Scheduler {
     if (this.mastery.recentLapses(kpId) >= (LR.afterLapses ?? 2) && s.p < (LR.unlessBelow ?? 0.3)) s.pendingModel = true;
   }
 
+  /**
+   * A FAILED test-out puts the learner back exactly where the teaching sequence would have started,
+   * and this method exists because getting it wrong is silent.
+   *
+   * `phaseFor`'s `model` trigger reads `attempts === 0`. A probe spends attempts, so without this a
+   * learner who was offered a probe, got item 1 wrong and clearly needs the demonstration would be
+   * handed `guided-3` — a hint surface, the LEAST helpful rung of the fade ladder — because the
+   * ladder read them as someone who had already been taught and had slipped. That is the opposite
+   * of what happened. "Failing the probe costs almost nothing" has to mean it costs one item and
+   * NOT the worked example, or the mechanism quietly punishes exactly the learner it was supposed
+   * to leave alone.
+   *
+   * This is not `_reenterTeaching`, which is the LAPSE path: a lapse deliberately re-enters one
+   * step back from solo, because "do not re-lecture an adult about a sign error". A failed probe is
+   * a first encounter, not a lapse, so it re-enters at the top.
+   */
+  _reenterAfterProbe(kpId) {
+    const s = this.mastery.stateOf(kpId);
+    s.lastPhase = null;
+    s.lastCorrect = null;
+    s.consecutiveWrong = 0;
+    s.fadeIdx = 0;
+    s.pendingModel = s.p < this.M.phases.modelPhaseThreshold;
+  }
+
   // ------------------------------------------------------------------ abandonment
 
   /**
@@ -711,6 +813,9 @@ export class Scheduler {
   snapshot() {
     return {
       event: this._event ? { ...this._event } : null,
+      // The probe's tally lives in `Mastery` (one counter, next to the scoring decision, for the
+      // same reason the certification event's does). This is only the pointer to which node it is on.
+      probe: this._probe ? { ...this._probe } : null,
       recentItemIds: [...this.recentItemIds],
       // The per-cell window is state: dropping it on reload would hand the learner the same items
       // again, which is exactly the repeat the audit priced against.
@@ -727,6 +832,7 @@ export class Scheduler {
   restore(snap) {
     if (!snap) return false;
     this._event = snap.event ? { ...snap.event } : null;
+    this._probe = snap.probe ? { ...snap.probe } : null;
     this.recentItemIds = [...(snap.recentItemIds ?? [])];
     this.recentByCell = new Map(Object.entries(snap.recentByCell ?? {}).map(([k, v]) => [k, [...v]]));
     this.inFlight = snap.inFlight ?? null;
@@ -766,6 +872,12 @@ export class Scheduler {
             right: tally?.right ?? 0,
             refusedRight: tally?.refusedRight ?? 0,
           }
+        : null,
+      probe: this._probe
+        ? (() => {
+            const t = this.mastery.testOutOf(this._probe.kpId);
+            return { kpId: this._probe.kpId, index: t?.index ?? 0, items: t?.items ?? 0, right: t?.right ?? 0, blindPass: t?.blindPass ?? null };
+          })()
         : null,
       reviewCapLift: this.reviewCapLift,
       pullForward: this.pullForward,

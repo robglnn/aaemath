@@ -1,0 +1,96 @@
+{
+ "note": "Built by: git archive <sha> | tar -x; npx vite build. The pre-P31 tree, same vite/rollup, same machine.",
+ "assets": {
+  "05-i18n-BZEALRpR.js": {
+   "raw": 10214,
+   "gzip": 4067
+  },
+  "10-world-BN8fsBl5.js": {
+   "raw": 40884,
+   "gzip": 17607
+  },
+  "12-sky-CC4jvI_T.js": {
+   "raw": 30211,
+   "gzip": 11274
+  },
+  "14-lighting-2mk9KG6w.js": {
+   "raw": 18125,
+   "gzip": 6757
+  },
+  "16-scatter-Dlua50-n.js": {
+   "raw": 31118,
+   "gzip": 12223
+  },
+  "20-input-BiBwleEQ.js": {
+   "raw": 39697,
+   "gzip": 12821
+  },
+  "30-locomotion-BNgreILm.js": {
+   "raw": 35818,
+   "gzip": 13485
+  },
+  "32-avatar-B_LNn4nD.js": {
+   "raw": 13405,
+   "gzip": 4999
+  },
+  "40-camera-BjiXT6WN.js": {
+   "raw": 16661,
+   "gzip": 5687
+  },
+  "52-post-B823BwJ2.js": {
+   "raw": 27258,
+   "gzip": 9618
+  },
+  "60-mathtex-DLVrwanO.css": {
+   "raw": 28934,
+   "gzip": 8044
+  },
+  "60-mathtex-DtYd_muC.js": {
+   "raw": 300171,
+   "gzip": 92130
+  },
+  "62-itembank-Bh2y_UWr.js": {
+   "raw": 338,
+   "gzip": 248
+  },
+  "62-learning-CGole4RN.js": {
+   "raw": 184815,
+   "gzip": 47505
+  },
+  "en-DiJtJ4AS.js": {
+   "raw": 20223,
+   "gzip": 8348
+  },
+  "es-ComwoYi9.js": {
+   "raw": 21242,
+   "gzip": 9043
+  },
+  "index-Bu0U1eDj.js": {
+   "raw": 509740,
+   "gzip": 130539
+  },
+  "index-BuMqkyig.css": {
+   "raw": 1420,
+   "gzip": 759
+  },
+  "ItemBank-B5q9etEn.js": {
+   "raw": 1616309,
+   "gzip": 147035
+  },
+  "Materials-CYlxchcG.js": {
+   "raw": 48779,
+   "gzip": 14562
+  },
+  "pl-CJVSLZEM.js": {
+   "raw": 21799,
+   "gzip": 9545
+  },
+  "index.html": {
+   "raw": 574,
+   "gzip": 342
+  }
+ },
+ "commit": "9d7cc64566bbd9a768e1db035b7673c51aa97eae",
+ "builtWith": "vite 5 (npx vite build), Windows, node v24.11.0",
+ "gzip": "zlib default level, the level vite reports at"
+}

@@ -1,0 +1,112 @@
+====================================================================================================
+P33 — Pomodoro session layer. Offline, real engine, no browser.
+arc: 15-25 min, target 21; 10 consecutive sittings per learner
+====================================================================================================
+
+C1  TEN CONSECUTIVE SITTINGS, WALL-CLOCK MINUTES  (seed 1)
+
+archetype        1    2    3    4    5    6    7    8    9   10   |  min   med   max  in-band  mid-item  mid-event
+----------------------------------------------------------------------------------------------------
+sprinter      20.1 20.1 20.1 20.1 19.6 19.8 20.1 16.1 15.1 15.2   | 15.14 20.06 20.14   10/10      0          0
+quick         18.9 19.3 19.7 19.7 18.9 19.8 19.7 19.1 19.3 20.8   | 18.92 19.66 20.78   10/10      0          0
+steady        19.9 18.2 18.6 18.4 18.2 19.7 17.9 20.4 19.7 19.3   | 17.89 19.27 20.38   10/10      0          0
+deliberate    16.7 16.9 17.0 18.5 17.1 17.1 16.6 16.1 19.9 16.7   | 16.13 17.01 19.94   10/10      0          0
+slow          18.9 15.5 18.3 15.4 20.3 15.7 15.9 15.7 19.3 16.9   | 15.36 16.92 20.32   10/10      0          0
+erratic       19.1 18.3 19.2 18.1 17.6 18.7 19.7 17.9 17.9 19.1   | 17.64 18.68 19.69   10/10      0          0
+
+C2  BASELINE — the shipped engine with no session layer (Scheduler.sessionMinutes = 25)
+    The box counts the DESIGN's seconds, which are the same for everybody.
+
+archetype        1    2    3    4    5    6    7    8    9   10   |  min   med   max  in-band  mid-event
+----------------------------------------------------------------------------------------------------
+sprinter       8.0  8.7  8.0 11.3  8.1  8.6  9.8  9.5  9.8 10.1   |  7.98  9.51 11.29   0/10      3
+quick         13.0 13.3 13.5 14.8 12.8 14.8 15.7 13.5 13.3 14.2   | 12.77 13.47 15.65   1/10      0
+steady        19.5 19.2 21.7 22.2 20.6 19.9 24.1 20.4 19.4 22.2   | 19.24 20.64 24.08   10/10      2
+deliberate    28.8 30.8 36.4 36.6 29.0 29.1 35.1 29.6 28.6 36.6   | 28.58 30.84 36.62   0/10      0
+slow          42.7 45.1 47.1 60.3 42.5 43.7 51.6 43.9 43.0 50.7   | 42.55 45.06 60.31   0/10      0
+erratic       18.9 17.8 19.5 20.3 16.6 17.1 23.3 21.3 14.3 19.0   | 14.29 18.96 23.31   9/10      1
+
+C3  DISTRIBUTION — 40 seeds x 10 sittings per archetype (400 sittings each)
+
+archetype     sittings   min    p10    med    p90    max   in 15-25   mid-item  mid-event  carried   items/sitting  rho
+----------------------------------------------------------------------------------------------------------------------
+sprinter         400     15  15.21  19.87  20.51  21.37    400/400          0          0        0             70  0.27
+quick            400  17.93  18.89  19.55  20.53  21.97    400/400          0          0        0             46  0.48
+steady           400  16.31  17.96  18.99  20.16  23.06    400/400          0          0        0             32  0.71
+deliberate       400  15.01  16.13   17.6  19.74   23.9    400/400          0          0        0             20  1.11
+slow             400  14.13  15.44  17.12  20.15  23.99    399/400          0         14       14             14   1.6
+erratic          400  15.69  17.96  19.09  21.15  24.96    400/400          0          2        2             34  0.57
+
+C4  SAME TWENTY MINUTES, DIFFERENT AMOUNT OF WORK — items served per sitting, session arm
+    (this is the requirement: a student who works fast gets MORE done, not cut off earlier)
+
+archetype     median items   median minutes   items/minute   baseline items   baseline minutes
+----------------------------------------------------------------------------------------------------
+sprinter                74            20.06           3.69               35               9.51
+quick                   46            19.66           2.34               35              13.47
+steady                  33            19.27           1.71               36              20.64
+deliberate              21            17.01           1.23               35              30.84
+slow                    13            16.92           0.77               35              45.06
+erratic                 32            18.68           1.71               35              18.96
+
+C5  HOW A SITTING ENDS — every close reason, every last-beat outcome, session arm, C3 corpus
+
+close reason        plan-complete=342  arc-complete=119  no-closing-win=19
+last beat kind/end  acquire/complete=274  retention/complete=101  consolidate/complete=55  review/complete=48  retention/carried=1  acquire/closed-at-item=1
+closing win         certified=309  set=142  stood=27  held=1  stopped=1
+
+C9  THE ARC MUST NOT COST LEARNING — Level 1 mastered % after 10 sittings, same learner, both arms
+
+archetype     session arm   baseline arm   session items   baseline items   certifications (session arm)
+--------------------------------------------------------------------------------------------------------
+sprinter            96.875         34.375             698              342                             31
+quick               53.125         46.875             466              346                             17
+steady                37.5         40.625             313              349                             12
+deliberate          15.625           37.5             191              347                              5
+slow                  12.5         28.125             123              345                              4
+erratic               37.5         40.625             319              345                             12
+
+C6  SAVE — absent, corrupt, wrong version, interrupted, and a denied store
+
+  PASS  absent
+  PASS  corrupt-json reported
+  PASS  corrupt body quarantined
+  PASS  usable state after corruption
+  PASS  wrong version reported
+  PASS  bad fields repaired and named (pace.ratio,sessions)
+  PASS  interrupted sitting recovered
+  PASS  interrupted sitting closed, not resumed
+  PASS  interrupted counted
+  PASS  storage denied is honest, not fatal
+
+C7  PACE CARRIES — a learner does not get re-measured from the design's seconds every sitting
+
+archetype     sitting 1 minutes   sitting 1 rho   sitting 2 rho   sitting 10 rho   true seconds/solo item
+--------------------------------------------------------------------------------------------------------
+sprinter                   20.1            0.24            0.23             0.24                       9
+quick                     18.92            0.42            0.41             0.51                      16
+steady                    19.88            0.66            0.67             0.71                      26
+deliberate                16.69            1.01            1.18             1.11                      44
+slow                      18.93            1.64            1.49             1.77                      68
+erratic                   19.14            0.56            0.54             0.62                      24
+
+C8  WHAT THE SITTING SAYS  (EN source for keys P20 has not been handed yet)
+
+  open   "10 certainties hold from before."   5w 32c
+  open   "16 claims are ready to be set."   7w 30c
+  close  "2 certainties set. They will not drift."   7w 39c
+  close  "Rung."   1w 5c
+  close  "The light is going. The field rests."   7w 36c
+
+  11 lines; over 7 words: 0; over 44 chars: 0; second person: 0; exclamations: 0; banned vocabulary: 0
+
+====================================================================================================
+FAIL  C1/C3  every sitting lands in 15-25 minutes   (2399/2400 in band)
+PASS  C1/C3  nothing is STARTED that is not expected to finish inside 25   (0 of 2400 sittings served an item outside the ceiling estimate)
+PASS  C1/C3  the residual is a single long response, never the layer   (no overruns)
+PASS  C1/C3  no sitting ends mid-problem   (0 of 2400)
+FAIL  C1/C3  no sitting ends inside a certification event   (16 of 2400)
+PASS  C2     the baseline it replaces does NOT   (a control that never fails is measuring nothing)
+PASS  C6     a bad save is reported, never silently reset
+      out-of-band sittings: slow 14.13min close=ceiling-guard lastBeat=acquire/complete items=7
+====================================================================================================

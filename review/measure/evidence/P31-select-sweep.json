@@ -1,0 +1,14 @@
+{
+ "rows": 5088,
+ "digest": "567d7e50",
+ "catalogueRows": 4985,
+ "generatedRows": 103,
+ "nullRows": 0,
+ "sample": [
+  "distribute-negative|construct|1|0|distribute-negative.subtract/construct/1029wo8|catalogue|nearest-band",
+  "distribute-negative|construct|1|1|distribute-negative.subtract/construct/1029wo8|catalogue|nearest-band",
+  "distribute-negative|construct|1|2|distribute-negative.subtract/construct/tb7wpr|catalogue|nearest-band"
+ ],
+ "commit": "9d7cc64566bbd9a768e1db035b7673c51aa97eae",
+ "note": "Produced by review/measure/_p31-sweep.mjs against the PRE-SPLIT tree, exported with git archive <commit> into a temp dir and run in place. It is the answer the monolithic bank gave."
+}

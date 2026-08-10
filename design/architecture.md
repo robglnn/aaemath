@@ -99,6 +99,14 @@ learning system takes the surface over rather than fighting it.
 
 **Kernel** — `kernel:frame {dt, alpha, simTime}` · `kernel:resize {width, height}`
 
+**Quality** (P30) — `quality:tier {tier, direction, why, source, postStack, shadows, shadowResolution,
+maxPixelRatio, drawDistance, grassDensity, particleBudget}`
+
+Emitted by `core/AutoTier.js` whenever the measured tier changes, and once at boot if the
+first-frame hardware heuristic lowered it. `direction` is `"heuristic" | "down" | "up" | "tier"`.
+The payload carries the whole tier row so a listener never has to import `Config`. Any system whose
+cost scales with the tier should subscribe rather than sample `config.tier` once at setup.
+
 ## Reviewer contract
 
 Every system publishes a probe: `publish("locomotion", () => ({ ...readable state }))`. Probes must

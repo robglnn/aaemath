@@ -25,6 +25,7 @@ Claim your slot here so ordering stays predictable. Lower runs first.
 
 | order | id | piece | why it sits there |
 |-------|----|-------|-------------------|
+| 02 | autotier | P30 | picks the quality tier before any system reads `config.tier` |
 | 05 | i18n | P20 | strings must exist before any UI reads them |
 | 10 | world | P09 | terrain and colliders before anything stands on them |
 | 12 | sky | P10 | background before lighting samples it |

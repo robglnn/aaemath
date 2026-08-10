@@ -102,6 +102,151 @@ const STATE_VERSION = 1;
  */
 export const REVIEW_LAPSE_BELOW = 0.9;
 
+/**
+ * ---------------------------------------------------------------------------------------------
+ * PREREQUISITE CREDIT PROPAGATION — the discount function, and the argument for it.
+ *
+ * `content/knowledge-graph.json` §1.2 already says one true thing about this: an item tagged
+ * `exercises: [a, b]` pays a half-weight BKT update to each listed prerequisite, because solving
+ * `3(x+4) = 27` really does exercise distribution and one-step equations, "and refusing to notice
+ * that is what makes tutors ask 400 questions to teach 30 things". What it does not say is what
+ * happens at distance TWO. The graph is a DAG eleven nodes deep; a learner who reliably solves
+ * two-step equations has demonstrated one-step equations, and a learner who has demonstrated
+ * one-step equations has demonstrated what an equation asserts. Stopping the inference at one
+ * edge is not conservatism, it is just an arbitrary place to stop.
+ *
+ * THE DISCOUNT.  w(d) = prerequisiteCreditWeight ** d      (0.500, 0.250, 0.125 at d = 1, 2, 3)
+ *
+ * Four things decide it, and none of them is taste:
+ *
+ *  1. PATH CONSISTENCY. The graph is transitively reduced but not a tree: between two nodes there
+ *     can be several paths of several lengths. A discount that is not multiplicative over
+ *     composition makes the credit a node receives depend on which path the engine happened to
+ *     walk, which is a bug that would never show up in a test. `w(d1+d2) = w(d1)*w(d2)` has
+ *     exactly one continuous solution family and it is the geometric one.
+ *  2. NO NEW CONSTANT. w(1) is `model.bkt.prerequisiteCreditWeight` exactly, so distance 1 keeps
+ *     the shipped §1.2 behaviour byte for byte. The extension does not add a number, it says what
+ *     the number the design already argued for means one edge further out.
+ *  3. IT DECAYS FASTER THAN THE GRAPH BRANCHES. Level 1's mean in-degree is 1.5, so the number of
+ *     ancestors at distance d grows about 1.5^d while the credit falls as 0.5^d. Total propagated
+ *     credit per response therefore converges instead of exploding as the graph deepens.
+ *  4. IT IS CUT OFF TWICE. `maxDistance` 3 and `minWeight` 0.05 both bite; the second is what
+ *     keeps the rule honest if the first is ever raised.
+ *
+ * THE CEILING, which is the part that matters more than the discount.
+ *
+ * A propagated update may never raise a node's posterior above `ceiling`. `ceiling` is
+ * `REVIEW_LAPSE_BELOW` (0.90) and it is strictly below `model.bkt.masteryThreshold` (0.95), so:
+ *
+ *     NO KNOWLEDGE POINT CAN EVER REACH M1 ON PROPAGATED EVIDENCE ALONE.
+ *
+ * That is a one-line invariant a reviewer can check and `review/measure/P32.mjs` asserts it
+ * directly. It is also not a new constant: 0.90 is already the posterior at which §3 says a node
+ * is no longer confidently held. Inference can carry a learner to the edge of "probably knows
+ * this" and no further; the last five points have to be earned on the node itself, unaided, and
+ * then survive a retention check twelve hours and a session later.
+ *
+ * DIRECTION. Ancestors only, always, by construction — `propagate()` walks
+ * `Graph.ancestorDistances`, and there is deliberately no descendant equivalent of that method.
+ * Crediting forwards would hand a learner who knows one-step equations some two-step equations,
+ * which is the direction that manufactures mastery nobody earned.
+ * ---------------------------------------------------------------------------------------------
+ */
+export const PROPAGATION = {
+  /** Furthest ancestor an item may pay credit to, in prerequisite edges. */
+  maxDistance: 3,
+  /** Below this the update is not worth the bookkeeping and is skipped outright. */
+  minWeight: 0.05,
+  /** A propagated update may never push a posterior past this. Strictly below `masteryThreshold`. */
+  ceiling: REVIEW_LAPSE_BELOW,
+  /**
+   * Distance 1 keeps §1.2's behaviour exactly: it pays on any SCORED response, up or down, because
+   * the item genuinely exercised that prerequisite. Distance >= 2 is an INFERENCE rather than an
+   * exercise, so it demands the strongest response class the engine has — `credited`, i.e. correct,
+   * unaided, above the latency floor, in a mastery-eligible (form x phase) on an honest bank cell.
+   */
+  inferenceRequiresCredited: true,
+  /**
+   * Distance 1 resets the prerequisite's spacing clock (§1.2). Distance >= 2 does not: "a skill you
+   * exercised in passing is not a skill you were checked on" is more true, not less, two edges out,
+   * and letting inference defer a revocation check is how a lapse gets laundered.
+   */
+  clockResetMaxDistance: 1,
+};
+
+/**
+ * ---------------------------------------------------------------------------------------------
+ * TEST-OUT — the short high-difficulty probe that replaces the teaching march.
+ *
+ * The product requirement: a student who already knows a knowledge point should spend about two
+ * minutes proving it, not an hour being taught it. The design's normal route to `provisional` is
+ * M1 + M2 + M3: six unaided mastery-eligible opportunities, three of them at or above the band
+ * centre, two distinct forms, posterior at 0.95 — and it is reached through a
+ * model -> guided-1 -> guided-2 -> guided-3 -> solo fade that costs four items before the first
+ * one of those six can even be counted.
+ *
+ * The probe replaces that with `plan.items` items that are ALL harder than M2 asks for, ALL
+ * unaided, ALL in mastery-eligible forms, and ALL of which must be right. It aborts on the first
+ * wrong answer, so failing it costs one item and drops the learner into ordinary teaching with the
+ * evidence they did produce still on the books.
+ *
+ * THE TRAP THIS PROJECT HAS FALLEN INTO THREE TIMES, stated before the parameters so it cannot be
+ * skimmed past: a test-out built on guessable items is a free pass, and the number that decides
+ * whether an item is guessable is NOT `model.trueGuessByForm`. That table says `construct` is
+ * worth 0.03 because "a numeric slot accepts about forty values". On the bank this game actually
+ * ships, the measured worst-surviving-family blind rate of a `construct` cell runs from 0.071 to
+ * 0.300 — up to TEN TIMES the constant. A three-item probe priced on the constant looks like
+ * 2.7e-5 and is really 1.6e-2. So:
+ *
+ *   - the probe length is DERIVED, per knowledge point, from `bankAudit` — the measured rates of
+ *     the shipped pools, at the granularity the engine already refuses families at;
+ *   - only forms in `formsEligibleForMastery` on cells the audit did not refuse are ever served,
+ *     so `select4` and `judge2` cannot appear in a probe at any length;
+ *   - a knowledge point whose measured rates cannot reach `maxBlindPass` within `maxItems` is
+ *     **NOT ELIGIBLE** for test-out. It is named in `issues` and in the probe. The bar is never
+ *     lowered to make a node fit.
+ *
+ * WHY `maxBlindPass` IS 1e-3. Not by taste: by comparison with the route the probe replaces. A
+ * blind responder drawing at the measured rates opens the ORDINARY M1+M2+M3 gate on 5% to 24% of
+ * Level 1's nodes within the twelve attempts §4's `Freshness` term allows (measured in
+ * `review/measure/P32.mjs`, claim G2). At 1e-3 the probe is 50x to 240x harder to fluke than the
+ * gate it stands in for, so it can never be the weakest link in the system. The gap in the other
+ * direction is a real defect in the shipped item bank and is reported rather than absorbed.
+ * ---------------------------------------------------------------------------------------------
+ */
+export const TEST_OUT = {
+  /** Ceiling on P(a blind responder passes the whole probe), computed on the MEASURED bank. */
+  maxBlindPass: 1e-3,
+  /** Never fewer than this, however clean the pool measures. Two distinct forms need three items. */
+  minItems: 3,
+  /** More than this and the probe is no longer a test-out; the node is refused instead. */
+  maxItems: 6,
+  /**
+   * Offer the probe when the learner already carries signal on this node — the posterior, which is
+   * what prerequisite propagation moves, or the global ability estimate standing at or above the
+   * node's own difficulty centre. Either is "we have reason to think you may already know this".
+   */
+  offerAbove: 0.45,
+  abilityMargin: 0,
+  /**
+   * Stop offering probes after this many consecutive failures, until the learner certifies
+   * something. Adaptivity cuts both ways: "no time wasted on what they already know" has a mirror
+   * image, which is "no time wasted proving, over and over, that they do not". Three failures in a
+   * row is the learner telling the engine — in three items — that its "you may already know this"
+   * hypothesis is wrong across the whole current frontier, and continuing to offer probes spends
+   * the session on items that die on item 1. A CERTIFICATION resets it, because that is the
+   * strongest evidence the engine has that the learner is now competent where they are standing;
+   * a learner who is certifying is not the learner this brake is for.
+   */
+  stopAfterConsecutiveFailures: 3,
+  /**
+   * Every probe item sits at the node's band centre plus this, which is `ability.certificationOffset`
+   * — the difficulty the standard names. M2 asks for three of six AT the centre; the probe asks for
+   * all of them ABOVE it.
+   */
+  difficultyOffset: 0.3,
+};
+
 export const logistic = (x) => 1 / (1 + Math.exp(-x));
 
 /**
@@ -701,6 +846,14 @@ export class Mastery {
     // §1.2: "Prerequisite credit resets the prerequisite's spacing clock." Switchable so
     // review/measure/P16.mjs can measure what the rule is worth instead of asserting it.
     this.prerequisiteClockReset = opts.prerequisiteClockReset !== false;
+    /**
+     * The propagation rule (see `PROPAGATION`). Switchable in every part so
+     * `review/measure/P32.mjs` can measure what each clause is worth rather than assert it —
+     * `maxDistance: 1` is exactly the shipped pre-P32 behaviour and is the control arm.
+     */
+    this.propagationRule = { ...PROPAGATION, ...(opts.propagation ?? {}) };
+    /** The test-out rule (see `TEST_OUT`). `enabled: false` is the control arm. */
+    this.testOutRule = { enabled: true, ...TEST_OUT, ...(opts.testOut ?? {}) };
     this._storage = opts.storage === undefined ? safeStorage() : opts.storage;
 
     /** Non-fatal content problems found at load. Surfaced in the probe so they cannot hide. */
@@ -715,6 +868,8 @@ export class Mastery {
     this.responses = 0;
     this.session = 0;
     this.sessionStartedAt = null;
+    /** Consecutive failed test-outs, learner-wide. See `TEST_OUT.stopAfterConsecutiveFailures`. */
+    this.testOutFailStreak = 0;
 
     this.stats = {
       items: 0,
@@ -724,7 +879,21 @@ export class Mastery {
       unpriceableCellItems: 0,
       refusedUpward: 0,
       prerequisiteCredits: 0,
+      /** Propagated updates by graph distance, so a reviewer can see how far inference reached. */
+      creditsByDistance: {},
+      /** Times the propagation ceiling actually bit. Zero means the ceiling was never tested. */
+      ceilingHits: 0,
       gateOpens: 0,
+      /** Of `gateOpens`, the ones reached by test-out rather than by the M1+M2+M3 march. */
+      gateOpensByTestOut: 0,
+      testOutsOffered: 0,
+      /** `{ posterior, ability }` — see `testOutTrigger`. Posterior offers are propagation's work. */
+      testOutsByTrigger: {},
+      testOutsPassed: 0,
+      /** Of `testOutsPassed`, the ones whose offer came from a propagated posterior. */
+      testOutsPassedByTrigger: {},
+      testOutsFailed: 0,
+      testOutItems: 0,
       certifications: 0,
       lapses: 0,
     };
@@ -742,6 +911,23 @@ export class Mastery {
 
     this.byKp = new Map();
     for (const id of this.graph.ids) this.byKp.set(id, freshNodeState(this.graph.band(id).prior));
+
+    /**
+     * One test-out plan per knowledge point, derived at load from the MEASURED bank so a reviewer
+     * can read the whole eligibility decision off the probe without answering an item. Eager on
+     * purpose: a node that can never be tested out of is a content fact, and it belongs in
+     * `issues` at construction next to the other content facts, not the first time a learner
+     * happens to reach it.
+     */
+    this.testOutPlans = new Map();
+    for (const id of this.graph.ids) this.testOutPlans.set(id, this._deriveTestOutPlan(id));
+    const noProbe = this.graph.ids.filter((id) => !this.testOutPlans.get(id).eligible);
+    for (const id of noProbe)
+      this.issues.push(
+        `TEST-OUT: "${id}" is NOT eligible for a test-out — ${this.testOutPlans.get(id).reason}. A learner ` +
+          `who already knows it must walk the full teaching sequence. The fix is content: more distinct ` +
+          `answers in that node's committed pools, never a looser maxBlindPass.`
+      );
   }
 
   // ------------------------------------------------------------------- pricing
@@ -892,6 +1078,201 @@ export class Mastery {
     };
   }
 
+  // ------------------------------------------------------------------- test-out
+
+  /**
+   * GROUND TRUTH for one probe item on this (knowledge point x form): what a responder with zero
+   * knowledge of the node actually achieves against the pool the game will serve.
+   *
+   * Three terms, composed by `max`, and the third is the one that decides every real answer: the
+   * form's constant, the `solo` phase's constant (0.00 — a probe is never scaffolded), and the
+   * MEASURED rate of the surviving families of this exact cell, taken at its Wilson upper bound
+   * because "measured 0.25 over 8 draws" is not 0.25, it is "at most 0.28".
+   */
+  probeItemBlindRate(kpId, form) {
+    const cell = this.cell(kpId, form);
+    return Math.max(
+      this.pricing.trueByForm[form] ?? 0,
+      this.pricing.trueByPhase.solo ?? 0,
+      cell ? Math.max(cell.blind, cell.blindUpper) : 1
+    );
+  }
+
+  /**
+   * The probe for one knowledge point, or the named reason there is none.
+   *
+   * The length is not a constant. It is the smallest number of items whose measured blind-pass
+   * probability clears `maxBlindPass`, over a form cycle ordered cheapest-blind-rate first, and it
+   * is bounded below by `minItems` (three, so a probe always spans at least two distinct forms
+   * where the node has two) and above by `maxItems`. A node that cannot reach the bound inside
+   * `maxItems` is refused: `{ eligible: false }`, named in `issues`, and the learner walks the
+   * ordinary teaching sequence. That refusal is the whole integrity of the mechanism — the
+   * alternative, quietly running a shorter probe on a guessable pool, is the free pass three
+   * critics have already caught versions of in this project.
+   */
+  _deriveTestOutPlan(kpId) {
+    const forms = this.masteryFormsFor(kpId);
+    if (!forms.length)
+      return { kpId, eligible: false, items: 0, forms: [], blindPass: 1, reason: "no mastery-eligible form survives the bank audit" };
+
+    const R = this.testOutRule;
+    // Cheapest first, then declaration order of `forms.order` as a deterministic tie-break.
+    const rated = forms
+      .map((form) => ({ form, rate: this.probeItemBlindRate(kpId, form) }))
+      .sort((a, b) => a.rate - b.rate || this.M.forms.order.indexOf(a.form) - this.M.forms.order.indexOf(b.form));
+
+    const seq = [];
+    let blindPass = 1;
+    for (let i = 0; i < R.maxItems; i++) {
+      const pick = rated[i % rated.length];
+      seq.push(pick.form);
+      blindPass *= pick.rate;
+      if (seq.length >= R.minItems && blindPass <= R.maxBlindPass)
+        return {
+          kpId,
+          eligible: true,
+          items: seq.length,
+          forms: seq,
+          rates: rated.map((r) => round6(r.rate)),
+          blindPass: round6(blindPass),
+          reason: null,
+        };
+    }
+    return {
+      kpId,
+      eligible: false,
+      items: 0,
+      forms: [],
+      rates: rated.map((r) => round6(r.rate)),
+      blindPass: round6(blindPass),
+      reason:
+        `its measured blind-pass probability is ${blindPass.toExponential(2)} at ${R.maxItems} items, above the ` +
+        `${R.maxBlindPass} bound (worst surviving family rates ${rated.map((r) => `${r.form} ${r.rate.toFixed(3)}`).join(", ")})`,
+    };
+  }
+
+  testOutPlan(kpId) {
+    return this.testOutPlans.get(kpId) ?? { kpId, eligible: false, items: 0, forms: [], blindPass: 1, reason: "unknown knowledge point" };
+  }
+
+  /**
+   * Should this learner be offered the probe on this knowledge point, right now?
+   *
+   * FIRST ENCOUNTER ONLY, and once ever. A test-out that can be retried is a lottery with unlimited
+   * tickets: at the shipped bank's rates, eleven retries turn a 1e-3 probe into a 1e-2 one. `attempts`
+   * and `testOut` together make it strictly one shot, and a lapsed node is out too — a learner who
+   * has already lost this skill once does not get to re-certify it in ninety seconds.
+   *
+   * AND ONLY ON SIGNAL. Either the posterior is already above `offerAbove` — which is where
+   * prerequisite propagation puts a node whose descendants the learner has been getting right — or
+   * the global ability estimate stands at or above the node's own difficulty centre. This is the
+   * clause that makes the mechanism adaptive rather than universal: a struggling learner's theta
+   * falls, so they stop being offered probes and stop paying an item apiece to fail them.
+   */
+  testOutOffered(kpId) {
+    return this.testOutTrigger(kpId) !== null;
+  }
+
+  /**
+   * WHICH signal opened the offer, or `null` for no offer. Published rather than folded into a
+   * boolean because the two triggers are the two halves of "advance on minimal signal once related
+   * foundations are verified or inferred", and they are worth different things:
+   *
+   *   "posterior" — this node's own P(known) is above `offerAbove`. **Only propagation can put it
+   *                 there.** Every band prior in the content file is below the threshold (0.35 at
+   *                 band 1 down to 0.08 at band 5), and a node with `attempts > 0` is not offered a
+   *                 probe at all, so a posterior-triggered offer is prerequisite credit arriving
+   *                 from work the learner did somewhere else in the graph. That count is the
+   *                 measurement of what propagation is FOR.
+   *   "ability"   — the global ability estimate stands at or above this node's difficulty centre.
+   *                 This is the bootstrap: it is what offers a probe on the very first node of the
+   *                 very first session, before any evidence exists to propagate.
+   */
+  testOutTrigger(kpId) {
+    if (!this.testOutRule.enabled) return null;
+    const plan = this.testOutPlan(kpId);
+    if (!plan.eligible) return null;
+    const s = this.stateOf(kpId);
+    if (s.status !== "learning" || s.attempts > 0 || s.testOut || s.lapses > 0) return null;
+    const R = this.testOutRule;
+    if (this.testOutFailStreak >= R.stopAfterConsecutiveFailures) return null;
+    if (s.p >= R.offerAbove) return "posterior";
+    if (this.theta >= this.graph.centre(kpId) + R.abilityMargin) return "ability";
+    return null;
+  }
+
+  /** Open the probe. The Scheduler calls this; the tally lives here, next to the scoring decision. */
+  beginTestOut(kpId) {
+    const plan = this.testOutPlan(kpId);
+    const s = this.stateOf(kpId);
+    const trigger = this.testOutTrigger(kpId) ?? "forced";
+    s.testOut = { items: plan.items, forms: [...plan.forms], blindPass: plan.blindPass, trigger, index: 0, right: 0, failed: false, done: false };
+    this.stats.testOutsOffered += 1;
+    this.stats.testOutsByTrigger[trigger] = (this.stats.testOutsByTrigger[trigger] ?? 0) + 1;
+    return s.testOut;
+  }
+
+  testOutOf(kpId) {
+    return this.stateOf(kpId).testOut;
+  }
+
+  /** The difficulty every probe item sits at: the standard's own difficulty, never below it. */
+  testOutDifficulty(kpId) {
+    return this.graph.centre(kpId) + this.testOutRule.difficultyOffset;
+  }
+
+  /**
+   * Score one probe item's verdict into the probe's own gate, after `respond()` has already scored
+   * it as the ordinary solo acquisition item it is.
+   *
+   * T1  the response was `credited` — correct, unaided, above the latency floor, in a
+   *     mastery-eligible (form x phase) on a bank cell the audit did not refuse;
+   * T2  it was served at or above `testOutDifficulty` — harder than M2's "at band";
+   * T3  every item, no exceptions: one wrong answer ends the probe;
+   * T4  the whole probe's measured blind-pass probability was inside `maxBlindPass` before it was
+   *     ever offered (`_deriveTestOutPlan`);
+   * T5  when the last item lands, M1 and M5 must ALSO hold — the posterior really is at 0.95 and
+   *     nothing in the window was scored upward from under the latency floor. The probe is a
+   *     shortcut around M2 and M3, which are counts; it is not a shortcut around the posterior.
+   */
+  _noteTestOut(kpId, s, out) {
+    const t = s.testOut;
+    if (!t || t.done) return;
+    t.index += 1;
+    const okDifficulty = out.difficulty >= this.testOutDifficulty(kpId) - 1e-9;
+    this.stats.testOutItems += 1;
+    if (out.credited && okDifficulty) t.right += 1;
+    else {
+      t.failed = true;
+      t.done = true;
+      t.reason = !out.credited ? `item ${t.index} not credited (${out.reason ?? (out.correct ? "wrong-class" : "wrong")})` : `item ${t.index} under-pitched`;
+      this.testOutFailStreak += 1;
+      this.stats.testOutsFailed += 1;
+      return;
+    }
+    if (t.index < t.items) return;
+    t.done = true;
+    const g = this.gateDetail(kpId);
+    if (t.right === t.items && g.m1 && g.m5) {
+      t.passed = true;
+      this.testOutFailStreak = 0;
+      this.stats.testOutsPassed += 1;
+      this.stats.testOutsPassedByTrigger[t.trigger] = (this.stats.testOutsPassedByTrigger[t.trigger] ?? 0) + 1;
+      // The probe can incidentally satisfy M2 on its last item (six items, six opportunities), in
+      // which case `respond` has already opened the gate the ordinary way. Do not open it twice,
+      // and do not claim the credit for it either.
+      if (s.status === "learning") {
+        this.stats.gateOpensByTestOut += 1;
+        this._openGate(kpId, s, "test-out");
+      }
+    } else {
+      t.failed = true;
+      t.reason = t.right === t.items ? `posterior ${round6(s.p)} short of M1/M5 at the end of the probe` : "not every item credited";
+      this.testOutFailStreak += 1;
+      this.stats.testOutsFailed += 1;
+    }
+  }
+
   // --------------------------------------------------------------------- state
 
   /** The live per-node record. Mutating spacing fields on it is the Scheduler's job, and only its. */
@@ -1030,6 +1411,10 @@ export class Mastery {
       latencyMs: r.latencyMs ?? null,
       response: r.response ?? null,
       hinted,
+      // The difficulty the item was actually served at. The test-out gate reads it (T2), and a
+      // reviewer must be able to see the probe was pitched above the band centre from outside.
+      difficulty: b,
+      testOut: !!r.testOut,
       scored: false,
       masteryEligible: false,
       // The engine's verdict, not the caller's: `correct` is what the world reported, `credited`
@@ -1071,6 +1456,9 @@ export class Mastery {
         this.stats.unpriceableCellItems += 1;
       this._bookkeep(s, out);
       this._emitRespond(out);
+      // An unscorable item inside a probe ends the probe. It cannot be `credited`, so T1 fails, and
+      // the alternative — skipping it and serving another — would let a caller retry a probe item.
+      if (r.testOut) this._noteTestOut(kpId, s, out);
       return out;
     }
 
@@ -1085,6 +1473,9 @@ export class Mastery {
       out.reason = fast ? "not-scored-upward:latency-floor" : "not-scored-upward:hinted";
       this._bookkeep(s, out);
       this._emitRespond(out);
+      // Same rule, and this is the arm that matters most: a probe answered under the latency floor
+      // or after the learner read a hint fails T1 outright. Speed and help cannot buy a test-out.
+      if (r.testOut) this._noteTestOut(kpId, s, out);
       return out;
     }
 
@@ -1123,42 +1514,119 @@ export class Mastery {
       if (fast && correct) s.fastUpwardInWindow += 1;
     }
 
-    // ---- prerequisite credit, §1.2 at weight 0.5. Never counts toward M2 — you cannot be
-    // certified on a skill you were only ever tested on incidentally — but it does reset the
-    // prerequisite's spacing clock.
-    for (const pid of this._exercised(r, node)) {
-      if (pid === kpId || !this.graph.has(pid)) continue;
+    // ---- prerequisite credit, §1.2 at weight 0.5, propagated along the DAG (see `PROPAGATION`).
+    out.propagated = this.propagate(r, node, out);
+
+    this.emit("learn:mastery", { kpId, p: round6(s.p), delta: round6(out.delta), status: s.status });
+
+    // ---- the gate itself
+    if (s.status === "learning" && this.gateReached(kpId)) this._openGate(kpId, s);
+    // ---- and the probe's own gate, which reads the verdict the gate above just recorded.
+    if (r.testOut) this._noteTestOut(kpId, s, out);
+    out.status = s.status;
+    return out;
+  }
+
+  /**
+   * PREREQUISITE CREDIT PROPAGATION. Evidence flows **backwards** along the prerequisite DAG and
+   * only backwards, at `w(d) = prerequisiteCreditWeight ** d`, capped by `ceiling`. The argument
+   * for every one of those words is at `PROPAGATION`, above.
+   *
+   * Three properties this function is written to make obvious on inspection, because each of them
+   * is a way the mechanism could hand out mastery nobody earned:
+   *
+   *  - **Ancestors only.** The walk is `graph.ancestorDistances(kpId)`. There is no descendant
+   *    branch anywhere in it, and `Graph` deliberately publishes no descendant-distance method.
+   *  - **Never toward certainty.** A propagated update may raise a posterior to `ceiling` (0.90)
+   *    and no further, and `ceiling` is strictly below `masteryThreshold` (0.95). Propagation
+   *    therefore cannot satisfy M1 at any distance, from any amount of evidence, ever. A node
+   *    already above the ceiling on its OWN evidence is left exactly where it is rather than
+   *    dragged back down — inference must not be able to un-earn something that was earned.
+   *  - **No counters.** `scored`, `atBand` and the form set are untouched here, at every distance.
+   *    §1.2: you cannot be certified on a skill you were only ever tested on incidentally.
+   *
+   * @returns {Array<{kpId:string, distance:number, weight:number, delta:number}>}
+   */
+  propagate(r, node, out) {
+    const R = this.propagationRule;
+    const kpId = node.id;
+    const w1 = this.M.bkt.prerequisiteCreditWeight;
+    /** Ground truth of the item that is paying: credit is never worth more than its own source. */
+    const sourceTrue = this.trueGuess(kpId, out.form, out.phase, r.family ?? null);
+    const paid = [];
+
+    // Distance 1 is the shipped §1.2 rule, unchanged: whatever the item says it exercised, or the
+    // A3 stand-in until P17 tags items. Deeper distances are reached FROM those seeds, so a caller
+    // that declares a narrow `exercises` list narrows the whole cone rather than only its first ring.
+    const seeds = this._exercised(r, node).filter((pid) => pid !== kpId && this.graph.has(pid));
+    const distance = new Map(seeds.map((pid) => [pid, 1]));
+    if (R.maxDistance > 1) {
+      const cone = this.graph.ancestorDistances(kpId);
+      for (const seed of seeds) {
+        for (const [aid, d] of this.graph.ancestorDistances(seed)) {
+          // The distance the ENGINE uses is the shortest one from the item's own knowledge point,
+          // so a node reachable by two seeds is credited once, at its true graph distance. Nodes
+          // outside `kpId`'s ancestor cone cannot appear here at all: `ancestorDistances(seed)` is
+          // a subset of it whenever `seed` is, and a caller-supplied `exercises` entry that is NOT
+          // an ancestor of `kpId` contributes only itself, at distance 1, exactly as §1.2 says.
+          const real = cone.get(aid) ?? d + 1;
+          if (!distance.has(aid) || real < distance.get(aid)) distance.set(aid, real);
+        }
+      }
+    }
+
+    for (const [pid, d] of distance) {
+      if (d > R.maxDistance) continue;
+      const weight = w1 ** d;
+      if (weight < R.minWeight) continue;
+      // Distance 1 is an EXERCISE — the item genuinely used that skill — and pays on any scored
+      // response, up or down. Distance >= 2 is an INFERENCE about a skill the item did not touch,
+      // and it demands the strongest response class the engine has.
+      if (d > 1 && R.inferenceRequiresCredited && !out.credited) continue;
       const ps = this.stateOf(pid);
       const pband = this.graph.band(pid);
       const pbefore = ps.p;
       // The prerequisite is priced at its OWN band, but never below what the item that paid the
       // credit was worth: a correct answer to something flukeable at 0.15 is not stronger evidence
       // about the prerequisite than it is about the knowledge point it was actually aimed at.
-      const pguess = Math.max(pband.guess, this.trueGuess(kpId, form, phase, r.family ?? null));
-      ps.p = bktUpdate(ps.p, correct, pband.slip, pguess, this.learnRate(pid), this.M.bkt.prerequisiteCreditWeight);
+      const pguess = Math.max(pband.guess, sourceTrue);
+      let after = bktUpdate(ps.p, out.correct, pband.slip, pguess, this.learnRate(pid), weight);
+      if (after > pbefore) {
+        const cap = Math.max(pbefore, R.ceiling);
+        if (after > cap) {
+          after = cap;
+          this.stats.ceilingHits += 1;
+        }
+      }
+      ps.p = after;
       ps.creditedAt = this.now();
       this.stats.prerequisiteCredits += 1;
-      // The clock restarts on a CORRECT exposure only, and it restarts the current interval
-      // rather than advancing the ladder — a skill you exercised in passing is not a skill you
-      // were checked on. A wrong response must not be able to defer the revocation check.
-      if (correct && this.prerequisiteClockReset && ps.status === "mastered" && Number.isFinite(ps.nextEventAt) && ps.intervalDays > 0) {
+      this.stats.creditsByDistance[d] = (this.stats.creditsByDistance[d] ?? 0) + 1;
+      // The clock restarts on a CORRECT exposure only, at distance 1 only, and it restarts the
+      // current interval rather than advancing the ladder — a skill you exercised in passing is not
+      // a skill you were checked on, and inference two edges out is less of a check still. A wrong
+      // response must not be able to defer the revocation check either.
+      if (
+        out.correct &&
+        d <= R.clockResetMaxDistance &&
+        this.prerequisiteClockReset &&
+        ps.status === "mastered" &&
+        Number.isFinite(ps.nextEventAt) &&
+        ps.intervalDays > 0
+      ) {
         ps.nextEventAt = Math.max(ps.nextEventAt, this.now() + ps.intervalDays * 1440);
       }
+      paid.push({ kpId: pid, distance: d, weight: round6(weight), delta: round6(ps.p - pbefore) });
       this.emit("learn:mastery", {
         kpId: pid,
         p: round6(ps.p),
         delta: round6(ps.p - pbefore),
         status: ps.status,
         credit: "prerequisite",
+        distance: d,
       });
     }
-
-    this.emit("learn:mastery", { kpId, p: round6(s.p), delta: round6(out.delta), status: s.status });
-
-    // ---- the gate itself
-    if (s.status === "learning" && this.gateReached(kpId)) this._openGate(kpId, s);
-    out.status = s.status;
-    return out;
+    return paid;
   }
 
   /**
@@ -1256,16 +1724,25 @@ export class Mastery {
     return g.m1 && g.m2 && g.m3 && g.m5;
   }
 
-  _openGate(kpId, s) {
+  /**
+   * @param {string} kpId
+   * @param {object} s
+   * @param {"gate"|"test-out"} [via] which of the two routes to `provisional` opened it. An
+   *        additive field on `learn:unlock` and `learn:mastery`, in the spirit of §6.3's `scored`:
+   *        P24 and a reviewer must be able to tell a certification march from a two-minute probe
+   *        without inferring it from a counter that did not move.
+   */
+  _openGate(kpId, s, via = "gate") {
     s.status = "provisional";
     s.everUnlocked = true;
+    s.unlockedVia = via;
     s.provisionalAt = this.now();
     s.provisionalSession = this.session;
     s.consolidated = false;
     s.nextEventAt = this.now() + this.M.spacing.consolidationMinutes;
     this.stats.gateOpens += 1;
-    this.emit("learn:unlock", { kpId });
-    this.emit("learn:mastery", { kpId, p: round6(s.p), delta: 0, status: s.status });
+    this.emit("learn:unlock", { kpId, via });
+    this.emit("learn:mastery", { kpId, p: round6(s.p), delta: 0, status: s.status, via });
     this.persist();
   }
 
@@ -1319,6 +1796,8 @@ export class Mastery {
 
   certify(kpId, { intervalDays, dueAtMinutes }) {
     const s = this.stateOf(kpId);
+    // A learner who is certifying is not the learner the test-out brake is for.
+    this.testOutFailStreak = 0;
     s.status = "mastered";
     s.everMastered = true;
     s.everUnlocked = true;
@@ -1422,6 +1901,8 @@ export class Mastery {
         forms: [...s.forms].sort(),
         attempts: s.attempts,
         lapses: s.lapses,
+        unlockedVia: s.unlockedVia,
+        testOut: s.testOut ? { items: s.testOut.items, index: s.testOut.index, right: s.testOut.right, passed: !!s.testOut.passed, failed: !!s.testOut.failed } : null,
       };
       if (Number.isFinite(s.nextEventAt) && s.nextEventAt <= t) due.push({ kpId: id, overdueMinutes: round6(t - s.nextEventAt) });
     }
@@ -1448,6 +1929,39 @@ export class Mastery {
       stats: { ...this.stats },
       scorablePairs: this.pricing.description,
       bankPricing: this.cellPricing.description,
+      // §8's `unscoredItems` exists so a reviewer can see the form gate firing from outside the
+      // engine. These two exist for the same reason, one axis further out: a reviewer must be able
+      // to read the propagation cap and the test-out eligibility decision without answering an item.
+      propagation: {
+        ...this.propagationRule,
+        creditWeightAtDistance1: this.M.bkt.prerequisiteCreditWeight,
+        credits: this.stats.prerequisiteCredits,
+        byDistance: { ...this.stats.creditsByDistance },
+        ceilingHits: this.stats.ceilingHits,
+        masteryThreshold: this.M.bkt.masteryThreshold,
+        ceilingIsBelowThreshold: this.propagationRule.ceiling < this.M.bkt.masteryThreshold,
+      },
+      testOut: {
+        enabled: this.testOutRule.enabled,
+        maxBlindPass: this.testOutRule.maxBlindPass,
+        eligible: this.graph.ids.filter((id) => this.testOutPlan(id).eligible).length,
+        ineligible: this.graph.ids.filter((id) => !this.testOutPlan(id).eligible).map((id) => ({ kpId: id, reason: this.testOutPlan(id).reason })),
+        // What the derivation actually produced, per node, so the length can be checked against
+        // `bankPricing.rejectedCells` rather than taken on trust.
+        plans: Object.fromEntries(this.graph.ids.map((id) => [id, { items: this.testOutPlan(id).items, forms: this.testOutPlan(id).forms, blindPass: this.testOutPlan(id).blindPass }])),
+        offered: this.stats.testOutsOffered,
+        failStreak: this.testOutFailStreak,
+        stopped: this.testOutFailStreak >= this.testOutRule.stopAfterConsecutiveFailures,
+        // A "posterior" offer is one only prerequisite propagation could have produced: every band
+        // prior in the content file sits below `offerAbove`, and a node with any attempts on it is
+        // never offered a probe. This pair is the measurement of what propagation buys.
+        byTrigger: { ...this.stats.testOutsByTrigger },
+        passedByTrigger: { ...this.stats.testOutsPassedByTrigger },
+        passed: this.stats.testOutsPassed,
+        failed: this.stats.testOutsFailed,
+        itemsSpent: this.stats.testOutItems,
+        gateOpensByTestOut: this.stats.gateOpensByTestOut,
+      },
       issues: this.issues,
       graph: this.graph.stats(),
       kps,
@@ -1491,6 +2005,10 @@ export class Mastery {
         lastMisconception: s.lastMisconception,
         consecutiveSameMisconception: s.consecutiveSameMisconception,
         event: s.event,
+        // Without this, a reload hands the learner a second test-out on a node they already used
+        // theirs on — which turns a one-shot 1e-3 probe into an unlimited-ticket lottery.
+        testOut: s.testOut ? { ...s.testOut, forms: [...s.testOut.forms] } : null,
+        unlockedVia: s.unlockedVia,
       };
     }
     return {
@@ -1498,6 +2016,7 @@ export class Mastery {
       theta: this.theta,
       responses: this.responses,
       session: this.session,
+      testOutFailStreak: this.testOutFailStreak,
       stats: { ...this.stats },
       inFlight: [...this.inFlight],
       // The Scheduler's half of the state. Without it a reload used to drop a half-answered
@@ -1513,6 +2032,7 @@ export class Mastery {
     this.theta = snap.theta ?? this.M.ability.theta0;
     this.responses = snap.responses ?? 0;
     this.session = snap.session ?? 0;
+    this.testOutFailStreak = snap.testOutFailStreak ?? 0;
     Object.assign(this.stats, snap.stats ?? {});
     this.inFlight = [...(snap.inFlight ?? [])];
     for (const id of this.graph.ids) {
@@ -1525,6 +2045,8 @@ export class Mastery {
         nextEventAt: from.nextEventAt == null ? Infinity : from.nextEventAt,
         // Key order is preserved so a re-persisted snapshot is byte-identical to the one read.
         event: from.event ? { ...from.event, refusedRight: from.event.refusedRight ?? 0 } : null,
+        testOut: from.testOut ? { ...from.testOut, forms: [...(from.testOut.forms ?? [])] } : null,
+        unlockedVia: from.unlockedVia ?? null,
       });
     }
     // A snapshot that CARRIES a scheduler block is resumable, whether or not this particular
@@ -1545,6 +2067,16 @@ export class Mastery {
     const hits = [];
     for (const id of this.graph.ids) {
       const s = this.stateOf(id);
+      // Same argument, applied to the probe: a test-out that was walked away from mid-run is a
+      // test-out that was failed. Leaving it open would let a learner re-roll the remaining items,
+      // and marking it passed is obviously worse. One shot means one shot across reloads too.
+      if (s.testOut && !s.testOut.done) {
+        s.testOut.done = true;
+        s.testOut.failed = true;
+        s.testOut.reason = `abandoned:${reason}`;
+        this.testOutFailStreak += 1;
+        this.stats.testOutsFailed += 1;
+      }
       if (!s.event) continue;
       const wasRetention = s.event.mode === "retention" && s.event.served > 0;
       s.event = null;
@@ -1623,6 +2155,10 @@ function freshNodeState(prior) {
     consecutiveSameMisconception: 0,
     creditedAt: null,
     event: null,
+    /** The test-out probe: `null` until offered, then the tally, and it is never cleared. One shot. */
+    testOut: null,
+    /** `"gate"` or `"test-out"`. Which route took this node to `provisional`. */
+    unlockedVia: null,
   };
 }
 

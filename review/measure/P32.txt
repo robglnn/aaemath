@@ -1,0 +1,101 @@
+P32 — prerequisite credit propagation + test-out
+graph 32 nodes, 48 edges, longest chain 11, max ancestor distance 6
+bank audit v2 fingerprint d6e2537d, 29754 draws (19032 catalogue / 10722 generated)
+certifiable knowledge points on this bank: 31 of 32
+learners 150/cell, bots 2000/cell, 26 sessions x 25 min
+
+==============================================================================================
+PART A — the propagation rule, checked against the shipped content
+==============================================================================================
+PASS  A1  the discount is geometric in graph distance, and distance 1 is the shipped constant
+        w(d) = prerequisiteCreditWeight^d = 1:0.500 2:0.250 3:0.125 4:0.063. w(1) = 0.5 is model.bkt.prerequisiteCreditWeight itself, so distance 1 keeps §1.2 byte for byte. w(a+b) = w(a)·w(b) holds exactly, which is the property that makes the credit a node receives independent of which path the engine walks — the graph is reduced but not a tree.
+PASS  A2  propagation is cut off twice, and both cuts bite inside this graph
+        maxDistance 3 against a graph whose ancestors reach distance 6; minWeight 0.05 against w(4) = 0.0625. By distance: 1:paid 2:paid 3:paid 4:maxDistance 5:minWeight 6:minWeight 7:minWeight
+PASS  A3  the propagation ceiling is strictly below the mastery threshold, so M1 is unreachable by inference
+        ceiling 0.9 < masteryThreshold 0.95. It is not a new constant: it is REVIEW_LAPSE_BELOW, the posterior at which §3 already says a node is no longer confidently held. A propagated update may carry a node to the edge of "probably knows this" and no further.
+PASS  A4  one response moves ANCESTORS ONLY — never a descendant, never a node off the prerequisite cone
+        129 propagated updates across all 32 knowledge points; 0 landed outside the ancestor closure and 0 landed on a descendant. Deepest hop actually paid: 3 (cap 3).
+PASS  A5  400 correct answers on one leaf lift NO ancestor to the mastery threshold, and unlock none of them
+        eq-model-context (depth 11, 19 ancestors). 9 ancestors received credit; the highest posterior any of them reached is 0.9000 against a ceiling of 0.9 and an M1 threshold of 0.95. 0 reached M1, 0 left "learning".
+PASS  A5c  CONTROL — with the ceiling removed the same run DOES hand out unearned certainty
+        ceiling 1.0, maxDistance 8, inference paid on any scored response: the highest ancestor posterior reaches 1.0000 and 16 ancestors cross M1 on leaf evidence alone (translate-sentence, translate-order, translate-phrase, expr-anatomy, eq-meaning, eval-substitute, …). If this control ever prints zero, claim A5 is measuring nothing.
+PASS  A6  propagated credit increments NO M2 counter and NO M3 form on any ancestor
+        60 credited responses on eq-model-context; 0 of its 19 ancestors show a non-zero scored/atBand/forms counter. §1.2: you cannot be certified on a skill you were only ever tested on incidentally.
+
+==============================================================================================
+PART B — the test-out, and the number the bound is made of
+==============================================================================================
+  knowledge point         band  honest forms               worst measured blind/item  probe items  probe minutes  blind pass  test-out
+  ----------------------  ----  -------------------------  -------------------------  -----------  -------------  ----------  --------
+  var-meaning             1     construct,repair,generate  0.200                      5            3.8            4.00e-4     yes     
+  oo-numeric              1     construct,repair,generate  0.167                      5            3.8            2.22e-4     yes     
+  expr-anatomy            1     construct                  0.200                      5            3.8            3.20e-4     yes     
+  oo-structure            2     construct,repair           0.250                      5            3.8            9.77e-4     yes     
+  eval-substitute         2     construct,repair,generate  0.250                      5            3.8            9.77e-4     yes     
+  eval-signed             3     construct,repair           0.250                      5            3.8            9.77e-4     yes     
+  eval-formula            3     construct,repair,generate  0.077                      4            3.1            1.82e-4     yes     
+  translate-phrase        2     construct,repair,generate  0.125                      4            3.1            3.72e-4     yes     
+  translate-order         3     construct,repair,generate  0.200                      5            3.8            4.00e-4     yes     
+  props-operations        2     construct,repair,generate  0.250                      5            3.8            9.77e-4     yes     
+  like-terms-id           2     construct,repair           0.167                      4            3.1            7.72e-4     yes     
+  like-terms-combine      3     construct,repair,generate  0.083                      4            3.1            9.60e-5     yes     
+  distribute-numeric      2     construct,repair,generate  0.167                      5            3.8            4.96e-4     yes     
+  distribute-variable     3     construct,repair,generate  0.083                      3            2.3            5.79e-4     yes     
+  distribute-negative     4     construct,repair,generate  0.143                      4            3.1            8.50e-4     yes     
+  simplify-expression     4     construct,repair,generate  0.077                      3            2.3            5.83e-4     yes     
+  equivalent-expressions  4     construct,repair,generate  0.077                      4            3.1            9.00e-5     yes     
+  eq-meaning              2     construct,repair,generate  0.167                      5            3.8            4.34e-4     yes     
+  props-equality          2     construct,repair,generate  0.143                      5            3.8            3.19e-4     yes     
+  eq-one-add              2     construct,repair,generate  0.250                      6            4.6            4.16e-4     yes     
+  eq-one-mult             2     repair,generate            0.286                      6            4.6            5.44e-4     yes     
+  eq-two-step             3     construct,repair,generate  0.154                      5            3.8            4.03e-4     yes     
+  eq-combine-side         4     construct,repair,generate  0.167                      5            3.8            2.38e-4     yes     
+  eq-distribute           4     construct,repair           0.250                      5            3.8            9.77e-4     yes     
+  eq-both-sides           4     construct,repair           0.214                      5            3.8            8.86e-4     yes     
+  eq-special-cases        5     —                          1.000                      —            —              —           NO      
+  translate-sentence      3     construct,repair,generate  0.154                      5            3.8            1.96e-4     yes     
+  eq-model-context        5     construct,repair,generate  0.250                      6            4.6            4.16e-4     yes     
+  ineq-meaning            2     construct,repair,generate  0.071                      3            2.3            5.95e-4     yes     
+  ineq-one-step           3     construct,repair,generate  0.143                      5            3.8            4.59e-4     yes     
+  ineq-negative-flip      4     construct,repair,generate  0.143                      4            3.1            8.33e-4     yes     
+  ineq-two-step           5     construct,repair,generate  0.143                      5            3.8            4.76e-4     yes     
+PASS  B1  every eligible probe clears the measured blind-pass bound, and every ineligible node is named loudly
+        31 of 32 knowledge points are test-out eligible. Probe length: min 3, median 5, max 6 items — 2.3 to 4.6 minutes. Worst blind pass across all eligible probes: 9.77e-4 against the 0.001 bound. Refused: eq-special-cases.
+PASS  B2  no probe anywhere contains a selected-response form — `select4` and `judge2` cannot appear at any length
+        145 probe items across the graph, all drawn from model.bkt.formsEligibleForMastery [construct, repair, generate] on bank cells the audit did not refuse, all at phase "solo" whose true blind rate is 0. Forms outside that list: 0.
+  knowledge point   items  blind pass, MEASURED bank  blind pass, modelled constants  understated by
+  ----------------  -----  -------------------------  ------------------------------  --------------
+  eq-one-mult       6      5.44e-4                    2.16e-10                        2518519x      
+  eq-one-add        6      4.16e-4                    3.24e-10                        1283951x      
+  eq-model-context  6      4.16e-4                    3.24e-10                        1283951x      
+  eval-substitute   5      9.77e-4                    1.62e-8                         60309x        
+  props-operations  5      9.77e-4                    1.62e-8                         60309x        
+  ineq-two-step     5      4.76e-4                    1.08e-8                         44074x        
+  ineq-one-step     5      4.59e-4                    1.08e-8                         42500x        
+  oo-structure      5      9.77e-4                    2.43e-8                         40206x        
+PASS  B3  pricing the probe on model.trueGuessByForm instead of the measured bank understates it by up to 3 orders of magnitude
+        Worst node eq-one-mult: measured 5.44e-4 against a modelled 2.16e-10 — understated 2518519x. Per ITEM the constants are understated by up to 14.3x (construct is declared 0.03 and measures up to 0.300). A three-item probe priced on the constants would look like 2.7e-05 and really be 1.6e-02. THIS is why probe length is derived per node from bank-audit.json and not fixed at three.
+            knowledge point      band  P(blind passes the PROBE)  P(blind opens the ORDINARY gate in 12 items)  probe is stricter by
+  --------  -------------------  ----  -------------------------  --------------------------------------------  --------------------
+  tightest  distribute-negative  4     8.50e-4                    5.58e-2                                       66x                 
+  median    translate-order      3     4.00e-4                    9.28e-2                                       232x                
+  loosest   oo-numeric           1     2.22e-4                    2.18e-1                                       984x                
+PASS  B4  the probe is 1–3 orders of magnitude harder to fluke than the M1+M2+M3 march it replaces
+        Across 31 eligible nodes the probe is between 66x and 984x stricter than the ordinary gate at the same measured rates. The test-out therefore cannot be the weakest link in this system. THE OTHER HALF OF THAT SENTENCE IS A DEFECT AND IT IS NOT MINE TO FIX: a blind responder opens the ORDINARY gate on 5.0%–24.0% of Level 1's nodes inside twelve attempts, because the bank measures 0.07–0.30 blind where the design assumes 0.03. M4's retention check is the only thing stopping certification. Reported to P16/P17.
+PASS  B4c  CONTROL — the same Monte-Carlo run at the DESIGN's assumed rates gives a far smaller number
+        var-meaning: 19.6% at the measured rates against 0.3% at model.trueGuessByForm. The estimator moves with the rate, so B4's numbers are a measurement of the bank and not an artefact of the harness.
+  band  nodes  slip  mean probe items  a genuine master passes first time
+  ----  -----  ----  ----------------  ----------------------------------
+  1     3      0.08  5.0               65.9%                             
+  2     11     0.1   4.8               60.4%                             
+  3     8      0.12  4.5               56.5%                             
+  4     7      0.14  4.3               52.7%                             
+  5     2      0.16  5.5               38.5%                             
+PASS  B5b  ALL correct beats allowing one miss — measured, not preferred
+        To keep the same 0.001 bound while tolerating one wrong answer, the probe has to grow from 4.7 items to 6.9 (up to 8 on the worst node), because P(>= n-1 of n) at a measured 0.25 needs eight items to reach 1e-3. That buys a genuine master a first-time pass rate of 81.3% instead of 56.8% — and it costs more overall, because the extra items are paid by EVERY learner while the higher pass rate only helps the ones who slip: expected acquisition cost 8.7 items per node against 8.6 for the all-correct probe. It also destroys the "failing is cheap" property, which is what protects a struggling learner: abort-on-first-wrong ends a hopeless probe in one item, abort-on-second-wrong takes 8.
+PASS  B5  a genuine master passes their own probe about three times in five, and failing costs one item
+        Mean first-time pass rate for a learner who holds the skill: 56.8% ((1−slip)^items). That is the price of "every item correct", and it is charged in ITEMS not in credit: the probe aborts on the first wrong answer, every item already answered stays scored toward M2/M3, and the learner continues in "solo" rather than being re-lectured. The alternative — allowing one miss — needs 8 items at this bank's measured rates to hold the same bound, which is LONGER than the six-item route it would replace. THE FIX IS CONTENT: at the design's own assumed blind rate of 0.03 the probe is 2 items and a genuine master passes 77.4% of the time. More distinct answers in the committed pools buys both a shorter probe and a higher pass rate at once.
+
+==============================================================================================
+PART C — six learner archetypes through the real engine
+==============================================================================================

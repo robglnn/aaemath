@@ -67,6 +67,7 @@ export class Graph {
 
     this._ancestors = new Map();
     this._descendants = new Map();
+    this._ancestorDistance = new Map();
     this._topo = null;
 
     if (validate) this.validate();
@@ -75,7 +76,12 @@ export class Graph {
     // recursion below is exactly the infinite regress `validate()` exists to catch.
     for (const id of this.ids) this.descendants(id);
     for (const id of this.ids) this.ancestors(id);
+    for (const id of this.ids) this.ancestorDistances(id);
     this.maxDescendants = Math.max(1, ...this.ids.map((id) => this.descendants(id).size));
+    this.maxAncestorDistance = Math.max(
+      0,
+      ...this.ids.map((id) => Math.max(0, ...this.ancestorDistances(id).values()))
+    );
   }
 
   // ------------------------------------------------------------------ lookup
@@ -135,6 +141,62 @@ export class Graph {
       for (const a of this.ancestors(p)) out.add(a);
     }
     return out;
+  }
+
+  /**
+   * The same closure as `ancestors()`, but carrying **how far away** each ancestor is: the number
+   * of prerequisite edges on the SHORTEST path from `id` back to it. Cached; the returned Map is
+   * shared, so callers must not mutate it.
+   *
+   * ------------------------------------------------------------------------------------------
+   * WHY DISTANCE, AND WHY THE SHORTEST ONE
+   *
+   * `Mastery` propagates evidence backwards along this relation: a learner who reliably solves
+   * two-step equations has, by construction, demonstrated one-step equations. That credit has to
+   * be discounted with distance, and the discount is geometric — `w(d) = creditWeight ** d` — for
+   * a reason that is about this method rather than about the discount: the graph is transitively
+   * reduced, so between two nodes there can be several paths of several lengths, and a discount
+   * that is not multiplicative over composition would make a node's credit depend on which path
+   * the engine happened to walk. `w(d1 + d2) = w(d1) * w(d2)` has exactly one continuous solution
+   * family, and it is the geometric one.
+   *
+   * SHORTEST is the conservative-in-the-right-direction choice for the same reason: the strongest
+   * inferential link between two nodes is the one with the fewest steps in it, and taking the
+   * longest path would silently under-credit a learner along a relation the graph does assert.
+   *
+   * There is deliberately **no** descendant equivalent of this method. Distance to a descendant is
+   * a number nothing in this engine is allowed to want: crediting forwards — "you know one-step
+   * equations, so have some two-step" — is exactly the direction that hands out mastery nobody
+   * earned. `Mastery.propagate` walks THIS map and nothing else.
+   * ------------------------------------------------------------------------------------------
+   *
+   * @param {string} id
+   * @returns {Map<string, number>} ancestor id -> shortest prerequisite distance (>= 1)
+   */
+  ancestorDistances(id) {
+    const hit = this._ancestorDistance.get(id);
+    if (hit) return hit;
+    const out = new Map();
+    this._ancestorDistance.set(id, out);
+    // Breadth-first, so the first time an ancestor is reached is by a shortest path.
+    let frontier = this.prerequisites(id);
+    let d = 1;
+    while (frontier.length) {
+      const next = [];
+      for (const p of frontier) {
+        if (!this.byId.has(p) || out.has(p) || p === id) continue;
+        out.set(p, d);
+        for (const q of this.prerequisites(p)) if (!out.has(q)) next.push(q);
+      }
+      frontier = next;
+      d += 1;
+    }
+    return out;
+  }
+
+  /** Shortest prerequisite distance from `from` back to `to`, or `Infinity` if `to` is not an ancestor. */
+  distanceToAncestor(from, to) {
+    return this.ancestorDistances(from).get(to) ?? Infinity;
   }
 
   /** Transitive dependents — what this node opens up. The `Reach` term of §4 is normalised on its size. */
@@ -333,6 +395,9 @@ export class Graph {
       longestChain: Math.max(...this.ids.map((id) => this.depth(id))),
       bands,
       maxDescendants: this.maxDescendants,
+      // How far prerequisite-credit propagation could ever reach if it were not capped. Published
+      // so a reviewer can read the cap in `Mastery.propagationRule` against the graph it runs on.
+      maxAncestorDistance: this.maxAncestorDistance,
     };
   }
 }

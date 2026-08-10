@@ -26,6 +26,11 @@
     "var-alphabet-value": 11,
     "var-as-label": 9,
     "var-must-differ": 16
+   },
+   "lesson": "expressions-1",
+   "sourceBytes": {
+    "raw": 27713,
+    "gzip": 2968
    }
   },
   "oo-numeric": {
@@ -52,6 +57,11 @@
     "oo-strict-left-to-right": 12,
     "oo-mult-before-div": 8,
     "oo-add-before-sub": 11
+   },
+   "lesson": "expressions-1",
+   "sourceBytes": {
+    "raw": 28142,
+    "gzip": 2955
    }
   },
   "expr-anatomy": {
@@ -77,6 +87,11 @@
     "term-split-at-product": 11,
     "bare-x-has-no-coefficient": 10,
     "sign-detached-from-term": 10
+   },
+   "lesson": "expressions-1",
+   "sourceBytes": {
+    "raw": 26386,
+    "gzip": 2365
    }
   },
   "oo-structure": {
@@ -103,6 +118,11 @@
     "coefficient-under-exponent": 8,
     "negative-square-sign-lost": 9,
     "juxtaposition-means-add": 7
+   },
+   "lesson": "expressions-2",
+   "sourceBytes": {
+    "raw": 27048,
+    "gzip": 2767
    }
   },
   "eval-substitute": {
@@ -129,6 +149,11 @@
     "substitute-first-occurrence-only": 9,
     "substitute-by-concatenation": 8,
     "coefficient-dropped-on-substitution": 8
+   },
+   "lesson": "expressions-2",
+   "sourceBytes": {
+    "raw": 27555,
+    "gzip": 2741
    }
   },
   "eval-signed": {
@@ -155,6 +180,11 @@
     "negative-substituted-bare": 7,
     "double-negative-collapsed-wrong": 9,
     "two-negatives-make-positive-on-sum": 9
+   },
+   "lesson": "expressions-3",
+   "sourceBytes": {
+    "raw": 27275,
+    "gzip": 2751
    }
   },
   "eval-formula": {
@@ -181,6 +211,11 @@
     "second-variable-ignored": 26,
     "values-assigned-by-order": 26,
     "one-value-for-all-letters": 26
+   },
+   "lesson": "expressions-3",
+   "sourceBytes": {
+    "raw": 36260,
+    "gzip": 3448
    }
   },
   "translate-phrase": {
@@ -207,6 +242,11 @@
     "keyword-without-structure": 14,
     "no-variable-introduced": 29,
     "twice-read-as-plus-two": 15
+   },
+   "lesson": "translation-1",
+   "sourceBytes": {
+    "raw": 32171,
+    "gzip": 2627
    }
   },
   "translate-order": {
@@ -233,6 +273,11 @@
     "less-than-reversed": 10,
     "subtract-from-reversed": 10,
     "divided-into-reversed": 11
+   },
+   "lesson": "translation-1",
+   "sourceBytes": {
+    "raw": 29021,
+    "gzip": 2373
    }
   },
   "props-operations": {
@@ -260,6 +305,11 @@
     "subtraction-commutes": 8,
     "regroup-across-subtraction": 8,
     "identity-swapped": 8
+   },
+   "lesson": "structure-1",
+   "sourceBytes": {
+    "raw": 27846,
+    "gzip": 2843
    }
   },
   "like-terms-id": {
@@ -287,6 +337,11 @@
     "all-variable-terms-alike": 24,
     "constant-like-variable": 24,
     "exponent-ignored-in-matching": 12
+   },
+   "lesson": "structure-1",
+   "sourceBytes": {
+    "raw": 36814,
+    "gzip": 3783
    }
   },
   "like-terms-combine": {
@@ -314,6 +369,11 @@
     "combine-unlike-terms": 24,
     "variable-parts-added-too": 24,
     "sign-left-behind-on-move": 24
+   },
+   "lesson": "structure-2",
+   "sourceBytes": {
+    "raw": 38351,
+    "gzip": 3564
    }
   },
   "distribute-numeric": {
@@ -341,6 +401,11 @@
     "distribute-to-first-term-only": 15,
     "distribute-by-adding": 15,
     "distribute-over-a-product": 14
+   },
+   "lesson": "structure-2",
+   "sourceBytes": {
+    "raw": 32158,
+    "gzip": 3153
    }
   },
   "distribute-variable": {
@@ -368,6 +433,11 @@
     "variable-multiplied-as-well": 24,
     "distribute-reaches-variable-only": 24,
     "coefficients-added-not-multiplied": 24
+   },
+   "lesson": "structure-3",
+   "sourceBytes": {
+    "raw": 38571,
+    "gzip": 3476
    }
   },
   "distribute-negative": {
@@ -395,6 +465,11 @@
     "flip-first-term-only": 29,
     "leading-minus-dropped": 29,
     "subtract-before-distributing": 15
+   },
+   "lesson": "structure-4",
+   "sourceBytes": {
+    "raw": 35296,
+    "gzip": 3289
    }
   },
   "simplify-expression": {
@@ -423,6 +498,11 @@
     "combine-before-distributing": 16,
     "over-combines-to-one-term": 21,
     "stops-before-fully-simplified": 12
+   },
+   "lesson": "structure-5",
+   "sourceBytes": {
+    "raw": 34754,
+    "gzip": 3358
    }
   },
   "equivalent-expressions": {
@@ -450,6 +530,11 @@
     "different-form-means-different": 36,
     "counterexample-ignored": 12,
     "one-value-proves-equivalence": 12
+   },
+   "lesson": "structure-6",
+   "sourceBytes": {
+    "raw": 34570,
+    "gzip": 2937
    }
   },
   "eq-meaning": {
@@ -478,6 +563,11 @@
     "equation-true-for-everything": 12,
     "solution-never-checked": 21,
     "equals-means-compute-now": 3
+   },
+   "lesson": "equations-1",
+   "sourceBytes": {
+    "raw": 32438,
+    "gzip": 3436
    }
   },
   "props-equality": {
@@ -503,6 +593,11 @@
     "operate-on-one-side": 16,
     "inverse-operations-on-each-side": 16,
     "divide-by-possible-zero": 13
+   },
+   "lesson": "equations-1",
+   "sourceBytes": {
+    "raw": 29146,
+    "gzip": 2636
    }
   },
   "eq-one-add": {
@@ -530,6 +625,11 @@
     "same-operation-not-inverse": 15,
     "subtraction-order-reversed": 15,
     "minus-inverted-wrongly": 14
+   },
+   "lesson": "equations-2",
+   "sourceBytes": {
+    "raw": 28064,
+    "gzip": 2615
    }
   },
   "eq-one-mult": {
@@ -557,6 +657,11 @@
     "subtract-the-coefficient": 13,
     "division-order-reversed": 13,
     "fraction-form-inverted": 16
+   },
+   "lesson": "equations-2",
+   "sourceBytes": {
+    "raw": 28028,
+    "gzip": 2556
    }
   },
   "eq-two-step": {
@@ -584,6 +689,11 @@
     "divide-before-clearing-constant": 17,
     "inverse-order-inverted": 18,
     "constant-sign-flipped": 17
+   },
+   "lesson": "equations-3",
+   "sourceBytes": {
+    "raw": 32711,
+    "gzip": 3235
    }
   },
   "eq-combine-side": {
@@ -611,6 +721,11 @@
     "combine-across-the-equals": 22,
     "one-like-term-dropped": 22,
     "constant-absorbed-into-coefficient": 22
+   },
+   "lesson": "equations-4",
+   "sourceBytes": {
+    "raw": 36952,
+    "gzip": 3569
    }
   },
   "eq-distribute": {
@@ -638,6 +753,11 @@
     "distribute-partially-in-equation": 22,
     "divide-bracket-only": 22,
     "coefficient-never-undone": 14
+   },
+   "lesson": "equations-5",
+   "sourceBytes": {
+    "raw": 34700,
+    "gzip": 3189
    }
   },
   "eq-both-sides": {
@@ -665,6 +785,11 @@
     "moved-without-inverting": 24,
     "removed-from-one-side-only": 24,
     "constants-collected-wrong-side": 24
+   },
+   "lesson": "equations-6",
+   "sourceBytes": {
+    "raw": 36277,
+    "gzip": 3459
    }
   },
   "eq-special-cases": {
@@ -692,6 +817,11 @@
     "vanishing-variable-means-zero": 23,
     "identity-called-no-solution": 8,
     "contradiction-given-a-solution": 8
+   },
+   "lesson": "equations-7",
+   "sourceBytes": {
+    "raw": 30159,
+    "gzip": 2469
    }
   },
   "translate-sentence": {
@@ -719,6 +849,11 @@
     "produces-expression-not-equation": 23,
     "sides-merged": 23,
     "unknown-defined-as-wrong-quantity": 23
+   },
+   "lesson": "translation-2",
+   "sourceBytes": {
+    "raw": 38230,
+    "gzip": 3303
    }
   },
   "eq-model-context": {
@@ -747,6 +882,11 @@
     "answers-the-wrong-question": 9,
     "arithmetic-shortcut-only": 27,
     "non-viable-solution-accepted": 14
+   },
+   "lesson": "equations-8",
+   "sourceBytes": {
+    "raw": 35342,
+    "gzip": 3600
    }
   },
   "ineq-meaning": {
@@ -774,6 +914,11 @@
     "reads-symbol-left-to-right-always": 26,
     "endpoint-style-swapped": 26,
     "single-value-for-a-set": 14
+   },
+   "lesson": "inequalities-1",
+   "sourceBytes": {
+    "raw": 32678,
+    "gzip": 2693
    }
   },
   "ineq-one-step": {
@@ -801,6 +946,11 @@
     "flip-after-adding": 14,
     "solved-as-equation": 16,
     "flip-because-a-negative-appeared": 15
+   },
+   "lesson": "inequalities-1",
+   "sourceBytes": {
+    "raw": 30479,
+    "gzip": 2809
    }
   },
   "ineq-negative-flip": {
@@ -828,6 +978,11 @@
     "no-flip-on-negative-divide": 15,
     "flip-but-sign-lost": 15,
     "flip-on-subtracting-a-negative": 14
+   },
+   "lesson": "inequalities-2",
+   "sourceBytes": {
+    "raw": 31742,
+    "gzip": 2979
    }
   },
   "ineq-two-step": {
@@ -856,7 +1011,358 @@
     "flipped-twice": 11,
     "coefficient-applied-to-constant-only": 21,
     "strictness-contradicts-context": 12
+   },
+   "lesson": "inequalities-3",
+   "sourceBytes": {
+    "raw": 33508,
+    "gzip": 3315
    }
   }
+ },
+ "lessons": [
+  {
+   "id": "expressions-1",
+   "strand": "expressions",
+   "strandTitle": "Reading and running an expression",
+   "title": "Variables · Order of operations · Anatomy of an expression",
+   "kpIds": [
+    "var-meaning",
+    "oo-numeric",
+    "expr-anatomy"
+   ],
+   "estMinutes": 22,
+   "sourceBytes": {
+    "raw": 82241,
+    "gzip": 8288
+   },
+   "items": 108
+  },
+  {
+   "id": "expressions-2",
+   "strand": "expressions",
+   "strandTitle": "Reading and running an expression",
+   "title": "Structure with variables · Evaluate by substitution",
+   "kpIds": [
+    "oo-structure",
+    "eval-substitute"
+   ],
+   "estMinutes": 20,
+   "sourceBytes": {
+    "raw": 54603,
+    "gzip": 5508
+   },
+   "items": 72
+  },
+  {
+   "id": "expressions-3",
+   "strand": "expressions",
+   "strandTitle": "Reading and running an expression",
+   "title": "Negative values · Multi-variable evaluation",
+   "kpIds": [
+    "eval-signed",
+    "eval-formula"
+   ],
+   "estMinutes": 22,
+   "sourceBytes": {
+    "raw": 63535,
+    "gzip": 6199
+   },
+   "items": 72
+  },
+  {
+   "id": "translation-1",
+   "strand": "translation",
+   "strandTitle": "Words into algebra",
+   "title": "Phrase to expression · Order-sensitive phrases",
+   "kpIds": [
+    "translate-phrase",
+    "translate-order"
+   ],
+   "estMinutes": 20,
+   "sourceBytes": {
+    "raw": 61192,
+    "gzip": 5000
+   },
+   "items": 72
+  },
+  {
+   "id": "translation-2",
+   "strand": "translation",
+   "strandTitle": "Words into algebra",
+   "title": "Sentence to equation",
+   "kpIds": [
+    "translate-sentence"
+   ],
+   "estMinutes": 10,
+   "sourceBytes": {
+    "raw": 38230,
+    "gzip": 3303
+   },
+   "items": 36
+  },
+  {
+   "id": "structure-1",
+   "strand": "structure",
+   "strandTitle": "Rewriting without changing meaning",
+   "title": "Properties of operations · Identify like terms",
+   "kpIds": [
+    "props-operations",
+    "like-terms-id"
+   ],
+   "estMinutes": 16,
+   "sourceBytes": {
+    "raw": 64660,
+    "gzip": 6626
+   },
+   "items": 72
+  },
+  {
+   "id": "structure-2",
+   "strand": "structure",
+   "strandTitle": "Rewriting without changing meaning",
+   "title": "Distributive property (numbers) · Combine like terms",
+   "kpIds": [
+    "distribute-numeric",
+    "like-terms-combine"
+   ],
+   "estMinutes": 22,
+   "sourceBytes": {
+    "raw": 70509,
+    "gzip": 6717
+   },
+   "items": 72
+  },
+  {
+   "id": "structure-3",
+   "strand": "structure",
+   "strandTitle": "Rewriting without changing meaning",
+   "title": "Distributive property (variables)",
+   "kpIds": [
+    "distribute-variable"
+   ],
+   "estMinutes": 12,
+   "sourceBytes": {
+    "raw": 38571,
+    "gzip": 3476
+   },
+   "items": 36
+  },
+  {
+   "id": "structure-4",
+   "strand": "structure",
+   "strandTitle": "Rewriting without changing meaning",
+   "title": "Negative distribution",
+   "kpIds": [
+    "distribute-negative"
+   ],
+   "estMinutes": 14,
+   "sourceBytes": {
+    "raw": 35296,
+    "gzip": 3289
+   },
+   "items": 36
+  },
+  {
+   "id": "structure-5",
+   "strand": "structure",
+   "strandTitle": "Rewriting without changing meaning",
+   "title": "Simplify fully",
+   "kpIds": [
+    "simplify-expression"
+   ],
+   "estMinutes": 14,
+   "sourceBytes": {
+    "raw": 34754,
+    "gzip": 3358
+   },
+   "items": 36
+  },
+  {
+   "id": "structure-6",
+   "strand": "structure",
+   "strandTitle": "Rewriting without changing meaning",
+   "title": "Equivalence",
+   "kpIds": [
+    "equivalent-expressions"
+   ],
+   "estMinutes": 12,
+   "sourceBytes": {
+    "raw": 34570,
+    "gzip": 2937
+   },
+   "items": 36
+  },
+  {
+   "id": "equations-1",
+   "strand": "equations",
+   "strandTitle": "Claims you can solve",
+   "title": "What an equation says · Properties of equality",
+   "kpIds": [
+    "eq-meaning",
+    "props-equality"
+   ],
+   "estMinutes": 18,
+   "sourceBytes": {
+    "raw": 61584,
+    "gzip": 6072
+   },
+   "items": 72
+  },
+  {
+   "id": "equations-2",
+   "strand": "equations",
+   "strandTitle": "Claims you can solve",
+   "title": "One-step: add and subtract · One-step: multiply and divide",
+   "kpIds": [
+    "eq-one-add",
+    "eq-one-mult"
+   ],
+   "estMinutes": 20,
+   "sourceBytes": {
+    "raw": 56092,
+    "gzip": 5171
+   },
+   "items": 72
+  },
+  {
+   "id": "equations-3",
+   "strand": "equations",
+   "strandTitle": "Claims you can solve",
+   "title": "Two-step equations",
+   "kpIds": [
+    "eq-two-step"
+   ],
+   "estMinutes": 14,
+   "sourceBytes": {
+    "raw": 32711,
+    "gzip": 3235
+   },
+   "items": 36
+  },
+  {
+   "id": "equations-4",
+   "strand": "equations",
+   "strandTitle": "Claims you can solve",
+   "title": "Combine, then solve",
+   "kpIds": [
+    "eq-combine-side"
+   ],
+   "estMinutes": 12,
+   "sourceBytes": {
+    "raw": 36952,
+    "gzip": 3569
+   },
+   "items": 36
+  },
+  {
+   "id": "equations-5",
+   "strand": "equations",
+   "strandTitle": "Claims you can solve",
+   "title": "Equations with grouping",
+   "kpIds": [
+    "eq-distribute"
+   ],
+   "estMinutes": 14,
+   "sourceBytes": {
+    "raw": 34700,
+    "gzip": 3189
+   },
+   "items": 36
+  },
+  {
+   "id": "equations-6",
+   "strand": "equations",
+   "strandTitle": "Claims you can solve",
+   "title": "Variables on both sides",
+   "kpIds": [
+    "eq-both-sides"
+   ],
+   "estMinutes": 16,
+   "sourceBytes": {
+    "raw": 36277,
+    "gzip": 3459
+   },
+   "items": 36
+  },
+  {
+   "id": "equations-7",
+   "strand": "equations",
+   "strandTitle": "Claims you can solve",
+   "title": "No solution and all solutions",
+   "kpIds": [
+    "eq-special-cases"
+   ],
+   "estMinutes": 12,
+   "sourceBytes": {
+    "raw": 30159,
+    "gzip": 2469
+   },
+   "items": 36
+  },
+  {
+   "id": "equations-8",
+   "strand": "equations",
+   "strandTitle": "Claims you can solve",
+   "title": "Model with an equation",
+   "kpIds": [
+    "eq-model-context"
+   ],
+   "estMinutes": 18,
+   "sourceBytes": {
+    "raw": 35342,
+    "gzip": 3600
+   },
+   "items": 36
+  },
+  {
+   "id": "inequalities-1",
+   "strand": "inequalities",
+   "strandTitle": "Claims with room in them",
+   "title": "What an inequality says · One-step inequalities",
+   "kpIds": [
+    "ineq-meaning",
+    "ineq-one-step"
+   ],
+   "estMinutes": 20,
+   "sourceBytes": {
+    "raw": 63157,
+    "gzip": 5502
+   },
+   "items": 72
+  },
+  {
+   "id": "inequalities-2",
+   "strand": "inequalities",
+   "strandTitle": "Claims with room in them",
+   "title": "Multiplying by a negative",
+   "kpIds": [
+    "ineq-negative-flip"
+   ],
+   "estMinutes": 12,
+   "sourceBytes": {
+    "raw": 31742,
+    "gzip": 2979
+   },
+   "items": 36
+  },
+  {
+   "id": "inequalities-3",
+   "strand": "inequalities",
+   "strandTitle": "Claims with room in them",
+   "title": "Two-step inequalities",
+   "kpIds": [
+    "ineq-two-step"
+   ],
+   "estMinutes": 14,
+   "sourceBytes": {
+    "raw": 33508,
+    "gzip": 3315
+   },
+   "items": 36
+  }
+ ],
+ "groups": {
+  "count": 32,
+  "granularity": "knowledge-point"
  }
 }

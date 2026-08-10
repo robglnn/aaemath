@@ -1,0 +1,68 @@
+{
+  "when": "2026-08-10T16:45:59.374Z",
+  "policy": {
+    "warmupFrames": 90,
+    "windowFrames": 120,
+    "downMs": 21,
+    "upMs": 13.5,
+    "cadenceTolerance": 1.06,
+    "cadenceJitter": 1.3,
+    "cadenceMaxMs": 17.5,
+    "cooldownMs": 3000,
+    "maxChanges": 3,
+    "maxUpSteps": 1,
+    "sampleMinMs": 2,
+    "sampleMaxMs": 250,
+    "stallRun": 5
+  },
+  "results": [
+    {
+      "id": "C1",
+      "title": "the game boots with auto-tiering mounted and no errors of its own",
+      "pass": true,
+      "detail": "fatal=null, errors mine=0 foreign=0, HMR reloads survived=0, probe enabled=true, reason=\"measuring\", start tier high, GPU \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\""
+    },
+    {
+      "id": "C2",
+      "title": "real measured frame cost steps the tier down in the real game",
+      "pass": true,
+      "detail": "high→medium at 113 ms median (8.8 fps) over 30 frames; medium→low at 112.8 ms median (8.9 fps) over 30 frames; low→potato at 125.9 ms median (7.9 fps) over 30 frames"
+    },
+    {
+      "id": "C3",
+      "title": "the renderer really changed: pixel ratio and shadow map size",
+      "pass": true,
+      "detail": "pixelRatio 1.5 → 1; shadow map 2048² → 512² across 2 caster(s); drawing buffer 720x405 → 480x270; shadowMap.enabled turned off: true"
+    },
+    {
+      "id": "C4",
+      "title": "every change is monotone downward and inside the session budget",
+      "pass": true,
+      "detail": "3 change(s): high→medium(down,post=bridge), medium→low(down,post=bridge:off), low→potato(down,post=bridge:off); budget left {\"changesLeft\":0,\"upStepsLeft\":0,\"ceiling\":\"high\"}; final tier potato; cap 3"
+    },
+    {
+      "id": "C5",
+      "title": "the post stack really followed the tier down",
+      "pass": true,
+      "detail": "installed true → false; effects {\"bloom\":true,\"sunGlow\":true,\"grain\":true,\"vignette\":true} → {\"bloom\":false,\"sunGlow\":false,\"grain\":false,\"vignette\":false}; targets 6 → 0, 4.21 MB → 1.87 MB"
+    },
+    {
+      "id": "C6",
+      "title": "nothing moves once the budget is spent (8 s of further frames)",
+      "pass": true,
+      "detail": "changes 3 → 3; own errors 0; final measured {\"fps\":15.4,\"medianMs\":65.1,\"p10Ms\":49,\"p95Ms\":67.7,\"p99Ms\":68.4,\"maxMs\":122.7,\"frames\":30}"
+    },
+    {
+      "id": "C7",
+      "title": "tiering actually bought frame time on a machine that could not hold the tier",
+      "pass": true,
+      "detail": "median frame cost across the last step low → potato: 125.9 ms (7.9 fps) → 65.1 ms (15.4 fps), 48 % cheaper per frame"
+    },
+    {
+      "id": "C8",
+      "title": "?tier=low stands auto-tiering down completely",
+      "pass": true,
+      "detail": "enabled=false, tier=low, autoTier=false, changes=0, reason=\"explicit: a tier was chosen (settings or ?tier=), autoTier stood down\""
+    }
+  ]
+}

@@ -1,0 +1,698 @@
+{
+ "piece": "P31",
+ "pass": true,
+ "passed": 18,
+ "of": 18,
+ "results": [
+  {
+   "id": "A1",
+   "claim": "the eager item-bank chunk shrank on the real build (npm run build, gzipped at vite's own level)",
+   "pass": true,
+   "measured": "ItemBank-B5q9etEn.js 1616.3 kB / 147.0 kB gz  ->  ItemBank-Dbf08q5G.js 242.0 kB / 64.3 kB gz  (-82.7 kB gz)",
+   "threshold": "> 60 kB gzipped removed from the eager chunk"
+  },
+  {
+   "id": "A2",
+   "claim": "FIRST LOAD — every chunk the page pulls before the first item, one locale, gzipped",
+   "pass": true,
+   "measured": "548.0 kB gz -> 479.5 kB gz  (-68.5 kB gz, -12.5%). Raw 2974.7 kB -> 1643.5 kB.",
+   "threshold": "> 55 kB gzipped off first load",
+   "notes": [
+    "The after-tree carries 2 chunks that did not exist at the baseline commit (02-autotier, 90-flow), costing 11.5 kB gz — other pieces building in parallel. They ADD to the after number; the reduction is measured against that handicap.",
+    "Like for like — first load minus those new chunks — is 468.0 kB gz, a reduction of 80.0 kB gz."
+   ]
+  },
+  {
+   "id": "A3",
+   "claim": "the catalogue built as one chunk per knowledge point, none of them on the first-load path",
+   "pass": true,
+   "measured": "32 group chunks totalling 907.9 kB / 93.0 kB gz, mean 2.9 kB gz each",
+   "threshold": "32 chunks"
+  },
+  {
+   "id": "A4",
+   "claim": "a single-lesson session's catalogue cost, measured on the SHIPPED chunks",
+   "pass": true,
+   "measured": "22 lessons, 2342–7895 B gz (median 3438 B), each 10–22 min of scored-item time — against 93.0 kB gz for the whole course",
+   "threshold": "every lesson under 12 kB gzipped"
+  },
+  {
+   "id": "A5",
+   "claim": "the REAL built game boots with zero item groups loaded, and still knows the whole course",
+   "pass": true,
+   "measured": "probe --name=itembank --built: groups \"0/32 resident, 0 loading\", 32 knowledge points, 1152 catalogue items, min 36/kp, 22 lessons, degraded []",
+   "threshold": "0/32 groups resident at boot"
+  },
+  {
+   "id": "B1",
+   "claim": "a 25-minute session runs end to end from a COLD cache and never serves a blank item",
+   "pass": true,
+   "measured": "36 items served over 5 knowledge points, 0 blanks, 37 scheduler steps (the scheduler closed the session on its own 25-minute budget, not on a bound in this script)",
+   "threshold": ">= 25 items, 0 blanks, terminates"
+  },
+  {
+   "id": "B2",
+   "claim": "the session pulled ONLY the groups it needed — not the course",
+   "pass": true,
+   "measured": "5/32 groups resident (var-meaning, oo-numeric, expr-anatomy, oo-structure, props-operations); 13.2 kB gz of shipped catalogue for the whole session, against 93.0 kB gz for all thirty-two",
+   "threshold": "groups touched + at most 4 prefetched, and strictly fewer than 32"
+  },
+  {
+   "id": "B3",
+   "claim": "every item the session served came back checkable and on the right knowledge point",
+   "pass": true,
+   "measured": "35 from the catalogue, 1 generated, 25 marked correct by the shipped checker",
+   "threshold": "every item identified and marked"
+  },
+  {
+   "id": "B4",
+   "claim": "the NEXT likely group is prefetched during idle, so nobody waits mid-session",
+   "pass": true,
+   "measured": "opening expressions-1 loaded 3 groups, then idle prefetch warmed 1 more (oo-structure)",
+   "threshold": "at least one group ahead"
+  },
+  {
+   "id": "C1",
+   "claim": "a group that never arrives degrades to a playable session AND says so — no hang, no blank item",
+   "pass": true,
+   "measured": "group \"oo-numeric\" made to fail (it carried 8 of the clean run's 36 items): 36 items still served, 0 blanks, 8 of them on the failed knowledge point, all generated: true; probe().degraded = [\"oo-numeric: simulated transport failure loading group \\\"oo-numeric\\\"\"]",
+   "threshold": "session completes, >=1 item still served on the failed knowledge point, 0 blanks, the failure named in the probe"
+  },
+  {
+   "id": "C2",
+   "claim": "a cold `select()` answers synchronously with a real, checkable, correctly-tagged item and starts the load",
+   "pass": true,
+   "measured": "cold -> generated/generated-group-absent (ineq-negative-flip.subneg/construct/14xp4di), its own correct answer marks true; after one tick the same request -> catalogue/exact",
+   "threshold": "generated-group-absent, checkable, then catalogue"
+  },
+  {
+   "id": "D1",
+   "claim": "the catalogue fingerprint is UNCHANGED by the split, so the committed pricing table still describes the bank it prices",
+   "pass": true,
+   "measured": "computed d6e2537d, committed in bank-audit.json d6e2537d",
+   "threshold": "identical"
+  },
+  {
+   "id": "D2",
+   "claim": "the eager spine carries every item's id, form, family and band, in the committed order (P17 C18 shape)",
+   "pass": true,
+   "measured": "32 files, 1152 items, ids identical, forms/families/bands identical",
+   "threshold": "identical"
+  },
+  {
+   "id": "D3",
+   "claim": "every item served from a group chunk is field-for-field the item in content/items/bank/*.json",
+   "pass": true,
+   "measured": "1152 items compared, 0 differ (English \"text\" snapshots excluded — the game never renders them)",
+   "threshold": "0 differ"
+  },
+  {
+   "id": "D4",
+   "claim": "the split changed DELIVERY and nothing else: 5,088 seeded selections come back byte-identical to the pre-split tree",
+   "pass": true,
+   "measured": "digest 567d7e50 over 5088 selections (4985 catalogue / 103 generated / 0 null); pre-split tree at 9d7cc64566 gave 567d7e50",
+   "threshold": "identical digest"
+  },
+  {
+   "id": "D5",
+   "claim": "the manifest is complete, single-valued and Pomodoro-shaped, and the shipped copy equals the readable one",
+   "pass": true,
+   "measured": "manifest.mjs == manifest.json: true; 22 lessons cover 32/32 knowledge points, 0 orphans, 0 in two lessons, 0 over 25 min, item counts agree: true",
+   "threshold": "0 orphans, 0 doubled, 0 over-long, counts agree"
+  },
+  {
+   "id": "D6",
+   "claim": "the coverage numbers a reviewer reads do not depend on what happens to be loaded",
+   "pass": true,
+   "measured": "with 0 groups resident: 32 kps, min 36 items/kp, min 3 items/misconception, 1152 catalogue items — identical with all 32 resident: true",
+   "threshold": "identical cold and warm"
+  },
+  {
+   "id": "D7",
+   "claim": "the locale table still ships whole — a generated item can name any key, so it cannot be split by knowledge point",
+   "pass": true,
+   "measured": "281 keys, identical to content/items/strings.json",
+   "threshold": "identical"
+  }
+ ],
+ "detail": {
+  "catalogueChunk": {
+   "before": {
+    "file": "ItemBank-B5q9etEn.js",
+    "raw": 1616309,
+    "gzip": 147035
+   },
+   "after": {
+    "file": "ItemBank-Dbf08q5G.js",
+    "raw": 242038,
+    "gzip": 64319
+   }
+  },
+  "firstLoad": {
+   "before": {
+    "raw": 2974694,
+    "gzip": 548050
+   },
+   "after": {
+    "raw": 1643472,
+    "gzip": 479516
+   },
+   "afterWholeBuild": {
+    "raw": 2594434,
+    "gzip": 591152
+   },
+   "chunksNotInBaseline": {
+    "files": [
+     "02-autotier-DmM4uVI0.js",
+     "90-flow-Dy5qClT3.js"
+    ],
+    "raw": 33987,
+    "gzip": 11488
+   },
+   "likeForLikeAfterGzip": 468028
+  },
+  "groupChunks": {
+   "count": 32,
+   "raw": 907921,
+   "gzip": 93048
+  },
+  "lessons": [
+   {
+    "id": "expressions-1",
+    "kps": [
+     "var-meaning",
+     "oo-numeric",
+     "expr-anatomy"
+    ],
+    "estMinutes": 22,
+    "items": 108,
+    "shippedGzip": 7895,
+    "sourceGzip": 8288
+   },
+   {
+    "id": "expressions-2",
+    "kps": [
+     "oo-structure",
+     "eval-substitute"
+    ],
+    "estMinutes": 20,
+    "items": 72,
+    "shippedGzip": 5210,
+    "sourceGzip": 5508
+   },
+   {
+    "id": "expressions-3",
+    "kps": [
+     "eval-signed",
+     "eval-formula"
+    ],
+    "estMinutes": 22,
+    "items": 72,
+    "shippedGzip": 5912,
+    "sourceGzip": 6199
+   },
+   {
+    "id": "translation-1",
+    "kps": [
+     "translate-phrase",
+     "translate-order"
+    ],
+    "estMinutes": 20,
+    "items": 72,
+    "shippedGzip": 4747,
+    "sourceGzip": 5000
+   },
+   {
+    "id": "translation-2",
+    "kps": [
+     "translate-sentence"
+    ],
+    "estMinutes": 10,
+    "items": 36,
+    "shippedGzip": 3169,
+    "sourceGzip": 3303
+   },
+   {
+    "id": "structure-1",
+    "kps": [
+     "props-operations",
+     "like-terms-id"
+    ],
+    "estMinutes": 16,
+    "items": 72,
+    "shippedGzip": 6361,
+    "sourceGzip": 6626
+   },
+   {
+    "id": "structure-2",
+    "kps": [
+     "distribute-numeric",
+     "like-terms-combine"
+    ],
+    "estMinutes": 22,
+    "items": 72,
+    "shippedGzip": 6445,
+    "sourceGzip": 6717
+   },
+   {
+    "id": "structure-3",
+    "kps": [
+     "distribute-variable"
+    ],
+    "estMinutes": 12,
+    "items": 36,
+    "shippedGzip": 3337,
+    "sourceGzip": 3476
+   },
+   {
+    "id": "structure-4",
+    "kps": [
+     "distribute-negative"
+    ],
+    "estMinutes": 14,
+    "items": 36,
+    "shippedGzip": 3170,
+    "sourceGzip": 3289
+   },
+   {
+    "id": "structure-5",
+    "kps": [
+     "simplify-expression"
+    ],
+    "estMinutes": 14,
+    "items": 36,
+    "shippedGzip": 3231,
+    "sourceGzip": 3358
+   },
+   {
+    "id": "structure-6",
+    "kps": [
+     "equivalent-expressions"
+    ],
+    "estMinutes": 12,
+    "items": 36,
+    "shippedGzip": 2816,
+    "sourceGzip": 2937
+   },
+   {
+    "id": "equations-1",
+    "kps": [
+     "eq-meaning",
+     "props-equality"
+    ],
+    "estMinutes": 18,
+    "items": 72,
+    "shippedGzip": 5848,
+    "sourceGzip": 6072
+   },
+   {
+    "id": "equations-2",
+    "kps": [
+     "eq-one-add",
+     "eq-one-mult"
+    ],
+    "estMinutes": 20,
+    "items": 72,
+    "shippedGzip": 4925,
+    "sourceGzip": 5171
+   },
+   {
+    "id": "equations-3",
+    "kps": [
+     "eq-two-step"
+    ],
+    "estMinutes": 14,
+    "items": 36,
+    "shippedGzip": 3102,
+    "sourceGzip": 3235
+   },
+   {
+    "id": "equations-4",
+    "kps": [
+     "eq-combine-side"
+    ],
+    "estMinutes": 12,
+    "items": 36,
+    "shippedGzip": 3438,
+    "sourceGzip": 3569
+   },
+   {
+    "id": "equations-5",
+    "kps": [
+     "eq-distribute"
+    ],
+    "estMinutes": 14,
+    "items": 36,
+    "shippedGzip": 3070,
+    "sourceGzip": 3189
+   },
+   {
+    "id": "equations-6",
+    "kps": [
+     "eq-both-sides"
+    ],
+    "estMinutes": 16,
+    "items": 36,
+    "shippedGzip": 3329,
+    "sourceGzip": 3459
+   },
+   {
+    "id": "equations-7",
+    "kps": [
+     "eq-special-cases"
+    ],
+    "estMinutes": 12,
+    "items": 36,
+    "shippedGzip": 2342,
+    "sourceGzip": 2469
+   },
+   {
+    "id": "equations-8",
+    "kps": [
+     "eq-model-context"
+    ],
+    "estMinutes": 18,
+    "items": 36,
+    "shippedGzip": 3462,
+    "sourceGzip": 3600
+   },
+   {
+    "id": "inequalities-1",
+    "kps": [
+     "ineq-meaning",
+     "ineq-one-step"
+    ],
+    "estMinutes": 20,
+    "items": 72,
+    "shippedGzip": 5231,
+    "sourceGzip": 5502
+   },
+   {
+    "id": "inequalities-2",
+    "kps": [
+     "ineq-negative-flip"
+    ],
+    "estMinutes": 12,
+    "items": 36,
+    "shippedGzip": 2840,
+    "sourceGzip": 2979
+   },
+   {
+    "id": "inequalities-3",
+    "kps": [
+     "ineq-two-step"
+    ],
+    "estMinutes": 14,
+    "items": 36,
+    "shippedGzip": 3168,
+    "sourceGzip": 3315
+   }
+  ],
+  "liveBoot": {
+   "knowledgePoints": 32,
+   "items": 0,
+   "catalogueItems": 1152,
+   "generatedThisSession": 0,
+   "locale": "en",
+   "minItemsPerKp": 36,
+   "minItemsPerMisconception": 3,
+   "groups": "0/32 resident, 0 loading",
+   "lessons": 22,
+   "residentGroups": [],
+   "degraded": [],
+   "issues": 0,
+   "formsPerKp": {
+    "var-meaning": "14/17/5",
+    "oo-numeric": "15/16/5",
+    "expr-anatomy": "16/15/5",
+    "oo-structure": "14/10/12",
+    "eval-substitute": "13/12/11",
+    "eval-signed": "12/13/11",
+    "eval-formula": "13/13/10",
+    "translate-phrase": "13/16/7",
+    "translate-order": "17/14/5",
+    "props-operations": "12/12/12",
+    "like-terms-id": "12/12/12",
+    "like-terms-combine": "12/12/12",
+    "distribute-numeric": "15/14/7",
+    "distribute-variable": "12/12/12",
+    "distribute-negative": "16/13/7",
+    "simplify-expression": "12/13/11",
+    "equivalent-expressions": "11/13/12",
+    "eq-meaning": "12/12/12",
+    "props-equality": "15/14/7",
+    "eq-one-add": "13/16/7",
+    "eq-one-mult": "15/14/7",
+    "eq-two-step": "11/13/12",
+    "eq-combine-side": "10/12/14",
+    "eq-distribute": "12/12/12",
+    "eq-both-sides": "10/14/12",
+    "eq-special-cases": "16/7/13",
+    "translate-sentence": "12/11/13",
+    "eq-model-context": "15/14/7",
+    "ineq-meaning": "14/12/10",
+    "ineq-one-step": "16/13/7",
+    "ineq-negative-flip": "15/14/7",
+    "ineq-two-step": "15/14/7"
+   }
+  },
+  "session": {
+   "lesson": "expressions-1",
+   "itemsServed": 36,
+   "kpsTouched": [
+    "var-meaning",
+    "expr-anatomy",
+    "props-operations",
+    "oo-numeric",
+    "oo-structure"
+   ],
+   "groupsPulled": [
+    "var-meaning",
+    "oo-numeric",
+    "expr-anatomy",
+    "oo-structure",
+    "props-operations"
+   ],
+   "bytes": {
+    "raw": 137135,
+    "gzip": 13898
+   },
+   "fromCatalogue": 35,
+   "fromGenerator": 1,
+   "degradedSelects": 1,
+   "blanks": 0,
+   "shippedBytes": {
+    "raw": 120070,
+    "gzip": 13227
+   }
+  },
+  "prefetch": {
+   "lesson": "expressions-1",
+   "lessonKps": [
+    "var-meaning",
+    "oo-numeric",
+    "expr-anatomy"
+   ],
+   "prefetched": [
+    "oo-structure"
+   ]
+  },
+  "failure": {
+   "kpId": "oo-numeric",
+   "itemsServed": 36,
+   "blanks": 0,
+   "onVictim": 8,
+   "onVictimAllGenerated": true,
+   "probeDegraded": [
+    "oo-numeric: simulated transport failure loading group \"oo-numeric\""
+   ],
+   "issues": [
+    {
+     "kind": "group-load-failed",
+     "kpId": "oo-numeric",
+     "lesson": "expressions-1",
+     "error": "simulated transport failure loading group \"oo-numeric\""
+    }
+   ]
+  },
+  "coldPath": {
+   "cold": {
+    "id": "ineq-negative-flip.subneg/construct/14xp4di",
+    "source": "generated",
+    "relaxation": "generated-group-absent",
+    "standards": [
+     "CCSS.HSA-REI.B.3",
+     "CCSS.7.EE.B.4b",
+     "TEKS.A.5B",
+     "FL.MA.8.AR.2.2",
+     "VA.7.PFA.4"
+    ]
+   },
+   "correctAnswerMarked": true,
+   "warm": {
+    "id": "ineq-negative-flip.subneg/construct/19xldef",
+    "source": "catalogue",
+    "relaxation": "exact"
+   }
+  },
+  "selectSweep": {
+   "baseline": {
+    "rows": 5088,
+    "digest": "567d7e50",
+    "catalogueRows": 4985,
+    "generatedRows": 103,
+    "nullRows": 0,
+    "sample": [
+     "distribute-negative|construct|1|0|distribute-negative.subtract/construct/1029wo8|catalogue|nearest-band",
+     "distribute-negative|construct|1|1|distribute-negative.subtract/construct/1029wo8|catalogue|nearest-band",
+     "distribute-negative|construct|1|2|distribute-negative.subtract/construct/tb7wpr|catalogue|nearest-band"
+    ],
+    "commit": "9d7cc64566bbd9a768e1db035b7673c51aa97eae",
+    "note": "Produced by review/measure/_p31-sweep.mjs against the PRE-SPLIT tree, exported with git archive <commit> into a temp dir and run in place. It is the answer the monolithic bank gave."
+   },
+   "now": {
+    "rows": 5088,
+    "digest": "567d7e50",
+    "catalogueRows": 4985,
+    "generatedRows": 103,
+    "nullRows": 0,
+    "sample": [
+     "distribute-negative|construct|1|0|distribute-negative.subtract/construct/1029wo8|catalogue|nearest-band",
+     "distribute-negative|construct|1|1|distribute-negative.subtract/construct/1029wo8|catalogue|nearest-band",
+     "distribute-negative|construct|1|2|distribute-negative.subtract/construct/tb7wpr|catalogue|nearest-band"
+    ]
+   }
+  },
+  "probeStability": {
+   "cold": {
+    "knowledgePoints": 32,
+    "items": 0,
+    "catalogueItems": 1152,
+    "generatedThisSession": 0,
+    "locale": "en",
+    "minItemsPerKp": 36,
+    "minItemsPerMisconception": 3,
+    "groups": "0/32 resident, 0 loading",
+    "lessons": 22,
+    "residentGroups": [],
+    "degraded": [],
+    "issues": 0,
+    "formsPerKp": {
+     "var-meaning": "14/17/5",
+     "oo-numeric": "15/16/5",
+     "expr-anatomy": "16/15/5",
+     "oo-structure": "14/10/12",
+     "eval-substitute": "13/12/11",
+     "eval-signed": "12/13/11",
+     "eval-formula": "13/13/10",
+     "translate-phrase": "13/16/7",
+     "translate-order": "17/14/5",
+     "props-operations": "12/12/12",
+     "like-terms-id": "12/12/12",
+     "like-terms-combine": "12/12/12",
+     "distribute-numeric": "15/14/7",
+     "distribute-variable": "12/12/12",
+     "distribute-negative": "16/13/7",
+     "simplify-expression": "12/13/11",
+     "equivalent-expressions": "11/13/12",
+     "eq-meaning": "12/12/12",
+     "props-equality": "15/14/7",
+     "eq-one-add": "13/16/7",
+     "eq-one-mult": "15/14/7",
+     "eq-two-step": "11/13/12",
+     "eq-combine-side": "10/12/14",
+     "eq-distribute": "12/12/12",
+     "eq-both-sides": "10/14/12",
+     "eq-special-cases": "16/7/13",
+     "translate-sentence": "12/11/13",
+     "eq-model-context": "15/14/7",
+     "ineq-meaning": "14/12/10",
+     "ineq-one-step": "16/13/7",
+     "ineq-negative-flip": "15/14/7",
+     "ineq-two-step": "15/14/7"
+    }
+   },
+   "warm": {
+    "knowledgePoints": 32,
+    "items": 1152,
+    "catalogueItems": 1152,
+    "generatedThisSession": 0,
+    "locale": "en",
+    "minItemsPerKp": 36,
+    "minItemsPerMisconception": 3,
+    "groups": "32/32 resident, 0 loading",
+    "lessons": 22,
+    "residentGroups": [
+     "var-meaning",
+     "oo-numeric",
+     "expr-anatomy",
+     "oo-structure",
+     "eval-substitute",
+     "eval-signed",
+     "eval-formula",
+     "translate-phrase",
+     "translate-order",
+     "props-operations",
+     "like-terms-id",
+     "like-terms-combine",
+     "distribute-numeric",
+     "distribute-variable",
+     "distribute-negative",
+     "simplify-expression",
+     "equivalent-expressions",
+     "eq-meaning",
+     "props-equality",
+     "eq-one-add",
+     "eq-one-mult",
+     "eq-two-step",
+     "eq-combine-side",
+     "eq-distribute",
+     "eq-both-sides",
+     "eq-special-cases",
+     "translate-sentence",
+     "eq-model-context",
+     "ineq-meaning",
+     "ineq-one-step",
+     "ineq-negative-flip",
+     "ineq-two-step"
+    ],
+    "degraded": [],
+    "issues": 0,
+    "formsPerKp": {
+     "var-meaning": "14/17/5",
+     "oo-numeric": "15/16/5",
+     "expr-anatomy": "16/15/5",
+     "oo-structure": "14/10/12",
+     "eval-substitute": "13/12/11",
+     "eval-signed": "12/13/11",
+     "eval-formula": "13/13/10",
+     "translate-phrase": "13/16/7",
+     "translate-order": "17/14/5",
+     "props-operations": "12/12/12",
+     "like-terms-id": "12/12/12",
+     "like-terms-combine": "12/12/12",
+     "distribute-numeric": "15/14/7",
+     "distribute-variable": "12/12/12",
+     "distribute-negative": "16/13/7",
+     "simplify-expression": "12/13/11",
+     "equivalent-expressions": "11/13/12",
+     "eq-meaning": "12/12/12",
+     "props-equality": "15/14/7",
+     "eq-one-add": "13/16/7",
+     "eq-one-mult": "15/14/7",
+     "eq-two-step": "11/13/12",
+     "eq-combine-side": "10/12/14",
+     "eq-distribute": "12/12/12",
+     "eq-both-sides": "10/14/12",
+     "eq-special-cases": "16/7/13",
+     "translate-sentence": "12/11/13",
+     "eq-model-context": "15/14/7",
+     "ineq-meaning": "14/12/10",
+     "ineq-one-step": "16/13/7",
+     "ineq-negative-flip": "15/14/7",
+     "ineq-two-step": "15/14/7"
+    }
+   }
+  }
+ }
+}

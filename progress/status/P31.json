@@ -1,0 +1,9 @@
+{
+  "id": "P31",
+  "state": "critique",
+  "round": 1,
+  "gap": null,
+  "note": "Catalogue split one chunk per knowledge point + 22-lesson manifest; eager bank chunk 147.0 -> 64.3 kB gz (-82.7), first load -68.5 kB gz (like-for-like -80.0). 18/18 claims in review/measure/P31.mjs. verify PASSED on dev and --built.",
+  "evidence": [],
+  "updated": "2026-08-10T16:47:23.072Z"
+}

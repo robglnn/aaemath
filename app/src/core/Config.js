@@ -81,6 +81,10 @@ export const TIER_ORDER = ["potato", "low", "medium", "high", "ultra"];
 
 const DEFAULTS = {
   tier: "high",
+  // The switch `core/AutoTier.js` reads. True: the tier above is a *starting point* that a
+  // first-frame hardware heuristic may lower and sustained frame-cost measurement may correct.
+  // False: the player has chosen, and nothing may move the picture under them. `set("tier", …)`
+  // and `?tier=` both flip it to false; `applyTier()` deliberately does not.
   autoTier: true,
   locale: "en",
 
@@ -151,7 +155,30 @@ export class Config {
   set(key, value) {
     if (this.values[key] === value) return;
     this.values[key] = value;
+    // A tier arriving through the public setter is a *player* choice — a settings screen, the
+    // console, a debug key. Auto-tiering stands down for good the moment one exists, and it is
+    // recorded in storage so it survives the next boot. `AutoTier` never lands here: its own
+    // choices go through `applyTier()` below.
+    if (key === "tier" && TIERS[value]) this.values.autoTier = false;
     write(this.values);
+  }
+
+  /**
+   * Apply a tier chosen by measurement rather than by the player.
+   *
+   * Two properties this must have, both of which `set()` would get wrong:
+   *
+   *  * **It does not disable auto-tiering.** Otherwise the first automatic step would be the last.
+   *  * **It is not persisted.** A tier measured on one bad afternoon — a machine with a browser
+   *    update downloading behind the game — must not become a permanent setting the student has no
+   *    idea how to undo. Every session re-measures from the player's own stored preference.
+   *
+   * @returns {boolean} true when the tier actually moved
+   */
+  applyTier(id) {
+    if (!TIERS[id] || this.values.tier === id) return false;
+    this.values.tier = id;
+    return true;
   }
 
   get tier() {

@@ -6,13 +6,20 @@
  *   node review/measure/P31.mjs --json             # machine-readable
  *   node review/measure/P31.mjs --after=dist       # which built tree is "after"
  *
- * P31's claim is narrow and it has two halves, and BOTH have to be measured or the piece is a
- * regression wearing a size reduction:
+ * P31's claim is narrow and it has THREE halves now, and all three have to be measured or the
+ * piece is a regression wearing a size reduction:
  *
  *   1. First load got materially smaller, in gzipped bytes, on the real build.
- *   2. Nothing else changed. Same items, same order, same fingerprint, same coverage, and a
+ *   2. The loader has a CALLER IN THE SHIPPED GAME. Round 2 failed exactly here: the byte win was
+ *      real, but `ensure`, `ensureLesson` and `prefetchAround` were referenced nowhere under
+ *      `app/` except their own definitions, the idle prefetch never ran, and the default path for
+ *      the first item on every knowledge point was the degraded generator. So section E is a
+ *      source-level check that the caller exists and a browser-level check that it fired, and
+ *      section B now drives the boot module's own entry point rather than a lesson this script
+ *      chose for itself.
+ *   3. Nothing else changed. Same items, same order, same fingerprint, same coverage, and a
  *      session that runs end to end pulling only the groups it needs — including when a group
- *      never arrives at all.
+ *      never arrives at all, and including when it comes back.
  *
  * WHERE THE "BEFORE" COMES FROM. `review/measure/evidence/P31-baseline.json` is a real
  * `vite build` of the pre-split tree at the commit named inside it, produced with
@@ -56,9 +63,19 @@ const bankFiles = kg.nodes.map((n) => load(`content/items/bank/${n.id}.json`));
 
 const ItemBankMod = await import(pathToFileURL(path.join(ROOT, "app/src/learn/ItemBank.js")).href);
 const { ItemBank, __evictAllGroups, __faultGroup, __groupBytesLoaded, bankIssues } = ItemBankMod;
-const { BANK, MANIFEST, STRINGS } = await import(pathToFileURL(path.join(ROOT, "content/items/index.mjs")).href);
+const itemsIndex = await import(pathToFileURL(path.join(ROOT, "content/items/index.mjs")).href);
+const {
+  BANK,
+  MANIFEST,
+  STRINGS,
+  BANK_FINGERPRINT,
+  BANK_FINGERPRINT_BASIS,
+  bankFingerprintBasis,
+  loadItemStrings,
+} = itemsIndex;
 const { Graph } = await import(pathToFileURL(path.join(ROOT, "app/src/learn/Graph.js")).href);
-const { Mastery, bankAuditFingerprint } = await import(pathToFileURL(path.join(ROOT, "app/src/learn/Mastery.js")).href);
+const Mast = await import(pathToFileURL(path.join(ROOT, "app/src/learn/Mastery.js")).href);
+const { Mastery, bankAuditFingerprint } = Mast;
 const { Scheduler, virtualClock, mulberry32 } = await import(pathToFileURL(path.join(ROOT, "app/src/learn/Scheduler.js")).href);
 
 const bankAudit = load("app/src/learn/bank-audit.json");
@@ -89,8 +106,17 @@ function measureDir(dir) {
 const KP_IDS = kg.nodes.map((n) => n.id);
 /** A group chunk is named after its knowledge point, because its entry module is `<kpId>.mjs`. */
 const isGroupChunk = (name) => KP_IDS.some((id) => name === `${id}.js` || name.startsWith(`${id}-`));
-/** i18n pulls exactly one locale bundle; the other two are never requested. */
-const isOtherLocale = (name, locale) => /^(en|es|pl)-/.test(name) && !name.startsWith(`${locale}-`);
+/**
+ * i18n pulls exactly one locale bundle; the other two are never requested. Since round 3 the ITEM
+ * text is split the same way (`items-<locale>-<hash>.js`), so the same rule covers both — and the
+ * live probe in `_p31-live.mjs` confirms from the browser's own resource timings that exactly one
+ * of each was fetched, so this is a filter over a measured fact rather than an assumption.
+ */
+const isOtherLocale = (name, locale) =>
+  (/^(en|es|pl)-/.test(name) && !name.startsWith(`${locale}-`)) ||
+  (/^items-(en|es|pl)-/.test(name) && !name.startsWith(`items-${locale}-`));
+/** The identity spine. Never on the first-load path: the fingerprint ships as a scalar. */
+const isSpineChunk = (name) => name === "spine.js" || /^spine-[A-Za-z0-9_-]+\.js$/.test(name);
 
 const baseline = load("review/measure/evidence/P31-baseline.json");
 const after = measureDir(AFTER_DIR);
@@ -125,7 +151,9 @@ const sum = (assets, keep) =>
   // NOT count is the two locale bundles the learner is not using, and — the point of this piece —
   // the item groups, which are not requested until a lesson asks for one.
   const beforeFirst = sum(baseline.assets, (n) => !isOtherLocale(n, "en"));
-  const afterFirst = after ? sum(after, (n) => !isGroupChunk(n) && !isOtherLocale(n, "en")) : null;
+  const afterFirst = after
+    ? sum(after, (n) => !isGroupChunk(n) && !isSpineChunk(n) && !isOtherLocale(n, "en"))
+    : null;
   const afterAll = after ? sum(after, () => true) : null;
 
   /**
@@ -136,7 +164,14 @@ const sum = (assets, keep) =>
    */
   const stem = (n) => n.replace(/-[A-Za-z0-9_-]{8}\.(js|css)$/, "");
   const beforeStems = new Set(Object.keys(baseline.assets).map(stem));
-  const newChunks = after ? Object.keys(after).filter((n) => !isGroupChunk(n) && !beforeStems.has(stem(n))) : [];
+  /**
+   * P31's OWN new chunks are excluded from this handicap list on purpose. `items-en-*.js` did not
+   * exist at the baseline, but it is not a parallel piece's cost — it is the eager locale table
+   * moved out of `ItemBank`, and it is still counted in the after number above. Calling our own
+   * replacement chunk "somebody else's" would be a flattering measurement, not a measurement.
+   */
+  const ours = (n) => isGroupChunk(n) || isSpineChunk(n) || /^items-(en|es|pl)-/.test(n);
+  const newChunks = after ? Object.keys(after).filter((n) => !ours(n) && !beforeStems.has(stem(n))) : [];
   const newCost = after ? sum(after, (n) => newChunks.includes(n)) : { raw: 0, gzip: 0 };
   const likeForLike = afterFirst ? afterFirst.gzip - newCost.gzip : 0;
 
@@ -218,45 +253,69 @@ const lessonChunkBytes = (kpIds) =>
   );
 }
 
+/**
+ * The claims above are about files on disk. The ones below are about the REAL BUILT GAME: which
+ * chunks the browser actually requested, and when, taken from `performance.getEntriesByType`
+ * inside the page. `review/measure/evidence/P31-live-probe.json` is written by
+ *
+ *   node review/measure/_p31-live.mjs
+ *
+ * which boots `vite preview` in headless Chromium, snapshots the resource list at ready, awaits the
+ * boot module's own warm promise, snapshots again, waits two idle turns for the prefetch and
+ * snapshots a third time. It renders nothing and captures no pixels.
+ */
+const live = load("review/measure/evidence/P31-live-probe.json");
+detail.live = {
+  ready: live.ready,
+  errors: live.errors,
+  warm: live.warm,
+  frontier: live.frontier,
+  classified: live.classified,
+  bankAudit: live.bankAudit,
+  probeAfterWarm: live.probeAfterWarm?.groups ?? null,
+  probe: live.probe,
+};
+
 {
-  /**
-   * The claim above is about files on disk. This one is about the REAL GAME: what the browser had
-   * actually pulled by the time the app reported ready. `review/measure/evidence/P31-live-probe.json`
-   * is the verbatim output of
-   *
-   *   node tools/review.mjs probe --name=itembank --built
-   *
-   * A group chunk can only enter the page through `GROUP_LOADERS`, so "0/32 resident" IS "no group
-   * chunk was requested". Everything the engine needs before a lesson opens — 32 knowledge points,
-   * 1152 catalogue items, the coverage minima — is there without one of them.
-   */
-  const live = load("review/measure/evidence/P31-live-probe.json").probe;
-  detail.liveBoot = live;
+  const cp = live.classified.criticalPath;
   claim(
     "A5",
-    "the REAL built game boots with zero item groups loaded, and still knows the whole course",
-    live.groups.startsWith("0/32 resident") &&
-      live.knowledgePoints === 32 &&
-      live.catalogueItems === 1152 &&
-      live.degraded.length === 0,
-    `probe --name=itembank --built: groups "${live.groups}", ${live.knowledgePoints} knowledge points, ` +
-      `${live.catalogueItems} catalogue items, min ${live.minItemsPerKp}/kp, ${live.lessons} lessons, degraded ${JSON.stringify(live.degraded)}`,
-    "0/32 groups resident at boot"
+    "the REAL built game reaches `ready` having requested ZERO item groups, ZERO spine and ONE locale — and still knows the whole course",
+    live.ready === true &&
+      live.errors.length === 0 &&
+      cp.groupChunks.length === 0 &&
+      cp.spineChunks.length === 0 &&
+      cp.itemLocaleChunks.length === 1 &&
+      live.probe.knowledgePoints === 32 &&
+      live.probe.catalogueItems === 1152,
+    `at ready the page had made ${cp.requests} requests (${kB(cp.encodedBytes)} encoded): ` +
+      `${cp.groupChunks.length} group chunks, ${cp.spineChunks.length} spine chunks, ` +
+      `item locale ${JSON.stringify(cp.itemLocaleChunks)}; the bank still reports ` +
+      `${live.probe.knowledgePoints} knowledge points, ${live.probe.catalogueItems} catalogue items, ` +
+      `min ${live.probe.minItemsPerKp}/kp, ${live.probe.lessons} lessons`,
+    "0 group chunks, 0 spine chunks, exactly 1 item locale chunk on the critical path"
   );
 }
 
 /* ================================================================ B — a real session, cold */
 
 /**
- * The whole engine, from a cold cache, exactly as a browser would start it: no groups resident,
- * the session opener asks for one lesson, and the scheduler runs until its 25 minutes are spent.
+ * The whole engine, from a cold cache, exactly as a browser starts it.
+ *
+ * ROUND 3 CHANGE, and the reason for it. Round 2 opened the session by picking a lesson HERE — the
+ * script asked the scheduler for a knowledge point, looked its lesson up and called `ensureLesson`
+ * itself. So B1, B2 and B4 measured a code path that only this file executed, which is precisely
+ * what the critic caught. The opener below is now `bank.warmFrontier(learning)`: the same method,
+ * with the same argument shape, that `app/src/boot/62-itembank.js` calls on every page load. If
+ * that method stopped working, or the boot module stopped calling it, section E fails and these
+ * claims are measuring the thing the game actually does.
  *
  * `settle()` is the microtask/timer drain that stands in for time passing while the learner reads
  * an item. Nothing here waits on wall-clock: what is being measured is which chunks got pulled.
  */
 const settle = () => new Promise((r) => setTimeout(r, 0));
 
-async function runSession({ fault = null, startLesson = null } = {}) {
+async function runSession({ fault = null } = {}) {
   __evictAllGroups();
   if (fault) __faultGroup(fault, true);
   const issues = [];
@@ -270,10 +329,11 @@ async function runSession({ fault = null, startLesson = null } = {}) {
 
   sched.beginSession();
 
-  // The session opener: one lesson's worth of catalogue, awaited before the first item.
-  const firstKp = sched.next()?.kpId ?? KP_IDS[0];
-  const lesson = startLesson ?? bank.lessonFor(firstKp)?.id ?? MANIFEST.lessons[0].id;
-  const opened = await bank.ensureLesson(lesson);
+  // The session opener, through the boot module's entry point. `62-learning.js` mounts
+  // `frontier: () => system.mastery.frontier()`; this is that object.
+  const learning = { frontier: () => mastery.frontier() };
+  const opened = await bank.warmFrontier(learning);
+  const lesson = opened.lesson;
 
   const served = [];
   let blanks = 0;
@@ -345,11 +405,17 @@ detail.session = {
 
 claim(
   "B1",
-  "a 25-minute session runs end to end from a COLD cache and never serves a blank item",
-  session.served.length >= 25 && session.blanks === 0 && session.steps <= 5000,
-  `${session.served.length} items served over ${session.kpsTouched.length} knowledge points, ${session.blanks} blanks, ${session.steps} scheduler steps ` +
+  "a 25-minute session runs end to end from a COLD cache, opened through the BOOT MODULE's own warm, and never serves a blank item",
+  session.served.length >= 25 &&
+    session.blanks === 0 &&
+    session.steps <= 5000 &&
+    session.opened.reason === "ok" &&
+    session.opened.lesson !== null,
+  `warmFrontier() -> frontier "${session.opened.kpId}" -> lesson "${session.opened.lesson}" ` +
+    `(${session.opened.groups} groups, ${session.opened.failed.length} failed, reason "${session.opened.reason}"); ` +
+    `then ${session.served.length} items served over ${session.kpsTouched.length} knowledge points, ${session.blanks} blanks, ${session.steps} scheduler steps ` +
     `(the scheduler closed the session on its own 25-minute budget, not on a bound in this script)`,
-  ">= 25 items, 0 blanks, terminates"
+  ">= 25 items, 0 blanks, terminates, and the lesson came from the engine's frontier"
 );
 
 const sessionShipped = lessonChunkBytes(session.residency.resident);
@@ -373,22 +439,36 @@ claim(
 );
 
 {
-  // Prefetch: open a lesson, do nothing else, and see what arrives during idle.
+  /**
+   * Prefetch, through the boot path: warm the frontier lesson, do nothing else, and see what
+   * arrives during idle. Then check the SAME thing happened in the real browser — the round-2
+   * criticism was not "prefetchAround is wrong", it was "prefetchAround never runs", and only the
+   * live half of this answers that.
+   */
   __evictAllGroups();
   const bank = new ItemBank();
-  const target = MANIFEST.lessons.find((l) => l.kpIds.length > 1) ?? MANIFEST.lessons[0];
-  await bank.ensureLesson(target.id);
+  const mastery = new Mastery(graph, { now: () => 0, storage: null, bankAudit });
+  const opened = await bank.warmFrontier({ frontier: () => mastery.frontier() });
+  const target = MANIFEST.lessons.find((l) => l.id === opened.lesson);
   const straightAfter = bank.residency().resident.length;
   await settle();
   await settle();
   const warmed = bank.residency().resident.filter((id) => !target.kpIds.includes(id));
-  detail.prefetch = { lesson: target.id, lessonKps: target.kpIds, prefetched: warmed };
+  const livePrefetch = live.classified.idlePrefetched;
+  detail.prefetch = {
+    lesson: target.id,
+    lessonKps: target.kpIds,
+    prefetched: warmed,
+    liveGroupChunks: livePrefetch.groupChunks,
+  };
   claim(
     "B4",
-    "the NEXT likely group is prefetched during idle, so nobody waits mid-session",
-    warmed.length > 0,
-    `opening ${target.id} loaded ${straightAfter} groups, then idle prefetch warmed ${warmed.length} more (${warmed.join(", ") || "none"})`,
-    "at least one group ahead"
+    "the NEXT likely group is prefetched during idle — offline AND in the real built game",
+    warmed.length > 0 && livePrefetch.groupChunks.length > 0,
+    `offline: warming ${target.id} loaded ${straightAfter} groups, then idle prefetch warmed ${warmed.length} more (${warmed.join(", ") || "none"}). ` +
+      `live built game: after the warm resolved, two idle turns pulled ${livePrefetch.groupChunks.length} further group chunk(s) ` +
+      `(${livePrefetch.groupChunks.join(", ") || "none"}, ${livePrefetch.encodedBytes} B encoded)`,
+    "at least one group ahead, in both"
   );
 }
 
@@ -405,7 +485,7 @@ claim(
   for (const s of session.served) load.set(s.kpId, (load.get(s.kpId) ?? 0) + 1);
   const ranked = [...load].sort((a, b) => b[1] - a[1]).map(([id]) => id);
   const victim = ranked[1] ?? ranked[0];
-  const run = await runSession({ fault: victim, startLesson: null });
+  const run = await runSession({ fault: victim });
   const onVictim = run.served.filter((s) => s.kpId === victim);
   const spoke = run.probe.degraded.some((d) => d.startsWith(`${victim}:`)) && run.issues.some((i) => i.kpId === victim);
   detail.failure = {
@@ -428,6 +508,64 @@ claim(
     "session completes, >=1 item still served on the failed knowledge point, 0 blanks, the failure named in the probe"
   );
   __faultGroup(victim, false);
+}
+
+{
+  /**
+   * ONE BLIP MUST NOT BE FOREVER.
+   *
+   * Round 2's `touch()` returned early on any `FAILED` entry and nothing in the shipped game ever
+   * called `ensure()` a second time, so a single dropped chunk downgraded that knowledge point —
+   * every item on it generated instead of authored — for the life of the page. On school wifi that
+   * is not an exotic case. The window is `RETRY_AFTER_MS`; this drives it by faking the clock
+   * rather than by waiting thirty seconds, then confirms the group actually comes back.
+   */
+  __evictAllGroups();
+  const victim = "eq-two-step";
+  const issues = [];
+  bankIssues.onIssue = (i) => issues.push(i);
+  const bank = new ItemBank();
+  __faultGroup(victim, true);
+
+  const first = bank.select({ kpId: victim, form: "construct", difficulty: 3, seed: 11 });
+  await new Promise((r) => setTimeout(r, 1200)); // three attempts with 250 ms / 750 ms backoff
+  const whileDown = bank.select({ kpId: victim, form: "construct", difficulty: 3, seed: 11 });
+  const failedEntry = bank.residency().failed[victim];
+
+  // The chunk becomes reachable again. `__FAULT` is cleared directly rather than through
+  // `__faultGroup(..., false)`, which also evicts — and evicting would delete the `FAILED` entry
+  // that is the entire subject of this claim. The timestamp is then moved rather than slept
+  // through: thirty real seconds inside a proof script measures patience, not code.
+  ItemBankMod.__FAULT.delete(victim);
+  const res = ItemBankMod.__ageFailure(victim, 31_000);
+  const stillCold = bank.select({ kpId: victim, form: "construct", difficulty: 3, seed: 11 });
+  await settle();
+  await settle();
+  const recovered = bank.select({ kpId: victim, form: "construct", difficulty: 3, seed: 11 });
+  bankIssues.onIssue = null;
+
+  detail.retry = {
+    kpId: victim,
+    attempts: failedEntry?.attempts ?? null,
+    duringOutage: [first?.relaxation, whileDown?.relaxation],
+    aged: res,
+    afterWindow: [stillCold?.relaxation, recovered?.source],
+    issueKinds: issues.map((i) => i.kind),
+  };
+  claim(
+    "C3",
+    "a group that failed ONCE is retried after the backoff window instead of being degraded for the life of the page",
+    (failedEntry?.attempts ?? 0) >= 3 &&
+      whileDown?.relaxation === "generated-group-failed" &&
+      stillCold?.relaxation === "generated-group-failed" &&
+      recovered?.source === "catalogue" &&
+      issues.some((i) => i.kind === "group-retry"),
+    `"${victim}" made to fail: ${failedEntry?.attempts} attempts inside one load (250 ms then 750 ms apart), ` +
+      `selects during the outage relaxed "${whileDown?.relaxation}"; after the ${res.retryAfterMs / 1000}s window the next select ` +
+      `still answered "${stillCold?.relaxation}" synchronously but started a retry (issues: ${issues.map((i) => i.kind).join(", ")}), ` +
+      `and the following select came from the ${recovered?.source}`,
+    "3 attempts, retried after the window, back on the catalogue, and the retry announced"
+  );
 }
 
 {
@@ -580,13 +718,192 @@ claim(
 }
 
 {
+  /**
+   * The locale table is split by LANGUAGE, not by knowledge point — a generated item can name any
+   * key, so a per-knowledge-point split of the strings would be wrong. The test is that splitting
+   * it lost nothing: the three chunks reassembled must be `content/items/strings.json`, key for
+   * key, locale for locale, IN ORDER, and every key must resolve through `ItemBank.text()` in
+   * every language with no English leaking into a Spanish or Polish session (G3).
+   */
   const strings = load("content/items/strings.json").keys;
+  const keys = Object.keys(strings);
+  const perLocale = {};
+  for (const l of ["en", "es", "pl"]) perLocale[l] = await loadItemStrings(l);
+  const bank = new ItemBank();
+  let mismatched = 0;
+  let englishLeaks = 0;
+  for (const l of ["en", "es", "pl"]) {
+    await bank.loadLocale(l);
+    for (const k of keys) {
+      if (perLocale[l][k] !== strings[k][l]) mismatched += 1;
+      // A key whose translation differs from English must not come back as the English string.
+      if (strings[k][l] !== strings[k].en && bank.text(k, {}, l) === strings[k].en) englishLeaks += 1;
+    }
+  }
+  await bank.loadLocale("en");
+  detail.localeSplit = {
+    keys: keys.length,
+    chunkKeys: Object.fromEntries(Object.entries(perLocale).map(([l, t]) => [l, Object.keys(t).length])),
+    mismatched,
+    englishLeaks,
+    liveLocaleChunks: live.classified.criticalPath.itemLocaleChunks,
+  };
   claim(
     "D7",
-    "the locale table still ships whole — a generated item can name any key, so it cannot be split by knowledge point",
-    JSON.stringify(STRINGS) === JSON.stringify(strings),
-    `${Object.keys(STRINGS).length} keys, identical to content/items/strings.json`,
-    "identical"
+    "the item locale table is one chunk per language and the three reassemble to strings.json exactly — and the page pulls ONE",
+    JSON.stringify(STRINGS) === JSON.stringify(strings) &&
+      mismatched === 0 &&
+      englishLeaks === 0 &&
+      live.classified.criticalPath.itemLocaleChunks.length === 1,
+    `${keys.length} keys x 3 locales; ${mismatched} strings differ from strings.json, ${englishLeaks} English leaks through text() in es/pl; ` +
+      `the reassembled table is byte-identical to strings.json; the live built game pulled ${JSON.stringify(live.classified.criticalPath.itemLocaleChunks)}`,
+    "0 differences, 0 leaks, exactly 1 locale chunk fetched"
+  );
+}
+
+/* ================================================================ E — the loader has a caller */
+
+/**
+ * ROUND 2 DIED HERE, so these claims are written to fail in exactly the way it failed.
+ *
+ * The critic's finding was not that per-lesson loading was broken; it was that nothing in the
+ * shipped game ran it. `ensure`, `ensureLesson` and `prefetchAround` appeared nowhere under `app/`
+ * except their own definitions, so the byte win was real and the delivery was fiction. E1 is that
+ * grep, executed. E2 is the browser's own record that the caller fired. A delivery mechanism with
+ * no caller must not be able to report PASS.
+ */
+
+function sourceFiles(dir) {
+  const out = [];
+  for (const entry of fs.readdirSync(path.join(ROOT, dir), { withFileTypes: true })) {
+    const rel = `${dir}/${entry.name}`;
+    if (entry.isDirectory()) out.push(...sourceFiles(rel));
+    else if (/\.(js|mjs)$/.test(entry.name)) out.push(rel);
+  }
+  return out;
+}
+
+{
+  /**
+   * COMMENTS ARE STRIPPED FIRST. Round 2's file talked about `ensureLesson` in a doc comment and
+   * never called it; a grep that counts prose would have reported PASS on exactly the state the
+   * critic rejected. Only executable text is searched here.
+   */
+  const stripComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+  const files = sourceFiles("app/src");
+  const DEFINITION = "app/src/learn/ItemBank.js";
+  const code = new Map(
+    files.map((f) => [f, stripComments(fs.readFileSync(path.join(ROOT, f), "utf8"))])
+  );
+  const where = (re) => files.filter((f) => f !== DEFINITION && re.test(code.get(f)));
+
+  const warmCallers = where(/\.\s*warmFrontier(WhenIdle)?\s*\(/);
+  const ensureCallers = where(/\.\s*ensure(Lesson)?\s*\(/);
+  const subscribers = where(/bankIssues\s*\.\s*onIssue\s*=/);
+
+  /**
+   * The static half cannot see through `warmFrontier` into `ensureLesson` and `prefetchAround`,
+   * which live in the same file as their caller. So the chain is exercised: patch the two methods
+   * to count, run the boot module's entry point, and put the counts in the claim. A grep can be
+   * satisfied by a mention; this cannot.
+   */
+  __evictAllGroups();
+  const spy = { ensureLesson: 0, ensure: 0, prefetchAround: 0 };
+  const proto = ItemBank.prototype;
+  const original = {
+    ensureLesson: proto.ensureLesson,
+    ensure: proto.ensure,
+    prefetchAround: proto.prefetchAround,
+  };
+  for (const name of Object.keys(spy)) {
+    proto[name] = function patched(...args) {
+      spy[name] += 1;
+      return original[name].apply(this, args);
+    };
+  }
+  const spyBank = new ItemBank();
+  const spyMastery = new Mastery(graph, { now: () => 0, storage: null, bankAudit });
+  const spyWarm = await spyBank.warmFrontier({ frontier: () => spyMastery.frontier() });
+  for (const name of Object.keys(spy)) proto[name] = original[name];
+
+  detail.callers = { warmCallers, ensureCallers, subscribers, chain: spy, spyWarm };
+  const bootWarms = warmCallers.some((f) => f.startsWith("app/src/boot/"));
+  const chained = spy.ensureLesson >= 1 && spy.ensure >= 1 && spy.prefetchAround >= 1;
+  claim(
+    "E1",
+    "the per-lesson loader is CALLED from the shipped game — executable code, not a doc comment — and the degradation channel has a subscriber",
+    bootWarms && subscribers.length > 0 && chained,
+    `with comments stripped, \`warmFrontier\`/\`warmFrontierWhenIdle\` is CALLED in [${warmCallers.join(", ") || "NOTHING"}], ` +
+      `\`ensure\`/\`ensureLesson\` in [${ensureCallers.join(", ") || "NOTHING"}], ` +
+      `and \`bankIssues.onIssue\` is assigned in [${subscribers.join(", ") || "NOTHING"}]. ` +
+      `Driving that entry point once reached ensureLesson x${spy.ensureLesson}, ensure x${spy.ensure}, prefetchAround x${spy.prefetchAround} ` +
+      `and opened "${spyWarm.lesson}"`,
+    "a boot module calls warmFrontier; the call reaches ensureLesson and prefetchAround; onIssue has a subscriber"
+  );
+}
+
+{
+  const w = live.warm;
+  const pulled = live.classified.warmPulled;
+  claim(
+    "E2",
+    "in the REAL built game the warm ran, off the critical path, on the lesson the ENGINE named — and pulled that lesson's chunks",
+    !!w &&
+      w.reason === "ok" &&
+      !!w.lesson &&
+      w.kpId === (live.frontier?.[0] ?? null) &&
+      w.failed.length === 0 &&
+      pulled.groupChunks.length === w.groups &&
+      pulled.groupChunks.length > 0,
+    `learning.frontier() = ${JSON.stringify(live.frontier)}; the warm resolved lesson "${w?.lesson}" from "${w?.kpId}" ` +
+      `in ${w?.ms} ms and loaded ${w?.groups} groups. The browser's resource timings show those exact ${pulled.groupChunks.length} chunks ` +
+      `(${pulled.groupChunks.join(", ")}, ${pulled.encodedBytes} B encoded) requested AFTER ready, none before it.`,
+    "warm ok, frontier-derived lesson, >0 group chunks, all after ready"
+  );
+}
+
+{
+  /**
+   * The fingerprint scalar, and the hole it could have opened. The build precomputes
+   * `bankAuditFingerprint` so the 1152-item identity spine does not have to ship; that is only safe
+   * because the constants it was folded over are keyed and rechecked at runtime. This runs the
+   * SHIPPED basis function over the LIVE constants — if the build's copy and the barrel's copy ever
+   * drift, this is where it shows.
+   */
+  const liveBasis = bankFingerprintBasis({
+    version: Mast.BANK_AUDIT_VERSION,
+    perCell: Mast.BANK_AUDIT_PER_CELL,
+    window: Mast.BANK_AUDIT_WINDOW,
+    candidates: Mast.EXECUTED_CANDIDATES,
+    sampleCap: Mast.EXECUTED_SAMPLE_CAP,
+    forms: Mast.EXECUTED_FORMS,
+    caps: graph.model?.bkt?.identifiabilityCaps ?? {},
+  });
+  const recomputed = bankAuditFingerprint({ bankFiles: BANK, model: graph.model });
+  const liveAudit = live.bankAudit ?? {};
+  detail.fingerprint = {
+    scalar: BANK_FINGERPRINT,
+    recomputedFromSpine: recomputed,
+    committed: bankAudit.fingerprint,
+    basisAtBuild: BANK_FINGERPRINT_BASIS,
+    basisLive: liveBasis,
+    liveAudit,
+  };
+  claim(
+    "E3",
+    "the audit fingerprint ships as a SCALAR, matches a full recomputation, and the identity spine is never requested by the page",
+    BANK_FINGERPRINT !== null &&
+      BANK_FINGERPRINT === recomputed &&
+      BANK_FINGERPRINT === bankAudit.fingerprint &&
+      liveBasis === BANK_FINGERPRINT_BASIS &&
+      liveAudit.fingerprintSource === "build-time" &&
+      live.classified.criticalPath.spineChunks.length === 0 &&
+      live.classified.warmPulled.spineChunks.length === 0,
+    `BANK_FINGERPRINT ${BANK_FINGERPRINT} == recomputed over all 1152 items ${recomputed} == committed ${bankAudit.fingerprint}; ` +
+      `basis key ${BANK_FINGERPRINT_BASIS} recomputed from the live Mastery constants gives ${liveBasis}; ` +
+      `the live game reports fingerprintSource "${liveAudit.fingerprintSource}" and resolved the price in ${liveAudit.setupMs} ms, ` +
+      `having requested 0 spine chunks`,
+    "identical, basis agrees, spine never fetched"
   );
 }
 

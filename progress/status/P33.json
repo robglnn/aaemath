@@ -1,9 +1,9 @@
 {
   "id": "P33",
   "state": "building",
-  "round": 1,
-  "gap": null,
-  "note": "Reading binding docs and existing flow/learning state before building the session layer",
+  "round": 2,
+  "gap": "A single 5-minute absence latches _breakPending and ends the Pomodoro at the next beat regardless of elapsed time, permanently (nothing calls restart()): under realistic away patterns only 6-46% of sittings land in 15-25 min, median 4.29 min for a fast learner, and review/measure/P33.mjs never calls noteAway() once",
+  "note": "Round 2: fixing break-latch ordering, making break a cycle, adding away arm to measure, heavy-tail reservation, resolving LEVERAGE",
   "evidence": [],
-  "updated": "2026-08-10T16:19:41.507Z"
+  "updated": "2026-08-10T17:05:40.520Z"
 }

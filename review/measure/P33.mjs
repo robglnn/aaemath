@@ -153,6 +153,45 @@ function gapMs(rng) {
   return Math.round(2500 + 3500 * rng());
 }
 
+// ------------------------------------------------------------------------------------- absence
+
+/**
+ * How often a learner LOOKS AWAY, and for how long.
+ *
+ * Round 1 of this script did not contain a single call to `noteAway()`, which meant the one
+ * mechanism that makes this layer a Pomodoro rather than a timer — an absence past
+ * `arc.breakMinutes` ending the sitting — was never once exercised. A 1440/1440 in-band result
+ * measured with the break path switched off is not a measurement of this piece.
+ *
+ * Four profiles, and `attentive` is kept precisely so the two can be read against each other:
+ *
+ *   - `attentive` — p = 0. The round-1 measurement, and the control.
+ *   - `alt-tab`   — 15% of items, 20–90 s. A notification, a sibling, a glance at a phone. Never
+ *                   long enough to be a break, so this profile stresses the ARC (away time must be
+ *                   excluded from the fifteen minutes) rather than the break rule.
+ *   - `churn`     — 8% of items, 2–9 minutes. A classroom: somebody comes to the desk, the bell for
+ *                   the corridor, a fire drill that turns out to be a test. This is the critic's
+ *                   own gate, and roughly one gap in three here is past `breakMinutes`.
+ *   - `break`     — 3% of items, 5–15 minutes. A real break, always past the threshold.
+ *
+ * Half of all absences land MID-ITEM — the claim is on the slab and the learner is not — because
+ * that is the case with the two invariants attached to it: the response must not be counted as
+ * evidence about pace, and the sitting must not end while the item is standing open.
+ */
+const AWAY_PROFILES = [
+  { id: "attentive", p: 0, lo: 0, hi: 0, note: "nobody looks away — the control, and round 1's only arm" },
+  { id: "alt-tab", p: 0.15, lo: 20, hi: 90, note: "15% of items, 20-90s — under the break threshold" },
+  { id: "churn", p: 0.08, lo: 120, hi: 540, note: "8% of items, 2-9 min — a real classroom" },
+  { id: "break", p: 0.03, lo: 300, hi: 900, note: "3% of items, 5-15 min — always a break" },
+];
+
+/** One absence, or none. Returns `{ ms, mid }`; `mid` means it lands with the claim standing open. */
+function drawAway(away, rng) {
+  if (!away.p || rng() >= away.p) return { ms: 0, mid: false };
+  const ms = Math.round((away.lo + (away.hi - away.lo) * rng()) * 1000);
+  return { ms, mid: rng() < 0.5 };
+}
+
 // ------------------------------------------------------------------------------------ the world
 
 function makeWorld(seed, startMs) {
@@ -192,24 +231,79 @@ function openEvents(world) {
 
 // ---------------------------------------------------------------------------------------- arms
 
-function runSessionArm(arch, seed, sessions) {
+function runSessionArm(arch, seed, sessions, away = AWAY_PROFILES[0]) {
   const rng = mulberry32(seed);
   const world = makeWorld(seed, Date.UTC(2026, 1, 2, 16, 30, 0));
   const save = new Save({ storage: new MemoryStorage(), now: () => world.t.ms });
   save.load();
   const rows = [];
+  /** Events left open at a sitting boundary, so the NEXT sitting can be checked for damage. */
+  let carried = [];
+  const faults = [];
+  /** Every `learn:session` phase the layer emitted, counted. `break` is the one round 1 lacked. */
+  const phases = new Map();
+  const emit = (name, value) => {
+    if (name === "learn:session") phases.set(value.phase, (phases.get(value.phase) ?? 0) + 1);
+  };
+  const make = () => new Session({ learning: world.learning, save, now: () => world.t.ms, emit });
+
+  /**
+   * ONE `Session` object stands for one page load. A sitting that ended on a break resumes on the
+   * SAME object after the break — that is `work -> break -> work`, and it is the half round 1 did
+   * not ship. Anything else is the learner coming back another day, which is a new page.
+   */
+  let session = null;
+  let onThisPage = 0;
+  const perPageLoad = [];
 
   for (let n = 0; n < sessions; n += 1) {
-    // Between sittings: a day, give or take. Enough for §3's 12-hour retention gate to open.
-    world.t.ms += Math.round((20 + 8 * rng()) * 3600 * 1000);
-
-    const session = new Session({ learning: world.learning, save, now: () => world.t.ms, emit: () => {} });
-    session.begin();
+    let resumed = false;
+    if (session && session.resumable) {
+      // The break itself: five to twenty-five minutes away from the tab.
+      world.t.ms += Math.round((5 + 20 * rng()) * 60000);
+      session.resume("returned");
+      resumed = true;
+      onThisPage += 1;
+    } else {
+      if (session) perPageLoad.push(onThisPage);
+      // Between page loads: a day, give or take. Enough for §3's 12-hour retention gate to open.
+      world.t.ms += Math.round((20 + 8 * rng()) * 3600 * 1000);
+      session = make();
+      session.begin();
+      onThisPage = 1;
+    }
     const planAtOpen = session.plan;
+    const openedAtMs = world.t.ms;
+    let awayMs = 0;
+
+    /**
+     * A carried event must survive the boundary INTACT — still open, same served count, no lapse —
+     * and that has to be checked HERE, before this sitting serves anything. Checking it at the end
+     * of the next sitting conflates "abandoned by the boundary" with "resumed and then genuinely
+     * failed", and a failed retention check is supposed to lapse. This is the whole difference
+     * between carrying a check and abandoning one: `Scheduler.abandonEvent` lapses the node and
+     * docks its M2 counters, a carry does neither.
+     */
+    for (const w of carried) {
+      const now = world.mastery.eventOf(w.kpId);
+      const st = world.mastery.stateOf(w.kpId);
+      if (!now) faults.push(`${w.kpId} ${w.mode} event vanished across the boundary`);
+      else if (now.served !== w.served) faults.push(`${w.kpId} served ${w.served} -> ${now.served} across the boundary`);
+      if (st.lapses !== w.lapses) faults.push(`${w.kpId} lapses ${w.lapses} -> ${st.lapses} across the boundary`);
+    }
+    carried = [];
 
     for (let guard = 0; guard < 600; guard += 1) {
       const req = session.next();
       if (!req) break;
+      const gap = drawAway(away, rng);
+      // Mid-item: the claim is standing open and the learner is not at the tablet. The layer must
+      // exclude this from pace AND must not end the sitting until the item is closed.
+      if (gap.ms && gap.mid) {
+        world.t.ms += gap.ms;
+        session.noteAway(gap.ms);
+        awayMs += gap.ms;
+      }
       const latencyMs = itemLatencyMs(arch, req, rng);
       world.t.ms += latencyMs;
       session.submit(req, {
@@ -222,15 +316,30 @@ function runSessionArm(arch, seed, sessions) {
         hinted: req.hinted,
       });
       world.t.ms += gapMs(rng);
+      if (gap.ms && !gap.mid) {
+        world.t.ms += gap.ms;
+        session.noteAway(gap.ms);
+        awayMs += gap.ms;
+      }
     }
     if (session.phase !== "closed") session.close("harness-guard");
 
+    carried = openEvents(world).map((ev) => ({ ...ev, lapses: world.mastery.stateOf(ev.kpId).lapses }));
+
     const last = session.beats[session.beats.length - 1] ?? null;
+    const adherence = session.probe().adherence;
     rows.push({
       n: n + 1,
       minutes: r2(session.elapsedSeconds / 60),
       // Unrounded, because the band check must not be decided by a rounding rule.
       minutesExact: session.elapsedSeconds / 60,
+      /** Attended + away: how long the sitting occupied of the learner's afternoon. */
+      wallMinutes: r2((world.t.ms - openedAtMs) / 60000),
+      awayMinutes: r2(awayMs / 60000),
+      resumed,
+      sittingOnPage: onThisPage,
+      matchRate: adherence.servedBeats ? adherence.matched / adherence.servedBeats : null,
+      slowRatio: r2(session.pace.slowRatio),
       items: session.itemsServed,
       beats: session.beats.length,
       closeReason: session.closeReason,
@@ -246,7 +355,7 @@ function runSessionArm(arch, seed, sessions) {
       certified: session.tally.certified.length,
       set: session.tally.set.length,
       level1: world.mastery.summary().level1Percent,
-      adherence: session.probe().adherence,
+      adherence,
       startsOutsideCeiling: session.stats.startsOutsideCeiling,
       beatsClosedAtItem: session.stats.beatsClosedAtItem,
       eventsCarried: session.stats.eventsCarried,
@@ -255,7 +364,8 @@ function runSessionArm(arch, seed, sessions) {
       lines: { open: session.opening.map((l) => l.source), close: session.closing.map((l) => l.source) },
     });
   }
-  return { rows, save, world };
+  if (session) perPageLoad.push(onThisPage);
+  return { rows, save, world, faults, perPageLoad, phases };
 }
 
 function runBaselineArm(arch, seed, sessions) {
@@ -303,6 +413,13 @@ function runBaselineArm(arch, seed, sessions) {
 
 // ------------------------------------------------------------------------------------- reporting
 
+function histogram(rows, key) {
+  const m = new Map();
+  for (const r of rows) m.set(r[key], (m.get(r[key]) ?? 0) + 1);
+  return [...m.entries()].sort((a, b) => b[1] - a[1]);
+}
+const showHist = (h) => h.map(([k, v]) => `${k}=${v}`).join("  ");
+
 function bandCheck(rows) {
   const inside = (r) => r.minutesExact >= ARC.minMinutes && r.minutesExact <= ARC.maxMinutes;
   return {
@@ -339,7 +456,7 @@ say("");
 say(
   "archetype    " +
     Array.from({ length: SESSIONS }, (_, i) => String(i + 1).padStart(5)).join("") +
-    "   |  min   med   max  in-band  mid-item  mid-event"
+    "   |  min   med   max  in-band  mid-claim  carried"
 );
 say("-".repeat(100));
 
@@ -353,7 +470,7 @@ for (const arch of ARCHETYPES) {
       rows.map((r) => r.minutes.toFixed(1).padStart(5)).join("") +
       `   | ${String(c.min).padStart(5)} ${String(c.median).padStart(5)} ${String(c.max).padStart(5)}` +
       `   ${c.inBand}/${c.sessions}` +
-      `      ${c.midItem}          ${c.midEvent}`
+      `      ${c.midItem}          ${c.eventsCarried}`
   );
 }
 
@@ -361,12 +478,15 @@ for (const arch of ARCHETYPES) {
 
 say("");
 say("C2  BASELINE — the shipped engine with no session layer (Scheduler.sessionMinutes = 25)");
-say("    The box counts the DESIGN's seconds, which are the same for everybody.");
+say("    The box counts the DESIGN's seconds, which are the same for everybody, so the wall clock");
+say("    lands wherever the learner's own speed puts it. \"events left open\" is the modelled budget");
+say("    expiring part-way through a certification check — the engine resumes it, but the cut is");
+say("    made by a clock that has never met this learner.");
 say("");
 say(
   "archetype    " +
     Array.from({ length: SESSIONS }, (_, i) => String(i + 1).padStart(5)).join("") +
-    "   |  min   med   max  in-band  mid-event"
+    "   |  min   med   max  in-band  events left open"
 );
 say("-".repeat(100));
 
@@ -389,7 +509,7 @@ for (const arch of ARCHETYPES) {
 say("");
 say(`C3  DISTRIBUTION — ${SEEDS} seeds x ${SESSIONS} sittings per archetype (${SEEDS * SESSIONS} sittings each)`);
 say("");
-say("archetype     sittings   min    p10    med    p90    max   in 15-25   mid-item  mid-event  carried   items/sitting  rho");
+say("archetype     sittings   min    p10    med    p90    max   in 15-25   mid-claim   carried   items/sitting  rho");
 say("-".repeat(118));
 
 const distribution = {};
@@ -400,9 +520,14 @@ let totalSittings = 0;
 let totalStartsOutside = 0;
 let totalCarried = 0;
 let overruns = [];
+const carryFaults = [];
 for (const arch of ARCHETYPES) {
   const rows = [];
-  for (let s = 1; s <= SEEDS; s += 1) rows.push(...runSessionArm(arch, s, SESSIONS).rows);
+  for (let s = 1; s <= SEEDS; s += 1) {
+    const run = runSessionArm(arch, s, SESSIONS);
+    rows.push(...run.rows);
+    carryFaults.push(...run.faults.map((f) => `${arch.id}/seed${s}: ${f}`));
+  }
   const c = bandCheck(rows);
   distribution[arch.id] = c;
   totalMidItem += c.midItem;
@@ -423,9 +548,8 @@ for (const arch of ARCHETYPES) {
       String(c.p90).padStart(7) +
       String(c.max).padStart(7) +
       `   ${c.inBand}/${c.sessions}`.padStart(11) +
-      String(c.midItem).padStart(11) +
-      String(c.midEvent).padStart(11) +
-      String(c.eventsCarried).padStart(9) +
+      String(c.midItem).padStart(12) +
+      String(c.eventsCarried).padStart(10) +
       String(items.median).padStart(15) +
       String(rho.median).padStart(6)
   );
@@ -477,24 +601,197 @@ say("close reason        " + [...reasons.entries()].sort((a, b) => b[1] - a[1]).
 say("last beat kind/end  " + [...lastBeats.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}=${v}`).join("  "));
 say("closing win         " + [...wins.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}=${v}`).join("  "));
 
+// ---- C10: the break. The mechanism that makes this a Pomodoro, measured for the first time. ----
+
+say("");
+say(`C10 ABSENCE AND THE BREAK — ${AWAY_PROFILES.length} profiles x ${ARCHETYPES.length} archetypes x ${SEEDS} seeds x ${SESSIONS} sittings`);
+say("    Round 1 of this script called noteAway() exactly zero times, so the break rule — the only");
+say("    thing that makes this layer a Pomodoro rather than a timer — was never exercised. These are");
+say("    the numbers it was missing. The band is on ATTENDED minutes, because away time is not");
+say("    session time; the wall-clock span is printed beside it so the two are never confused.");
+say("");
+for (const p of AWAY_PROFILES) say(`    ${p.id.padEnd(10)} ${p.note}`);
+say("");
+say("profile     archetype     sittings   min    med    max   in 15-25   mid-claim   attended  wall  away   sittings/page");
+say("-".repeat(122));
+
+const awayRuns = {};
+const awayTotals = { sittings: 0, inBand: 0, midItem: 0, midEvent: 0, startsOutside: 0, overruns: [] };
+for (const profile of AWAY_PROFILES) {
+  const perProfile = [];
+  const pages = [];
+  const phaseTotals = new Map();
+  for (const arch of ARCHETYPES) {
+    const rows = [];
+    for (let s = 1; s <= SEEDS; s += 1) {
+      const run = runSessionArm(arch, s, SESSIONS, profile);
+      rows.push(...run.rows);
+      pages.push(...run.perPageLoad);
+      for (const [k, v] of run.phases) phaseTotals.set(k, (phaseTotals.get(k) ?? 0) + v);
+    }
+    const c = bandCheck(rows);
+    perProfile.push(...rows);
+    const wall = stats(rows.map((r) => r.wallMinutes));
+    const awayS = stats(rows.map((r) => r.awayMinutes));
+    const onPage = stats(rows.map((r) => r.sittingOnPage));
+    say(
+      profile.id.padEnd(12) +
+        arch.id.padEnd(12) +
+        String(c.sessions).padStart(9) +
+        String(c.min).padStart(7) +
+        String(c.median).padStart(7) +
+        String(c.max).padStart(7) +
+        `   ${c.inBand}/${c.sessions}`.padStart(12) +
+        String(c.midItem).padStart(12) +
+        String(c.median).padStart(11) +
+        String(wall.median).padStart(6) +
+        String(awayS.median).padStart(6) +
+        String(onPage.max).padStart(15)
+    );
+  }
+  const c = bandCheck(perProfile);
+  awayRuns[profile.id] = { band: c, rows: perProfile, pages, phases: phaseTotals };
+  awayTotals.sittings += c.sessions;
+  awayTotals.inBand += c.inBand;
+  awayTotals.midItem += c.midItem;
+  awayTotals.midEvent += c.midEvent;
+  awayTotals.startsOutside += c.startsOutsideCeiling;
+  awayTotals.overruns.push(...c.overrunMinutes);
+  say("-".repeat(122));
+  say(
+    `${profile.id.padEnd(12)}ALL         ${String(c.sessions).padStart(9)}${String(c.min).padStart(7)}` +
+      `${String(c.median).padStart(7)}${String(c.max).padStart(7)}   ${c.inBand}/${c.sessions}` +
+      `   (${r2((100 * c.inBand) / c.sessions)}%)`
+  );
+  say("");
+}
+
+say("C10b CLOSE REASONS, PER PROFILE — 'break' is the sitting ending because the learner took one");
+say("");
+for (const profile of AWAY_PROFILES) {
+  const rows = awayRuns[profile.id].rows;
+  say(`  ${profile.id.padEnd(11)}${showHist(histogram(rows, "closeReason"))}`);
+}
+say("");
+say("C10c THE CYCLE — work -> break -> work, per page load. A break must not be a terminus.");
+say("     'break signals' is learn:session {phase:\"break\"}; 'resumed' is a sitting opened by");
+say("     Session.resume() on the SAME object, which is the second work half of the cycle.");
+say("");
+say("profile      break closes   break signals   resumed sittings   sittings per page load: med / max");
+say("-".repeat(104));
+for (const profile of AWAY_PROFILES) {
+  const { rows, pages, phases } = awayRuns[profile.id];
+  const breaks = rows.filter((r) => r.closeReason === "break").length;
+  const resumedRows = rows.filter((r) => r.resumed).length;
+  const pg = stats(pages);
+  say(
+    profile.id.padEnd(13) +
+      String(breaks).padStart(12) +
+      String(phases.get("break") ?? 0).padStart(16) +
+      String(resumedRows).padStart(19) +
+      `${pg.median} / ${pg.max}`.padStart(35)
+  );
+}
+
+// ---- C11: the forecast, against reality --------------------------------------------------------
+
+say("");
+say("C11 DOES THE FORECAST DESCRIBE WHAT THE ENGINE SERVES?");
+say("    `candidates()` is a model of §4's own order: the due-time queue, then the frontier score");
+say("    with the same five terms and the same two-open cap. Round 1 ordered it by a leverage table");
+say("    of this layer's own invention that the engine had no way to hear, and — worse — ENDED over");
+say("    half of all sittings on it. The table is gone and nothing ends a sitting on a forecast now.");
+say("");
+say("    Two horizons, and only one of them is a real test.");
+say("      NEXT BEAT  — at every beat boundary the live plan names what should come next, and the");
+say("                   engine is then asked. This is falsifiable and it is the number to read.");
+say("      WHOLE SITTING — the multiset of every beat forecast at the door against every beat");
+say("                   served. A sprinter's sitting is thirty beats and each acquisition block");
+say("                   moves the frontier score of the node it ran on, so the identity of beat 24");
+say("                   is not knowable at beat 1. Reported anyway, because deleting an");
+say("                   unflattering number is how a claim rots — but it never decided anything.");
+say("      SIZE       — planned minutes at the door against actual. The size IS what this layer");
+say("                   decides, so this is the forecast that has to be good.");
+say("");
+say("archetype     next-beat hits   next-beat rate   whole-sitting match   planned min   actual min   size err");
+say("-".repeat(110));
+let adherenceNext = 0;
+let adherenceWhole = 0;
+let sizeErrMedian = 0;
+{
+  let allCalled = 0;
+  let allHit = 0;
+  let allServed = 0;
+  let allMatched = 0;
+  const allSizeErr = [];
+  for (const arch of ARCHETYPES) {
+    const rows = [];
+    for (let s = 1; s <= Math.min(SEEDS, 8); s += 1) rows.push(...runSessionArm(arch, s, SESSIONS).rows);
+    const called = rows.reduce((a, r) => a + r.adherence.nextBeatCalled, 0);
+    const hit = rows.reduce((a, r) => a + r.adherence.nextBeatHit, 0);
+    const served = rows.reduce((a, r) => a + r.adherence.servedBeats, 0);
+    const matched = rows.reduce((a, r) => a + r.adherence.matched, 0);
+    const pm = stats(rows.map((r) => r.plannedMinutes));
+    const am = stats(rows.map((r) => r.minutes));
+    const err = rows.map((r) => Math.abs(r.plannedMinutes - r.minutes));
+    allCalled += called;
+    allHit += hit;
+    allServed += served;
+    allMatched += matched;
+    allSizeErr.push(...err);
+    say(
+      arch.id.padEnd(12) +
+        `${hit}/${called}`.padStart(15) +
+        String(r2(hit / Math.max(1, called))).padStart(17) +
+        String(r2(matched / Math.max(1, served))).padStart(22) +
+        String(pm.median).padStart(14) +
+        String(am.median).padStart(13) +
+        String(stats(err).median).padStart(11)
+    );
+  }
+  say("-".repeat(110));
+  adherenceNext = allHit / Math.max(1, allCalled);
+  adherenceWhole = allMatched / Math.max(1, allServed);
+  sizeErrMedian = stats(allSizeErr).median;
+  say(
+    "ALL".padEnd(12) +
+      `${allHit}/${allCalled}`.padStart(15) +
+      String(r2(adherenceNext)).padStart(17) +
+      String(r2(adherenceWhole)).padStart(22) +
+      "".padStart(14) +
+      "".padStart(13) +
+      String(sizeErrMedian).padStart(11)
+  );
+}
+
 // ---- C5b: does the arc still teach? -----------------------------------------------------------
 
 say("");
 say("C9  THE ARC MUST NOT COST LEARNING — Level 1 mastered % after 10 sittings, same learner, both arms");
+say("    Read the HOURS column first. The baseline reaches more of Level 1 for a slow learner only by");
+say("    spending seven and a half hours on ten sittings. Mastery per hour of attention is the number.");
 say("");
-say("archetype     session arm   baseline arm   session items   baseline items   certifications (session arm)");
-say("-".repeat(104));
+say("archetype   |  session arm: mastered%  hours  %/hour  items  certs  |  baseline: mastered%  hours  %/hour  items");
+say("-".repeat(112));
 for (const arch of ARCHETYPES) {
   const s10 = headline[arch.id];
   const b10 = baseline[arch.id];
   const certs = s10.reduce((a, r) => a + r.certified, 0);
+  const sh = s10.reduce((a, r) => a + r.minutesExact, 0) / 60;
+  const bh = b10.reduce((a, r) => a + r.minutesExact, 0) / 60;
   say(
     arch.id.padEnd(12) +
-      String(s10[s10.length - 1].level1).padStart(14) +
-      String(b10[b10.length - 1].level1).padStart(15) +
-      String(s10.reduce((a, r) => a + r.items, 0)).padStart(16) +
-      String(b10.reduce((a, r) => a + r.items, 0)).padStart(17) +
-      String(certs).padStart(31)
+      "|" +
+      String(s10[s10.length - 1].level1).padStart(24) +
+      String(r2(sh)).padStart(7) +
+      String(r2(s10[s10.length - 1].level1 / sh)).padStart(8) +
+      String(s10.reduce((a, r) => a + r.items, 0)).padStart(7) +
+      String(certs).padStart(7) +
+      "  |" +
+      String(b10[b10.length - 1].level1).padStart(21) +
+      String(r2(bh)).padStart(7) +
+      String(r2(b10[b10.length - 1].level1 / bh)).padStart(8) +
+      String(b10.reduce((a, r) => a + r.items, 0)).padStart(7)
   );
 }
 
@@ -629,6 +926,44 @@ const claims = [
     "C2     the baseline it replaces does NOT",
     Object.values(baseline).some((rows) => rows.some((r) => r.minutesExact < ARC.minMinutes || r.minutesExact > ARC.maxMinutes)),
     "a control that never fails is measuring nothing",
+  ],
+  [
+    "C10    the band holds when the learner LOOKS AWAY, every profile",
+    AWAY_PROFILES.every((p) => awayRuns[p.id].band.inBand / awayRuns[p.id].band.sessions >= 0.99),
+    AWAY_PROFILES.map((p) => `${p.id} ${awayRuns[p.id].band.inBand}/${awayRuns[p.id].band.sessions}`).join("; "),
+  ],
+  [
+    "C10    classroom churn (p=0.08, 2-9 min gaps) holds at >=99%",
+    awayRuns.churn.band.inBand / awayRuns.churn.band.sessions >= 0.99,
+    `${awayRuns.churn.band.inBand}/${awayRuns.churn.band.sessions} = ` +
+      `${r2((100 * awayRuns.churn.band.inBand) / awayRuns.churn.band.sessions)}%`,
+  ],
+  [
+    "C10    no sitting ends mid-problem WITH absences, including mid-item ones",
+    awayTotals.midItem === 0,
+    `${awayTotals.midItem} of ${awayTotals.sittings} across all profiles`,
+  ],
+  [
+    "C10    a break ENDS a sitting — and only at or past the fifteen-minute floor",
+    awayRuns.break.rows.some((r) => r.closeReason === "break") &&
+      !awayRuns.break.rows.some((r) => r.closeReason === "break" && r.minutesExact < ARC.minMinutes) &&
+      !awayRuns.churn.rows.some((r) => r.closeReason === "break" && r.minutesExact < ARC.minMinutes),
+    `break closes: churn ${awayRuns.churn.rows.filter((r) => r.closeReason === "break").length}, ` +
+      `break ${awayRuns.break.rows.filter((r) => r.closeReason === "break").length}; ` +
+      `earliest ${r2(Math.min(...awayRuns.break.rows.filter((r) => r.closeReason === "break").map((r) => r.minutesExact), Infinity))} min`,
+  ],
+  [
+    "C10c   a break is a HINGE — the next sitting opens on the same page load",
+    awayRuns.break.rows.some((r) => r.resumed) && (awayRuns.break.phases.get("break") ?? 0) > 0,
+    `${awayRuns.break.rows.filter((r) => r.resumed).length} resumed sittings; ` +
+      `${awayRuns.break.phases.get("break") ?? 0} learn:session{phase:"break"} signals; ` +
+      `max sittings per page load ${stats(awayRuns.break.pages).max}`,
+  ],
+  [
+    "C11    the live forecast names the beat the engine serves next",
+    adherenceNext >= 0.8,
+    `${r2(100 * adherenceNext)}% of beat boundaries; whole-sitting multiset ${r2(100 * adherenceWhole)}% ` +
+      `(reported, never used); median size error ${sizeErrMedian} min`,
   ],
   ["C6     a bad save is reported, never silently reset", saveChecks.every(([, ok]) => ok), ""],
 ];

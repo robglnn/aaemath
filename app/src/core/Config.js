@@ -81,10 +81,11 @@ export const TIER_ORDER = ["potato", "low", "medium", "high", "ultra"];
 
 const DEFAULTS = {
   tier: "high",
-  // The switch `core/AutoTier.js` reads. True: the tier above is a *starting point* that a
-  // first-frame hardware heuristic may lower and sustained frame-cost measurement may correct.
-  // False: the player has chosen, and nothing may move the picture under them. `set("tier", …)`
-  // and `?tier=` both flip it to false; `applyTier()` deliberately does not.
+  // The switch `core/AutoTier.js` reads, on **every frame** — not once at boot. True: the tier
+  // above is a *ceiling*, not a starting point. A first-frame hardware heuristic starts at `medium`
+  // unless the renderer string names a discrete GPU, and sustained frame-cost measurement corrects
+  // it from there. False: the player has chosen, and nothing may move the picture under them.
+  // `set("tier", …)` and `?tier=` both flip it to false; `applyTier()` deliberately does not.
   autoTier: true,
   locale: "en",
 

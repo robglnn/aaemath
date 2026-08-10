@@ -81,6 +81,15 @@ export function freshPace() {
     ratio: 1,
     /** EWMA standard deviation of that ratio. Feeds the ceiling estimate, never the plan. */
     spread: 0,
+    /**
+     * An OBSERVED upper quantile (p95) of that ratio, tracked online by `Session._calibrateTail`.
+     * A variance cannot see a heavy tail — a rare four-minute stare barely moves an EWMA — and the
+     * reservation that decides whether a four-item retention check fits inside twenty-five minutes
+     * is exactly a question about the tail. 2 is the first-run default: a learner nobody has
+     * measured yet is assumed capable of taking twice the design's seconds on one item, which is
+     * an honest thing to assume and a cheap one to be wrong about.
+     */
+    slowRatio: 2,
     /** Seconds between one item being answered and the next being served: travel, feedback, world. */
     gapSeconds: 4,
     /** How many items the numbers above are made of. 0 means "these are the design's, not yours". */
@@ -251,6 +260,8 @@ export class Save {
       // minutes, and a human being can honestly be at either end.
       out.pace.ratio = field("pace.ratio", p.ratio, (v) => finite(v) && v >= 0.1 && v <= 6, d.ratio);
       out.pace.spread = field("pace.spread", p.spread, (v) => finite(v) && v >= 0 && v <= 6, d.spread);
+      // Absent is an older build and is defaulted quietly; present-and-wrong is damage and is named.
+      out.pace.slowRatio = field("pace.slowRatio", p.slowRatio, (v) => finite(v) && v >= 0.1 && v <= 12, d.slowRatio);
       out.pace.gapSeconds = field("pace.gapSeconds", p.gapSeconds, (v) => finite(v) && v >= 0 && v <= 120, d.gapSeconds);
       out.pace.samples = Math.floor(field("pace.samples", p.samples, (v) => finite(v) && v >= 0, d.samples));
     } else if (raw.pace !== undefined) bad("pace");

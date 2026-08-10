@@ -1,0 +1,374 @@
+{
+ "bootAssets": [
+  "index-BBIgvjmr.js",
+  "index-BuMqkyig.css",
+  "02-autotier-u4s9MOmd.js",
+  "05-i18n-D2bcirez.js",
+  "10-world-DYC3idop.js",
+  "Materials-B0xxM5Zn.js",
+  "12-sky-0eH0mqVZ.js",
+  "14-lighting-pcWZGnbS.js",
+  "16-scatter-CumkxuLN.js",
+  "20-input-D2Qx_NUP.js",
+  "30-locomotion-BUHatlvW.js",
+  "32-avatar-BZQBlDAR.js",
+  "40-camera-BSBPejx5.js",
+  "52-post-C822KxB4.js",
+  "60-mathtex-CUGJutxq.js",
+  "60-mathtex-DLVrwanO.css",
+  "62-itembank-pRJO1qcJ.js",
+  "ItemBank-59RWgwNc.js",
+  "62-learning-CGwHGx44.js",
+  "90-flow-CvQ1O8Q9.js",
+  "en-DiJtJ4AS.js",
+  "KaTeX_Main-Regular-B22Nviop.woff2",
+  "KaTeX_Main-Italic-NWA7e6Wa.woff2",
+  "KaTeX_Main-Bold-Cx986IdX.woff2",
+  "KaTeX_Size1-Regular-mCD8mA8B.woff2",
+  "KaTeX_Math-Italic-t53AETM-.woff2",
+  "KaTeX_Size2-Regular-Dy4dx90m.woff2",
+  "KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+  "KaTeX_AMS-Regular-BQhdFMY1.woff2"
+ ],
+ "bootJsCss": [
+  "02-autotier-u4s9MOmd.js",
+  "05-i18n-D2bcirez.js",
+  "10-world-DYC3idop.js",
+  "12-sky-0eH0mqVZ.js",
+  "14-lighting-pcWZGnbS.js",
+  "16-scatter-CumkxuLN.js",
+  "20-input-D2Qx_NUP.js",
+  "30-locomotion-BUHatlvW.js",
+  "32-avatar-BZQBlDAR.js",
+  "40-camera-BSBPejx5.js",
+  "52-post-C822KxB4.js",
+  "60-mathtex-CUGJutxq.js",
+  "60-mathtex-DLVrwanO.css",
+  "62-itembank-pRJO1qcJ.js",
+  "62-learning-CGwHGx44.js",
+  "90-flow-CvQ1O8Q9.js",
+  "ItemBank-59RWgwNc.js",
+  "Materials-B0xxM5Zn.js",
+  "en-DiJtJ4AS.js",
+  "index-BBIgvjmr.js",
+  "index-BuMqkyig.css"
+ ],
+ "bootGroupChunks": [],
+ "bootProbe": {
+  "knowledgePoints": 32,
+  "items": 0,
+  "catalogueItems": 1152,
+  "generatedThisSession": 0,
+  "locale": "en",
+  "minItemsPerKp": 36,
+  "minItemsPerMisconception": 3,
+  "groups": "0/32 resident, 0 loading",
+  "lessons": 22,
+  "residentGroups": [],
+  "degraded": [],
+  "issues": 0,
+  "formsPerKp": {
+   "var-meaning": "14/17/5",
+   "oo-numeric": "15/16/5",
+   "expr-anatomy": "16/15/5",
+   "oo-structure": "14/10/12",
+   "eval-substitute": "13/12/11",
+   "eval-signed": "12/13/11",
+   "eval-formula": "13/13/10",
+   "translate-phrase": "13/16/7",
+   "translate-order": "17/14/5",
+   "props-operations": "12/12/12",
+   "like-terms-id": "12/12/12",
+   "like-terms-combine": "12/12/12",
+   "distribute-numeric": "15/14/7",
+   "distribute-variable": "12/12/12",
+   "distribute-negative": "16/13/7",
+   "simplify-expression": "12/13/11",
+   "equivalent-expressions": "11/13/12",
+   "eq-meaning": "12/12/12",
+   "props-equality": "15/14/7",
+   "eq-one-add": "13/16/7",
+   "eq-one-mult": "15/14/7",
+   "eq-two-step": "11/13/12",
+   "eq-combine-side": "10/12/14",
+   "eq-distribute": "12/12/12",
+   "eq-both-sides": "10/14/12",
+   "eq-special-cases": "16/7/13",
+   "translate-sentence": "12/11/13",
+   "eq-model-context": "15/14/7",
+   "ineq-meaning": "14/12/10",
+   "ineq-one-step": "16/13/7",
+   "ineq-negative-flip": "15/14/7",
+   "ineq-two-step": "15/14/7"
+  }
+ },
+ "ready": true,
+ "fatal": null,
+ "play": {
+  "served": 117,
+  "nulls": 3
+ },
+ "afterPlayProbe": {
+  "knowledgePoints": 32,
+  "items": 0,
+  "catalogueItems": 1152,
+  "generatedThisSession": 0,
+  "locale": "en",
+  "minItemsPerKp": 36,
+  "minItemsPerMisconception": 3,
+  "groups": "0/32 resident, 0 loading",
+  "lessons": 22,
+  "residentGroups": [],
+  "degraded": [],
+  "issues": 0,
+  "formsPerKp": {
+   "var-meaning": "14/17/5",
+   "oo-numeric": "15/16/5",
+   "expr-anatomy": "16/15/5",
+   "oo-structure": "14/10/12",
+   "eval-substitute": "13/12/11",
+   "eval-signed": "12/13/11",
+   "eval-formula": "13/13/10",
+   "translate-phrase": "13/16/7",
+   "translate-order": "17/14/5",
+   "props-operations": "12/12/12",
+   "like-terms-id": "12/12/12",
+   "like-terms-combine": "12/12/12",
+   "distribute-numeric": "15/14/7",
+   "distribute-variable": "12/12/12",
+   "distribute-negative": "16/13/7",
+   "simplify-expression": "12/13/11",
+   "equivalent-expressions": "11/13/12",
+   "eq-meaning": "12/12/12",
+   "props-equality": "15/14/7",
+   "eq-one-add": "13/16/7",
+   "eq-one-mult": "15/14/7",
+   "eq-two-step": "11/13/12",
+   "eq-combine-side": "10/12/14",
+   "eq-distribute": "12/12/12",
+   "eq-both-sides": "10/14/12",
+   "eq-special-cases": "16/7/13",
+   "translate-sentence": "12/11/13",
+   "eq-model-context": "15/14/7",
+   "ineq-meaning": "14/12/10",
+   "ineq-one-step": "16/13/7",
+   "ineq-negative-flip": "15/14/7",
+   "ineq-two-step": "15/14/7"
+  }
+ },
+ "groupChunksAfterPlay": [],
+ "itemBankChunk": "ItemBank-59RWgwNc.js",
+ "moduleHandle": {
+  "found": true,
+  "keys": [
+   "B",
+   "g",
+   "i"
+  ]
+ },
+ "goodLesson": {
+  "requested": 3,
+  "loaded": 3,
+  "alreadyResident": 0,
+  "failed": [],
+  "lesson": "expressions-1",
+  "ms": 12,
+  "residency": {
+   "groups": 32,
+   "resident": [
+    "expr-anatomy",
+    "var-meaning",
+    "oo-numeric"
+   ],
+   "loading": [],
+   "failed": {}
+  }
+ },
+ "groupChunksAfterEnsure": [
+  "expr-anatomy-WYJhDm_0.js",
+  "oo-numeric-BjsVHueV.js",
+  "var-meaning-Ct12kn0-.js"
+ ],
+ "brokenLesson": "expressions-2",
+ "brokenKps": [
+  "oo-structure",
+  "eval-substitute"
+ ],
+ "brokenResult": {
+  "requested": 2,
+  "loaded": 0,
+  "alreadyResident": 0,
+  "failed": [
+   "oo-structure",
+   "eval-substitute"
+  ],
+  "lesson": "expressions-2",
+  "ms": 9
+ },
+ "brokenSelect": {
+  "rows": [
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   },
+   {
+    "src": "generated",
+    "rel": "generated-group-failed",
+    "ok": true,
+    "kp": "oo-structure",
+    "std": 4
+   }
+  ],
+  "blanks": 0,
+  "probe": {
+   "knowledgePoints": 32,
+   "items": 113,
+   "catalogueItems": 1152,
+   "generatedThisSession": 12,
+   "locale": "en",
+   "minItemsPerKp": 36,
+   "minItemsPerMisconception": 3,
+   "groups": "3/32 resident, 0 loading",
+   "lessons": 22,
+   "residentGroups": [
+    "expr-anatomy",
+    "var-meaning",
+    "oo-numeric"
+   ],
+   "degraded": [
+    "oo-structure: Failed to fetch dynamically imported module: http://127.0.0.1:59795/assets/oo-structure-Bges-2rk.js",
+    "eval-substitute: Failed to fetch dynamically imported module: http://127.0.0.1:59795/assets/eval-substitute-CIy76Axk.js"
+   ],
+   "issues": 2,
+   "formsPerKp": {
+    "var-meaning": "14/17/5",
+    "oo-numeric": "15/16/5",
+    "expr-anatomy": "16/15/5",
+    "oo-structure": "14/10/12",
+    "eval-substitute": "13/12/11",
+    "eval-signed": "12/13/11",
+    "eval-formula": "13/13/10",
+    "translate-phrase": "13/16/7",
+    "translate-order": "17/14/5",
+    "props-operations": "12/12/12",
+    "like-terms-id": "12/12/12",
+    "like-terms-combine": "12/12/12",
+    "distribute-numeric": "15/14/7",
+    "distribute-variable": "12/12/12",
+    "distribute-negative": "16/13/7",
+    "simplify-expression": "12/13/11",
+    "equivalent-expressions": "11/13/12",
+    "eq-meaning": "12/12/12",
+    "props-equality": "15/14/7",
+    "eq-one-add": "13/16/7",
+    "eq-one-mult": "15/14/7",
+    "eq-two-step": "11/13/12",
+    "eq-combine-side": "10/12/14",
+    "eq-distribute": "12/12/12",
+    "eq-both-sides": "10/14/12",
+    "eq-special-cases": "16/7/13",
+    "translate-sentence": "12/11/13",
+    "eq-model-context": "15/14/7",
+    "ineq-meaning": "14/12/10",
+    "ineq-one-step": "16/13/7",
+    "ineq-negative-flip": "15/14/7",
+    "ineq-two-step": "15/14/7"
+   }
+  }
+ },
+ "consoleErrors": [
+  "Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "Failed to load resource: the server responded with a status of 404 (Not Found)"
+ ],
+ "failedRequests": [
+  "http://127.0.0.1:59795/assets/oo-structure-Bges-2rk.js — net::ERR_ABORTED",
+  "http://127.0.0.1:59795/assets/eval-substitute-CIy76Axk.js — net::ERR_ABORTED"
+ ],
+ "finalReadyStats": {
+  "fps": 0,
+  "frameMs": 4159.2,
+  "simTime": 30.433,
+  "frames": 909,
+  "steps": 1826,
+  "drawCalls": 138,
+  "triangles": 153047,
+  "programs": 22,
+  "textures": 12,
+  "geometries": 53,
+  "pixelRatio": 1,
+  "tier": "high"
+ }
+}

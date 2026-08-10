@@ -1,9 +1,9 @@
 {
   "id": "P32",
   "state": "building",
-  "round": 1,
-  "gap": null,
-  "note": "Reading binding docs, knowledge graph, existing Mastery/Graph/Scheduler before building prereq credit propagation + test-out",
+  "round": 2,
+  "gap": "Test-out's 1e-3 blind bound is unenforceable: it rests on never serving a refused generator family, but ItemBank.js has 0 occurrences of 'family' so Scheduler's avoidFamilies is ignored and outcome.family is never set; Mastery.respond treats family:null as priceable. Measured: a pure guesser passes expr-anatomy's 5-item probe at p=0.728 (728x the bound) if families are served in audit proportion; 5 of 31 nodes go over. P32.mjs cannot see this because it declines to import ItemBank on a premise ('does not parse under Node') that is false - it imports fine.",
+  "note": "Round 2: closing the family-filter leak (family==null must fail when refusedFamilies non-empty), ItemBank-importing proof claim, upper-bound max-over-sources, and shortening the probe",
   "evidence": [],
-  "updated": "2026-08-10T16:19:41.543Z"
+  "updated": "2026-08-10T17:18:29.617Z"
 }

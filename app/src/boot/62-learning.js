@@ -1,11 +1,27 @@
 import graphSource from "../../../content/knowledge-graph.json";
-import { BANK } from "../../../content/items/index.mjs";
+import {
+  BANK_FINGERPRINT,
+  BANK_FINGERPRINT_BASIS,
+  bankFingerprintBasis,
+  loadBankSpine,
+} from "../../../content/items/index.mjs";
 import { publish, warn } from "../core/Introspect.js";
 import { signals } from "../core/Signals.js";
 import { Graph } from "../learn/Graph.js";
 import { itemBank } from "../learn/ItemBank.js";
 import bankAuditTable from "../learn/bank-audit.json";
-import { Mastery, auditBlindGuessing, collectBankSample, bankAuditFingerprint, BANK_AUDIT_VERSION } from "../learn/Mastery.js";
+import {
+  Mastery,
+  auditBlindGuessing,
+  collectBankSample,
+  bankAuditFingerprint,
+  BANK_AUDIT_VERSION,
+  BANK_AUDIT_PER_CELL,
+  BANK_AUDIT_WINDOW,
+  EXECUTED_CANDIDATES,
+  EXECUTED_SAMPLE_CAP,
+  EXECUTED_FORMS,
+} from "../learn/Mastery.js";
 import { Scheduler, realClock, virtualClock, mulberry32 } from "../learn/Scheduler.js";
 
 /**
@@ -71,22 +87,56 @@ export default {
      * live — slow, loud, and correct — because the alternative is scoring on a table that does not
      * describe the bank, which is the whole defect this piece exists to close.
      */
+    /**
+     * P31. The fingerprint is READ, not computed, for the same reason the audit table is.
+     *
+     * Recomputing it meant shipping the identity spine — id, difficulty and canonical answer for
+     * all 1152 committed items, 13.5 kB gzipped — to every learner on every page load, so the page
+     * could rediscover a value that is fully determined at build time. `content/items/index.mjs`
+     * now exports that value as eight characters.
+     *
+     * The hole that opens, and how it is closed: the fingerprint folds the audit CONSTANTS in as
+     * well as the bank, so an edit to one of those constants without a rebuild would leave a stale
+     * scalar agreeing with a stale table — the exact defect the fingerprint exists to catch, one
+     * level up. So the build also exports the key of the constants it folded, and it is recomputed
+     * here from the LIVE ones on every page load. When they disagree, or when the build could not
+     * precompute anything, the spine chunk is pulled and the fingerprint is computed the old way.
+     */
     const tAudit = performance.now();
     let bankAudit = bankAuditTable;
     let auditSource = "committed";
-    const want = bankAuditFingerprint({ bankFiles: BANK, model: graph.model });
+    const liveBasis = bankFingerprintBasis({
+      version: BANK_AUDIT_VERSION,
+      perCell: BANK_AUDIT_PER_CELL,
+      window: BANK_AUDIT_WINDOW,
+      candidates: EXECUTED_CANDIDATES,
+      sampleCap: EXECUTED_SAMPLE_CAP,
+      forms: EXECUTED_FORMS,
+      caps: graph.model?.bkt?.identifiabilityCaps ?? {},
+    });
+    let fingerprintSource = "build-time";
+    let want = BANK_FINGERPRINT;
+    if (want === null || liveBasis !== BANK_FINGERPRINT_BASIS) {
+      warn(
+        `learning: the bank fingerprint could not be trusted from the build (basis ${BANK_FINGERPRINT_BASIS} ` +
+          `vs live ${liveBasis}) — pulling the identity spine and computing it here. Run: node content/items/build-index.mjs`
+      );
+      want = bankAuditFingerprint({ bankFiles: await loadBankSpine(), model: graph.model });
+      fingerprintSource = "spine-recomputed";
+    }
     if (bankAuditTable.version !== BANK_AUDIT_VERSION || bankAuditTable.fingerprint !== want) {
       warn(
         `learning: bank-audit.json is STALE (fingerprint ${bankAuditTable.fingerprint} v${bankAuditTable.version}, ` +
           `content wants ${want} v${BANK_AUDIT_VERSION}) — recomputing it live, which is slow. Run: node tools/bank-audit.mjs`
       );
       const { generateOne, TIERS } = await import("../../../content/items/generators.mjs");
+      const spine = await loadBankSpine();
       bankAudit = auditBlindGuessing(
         collectBankSample({
           select: (o) => itemBank.select(o),
           kpIds: graph.ids,
           bandOf: (id) => graph.difficulty(id),
-          bankFiles: BANK,
+          bankFiles: spine,
           generateOne,
           tiers: TIERS,
         }),
@@ -210,6 +260,8 @@ export default {
       // this page load, and what population it was measured on.
       bankAudit: {
         source: auditSource,
+        // P31: where `want` came from. "build-time" means the identity spine was never requested.
+        fingerprintSource,
         setupMs: auditMs,
         fingerprint: bankAudit.fingerprint ?? null,
         version: bankAudit.version ?? null,

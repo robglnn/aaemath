@@ -13,7 +13,7 @@
     ],
     "stats": {
       "fps": 0,
-      "frameMs": -19.5,
+      "frameMs": -13.7,
       "simTime": 0,
       "frames": 1,
       "steps": 0,
@@ -38,14 +38,20 @@
         "dry": false,
         "forced": true,
         "reason": "measuring",
+        "standDown": null,
+        "frames": 1,
         "bootTier": "high",
         "startTier": "high",
         "tier": "high",
         "policyTier": "high",
+        "ceiling": "high",
+        "ceilingSource": "configured tier",
         "autoTierSetting": true,
         "heuristic": {
           "tier": "high",
           "standDown": true,
+          "caps": [],
+          "strengths": [],
           "notes": [
             "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
           ],
@@ -73,10 +79,19 @@
           "downMs": 21,
           "upMs": 13.5,
           "windowFrames": 30,
+          "windowMs": 600000,
+          "minFrames": 24,
+          "firstWindowFrames": 30,
+          "firstWindowMs": 600000,
+          "firstMinFrames": 12,
           "warmupFrames": 30,
+          "warmupMs": 600000,
+          "firstWarmupFrames": 30,
+          "firstWarmupMs": 600000,
           "cooldownMs": 1000,
           "maxChanges": 3,
           "maxUpSteps": 1,
+          "maxLeap": 3,
           "sampleMinMs": 2,
           "sampleMaxMs": 250
         },
@@ -1443,11 +1458,11 @@
         "tier": "high",
         "density": 1,
         "surface": "terrain",
-        "surfaceQueries": 5581,
+        "surfaceQueries": 5598,
         "built": true,
         "outstanding": true,
-        "genCalls": 538,
-        "genMsTotal": 9.7,
+        "genCalls": 539,
+        "genMsTotal": 9.4,
         "instances": 1472,
         "triangles": 31581,
         "groundTriangles": 26876,
@@ -1577,9 +1592,9 @@
               12
             ],
             "tris": 5706,
-            "candidates": 633,
-            "rejected": 792,
-            "tiles": 103,
+            "candidates": 641,
+            "rejected": 799,
+            "tiles": 104,
             "gather": 150,
             "fade": [
               105.92857142857142,
@@ -2684,11 +2699,11 @@
           "ready": true,
           "loaded": 9,
           "failed": [],
-          "ms": 14.8
+          "ms": 14
         },
         "raster": {
           "rasters": 3,
-          "ms": 7.7,
+          "ms": 7.6,
           "glyphs": 6,
           "paths": 0,
           "rules": 0,
@@ -2713,7 +2728,7 @@
       },
       "mathocclusion": {
         "at": 0,
-        "ms": 152.8,
+        "ms": 162.1,
         "occluders": 44,
         "worstOccludedPct": 83.3,
         "panels": [
@@ -2774,7 +2789,7 @@
         "typesets": 4,
         "failures": [],
         "evictions": 0,
-        "typesetMs": 0.5,
+        "typesetMs": 0.3,
         "cacheSize": 4,
         "locale": "en",
         "unspokenNodeTypes": [
@@ -4050,6 +4065,8 @@
             }
           },
           "offered": 0,
+          "failStreak": 0,
+          "stopped": false,
           "byTrigger": {},
           "passedByTrigger": {},
           "passed": 0,
@@ -4451,7 +4468,7 @@
         },
         "bankAudit": {
           "source": "committed",
-          "setupMs": 1.6,
+          "setupMs": 1.4,
           "fingerprint": "d6e2537d",
           "version": 2,
           "sampled": 29754,
@@ -4576,7 +4593,8 @@
         },
         "stats": {
           "startsOutsideCeiling": 0,
-          "beatsClosedAtItem": 0
+          "beatsClosedAtItem": 0,
+          "eventsCarried": 0
         },
         "lines": {
           "opening": [
@@ -4619,14 +4637,20 @@
     "dry": false,
     "forced": true,
     "reason": "measuring",
+    "standDown": null,
+    "frames": 3,
     "bootTier": "high",
     "startTier": "high",
     "tier": "high",
     "policyTier": "high",
+    "ceiling": "high",
+    "ceilingSource": "configured tier",
     "autoTierSetting": true,
     "heuristic": {
       "tier": "high",
       "standDown": true,
+      "caps": [],
+      "strengths": [],
       "notes": [
         "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
       ],
@@ -4648,16 +4672,25 @@
     "samples": {
       "accepted": 0,
       "rejected": 1,
-      "clockMs": 608
+      "clockMs": 604
     },
     "thresholds": {
       "downMs": 21,
       "upMs": 13.5,
       "windowFrames": 30,
+      "windowMs": 600000,
+      "minFrames": 24,
+      "firstWindowFrames": 30,
+      "firstWindowMs": 600000,
+      "firstMinFrames": 12,
       "warmupFrames": 30,
+      "warmupMs": 600000,
+      "firstWarmupFrames": 30,
+      "firstWarmupMs": 600000,
       "cooldownMs": 1000,
       "maxChanges": 3,
       "maxUpSteps": 1,
+      "maxLeap": 3,
       "sampleMinMs": 2,
       "sampleMaxMs": 250
     },
@@ -4777,14 +4810,20 @@
     "dry": false,
     "forced": true,
     "reason": "measuring",
+    "standDown": null,
+    "frames": 63,
     "bootTier": "high",
     "startTier": "high",
     "tier": "potato",
     "policyTier": "potato",
+    "ceiling": "high",
+    "ceilingSource": "configured tier",
     "autoTierSetting": true,
     "heuristic": {
       "tier": "high",
       "standDown": true,
+      "caps": [],
+      "strengths": [],
       "notes": [
         "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
       ],
@@ -4803,48 +4842,60 @@
       }
     },
     "measured": {
-      "fps": 7.9,
-      "medianMs": 125.9,
-      "p10Ms": 52.3,
-      "p95Ms": 174.3,
-      "p99Ms": 232.5,
-      "maxMs": 234,
-      "frames": 30
+      "fps": 8.9,
+      "medianMs": 111.9,
+      "p10Ms": 98.6,
+      "p95Ms": 125.4,
+      "p99Ms": 151.4,
+      "maxMs": 221,
+      "frames": 30,
+      "spanMs": 3405.5
     },
     "samples": {
-      "accepted": 90,
-      "rejected": 9,
-      "clockMs": 22273
+      "accepted": 30,
+      "rejected": 2,
+      "clockMs": 5187
     },
     "thresholds": {
       "downMs": 21,
       "upMs": 13.5,
       "windowFrames": 30,
+      "windowMs": 600000,
+      "minFrames": 24,
+      "firstWindowFrames": 30,
+      "firstWindowMs": 600000,
+      "firstMinFrames": 12,
       "warmupFrames": 30,
+      "warmupMs": 600000,
+      "firstWarmupFrames": 30,
+      "firstWarmupMs": 600000,
       "cooldownMs": 1000,
       "maxChanges": 3,
       "maxUpSteps": 1,
+      "maxLeap": 3,
       "sampleMinMs": 2,
       "sampleMaxMs": 250
     },
     "budget": {
-      "changesLeft": 0,
+      "changesLeft": 2,
       "upStepsLeft": 0,
       "ceiling": "high"
     },
     "changes": [
       {
-        "at": 5608.2,
+        "at": 5186.9,
         "from": "high",
-        "to": "medium",
+        "to": "potato",
         "direction": "down",
-        "why": "median frame 113.0 ms (8.8 fps) over 30 frames is above the 21 ms floor",
-        "fps": 8.8,
-        "medianMs": 113,
-        "p10Ms": 94.6,
-        "p95Ms": 206.7,
-        "p99Ms": 223.3,
+        "rungs": 3,
+        "why": "median frame 111.9 ms (8.9 fps) over 30 frames / 3.4 s is 5.3x the 21 ms floor — 3 rung(s)",
+        "fps": 8.9,
+        "medianMs": 111.9,
+        "p10Ms": 98.6,
+        "p95Ms": 125.4,
+        "p99Ms": 151.4,
         "frames": 30,
+        "spanMs": 3405.5,
         "applied": true,
         "dry": false,
         "before": {
@@ -4855,78 +4906,6 @@
           "drawingBuffer": [
             720,
             405
-          ]
-        },
-        "after": {
-          "pixelRatio": 1.25,
-          "shadowMapEnabled": true,
-          "shadowMapSize": 1024,
-          "shadowCasters": 2,
-          "drawingBuffer": [
-            600,
-            337
-          ]
-        },
-        "post": "bridge"
-      },
-      {
-        "at": 12570.5,
-        "from": "medium",
-        "to": "low",
-        "direction": "down",
-        "why": "median frame 112.8 ms (8.9 fps) over 30 frames is above the 21 ms floor",
-        "fps": 8.9,
-        "medianMs": 112.8,
-        "p10Ms": 48.4,
-        "p95Ms": 140,
-        "p99Ms": 187.3,
-        "frames": 30,
-        "applied": true,
-        "dry": false,
-        "before": {
-          "pixelRatio": 1.25,
-          "shadowMapEnabled": true,
-          "shadowMapSize": 1024,
-          "shadowCasters": 2,
-          "drawingBuffer": [
-            600,
-            337
-          ]
-        },
-        "after": {
-          "pixelRatio": 1,
-          "shadowMapEnabled": true,
-          "shadowMapSize": 512,
-          "shadowCasters": 2,
-          "drawingBuffer": [
-            480,
-            270
-          ]
-        },
-        "post": "bridge:off"
-      },
-      {
-        "at": 22273.3,
-        "from": "low",
-        "to": "potato",
-        "direction": "down",
-        "why": "median frame 125.9 ms (7.9 fps) over 30 frames is above the 21 ms floor",
-        "fps": 7.9,
-        "medianMs": 125.9,
-        "p10Ms": 52.3,
-        "p95Ms": 174.3,
-        "p99Ms": 232.5,
-        "frames": 30,
-        "applied": true,
-        "dry": false,
-        "before": {
-          "pixelRatio": 1,
-          "shadowMapEnabled": true,
-          "shadowMapSize": 512,
-          "shadowCasters": 2,
-          "drawingBuffer": [
-            480,
-            270
           ]
         },
         "after": {
@@ -4959,14 +4938,20 @@
     "dry": false,
     "forced": true,
     "reason": "measuring",
+    "standDown": null,
+    "frames": 184,
     "bootTier": "high",
     "startTier": "high",
     "tier": "potato",
     "policyTier": "potato",
+    "ceiling": "high",
+    "ceilingSource": "configured tier",
     "autoTierSetting": true,
     "heuristic": {
       "tier": "high",
       "standDown": true,
+      "caps": [],
+      "strengths": [],
       "notes": [
         "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
       ],
@@ -4985,48 +4970,60 @@
       }
     },
     "measured": {
-      "fps": 15.4,
-      "medianMs": 65.1,
-      "p10Ms": 49,
-      "p95Ms": 67.7,
-      "p99Ms": 68.4,
-      "maxMs": 122.7,
-      "frames": 30
+      "fps": 18.1,
+      "medianMs": 55.2,
+      "p10Ms": 53.9,
+      "p95Ms": 59.4,
+      "p99Ms": 66,
+      "maxMs": 111,
+      "frames": 30,
+      "spanMs": 1680.7
     },
     "samples": {
-      "accepted": 149,
-      "rejected": 13,
-      "clockMs": 30746
+      "accepted": 119,
+      "rejected": 4,
+      "clockMs": 13795
     },
     "thresholds": {
       "downMs": 21,
       "upMs": 13.5,
       "windowFrames": 30,
+      "windowMs": 600000,
+      "minFrames": 24,
+      "firstWindowFrames": 30,
+      "firstWindowMs": 600000,
+      "firstMinFrames": 12,
       "warmupFrames": 30,
+      "warmupMs": 600000,
+      "firstWarmupFrames": 30,
+      "firstWarmupMs": 600000,
       "cooldownMs": 1000,
       "maxChanges": 3,
       "maxUpSteps": 1,
+      "maxLeap": 3,
       "sampleMinMs": 2,
       "sampleMaxMs": 250
     },
     "budget": {
-      "changesLeft": 0,
+      "changesLeft": 2,
       "upStepsLeft": 0,
       "ceiling": "high"
     },
     "changes": [
       {
-        "at": 5608.2,
+        "at": 5186.9,
         "from": "high",
-        "to": "medium",
+        "to": "potato",
         "direction": "down",
-        "why": "median frame 113.0 ms (8.8 fps) over 30 frames is above the 21 ms floor",
-        "fps": 8.8,
-        "medianMs": 113,
-        "p10Ms": 94.6,
-        "p95Ms": 206.7,
-        "p99Ms": 223.3,
+        "rungs": 3,
+        "why": "median frame 111.9 ms (8.9 fps) over 30 frames / 3.4 s is 5.3x the 21 ms floor — 3 rung(s)",
+        "fps": 8.9,
+        "medianMs": 111.9,
+        "p10Ms": 98.6,
+        "p95Ms": 125.4,
+        "p99Ms": 151.4,
         "frames": 30,
+        "spanMs": 3405.5,
         "applied": true,
         "dry": false,
         "before": {
@@ -5037,78 +5034,6 @@
           "drawingBuffer": [
             720,
             405
-          ]
-        },
-        "after": {
-          "pixelRatio": 1.25,
-          "shadowMapEnabled": true,
-          "shadowMapSize": 1024,
-          "shadowCasters": 2,
-          "drawingBuffer": [
-            600,
-            337
-          ]
-        },
-        "post": "bridge"
-      },
-      {
-        "at": 12570.5,
-        "from": "medium",
-        "to": "low",
-        "direction": "down",
-        "why": "median frame 112.8 ms (8.9 fps) over 30 frames is above the 21 ms floor",
-        "fps": 8.9,
-        "medianMs": 112.8,
-        "p10Ms": 48.4,
-        "p95Ms": 140,
-        "p99Ms": 187.3,
-        "frames": 30,
-        "applied": true,
-        "dry": false,
-        "before": {
-          "pixelRatio": 1.25,
-          "shadowMapEnabled": true,
-          "shadowMapSize": 1024,
-          "shadowCasters": 2,
-          "drawingBuffer": [
-            600,
-            337
-          ]
-        },
-        "after": {
-          "pixelRatio": 1,
-          "shadowMapEnabled": true,
-          "shadowMapSize": 512,
-          "shadowCasters": 2,
-          "drawingBuffer": [
-            480,
-            270
-          ]
-        },
-        "post": "bridge:off"
-      },
-      {
-        "at": 22273.3,
-        "from": "low",
-        "to": "potato",
-        "direction": "down",
-        "why": "median frame 125.9 ms (7.9 fps) over 30 frames is above the 21 ms floor",
-        "fps": 7.9,
-        "medianMs": 125.9,
-        "p10Ms": 52.3,
-        "p95Ms": 174.3,
-        "p99Ms": 232.5,
-        "frames": 30,
-        "applied": true,
-        "dry": false,
-        "before": {
-          "pixelRatio": 1,
-          "shadowMapEnabled": true,
-          "shadowMapSize": 512,
-          "shadowCasters": 2,
-          "drawingBuffer": [
-            480,
-            270
           ]
         },
         "after": {
@@ -5150,16 +5075,16 @@
       "math: claim \"leaf9-mark\" reads 21.2 device px per em, under the 33 px legibility floor — its thinnest stroke would be 0.95 px, so the mark stands until the player is closer"
     ],
     "stats": {
-      "fps": 11,
-      "frameMs": 88.89,
-      "simTime": 24.533,
-      "frames": 283,
-      "steps": 1472,
-      "drawCalls": 56,
-      "triangles": 85515,
-      "programs": 47,
-      "textures": 6,
-      "geometries": 54,
+      "fps": 18,
+      "frameMs": 55,
+      "simTime": 12.217,
+      "frames": 184,
+      "steps": 733,
+      "drawCalls": 55,
+      "triangles": 85457,
+      "programs": 34,
+      "textures": 4,
+      "geometries": 53,
       "pixelRatio": 1,
       "tier": "potato"
     },
@@ -5176,14 +5101,20 @@
         "dry": false,
         "forced": true,
         "reason": "measuring",
+        "standDown": null,
+        "frames": 184,
         "bootTier": "high",
         "startTier": "high",
         "tier": "potato",
         "policyTier": "potato",
+        "ceiling": "high",
+        "ceilingSource": "configured tier",
         "autoTierSetting": true,
         "heuristic": {
           "tier": "high",
           "standDown": true,
+          "caps": [],
+          "strengths": [],
           "notes": [
             "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
           ],
@@ -5202,48 +5133,60 @@
           }
         },
         "measured": {
-          "fps": 15.4,
-          "medianMs": 65.1,
-          "p10Ms": 49,
-          "p95Ms": 67.7,
-          "p99Ms": 68.4,
-          "maxMs": 122.7,
-          "frames": 30
+          "fps": 18.1,
+          "medianMs": 55.2,
+          "p10Ms": 53.9,
+          "p95Ms": 59.4,
+          "p99Ms": 66,
+          "maxMs": 111,
+          "frames": 30,
+          "spanMs": 1680.7
         },
         "samples": {
-          "accepted": 149,
-          "rejected": 13,
-          "clockMs": 30746
+          "accepted": 119,
+          "rejected": 4,
+          "clockMs": 13795
         },
         "thresholds": {
           "downMs": 21,
           "upMs": 13.5,
           "windowFrames": 30,
+          "windowMs": 600000,
+          "minFrames": 24,
+          "firstWindowFrames": 30,
+          "firstWindowMs": 600000,
+          "firstMinFrames": 12,
           "warmupFrames": 30,
+          "warmupMs": 600000,
+          "firstWarmupFrames": 30,
+          "firstWarmupMs": 600000,
           "cooldownMs": 1000,
           "maxChanges": 3,
           "maxUpSteps": 1,
+          "maxLeap": 3,
           "sampleMinMs": 2,
           "sampleMaxMs": 250
         },
         "budget": {
-          "changesLeft": 0,
+          "changesLeft": 2,
           "upStepsLeft": 0,
           "ceiling": "high"
         },
         "changes": [
           {
-            "at": 5608.2,
+            "at": 5186.9,
             "from": "high",
-            "to": "medium",
+            "to": "potato",
             "direction": "down",
-            "why": "median frame 113.0 ms (8.8 fps) over 30 frames is above the 21 ms floor",
-            "fps": 8.8,
-            "medianMs": 113,
-            "p10Ms": 94.6,
-            "p95Ms": 206.7,
-            "p99Ms": 223.3,
+            "rungs": 3,
+            "why": "median frame 111.9 ms (8.9 fps) over 30 frames / 3.4 s is 5.3x the 21 ms floor — 3 rung(s)",
+            "fps": 8.9,
+            "medianMs": 111.9,
+            "p10Ms": 98.6,
+            "p95Ms": 125.4,
+            "p99Ms": 151.4,
             "frames": 30,
+            "spanMs": 3405.5,
             "applied": true,
             "dry": false,
             "before": {
@@ -5254,78 +5197,6 @@
               "drawingBuffer": [
                 720,
                 405
-              ]
-            },
-            "after": {
-              "pixelRatio": 1.25,
-              "shadowMapEnabled": true,
-              "shadowMapSize": 1024,
-              "shadowCasters": 2,
-              "drawingBuffer": [
-                600,
-                337
-              ]
-            },
-            "post": "bridge"
-          },
-          {
-            "at": 12570.5,
-            "from": "medium",
-            "to": "low",
-            "direction": "down",
-            "why": "median frame 112.8 ms (8.9 fps) over 30 frames is above the 21 ms floor",
-            "fps": 8.9,
-            "medianMs": 112.8,
-            "p10Ms": 48.4,
-            "p95Ms": 140,
-            "p99Ms": 187.3,
-            "frames": 30,
-            "applied": true,
-            "dry": false,
-            "before": {
-              "pixelRatio": 1.25,
-              "shadowMapEnabled": true,
-              "shadowMapSize": 1024,
-              "shadowCasters": 2,
-              "drawingBuffer": [
-                600,
-                337
-              ]
-            },
-            "after": {
-              "pixelRatio": 1,
-              "shadowMapEnabled": true,
-              "shadowMapSize": 512,
-              "shadowCasters": 2,
-              "drawingBuffer": [
-                480,
-                270
-              ]
-            },
-            "post": "bridge:off"
-          },
-          {
-            "at": 22273.3,
-            "from": "low",
-            "to": "potato",
-            "direction": "down",
-            "why": "median frame 125.9 ms (7.9 fps) over 30 frames is above the 21 ms floor",
-            "fps": 7.9,
-            "medianMs": 125.9,
-            "p10Ms": 52.3,
-            "p95Ms": 174.3,
-            "p99Ms": 232.5,
-            "frames": 30,
-            "applied": true,
-            "dry": false,
-            "before": {
-              "pixelRatio": 1,
-              "shadowMapEnabled": true,
-              "shadowMapSize": 512,
-              "shadowCasters": 2,
-              "drawingBuffer": [
-                480,
-                270
               ]
             },
             "after": {
@@ -6157,11 +6028,11 @@
         },
         "sun": {
           "toLight": [
-            0.8749,
-            0.1905,
-            -0.4453
+            0.8708,
+            0.1907,
+            -0.4532
           ],
-          "level": 1.0465
+          "level": 1.0695
         }
       },
       "sky": {
@@ -6175,19 +6046,19 @@
         },
         "drawCalls": 1,
         "triangles": 1,
-        "simTime": 24.5333,
+        "simTime": 12.2167,
         "motionScale": 1,
-        "lethis": 0.9343,
+        "lethis": 0.9974,
         "lethisMaxRatePerStep": 0.0001121,
         "lethisRateBudgetPerStep": 0.0015,
         "sun": {
           "toLight": [
-            0.8749,
-            0.1905,
-            -0.4453
+            0.8708,
+            0.1907,
+            -0.4532
           ],
-          "elevationDeg": 10.984,
-          "azimuthDeg": 116.977,
+          "elevationDeg": 10.996,
+          "azimuthDeg": 117.492,
           "adopted": true,
           "discRadiusDeg": 1.15
         },
@@ -6242,7 +6113,7 @@
         },
         "errata": {
           "enabled": true,
-          "azimuthDeg": 304.944,
+          "azimuthDeg": 303.466,
           "driftDegPerSec": 0.12
         },
         "dither": {
@@ -6296,13 +6167,13 @@
         },
         "sun": {
           "toLight": [
-            0.8749,
-            0.1905,
-            -0.4453
+            0.8708,
+            0.1907,
+            -0.4532
           ],
-          "elevationDeg": 10.984,
-          "azimuthDeg": 116.977,
-          "bakedAzimuthDeg": 117.556
+          "elevationDeg": 10.996,
+          "azimuthDeg": 117.492,
+          "bakedAzimuthDeg": 117.814
         },
         "sample": [
           {
@@ -6336,14 +6207,14 @@
       "lighting": {
         "sun": {
           "toLight": [
-            0.8749,
-            0.1905,
-            -0.4453
+            0.8708,
+            0.1907,
+            -0.4531
           ],
           "direction": [
-            -0.8749,
-            -0.1905,
-            0.4453
+            -0.8708,
+            -0.1907,
+            0.4531
           ],
           "color": [
             1,
@@ -6351,15 +6222,15 @@
             0.4793
           ],
           "hex": "#FFE3B8",
-          "intensity": 3.2874,
-          "relativeIntensity": 1.0464,
-          "elevationDeg": 10.984,
-          "azimuthDeg": 116.975,
-          "discElevationDeg": 10.984,
+          "intensity": 3.3602,
+          "relativeIntensity": 1.0696,
+          "elevationDeg": 10.996,
+          "azimuthDeg": 117.489,
+          "discElevationDeg": 10.996,
           "shadowElevationDeg": 16,
           "shadowLengthRatio": 3.487,
           "worldFixedBearing": true,
-          "timeOfDay": 0.2704,
+          "timeOfDay": 0.2602,
           "exposure": 1,
           "tonemap": "none",
           "fill": {
@@ -6375,9 +6246,9 @@
           },
           "rim": {
             "toRim": [
-              -0.5112,
+              -0.5088,
               0.8192,
-              0.2602
+              0.2647
             ],
             "gain": 0.28,
             "tint": "#1B2C33"
@@ -6390,7 +6261,7 @@
         "lights": {
           "key": {
             "hex": "#FFE3B8",
-            "intensity": 3.2874
+            "intensity": 3.3602
           },
           "fill": {
             "sky": "#5EA3FF",
@@ -6400,7 +6271,7 @@
           },
           "bounce": {
             "hex": "#8A5B3E",
-            "intensity": 0.1644
+            "intensity": 0.168
           },
           "rim": {
             "gain": 0.28,
@@ -6461,7 +6332,7 @@
           "verticalSpeed": 0,
           "airborne": 0,
           "groundedSignal": true,
-          "bearingDeg": -63.025,
+          "bearingDeg": -62.511,
           "multiplier": [
             0.2833,
             0.5354,
@@ -6697,15 +6568,15 @@
         "tier": "high",
         "density": 1,
         "surface": "terrain",
-        "surfaceQueries": 54559,
+        "surfaceQueries": 54501,
         "built": true,
         "outstanding": false,
-        "genCalls": 2243,
-        "genMsTotal": 49.3,
-        "instances": 5199,
-        "triangles": 51712,
-        "groundTriangles": 47007,
-        "meshes": 14,
+        "genCalls": 2235,
+        "genMsTotal": 53.8,
+        "instances": 5170,
+        "triangles": 51654,
+        "groundTriangles": 46949,
+        "meshes": 13,
         "solids": 240,
         "missingRoles": [],
         "flatShading": {
@@ -6831,9 +6702,9 @@
               12
             ],
             "tris": 7212,
-            "candidates": 765,
-            "rejected": 1467,
-            "tiles": 181,
+            "candidates": 716,
+            "rejected": 1388,
+            "tiles": 171,
             "gather": 150,
             "fade": [
               105.92857142857142,
@@ -6902,8 +6773,8 @@
             ],
             "tris": 1876,
             "candidates": 907,
-            "rejected": 2649,
-            "tiles": 44,
+            "rejected": 2713,
+            "tiles": 45,
             "gather": 70,
             "fade": [
               34.49999999999999,
@@ -6942,13 +6813,13 @@
             ],
             "drawn": [
               0,
-              29
+              0
             ],
             "geoTris": [
               4,
               2
             ],
-            "tris": 58,
+            "tris": 0,
             "candidates": 436,
             "rejected": 2511,
             "tiles": 32,
@@ -7030,7 +6901,7 @@
           "window": true,
           "page": true
         },
-        "step": 1472,
+        "step": 733,
         "move": {
           "x": 0,
           "y": 0,
@@ -7421,8 +7292,8 @@
         "fallbackGround": false,
         "counters": {
           "depenetrations": 0,
-          "rays": 7361,
-          "triTests": 35312
+          "rays": 3666,
+          "triTests": 17576
         }
       },
       "locomotion": {
@@ -7488,7 +7359,7 @@
           "airtime": 0,
           "at": -1
         },
-        "simTime": 24.5333,
+        "simTime": 12.2167,
         "spawnPoint": [
           10,
           59.14,
@@ -7658,7 +7529,7 @@
         "speed": 0,
         "speedMeasured": 0,
         "speedSignal": 0,
-        "speedSignalAge": 24.2667,
+        "speedSignalAge": 11.95,
         "followError": 0,
         "followLag": 0,
         "focus": {
@@ -7760,7 +7631,7 @@
           "white": 1,
           "gradeIsIdentity": true
         },
-        "frames": 124
+        "frames": 62
       },
       "mathtex": {
         "locale": "en",
@@ -7928,14 +7799,14 @@
         "evictions": 0,
         "worstOccludedPct": 83.3,
         "occlusionAt": 0,
-        "occlusionMs": 152.8,
+        "occlusionMs": 162.1,
         "occluders": 44,
         "occlusionProbe": "mathocclusion",
         "fonts": {
           "ready": true,
           "loaded": 9,
           "failed": [],
-          "ms": 14.8
+          "ms": 14
         },
         "raster": {
           "rasters": 4,
@@ -7963,9 +7834,9 @@
         }
       },
       "mathocclusion": {
-        "at": 24.53,
-        "ms": 217.9,
-        "occluders": 51,
+        "at": 12.22,
+        "ms": 200.9,
+        "occluders": 50,
         "worstOccludedPct": 0,
         "panels": [
           {
@@ -8025,7 +7896,7 @@
         "typesets": 4,
         "failures": [],
         "evictions": 0,
-        "typesetMs": 0.5,
+        "typesetMs": 0.3,
         "cacheSize": 4,
         "locale": "en",
         "unspokenNodeTypes": [
@@ -9301,6 +9172,8 @@
             }
           },
           "offered": 0,
+          "failStreak": 0,
+          "stopped": false,
           "byTrigger": {},
           "passedByTrigger": {},
           "passed": 0,
@@ -9702,7 +9575,7 @@
         },
         "bankAudit": {
           "source": "committed",
-          "setupMs": 1.6,
+          "setupMs": 1.4,
           "fingerprint": "d6e2537d",
           "version": 2,
           "sampled": 29754,
@@ -9827,7 +9700,8 @@
         },
         "stats": {
           "startsOutsideCeiling": 0,
-          "beatsClosedAtItem": 0
+          "beatsClosedAtItem": 0,
+          "eventsCarried": 0
         },
         "lines": {
           "opening": [
@@ -9953,21 +9827,27 @@
       "white": 1,
       "gradeIsIdentity": true
     },
-    "frames": 124
+    "frames": 62
   },
   "explicit": {
     "enabled": false,
     "dry": false,
     "forced": false,
     "reason": "explicit: a tier was chosen (settings or ?tier=), autoTier stood down",
+    "standDown": null,
+    "frames": 42,
     "bootTier": "low",
     "startTier": "low",
     "tier": "low",
     "policyTier": "low",
+    "ceiling": "low",
+    "ceilingSource": "configured tier",
     "autoTierSetting": false,
     "heuristic": {
       "tier": "low",
       "standDown": true,
+      "caps": [],
+      "strengths": [],
       "notes": [
         "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
       ],
@@ -9995,10 +9875,19 @@
       "downMs": 21,
       "upMs": 13.5,
       "windowFrames": 120,
+      "windowMs": 5000,
+      "minFrames": 24,
+      "firstWindowFrames": 45,
+      "firstWindowMs": 2500,
+      "firstMinFrames": 12,
       "warmupFrames": 90,
+      "warmupMs": 3000,
+      "firstWarmupFrames": 30,
+      "firstWarmupMs": 1500,
       "cooldownMs": 3000,
       "maxChanges": 3,
       "maxUpSteps": 1,
+      "maxLeap": 3,
       "sampleMinMs": 2,
       "sampleMaxMs": 250
     },
@@ -10035,13 +9924,13 @@
       "math: claim \"leaf9-mark\" reads 24.4 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.10 px, so the mark stands until the player is closer"
     ],
     "stats": {
-      "fps": 7,
-      "frameMs": 136.07,
+      "fps": 8,
+      "frameMs": 127.83,
       "simTime": 0.933,
       "frames": 43,
       "steps": 56,
       "drawCalls": 93,
-      "triangles": 98884,
+      "triangles": 98880,
       "programs": 17,
       "textures": 5,
       "geometries": 53,
@@ -10061,14 +9950,20 @@
         "dry": false,
         "forced": false,
         "reason": "explicit: a tier was chosen (settings or ?tier=), autoTier stood down",
+        "standDown": null,
+        "frames": 43,
         "bootTier": "low",
         "startTier": "low",
         "tier": "low",
         "policyTier": "low",
+        "ceiling": "low",
+        "ceilingSource": "configured tier",
         "autoTierSetting": false,
         "heuristic": {
           "tier": "low",
           "standDown": true,
+          "caps": [],
+          "strengths": [],
           "notes": [
             "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
           ],
@@ -10096,10 +9991,19 @@
           "downMs": 21,
           "upMs": 13.5,
           "windowFrames": 120,
+          "windowMs": 5000,
+          "minFrames": 24,
+          "firstWindowFrames": 45,
+          "firstWindowMs": 2500,
+          "firstMinFrames": 12,
           "warmupFrames": 90,
+          "warmupMs": 3000,
+          "firstWarmupFrames": 30,
+          "firstWarmupMs": 1500,
           "cooldownMs": 3000,
           "maxChanges": 3,
           "maxUpSteps": 1,
+          "maxLeap": 3,
           "sampleMinMs": 2,
           "sampleMaxMs": 250
         },
@@ -11214,7 +11118,7 @@
           "groundY": 58.3512,
           "lyingOn": "sole",
           "verticalSpeed": 0,
-          "airborne": 0.002,
+          "airborne": 0.003,
           "groundedSignal": true,
           "bearingDeg": -62.039,
           "multiplier": [
@@ -11452,14 +11356,14 @@
         "tier": "low",
         "density": 0.36,
         "surface": "terrain",
-        "surfaceQueries": 36885,
+        "surfaceQueries": 37326,
         "built": true,
         "outstanding": false,
-        "genCalls": 2066,
-        "genMsTotal": 87.2,
-        "instances": 4179,
-        "triangles": 39745,
-        "groundTriangles": 37424,
+        "genCalls": 2128,
+        "genMsTotal": 68.3,
+        "instances": 4175,
+        "triangles": 39741,
+        "groundTriangles": 37420,
         "meshes": 14,
         "solids": 240,
         "missingRoles": [],
@@ -11586,9 +11490,9 @@
               12
             ],
             "tris": 5253,
-            "candidates": 658,
-            "rejected": 1338,
-            "tiles": 164,
+            "candidates": 674,
+            "rejected": 1344,
+            "tiles": 165,
             "gather": 150,
             "fade": [
               105.92857142857142,
@@ -11673,13 +11577,13 @@
             ],
             "drawn": [
               654,
-              1748
+              1750
             ],
             "geoTris": [
               10,
               4
             ],
-            "tris": 13532,
+            "tris": 13540,
             "candidates": 4512,
             "rejected": 6128,
             "tiles": 41,
@@ -11697,13 +11601,13 @@
             ],
             "drawn": [
               0,
-              29
+              23
             ],
             "geoTris": [
               4,
               2
             ],
-            "tris": 58,
+            "tris": 46,
             "candidates": 436,
             "rejected": 2511,
             "tiles": 32,
@@ -12657,11 +12561,11 @@
           "ready": true,
           "loaded": 9,
           "failed": [],
-          "ms": 5.6
+          "ms": 6.1
         },
         "raster": {
           "rasters": 4,
-          "ms": 6.1,
+          "ms": 5.3,
           "glyphs": 1,
           "paths": 0,
           "rules": 0,
@@ -12686,7 +12590,7 @@
       },
       "mathocclusion": {
         "at": 0.93,
-        "ms": 189.5,
+        "ms": 151.4,
         "occluders": 51,
         "worstOccludedPct": 0,
         "panels": [
@@ -12747,7 +12651,7 @@
         "typesets": 4,
         "failures": [],
         "evictions": 0,
-        "typesetMs": 0.3,
+        "typesetMs": 0.5,
         "cacheSize": 4,
         "locale": "en",
         "unspokenNodeTypes": [
@@ -14023,6 +13927,8 @@
             }
           },
           "offered": 0,
+          "failStreak": 0,
+          "stopped": false,
           "byTrigger": {},
           "passedByTrigger": {},
           "passed": 0,
@@ -14424,7 +14330,7 @@
         },
         "bankAudit": {
           "source": "committed",
-          "setupMs": 3,
+          "setupMs": 2.6,
           "fingerprint": "d6e2537d",
           "version": 2,
           "sampled": 29754,
@@ -14549,7 +14455,8 @@
         },
         "stats": {
           "startsOutsideCeiling": 0,
-          "beatsClosedAtItem": 0
+          "beatsClosedAtItem": 0,
+          "eventsCarried": 0
         },
         "lines": {
           "opening": [],
@@ -14567,6 +14474,4831 @@
             "opened": 2,
             "closed": 0,
             "interrupted": 1
+          },
+          "writes": 2,
+          "writeFailures": 0,
+          "pace": {
+            "ratio": 1,
+            "spread": 0,
+            "gapSeconds": 4,
+            "samples": 0
+          },
+          "lastCloseReason": "interrupted"
+        }
+      }
+    }
+  },
+  "midBefore": {
+    "enabled": true,
+    "dry": false,
+    "forced": true,
+    "reason": "measuring",
+    "standDown": null,
+    "frames": 1,
+    "bootTier": "high",
+    "startTier": "high",
+    "tier": "high",
+    "policyTier": "high",
+    "ceiling": "high",
+    "ceilingSource": "configured tier",
+    "autoTierSetting": true,
+    "heuristic": {
+      "tier": "high",
+      "standDown": true,
+      "caps": [],
+      "strengths": [],
+      "notes": [
+        "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
+      ],
+      "env": {
+        "renderer": "WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "vendor": "Google Inc. (Google)",
+        "maxTextureSize": 8192,
+        "webgl2": true,
+        "devicePixelRatio": 2,
+        "cores": 20,
+        "memoryGB": 32,
+        "viewport": [
+          480,
+          270
+        ]
+      }
+    },
+    "measured": null,
+    "samples": {
+      "accepted": 0,
+      "rejected": 0,
+      "clockMs": 0
+    },
+    "thresholds": {
+      "downMs": 21,
+      "upMs": 13.5,
+      "windowFrames": 30,
+      "windowMs": 600000,
+      "minFrames": 24,
+      "firstWindowFrames": 30,
+      "firstWindowMs": 600000,
+      "firstMinFrames": 12,
+      "warmupFrames": 30,
+      "warmupMs": 600000,
+      "firstWarmupFrames": 30,
+      "firstWarmupMs": 600000,
+      "cooldownMs": 1000,
+      "maxChanges": 3,
+      "maxUpSteps": 1,
+      "maxLeap": 3,
+      "sampleMinMs": 2,
+      "sampleMaxMs": 250
+    },
+    "budget": {
+      "changesLeft": 3,
+      "upStepsLeft": 1,
+      "ceiling": "high"
+    },
+    "changes": [],
+    "renderer": {
+      "pixelRatio": 1.5,
+      "shadowMapEnabled": true,
+      "shadowMapSize": 2048,
+      "shadowCasters": 2,
+      "drawingBuffer": [
+        720,
+        405
+      ]
+    },
+    "postRoute": null
+  },
+  "midSet": {
+    "tier": "low",
+    "autoTier": false
+  },
+  "mid": {
+    "enabled": false,
+    "dry": false,
+    "forced": true,
+    "reason": "explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down",
+    "standDown": {
+      "reason": "explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down",
+      "atFrame": 3,
+      "atMs": 311.8,
+      "playerTier": "low",
+      "autoTierWas": "high",
+      "autoChangesMade": 0,
+      "applied": true,
+      "renderer": {
+        "pixelRatio": 1,
+        "shadowMapEnabled": true,
+        "shadowMapSize": 512,
+        "shadowCasters": 2,
+        "drawingBuffer": [
+          480,
+          270
+        ]
+      }
+    },
+    "frames": 222,
+    "bootTier": "high",
+    "startTier": "high",
+    "tier": "low",
+    "policyTier": "high",
+    "ceiling": "high",
+    "ceilingSource": "configured tier",
+    "autoTierSetting": false,
+    "heuristic": {
+      "tier": "high",
+      "standDown": true,
+      "caps": [],
+      "strengths": [],
+      "notes": [
+        "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
+      ],
+      "env": {
+        "renderer": "WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "vendor": "Google Inc. (Google)",
+        "maxTextureSize": 8192,
+        "webgl2": true,
+        "devicePixelRatio": 2,
+        "cores": 20,
+        "memoryGB": 32,
+        "viewport": [
+          480,
+          270
+        ]
+      }
+    },
+    "measured": null,
+    "samples": {
+      "accepted": 0,
+      "rejected": 1,
+      "clockMs": 312
+    },
+    "thresholds": {
+      "downMs": 21,
+      "upMs": 13.5,
+      "windowFrames": 30,
+      "windowMs": 600000,
+      "minFrames": 24,
+      "firstWindowFrames": 30,
+      "firstWindowMs": 600000,
+      "firstMinFrames": 12,
+      "warmupFrames": 30,
+      "warmupMs": 600000,
+      "firstWarmupFrames": 30,
+      "firstWarmupMs": 600000,
+      "cooldownMs": 1000,
+      "maxChanges": 3,
+      "maxUpSteps": 1,
+      "maxLeap": 3,
+      "sampleMinMs": 2,
+      "sampleMaxMs": 250
+    },
+    "budget": {
+      "changesLeft": 3,
+      "upStepsLeft": 1,
+      "ceiling": "high"
+    },
+    "changes": [],
+    "renderer": {
+      "pixelRatio": 1,
+      "shadowMapEnabled": true,
+      "shadowMapSize": 512,
+      "shadowCasters": 2,
+      "drawingBuffer": [
+        480,
+        270
+      ]
+    },
+    "postRoute": "bridge:off"
+  },
+  "midStats": {
+    "build": "0.0.1",
+    "ready": true,
+    "fatal": null,
+    "errors": [],
+    "warnings": [
+      "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+      "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+      "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
+      "flow: the previous sitting (#2) was never closed and has been recorded as interrupted. The learner model is stored separately and was not affected.",
+      "math: claim \"leaf9-span\" reads 23.4 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.06 px, so the mark stands until the player is closer",
+      "math: claim \"leaf9-share\" reads 23.4 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.06 px, so the mark stands until the player is closer",
+      "math: claim \"leaf9-mark\" reads 2.1 device px per em, under the 33 px legibility floor — its thinnest stroke would be 0.09 px, so the mark stands until the player is closer"
+    ],
+    "stats": {
+      "fps": 11,
+      "frameMs": 94.63,
+      "simTime": 17.683,
+      "frames": 222,
+      "steps": 1061,
+      "drawCalls": 130,
+      "triangles": 155117,
+      "programs": 33,
+      "textures": 6,
+      "geometries": 54,
+      "pixelRatio": 1,
+      "tier": "low"
+    },
+    "katex": {
+      "rendered": 3,
+      "failed": 0,
+      "failedSamples": [],
+      "rawSourceLeak": false,
+      "leakSample": null
+    },
+    "probes": {
+      "autotier": {
+        "enabled": false,
+        "dry": false,
+        "forced": true,
+        "reason": "explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down",
+        "standDown": {
+          "reason": "explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down",
+          "atFrame": 3,
+          "atMs": 311.8,
+          "playerTier": "low",
+          "autoTierWas": "high",
+          "autoChangesMade": 0,
+          "applied": true,
+          "renderer": {
+            "pixelRatio": 1,
+            "shadowMapEnabled": true,
+            "shadowMapSize": 512,
+            "shadowCasters": 2,
+            "drawingBuffer": [
+              480,
+              270
+            ]
+          }
+        },
+        "frames": 222,
+        "bootTier": "high",
+        "startTier": "high",
+        "tier": "low",
+        "policyTier": "high",
+        "ceiling": "high",
+        "ceilingSource": "configured tier",
+        "autoTierSetting": false,
+        "heuristic": {
+          "tier": "high",
+          "standDown": true,
+          "caps": [],
+          "strengths": [],
+          "notes": [
+            "software rasteriser \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\" — a measurement environment, not a device class"
+          ],
+          "env": {
+            "renderer": "WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+            "vendor": "Google Inc. (Google)",
+            "maxTextureSize": 8192,
+            "webgl2": true,
+            "devicePixelRatio": 2,
+            "cores": 20,
+            "memoryGB": 32,
+            "viewport": [
+              480,
+              270
+            ]
+          }
+        },
+        "measured": null,
+        "samples": {
+          "accepted": 0,
+          "rejected": 1,
+          "clockMs": 312
+        },
+        "thresholds": {
+          "downMs": 21,
+          "upMs": 13.5,
+          "windowFrames": 30,
+          "windowMs": 600000,
+          "minFrames": 24,
+          "firstWindowFrames": 30,
+          "firstWindowMs": 600000,
+          "firstMinFrames": 12,
+          "warmupFrames": 30,
+          "warmupMs": 600000,
+          "firstWarmupFrames": 30,
+          "firstWarmupMs": 600000,
+          "cooldownMs": 1000,
+          "maxChanges": 3,
+          "maxUpSteps": 1,
+          "maxLeap": 3,
+          "sampleMinMs": 2,
+          "sampleMaxMs": 250
+        },
+        "budget": {
+          "changesLeft": 3,
+          "upStepsLeft": 1,
+          "ceiling": "high"
+        },
+        "changes": [],
+        "renderer": {
+          "pixelRatio": 1,
+          "shadowMapEnabled": true,
+          "shadowMapSize": 512,
+          "shadowCasters": 2,
+          "drawingBuffer": [
+            480,
+            270
+          ]
+        },
+        "postRoute": "bridge:off"
+      },
+      "i18n": {
+        "locale": "en",
+        "requested": "en",
+        "reference": "en",
+        "keys": 338,
+        "referenceKeys": 338,
+        "missing": [],
+        "pluralCategories": [
+          "one",
+          "other"
+        ],
+        "conventions": {
+          "decimal": ".",
+          "group": ",",
+          "groupFrom": 4,
+          "texDecimal": ".",
+          "texGroup": "{,}",
+          "minus": "−",
+          "percentGap": "",
+          "listSep": ", ",
+          "listLast": " and "
+        },
+        "sample": {
+          "number": "16,004",
+          "decimal": "1.5",
+          "negative": "−2.25",
+          "percent": "80%",
+          "tex": "16{,}004.5",
+          "plural": {
+            "1": "1 leaf",
+            "2": "2 leaves",
+            "5": "5 leaves",
+            "22": "22 leaves",
+            "1.5": "1.5 leaves"
+          }
+        },
+        "rendered": 398,
+        "layout": null
+      },
+      "terrain": {
+        "id": "leaf-nine",
+        "cell": 6,
+        "grid": [
+          78,
+          116
+        ],
+        "bounds": {
+          "x0": -232,
+          "x1": 232,
+          "z0": -352,
+          "z1": 338
+        },
+        "surfaceTriangles": 9443,
+        "lipEdges": 405,
+        "indexed": false,
+        "flatNormalFraction": 1,
+        "underTriangles": 10253,
+        "shoulders": {
+          "checked": 27,
+          "violations": 0,
+          "worstAdjacentDeltaDeg": 14.89,
+          "minSeparationDeg": 12,
+          "widestSpreadUsed": 1
+        },
+        "paletteMisses": [],
+        "sceneFitTolerance": 0.02
+      },
+      "level": {
+        "id": "leaf-nine",
+        "downLeaf": [
+          0,
+          0,
+          -1
+        ],
+        "anchors": {
+          "spawn": {
+            "x": 10,
+            "y": 60.05,
+            "z": 216,
+            "leaf": [
+              -216,
+              10
+            ]
+          },
+          "brow": {
+            "x": 10,
+            "y": 58.35,
+            "z": 216,
+            "leaf": [
+              -216,
+              10
+            ]
+          },
+          "bollard": {
+            "x": 34,
+            "y": 48.84,
+            "z": 300,
+            "leaf": [
+              -300,
+              34
+            ]
+          },
+          "barge": {
+            "x": 74,
+            "y": 48.34,
+            "z": 296,
+            "leaf": [
+              -296,
+              74
+            ]
+          },
+          "kindness": {
+            "x": 116,
+            "y": 44.66,
+            "z": 266,
+            "leaf": [
+              -266,
+              116
+            ]
+          },
+          "standingHouse": {
+            "x": -66,
+            "y": 34.25,
+            "z": 90,
+            "leaf": [
+              -90,
+              -66
+            ]
+          },
+          "standingHouseSocket": {
+            "x": -63,
+            "y": 31.04,
+            "z": 104,
+            "leaf": [
+              -104,
+              -63
+            ]
+          },
+          "weir": {
+            "x": 78,
+            "y": 10.79,
+            "z": 30,
+            "leaf": [
+              -30,
+              78
+            ]
+          },
+          "terrace": {
+            "x": 20,
+            "y": 8.44,
+            "z": -24,
+            "leaf": [
+              24,
+              20
+            ]
+          },
+          "knuckle": {
+            "x": -52,
+            "y": 34.38,
+            "z": -66,
+            "leaf": [
+              66,
+              -52
+            ]
+          },
+          "cutwater": {
+            "x": -104,
+            "y": -17.96,
+            "z": -244,
+            "leaf": [
+              244,
+              -104
+            ]
+          },
+          "carryHead": {
+            "x": 28,
+            "y": 28.77,
+            "z": 140,
+            "leaf": [
+              -140,
+              28
+            ]
+          },
+          "carryBend": {
+            "x": -24,
+            "y": 32.34,
+            "z": 68,
+            "leaf": [
+              -68,
+              -24
+            ]
+          },
+          "carryFord": {
+            "x": 32,
+            "y": 6.09,
+            "z": -10,
+            "leaf": [
+              10,
+              32
+            ]
+          },
+          "carryMouth": {
+            "x": 56,
+            "y": -9.08,
+            "z": -160,
+            "leaf": [
+              160,
+              56
+            ]
+          },
+          "crestSummit": {
+            "x": -150,
+            "y": 42.21,
+            "z": 246,
+            "leaf": [
+              -246,
+              -150
+            ]
+          },
+          "headLip": {
+            "x": 6,
+            "y": 51.05,
+            "z": 318,
+            "leaf": [
+              -318,
+              6
+            ]
+          },
+          "northShoulder": {
+            "x": 158,
+            "y": 49.04,
+            "z": 92,
+            "leaf": [
+              -92,
+              158
+            ]
+          },
+          "shoulderCamp": {
+            "x": 150,
+            "y": 18.45,
+            "z": -20,
+            "leaf": [
+              20,
+              150
+            ]
+          },
+          "southBench": {
+            "x": -152,
+            "y": 17.93,
+            "z": 40,
+            "leaf": [
+              -40,
+              -152
+            ]
+          },
+          "knuckleFoot": {
+            "x": -132,
+            "y": -0.88,
+            "z": -112,
+            "leaf": [
+              112,
+              -132
+            ]
+          },
+          "lowerTerrace": {
+            "x": 84,
+            "y": -0.38,
+            "z": -126,
+            "leaf": [
+              126,
+              84
+            ]
+          },
+          "ravineOverlook": {
+            "x": -66,
+            "y": -5.93,
+            "z": -146,
+            "leaf": [
+              146,
+              -66
+            ]
+          },
+          "farRidgeHead": {
+            "x": -186,
+            "y": -21.89,
+            "z": -276,
+            "leaf": [
+              276,
+              -186
+            ]
+          },
+          "crestFoot": {
+            "x": -118,
+            "y": 51.37,
+            "z": 160,
+            "leaf": [
+              -160,
+              -118
+            ]
+          },
+          "eastBench": {
+            "x": 128,
+            "y": -14.03,
+            "z": -212,
+            "leaf": [
+              212,
+              128
+            ]
+          },
+          "southRim": {
+            "x": -180,
+            "y": 7.29,
+            "z": -44,
+            "leaf": [
+              44,
+              -180
+            ]
+          },
+          "browShoulder": {
+            "x": 120,
+            "y": 33.87,
+            "z": 176,
+            "leaf": [
+              -176,
+              120
+            ]
+          },
+          "spanNear": {
+            "x": 20,
+            "y": -9.82,
+            "z": -158.9,
+            "leaf": [
+              158.90000000000057,
+              20
+            ]
+          },
+          "spanFar": {
+            "x": 20,
+            "y": -22.9,
+            "z": -216.9,
+            "leaf": [
+              216.9000000000013,
+              20
+            ]
+          },
+          "secondLip": {
+            "x": 26,
+            "y": -25.3,
+            "z": -268,
+            "leaf": [
+              268,
+              26
+            ]
+          },
+          "certaintyField": {
+            "x": 30,
+            "y": -25.81,
+            "z": -258,
+            "leaf": [
+              258,
+              30
+            ]
+          },
+          "ridgeThing": {
+            "x": -150,
+            "y": -20.91,
+            "z": -268,
+            "leaf": [
+              268,
+              -150
+            ]
+          },
+          "edgewake": {
+            "x": 110,
+            "y": -24.59,
+            "z": -298,
+            "leaf": [
+              298,
+              110
+            ]
+          },
+          "lowLip": {
+            "x": 40,
+            "y": -18.46,
+            "z": -318,
+            "leaf": [
+              318,
+              40
+            ]
+          },
+          "cutters": {
+            "x": -66,
+            "y": -24.34,
+            "z": -296,
+            "leaf": [
+              296,
+              -66
+            ]
+          },
+          "span": {
+            "near": {
+              "x": 20,
+              "y": -9.82,
+              "z": -158.9,
+              "leaf": [
+                158.90000000000057,
+                20
+              ]
+            },
+            "far": {
+              "x": 20,
+              "y": -22.9,
+              "z": -216.9,
+              "leaf": [
+                216.9000000000013,
+                20
+              ]
+            },
+            "gap": 58,
+            "drop": -13.08
+          },
+          "vantis": {
+            "bearing": -0.16,
+            "distance": 10800
+          }
+        },
+        "carries": [
+          {
+            "id": "carry.spine",
+            "uphill": false,
+            "hero": true,
+            "width": 10,
+            "taper": [
+              1.3,
+              0.6
+            ],
+            "maxWidth": 13,
+            "brim": 1.2,
+            "pts": [
+              [
+                -140,
+                28
+              ],
+              [
+                -126,
+                56
+              ],
+              [
+                -100,
+                6
+              ],
+              [
+                -68,
+                -22
+              ],
+              [
+                -30,
+                -8
+              ],
+              [
+                10,
+                32
+              ],
+              [
+                46,
+                78
+              ],
+              [
+                88,
+                44
+              ],
+              [
+                126,
+                78
+              ],
+              [
+                160,
+                56
+              ]
+            ]
+          },
+          {
+            "id": "carry.low",
+            "uphill": false,
+            "hero": false,
+            "width": 22,
+            "taper": [
+              0.9,
+              0.48
+            ],
+            "maxWidth": 19.8,
+            "brim": 0.9,
+            "pts": [
+              [
+                -268,
+                -104
+              ],
+              [
+                -214,
+                -96
+              ],
+              [
+                -150,
+                -78
+              ],
+              [
+                -64,
+                -58
+              ],
+              [
+                24,
+                -40
+              ],
+              [
+                104,
+                -22
+              ],
+              [
+                150,
+                -10
+              ]
+            ]
+          },
+          {
+            "id": "carry.middle",
+            "uphill": true,
+            "hero": false,
+            "width": 18,
+            "taper": [
+              0.9,
+              0.48
+            ],
+            "maxWidth": 16.2,
+            "brim": 0.9,
+            "pts": [
+              [
+                172,
+                128
+              ],
+              [
+                104,
+                114
+              ],
+              [
+                36,
+                98
+              ],
+              [
+                -30,
+                78
+              ],
+              [
+                -92,
+                56
+              ],
+              [
+                -118,
+                22
+              ]
+            ]
+          },
+          {
+            "id": "carry.high",
+            "uphill": false,
+            "hero": false,
+            "width": 18,
+            "taper": [
+              0.9,
+              0.48
+            ],
+            "maxWidth": 16.2,
+            "brim": 0.9,
+            "pts": [
+              [
+                -262,
+                112
+              ],
+              [
+                -186,
+                136
+              ],
+              [
+                -92,
+                146
+              ],
+              [
+                4,
+                138
+              ],
+              [
+                90,
+                124
+              ],
+              [
+                148,
+                108
+              ]
+            ]
+          },
+          {
+            "id": "carry.field",
+            "uphill": false,
+            "hero": false,
+            "width": 18,
+            "taper": [
+              0.9,
+              0.48
+            ],
+            "maxWidth": 16.2,
+            "brim": 0.9,
+            "pts": [
+              [
+                212,
+                50
+              ],
+              [
+                248,
+                36
+              ],
+              [
+                286,
+                44
+              ],
+              [
+                320,
+                30
+              ]
+            ]
+          }
+        ],
+        "carryClearance": 0.9,
+        "spires": {
+          "placed": 11,
+          "trimmed": 4,
+          "skipped": 13
+        },
+        "heroShards": [
+          {
+            "id": "hero.0",
+            "leaf": [
+              -159,
+              -18
+            ],
+            "x": -18,
+            "y": 37.87,
+            "z": 159,
+            "radius": 12,
+            "height": 56,
+            "taper": 0.11,
+            "lean": [
+              -4,
+              -5
+            ],
+            "bands": [
+              -7.93,
+              8.01,
+              24.26,
+              44.12
+            ]
+          },
+          {
+            "id": "hero.1",
+            "leaf": [
+              -186,
+              -40
+            ],
+            "x": -40,
+            "y": 63.69,
+            "z": 186,
+            "radius": 10,
+            "height": 44,
+            "taper": 0.11,
+            "lean": [
+              -4,
+              -5
+            ],
+            "bands": [
+              -7.28,
+              8.66,
+              24.81,
+              44.46
+            ]
+          },
+          {
+            "id": "hero.2",
+            "leaf": [
+              -142,
+              -52
+            ],
+            "x": -52,
+            "y": 53.92,
+            "z": 142,
+            "radius": 7.14,
+            "height": 30,
+            "taper": 0.11,
+            "lean": [
+              -4,
+              -5
+            ],
+            "bands": [
+              -6.74,
+              9.19,
+              25.26,
+              44.74
+            ]
+          },
+          {
+            "id": "hero.3",
+            "leaf": [
+              -206,
+              -66
+            ],
+            "x": -66,
+            "y": 60.92,
+            "z": 206,
+            "radius": 9.24,
+            "height": 34,
+            "taper": 0.11,
+            "lean": [
+              -4,
+              -5
+            ],
+            "bands": [
+              -5.04,
+              10.86,
+              26.65,
+              45.59
+            ]
+          },
+          {
+            "id": "hero.4",
+            "leaf": [
+              -178,
+              -6
+            ],
+            "x": -6,
+            "y": 35.44,
+            "z": 178,
+            "radius": 6,
+            "height": 22,
+            "taper": 0.11,
+            "lean": [
+              -4,
+              -5
+            ],
+            "bands": [
+              -4.99,
+              10.91,
+              26.69,
+              45.62
+            ]
+          },
+          {
+            "id": "hero.5",
+            "leaf": [
+              -150,
+              -34
+            ],
+            "x": -34,
+            "y": 51.09,
+            "z": 150,
+            "radius": 5,
+            "height": 16,
+            "taper": 0.11,
+            "lean": [
+              -4,
+              -5
+            ],
+            "bands": [
+              -2.97,
+              12.85,
+              28.29,
+              46.59
+            ]
+          }
+        ],
+        "rockShader": {
+          "compiled": true,
+          "hasTerrainGrade": true,
+          "hasTerrainBackHemisphereGrade": true,
+          "hasMaterialsTurnedTerm": false
+        },
+        "landmarks": {
+          "spires": 11,
+          "boulders": 62,
+          "certaintyClusters": 90,
+          "vantisTowers": 98,
+          "nearLeaves": 8,
+          "horizonLeaves": 7
+        },
+        "backdrop": {
+          "compression": 10.18,
+          "nearScale": 1
+        },
+        "triangles": {
+          "rock": 1716,
+          "carries": 2928,
+          "built": 676,
+          "certainties": 5200,
+          "archipelago": 962,
+          "backdrop": 1508
+        },
+        "sun": {
+          "toLight": [
+            0.8726,
+            0.1907,
+            -0.4497
+          ],
+          "level": 1.068
+        }
+      },
+      "sky": {
+        "tier": "low",
+        "knobs": {
+          "lowOct": 4,
+          "highOct": 3,
+          "deck2": 1,
+          "rim": 1,
+          "errata": 1
+        },
+        "drawCalls": 1,
+        "triangles": 1,
+        "simTime": 17.6833,
+        "motionScale": 1,
+        "lethis": 0.9719,
+        "lethisMaxRatePerStep": 0.0001121,
+        "lethisRateBudgetPerStep": 0.0015,
+        "sun": {
+          "toLight": [
+            0.8726,
+            0.1907,
+            -0.4497
+          ],
+          "elevationDeg": 10.991,
+          "azimuthDeg": 117.263,
+          "adopted": true,
+          "discRadiusDeg": 1.15
+        },
+        "bands": [
+          {
+            "elevationDeg": 0,
+            "hex": "#F7A75C"
+          },
+          {
+            "elevationDeg": 6,
+            "hex": "#EDA05E"
+          },
+          {
+            "elevationDeg": 10.5,
+            "hex": "#BC9968"
+          },
+          {
+            "elevationDeg": 15,
+            "hex": "#929576"
+          },
+          {
+            "elevationDeg": 20,
+            "hex": "#6D8E81"
+          },
+          {
+            "elevationDeg": 27,
+            "hex": "#558789"
+          },
+          {
+            "elevationDeg": 90,
+            "hex": "#4A848B"
+          }
+        ],
+        "bandSharp": 0.45,
+        "underHex": "#FFD6A0",
+        "cloud": {
+          "top": "#FFD891",
+          "body": "#FFCA84",
+          "under": "#DFAE74",
+          "sunward": "#FFF6E0",
+          "azCells": 656,
+          "cellAzDeg": 0.5488,
+          "cellElDirY": 0.0096,
+          "cellElDegNearHorizon": 0.55,
+          "gain": 1,
+          "decks": 2,
+          "lowElevationBandDeg": [
+            4.301,
+            51.261
+          ],
+          "rimShading": true
+        },
+        "errata": {
+          "enabled": true,
+          "azimuthDeg": 304.122,
+          "driftDegPerSec": 0.12
+        },
+        "dither": {
+          "lsb": 1.25,
+          "pattern": "bayer8x8",
+          "source": "gl_FragCoord",
+          "appliedAfter": "tonemapping+colorspace"
+        },
+        "toneMapping": 0,
+        "exposure": 1,
+        "toneSolveResidual": 0,
+        "toneSolveResiduals": {
+          "band0": 0,
+          "band6": 0,
+          "band10.5": 0,
+          "band15": 0,
+          "band20": 0,
+          "band27": 0,
+          "band90": 0,
+          "under": 0,
+          "cloudTop": 0,
+          "cloudBody": 0,
+          "cloudUnder": 0,
+          "cloudSunward": 0,
+          "sunGlow": 0,
+          "sunCore": 0,
+          "errata": 0,
+          "errataEdge": 0
+        }
+      },
+      "atmosphere": {
+        "installed": true,
+        "tier": "low",
+        "enabled": true,
+        "flatFallback": false,
+        "space": "srgb",
+        "composer": false,
+        "timeOfDay": 0.18,
+        "near": 48.191,
+        "far": 534.005,
+        "densityScale": 1,
+        "rangeScale": 1,
+        "law": {
+          "density": 3,
+          "max": 0.94,
+          "desaturation": 0.68,
+          "heightBase": -40,
+          "heightScale": 420,
+          "shape": "f = 1 - exp(-t^2 * density * exp(-(y-h0)/hscale)), t = (d-near)/(far-near)",
+          "appliedIn": "renderer output space, after tonemap + colorspace"
+        },
+        "sun": {
+          "toLight": [
+            0.8726,
+            0.1907,
+            -0.4497
+          ],
+          "elevationDeg": 10.991,
+          "azimuthDeg": 117.263,
+          "bakedAzimuthDeg": 117.995
+        },
+        "sample": [
+          {
+            "distance": 40,
+            "f": 0
+          },
+          {
+            "distance": 120,
+            "f": 0.0544
+          },
+          {
+            "distance": 260,
+            "f": 0.3803
+          },
+          {
+            "distance": 500,
+            "f": 0.8512
+          },
+          {
+            "distance": 900,
+            "f": 0.9398
+          },
+          {
+            "distance": 1600,
+            "f": 0.94
+          }
+        ],
+        "bakes": 4,
+        "materialsTouchedOnBake": 33
+      },
+      "lighting": {
+        "sun": {
+          "toLight": [
+            0.8726,
+            0.1907,
+            -0.4496
+          ],
+          "direction": [
+            -0.8726,
+            -0.1907,
+            0.4496
+          ],
+          "color": [
+            1,
+            0.7682,
+            0.4793
+          ],
+          "hex": "#FFE3B8",
+          "intensity": 3.3548,
+          "relativeIntensity": 1.0679,
+          "elevationDeg": 10.991,
+          "azimuthDeg": 117.26,
+          "discElevationDeg": 10.991,
+          "shadowElevationDeg": 16,
+          "shadowLengthRatio": 3.487,
+          "worldFixedBearing": true,
+          "timeOfDay": 0.2647,
+          "exposure": 1,
+          "tonemap": "none",
+          "fill": {
+            "hex": "#5EA3FF",
+            "ground": "#2A1F16",
+            "relative": 0.2853,
+            "derivation": "shadow/lit on (ground.lit, ground.shadow), solved for fill/(key+fill) — art-direction §3.1",
+            "docPrinted": "#66B3FF"
+          },
+          "bounce": {
+            "hex": "#8A5B3E",
+            "relative": 0.05
+          },
+          "rim": {
+            "toRim": [
+              -0.5099,
+              0.8192,
+              0.2627
+            ],
+            "gain": 0.28,
+            "tint": "#1B2C33"
+          },
+          "kick": {
+            "hex": "#1B2C33",
+            "relative": 0.28
+          }
+        },
+        "lights": {
+          "key": {
+            "hex": "#FFE3B8",
+            "intensity": 3.3548
+          },
+          "fill": {
+            "sky": "#5EA3FF",
+            "ground": "#2A1F16",
+            "intensity": 0.8964,
+            "relativeToKey": 0.2853
+          },
+          "bounce": {
+            "hex": "#8A5B3E",
+            "intensity": 0.1677
+          },
+          "rim": {
+            "gain": 0.28,
+            "elevationDeg": 55,
+            "insideShadowFamily": true
+          },
+          "accentPool": 6,
+          "accentsActive": 0,
+          "shadowCasters": 2,
+          "contributingLights": 3,
+          "zeroIntensityShadowOwners": 2
+        },
+        "shadow": {
+          "enabled": true,
+          "cascades": [
+            {
+              "radius": 15,
+              "mapSize": 512,
+              "texelMetres": 0.0586,
+              "bias": -0.00016,
+              "normalBias": 0.0645,
+              "centredOn": "player",
+              "centre": [
+                10,
+                59.406,
+                216
+              ]
+            },
+            {
+              "radius": 58,
+              "mapSize": 512,
+              "texelMetres": 0.2266,
+              "bias": -0.00016,
+              "normalBias": 0.2492,
+              "centredOn": "camera-forward",
+              "centre": [
+                11.15,
+                56.793,
+                184.653
+              ]
+            }
+          ],
+          "splitMetres": 9.3,
+          "type": "PCF",
+          "trackingPlayer": true
+        },
+        "contact": {
+          "visible": true,
+          "strength": 0.86,
+          "clearance": 0,
+          "at": [
+            10,
+            59.4056,
+            216
+          ],
+          "groundY": 58.3512,
+          "lyingOn": "sole",
+          "verticalSpeed": 0,
+          "airborne": 0,
+          "groundedSignal": true,
+          "bearingDeg": -62.74,
+          "multiplier": [
+            0.2833,
+            0.5354,
+            0.7727
+          ],
+          "footprint": {
+            "downSun": 1.385,
+            "upSun": 0.785,
+            "across": 0.7,
+            "plateauDownSun": 0.7557,
+            "plateauUpSun": 0.1557
+          },
+          "blend": "multiply — can only darken"
+        },
+        "renderer": {
+          "toneMapping": 0,
+          "toneMappingExposure": 1,
+          "outputColorSpace": "srgb",
+          "shadowMapEnabled": true
+        },
+        "standInSky": false,
+        "fog": {
+          "hex": "#F7A75C",
+          "near": 48.190799999999996,
+          "far": 534.0048425531915
+        },
+        "removedPlaceholderLights": 0,
+        "materials": {
+          "instances": 25,
+          "shared": 5,
+          "uncached": 20,
+          "built": 25,
+          "cacheHits": 0,
+          "programVariants": 10,
+          "programs": [
+            "vs:basic:-:t:c:multiply",
+            "vs:lambert::f:-:c:vs.flat",
+            "vs:lambert:VS_KEYSHADOW,VS_RIM,VS_TINT:-:-:-",
+            "vs:lambert:VS_KEYSHADOW,VS_RIM,VS_TINT:-:-:c:p13:flora",
+            "vs:lambert:VS_KEYSHADOW,VS_RIM,VS_TINT:-:-:c:p13:lichen",
+            "vs:lambert:VS_KEYSHADOW,VS_RIM,VS_TINT:-:-:c:p13:stone",
+            "vs:lambert:VS_KEYSHADOW,VS_RIM,VS_TINT:f:-:-",
+            "vs:lambert:VS_KEYSHADOW:-:-:c:p13:crystal",
+            "vs:lambert:VS_KEYSHADOW:-:-:c:p13:island-crystal",
+            "vs:lambert:VS_KEYSHADOW:-:-:c:p13:island-rock"
+          ],
+          "archetypes": 20,
+          "handedOut": {
+            "authored": 9,
+            "contactShadow": 1,
+            "crystal": 3,
+            "rock": 3,
+            "foliage": 2,
+            "stone": 1,
+            "backdrop": 1,
+            "heroPlate": 1,
+            "heroDark": 1,
+            "heroSkin": 1,
+            "heroHair": 1,
+            "metal": 1
+          },
+          "textures": 0,
+          "standardMaterials": 0,
+          "envMaps": 0,
+          "missingRoles": [],
+          "keyHex": "#FFE3B8",
+          "albedos": {
+            "crystal": {
+              "from": "crystal.hot - crystal.face",
+              "sampled": "#96FDE1",
+              "ladderStep": 1,
+              "albedo": "#45B3B0",
+              "linear": [
+                0.0588,
+                0.4487,
+                0.4323
+              ]
+            },
+            "rock": {
+              "from": "rock.lit.a",
+              "sampled": "#F59E49",
+              "ndl": 1,
+              "hemi": 0.5,
+              "albedo": "#F3AD5C",
+              "linear": [
+                0.8959,
+                0.4157,
+                0.1069
+              ]
+            },
+            "foliage": {
+              "from": "world.foliage.lit",
+              "sampled": "#585939",
+              "ndl": 1,
+              "hemi": 0.6,
+              "albedo": "#576147",
+              "linear": [
+                0.0955,
+                0.12,
+                0.0628
+              ]
+            },
+            "stone": {
+              "from": "stone.bone",
+              "sampled": "#AC8659",
+              "ndl": 1,
+              "hemi": 0.5,
+              "albedo": "#AB936F",
+              "linear": [
+                0.4048,
+                0.2898,
+                0.1603
+              ]
+            },
+            "backdrop": {
+              "from": "rock.lit.a",
+              "sampled": "#F59E49",
+              "ndl": 1,
+              "hemi": 0.5,
+              "albedo": "#F3AD5C",
+              "linear": [
+                0.8959,
+                0.4157,
+                0.1069
+              ]
+            },
+            "heroPlate": {
+              "from": "hero.rim",
+              "sampled": "#F3B16D",
+              "ndl": 1,
+              "hemi": 0.5,
+              "albedo": "#F1C188",
+              "linear": [
+                0.8794,
+                0.5345,
+                0.2454
+              ]
+            },
+            "heroDark": {
+              "from": "hero.dark",
+              "sampled": "#111416",
+              "ndl": 0.27,
+              "hemi": 0.5,
+              "albedo": "#262D30",
+              "linear": [
+                0.0194,
+                0.0267,
+                0.0294
+              ]
+            },
+            "heroSkin": {
+              "from": "hero.skin",
+              "sampled": "#542C13",
+              "ndl": 0.27,
+              "hemi": 0.5,
+              "albedo": "#96572B",
+              "linear": [
+                0.3065,
+                0.0962,
+                0.0238
+              ]
+            },
+            "heroHair": {
+              "from": "hero.hair",
+              "sampled": "#442611",
+              "ndl": 0.27,
+              "hemi": 0.5,
+              "albedo": "#7C4D27",
+              "linear": [
+                0.1999,
+                0.074,
+                0.0205
+              ]
+            },
+            "metal": {
+              "from": "stone.bone",
+              "sampled": "#AC8659",
+              "ndl": 1,
+              "hemi": 0.5,
+              "albedo": "#AB936F",
+              "linear": [
+                0.4048,
+                0.2898,
+                0.1603
+              ]
+            }
+          },
+          "keys": [
+            "heroDark|owner=avatar",
+            "heroHair|owner=avatar",
+            "heroPlate|owner=avatar",
+            "heroSkin|owner=avatar",
+            "metal|owner=avatar"
+          ]
+        },
+        "world": {
+          "meshes": 60,
+          "byArchetype": {
+            "authored": 9,
+            "contactShadow": 1,
+            "crystal": 5,
+            "rock": 5,
+            "foliage": 4,
+            "stone": 1,
+            "backdrop": 1,
+            "heroDark": 11,
+            "heroPlate": 12,
+            "metal": 1,
+            "heroSkin": 2,
+            "heroHair": 1
+          },
+          "owned": 53,
+          "unowned": [
+            "Mesh:MeshStandardMaterial",
+            "Mesh:MeshStandardMaterial",
+            "tex:leaf9-span:MeshBasicMaterial",
+            "tex:leaf9-share:MeshBasicMaterial",
+            "tex:leaf9-working:MeshBasicMaterial",
+            "tex:leaf9-mark:MeshBasicMaterial"
+          ],
+          "unownedCount": 6,
+          "banned": {
+            "standard": 2,
+            "physical": 0,
+            "envMap": 0,
+            "anyMap": 4,
+            "sceneEnvironment": 0
+          }
+        }
+      },
+      "scatter": {
+        "seed": 0,
+        "tier": "high",
+        "density": 1,
+        "surface": "terrain",
+        "surfaceQueries": 38529,
+        "built": true,
+        "outstanding": false,
+        "genCalls": 2147,
+        "genMsTotal": 66.9,
+        "instances": 5191,
+        "triangles": 51680,
+        "groundTriangles": 46975,
+        "meshes": 14,
+        "solids": 240,
+        "missingRoles": [],
+        "flatShading": {
+          "triangles": 4873,
+          "perFaceNormals": 4873,
+          "ratio": 1
+        },
+        "maxGeoTris": 30,
+        "islands": {
+          "count": 44,
+          "crystals": 97,
+          "structures": 113,
+          "rockTris": 4220,
+          "crystalTris": 485,
+          "distance": [
+            313.6,
+            1121.3
+          ],
+          "altitude": [
+            -25.1,
+            193.3
+          ]
+        },
+        "haze": {
+          "falloffMetres": 620,
+          "ceiling": 0.78,
+          "sceneFogUsed": false
+        },
+        "eye": [
+          11.15,
+          60.61,
+          219.24
+        ],
+        "placementDigest": {
+          "crystal": {
+            "hash": 1133784080,
+            "instances": 124
+          },
+          "shard": {
+            "hash": 1161135671,
+            "instances": 192
+          },
+          "boulder": {
+            "hash": 3889682765,
+            "instances": 198
+          },
+          "spire": {
+            "hash": 209236971,
+            "instances": 18
+          },
+          "chip": {
+            "hash": 3389966817,
+            "instances": 351
+          },
+          "tuft": {
+            "hash": 1791770240,
+            "instances": 8736
+          },
+          "abouts": {
+            "hash": 573085257,
+            "instances": 166
+          },
+          "oldtrue": {
+            "hash": 3035876772,
+            "instances": 1170
+          }
+        },
+        "closeUp": {
+          "pos": [
+            9.869,
+            41.72,
+            189.135
+          ],
+          "opts": {
+            "heading": [
+              -0.78,
+              -0.63
+            ]
+          },
+          "target": [
+            4.118,
+            39.622,
+            184.49
+          ],
+          "height": 4.61
+        },
+        "categories": {
+          "crystal": {
+            "budget": [
+              470,
+              950
+            ],
+            "drawn": [
+              135,
+              443
+            ],
+            "geoTris": [
+              30,
+              20
+            ],
+            "tris": 12910,
+            "candidates": 752,
+            "rejected": 2378,
+            "tiles": 468,
+            "gather": 260,
+            "fade": [
+              204.1428571428571,
+              232.1428571428571
+            ],
+            "lodDist": 58
+          },
+          "shard": {
+            "budget": [
+              420,
+              900
+            ],
+            "drawn": [
+              88,
+              491
+            ],
+            "geoTris": [
+              15,
+              12
+            ],
+            "tris": 7212,
+            "candidates": 658,
+            "rejected": 1338,
+            "tiles": 164,
+            "gather": 150,
+            "fade": [
+              105.92857142857142,
+              133.92857142857142
+            ],
+            "lodDist": 34
+          },
+          "boulder": {
+            "budget": [
+              420,
+              820
+            ],
+            "drawn": [
+              127,
+              809
+            ],
+            "geoTris": [
+              20,
+              8
+            ],
+            "tris": 9012,
+            "candidates": 1127,
+            "rejected": 3211,
+            "tiles": 236,
+            "gather": 185,
+            "fade": [
+              137.17857142857142,
+              165.17857142857142
+            ],
+            "lodDist": 52
+          },
+          "spire": {
+            "budget": [
+              120,
+              220
+            ],
+            "drawn": [
+              35,
+              163
+            ],
+            "geoTris": [
+              23,
+              10
+            ],
+            "tris": 2435,
+            "candidates": 220,
+            "rejected": 1796,
+            "tiles": 504,
+            "gather": 280,
+            "fade": [
+              221.99999999999997,
+              249.99999999999997
+            ],
+            "lodDist": 84
+          },
+          "chip": {
+            "budget": [
+              900,
+              0
+            ],
+            "drawn": [
+              470
+            ],
+            "geoTris": [
+              4
+            ],
+            "tris": 1880,
+            "candidates": 907,
+            "rejected": 2713,
+            "tiles": 45,
+            "gather": 70,
+            "fade": [
+              34.49999999999999,
+              62.49999999999999
+            ],
+            "lodDist": 1000000000
+          },
+          "tuft": {
+            "budget": [
+              3800,
+              5000
+            ],
+            "drawn": [
+              642,
+              1765
+            ],
+            "geoTris": [
+              10,
+              4
+            ],
+            "tris": 13480,
+            "candidates": 4512,
+            "rejected": 6128,
+            "tiles": 41,
+            "gather": 66,
+            "fade": [
+              30.928571428571423,
+              58.92857142857142
+            ],
+            "lodDist": 30
+          },
+          "abouts": {
+            "budget": [
+              900,
+              1200
+            ],
+            "drawn": [
+              0,
+              23
+            ],
+            "geoTris": [
+              4,
+              2
+            ],
+            "tris": 46,
+            "candidates": 436,
+            "rejected": 2511,
+            "tiles": 32,
+            "gather": 52,
+            "fade": [
+              18.428571428571423,
+              46.42857142857142
+            ],
+            "lodDist": 24
+          },
+          "oldtrue": {
+            "budget": [
+              900,
+              0
+            ],
+            "drawn": [
+              0
+            ],
+            "geoTris": [
+              6
+            ],
+            "tris": 0,
+            "candidates": 1381,
+            "rejected": 2668,
+            "tiles": 36,
+            "gather": 56,
+            "fade": [
+              21.999999999999993,
+              49.99999999999999
+            ],
+            "lodDist": 1000000000
+          }
+        }
+      },
+      "input": {
+        "device": {
+          "active": "kbm",
+          "style": "kbm",
+          "padId": null,
+          "padConnected": false,
+          "padVirtual": false,
+          "everPad": false,
+          "switches": 0,
+          "switchedAt": -1,
+          "dwell": 0.35,
+          "pending": null,
+          "usedAt": {
+            "kbm": -1,
+            "pad": -1
+          }
+        },
+        "pad": {
+          "connected": false,
+          "samples": 0,
+          "edges": 0,
+          "axesRaw": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "axesCal": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "zero": null,
+          "zeroAt": -1,
+          "zeroCount": 0,
+          "still": 0,
+          "latched": [],
+          "sticksDown": [],
+          "pending": 0
+        },
+        "context": "play",
+        "focus": {
+          "focused": true,
+          "window": true,
+          "page": true
+        },
+        "step": 1061,
+        "move": {
+          "x": 0,
+          "y": 0,
+          "mag": 0,
+          "source": "none"
+        },
+        "look": {
+          "dx": 0,
+          "dy": 0,
+          "yawTotal": 0,
+          "pitchTotal": 0,
+          "boost": 1,
+          "source": "none",
+          "pointerLock": false,
+          "lookMode": "auto"
+        },
+        "sticks": {
+          "left": {
+            "hw": {
+              "x": 0,
+              "y": 0
+            },
+            "zero": {
+              "x": 0,
+              "y": 0
+            },
+            "mapped": {
+              "x": 0,
+              "y": 0
+            },
+            "out": {
+              "x": 0,
+              "y": 0
+            },
+            "mag": 0
+          },
+          "right": {
+            "hw": {
+              "x": 0,
+              "y": 0
+            },
+            "zero": {
+              "x": 0,
+              "y": 0
+            },
+            "mapped": {
+              "x": 0,
+              "y": 0
+            },
+            "out": {
+              "x": 0,
+              "y": 0
+            },
+            "mag": 0
+          }
+        },
+        "held": [],
+        "actions": {},
+        "conflicts": [],
+        "unbound": [],
+        "bindings": {
+          "kbm": {
+            "moveForward": [
+              "KeyW",
+              "ArrowUp"
+            ],
+            "moveBack": [
+              "KeyS",
+              "ArrowDown"
+            ],
+            "moveLeft": [
+              "KeyA",
+              "ArrowLeft"
+            ],
+            "moveRight": [
+              "KeyD",
+              "ArrowRight"
+            ],
+            "jump": [
+              "Space"
+            ],
+            "sprint": [
+              "ShiftLeft",
+              "ShiftRight"
+            ],
+            "crouch": [
+              "ControlLeft",
+              "KeyC"
+            ],
+            "dash": [
+              "KeyF"
+            ],
+            "interact": [
+              "KeyE"
+            ],
+            "primary": [
+              "Mouse0"
+            ],
+            "secondary": [
+              "Mouse2"
+            ],
+            "cyclePrev": [
+              "Wheel-",
+              "BracketLeft"
+            ],
+            "cycleNext": [
+              "Wheel+",
+              "BracketRight"
+            ],
+            "map": [
+              "Tab"
+            ],
+            "menu": [
+              "Escape"
+            ],
+            "buildToggle": [
+              "KeyB"
+            ],
+            "buildSlot1": [
+              "Digit1"
+            ],
+            "buildSlot2": [
+              "Digit2"
+            ],
+            "buildSlot3": [
+              "Digit3"
+            ],
+            "buildSlot4": [
+              "Digit4"
+            ],
+            "buildRotate": [
+              "KeyR"
+            ],
+            "buildPlace": [
+              "Mouse0"
+            ],
+            "buildRemove": [
+              "Mouse2",
+              "KeyX"
+            ],
+            "confirm": [
+              "Enter",
+              "Space"
+            ],
+            "cancel": [
+              "Escape",
+              "Backspace"
+            ],
+            "navUp": [
+              "ArrowUp",
+              "KeyW"
+            ],
+            "navDown": [
+              "ArrowDown",
+              "KeyS"
+            ],
+            "navLeft": [
+              "ArrowLeft",
+              "KeyA"
+            ],
+            "navRight": [
+              "ArrowRight",
+              "KeyD"
+            ],
+            "tabPrev": [
+              "KeyQ",
+              "Wheel-"
+            ],
+            "tabNext": [
+              "KeyE",
+              "Wheel+"
+            ]
+          },
+          "pad": {
+            "moveForward": [
+              "Pad:LSUp"
+            ],
+            "moveBack": [
+              "Pad:LSDown"
+            ],
+            "moveLeft": [
+              "Pad:LSLeft"
+            ],
+            "moveRight": [
+              "Pad:LSRight"
+            ],
+            "jump": [
+              "Pad:A"
+            ],
+            "sprint": [
+              "Pad:L3"
+            ],
+            "crouch": [
+              "Pad:B"
+            ],
+            "dash": [
+              "Pad:R3"
+            ],
+            "interact": [
+              "Pad:X"
+            ],
+            "primary": [
+              "Pad:RT"
+            ],
+            "secondary": [
+              "Pad:LT"
+            ],
+            "cyclePrev": [
+              "Pad:LB"
+            ],
+            "cycleNext": [
+              "Pad:RB"
+            ],
+            "map": [
+              "Pad:View"
+            ],
+            "menu": [
+              "Pad:Menu"
+            ],
+            "buildToggle": [
+              "Pad:Y"
+            ],
+            "buildSlot1": [
+              "Pad:DUp"
+            ],
+            "buildSlot2": [
+              "Pad:DRight"
+            ],
+            "buildSlot3": [
+              "Pad:DDown"
+            ],
+            "buildSlot4": [
+              "Pad:DLeft"
+            ],
+            "buildRotate": [
+              "Pad:RB"
+            ],
+            "buildPlace": [
+              "Pad:RT"
+            ],
+            "buildRemove": [
+              "Pad:LT"
+            ],
+            "confirm": [
+              "Pad:A"
+            ],
+            "cancel": [
+              "Pad:B",
+              "Pad:Menu"
+            ],
+            "navUp": [
+              "Pad:DUp",
+              "Pad:LSUp"
+            ],
+            "navDown": [
+              "Pad:DDown",
+              "Pad:LSDown"
+            ],
+            "navLeft": [
+              "Pad:DLeft",
+              "Pad:LSLeft"
+            ],
+            "navRight": [
+              "Pad:DRight",
+              "Pad:LSRight"
+            ],
+            "tabPrev": [
+              "Pad:LB"
+            ],
+            "tabNext": [
+              "Pad:RB"
+            ]
+          }
+        },
+        "axes": {
+          "move": {
+            "x": {
+              "axis": 0,
+              "invert": false
+            },
+            "y": {
+              "axis": 1,
+              "invert": true
+            }
+          },
+          "look": {
+            "x": {
+              "axis": 2,
+              "invert": false
+            },
+            "y": {
+              "axis": 3,
+              "invert": false
+            }
+          }
+        },
+        "sticksSwapped": false,
+        "glyphs": {
+          "moveForward": "W",
+          "moveBack": "S",
+          "moveLeft": "A",
+          "moveRight": "D",
+          "jump": "Space",
+          "sprint": "L Shift",
+          "crouch": "L Ctrl",
+          "dash": "F",
+          "interact": "E",
+          "primary": "LMB",
+          "secondary": "RMB",
+          "cyclePrev": "Wheel ↑",
+          "cycleNext": "Wheel ↓",
+          "map": "Tab",
+          "menu": "Esc",
+          "buildToggle": "B",
+          "buildSlot1": "1",
+          "buildSlot2": "2",
+          "buildSlot3": "3",
+          "buildSlot4": "4",
+          "buildRotate": "R",
+          "buildPlace": "LMB",
+          "buildRemove": "RMB",
+          "confirm": "Enter",
+          "cancel": "Esc",
+          "navUp": "↑",
+          "navDown": "↓",
+          "navLeft": "←",
+          "navRight": "→",
+          "tabPrev": "Q",
+          "tabNext": "E"
+        },
+        "tuning": {
+          "moveBand": {
+            "inner": 0.24,
+            "outer": 0.94,
+            "exp": 1.25
+          },
+          "lookBand": {
+            "inner": 0.24,
+            "outer": 0.92,
+            "exp": 1.6
+          },
+          "lookRate": 3.25,
+          "lookRamp": {
+            "threshold": 0.9,
+            "seconds": 0.45,
+            "boost": 1.7,
+            "decay": 4
+          },
+          "mouseRadiansPerPixel": 0.0022,
+          "bufferDefault": 0.18,
+          "deviceDwell": 0.35,
+          "padWakeAxisDelta": 0.12,
+          "padRest": {
+            "settleSeconds": 1.5,
+            "firstSeconds": 0.35,
+            "maxOffset": 0.18,
+            "epsilon": 0.02
+          },
+          "padPollHz": 250,
+          "trigger": {
+            "press": 0.35,
+            "release": 0.28
+          },
+          "stickButton": {
+            "press": 0.55,
+            "release": 0.4
+          },
+          "maxSlots": 3,
+          "sensitivity": {
+            "look": 1,
+            "mouse": 1,
+            "pad": 1,
+            "invertX": false,
+            "invertY": false,
+            "holdToSprint": true,
+            "swapSticks": false,
+            "rumble": true
+          }
+        },
+        "actionCount": 31
+      },
+      "collision": {
+        "colliders": 4,
+        "triangles": 14147,
+        "cells": 28241,
+        "oversized": 2,
+        "cellSize": 2.5,
+        "fallbackGround": false,
+        "counters": {
+          "depenetrations": 0,
+          "rays": 5306,
+          "triTests": 25448
+        }
+      },
+      "locomotion": {
+        "position": [
+          10,
+          59.4056,
+          216
+        ],
+        "velocity": [
+          0,
+          0,
+          0
+        ],
+        "speed": 0,
+        "verticalSpeed": 0,
+        "grounded": true,
+        "sliding": false,
+        "braking": false,
+        "pivotRemaining": 0,
+        "turnUsed": 0,
+        "blocked": false,
+        "blockTimer": 0,
+        "lastBlock": {
+          "speed": 0,
+          "at": -1
+        },
+        "state": "idle",
+        "lean": 0,
+        "push": 0,
+        "takeoff": [
+          0,
+          0,
+          -1
+        ],
+        "intent": [
+          0,
+          0
+        ],
+        "basisYawDeg": 0,
+        "headingDeg": 0,
+        "slopeDeg": 32.0927,
+        "groundNormal": [
+          0.0036,
+          0.8472,
+          -0.5313
+        ],
+        "coyoteRemaining": 0.16,
+        "stepBudget": 0.37,
+        "ledgeRise": 0,
+        "bufferRemaining": 0,
+        "airtime": 0,
+        "squash": 0,
+        "landLock": 0,
+        "lastLand": {
+          "impact": 6.16,
+          "severity": 0,
+          "hard": false,
+          "at": 0.2167
+        },
+        "lastJump": {
+          "apex": 0,
+          "height": 0,
+          "airtime": 0,
+          "at": -1
+        },
+        "simTime": 17.6833,
+        "spawnPoint": [
+          10,
+          59.14,
+          216
+        ],
+        "voidLimit": 30.05,
+        "inputSource": "idle",
+        "cameraBasis": true,
+        "tunables": {
+          "capsuleRadius": 0.36,
+          "capsuleHeight": 1.82,
+          "walkSpeed": 2.4,
+          "runSpeed": 5.6,
+          "sprintSpeed": 8.3,
+          "groundAccel": 16,
+          "launchBoost": 0.9,
+          "groundBrake": 26,
+          "reverseBoost": 1.6,
+          "idleFriction": 23,
+          "lateralGrip": 19,
+          "brakeAngleDeg": 110,
+          "brakeHeadingDeg": 100,
+          "brakeHoldDeg": 99,
+          "brakeHeadingHoldDeg": 90,
+          "pivotSpeed": 3.3,
+          "pivotTime": 0.14,
+          "pivotAccel": 0.4,
+          "airAccel": 9,
+          "airDrag": 0.05,
+          "airAlongKeep": 0.55,
+          "airAlongFloor": 2.6,
+          "airLateralK": 0.55,
+          "airLateralMin": 2.6,
+          "turnRateSlow": 7,
+          "turnRateFast": 2.45,
+          "turnRateAir": 2.6,
+          "pivotTurnBoost": 1.75,
+          "carveScrub": 0.09,
+          "carveScrubDecel": 3.4,
+          "leanReference": 26,
+          "jumpSpeed": 7.45,
+          "gravityRise": 22,
+          "gravityFall": 33,
+          "apexSpeed": 1.2,
+          "apexGravityScale": 0.55,
+          "apexAirControl": 1.2,
+          "jumpCut": 0.42,
+          "minJumpHold": 0.055,
+          "terminalSpeed": 45,
+          "coyoteTime": 0.16,
+          "jumpBuffer": 0.19,
+          "jumpCooldown": 0.09,
+          "slopeLimitDeg": 47,
+          "slideAccel": 16,
+          "slideControl": 0.22,
+          "uphillK": 0.85,
+          "downhillK": 0.18,
+          "stepHeight": 0.55,
+          "stepAssist": 0.35,
+          "stepSpeedCost": 0.28,
+          "stepGraceSteps": 3,
+          "snapDistance": 0.38,
+          "snapSuppress": 0.09,
+          "groundEpsilon": 0.05,
+          "landSoftSpeed": 10.2,
+          "landHardSpeed": 24,
+          "landLockMin": 0.06,
+          "landLockMax": 0.26,
+          "landControlMin": 0.35,
+          "landSpeedKeep": 0.55,
+          "squashDecay": 0.22,
+          "blockImpactSpeed": 4,
+          "blockStateTime": 0.25,
+          "voidDrop": 30,
+          "strideLength": 2.1
+        }
+      },
+      "avatar": {
+        "visible": true,
+        "height": 1.82,
+        "meshes": 27,
+        "triangles": 856,
+        "materials": 5,
+        "castShadow": true,
+        "position": {
+          "x": 10,
+          "y": 59.406,
+          "z": 216
+        },
+        "yawDeg": 180,
+        "speed": 0,
+        "travelled": 14.56,
+        "opacity": 1,
+        "joints": [
+          "hips",
+          "chest",
+          "neck",
+          "head",
+          "shoulderL",
+          "elbowL",
+          "shoulderR",
+          "elbowR",
+          "hipL",
+          "kneeL",
+          "ankleL",
+          "hipR",
+          "kneeR",
+          "ankleR"
+        ],
+        "placeholderHidden": true
+      },
+      "animator": {
+        "phase": 0.5,
+        "strideMetres": 1.16,
+        "speed": 0,
+        "state": "idle",
+        "grounded": true,
+        "weights": {
+          "stride": 0,
+          "air": 0,
+          "land": 0,
+          "idle": 1
+        },
+        "travelled": 14.56,
+        "cycles": 0.532,
+        "joints": 14,
+        "landImpact": 0.44
+      },
+      "camera": {
+        "mode": "follow",
+        "framing": "follow",
+        "targetSource": "object",
+        "position": [
+          11.15,
+          60.6138,
+          219.2431
+        ],
+        "target": [
+          11.15,
+          60.2556,
+          216
+        ],
+        "player": [
+          10,
+          59.4056,
+          216
+        ],
+        "yaw": 0,
+        "pitch": -0.11,
+        "distance": 3.2628,
+        "desiredDistance": 4.55,
+        "freeDistance": 3.272,
+        "allowedDistance": 3.272,
+        "penetrating": false,
+        "avatarOpacity": 1,
+        "fov": 62,
+        "occluded": true,
+        "occlusionDepth": 1.278,
+        "trauma": 0,
+        "shake": 0,
+        "shakeEnabled": true,
+        "reduceMotion": false,
+        "grounded": true,
+        "airTime": 0,
+        "pivotLift": 0,
+        "pivotDip": 0,
+        "speed": 0,
+        "speedMeasured": 0,
+        "speedSignal": 0,
+        "speedSignalAge": 17.4167,
+        "followError": 0,
+        "followLag": 0,
+        "focus": {
+          "active": false,
+          "weight": 0,
+          "point": null
+        },
+        "lookUnit": "rad",
+        "lookScale": 1,
+        "sensitivity": 1,
+        "invertY": false,
+        "cameraShake": 1
+      },
+      "post": {
+        "installed": false,
+        "mode": "tier",
+        "tier": "low",
+        "requested": [
+          "bloom",
+          "godrays",
+          "tonemap",
+          "grain",
+          "vignette"
+        ],
+        "declined": [],
+        "unknown": [],
+        "effects": {
+          "bloom": false,
+          "sunGlow": false,
+          "grain": false,
+          "vignette": false
+        },
+        "display": {
+          "mode": 0,
+          "name": "none",
+          "mirrors": 0,
+          "exposure": 1
+        },
+        "size": null,
+        "samples": 0,
+        "targets": 0,
+        "targetBytes": 1962720,
+        "megabytes": 1.87,
+        "postDrawCalls": 0,
+        "bloom": {
+          "base": 0,
+          "top": 3,
+          "lobes": 3,
+          "tentRadius": 0.54,
+          "compositeSize": [
+            240,
+            135
+          ],
+          "mipSizes": [
+            [
+              240,
+              135
+            ],
+            [
+              120,
+              67
+            ],
+            [
+              60,
+              33
+            ],
+            [
+              30,
+              16
+            ]
+          ],
+          "drawCalls": 6,
+          "radiusFractionOfHeight": 0.032
+        },
+        "sun": {
+          "source": "light:vs.key",
+          "direction": [
+            0.8667,
+            0.1908,
+            -0.4608
+          ],
+          "uv": [
+            1.4281,
+            0.9574
+          ],
+          "weight": 0.0069,
+          "onScreen": false
+        },
+        "look": {
+          "bloomThreshold": 1.25,
+          "bloomKnee": 0.35,
+          "bloomStrength": 0.055,
+          "sunGlowStrength": 0.42,
+          "vignetteAmount": 0.08,
+          "vignetteStart": 0.72,
+          "grainAmount": 0.0018,
+          "ditherAmount": 0.5,
+          "shoulder": 1,
+          "white": 1,
+          "gradeIsIdentity": true
+        },
+        "frames": 2
+      },
+      "mathtex": {
+        "locale": "en",
+        "driven": false,
+        "registered": 3,
+        "panels": [
+          {
+            "id": "leaf9-span",
+            "kpId": "eq-one-add",
+            "kind": "claim",
+            "tex": "x + 3 = 7",
+            "ok": true,
+            "speech": "x plus 3 equals 7",
+            "locale": "en",
+            "em": 0.88,
+            "emRequested": 0.88,
+            "emClamped": false,
+            "occludedPct": null,
+            "occlusionSamples": 0,
+            "depthTest": false,
+            "worldSize": [
+              0.825,
+              0.807
+            ],
+            "texturePx": 48,
+            "fontPx": 48,
+            "textureSize": [
+              45,
+              44
+            ],
+            "bound": null,
+            "emScreenPx": 14.9,
+            "texelsPerPixel": 3.22,
+            "strokeEms": 0.045,
+            "strokePx": 0.67,
+            "legibleFloorPx": 33.3,
+            "legible": false,
+            "standIn": "distance",
+            "rasters": 1,
+            "position": [
+              12.59,
+              64.12,
+              206.52
+            ]
+          },
+          {
+            "id": "leaf9-share",
+            "kpId": "eq-one-mult",
+            "kind": "claim",
+            "tex": "\\frac{1}{2}x = 4",
+            "ok": true,
+            "speech": "1 over 2 x equals 4",
+            "locale": "en",
+            "em": 0.88,
+            "emRequested": 0.88,
+            "emClamped": false,
+            "occludedPct": null,
+            "occlusionSamples": 0,
+            "depthTest": false,
+            "worldSize": [
+              0.825,
+              0.807
+            ],
+            "texturePx": 48,
+            "fontPx": 48,
+            "textureSize": [
+              45,
+              44
+            ],
+            "bound": null,
+            "emScreenPx": 15.4,
+            "texelsPerPixel": 3.12,
+            "strokeEms": 0.045,
+            "strokePx": 0.69,
+            "legibleFloorPx": 33.3,
+            "legible": false,
+            "standIn": "distance",
+            "rasters": 1,
+            "position": [
+              12.59,
+              61.92,
+              206.52
+            ]
+          },
+          {
+            "id": "leaf9-working",
+            "kpId": null,
+            "kind": "working",
+            "tex": null,
+            "ok": true,
+            "speech": "",
+            "locale": "en",
+            "em": 0.73,
+            "emRequested": 0.73,
+            "emClamped": false,
+            "occludedPct": null,
+            "occlusionSamples": 0,
+            "depthTest": false,
+            "worldSize": [
+              2.92,
+              2.92
+            ],
+            "texturePx": 48,
+            "fontPx": 48,
+            "textureSize": [
+              192,
+              192
+            ],
+            "bound": null,
+            "emScreenPx": 11.4,
+            "texelsPerPixel": 4.21,
+            "strokeEms": 0.064,
+            "strokePx": 0.73,
+            "legibleFloorPx": 23.4,
+            "legible": true,
+            "standIn": null,
+            "rasters": 1,
+            "position": [
+              17.45,
+              63.02,
+              206.52
+            ]
+          },
+          {
+            "id": "leaf9-mark",
+            "kpId": "ineq-one-step",
+            "kind": "claim",
+            "tex": "2x + 1 \\ge 9",
+            "ok": true,
+            "speech": "2 x plus 1 is greater than or equal to 9",
+            "locale": "en",
+            "em": 2.1,
+            "emRequested": 2.1,
+            "emClamped": false,
+            "occludedPct": null,
+            "occlusionSamples": 0,
+            "depthTest": false,
+            "worldSize": [
+              1.969,
+              1.925
+            ],
+            "texturePx": 48,
+            "fontPx": 48,
+            "textureSize": [
+              45,
+              44
+            ],
+            "bound": null,
+            "emScreenPx": 14.5,
+            "texelsPerPixel": 3.3,
+            "strokeEms": 0.045,
+            "strokePx": 0.65,
+            "legibleFloorPx": 33.3,
+            "legible": false,
+            "standIn": "distance",
+            "rasters": 2,
+            "position": [
+              31.65,
+              65.46,
+              194.52
+            ]
+          }
+        ],
+        "maxPanels": 32,
+        "evictions": 0,
+        "worstOccludedPct": null,
+        "occlusionAt": null,
+        "occlusionMs": 0,
+        "occluders": 0,
+        "occlusionProbe": "mathocclusion",
+        "fonts": {
+          "ready": true,
+          "loaded": 9,
+          "failed": [],
+          "ms": 4.9
+        },
+        "raster": {
+          "rasters": 4,
+          "ms": 5.1,
+          "glyphs": 1,
+          "paths": 0,
+          "rules": 0,
+          "unsupportedSvg": 0,
+          "baselineResidual": 0,
+          "maxCanvasWidth": 337,
+          "maxCanvasHeight": 192,
+          "maxCanvasPixels": 36864,
+          "scaledDown": 0,
+          "refusedGeometry": 0,
+          "caps": {
+            "maxEdge": 4096,
+            "maxPixels": 4194304,
+            "maxInkEmsWide": 48,
+            "maxInkEmsTall": 24,
+            "minFontPx": 8,
+            "maxEmWorld": 4,
+            "minEmWorld": 0.02,
+            "maxWorkingTicks": 64
+          }
+        }
+      },
+      "mathocclusion": {
+        "at": 17.68,
+        "ms": 200.6,
+        "occluders": 51,
+        "worstOccludedPct": 0,
+        "panels": [
+          {
+            "id": "leaf9-span",
+            "kind": "claim",
+            "occludedPct": 0,
+            "samples": 24,
+            "candidates": 9,
+            "position": [
+              12.59,
+              64.12,
+              206.52
+            ]
+          },
+          {
+            "id": "leaf9-share",
+            "kind": "claim",
+            "occludedPct": 0,
+            "samples": 24,
+            "candidates": 9,
+            "position": [
+              12.59,
+              61.92,
+              206.52
+            ]
+          },
+          {
+            "id": "leaf9-working",
+            "kind": "working",
+            "occludedPct": 0,
+            "samples": 24,
+            "candidates": 9,
+            "position": [
+              17.45,
+              63.02,
+              206.52
+            ]
+          },
+          {
+            "id": "leaf9-mark",
+            "kind": "claim",
+            "occludedPct": 0,
+            "samples": 24,
+            "candidates": 9,
+            "position": [
+              31.65,
+              65.46,
+              194.52
+            ]
+          }
+        ]
+      },
+      "tex": {
+        "requests": 7,
+        "hits": 3,
+        "misses": 4,
+        "typesets": 4,
+        "failures": [],
+        "evictions": 0,
+        "typesetMs": 0.2,
+        "cacheSize": 4,
+        "locale": "en",
+        "unspokenNodeTypes": [
+          "\\blacksquare"
+        ]
+      },
+      "itembank": {
+        "knowledgePoints": 32,
+        "items": 0,
+        "catalogueItems": 1152,
+        "generatedThisSession": 0,
+        "locale": "en",
+        "minItemsPerKp": 36,
+        "minItemsPerMisconception": 3,
+        "groups": "0/32 resident, 0 loading",
+        "lessons": 22,
+        "residentGroups": [],
+        "degraded": [],
+        "issues": 0,
+        "formsPerKp": {
+          "var-meaning": "14/17/5",
+          "oo-numeric": "15/16/5",
+          "expr-anatomy": "16/15/5",
+          "oo-structure": "14/10/12",
+          "eval-substitute": "13/12/11",
+          "eval-signed": "12/13/11",
+          "eval-formula": "13/13/10",
+          "translate-phrase": "13/16/7",
+          "translate-order": "17/14/5",
+          "props-operations": "12/12/12",
+          "like-terms-id": "12/12/12",
+          "like-terms-combine": "12/12/12",
+          "distribute-numeric": "15/14/7",
+          "distribute-variable": "12/12/12",
+          "distribute-negative": "16/13/7",
+          "simplify-expression": "12/13/11",
+          "equivalent-expressions": "11/13/12",
+          "eq-meaning": "12/12/12",
+          "props-equality": "15/14/7",
+          "eq-one-add": "13/16/7",
+          "eq-one-mult": "15/14/7",
+          "eq-two-step": "11/13/12",
+          "eq-combine-side": "10/12/14",
+          "eq-distribute": "12/12/12",
+          "eq-both-sides": "10/14/12",
+          "eq-special-cases": "16/7/13",
+          "translate-sentence": "12/11/13",
+          "eq-model-context": "15/14/7",
+          "ineq-meaning": "14/12/10",
+          "ineq-one-step": "16/13/7",
+          "ineq-negative-flip": "15/14/7",
+          "ineq-two-step": "15/14/7"
+        }
+      },
+      "mastery": {
+        "theta": -0.8,
+        "unlocked": 0,
+        "learning": 32,
+        "provisional": 0,
+        "mastered": 0,
+        "total": 32,
+        "level1Percent": 0,
+        "session": 3,
+        "responses": 0,
+        "dueNow": 0,
+        "due": [],
+        "inFlight": [],
+        "openEvents": [],
+        "unscoredItems": 0,
+        "refusedUpward": 0,
+        "stats": {
+          "items": 0,
+          "scoredItems": 0,
+          "unscoredItems": 0,
+          "unpriceableCellItems": 0,
+          "refusedUpward": 0,
+          "prerequisiteCredits": 0,
+          "creditsByDistance": {},
+          "ceilingHits": 0,
+          "gateOpens": 0,
+          "gateOpensByTestOut": 0,
+          "testOutsOffered": 0,
+          "testOutsByTrigger": {},
+          "testOutsPassed": 0,
+          "testOutsPassedByTrigger": {},
+          "testOutsFailed": 0,
+          "testOutItems": 0,
+          "certifications": 0,
+          "lapses": 0
+        },
+        "scorablePairs": {
+          "scorable": "construct,generate,repair x guided-1,solo",
+          "scorableCells": 6,
+          "masteryEligible": "construct,generate,repair x solo",
+          "masteryEligibleCells": 3,
+          "rejectedForms": [
+            "judge2",
+            "select4"
+          ],
+          "rejectedPhases": [
+            "guided-2",
+            "guided-3",
+            "model"
+          ]
+        },
+        "bankPricing": {
+          "audited": true,
+          "cellsPriced": 96,
+          "sampled": 29754,
+          "mixture": {
+            "catalogue": 19032,
+            "generated": 10722
+          },
+          "catalogueShare": 0.639645,
+          "rejectedCells": [
+            {
+              "cell": "expr-anatomy|construct",
+              "family": "expr-anatomy.count",
+              "blind": 1,
+              "n": 55,
+              "modalAnswer": "3",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "expr-anatomy|construct",
+              "family": "expr-anatomy.coefficient",
+              "blind": 1,
+              "n": 5,
+              "modalAnswer": "1",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "expr-anatomy|repair",
+              "family": "expr-anatomy.count",
+              "blind": 1,
+              "n": 54,
+              "modalAnswer": "2: 3",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "expr-anatomy|repair",
+              "family": "expr-anatomy.coefficient",
+              "blind": 1,
+              "n": 5,
+              "modalAnswer": "2: 1",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "expr-anatomy|repair",
+              "blind": null,
+              "reason": "every generator family is above the caps (3 of 3)"
+            },
+            {
+              "cell": "expr-anatomy|generate",
+              "family": "expr-anatomy.count",
+              "blind": 1,
+              "n": 120,
+              "modalAnswer": "9x + 2y - 8",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "expr-anatomy|generate",
+              "blind": null,
+              "reason": "every generator family is above the caps (1 of 1)"
+            },
+            {
+              "cell": "oo-structure|generate",
+              "family": "oo-structure.negsq",
+              "blind": 1,
+              "n": 4,
+              "modalAnswer": "-x^{2}",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "oo-structure|generate",
+              "blind": null,
+              "reason": "every generator family is above the caps (3 of 3)"
+            },
+            {
+              "cell": "eval-substitute|generate",
+              "family": "eval-substitute.twice",
+              "blind": 1,
+              "n": 3,
+              "modalAnswer": "x^{2} + x",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eval-signed|generate",
+              "family": "eval-signed.square",
+              "blind": 1,
+              "n": 4,
+              "modalAnswer": "x^{2}",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eval-signed|generate",
+              "blind": null,
+              "reason": "every generator family is above the caps (3 of 3)"
+            },
+            {
+              "cell": "props-operations|construct",
+              "family": "props-operations.identity",
+              "blind": 1,
+              "n": 4,
+              "modalAnswer": "x",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "props-operations|repair",
+              "family": "props-operations.identity",
+              "blind": 1,
+              "n": 4,
+              "modalAnswer": "2: 0 + x",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "props-operations|generate",
+              "family": "props-operations.identity",
+              "blind": 1,
+              "n": 4,
+              "modalAnswer": "x + 9x \\cdot 0",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "like-terms-id|generate",
+              "family": "like-terms-id.xy",
+              "blind": 1,
+              "n": 6,
+              "modalAnswer": "10x",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "like-terms-id|generate",
+              "family": "like-terms-id.pow",
+              "blind": 1,
+              "n": 6,
+              "modalAnswer": "10x",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "like-terms-id|generate",
+              "blind": null,
+              "reason": "every generator family is above the caps (2 of 2)"
+            },
+            {
+              "cell": "props-equality|construct",
+              "family": "props-equality.zero",
+              "blind": 1,
+              "n": 7,
+              "modalAnswer": "-2x = 0",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "props-equality|repair",
+              "family": "props-equality.zero",
+              "blind": 1,
+              "n": 6,
+              "modalAnswer": "2: -x = 0",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-one-mult|construct",
+              "blind": null,
+              "reason": "every generator family is above the caps (2 of 2)"
+            },
+            {
+              "cell": "eq-distribute|generate",
+              "blind": null,
+              "reason": "every generator family is above the caps (1 of 1)"
+            },
+            {
+              "cell": "eq-both-sides|generate",
+              "blind": null,
+              "reason": "every generator family is above the caps (1 of 1)"
+            },
+            {
+              "cell": "eq-special-cases|construct",
+              "family": "eq-special-cases.always",
+              "blind": 1,
+              "n": 8,
+              "modalAnswer": "always",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-special-cases|construct",
+              "family": "eq-special-cases.refusal",
+              "blind": 1,
+              "n": 8,
+              "modalAnswer": "none",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-special-cases|construct",
+              "blind": null,
+              "reason": "every generator family is above the caps (2 of 2)"
+            },
+            {
+              "cell": "eq-special-cases|repair",
+              "family": "eq-special-cases.always",
+              "blind": 1,
+              "n": 7,
+              "modalAnswer": "3: 0 = 0",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-special-cases|repair",
+              "blind": null,
+              "reason": "every generator family is above the caps (1 of 1)"
+            },
+            {
+              "cell": "eq-special-cases|generate",
+              "family": "eq-special-cases.always",
+              "blind": 1,
+              "n": 6,
+              "modalAnswer": "5\\left(x + 2\\right) = 5x + 10",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-special-cases|generate",
+              "family": "eq-special-cases.refusal",
+              "blind": 1,
+              "n": 7,
+              "modalAnswer": "4x - 3 = 4x - 1",
+              "reason": "blind 1.000 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-special-cases|generate",
+              "blind": null,
+              "reason": "every generator family is above the caps (2 of 2)"
+            },
+            {
+              "cell": "oo-structure|generate",
+              "family": "oo-structure.coefsq",
+              "blind": 0.5,
+              "n": 4,
+              "modalAnswer": "3x^{2}",
+              "reason": "blind 0.500 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "oo-structure|generate",
+              "family": "oo-structure.juxt",
+              "blind": 0.5,
+              "n": 4,
+              "modalAnswer": "5x",
+              "reason": "blind 0.500 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eval-substitute|generate",
+              "family": "eval-substitute.concat",
+              "blind": 0.5,
+              "n": 4,
+              "modalAnswer": "6 + n",
+              "reason": "blind 0.500 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eval-signed|repair",
+              "family": "eval-signed.sumneg",
+              "blind": 0.5,
+              "n": 4,
+              "modalAnswer": "2: \\left(-6\\right) + \\left(-2\\right)",
+              "reason": "blind 0.500 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eval-signed|generate",
+              "family": "eval-signed.minusneg",
+              "blind": 0.5,
+              "n": 4,
+              "modalAnswer": "9 - x",
+              "reason": "blind 0.500 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "props-operations|repair",
+              "family": "props-operations.regroup",
+              "blind": 0.5,
+              "n": 4,
+              "modalAnswer": "2: 14 - 14",
+              "reason": "blind 0.500 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "var-meaning|construct",
+              "family": "var-meaning.seat",
+              "blind": 0.4,
+              "n": 5,
+              "modalAnswer": "3",
+              "reason": "blind 0.400 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "expr-anatomy|repair",
+              "family": "expr-anatomy.term",
+              "blind": 0.4,
+              "n": 5,
+              "modalAnswer": "2: -9x",
+              "reason": "blind 0.400 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-model-context|construct",
+              "family": "eq-model-context.members",
+              "blind": 0.375,
+              "n": 8,
+              "modalAnswer": "9",
+              "reason": "blind 0.375 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "oo-numeric|construct",
+              "family": "oo-numeric.divmul",
+              "blind": 0.333333,
+              "n": 3,
+              "modalAnswer": "10",
+              "reason": "blind 0.333 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "oo-structure|repair",
+              "family": "oo-structure.coefsq",
+              "blind": 0.333333,
+              "n": 3,
+              "modalAnswer": "2: 3 \\cdot 2^{2}",
+              "reason": "blind 0.333 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "oo-structure|repair",
+              "family": "oo-structure.juxt",
+              "blind": 0.333333,
+              "n": 3,
+              "modalAnswer": "2: 12 \\cdot 6",
+              "reason": "blind 0.333 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eval-signed|construct",
+              "family": "eval-signed.square",
+              "blind": 0.333333,
+              "n": 3,
+              "modalAnswer": "169",
+              "reason": "blind 0.333 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eval-signed|generate",
+              "family": "eval-signed.sumneg",
+              "blind": 0.333333,
+              "n": 3,
+              "modalAnswer": "x - 11",
+              "reason": "blind 0.333 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-one-mult|construct",
+              "family": "eq-one-mult.mult",
+              "blind": 0.333333,
+              "n": 6,
+              "modalAnswer": "4",
+              "reason": "blind 0.333 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-one-mult|construct",
+              "family": "eq-one-mult.fraction",
+              "blind": 0.333333,
+              "n": 9,
+              "modalAnswer": "12",
+              "reason": "blind 0.333 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-distribute|generate",
+              "family": "eq-distribute.core",
+              "blind": 0.333333,
+              "n": 12,
+              "modalAnswer": "2\\left(x + 8\\right) = 26",
+              "reason": "blind 0.333 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "eq-both-sides|generate",
+              "family": "eq-both-sides.core",
+              "blind": 0.333333,
+              "n": 12,
+              "modalAnswer": "3x + 1 = 2x + 4",
+              "reason": "blind 0.333 > maxTrueGuess 0.3"
+            },
+            {
+              "cell": "ineq-two-step|repair",
+              "family": "ineq-two-step.turned",
+              "blind": 0.142857,
+              "n": 7,
+              "modalAnswer": "2: -2x > 3",
+              "reason": "conservative price 0.513 > maxGuess 0.3 at solo"
+            }
+          ],
+          "repricedCells": [
+            {
+              "cell": "eq-both-sides|construct",
+              "from": 0.08,
+              "to": 0.3
+            },
+            {
+              "cell": "distribute-numeric|generate",
+              "from": 0.036,
+              "to": 0.285714
+            },
+            {
+              "cell": "eq-one-add|construct",
+              "from": 0.06,
+              "to": 0.285714
+            },
+            {
+              "cell": "eq-one-add|generate",
+              "from": 0.036,
+              "to": 0.285714
+            },
+            {
+              "cell": "eq-one-mult|repair",
+              "from": 0.06,
+              "to": 0.285714
+            },
+            {
+              "cell": "eq-one-mult|generate",
+              "from": 0.036,
+              "to": 0.285714
+            },
+            {
+              "cell": "eq-model-context|construct",
+              "from": 0.1,
+              "to": 0.285714
+            },
+            {
+              "cell": "eq-model-context|generate",
+              "from": 0.06,
+              "to": 0.285714
+            },
+            {
+              "cell": "ineq-one-step|repair",
+              "from": 0.07,
+              "to": 0.285714
+            },
+            {
+              "cell": "ineq-negative-flip|repair",
+              "from": 0.08,
+              "to": 0.285714
+            },
+            {
+              "cell": "ineq-two-step|construct",
+              "from": 0.1,
+              "to": 0.285714
+            },
+            {
+              "cell": "ineq-two-step|repair",
+              "from": 0.1,
+              "to": 0.285714
+            },
+            {
+              "cell": "ineq-one-step|construct",
+              "from": 0.07,
+              "to": 0.280683
+            },
+            {
+              "cell": "eq-two-step|construct",
+              "from": 0.07,
+              "to": 0.272727
+            },
+            {
+              "cell": "var-meaning|construct",
+              "from": 0.05,
+              "to": 0.25
+            },
+            {
+              "cell": "oo-structure|construct",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "oo-structure|repair",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "eval-substitute|construct",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "eval-substitute|repair",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "eval-substitute|generate",
+              "from": 0.036,
+              "to": 0.25
+            },
+            {
+              "cell": "eval-signed|construct",
+              "from": 0.07,
+              "to": 0.25
+            },
+            {
+              "cell": "eval-signed|repair",
+              "from": 0.07,
+              "to": 0.25
+            },
+            {
+              "cell": "translate-order|repair",
+              "from": 0.07,
+              "to": 0.25
+            },
+            {
+              "cell": "props-operations|construct",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "props-operations|repair",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "props-operations|generate",
+              "from": 0.036,
+              "to": 0.25
+            },
+            {
+              "cell": "distribute-numeric|construct",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "distribute-negative|construct",
+              "from": 0.08,
+              "to": 0.25
+            },
+            {
+              "cell": "eq-meaning|construct",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "eq-meaning|generate",
+              "from": 0.036,
+              "to": 0.25
+            },
+            {
+              "cell": "props-equality|construct",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "props-equality|repair",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "eq-one-add|repair",
+              "from": 0.06,
+              "to": 0.25
+            },
+            {
+              "cell": "eq-two-step|generate",
+              "from": 0.042,
+              "to": 0.25
+            },
+            {
+              "cell": "eq-distribute|construct",
+              "from": 0.08,
+              "to": 0.25
+            },
+            {
+              "cell": "eq-distribute|repair",
+              "from": 0.08,
+              "to": 0.25
+            },
+            {
+              "cell": "translate-sentence|construct",
+              "from": 0.07,
+              "to": 0.25
+            },
+            {
+              "cell": "eq-model-context|repair",
+              "from": 0.1,
+              "to": 0.25
+            },
+            {
+              "cell": "eq-combine-side|generate",
+              "from": 0.048,
+              "to": 0.214286
+            },
+            {
+              "cell": "eq-both-sides|repair",
+              "from": 0.08,
+              "to": 0.214286
+            },
+            {
+              "cell": "var-meaning|repair",
+              "from": 0.05,
+              "to": 0.2
+            },
+            {
+              "cell": "var-meaning|generate",
+              "from": 0.03,
+              "to": 0.2
+            },
+            {
+              "cell": "oo-numeric|repair",
+              "from": 0.05,
+              "to": 0.2
+            },
+            {
+              "cell": "oo-numeric|generate",
+              "from": 0.03,
+              "to": 0.2
+            },
+            {
+              "cell": "expr-anatomy|construct",
+              "from": 0.05,
+              "to": 0.2
+            },
+            {
+              "cell": "eval-formula|generate",
+              "from": 0.042,
+              "to": 0.2
+            },
+            {
+              "cell": "translate-order|construct",
+              "from": 0.07,
+              "to": 0.2
+            },
+            {
+              "cell": "translate-order|generate",
+              "from": 0.042,
+              "to": 0.2
+            },
+            {
+              "cell": "eq-combine-side|construct",
+              "from": 0.08,
+              "to": 0.2
+            },
+            {
+              "cell": "equivalent-expressions|construct",
+              "from": 0.08,
+              "to": 0.181818
+            },
+            {
+              "cell": "translate-sentence|repair",
+              "from": 0.07,
+              "to": 0.181818
+            },
+            {
+              "cell": "oo-numeric|construct",
+              "from": 0.05,
+              "to": 0.166667
+            },
+            {
+              "cell": "translate-phrase|construct",
+              "from": 0.06,
+              "to": 0.166667
+            },
+            {
+              "cell": "like-terms-id|construct",
+              "from": 0.06,
+              "to": 0.166667
+            },
+            {
+              "cell": "like-terms-id|repair",
+              "from": 0.06,
+              "to": 0.166667
+            },
+            {
+              "cell": "like-terms-combine|repair",
+              "from": 0.07,
+              "to": 0.166667
+            },
+            {
+              "cell": "distribute-numeric|repair",
+              "from": 0.06,
+              "to": 0.166667
+            },
+            {
+              "cell": "distribute-negative|repair",
+              "from": 0.08,
+              "to": 0.166667
+            },
+            {
+              "cell": "eq-meaning|repair",
+              "from": 0.06,
+              "to": 0.166667
+            },
+            {
+              "cell": "eq-combine-side|repair",
+              "from": 0.08,
+              "to": 0.166667
+            },
+            {
+              "cell": "eval-formula|construct",
+              "from": 0.07,
+              "to": 0.153846
+            },
+            {
+              "cell": "eq-two-step|repair",
+              "from": 0.07,
+              "to": 0.153846
+            },
+            {
+              "cell": "translate-sentence|generate",
+              "from": 0.042,
+              "to": 0.153846
+            },
+            {
+              "cell": "translate-phrase|generate",
+              "from": 0.036,
+              "to": 0.142857
+            },
+            {
+              "cell": "distribute-negative|generate",
+              "from": 0.048,
+              "to": 0.142857
+            },
+            {
+              "cell": "props-equality|generate",
+              "from": 0.036,
+              "to": 0.142857
+            },
+            {
+              "cell": "ineq-one-step|generate",
+              "from": 0.042,
+              "to": 0.142857
+            },
+            {
+              "cell": "ineq-negative-flip|construct",
+              "from": 0.08,
+              "to": 0.142857
+            },
+            {
+              "cell": "ineq-negative-flip|generate",
+              "from": 0.048,
+              "to": 0.142857
+            },
+            {
+              "cell": "ineq-two-step|generate",
+              "from": 0.06,
+              "to": 0.142857
+            },
+            {
+              "cell": "translate-phrase|repair",
+              "from": 0.06,
+              "to": 0.125
+            },
+            {
+              "cell": "ineq-meaning|generate",
+              "from": 0.036,
+              "to": 0.1
+            },
+            {
+              "cell": "simplify-expression|generate",
+              "from": 0.048,
+              "to": 0.090909
+            },
+            {
+              "cell": "like-terms-combine|construct",
+              "from": 0.07,
+              "to": 0.083333
+            },
+            {
+              "cell": "like-terms-combine|generate",
+              "from": 0.042,
+              "to": 0.083333
+            },
+            {
+              "cell": "distribute-variable|construct",
+              "from": 0.07,
+              "to": 0.083333
+            },
+            {
+              "cell": "distribute-variable|repair",
+              "from": 0.07,
+              "to": 0.083333
+            },
+            {
+              "cell": "distribute-variable|generate",
+              "from": 0.042,
+              "to": 0.083333
+            },
+            {
+              "cell": "simplify-expression|construct",
+              "from": 0.08,
+              "to": 0.083333
+            },
+            {
+              "cell": "equivalent-expressions|generate",
+              "from": 0.048,
+              "to": 0.083333
+            },
+            {
+              "cell": "ineq-meaning|repair",
+              "from": 0.06,
+              "to": 0.083333
+            },
+            {
+              "cell": "eval-formula|repair",
+              "from": 0.07,
+              "to": 0.076923
+            },
+            {
+              "cell": "ineq-meaning|construct",
+              "from": 0.06,
+              "to": 0.071429
+            }
+          ],
+          "relaxed": [
+            {
+              "kpId": "expr-anatomy",
+              "forms": [
+                "construct"
+              ],
+              "need": 1
+            }
+          ],
+          "unmasterable": [
+            "eq-special-cases"
+          ]
+        },
+        "propagation": {
+          "maxDistance": 3,
+          "minWeight": 0.05,
+          "ceiling": 0.9,
+          "inferenceRequiresCredited": true,
+          "clockResetMaxDistance": 1,
+          "creditWeightAtDistance1": 0.5,
+          "credits": 0,
+          "byDistance": {},
+          "ceilingHits": 0,
+          "masteryThreshold": 0.95,
+          "ceilingIsBelowThreshold": true
+        },
+        "testOut": {
+          "enabled": true,
+          "maxBlindPass": 0.001,
+          "eligible": 31,
+          "ineligible": [
+            {
+              "kpId": "eq-special-cases",
+              "reason": "no mastery-eligible form survives the bank audit"
+            }
+          ],
+          "plans": {
+            "var-meaning": {
+              "items": 5,
+              "forms": [
+                "repair",
+                "generate",
+                "construct",
+                "repair",
+                "generate"
+              ],
+              "blindPass": 0.0004
+            },
+            "oo-numeric": {
+              "items": 5,
+              "forms": [
+                "construct",
+                "repair",
+                "generate",
+                "construct",
+                "repair"
+              ],
+              "blindPass": 0.000222
+            },
+            "expr-anatomy": {
+              "items": 5,
+              "forms": [
+                "construct",
+                "construct",
+                "construct",
+                "construct",
+                "construct"
+              ],
+              "blindPass": 0.00032
+            },
+            "oo-structure": {
+              "items": 5,
+              "forms": [
+                "construct",
+                "repair",
+                "construct",
+                "repair",
+                "construct"
+              ],
+              "blindPass": 0.000977
+            },
+            "eval-substitute": {
+              "items": 5,
+              "forms": [
+                "construct",
+                "repair",
+                "generate",
+                "construct",
+                "repair"
+              ],
+              "blindPass": 0.000977
+            },
+            "eval-signed": {
+              "items": 5,
+              "forms": [
+                "construct",
+                "repair",
+                "construct",
+                "repair",
+                "construct"
+              ],
+              "blindPass": 0.000977
+            },
+            "eval-formula": {
+              "items": 4,
+              "forms": [
+                "repair",
+                "construct",
+                "generate",
+                "repair"
+              ],
+              "blindPass": 0.000182
+            },
+            "translate-phrase": {
+              "items": 4,
+              "forms": [
+                "repair",
+                "generate",
+                "construct",
+                "repair"
+              ],
+              "blindPass": 0.000372
+            },
+            "translate-order": {
+              "items": 5,
+              "forms": [
+                "construct",
+                "generate",
+                "repair",
+                "construct",
+                "generate"
+              ],
+              "blindPass": 0.0004
+            },
+            "props-operations": {
+              "items": 5,
+              "forms": [
+                "construct",
+                "repair",
+                "generate",
+                "construct",
+                "repair"
+              ],
+              "blindPass": 0.000977
+            },
+            "like-terms-id": {
+              "items": 4,
+              "forms": [
+                "construct",
+                "repair",
+                "construct",
+                "repair"
+              ],
+              "blindPass": 0.000772
+            },
+            "like-terms-combine": {
+              "items": 4,
+              "forms": [
+                "construct",
+                "generate",
+                "repair",
+                "construct"
+              ],
+              "blindPass": 0.000096
+            },
+            "distribute-numeric": {
+              "items": 5,
+              "forms": [
+                "repair",
+                "construct",
+                "generate",
+                "repair",
+                "construct"
+              ],
+              "blindPass": 0.000496
+            },
+            "distribute-variable": {
+              "items": 3,
+              "forms": [
+                "construct",
+                "repair",
+                "generate"
+              ],
+              "blindPass": 0.000579
+            },
+            "distribute-negative": {
+              "items": 4,
+              "forms": [
+                "generate",
+                "repair",
+                "construct",
+                "generate"
+              ],
+              "blindPass": 0.00085
+            },
+            "simplify-expression": {
+              "items": 3,
+              "forms": [
+                "repair",
+                "construct",
+                "generate"
+              ],
+              "blindPass": 0.000583
+            },
+            "equivalent-expressions": {
+              "items": 4,
+              "forms": [
+                "repair",
+                "generate",
+                "construct",
+                "repair"
+              ],
+              "blindPass": 0.00009
+            },
+            "eq-meaning": {
+              "items": 5,
+              "forms": [
+                "repair",
+                "construct",
+                "generate",
+                "repair",
+                "construct"
+              ],
+              "blindPass": 0.000434
+            },
+            "props-equality": {
+              "items": 5,
+              "forms": [
+                "generate",
+                "construct",
+                "repair",
+                "generate",
+                "construct"
+              ],
+              "blindPass": 0.000319
+            },
+            "eq-one-add": {
+              "items": 6,
+              "forms": [
+                "repair",
+                "construct",
+                "generate",
+                "repair",
+                "construct",
+                "generate"
+              ],
+              "blindPass": 0.000416
+            },
+            "eq-one-mult": {
+              "items": 6,
+              "forms": [
+                "repair",
+                "generate",
+                "repair",
+                "generate",
+                "repair",
+                "generate"
+              ],
+              "blindPass": 0.000544
+            },
+            "eq-two-step": {
+              "items": 5,
+              "forms": [
+                "repair",
+                "generate",
+                "construct",
+                "repair",
+                "generate"
+              ],
+              "blindPass": 0.000403
+            },
+            "eq-combine-side": {
+              "items": 5,
+              "forms": [
+                "repair",
+                "construct",
+                "generate",
+                "repair",
+                "construct"
+              ],
+              "blindPass": 0.000238
+            },
+            "eq-distribute": {
+              "items": 5,
+              "forms": [
+                "construct",
+                "repair",
+                "construct",
+                "repair",
+                "construct"
+              ],
+              "blindPass": 0.000977
+            },
+            "eq-both-sides": {
+              "items": 5,
+              "forms": [
+                "repair",
+                "construct",
+                "repair",
+                "construct",
+                "repair"
+              ],
+              "blindPass": 0.000886
+            },
+            "eq-special-cases": {
+              "items": 0,
+              "forms": [],
+              "blindPass": 1
+            },
+            "translate-sentence": {
+              "items": 5,
+              "forms": [
+                "generate",
+                "repair",
+                "construct",
+                "generate",
+                "repair"
+              ],
+              "blindPass": 0.000196
+            },
+            "eq-model-context": {
+              "items": 6,
+              "forms": [
+                "repair",
+                "construct",
+                "generate",
+                "repair",
+                "construct",
+                "generate"
+              ],
+              "blindPass": 0.000416
+            },
+            "ineq-meaning": {
+              "items": 3,
+              "forms": [
+                "construct",
+                "repair",
+                "generate"
+              ],
+              "blindPass": 0.000595
+            },
+            "ineq-one-step": {
+              "items": 5,
+              "forms": [
+                "generate",
+                "construct",
+                "repair",
+                "generate",
+                "construct"
+              ],
+              "blindPass": 0.000459
+            },
+            "ineq-negative-flip": {
+              "items": 4,
+              "forms": [
+                "construct",
+                "generate",
+                "repair",
+                "construct"
+              ],
+              "blindPass": 0.000833
+            },
+            "ineq-two-step": {
+              "items": 5,
+              "forms": [
+                "generate",
+                "construct",
+                "repair",
+                "generate",
+                "construct"
+              ],
+              "blindPass": 0.000476
+            }
+          },
+          "offered": 0,
+          "failStreak": 0,
+          "stopped": false,
+          "byTrigger": {},
+          "passedByTrigger": {},
+          "passed": 0,
+          "failed": 0,
+          "itemsSpent": 0,
+          "gateOpensByTestOut": 0
+        },
+        "issues": [
+          "CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+          "CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+          "TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass."
+        ],
+        "graph": {
+          "nodes": 32,
+          "edges": 48,
+          "roots": 2,
+          "leaves": 4,
+          "longestChain": 11,
+          "bands": {
+            "1": 3,
+            "2": 11,
+            "3": 8,
+            "4": 7,
+            "5": 3
+          },
+          "maxDescendants": 30,
+          "maxAncestorDistance": 6
+        },
+        "kps": {
+          "var-meaning": {
+            "p": 0.35,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "oo-numeric": {
+            "p": 0.35,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "expr-anatomy": {
+            "p": 0.35,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "oo-structure": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eval-substitute": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eval-signed": {
+            "p": 0.18,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eval-formula": {
+            "p": 0.18,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "translate-phrase": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "translate-order": {
+            "p": 0.18,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "props-operations": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "like-terms-id": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "like-terms-combine": {
+            "p": 0.18,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "distribute-numeric": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "distribute-variable": {
+            "p": 0.18,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "distribute-negative": {
+            "p": 0.12,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "simplify-expression": {
+            "p": 0.12,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "equivalent-expressions": {
+            "p": 0.12,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eq-meaning": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "props-equality": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eq-one-add": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eq-one-mult": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eq-two-step": {
+            "p": 0.18,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eq-combine-side": {
+            "p": 0.12,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eq-distribute": {
+            "p": 0.12,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eq-both-sides": {
+            "p": 0.12,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eq-special-cases": {
+            "p": 0.08,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "translate-sentence": {
+            "p": 0.18,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "eq-model-context": {
+            "p": 0.08,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "ineq-meaning": {
+            "p": 0.25,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "ineq-one-step": {
+            "p": 0.18,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "ineq-negative-flip": {
+            "p": 0.12,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          },
+          "ineq-two-step": {
+            "p": 0.08,
+            "status": "learning",
+            "scored": 0,
+            "atBand": 0,
+            "forms": [],
+            "attempts": 0,
+            "lapses": 0,
+            "unlockedVia": null,
+            "testOut": null
+          }
+        },
+        "resumed": true,
+        "scheduler": {
+          "sessionMinutes": 25,
+          "secondsSpent": 0,
+          "itemsThisSession": 0,
+          "reviewItemsThisSession": 0,
+          "inFlight": [],
+          "blockCount": 0,
+          "recentItemIds": 0,
+          "noRepeatWindow": 40,
+          "recentCells": 0,
+          "widestCellWindow": 0,
+          "event": null,
+          "probe": null,
+          "reviewCapLift": true,
+          "pullForward": true
+        },
+        "bankAudit": {
+          "source": "committed",
+          "setupMs": 2.4,
+          "fingerprint": "d6e2537d",
+          "version": 2,
+          "sampled": 29754,
+          "catalogueShare": 0.6396
+        }
+      },
+      "session": {
+        "phase": "open",
+        "number": 3,
+        "arc": {
+          "minMinutes": 15,
+          "targetMinutes": 21,
+          "maxMinutes": 25,
+          "breakMinutes": 5
+        },
+        "planned": {
+          "events": 8,
+          "items": 24,
+          "minutes": 20,
+          "perItemSeconds": 50,
+          "shortfall": false,
+          "beats": [
+            {
+              "index": 0,
+              "kind": "acquire",
+              "kpId": "var-meaning",
+              "items": 3,
+              "leverage": 0.0833
+            },
+            {
+              "index": 1,
+              "kind": "acquire",
+              "kpId": "oo-numeric",
+              "items": 3,
+              "leverage": 0.0778
+            },
+            {
+              "index": 2,
+              "kind": "acquire",
+              "kpId": "var-meaning",
+              "items": 3,
+              "leverage": 0.0833
+            },
+            {
+              "index": 3,
+              "kind": "acquire",
+              "kpId": "oo-numeric",
+              "items": 3,
+              "leverage": 0.0778
+            },
+            {
+              "index": 4,
+              "kind": "acquire",
+              "kpId": "var-meaning",
+              "items": 3,
+              "leverage": 0.0833
+            },
+            {
+              "index": 5,
+              "kind": "acquire",
+              "kpId": "oo-numeric",
+              "items": 3,
+              "leverage": 0.0778
+            },
+            {
+              "index": 6,
+              "kind": "acquire",
+              "kpId": "var-meaning",
+              "items": 3,
+              "leverage": 0.0833
+            },
+            {
+              "index": 7,
+              "kind": "acquire",
+              "kpId": "oo-numeric",
+              "items": 3,
+              "leverage": 0.0778
+            }
+          ]
+        },
+        "elapsed": {
+          "seconds": 0,
+          "minutes": 0,
+          "items": 0,
+          "beats": 0,
+          "awaySeconds": 0
+        },
+        "remaining": {
+          "events": 8,
+          "items": 24,
+          "seconds": 1200,
+          "minutes": 20,
+          "arcSeconds": 1260
+        },
+        "beat": null,
+        "closeReason": null,
+        "closingWin": null,
+        "pace": {
+          "ratio": 1,
+          "spread": 0,
+          "gapSeconds": 4,
+          "samples": 0,
+          "secondsPerItem": 50,
+          "secondsPerItemHigh": 50,
+          "secondsPerItemCeiling": 50,
+          "source": "design-default"
+        },
+        "adherence": {
+          "plannedBeats": 8,
+          "servedBeats": 0,
+          "matched": 0,
+          "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+        },
+        "tally": {
+          "items": 0,
+          "stood": 0,
+          "fell": 0,
+          "unscored": 0,
+          "certified": [],
+          "set": [],
+          "lapsed": []
+        },
+        "stats": {
+          "startsOutsideCeiling": 0,
+          "beatsClosedAtItem": 0,
+          "eventsCarried": 0
+        },
+        "lines": {
+          "opening": [],
+          "closing": []
+        },
+        "save": {
+          "key": "vs.flow.save.v1",
+          "storage": "available",
+          "loaded": true,
+          "fault": null,
+          "repaired": [],
+          "quarantined": null,
+          "sessions": 2,
+          "counters": {
+            "opened": 3,
+            "closed": 0,
+            "interrupted": 2
           },
           "writes": 2,
           "writeFailures": 0,

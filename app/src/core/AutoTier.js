@@ -9,10 +9,31 @@ import { publish } from "./Introspect.js";
  *
  * `config.autoTier` was declared and read by nothing, so every machine booted at `high`: 3072-line
  * shadow cascades, the full post stack, and a 1.5x pixel ratio. This game is *for* school
- * Chromebooks — Intel UHD 600 / Mali / Adreno class parts pushing a 1366x768 or 1920x1080 panel —
- * and on those parts that tier is not a slightly worse experience, it is a slideshow. A student
- * whose first thirty seconds stutter does not come back, and the product goal is that they come
- * back on their own.
+ * Chromebooks — Intel UHD 600 / Iris Xe / Mali / Adreno / AMD-APU class parts pushing a 1366x768 or
+ * 1920x1080 panel — and on those parts that tier is not a slightly worse experience, it is a
+ * slideshow. A student whose first thirty seconds stutter does not come back, and the product goal
+ * is that they come back on their own.
+ *
+ * ## The asymmetry that sets every default in this file
+ *
+ * Being one tier too low costs a student some bloom and some shadow resolution for a few seconds.
+ * Being one tier too high costs them the frame rate, which is the whole feel of the game. The two
+ * errors are not the same size, so the defaults are not symmetric:
+ *
+ *  * The heuristic starts at **medium unless there is positive evidence of strength** — not at
+ *    `high` unless there is positive evidence of weakness. Hardware signals are routinely
+ *    *illegible* (Firefox with `resistFingerprinting`, Safari, a legacy "WebKit WebGL" mask, any
+ *    browser without `deviceMemory`, Chrome once `WEBGL_debug_renderer_info` finishes going away),
+ *    and "I could not tell" must not mean "assume a gaming desktop".
+ *  * Relief is urgent; promotion never is. The *first* decision window is deliberately small
+ *    (30 warm-up / 45 scored frames, and smaller still in wall-clock terms on a slow machine), and
+ *    the first down-step may **leap more than one rung** when the median is catastrophically over
+ *    budget. A promotion, by contrast, always waits for the full steady-state window.
+ *
+ * The price of the conservative default is bounded and known: a vsync-locked 60 Hz desktop is
+ * promoted medium → high about 3 s in, through the up-path below. The price of the optimistic
+ * default was not bounded — it was "the slower the machine, the longer it sits at the tier it
+ * cannot afford".
  *
  * ## Two mechanisms, deliberately separate
  *
@@ -26,7 +47,14 @@ import { publish } from "./Introspect.js";
  *
  * The split matters because neither half is trustworthy alone. A renderer string is a guess (a
  * "UHD Graphics 620" in a fanless tablet and in a desktop are different machines), and measurement
- * cannot help you for the first three seconds — which are exactly the seconds a student decides in.
+ * cannot help you for the first few seconds — which are exactly the seconds a student decides in.
+ *
+ * **The heuristic's cap is the measurement's ceiling.** When the heuristic lowered the tier on
+ * hardware evidence, that evidence does not expire the moment the machine holds vsync at the lower
+ * tier: holding 60 Hz at `medium` is not evidence that `high` is affordable. Promoting past a
+ * hardware cap is how a correctly-capped Chromebook ends a session two tiers *below* the cap with
+ * three visible picture changes on the way — measured, and the reason `ceiling` below is the
+ * heuristic's answer whenever the heuristic had one.
  *
  * ## Why it cannot oscillate
  *
@@ -43,15 +71,18 @@ import { publish } from "./Introspect.js";
  *    step up again for the rest of the session. A machine that has already failed a window does not
  *    get re-promoted on a quiet stretch — that is precisely the loop that produces oscillation.
  *  * **A hard budget.** `maxChanges` total per session, `maxUpSteps` of them upward, and the ceiling
- *    is whatever tier the config asked for — auto-tiering hands work back, it never promotes past
- *    what was configured.
+ *    is the heuristic's cap (or the configured tier when the heuristic found nothing) — auto-tiering
+ *    hands work back, it never promotes past what the hardware or the config asked for.
  *
  * ## Why an explicit choice wins completely
  *
  * `config.get("autoTier")` is the switch, and `Config.set("tier", …)` turns it off — so a settings
  * screen, `?tier=low`, or a console poke all stand this module down for the session with no further
- * cooperation required. Auto choices go through `config.applyTier()`, which is runtime-only and
- * never persisted, so a bad afternoon on a loaded machine cannot become a permanent setting.
+ * cooperation required. That switch is re-read **every frame**, not captured at boot: a settings
+ * screen opened ten minutes in is exactly as binding as `?tier=` on the URL, and standing down also
+ * pushes the player's choice into the renderer, because a setting that does not change the picture
+ * is not a setting. Auto choices go through `config.applyTier()`, which is runtime-only and never
+ * persisted, so a bad afternoon on a loaded machine cannot become a permanent setting.
  *
  * ## Why a software rasteriser is not a device class
  *
@@ -69,25 +100,60 @@ import { publish } from "./Introspect.js";
  * | `?autotier=off` | disabled entirely |
  * | `?autotier=force` | measure *and apply* even on a software rasteriser |
  * | `?autotierWarmup=N` | frames discarded after boot and after each change |
+ * | `?autotierWarmupMs=MS` | wall-clock cap on that discard window |
  * | `?autotierWindow=N` | samples in the decision window |
+ * | `?autotierWindowMs=MS` | wall-clock size at which a short window may decide anyway |
  * | `?autotierCooldown=MS` | minimum ms between decisions |
  * | `?autotierDown=MS` | median frame period above which the tier steps down |
  */
 
 /** Every threshold, in one table, so a critic can read the policy without reading the code. */
 export const POLICY = {
+  // -- the steady-state decision shape ------------------------------------------------------------
   /**
-   * Frames thrown away after boot and after every applied change.
+   * Frames thrown away after every applied change.
    *
-   * Not just boot hitches: for the first second or two the *scene is still assembling* — geometry
-   * uploading, programs compiling, the scatter filling in — so early frames are cheap in a way that
-   * describes nothing. P30 watched a decision taken 1 s in measure 37.8 ms on a machine that
-   * settled at 93 ms. 90 frames is 1.5 s at 60 Hz and 9 s on a 10 fps machine, which is the right
-   * way round: the slower the machine, the longer it gets to finish building before being judged.
+   * Not just hitches: a tier change costs a shader recompile and a render-target reallocation, and
+   * those frames describe the change, not the machine.
    */
   warmupFrames: 90,
+  /**
+   * …and the wall-clock cap on that discard window.
+   *
+   * The frame count alone is the wrong instrument on exactly the hardware this module exists for.
+   * Recompiles and reallocations cost roughly a fixed amount of *time*, so on a 2 fps machine
+   * "90 frames" is 45 s of penance for a 3 s event. Whichever bound is reached first ends the
+   * warm-up: frames bind above ~30 fps, time binds below it.
+   */
+  warmupMs: 3000,
   /** Samples the decision window holds. 120 frames is 2 s at 60 Hz, 4 s at 30 Hz. */
   windowFrames: 120,
+  /**
+   * …and the wall-clock size at which a *short* window is allowed to decide anyway (down only).
+   * 120 frames is 6 s at 20 fps and 60 s at 2 fps; below ~20 fps the frame count stops being
+   * evidence and starts being a delay. See `minFrames` for the floor that keeps it honest.
+   */
+  windowMs: 5000,
+  /** Never decide on fewer than this many scored frames, however long they took. */
+  minFrames: 24,
+
+  // -- the first decision, which is a different problem ------------------------------------------
+  /**
+   * The first window is smaller than the rest, because it is the only one whose latency a student
+   * experiences as "this game is broken" rather than as "the picture changed once".
+   *
+   * With the shipped steady-state numbers the first down-step could not fire until 210 scored
+   * frames had elapsed — 21 s at 10 fps, 42 s at 5 fps, 107 s at 2 fps. The slower the machine, the
+   * longer it sat at the tier it could not afford, which is the exact failure this module exists to
+   * prevent. These four numbers cut that to ~4 s at 10 fps, ~4 s at 5 fps and ~9 s at 2 fps.
+   */
+  firstWarmupFrames: 30,
+  firstWarmupMs: 1500,
+  firstWindowFrames: 45,
+  firstWindowMs: 2500,
+  firstMinFrames: 12,
+
+  // -- the thresholds themselves -----------------------------------------------------------------
   /** Median frame period above which the tier steps down. 21 ms ≈ 47.6 fps sustained. */
   downMs: 21,
   /** Median frame period below which headroom is unambiguous even without a cadence estimate. */
@@ -110,6 +176,24 @@ export const POLICY = {
   maxChanges: 3,
   /** Of those, how many may be upward. */
   maxUpSteps: 1,
+
+  // -- how far a single down-step may travel -----------------------------------------------------
+  /**
+   * How far one down-step may travel: `ceil(log2(median / downMs))`, capped here.
+   *
+   * A rung is worth *roughly* a factor of two. high → medium is 2.25 → 1.5625 drawing-buffer pixels
+   * per screen pixel, 3x3072² → 2x2048² shadow texels and 5 → 3 post passes; medium → low is
+   * 1.5625 → 1, 2x2048² → 1x1024², 3 → 1. Call it 1.6-2x each, which is why the log is rounded
+   * *up*: under-stepping costs another whole window to discover, and the round-1 policy that
+   * stepped exactly one rung per decision could not carry `ultra` to `potato` inside `maxChanges`
+   * at all. At a 100 ms median the policy already knows `medium` will not save this machine; making
+   * it re-learn that over another 120 frames is the delay, not the caution.
+   *
+   * Leaps are down-only and, like every other change, cost exactly one unit of `maxChanges`.
+   */
+  maxLeap: 3,
+
+  // -- what counts as a frame at all -------------------------------------------------------------
   /**
    * Periods outside this range are not frames: a stall/tab switch/GC above, and below —
    *
@@ -142,10 +226,17 @@ const clampIndex = (i) => Math.max(0, Math.min(TIER_ORDER.length - 1, i));
 export class TierPolicy {
   constructor(startTier, opts = {}) {
     this.p = { ...POLICY, ...opts };
+    // Keep the first window inside the steady-state one however the knobs were overridden, so a
+    // review run that shrinks `windowFrames` can never ask for a first window it will never fill.
+    this.p.windowFrames = Math.max(1, this.p.windowFrames);
+    this.p.firstWindowFrames = Math.min(this.p.firstWindowFrames, this.p.windowFrames);
+    this.p.minFrames = Math.min(this.p.minFrames, this.p.windowFrames);
+    this.p.firstMinFrames = Math.min(this.p.firstMinFrames, this.p.firstWindowFrames);
+    this.p.firstWarmupFrames = Math.min(this.p.firstWarmupFrames, this.p.warmupFrames);
+
     this.tier = TIERS[startTier] ? startTier : "high";
     this.ceiling = TIERS[this.p.ceiling] ? this.p.ceiling : this.tier;
     this.samples = [];
-    this.discard = this.p.warmupFrames;
     this.clock = 0;
     this.lastChangeAt = 0;
     this.changes = [];
@@ -155,6 +246,30 @@ export class TierPolicy {
     this.accepted = 0;
     this.overrun = 0;
     this.lastStats = null;
+
+    const s = this.shape(true);
+    this.discard = s.warmFrames;
+    this._warmMs = s.warmMs;
+    this._warmStart = 0;
+  }
+
+  /** The window shape for the next decision. The first one is deliberately not the shipped one. */
+  shape(first = this.changes.length === 0) {
+    return first
+      ? {
+          warmFrames: this.p.firstWarmupFrames,
+          warmMs: this.p.firstWarmupMs,
+          frames: this.p.firstWindowFrames,
+          ms: this.p.firstWindowMs,
+          min: this.p.firstMinFrames,
+        }
+      : {
+          warmFrames: this.p.warmupFrames,
+          warmMs: this.p.warmupMs,
+          frames: this.p.windowFrames,
+          ms: this.p.windowMs,
+          min: this.p.minFrames,
+        };
   }
 
   /**
@@ -183,6 +298,8 @@ export class TierPolicy {
     }
     if (this.discard > 0) {
       this.discard--;
+      // …or the wall clock ends it first. See POLICY.warmupMs.
+      if (this.clock - this._warmStart >= this._warmMs) this.discard = 0;
       return null;
     }
     this.accepted++;
@@ -221,39 +338,68 @@ export class TierPolicy {
     return cadence <= this.p.cadenceMaxMs && st.median <= cadence * this.p.cadenceTolerance;
   }
 
+  /** How many rungs a single down-step may travel. See POLICY.maxLeap for the model. */
+  rungsFor(median) {
+    const over = median / this.p.downMs;
+    return Math.max(1, Math.min(this.p.maxLeap, Math.ceil(Math.log2(over))));
+  }
+
   decide() {
     const st = this.stats();
     this.lastStats = st;
-    if (!st || st.n < this.p.windowFrames) return null;
-    if (this.clock - this.lastChangeAt < this.p.cooldownMs) return null;
+    if (!st) return null;
     if (this.changes.length >= this.p.maxChanges) return null;
+
+    const w = this.shape();
+    const full = st.n >= w.frames;
+    // A window short on frames but long in wall-clock is a machine so slow that waiting for the
+    // frame count *is* the harm. It may step down; it may never step up (below).
+    const early = !full && st.n >= w.min && st.spanMs >= w.ms;
+    if (!full && !early) return null;
+    if (this.clock - this.lastChangeAt < this.p.cooldownMs) return null;
 
     const i = TIER_ORDER.indexOf(this.tier);
     const ceil = TIER_ORDER.indexOf(this.ceiling);
 
     if (st.median > this.p.downMs && i > 0) {
-      return this._change(TIER_ORDER[clampIndex(i - 1)], "down", st,
-        `median frame ${st.median.toFixed(1)} ms (${st.fps.toFixed(1)} fps) over ${st.n} frames is above the ${this.p.downMs} ms floor`);
+      const rungs = this.rungsFor(st.median);
+      return this._change(
+        TIER_ORDER[clampIndex(i - rungs)],
+        "down",
+        st,
+        `median frame ${st.median.toFixed(1)} ms (${st.fps.toFixed(1)} fps) over ${st.n} frames / ${(st.spanMs / 1000).toFixed(1)} s is ${(st.median / this.p.downMs).toFixed(1)}x the ${this.p.downMs} ms floor — ${rungs} rung(s)`,
+        rungs
+      );
     }
 
+    // Promotion always waits for the full steady-state window. Relief is urgent and promotion is
+    // not, and the p99 jitter gate is only meaningful over a long window: in 45 frames a 1-in-40
+    // stutter is a single sample and p99 cannot see it, which buys a step up nothing earned.
     if (
+      st.n >= this.p.windowFrames &&
       i < ceil &&
       this.downSteps === 0 &&
       this.upSteps < this.p.maxUpSteps &&
       this.headroom(st)
     ) {
-      return this._change(TIER_ORDER[clampIndex(i + 1)], "up", st,
-        `median ${st.median.toFixed(1)} ms against a ${st.p10.toFixed(1)} ms cadence with p99 ${st.p99.toFixed(1)} ms — headroom for one step`);
+      return this._change(
+        TIER_ORDER[clampIndex(i + 1)],
+        "up",
+        st,
+        `median ${st.median.toFixed(1)} ms against a ${st.p10.toFixed(1)} ms cadence with p99 ${st.p99.toFixed(1)} ms — headroom for one step`,
+        1
+      );
     }
     return null;
   }
 
-  _change(to, direction, st, why) {
+  _change(to, direction, st, why, rungs = 1) {
     const rec = {
       at: Number(this.clock.toFixed(1)),
       from: this.tier,
       to,
       direction,
+      rungs,
       why,
       fps: Number(st.fps.toFixed(1)),
       medianMs: Number(st.median.toFixed(2)),
@@ -261,6 +407,7 @@ export class TierPolicy {
       p95Ms: Number(st.p95.toFixed(2)),
       p99Ms: Number(st.p99.toFixed(2)),
       frames: st.n,
+      spanMs: Number(st.spanMs.toFixed(1)),
     };
     this.tier = to;
     this.changes.push(rec);
@@ -269,7 +416,10 @@ export class TierPolicy {
     // Flush: the change itself costs a shader recompile and a render-target reallocation, and those
     // frames must never become evidence for the next decision.
     this.samples.length = 0;
-    this.discard = this.p.warmupFrames;
+    const s = this.shape(false);
+    this.discard = s.warmFrames;
+    this._warmMs = s.warmMs;
+    this._warmStart = this.clock;
     this.lastChangeAt = this.clock;
     return rec;
   }
@@ -285,7 +435,13 @@ export class TierPolicy {
 
 // --------------------------------------------------------------------------- the first-frame guess
 
-/** Renderer-string families that are known-weak, with the reason each is capped where it is. */
+/** The tier a machine starts at when nothing legible says it can afford more. */
+export const NEUTRAL_START = "medium";
+
+/**
+ * Renderer-string families that are known-weak, with the reason each is capped where it is.
+ * Ordered narrow → broad; the first match wins.
+ */
 const GPU_RULES = [
   // Raspberry Pi / VideoCore-class parts: no meaningful fill rate at all.
   { re: /videocore|\bvc4\b|\bv3d\b/, tier: "potato", why: "VideoCore-class GPU" },
@@ -303,6 +459,48 @@ const GPU_RULES = [
   // UHD 600/605 (Gemini Lake) is *the* school-Chromebook GPU. Capped at medium: it can hold 60 Hz
   // with one shadow cascade and a bloom, and cannot with three cascades at a 1.5x pixel ratio.
   { re: /intel.*\b(hd|uhd) graphics\b/, tier: "medium", why: "Intel HD/UHD integrated graphics" },
+  // Iris / Xe / Arc integrated: the *current* Chromebook Plus and thin-laptop part. Far better than
+  // UHD 600 and still integrated — it shares system memory bandwidth with the CPU, which is what
+  // three shadow cascades at a 1.5x pixel ratio actually run out of. It reports MAX_TEXTURE_SIZE
+  // 16384 and ships with 8 cores and 8 GB, so *every* capability cap below misses it: without this
+  // rule an Iris Xe Chromebook Plus booted straight into `high`.
+  {
+    re: /(intel|mesa).*\b(iris|xe graphics|arc)\b/,
+    tier: "medium",
+    why: "Intel Iris/Xe/Arc integrated graphics",
+  },
+  // AMD APU integrated. Codenames first: Mesa reports them explicitly ("AMD Radeon Graphics
+  // (renoir, LLVM …)"), and the marketing string on those parts is the maximally unhelpful
+  // "AMD Radeon Graphics". Only the 4-core / 4 GB caps used to rescue these, and an 8 GB / 8-core
+  // Ryzen Chromebook was rescued by nothing at all.
+  {
+    re: /raven|renoir|cezanne|picasso|barcelo|mendocino|lucienne|rembrandt|stoney|carrizo/,
+    tier: "medium",
+    why: "AMD APU integrated graphics",
+  },
+  // …and the marketing strings: "AMD Radeon(TM) Graphics", "AMD Radeon(TM) Vega 8 Graphics".
+  // Discrete parts are named ("Radeon RX 7600", "Radeon Pro W6600") and do not match.
+  { re: /radeon\s*(\(tm\)\s*)?(graphics|vega)\b/, tier: "medium", why: "AMD integrated Radeon graphics" },
+];
+
+/**
+ * Positive evidence that a machine can afford the configured tier. Nothing here is required; the
+ * absence of all of it simply means the machine starts at `NEUTRAL_START` and earns the rest.
+ *
+ * **Only the renderer string may promote.** The obvious alternative — "MAX_TEXTURE_SIZE ≥ 16384
+ * with ≥ 8 cores" — sounds like a capability check and is really a calendar check: every Iris Xe,
+ * every Ryzen APU and every Mali-G610 shipped since about 2018 reports exactly those numbers. I
+ * tried it and it put a privacy-masked Firefox, a legacy "WebKit WebGL" mask and every browser
+ * without `deviceMemory` straight back into `high`, which is the bug this round exists to kill.
+ * Capability numbers cap; they never promote. A machine behind a mask starts at `NEUTRAL_START` and
+ * buys `high` back in about three seconds through the up-path, which is the cheap side of the
+ * asymmetry.
+ */
+const STRENGTH_RULES = [
+  // Brand words, not the vendor word: "NVIDIA" also appears on Tegra, which is not this machine.
+  { re: /\b(geforce|rtx|gtx|quadro|titan|tesla)\b/, why: "discrete NVIDIA GPU" },
+  { re: /radeon\s*(rx|pro)\b|\bfirepro\b|\bnavi\b|\bvega\s*(56|64)\b/, why: "discrete AMD Radeon GPU" },
+  { re: /\bapple\s*m\d/, why: "Apple-silicon GPU" },
 ];
 
 /** True for SwiftShader / llvmpipe / Apple's software fallback. See the class docs. */
@@ -346,7 +544,14 @@ export function inspectDevice(renderer) {
 }
 
 /**
- * Pick the tier to *start* at. Never above `ceiling`; each rule states what it keyed on and why.
+ * Pick the tier to *start* at.
+ *
+ * The shape of the answer, and the thing that changed in round 2: the baseline is
+ * `NEUTRAL_START`, and only *positive evidence of strength* raises it to the configured `ceiling`.
+ * Weak-hardware rules then cap it further. The old shape — start at the ceiling, lower on evidence
+ * of weakness — meant every machine whose signals were illegible booted into 3072² x3 shadow
+ * cascades at a 1.5x pixel ratio with a 5-pass post stack, and "illegible" describes a large and
+ * *growing* share of real browsers.
  *
  * @param {object} env  from `inspectDevice`
  * @param {string} ceiling  the configured tier — the heuristic may lower, never raise
@@ -354,6 +559,7 @@ export function inspectDevice(renderer) {
 export function startingTier(env, ceiling = "high") {
   const notes = [];
   const caps = [];
+  const strengths = [];
   const cap = (tier, why) => {
     if (!TIERS[tier]) return;
     caps.push(tier);
@@ -366,14 +572,16 @@ export function startingTier(env, ceiling = "high") {
       standDown: true,
       notes: [`software rasteriser "${env.renderer}" — a measurement environment, not a device class`],
       caps: [],
+      strengths: [],
     };
   }
 
+  const name = String(env.renderer).toLowerCase();
+
   for (const rule of GPU_RULES) {
-    if (rule.re.test(String(env.renderer).toLowerCase())) {
-      cap(rule.tier, rule.why);
-      break; // first (most specific) match wins; the list is ordered narrow → broad
-    }
+    if (!rule.re.test(name)) continue;
+    cap(rule.tier, rule.why);
+    break; // first (most specific) match wins; the list is ordered narrow → broad
   }
 
   // A GL stack without WebGL2 in 2026 is an old driver on old silicon, and it also costs the post
@@ -396,11 +604,25 @@ export function startingTier(env, ceiling = "high") {
   const pixels = (env.viewport[0] || 0) * (env.viewport[1] || 0) * dpr * dpr;
   if (pixels > 5e6) cap("medium", `${(pixels / 1e6).toFixed(1)} MP drawing buffer`);
 
+  // ---- and now the other direction: is there any positive reason to believe in this machine?
+  for (const rule of STRENGTH_RULES) {
+    if (rule.re.test(name)) {
+      strengths.push(rule.why);
+      break;
+    }
+  }
   const ceilIdx = TIER_ORDER.indexOf(TIERS[ceiling] ? ceiling : "high");
-  const idx = caps.reduce((lo, t) => Math.min(lo, TIER_ORDER.indexOf(t)), ceilIdx);
+  const neutralIdx = Math.min(ceilIdx, TIER_ORDER.indexOf(NEUTRAL_START));
+  const baseIdx = strengths.length ? ceilIdx : neutralIdx;
+  notes.unshift(
+    strengths.length
+      ? `evidence of strength (${strengths.join("; ")}) → start at the configured ${TIER_ORDER[ceilIdx]}`
+      : `no evidence of strength → start at ${TIER_ORDER[baseIdx]} and let measurement earn the rest`
+  );
+
+  const idx = caps.reduce((lo, t) => Math.min(lo, TIER_ORDER.indexOf(t)), baseIdx);
   const tier = TIER_ORDER[clampIndex(idx)];
-  if (!caps.length) notes.push("no weak-hardware signal — starting at the configured tier");
-  return { tier, standDown: false, notes, caps };
+  return { tier, standDown: false, notes, caps, strengths };
 }
 
 // ------------------------------------------------------------------------------------ the system
@@ -441,15 +663,36 @@ export class AutoTier {
         : "measuring";
     }
 
+    /**
+     * The ceiling measurement may promote to.
+     *
+     * When the heuristic capped the tier on hardware evidence, *that cap is the ceiling* — not the
+     * configured tier. Holding vsync at `medium` is not evidence that `high` is affordable, and
+     * treating it as such is how a correctly-capped Chromebook goes medium → high → medium → low
+     * and ends two tiers below the heuristic's own answer with its whole change budget spent.
+     * When the heuristic found nothing to cap, the configured tier is the ceiling as before, which
+     * is what lets a machine with illegible hardware signals earn its way back up from
+     * `NEUTRAL_START`.
+     */
+    this.ceilingSource = this.heuristic.caps.length ? "heuristic cap" : "configured tier";
+    this.ceiling = this.heuristic.caps.length ? this.heuristic.tier : this.bootTier;
+
     this.policy = new TierPolicy(this.enabled ? this.heuristic.tier : this.bootTier, {
-      ceiling: this.bootTier,
+      ceiling: this.enabled ? this.ceiling : this.bootTier,
       warmupFrames: num("autotierWarmup", POLICY.warmupFrames),
+      firstWarmupFrames: num("autotierWarmup", POLICY.firstWarmupFrames),
+      warmupMs: num("autotierWarmupMs", POLICY.warmupMs),
+      firstWarmupMs: num("autotierWarmupMs", POLICY.firstWarmupMs),
       windowFrames: num("autotierWindow", POLICY.windowFrames),
+      firstWindowFrames: num("autotierWindow", POLICY.firstWindowFrames),
+      windowMs: num("autotierWindowMs", POLICY.windowMs),
+      firstWindowMs: num("autotierWindowMs", POLICY.firstWindowMs),
       cooldownMs: num("autotierCooldown", POLICY.cooldownMs),
       downMs: num("autotierDown", POLICY.downMs),
     });
 
     this.history = [];
+    this.standDown = null;
     this.startTier = this.bootTier;
     this._last = 0;
     this._frames = 0;
@@ -473,6 +716,8 @@ export class AutoTier {
         direction: "heuristic",
         why: this.heuristic.notes.join("; "),
         applied: true,
+        // No post system exists at boot order 02; the signal above is the whole contract here.
+        post: "signal",
       });
     }
 
@@ -482,8 +727,21 @@ export class AutoTier {
   // ------------------------------------------------------------------------------ measurement
 
   frame() {
-    if (!this.enabled) return;
+    // Counted even when the module is standing down, so the probe can prove that thousands of real
+    // frames went by under an explicit choice and nothing moved.
     this._frames++;
+    if (!this.enabled) return;
+
+    // Re-read the switch every frame, not once at boot. `Config.set("tier", …)` flips `autoTier`
+    // to false, and a settings screen opened ten minutes into a session is exactly as binding as
+    // `?tier=` on the URL. Captured at construction, this check was true only of the boot instant:
+    // the player picked `low`, and 2000 frames later auto-tiering had walked the picture down to
+    // `potato` underneath them.
+    if (config.get("autoTier") === false) {
+      this._standDown();
+      return;
+    }
+
     // The lighting rig builds its cascades at boot order 14, so the baseline can only be read once
     // the first frames are running. Bounded on both axes: every 15th frame, and abandoned after
     // 300. A machine that starts at `potato` has `castShadow` false on every light and would
@@ -501,6 +759,35 @@ export class AutoTier {
     this._last = now;
   }
 
+  /**
+   * Hand control back to the player, for good.
+   *
+   * Recorded separately from `history` on purpose: `history` is the list of changes *auto-tiering
+   * decided*, and standing down is the opposite of a decision. It still applies, because
+   * `config.tier` is already the player's choice while the renderer is still wearing whatever
+   * auto-tiering last chose — and a setting that does not change the picture is not a setting.
+   */
+  _standDown() {
+    this.enabled = false;
+    this.reason =
+      "explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down";
+    this.standDown = {
+      reason: this.reason,
+      atFrame: this._frames,
+      atMs: Number(this.policy.clock.toFixed(1)),
+      playerTier: config.tier.id,
+      autoTierWas: this.policy.tier,
+      autoChangesMade: this.history.length,
+      applied: false,
+    };
+    if (this.dry) return;
+    this.kernel.resize();
+    this._applyShadows();
+    this._applyPost(this.reason, "player");
+    this.standDown.applied = true;
+    this.standDown.renderer = this.rendererState();
+  }
+
   _onDecision(change) {
     const before = this.rendererState();
     let applied = false;
@@ -509,7 +796,7 @@ export class AutoTier {
       if (applied) {
         this.kernel.resize(); // pixel ratio + every render target that follows the drawing buffer
         this._applyShadows();
-        this._applyPost(change.why);
+        this._applyPost(change.why, change.direction);
       }
     }
     this.history.push({
@@ -520,7 +807,6 @@ export class AutoTier {
       after: applied ? this.rendererState() : null,
       post: this._postRoute,
     });
-    if (applied) this._emit(change.direction, change.why);
   }
 
   // ------------------------------------------------------------------------------ applying it
@@ -596,9 +882,9 @@ export class AutoTier {
    * documents as its runtime control surface (`setEnabled` / `setEffect`), reached through the
    * kernel's system registry rather than an import.
    */
-  _applyPost(why) {
+  _applyPost(why, direction = "tier") {
     const listening = signals.names().includes("quality:tier");
-    this._emit("tier", why);
+    this._emit(direction, why);
     if (listening) {
       this._postRoute = "signal";
       return;
@@ -670,14 +956,20 @@ export class AutoTier {
       dry: !!this.dry,
       forced: !!this.forced,
       reason: this.reason,
+      standDown: this.standDown,
+      frames: this._frames,
       bootTier: this.bootTier,
       startTier: this.startTier,
       tier: config.tier.id,
       policyTier: this.policy.tier,
+      ceiling: this.policy.ceiling,
+      ceilingSource: this.ceilingSource,
       autoTierSetting: config.get("autoTier"),
       heuristic: {
         tier: this.heuristic.tier,
         standDown: this.heuristic.standDown,
+        caps: this.heuristic.caps,
+        strengths: this.heuristic.strengths,
         notes: this.heuristic.notes,
         env: this.env,
       },
@@ -690,6 +982,7 @@ export class AutoTier {
             p99Ms: Number(st.p99.toFixed(2)),
             maxMs: Number(st.max.toFixed(2)),
             frames: st.n,
+            spanMs: Number(st.spanMs.toFixed(1)),
           }
         : null,
       samples: {
@@ -701,10 +994,19 @@ export class AutoTier {
         downMs: this.policy.p.downMs,
         upMs: this.policy.p.upMs,
         windowFrames: this.policy.p.windowFrames,
+        windowMs: this.policy.p.windowMs,
+        minFrames: this.policy.p.minFrames,
+        firstWindowFrames: this.policy.p.firstWindowFrames,
+        firstWindowMs: this.policy.p.firstWindowMs,
+        firstMinFrames: this.policy.p.firstMinFrames,
         warmupFrames: this.policy.p.warmupFrames,
+        warmupMs: this.policy.p.warmupMs,
+        firstWarmupFrames: this.policy.p.firstWarmupFrames,
+        firstWarmupMs: this.policy.p.firstWarmupMs,
         cooldownMs: this.policy.p.cooldownMs,
         maxChanges: this.policy.p.maxChanges,
         maxUpSteps: this.policy.p.maxUpSteps,
+        maxLeap: this.policy.p.maxLeap,
         sampleMinMs: this.policy.p.sampleMinMs,
         sampleMaxMs: this.policy.p.sampleMaxMs,
       },

@@ -102,8 +102,9 @@ learning system takes the surface over rather than fighting it.
 **Quality** (P30) — `quality:tier {tier, direction, why, source, postStack, shadows, shadowResolution,
 maxPixelRatio, drawDistance, grassDensity, particleBudget}`
 
-Emitted by `core/AutoTier.js` whenever the measured tier changes, and once at boot if the
-first-frame hardware heuristic lowered it. `direction` is `"heuristic" | "down" | "up" | "tier"`.
+Emitted by `core/AutoTier.js` whenever the measured tier changes, once at boot if the first-frame
+hardware heuristic lowered it, and once more if the player makes an explicit choice mid-session and
+auto-tiering hands the picture back. `direction` is `"heuristic" | "down" | "up" | "player"`.
 The payload carries the whole tier row so a listener never has to import `Config`. Any system whose
 cost scales with the tier should subscribe rather than sample `config.tier` once at setup.
 

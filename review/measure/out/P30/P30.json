@@ -1,8 +1,21 @@
 {
-  "when": "2026-08-10T16:45:59.374Z",
+  "when": "2026-08-10T17:08:55.103Z",
+  "ran": [
+    "A",
+    "B",
+    "D"
+  ],
   "policy": {
     "warmupFrames": 90,
+    "warmupMs": 3000,
     "windowFrames": 120,
+    "windowMs": 5000,
+    "minFrames": 24,
+    "firstWarmupFrames": 30,
+    "firstWarmupMs": 1500,
+    "firstWindowFrames": 45,
+    "firstWindowMs": 2500,
+    "firstMinFrames": 12,
     "downMs": 21,
     "upMs": 13.5,
     "cadenceTolerance": 1.06,
@@ -11,22 +24,191 @@
     "cooldownMs": 3000,
     "maxChanges": 3,
     "maxUpSteps": 1,
+    "maxLeap": 3,
     "sampleMinMs": 2,
     "sampleMaxMs": 250,
     "stallRun": 5
   },
   "results": [
     {
+      "id": "A1",
+      "title": "sustained 25 fps steps the tier down",
+      "pass": true,
+      "detail": "high → potato in 3 changes: high→medium @40ms/25fps, medium→low @40ms/25fps, low→potato @40ms/25fps"
+    },
+    {
+      "id": "A2",
+      "title": "no change anywhere in the dead band (54 fps, 20 000 frames)",
+      "pass": true,
+      "detail": "median 19.00 ms, p10 18.00 ms, changes 0"
+    },
+    {
+      "id": "A3",
+      "title": "a 1-in-40 stutter buys no step up (the p99 jitter gate)",
+      "pass": true,
+      "detail": "median 16.60 ms, p95 16.60 ms, p99 44.00 ms, max 44.00 ms → changes 0"
+    },
+    {
+      "id": "A4",
+      "title": "clean headroom buys exactly one step up, forever",
+      "pass": true,
+      "detail": "40 000 frames at 8 ms → 1 change(s): low→medium; tier medium"
+    },
+    {
+      "id": "A5",
+      "title": "vsync-locked 60 Hz reads as headroom through the cadence path",
+      "pass": true,
+      "detail": "p10 16.60 ms, median 16.75 ms, p99 16.90 ms → 1 change(s)"
+    },
+    {
+      "id": "A6",
+      "title": "no step up after a step down, for the rest of the session",
+      "pass": true,
+      "detail": "3 down step(s) then 40 000 frames at 5 ms (200 fps) → 0 further change(s)"
+    },
+    {
+      "id": "A7",
+      "title": "load alternating across the threshold produces no oscillation",
+      "pass": true,
+      "detail": "3 change(s), all downward (down,down,down); tier ended potato"
+    },
+    {
+      "id": "A8",
+      "title": "at most 3 tier changes per session",
+      "pass": true,
+      "detail": "100 000 frames at 40 ms (1.9x the floor — one rung each) → 3 change(s), ultra → low; budget {\"changesLeft\":0,\"upStepsLeft\":0,\"ceiling\":\"ultra\"}"
+    },
+    {
+      "id": "A9",
+      "title": "consecutive decisions are ≥ 3000 ms of measured time apart",
+      "pass": true,
+      "detail": "gaps: 7800 ms, 7800 ms"
+    },
+    {
+      "id": "A10",
+      "title": "multi-second stalls are rejected as samples but still advance the clock",
+      "pass": true,
+      "detail": "67 rejected, 19932 accepted, clock 599 s, changes 0"
+    },
+    {
+      "id": "A11",
+      "title": "never promotes above the ceiling it was given",
+      "pass": true,
+      "detail": "40 000 frames at 4 ms (250 fps) at the ceiling → 0 change(s)"
+    },
+    {
+      "id": "A12",
+      "title": "potato is the floor — no change is attempted below it",
+      "pass": true,
+      "detail": "medium → potato in 1 change(s) of 3 rung(s), then 100 000 further frames at 200 ms produced none"
+    },
+    {
+      "id": "A13",
+      "title": "a sustained 2 fps machine is tiered down; an isolated 4 s stall (A10) still is not",
+      "pass": true,
+      "detail": "4 000 frames at 500 ms → 1 change(s), high → potato; 4 rejected before the 5-frame run tripped"
+    },
+    {
+      "id": "A14",
+      "title": "a catastrophically over-budget median leaps more than one rung, in one change",
+      "pass": true,
+      "detail": "30 ms (1.4x floor) → 1 rung(s) ultra→high; 45 ms (2.1x floor) → 2 rung(s) ultra→medium; 100 ms (4.8x floor) → 3 rung(s) ultra→low; 250 ms (11.9x floor) → 3 rung(s) ultra→low"
+    },
+    {
+      "id": "A15",
+      "title": "first relief inside 10 s at 10, 5 and 2 fps (round 1: 21 s / 42 s / 107 s)",
+      "pass": true,
+      "detail": "10 fps → first step at 4.0 s, potato at 4.0 s in 1 change(s); 5 fps → first step at 4.2 s, potato at 4.2 s in 1 change(s); 2 fps → first step at 8.5 s, potato at 8.5 s in 1 change(s)"
+    },
+    {
+      "id": "A16",
+      "title": "a display-locked machine is promoted medium → high inside 4 s",
+      "pass": true,
+      "detail": "60 Hz → medium→high at 3.0 s (1 change total); 144 Hz → medium→high at 3.0 s (1 change total)"
+    },
+    {
+      "id": "A17",
+      "title": "no up-step is ever taken on the short first window",
+      "pass": true,
+      "detail": "the one promotion was decided on 120 frames (steady window 120, first window 45)"
+    },
+    {
+      "id": "B1",
+      "title": "a Gemini-Lake school Chromebook does not start at high",
+      "pass": true,
+      "detail": "→ medium; keyed on: no evidence of strength → start at medium and let measurement earn the rest · Intel HD/UHD integrated graphics → ≤ medium · MAX_TEXTURE_SIZE 8192 → ≤ medium · 4 logical cores → ≤ medium · 4 GB device memory → ≤ medium"
+    },
+    {
+      "id": "B2",
+      "title": "an ARM Chromebook at 1080p starts at or below medium",
+      "pass": true,
+      "detail": "→ medium; keyed on: no evidence of strength → start at medium and let measurement earn the rest · Mali-class mobile GPU → ≤ medium · MAX_TEXTURE_SIZE 8192 → ≤ medium · 4 GB device memory → ≤ medium"
+    },
+    {
+      "id": "B3",
+      "title": "a discrete-GPU desktop starts at the configured tier and lets measurement decide",
+      "pass": true,
+      "detail": "→ high; evidence of strength (discrete NVIDIA GPU) → start at the configured high"
+    },
+    {
+      "id": "B4",
+      "title": "a 2 GB, no-WebGL2, 4096-texture machine starts at potato",
+      "pass": true,
+      "detail": "→ potato; keyed on: no evidence of strength → start at medium and let measurement earn the rest · pre-Haswell Intel integrated → ≤ low · no WebGL2 → ≤ low · MAX_TEXTURE_SIZE 4096 → ≤ low · 2 logical cores → ≤ low · 2 GB device memory → ≤ potato"
+    },
+    {
+      "id": "B5",
+      "title": "a software rasteriser stands the whole module down instead of being tiered",
+      "pass": true,
+      "detail": "→ standDown=true, tier high; software rasteriser \"ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device))\" — a measurement environment, not a device class"
+    },
+    {
+      "id": "B6",
+      "title": "the heuristic can only lower, never raise, the configured tier",
+      "pass": true,
+      "detail": "a RTX 4070 with ceiling \"low\" → low"
+    },
+    {
+      "id": "B7",
+      "title": "fill rate counts as evidence on its own — a 4K panel is capped",
+      "pass": true,
+      "detail": "→ medium; evidence of strength (discrete NVIDIA GPU) → start at the configured high · 18.7 MP drawing buffer → ≤ medium"
+    },
+    {
+      "id": "B8",
+      "title": "hardware with no legible signal starts at medium, not at the configured high",
+      "pass": true,
+      "detail": "legacy Chrome mask (\"no evidence of strength → start at medium and le…\") → medium; Firefox resistFingerprinting (\"no evidence of strength → start at medium and le…\") → medium; extension removed, no deviceMemory (\"no evidence of strength → start at medium and le…\") → medium"
+    },
+    {
+      "id": "B9",
+      "title": "Intel Iris/Xe/Arc integrated is named as integrated, not left to the capability caps",
+      "pass": true,
+      "detail": "Chromebook Plus (Xe, 16384 textures, 8 cores, 8 GB — every capability cap misses it) → medium; Intel Iris/Xe/Arc integrated graphics → ≤ medium"
+    },
+    {
+      "id": "B10",
+      "title": "an 8-core / 8 GB AMD APU Chromebook is capped by its GPU family, not by nothing",
+      "pass": true,
+      "detail": "Ryzen \"renoir\" APU → medium; AMD APU integrated graphics → ≤ medium"
+    },
+    {
+      "id": "B11",
+      "title": "a discrete Radeon is not caught by the integrated-Radeon rule",
+      "pass": true,
+      "detail": "Radeon RX 7600 → high; evidence of strength (discrete AMD Radeon GPU) → start at the configured high"
+    },
+    {
       "id": "C1",
       "title": "the game boots with auto-tiering mounted and no errors of its own",
       "pass": true,
-      "detail": "fatal=null, errors mine=0 foreign=0, HMR reloads survived=0, probe enabled=true, reason=\"measuring\", start tier high, GPU \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\""
+      "detail": "fatal=null, errors mine=0 foreign=0, HMR reloads survived=0, probe enabled=true, reason=\"measuring\", start tier high, ceiling high (configured tier), GPU \"WebKit WebGL | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)\""
     },
     {
       "id": "C2",
       "title": "real measured frame cost steps the tier down in the real game",
       "pass": true,
-      "detail": "high→medium at 113 ms median (8.8 fps) over 30 frames; medium→low at 112.8 ms median (8.9 fps) over 30 frames; low→potato at 125.9 ms median (7.9 fps) over 30 frames"
+      "detail": "high→potato (3 rung(s)) at 111.9 ms median (8.9 fps) over 30 frames"
     },
     {
       "id": "C3",
@@ -38,7 +220,7 @@
       "id": "C4",
       "title": "every change is monotone downward and inside the session budget",
       "pass": true,
-      "detail": "3 change(s): high→medium(down,post=bridge), medium→low(down,post=bridge:off), low→potato(down,post=bridge:off); budget left {\"changesLeft\":0,\"upStepsLeft\":0,\"ceiling\":\"high\"}; final tier potato; cap 3"
+      "detail": "1 change(s): high→potato(down,post=bridge:off); budget left {\"changesLeft\":2,\"upStepsLeft\":0,\"ceiling\":\"high\"}; final tier potato; cap 3"
     },
     {
       "id": "C5",
@@ -48,21 +230,39 @@
     },
     {
       "id": "C6",
-      "title": "nothing moves once the budget is spent (8 s of further frames)",
+      "title": "nothing moves once it has settled (8 s of further frames)",
       "pass": true,
-      "detail": "changes 3 → 3; own errors 0; final measured {\"fps\":15.4,\"medianMs\":65.1,\"p10Ms\":49,\"p95Ms\":67.7,\"p99Ms\":68.4,\"maxMs\":122.7,\"frames\":30}"
+      "detail": "changes 1 → 1; own errors 0; final measured {\"fps\":18.1,\"medianMs\":55.2,\"p10Ms\":53.9,\"p95Ms\":59.4,\"p99Ms\":66,\"maxMs\":111,\"frames\":30,\"spanMs\":1680.7}"
     },
     {
       "id": "C7",
       "title": "tiering actually bought frame time on a machine that could not hold the tier",
       "pass": true,
-      "detail": "median frame cost across the last step low → potato: 125.9 ms (7.9 fps) → 65.1 ms (15.4 fps), 48 % cheaper per frame"
+      "detail": "median frame cost across the last step high → potato: 111.9 ms (8.9 fps) → 55.2 ms (18.1 fps), 51 % cheaper per frame"
     },
     {
       "id": "C8",
-      "title": "?tier=low stands auto-tiering down completely",
+      "title": "?tier=low at boot stands auto-tiering down completely",
       "pass": true,
       "detail": "enabled=false, tier=low, autoTier=false, changes=0, reason=\"explicit: a tier was chosen (settings or ?tier=), autoTier stood down\""
+    },
+    {
+      "id": "C9",
+      "title": "a settings-screen choice mid-session stands auto-tiering down and reaches the renderer",
+      "pass": true,
+      "detail": "booted measuring (enabled=true, tier high, pixelRatio 1.5) → config.set(\"tier\",\"low\") → enabled=false after 3 frames, 222 real frames rendered in total, auto changes 0, tier \"low\", pixelRatio 1, shadow 512², reason \"explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down\""
+    },
+    {
+      "id": "D1",
+      "title": "measurement never promotes past the heuristic's hardware cap",
+      "pass": true,
+      "detail": "heuristic medium (caps [\"medium\",\"medium\"]) → policy ceiling \"medium\" from the heuristic cap; boot medium, after 5 000 vsync frames still medium, after 12 000 loaded frames low; changes [\"high→medium(heuristic)\",\"medium→low(down)\"]; budget {\"changesLeft\":2,\"upStepsLeft\":0,\"ceiling\":\"medium\"}. Round 1 on this exact stream: medium→high(up), high→medium, medium→low — 3 changes, budget spent, two tiers below the cap."
+    },
+    {
+      "id": "D2",
+      "title": "an explicit choice mid-session stands the module down and reaches the renderer",
+      "pass": true,
+      "detail": "enabled true → false at frame 41; auto changes 0 across 4040 frames; config.tier \"low\"; pixelRatio 1.5 → 1; reason \"explicit: a tier was chosen mid-session (settings screen or console), autoTier stood down\". Round 1 on this exact stream: 3 changes, high→medium→low→potato, ending at \"potato\" while the player had asked for \"low\"."
     }
   ]
 }

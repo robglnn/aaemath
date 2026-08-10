@@ -5,19 +5,22 @@ arc: 15-25 min, target 21; 10 consecutive sittings per learner
 
 C1  TEN CONSECUTIVE SITTINGS, WALL-CLOCK MINUTES  (seed 1)
 
-archetype        1    2    3    4    5    6    7    8    9   10   |  min   med   max  in-band  mid-item  mid-event
+archetype        1    2    3    4    5    6    7    8    9   10   |  min   med   max  in-band  mid-claim  carried
 ----------------------------------------------------------------------------------------------------
-sprinter      20.1 20.1 20.1 20.1 19.6 19.8 20.1 16.1 15.1 15.2   | 15.14 20.06 20.14   10/10      0          0
-quick         18.9 19.3 19.7 19.7 18.9 19.8 19.7 19.1 19.3 20.8   | 18.92 19.66 20.78   10/10      0          0
-steady        19.9 18.2 18.6 18.4 18.2 19.7 17.9 20.4 19.7 19.3   | 17.89 19.27 20.38   10/10      0          0
-deliberate    16.7 16.9 17.0 18.5 17.1 17.1 16.6 16.1 19.9 16.7   | 16.13 17.01 19.94   10/10      0          0
+sprinter      19.1 20.0 20.1 19.5 20.5 19.7 20.8 20.1 20.1 19.6   |  19.1  20.1 20.79   10/10      0          0
+quick         18.9 19.3 18.9 18.5 19.6 18.7 18.9 19.3 18.4 18.6   | 18.38 18.94 19.57   10/10      0          0
+steady        18.3 19.3 18.0 18.5 17.6 18.7 18.0 18.7 18.4 18.9   |  17.6 18.46 19.25   10/10      0          0
+deliberate    16.7 16.9 17.0 15.4 15.7 17.1 20.0 18.9 17.4 17.2   | 15.43 17.15 20.04   10/10      0          0
 slow          18.9 15.5 18.3 15.4 20.3 15.7 15.9 15.7 19.3 16.9   | 15.36 16.92 20.32   10/10      0          0
-erratic       19.1 18.3 19.2 18.1 17.6 18.7 19.7 17.9 17.9 19.1   | 17.64 18.68 19.69   10/10      0          0
+erratic       15.9 17.5 18.9 18.2 18.9 18.9 19.0 18.1 17.5 17.6   | 15.94 18.17 18.96   10/10      0          0
 
 C2  BASELINE — the shipped engine with no session layer (Scheduler.sessionMinutes = 25)
-    The box counts the DESIGN's seconds, which are the same for everybody.
+    The box counts the DESIGN's seconds, which are the same for everybody, so the wall clock
+    lands wherever the learner's own speed puts it. "events left open" is the modelled budget
+    expiring part-way through a certification check — the engine resumes it, but the cut is
+    made by a clock that has never met this learner.
 
-archetype        1    2    3    4    5    6    7    8    9   10   |  min   med   max  in-band  mid-event
+archetype        1    2    3    4    5    6    7    8    9   10   |  min   med   max  in-band  events left open
 ----------------------------------------------------------------------------------------------------
 sprinter       8.0  8.7  8.0 11.3  8.1  8.6  9.8  9.5  9.8 10.1   |  7.98  9.51 11.29   0/10      3
 quick         13.0 13.3 13.5 14.8 12.8 14.8 15.7 13.5 13.3 14.2   | 12.77 13.47 15.65   1/10      0
@@ -26,45 +29,142 @@ deliberate    28.8 30.8 36.4 36.6 29.0 29.1 35.1 29.6 28.6 36.6   | 28.58 30.84 
 slow          42.7 45.1 47.1 60.3 42.5 43.7 51.6 43.9 43.0 50.7   | 42.55 45.06 60.31   0/10      0
 erratic       18.9 17.8 19.5 20.3 16.6 17.1 23.3 21.3 14.3 19.0   | 14.29 18.96 23.31   9/10      1
 
-C3  DISTRIBUTION — 40 seeds x 10 sittings per archetype (400 sittings each)
+C3  DISTRIBUTION — 24 seeds x 10 sittings per archetype (240 sittings each)
 
-archetype     sittings   min    p10    med    p90    max   in 15-25   mid-item  mid-event  carried   items/sitting  rho
+archetype     sittings   min    p10    med    p90    max   in 15-25   mid-claim   carried   items/sitting  rho
 ----------------------------------------------------------------------------------------------------------------------
-sprinter         400     15  15.21  19.87  20.51  21.37    400/400          0          0        0             70  0.27
-quick            400  17.93  18.89  19.55  20.53  21.97    400/400          0          0        0             46  0.48
-steady           400  16.31  17.96  18.99  20.16  23.06    400/400          0          0        0             32  0.71
-deliberate       400  15.01  16.13   17.6  19.74   23.9    400/400          0          0        0             20  1.11
-slow             400  14.13  15.44  17.12  20.15  23.99    399/400          0         14       14             14   1.6
-erratic          400  15.69  17.96  19.09  21.15  24.96    400/400          0          2        2             34  0.57
+sprinter         240  18.32  19.38  19.78  20.32  21.29    240/240           0         0             72  0.27
+quick            240  17.68  18.44  19.08  19.89  22.26    240/240           0         0             46  0.47
+steady           240  16.24  17.35  18.24  19.62   21.8    240/240           0         0             31  0.71
+deliberate       240  15.01  15.67  17.01  18.92  21.68    240/240           0         0             19  1.09
+slow             240     15  15.44  16.98  20.06  23.99    240/240           0         5             14  1.59
+erratic          240  15.69  17.37  18.57  20.44  24.64    240/240           0         2             33  0.57
 
 C4  SAME TWENTY MINUTES, DIFFERENT AMOUNT OF WORK — items served per sitting, session arm
     (this is the requirement: a student who works fast gets MORE done, not cut off earlier)
 
 archetype     median items   median minutes   items/minute   baseline items   baseline minutes
 ----------------------------------------------------------------------------------------------------
-sprinter                74            20.06           3.69               35               9.51
-quick                   46            19.66           2.34               35              13.47
-steady                  33            19.27           1.71               36              20.64
-deliberate              21            17.01           1.23               35              30.84
+sprinter                74             20.1           3.68               35               9.51
+quick                   46            18.94           2.43               35              13.47
+steady                  31            18.46           1.68               36              20.64
+deliberate              20            17.15           1.17               35              30.84
 slow                    13            16.92           0.77               35              45.06
-erratic                 32            18.68           1.71               35              18.96
+erratic                 31            18.17           1.71               35              18.96
 
 C5  HOW A SITTING ENDS — every close reason, every last-beat outcome, session arm, C3 corpus
 
-close reason        plan-complete=342  arc-complete=119  no-closing-win=19
-last beat kind/end  acquire/complete=274  retention/complete=101  consolidate/complete=55  review/complete=48  retention/carried=1  acquire/closed-at-item=1
-closing win         certified=309  set=142  stood=27  held=1  stopped=1
+close reason        arc-complete=457  no-closing-win=23
+last beat kind/end  acquire/complete=275  retention/complete=94  consolidate/complete=60  review/complete=49  retention/carried=1  acquire/closed-at-item=1
+closing win         certified=317  set=133  stood=29  stopped=1
+
+C10 ABSENCE AND THE BREAK — 4 profiles x 6 archetypes x 24 seeds x 10 sittings
+    Round 1 of this script called noteAway() exactly zero times, so the break rule — the only
+    thing that makes this layer a Pomodoro rather than a timer — was never exercised. These are
+    the numbers it was missing. The band is on ATTENDED minutes, because away time is not
+    session time; the wall-clock span is printed beside it so the two are never confused.
+
+    attentive  nobody looks away — the control, and round 1's only arm
+    alt-tab    15% of items, 20-90s — under the break threshold
+    churn      8% of items, 2-9 min — a real classroom
+    break      3% of items, 5-15 min — always a break
+
+profile     archetype     sittings   min    med    max   in 15-25   mid-claim   attended  wall  away   sittings/page
+--------------------------------------------------------------------------------------------------------------------------
+attentive   sprinter          240  18.32  19.78  21.29     240/240           0      19.78 19.78     0              1
+attentive   quick             240  17.68  19.08  22.26     240/240           0      19.08 19.08     0              1
+attentive   steady            240  16.24  18.24   21.8     240/240           0      18.24 18.24     0              1
+attentive   deliberate        240  15.01  17.01  21.68     240/240           0      17.01 17.01     0              1
+attentive   slow              240     15  16.98  23.99     240/240           0      16.98 16.98     0              1
+attentive   erratic           240  15.69  18.57  24.64     240/240           0      18.57 18.57     0              1
+--------------------------------------------------------------------------------------------------------------------------
+attentive   ALL              1440     15  18.62  24.64   1440/1440   (100%)
+
+alt-tab     sprinter          240  18.24  19.56   20.7     240/240           0      19.56 29.26  9.67              1
+alt-tab     quick             240  16.91  19.01  21.41     240/240           0      19.01 25.33  6.35              1
+alt-tab     steady            240   15.9  17.94  22.29     240/240           0      17.94 22.09  4.06              1
+alt-tab     deliberate        240     15  16.66  22.48     240/240           0      16.66 19.55  2.62              1
+alt-tab     slow              240  15.02  17.12  22.01     240/240           0      17.12 19.22  1.84              1
+alt-tab     erratic           240  15.02  18.19  25.38     239/240           0      18.19  22.9  4.52              1
+--------------------------------------------------------------------------------------------------------------------------
+alt-tab     ALL              1440     15  18.34  25.38   1439/1440   (99.93%)
+
+churn       sprinter          240  15.04   18.7  20.71     240/240           0       18.7 48.44 31.08              6
+churn       quick             240     15  18.52  21.11     240/240           0      18.52 37.54 18.82              6
+churn       steady            240   15.1  17.77  21.66     240/240           0      17.77 29.94 11.97              5
+churn       deliberate        240  15.05  16.78  22.47     240/240           0      16.78 25.17  8.19              4
+churn       slow              240  15.02  17.19  22.44     240/240           0      17.19 22.55   4.9              3
+churn       erratic           240  15.05  18.01  24.86     240/240           0      18.01 31.65 13.86              5
+--------------------------------------------------------------------------------------------------------------------------
+churn       ALL              1440     15  17.78  24.86   1440/1440   (100%)
+
+break       sprinter          240  15.08  19.47  21.37     240/240           0      19.47  37.9 19.69              6
+break       quick             240  15.27  18.83  22.14     240/240           0      18.83  29.5 11.37              5
+break       steady            240  15.02  17.95   22.7     240/240           0      17.95 26.46  8.48              4
+break       deliberate        240  15.01  16.94  23.76     240/240           0      16.94 19.14     0              3
+break       slow              240  15.02   17.4  22.58     240/240           0       17.4  18.7     0              3
+break       erratic           240  15.18  18.51  23.96     240/240           0      18.51 27.37  8.89              3
+--------------------------------------------------------------------------------------------------------------------------
+break       ALL              1440  15.01  18.13  23.96   1440/1440   (100%)
+
+C10b CLOSE REASONS, PER PROFILE — 'break' is the sitting ending because the learner took one
+
+  attentive  arc-complete=1375  no-closing-win=65
+  alt-tab    arc-complete=1387  no-closing-win=53
+  churn      arc-complete=944  break=445  no-closing-win=51
+  break      arc-complete=1055  break=321  no-closing-win=64
+
+C10c THE CYCLE — work -> break -> work, per page load. A break must not be a terminus.
+     'break signals' is learn:session {phase:"break"}; 'resumed' is a sitting opened by
+     Session.resume() on the SAME object, which is the second work half of the cycle.
+
+profile      break closes   break signals   resumed sittings   sittings per page load: med / max
+--------------------------------------------------------------------------------------------------------
+attentive               0               0                  0                              1 / 1
+alt-tab                 0               0                  0                              1 / 1
+churn                 445             445                407                              1 / 6
+break                 321             321                287                              1 / 6
+
+C11 DOES THE FORECAST DESCRIBE WHAT THE ENGINE SERVES?
+    `candidates()` is a model of §4's own order: the due-time queue, then the frontier score
+    with the same five terms and the same two-open cap. Round 1 ordered it by a leverage table
+    of this layer's own invention that the engine had no way to hear, and — worse — ENDED over
+    half of all sittings on it. The table is gone and nothing ends a sitting on a forecast now.
+
+    Two horizons, and only one of them is a real test.
+      NEXT BEAT  — at every beat boundary the live plan names what should come next, and the
+                   engine is then asked. This is falsifiable and it is the number to read.
+      WHOLE SITTING — the multiset of every beat forecast at the door against every beat
+                   served. A sprinter's sitting is thirty beats and each acquisition block
+                   moves the frontier score of the node it ran on, so the identity of beat 24
+                   is not knowable at beat 1. Reported anyway, because deleting an
+                   unflattering number is how a claim rots — but it never decided anything.
+      SIZE       — planned minutes at the door against actual. The size IS what this layer
+                   decides, so this is the forecast that has to be good.
+
+archetype     next-beat hits   next-beat rate   whole-sitting match   planned min   actual min   size err
+--------------------------------------------------------------------------------------------------------------
+sprinter          1416/2442             0.58                  0.38            20        19.76       0.57
+quick              873/1481             0.59                  0.23          19.5        18.97       0.59
+steady             605/1016              0.6                  0.31         18.97        18.43       0.87
+deliberate          365/623             0.59                  0.36         17.42        17.08       1.34
+slow                242/419             0.58                  0.35          15.9        17.27       2.21
+erratic            630/1065             0.59                   0.3         19.07        18.56       0.98
+--------------------------------------------------------------------------------------------------------------
+ALL               4131/7046             0.59                  0.32                                  0.94
 
 C9  THE ARC MUST NOT COST LEARNING — Level 1 mastered % after 10 sittings, same learner, both arms
+    Read the HOURS column first. The baseline reaches more of Level 1 for a slow learner only by
+    spending seven and a half hours on ten sittings. Mastery per hour of attention is the number.
 
-archetype     session arm   baseline arm   session items   baseline items   certifications (session arm)
---------------------------------------------------------------------------------------------------------
-sprinter            96.875         34.375             698              342                             31
-quick               53.125         46.875             466              346                             17
-steady                37.5         40.625             313              349                             12
-deliberate          15.625           37.5             191              347                              5
-slow                  12.5         28.125             123              345                              4
-erratic               37.5         40.625             319              345                             12
+archetype   |  session arm: mastered%  hours  %/hour  items  certs  |  baseline: mastered%  hours  %/hour  items
+----------------------------------------------------------------------------------------------------------------
+sprinter    |                   93.75   3.33   28.18    738     31  |               34.375   1.53   22.45    342
+quick       |                  59.375   3.15   18.84    456     19  |               46.875   2.31   20.25    346
+steady      |                  34.375   3.07   11.19    300     11  |               40.625   3.49   11.64    349
+deliberate  |                  21.875   2.87    7.61    191      7  |                 37.5   5.34    7.02    347
+slow        |                    12.5   2.87    4.36    123      4  |               28.125   7.84    3.59    345
+erratic     |                  34.375   3.01   11.43    317     11  |               40.625   3.13   12.97    345
 
 C6  SAVE — absent, corrupt, wrong version, interrupted, and a denied store
 
@@ -83,30 +183,35 @@ C7  PACE CARRIES — a learner does not get re-measured from the design's second
 
 archetype     sitting 1 minutes   sitting 1 rho   sitting 2 rho   sitting 10 rho   true seconds/solo item
 --------------------------------------------------------------------------------------------------------
-sprinter                   20.1            0.24            0.23             0.24                       9
-quick                     18.92            0.42            0.41             0.51                      16
-steady                    19.88            0.66            0.67             0.71                      26
-deliberate                16.69            1.01            1.18             1.11                      44
+sprinter                   19.1            0.22            0.23             0.29                       9
+quick                     18.92            0.42            0.41             0.48                      16
+steady                    18.32            0.62            0.64             0.78                      26
+deliberate                16.69            1.01            1.18             1.08                      44
 slow                      18.93            1.64            1.49             1.77                      68
-erratic                   19.14            0.56            0.54             0.62                      24
+erratic                   15.94             0.6            0.67             0.57                      24
 
 C8  WHAT THE SITTING SAYS  (EN source for keys P20 has not been handed yet)
 
   open   "10 certainties hold from before."   5w 32c
   open   "16 claims are ready to be set."   7w 30c
-  close  "2 certainties set. They will not drift."   7w 39c
+  close  "1 certainties set. They will not drift."   7w 39c
   close  "Rung."   1w 5c
   close  "The light is going. The field rests."   7w 36c
 
-  11 lines; over 7 words: 0; over 44 chars: 0; second person: 0; exclamations: 0; banned vocabulary: 0
+  13 lines; over 7 words: 0; over 44 chars: 0; second person: 0; exclamations: 0; banned vocabulary: 0
 
 ====================================================================================================
-FAIL  C1/C3  every sitting lands in 15-25 minutes   (2399/2400 in band)
-PASS  C1/C3  nothing is STARTED that is not expected to finish inside 25   (0 of 2400 sittings served an item outside the ceiling estimate)
+PASS  C1/C3  every sitting lands in 15-25 minutes   (1440/1440 in band)
+PASS  C1/C3  nothing is STARTED that is not expected to finish inside 25   (0 of 1440 sittings served an item outside the ceiling estimate)
 PASS  C1/C3  the residual is a single long response, never the layer   (no overruns)
-PASS  C1/C3  no sitting ends mid-problem   (0 of 2400)
-FAIL  C1/C3  no sitting ends inside a certification event   (16 of 2400)
+PASS  C1/C3  no sitting ends mid-problem   (0 of 1440)
+PASS  C1/C3  a certification event is CARRIED across the boundary, never abandoned   (7 carried of 1440 sittings; 0 faults)
 PASS  C2     the baseline it replaces does NOT   (a control that never fails is measuring nothing)
+PASS  C10    the band holds when the learner LOOKS AWAY, every profile   (attentive 1440/1440; alt-tab 1439/1440; churn 1440/1440; break 1440/1440)
+PASS  C10    classroom churn (p=0.08, 2-9 min gaps) holds at >=99%   (1440/1440 = 100%)
+PASS  C10    no sitting ends mid-problem WITH absences, including mid-item ones   (0 of 5760 across all profiles)
+PASS  C10    a break ENDS a sitting — and only at or past the fifteen-minute floor   (break closes: churn 445, break 321; earliest 15.02 min)
+PASS  C10c   a break is a HINGE — the next sitting opens on the same page load   (287 resumed sittings; 321 learn:session{phase:"break"} signals; max sittings per page load 6)
+FAIL  C11    the live forecast names the beat the engine serves next   (58.63% of beat boundaries; whole-sitting multiset 32.28% (reported, never used); median size error 0.94 min)
 PASS  C6     a bad save is reported, never silently reset
-      out-of-band sittings: slow 14.13min close=ceiling-guard lastBeat=acquire/complete items=7
 ====================================================================================================

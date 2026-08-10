@@ -46,15 +46,30 @@
  *      `generated-group-absent` / `generated-group-failed`, starts the load in the background,
  *      and records the fact in `probe().degraded` where a reviewer and the HUD can read it.
  *
- * `await bank.ensure(kpId)` / `bank.ensureLesson(lessonId)` is what a session opener should call,
- * and after any load the bank prefetches the rest of the lesson during idle time, so the
- * degraded path is a safety net rather than the normal experience.
+ * `await bank.ensure(kpId)` / `bank.ensureLesson(lessonId)` is what a session opener calls, and
+ * after any load the bank prefetches the rest of the lesson during idle time, so the degraded path
+ * is a safety net rather than the normal experience.
+ *
+ * ROUND 3 — THE CALLER, WHICH IS THE WHOLE POINT.
+ *
+ * Round 2 shipped all of that machinery with NO caller in the game. A critic drove the built app's
+ * scheduler for 117 items and it pulled 0 of the 32 group chunks; `ensure`, `ensureLesson` and
+ * `prefetchAround` appeared nowhere under `app/` except their own definitions. The bytes were real
+ * and the delivery was fiction: the idle prefetch never ran, and the FIRST item a learner met on
+ * every knowledge point would have come from the generator, not from the thirty-six a human
+ * reviewed. `warmFrontier()` below is the caller, and `app/src/boot/62-itembank.js` runs it in
+ * idle time on every page load. `probe().warm` reports what it did, so "the loader has a caller"
+ * is a measurement rather than a claim.
+ *
+ * Round 3 also moved the last two eager costs out of the barrel: the item locale table is one
+ * chunk per language (see below), and the identity spine is loaded only when the audit constants
+ * have moved. Neither is on the path to the first item.
  *
  * The loaded catalogue is MODULE-LEVEL, shared by every `ItemBank` instance. Committed items are
  * immutable and identical for everyone; the per-instance state is only what a session generates.
  */
 
-import { BANK_INDEX, STRINGS, KP_META, LESSONS } from "../../../content/items/index.mjs";
+import { BANK_INDEX, KP_META, LESSONS, loadItemStrings } from "../../../content/items/index.mjs";
 import { GROUP_IDS, GROUP_LOADERS } from "../../../content/items/groups/index.mjs";
 import { generateOne, generateForKp, TIERS } from "../../../content/items/generators.mjs";
 import {
@@ -82,9 +97,49 @@ import {
   solveLinear,
 } from "../../../content/items/kit.mjs";
 
-/* ------------------------------------------------------------------ locale text */
+/* ------------------------------------------------------------------ locale text
+ *
+ * P31 round 3. The item locale table used to ship all three languages of all 281 keys to every
+ * learner — 24.5 kB gzipped of which a learner reads a third. `app/src/boot/05-i18n.js` had
+ * already settled the shape for the UI half of the same problem: one bundle per locale, pulled
+ * dynamically, awaited ONCE at boot so every lookup afterwards is synchronous. This is the item
+ * half, and it obeys the same two rules.
+ *
+ *   1. `text()` stays synchronous. `present()` is called from the frame that draws an item.
+ *   2. A learner never sees a key sentinel because of loading. `setLocale()` therefore does not
+ *      flip `this.locale` until the new table is resident: mid-switch a learner keeps reading the
+ *      language they were reading, which is a delayed switch, not a fallback to English (G3).
+ */
 
 const LOCALES = ["en", "es", "pl"];
+
+/** locale -> { key: string }. Module-level: the tables are immutable and shared by every bank. */
+const TEXT = new Map();
+/** locale -> Promise, so N banks switching at once cause ONE fetch. */
+const TEXT_INFLIGHT = new Map();
+
+function loadLocaleTable(locale) {
+  if (!LOCALES.includes(locale)) return Promise.resolve(null);
+  const resident = TEXT.get(locale);
+  if (resident) return Promise.resolve(resident);
+  const pending = TEXT_INFLIGHT.get(locale);
+  if (pending) return pending;
+  const p = loadItemStrings(locale)
+    .then((table) => {
+      TEXT_INFLIGHT.delete(locale);
+      if (table) TEXT.set(locale, table);
+      return table ?? null;
+    })
+    .catch((err) => {
+      TEXT_INFLIGHT.delete(locale);
+      // Resolved, not rejected: a session opener must carry on. The consequence is visible —
+      // `probe().localesResident` will not list it and `issues` will name it.
+      raise({ kind: "locale-load-failed", locale, error: String(err?.message || err) });
+      return null;
+    });
+  TEXT_INFLIGHT.set(locale, p);
+  return p;
+}
 
 /**
  * Words a learner may type for the two closures that are not numbers. Every locale's words are
@@ -138,6 +193,17 @@ const RESIDENT = new Map();
 const INFLIGHT = new Map();
 /** kpId -> { error, attempts, at }. A group here is degraded, not pending. */
 const FAILED = new Map();
+/**
+ * How long a failed group stays given-up before the next `select()` on it will try again.
+ *
+ * Round 2 had no such window: `touch()` returned early forever on a `FAILED` entry and nothing in
+ * the shipped game ever called `ensure()` a second time, so ONE dropped chunk downgraded that
+ * knowledge point — every item on it generated rather than authored — for the life of the page.
+ * On school wifi that is not a rare case, it is Tuesday. Thirty seconds is long enough that a real
+ * outage cannot become a retry storm (a session serves an item every 20-40 s, so this is at most
+ * one extra request per item) and short enough that a blip costs a learner one item, not a lesson.
+ */
+const RETRY_AFTER_MS = 30_000;
 /** Review-harness only: groups whose chunk is made to refuse to load. See `__faultGroup`. */
 const FAULT = new Set();
 /** Anything the outside world should be told about, in the order it happened. */
@@ -200,10 +266,18 @@ function indexGroup(kpId, group) {
   return entry;
 }
 
+const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** Attempts inside one `loadGroup` call, and the pause before each retry. */
+const ATTEMPTS = 3;
+const BACKOFF_MS = 250;
+
 /**
- * Load one group. Retries once — a school wifi hiccup on a 4 kB chunk is worth a second attempt
- * and is not worth failing a lesson over — then gives up loudly and stays given-up until someone
- * calls `ensure` again, so the degraded path cannot turn into a retry storm.
+ * Load one group. Three attempts with a growing pause between them — a school wifi hiccup on a
+ * 4 kB chunk is worth a second and a third go, and hammering the same dead socket twice inside a
+ * millisecond (which is what round 2 did) is not a retry, it is the same failure counted twice.
+ * Then it gives up, loudly, and the group is degraded until `RETRY_AFTER_MS` has passed or someone
+ * calls `ensure` — so the degraded path cannot turn into a retry storm and cannot become permanent.
  */
 function loadGroup(kpId) {
   const resident = RESIDENT.get(kpId);
@@ -217,21 +291,34 @@ function loadGroup(kpId) {
     raise({ kind: "unknown-group", kpId, error: err.message });
     return Promise.reject(err);
   }
+  const previous = FAILED.get(kpId)?.attempts ?? 0;
   const fetchOnce = () =>
     FAULT.has(kpId)
       ? Promise.reject(new Error(`simulated transport failure loading group "${kpId}"`))
       : loader().then((mod) => mod.default ?? mod);
-  const attempt = (n) => fetchOnce().catch((err) => (n > 0 ? attempt(n - 1) : Promise.reject(err)));
-  const p = attempt(1)
+  const attempt = (left, wait) =>
+    fetchOnce().catch((err) =>
+      left > 0 ? delay(wait).then(() => attempt(left - 1, wait * 3)) : Promise.reject(err)
+    );
+  const p = attempt(ATTEMPTS - 1, BACKOFF_MS)
     .then((group) => {
       INFLIGHT.delete(kpId);
-      return indexGroup(kpId, group);
+      const entry = indexGroup(kpId, group);
+      if (previous) raise({ kind: "group-recovered", kpId, afterAttempts: previous + ATTEMPTS });
+      return entry;
     })
     .catch((err) => {
       INFLIGHT.delete(kpId);
       const message = String(err?.message || err);
-      FAILED.set(kpId, { error: message, attempts: 2, at: Date.now() });
-      raise({ kind: "group-load-failed", kpId, lesson: LESSON_OF.get(kpId)?.id ?? null, error: message });
+      FAILED.set(kpId, { error: message, attempts: previous + ATTEMPTS, at: Date.now() });
+      raise({
+        kind: "group-load-failed",
+        kpId,
+        lesson: LESSON_OF.get(kpId)?.id ?? null,
+        error: message,
+        attempts: previous + ATTEMPTS,
+        retryAfterMs: RETRY_AFTER_MS,
+      });
       // Resolved, not rejected: a caller that awaited a lesson must carry on into a degraded but
       // playable session rather than have the whole session opener reject.
       return null;
@@ -245,12 +332,25 @@ function isResident(kpId) {
   return RESIDENT.has(kpId);
 }
 
+/** How long until a failed group may be tried again. 0 means "now". */
+function retryIn(kpId) {
+  const f = FAILED.get(kpId);
+  if (!f) return 0;
+  return Math.max(0, RETRY_AFTER_MS - (Date.now() - f.at));
+}
+
 /**
  * Fire-and-forget. Called from the synchronous `select()` path so that a cold knowledge point is
- * loading by the time the learner has read the item the generator just made.
+ * loading by the time the learner has read the item the generator just made — and, once
+ * `RETRY_AFTER_MS` has elapsed, so that a knowledge point downgraded by one dropped chunk gets
+ * another chance instead of serving generated items for the life of the page.
  */
 function touch(kpId) {
-  if (RESIDENT.has(kpId) || INFLIGHT.has(kpId) || FAILED.has(kpId)) return;
+  if (RESIDENT.has(kpId) || INFLIGHT.has(kpId)) return;
+  if (FAILED.has(kpId)) {
+    if (retryIn(kpId) > 0) return;
+    raise({ kind: "group-retry", kpId, afterMs: RETRY_AFTER_MS, attempts: FAILED.get(kpId).attempts });
+  }
   loadGroup(kpId).catch(() => {});
 }
 
@@ -275,7 +375,16 @@ const idle =
  */
 const IS_NODE =
   typeof process !== "undefined" && !!process.versions?.node && typeof window === "undefined";
-if (IS_NODE) await Promise.all(KP_IDS.map((id) => loadGroup(id)));
+if (IS_NODE) {
+  await Promise.all([...KP_IDS.map((id) => loadGroup(id)), ...LOCALES.map(loadLocaleTable)]);
+}
+
+/**
+ * What the last `warmFrontier()` did, module-level because it is a fact about the PAGE, not about
+ * an instance. `probe().warm` reports it, which is how a reviewer sees that the shipped game
+ * called the loader rather than that the loader exists.
+ */
+let WARM = null;
 
 /* ------------------------------------------------------------------ the bank */
 
@@ -315,6 +424,85 @@ export class ItemBank {
   }
 
   /**
+   * ------------------------------------------------------------------------------------------
+   * THE CALLER. `app/src/boot/62-itembank.js` runs this, in idle time, on every page load.
+   * ------------------------------------------------------------------------------------------
+   *
+   * Round 2 shipped `ensure`, `ensureLesson` and `prefetchAround` and gave them no caller inside
+   * the game. The critic drove the real built app's scheduler for 117 items and it pulled 0 of 32
+   * group chunks: the delivery mechanism was documentation, the idle prefetch never ran, and the
+   * DEFAULT path for the first item on every knowledge point was the degraded generator — so the
+   * first item a learner ever met on a node would not be one of the thirty-six a human reviewed.
+   *
+   * This closes that. It asks the mastery engine what the learner is actually working on
+   * (`learning.frontier()[0]` — the first unlocked, unmastered knowledge point in prerequisite
+   * order), resolves the lesson that knowledge point belongs to, and pulls that lesson's groups.
+   * `ensure()` then triggers `prefetchAround()`, so the rest of the lesson and the head of the next
+   * one arrive during idle too.
+   *
+   * It costs ZERO first-load bytes: it runs inside `requestIdleCallback` after boot has returned,
+   * and a lesson is 2.3-7.9 kB gzipped. The engine is the source of truth for what to warm, so a
+   * returning learner warms where they are, not where the course starts.
+   *
+   * It never throws. A warm that fails leaves the game exactly where round 2 left it — degrading
+   * to the generator on first touch — and says so in `probe().warm.reason`.
+   */
+  async warmFrontier(learningOrGetter) {
+    const t0 = typeof performance !== "undefined" ? performance.now() : Date.now();
+    const record = { at: Date.now(), kpId: null, lesson: null, groups: 0, failed: [], ms: 0, reason: null };
+    try {
+      // A THUNK is allowed, and is what the boot module passes: `62-learning.js` mounts at the
+      // same order as `62-itembank.js`, so the registry lookup has to happen when the idle
+      // callback runs, not when `setup()` schedules it.
+      const learning = typeof learningOrGetter === "function" ? learningOrGetter() : learningOrGetter;
+      const frontier = typeof learning?.frontier === "function" ? learning.frontier() : null;
+      record.kpId = Array.isArray(frontier) ? (frontier[0] ?? null) : null;
+      if (!record.kpId) {
+        record.reason = frontier ? "frontier-empty" : "no-learning-system";
+      } else {
+        const lesson = this.lessonFor(record.kpId);
+        if (!lesson) {
+          record.reason = `no lesson contains "${record.kpId}"`;
+        } else {
+          const out = await this.ensureLesson(lesson.id);
+          record.lesson = lesson.id;
+          record.groups = out.loaded;
+          record.failed = out.failed;
+          record.reason = out.failed.length ? "partial" : "ok";
+        }
+      }
+    } catch (err) {
+      record.reason = `warm-failed: ${String(err?.message || err)}`;
+      raise({ kind: "warm-failed", error: record.reason });
+    }
+    record.ms = Math.round(((typeof performance !== "undefined" ? performance.now() : Date.now()) - t0) * 10) / 10;
+    WARM = record;
+    return record;
+  }
+
+  /** The same, deferred to idle time so it cannot compete with the first frames. */
+  warmFrontierWhenIdle(learningOrGetter) {
+    return new Promise((resolve) => idle(() => resolve(this.warmFrontier(learningOrGetter))));
+  }
+
+  /**
+   * Pull one locale's item text and make it the active one. Awaited once at boot, exactly the way
+   * `boot/05-i18n.js` awaits its UI bundle, so every `text()` and `present()` afterwards is
+   * synchronous and complete.
+   */
+  async loadLocale(locale) {
+    const want = LOCALES.includes(locale) ? locale : "en";
+    const table = await loadLocaleTable(want);
+    if (table) this.locale = want;
+    return this.locale;
+  }
+
+  /** Which item-text locales are in memory. `probe()` reports it; nothing gameplay depends on. */
+  localesResident() {
+    return [...TEXT.keys()];
+  }
+
+  /**
    * Warm what the learner is most likely to need next, during idle time, so nobody ever waits
    * mid-session: the rest of the current lesson first, then the head of the next one. Capped,
    * because prefetching aggressively enough is just downloading the whole course again with extra
@@ -346,12 +534,28 @@ export class ItemBank {
       groups: KP_IDS.length,
       resident: [...RESIDENT.keys()],
       loading: [...INFLIGHT.keys()],
-      failed: Object.fromEntries(FAILED),
+      failed: Object.fromEntries(
+        [...FAILED].map(([id, f]) => [id, { ...f, retryInMs: retryIn(id) }])
+      ),
     };
   }
 
+  /**
+   * Switch language. The flip happens when the new table is RESIDENT, not when the request is
+   * made: `text()` is synchronous, and flipping first would put `⟨fail.slip⟩` in front of a
+   * learner for a few hundred milliseconds. Until then they keep reading the language they were
+   * reading — a delayed switch, not a fallback to English (G3).
+   */
   setLocale(locale) {
-    if (LOCALES.includes(locale)) this.locale = locale;
+    if (!LOCALES.includes(locale)) return this.locale;
+    if (TEXT.has(locale)) {
+      this.locale = locale;
+      return this.locale;
+    }
+    this.pendingLocale = locale;
+    loadLocaleTable(locale).then((table) => {
+      if (table && this.pendingLocale === locale) this.locale = locale;
+    });
     return this.locale;
   }
 
@@ -548,11 +752,23 @@ export class ItemBank {
 
   /* ---------------------------------------------------------------- presentation */
 
-  /** Resolve one locale key with its parameters. Never falls back to English (G3). */
+  /**
+   * Resolve one locale key with its parameters. Never falls back to English (G3).
+   *
+   * The table is per-locale and lazily loaded, so there is a fourth failure mode round 2 did not
+   * have: the table is not in memory. It is not silently papered over with English — that is the
+   * exact bug G3 exists to forbid — it is reported as the missing key it is, the load is started,
+   * and `probe().localesResident` shows a reviewer why. In practice it does not happen: the boot
+   * module awaits `loadLocale()` before publishing the bank, the way `05-i18n.js` does.
+   */
   text(key, params = {}, locale = this.locale) {
-    const entry = STRINGS[key];
-    if (!entry) return `⟨${key}⟩`;
-    const src = entry[locale] ?? entry.en;
+    const table = TEXT.get(locale);
+    if (!table) {
+      loadLocaleTable(locale);
+      return `⟨${key}⟩`;
+    }
+    const src = table[key];
+    if (src === undefined) return `⟨${key}⟩`;
     return src.replace(/\{(\w+)\}/g, (m, name) =>
       params[name] === undefined ? m : localeNumber(params[name], locale)
     );
@@ -959,8 +1175,16 @@ export class ItemBank {
       groups: `${res.resident.length}/${res.groups} resident, ${res.loading.length} loading`,
       lessons: LESSONS.length,
       residentGroups: res.resident,
-      degraded: Object.entries(res.failed).map(([kpId, f]) => `${kpId}: ${f.error}`),
+      degraded: Object.entries(res.failed).map(
+        ([kpId, f]) => `${kpId}: ${f.error} (${f.attempts} attempts, retry in ${Math.round(f.retryInMs / 1000)}s)`
+      ),
       issues: ISSUES.length,
+      lastIssue: ISSUES.length ? ISSUES[ISSUES.length - 1] : null,
+      // Did the SHIPPED game call the loader on this page load, and what did it get? Null here
+      // means the per-lesson path exists and nothing ran it — which is the state round 2 shipped.
+      warm: WARM,
+      itemLocale: this.locale,
+      localesResident: [...TEXT.keys()],
       formsPerKp: Object.fromEntries(
         Object.entries(s.perKp).map(([k, v]) => [k, `${v.forms.construct}/${v.forms.repair}/${v.forms.generate}`])
       ),
@@ -1218,12 +1442,22 @@ export function __evictGroup(kpId) {
 export function __evictAllGroups() {
   for (const id of KP_IDS) __evictGroup(id);
   ISSUES.length = 0;
+  WARM = null;
 }
 /** Make a group's chunk refuse to load, the way a dropped connection would. */
 export function __faultGroup(kpId, on = true) {
   if (on) FAULT.add(kpId);
   else FAULT.delete(kpId);
   __evictGroup(kpId);
+}
+/**
+ * Age a recorded failure, so the retry window can be proved without sleeping through it. Thirty
+ * real seconds inside a proof script measures patience, not code.
+ */
+export function __ageFailure(kpId, byMs) {
+  const f = FAILED.get(kpId);
+  if (f) f.at -= byMs;
+  return { kpId, agedByMs: byMs, retryAfterMs: RETRY_AFTER_MS, retryInMs: retryIn(kpId), failed: !!f };
 }
 /** SOURCE bytes of the resident groups — a build-time estimate. P31 measures the shipped chunks. */
 export function __groupBytesLoaded() {

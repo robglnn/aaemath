@@ -46,4 +46,4 @@ Claim your slot here so ordering stays predictable. Lower runs first.
 | 72 | progressui | P24 | |
 | 74 | menus | P22 | |
 | 80 | audio | P25 | last of the systems |
-| 90 | flow | P23/P27 | title, onboarding, session — drives the rest |
+| 90 | flow | P33 (+P23/P27) | title, onboarding, session — drives the rest. `90-flow.js` mounts P33's `flow/Session.js` + `flow/Save.js` (the Pomodoro arc); title/onboarding land alongside |

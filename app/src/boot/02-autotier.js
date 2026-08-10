@@ -12,6 +12,11 @@ import { AutoTier } from "../core/AutoTier.js";
  * could least afford to do it.
  *
  * It runs after nothing, because it depends on nothing but the renderer the kernel already built.
+ *
+ * Order matters for the *heuristic*; it does not matter for the stand-down. `AutoTier.frame()`
+ * re-reads `config.autoTier` every frame, so a settings screen mounted at any order — or a console
+ * poke, or a future boot module that sets a tier at order 90 — stands this module down without
+ * needing to know it exists.
  */
 export default {
   id: "autotier",

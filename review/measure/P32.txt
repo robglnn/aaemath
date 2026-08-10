@@ -2,7 +2,7 @@ P32 — prerequisite credit propagation + test-out
 graph 32 nodes, 48 edges, longest chain 11, max ancestor distance 6
 bank audit v2 fingerprint d6e2537d, 29754 draws (19032 catalogue / 10722 generated)
 certifiable knowledge points on this bank: 31 of 32
-learners 150/cell, bots 2000/cell, 26 sessions x 25 min
+learners 120/cell, bots 1200/cell, 26 sessions x 25 min
 
 ==============================================================================================
 PART A — the propagation rule, checked against the shipped content
@@ -73,14 +73,14 @@ PASS  B2  no probe anywhere contains a selected-response form — `select4` and 
   ineq-two-step     5      4.76e-4                    1.08e-8                         44074x        
   ineq-one-step     5      4.59e-4                    1.08e-8                         42500x        
   oo-structure      5      9.77e-4                    2.43e-8                         40206x        
-PASS  B3  pricing the probe on model.trueGuessByForm instead of the measured bank understates it by up to 3 orders of magnitude
+PASS  B3  pricing the probe on model.trueGuessByForm instead of the measured bank understates it by SIX orders of magnitude
         Worst node eq-one-mult: measured 5.44e-4 against a modelled 2.16e-10 — understated 2518519x. Per ITEM the constants are understated by up to 14.3x (construct is declared 0.03 and measures up to 0.300). A three-item probe priced on the constants would look like 2.7e-05 and really be 1.6e-02. THIS is why probe length is derived per node from bank-audit.json and not fixed at three.
             knowledge point      band  P(blind passes the PROBE)  P(blind opens the ORDINARY gate in 12 items)  probe is stricter by
   --------  -------------------  ----  -------------------------  --------------------------------------------  --------------------
   tightest  distribute-negative  4     8.50e-4                    5.58e-2                                       66x                 
   median    translate-order      3     4.00e-4                    9.28e-2                                       232x                
   loosest   oo-numeric           1     2.22e-4                    2.18e-1                                       984x                
-PASS  B4  the probe is 1–3 orders of magnitude harder to fluke than the M1+M2+M3 march it replaces
+PASS  B4  the probe is 1–3 orders of magnitude harder to fluke than the M1+M2+M3 march it replaces (and that march is the defect)
         Across 31 eligible nodes the probe is between 66x and 984x stricter than the ordinary gate at the same measured rates. The test-out therefore cannot be the weakest link in this system. THE OTHER HALF OF THAT SENTENCE IS A DEFECT AND IT IS NOT MINE TO FIX: a blind responder opens the ORDINARY gate on 5.0%–24.0% of Level 1's nodes inside twelve attempts, because the bank measures 0.07–0.30 blind where the design assumes 0.03. M4's retention check is the only thing stopping certification. Reported to P16/P17.
 PASS  B4c  CONTROL — the same Monte-Carlo run at the DESIGN's assumed rates gives a far smaller number
         var-meaning: 19.6% at the measured rates against 0.3% at model.trueGuessByForm. The estimator moves with the rate, so B4's numbers are a measurement of the bank and not an artefact of the harness.
@@ -99,3 +99,95 @@ PASS  B5  a genuine master passes their own probe about three times in five, and
 ==============================================================================================
 PART C — six learner archetypes through the real engine
 ==============================================================================================
+
+==============================================================================================
+MINUTES TO MASTERY, PER LEARNER ARCHETYPE  (median; minutes are scored-item time at 46 s/item)
+==============================================================================================
+  archetype     arm               min → 80%  items → 80%  sess → 80%  reached 80%  min → all 31  items → all  sess → all  reached all  final mastery  probes off/pass
+  ------------  ----------------  ---------  -----------  ----------  -----------  ------------  -----------  ----------  -----------  -------------  ---------------
+  strong        shipped           305        407          12          100.0%       355           471          14          100.0%       96.9%          30.2/16.7      
+  strong        baseline          430        591          17          100.0%       456           625          18          100.0%       96.9%          0.0/0.0        
+  median        shipped           456        636          18          100.0%       532           735          21          99.2%        96.6%          28.4/5.5       
+  median        baseline          506        711          20          100.0%       557           778          22          95.0%        96.4%          0.0/0.0        
+  struggler     shipped           558        795          22          98.3%        632           882          25          55.0%        93.7%          26.7/3.1       
+  struggler     baseline          583        833          23          97.5%        634           904          25          33.3%        91.4%          0.0/0.0        
+  advancedOnly  shipped           405        560          16          100.0%       455           624          18          100.0%       96.9%          28.8/6.6       
+  advancedOnly  baseline          456        639          18          100.0%       505           702          20          100.0%       96.8%          0.0/0.0        
+  strong        propagation only  430        591          17          100.0%       456           625          18          100.0%       96.9%          0.0/0.0        
+  strong        test-out only     305        407          12          100.0%       355           471          14          100.0%       96.9%          30.2/16.7      
+
+==============================================================================================
+HOSTILE ARMS  (bots; every rate drawn from the MEASURED shipped bank)
+==============================================================================================
+  bot         arm          n     items answered  probes offered  probes PASSED  bots that passed one  probe unlocks → certified  KPs certified (mean)  bots that certified any
+  ----------  -----------  ----  --------------  --------------  -------------  --------------------  -------------------------  --------------------  -----------------------
+  guesser     shipped      1201  985             1.11            0.0000         0 / 1201              0 → 0                      0.1282                147 / 1201             
+  guesser     baseline     1201  985             0.00            0.0000         0 / 1201              0 → 0                      0.1307                149 / 1201             
+  hintAbuser  shipped      1201  985             1.10            0.0008         1 / 1201              0 → 0                      0.1549                171 / 1201             
+  hintAbuser  baseline     1201  985             0.00            0.0000         0 / 1201              0 → 0                      0.1357                158 / 1201             
+  masher      shipped      1201  996             1.00            0.0000         0 / 1201              0 → 0                      0.0000                0 / 1201               
+  masher      baseline     1201  996             0.00            0.0000         0 / 1201              0 → 0                      0.0000                0 / 1201               
+  guesser     leaky-probe  1201  985             1.12            0.0117         14 / 1201             0 → 0                      0.1266                145 / 1201             
+  hintLeak    shipped      300   888             12.09           5.5400         277 / 300             79 → 28                    1.2567                214 / 300              
+
+==============================================================================================
+WHERE THE TIME GOES  (median, minutes of scored-item time over the whole run)
+==============================================================================================
+  archetype     arm       ACQUISITION min  acq items  min per KP certified  CERTIFICATION min  total min  certification share
+  ------------  --------  ---------------  ---------  --------------------  -----------------  ---------  -------------------
+  strong        shipped   159              214        5.1                   499                658        75.9%              
+  strong        baseline  242              347        7.8                   417                658        63.3%              
+  median        shipped   278              405        9.0                   382                658        58.0%              
+  median        baseline  307              456        9.9                   350                658        53.2%              
+  struggler     shipped   367              542        12.1                  292                658        44.4%              
+  struggler     baseline  386              578        12.8                  274                658        41.6%              
+  advancedOnly  shipped   230              330        7.4                   429                658        65.1%              
+  advancedOnly  baseline  271              398        8.8                   387                658        58.8%              
+PASS  C1  the probe cuts a strong learner's ACQUISITION time per knowledge point by about a third
+        strong learner, median of 120. Acquisition time per certified knowledge point: 5.1 min shipped against 7.8 min on the pre-P32 engine — 34.3% less. That is the number the product goal names: a learner who already knows a knowledge point proves it in a 5-item probe (3.8 min, 2.3 min at the best node) instead of walking model → guided-1 → guided-2 → guided-3 → six solo items. Probes: 30.2 offered, 16.7 passed, 113 items spent.
+PASS  C1b  end to end, that is a real but SMALLER cut — because certification, not teaching, is the floor
+        80% of Level 1 in 305 min / 407 items / 12 sessions, against 430 min / 591 items / 17 sessions — 29.1% less time. All 31: 355 min / 471 items / 14 sessions against 456 / 625 / 18 — 22.2% less time, 24.6% fewer items, 4 sessions saved. DO NOT REPORT THE FIRST NUMBER WITHOUT THIS ONE. 75.9% of a strong learner's run is now consolidation and retention items, which no amount of prior knowledge removes: 6 items x 31 nodes = 143 minutes, plus a 12-hour gate and an intervening session per node that caps the run at 14 sessions however fast the learner is. §4.1 said the bottleneck is certification capacity; the probe is what makes that visible.
+  archetype  arm               propagation           probe  min → all 31  final mastery  probes offered  …of which on PROPAGATED posterior  probes passed on propagated signal
+  ---------  ----------------  --------------------  -----  ------------  -------------  --------------  ---------------------------------  ----------------------------------
+  strong     shipped           distance ≤ 3          on     355           96.9%          30.2            0.0                                0.0                               
+  strong     test-out only     distance 1 (pre-P32)  on     355           96.9%          30.2            0.0                                0.0                               
+  strong     propagation only  distance ≤ 3          off    456           96.9%          0.0             0.0                                0.0                               
+  strong     baseline          distance 1 (pre-P32)  off    456           96.9%          0.0             0.0                                0.0                               
+  median     shipped           distance ≤ 3          on     532           96.6%          28.4            0.0                                0.0                               
+  median     test-out only     distance 1 (pre-P32)  on     532           96.6%          28.4            0.0                                0.0                               
+  median     propagation only  distance ≤ 3          off    557           96.5%          0.0             0.0                                0.0                               
+  median     baseline          distance 1 (pre-P32)  off    557           96.4%          0.0             0.0                                0.0                               
+PASS  C2  the posterior trigger is structurally unreachable under §4's frontier rule — stated as a theorem, not hidden as a zero
+        Every band prior in the content file is between 0.08 and 0.35, all below the 0.45 offer threshold, so a posterior-triggered offer could only come from propagated credit. It never does: 0.0 of 30.2 strong-learner offers were posterior-triggered. The reason is checked, not guessed — across 238 probes offered in 8 runs, the ancestor closure was ALREADY fully unlocked 238 times and still had a "learning" member 0 times. §4 walks the DAG in topological order, and credit that flows backwards along that order can only ever reach nodes the learner has already been through. IF A LATER PIECE WANTS PROPAGATION TO FIRE A PROBE, THE FRONTIER RULE IS WHAT HAS TO CHANGE, NOT THIS ONE.
+PASS  C2b  propagation's real, measured contribution is posterior maintenance on already-unlocked ancestors
+        Median learner, Level 1 mastered, arms differing ONLY in propagation distance: with the probe on, 96.6% at distance <= 3 against 96.6% at distance 1 (+0.1 points); with the probe off, 96.5% against 96.4% (+0.1 points). Lapses per learner 5.8 vs 5.9. The mechanism is not a shortcut, it is what stops a foundation the learner keeps using in harder work from drifting under 0.9 and lapsing at its own review — which is exactly what §1.2 argued for and one edge further out. Credits paid by distance: {"1":859.8666666666662,"2":1107.0083333333332,"3":1139.1666666666667} (strong), {"1":853.7666666666668,"2":883.8916666666665,"3":907.916666666667} (median).
+PASS  C2c  the saving is the probe's, and it is not bought by lowering anyone's final mastery
+        strong learner, minutes to all 31: shipped 355, probe alone 355, propagation alone 456, baseline 456. Final mastery 96.9% shipped against 96.9% baseline — the strong learner arrives at the same place, sooner. The floor under the remaining 355 minutes is not teaching, it is CERTIFICATION: 2 consolidation + 4 retention items per node is 143 minutes that no amount of prior knowledge removes, which is 40.2% of the whole run. §4.1 said the bottleneck in a mastery system is certification capacity, not teaching capacity; with the probe in place that is now visibly true.
+PASS  C3  L5 — the median learner still reaches ≥80% mastery with the probe in the loop
+        median learner, 120 runs, 26 sessions: 96.6% of Level 1 mastered (30.9 of 32 knowledge points, ceiling 31); 100.0% of them at or above 80%. Baseline arm for comparison: 96.4%. Probes offered 28.4, passed 5.5, failed 22.9 — a failed probe costs 2.0 items on average and is not punitive.
+PASS  C3b  a struggling learner is not taxed by a mechanism built for someone else
+        struggler: 26.7 probes offered, 44 items spent on them out of 924 answered (4.8% of the session budget). Their theta falls, so the offer condition stops firing — that self-limiting behaviour is why the probe is gated on signal rather than offered on every first encounter. Mastery 93.7% shipped against 91.4% baseline.
+PASS  D1  the measured hostile blind-pass rate does not exceed the declared bound, and no pass becomes a certification
+        1201 bots per arm (floor 1201, set by the power D1 needs) x 26 sessions, every rate drawn from the MEASURED bank for the exact cell the scheduler served. 3853 probes offered across guesser, hint-abuser and masher; 1 passed. That is 2.60e-4 against the 0.001 the probe lengths were derived to hold, which predicts 3.9 passes over this many offers. One-sided binomial test of "the true rate exceeds the bound": p = 0.979, so the bound is NOT rejected (95% Wilson interval on the observation itself: up to 1.47e-3). STATING THIS AS "NEVER" WOULD BE THE OVERCLAIM §9 OF THE LEARNING ARCHITECTURE WARNS ABOUT — a 1e-3 bound means one in a thousand, not zero, and the run finds exactly that. Per arm, offered/passed: guesser 1335/0, hint-abuser 1317/1, masher 1201/0 (the masher's zero is structural, not statistical: every one of its responses is under the 900 ms floor and so can never be credited). AND THE RESIDUAL BUYS NOTHING: 0 probe-unlocked nodes across all three arms, 0 of them certified. A passed probe grants "provisional" — it still owes consolidation and a 3-of-4 retention check twelve hours and a session later, and a blind responder does not pass that.
+PASS  D1c  CONTROL — a FIXED three-item probe with the derivation switched off leaks, and D1's test REJECTS it
+        same bot, same seeds, maxBlindPass 1.0 and a fixed 3 items — the naive implementation of this feature: 0.0117 probes passed per bot, 14 of 1201 bots got a free unlock (1.2%). Run D1's OWN test on it: 14 passes in 1347 offers gives p = 2.01e-10, so the bound is REJECTED — the same statistic that cannot reject the shipped arm rejects this one decisively. THAT is what makes D1 a measurement rather than an absence: the test has the power to see the leak, and the leak is exactly what a probe length chosen by taste instead of by bank-audit.json produces.
+PASS  D1d  CONTROL — a bot that IS credited on every probe item passes them, so the detector can see a pass
+        P16 assumption B2 pointed at the probe: P18 leaks the hint surface into "solo" and never tells the engine, so 300 bots answer at 0.85 and report unhinted. They pass 5.54 probes each (277 of 300 bots) and certify 1.26 knowledge points. The mechanism is therefore only as good as the per-response "hinted" flag P18 sets — the same conclusion §6.1 already reached for the ordinary gate, and it now applies to the probe too.
+PASS  D2  P32 does not make the bots' CERTIFICATION rate worse — the residual leak is pre-existing and is P16/P17's
+        Mean knowledge points certified per bot, shipped vs pre-P32 baseline, identical seeds: guesser 0.1282 vs 0.1307, hint-abuser 0.1549 vs 0.1357, masher 0.0000 vs 0.0000. Summed difference +0.0167 +/- 0.0212 (z = 0.79), i.e. NOT distinguishable from no change at 95%. NAMED RATHER THAN ABSORBED: those baseline figures are NOT zero, and the design says they should be (§5.0 target: "patient guessing bot, mean KPs certified < 0.01 of 32"). None of it comes through the probe — zero probes are passed on either arm (D1) — it comes through the ORDINARY M1+M2+M3 gate plus M4 at the bank's measured 0.07-0.30 blind rates, which claim B4 quantifies. That is a P16/P17 defect this piece inherits, does not widen, and must not be credited with fixing.
+PASS  D3  the probe closes the two doors the design says a learner can open for themselves
+        A probe item is scored exactly like the ordinary solo acquisition item it is, so both of §6.1's learner-chosen refusals apply to it unchanged and T1 reads their verdict: a correct answer committed under the 900 ms + 120 ms/token floor is not credited, and neither is a correct answer committed after the learner idled past 12000 ms and read the help. 2400 bots: the masher passed 0 of 1201 probes — a STRUCTURAL zero, since every response it makes is under the floor and so can never be credited at all — and the hint-abuser passed 1 of 1317, certifying 0 of them. The hint-abuser's residual is not the hint getting through: it is the ordinary blind-luck rate on the items whose phase surfaces no hint, bounded at 0.001 by D1. Speed cannot help you and help cannot help you.
+PASS  D4  propagation never certifies an ancestor: every mastered node rests on its own unaided evidence
+        advancedOnly (knows every band-4/5 node, no band-1/2 foundation), 120 runs: 2924 certifications reached M2 on the node's own counters and 796 passed the node's own probe; 0 rested on neither. Propagation moved 2824 posteriors per learner ({"1":822.5666666666665,"2":986.8416666666665,"3":1014.6416666666671} by distance) and certified none of them. What propagation DOES buy this learner is the OFFER: a foundation node whose posterior it raised above 0.45 gets a probe, and a learner who does not know it fails item 1 and lands in ordinary teaching.
+PASS  D5  a probe is offered once per knowledge point, ever — a failure is not re-rollable, not even across a reload
+        first item of session 1 was a probe on "var-meaning"; one wrong answer ended it (item 1 not credited (wrong)). testOutOffered is now false live and false after a snapshot/restore round trip. Without persistence a reload would turn a 1e-3 probe into an unlimited-ticket lottery: eleven retries at the shipped bank's rates is a 1e-2 probe.
+PASS  D6  the whole engine is deterministic under a fixed seed — the mastery probe is byte-identical
+        two identical runs of a 6-session strong learner produce probe payloads of 25233 bytes that compare equal. §8 requirement 12 extended to the two new mechanisms.
+
+==============================================================================================
+RESULT — 29 of 29 claims pass
+==============================================================================================
+
+All 29 claims pass.
+
+exit=0

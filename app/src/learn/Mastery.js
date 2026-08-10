@@ -1561,16 +1561,28 @@ export class Mastery {
     const seeds = this._exercised(r, node).filter((pid) => pid !== kpId && this.graph.has(pid));
     const distance = new Map(seeds.map((pid) => [pid, 1]));
     if (R.maxDistance > 1) {
-      const cone = this.graph.ancestorDistances(kpId);
-      for (const seed of seeds) {
-        for (const [aid, d] of this.graph.ancestorDistances(seed)) {
-          // The distance the ENGINE uses is the shortest one from the item's own knowledge point,
-          // so a node reachable by two seeds is credited once, at its true graph distance. Nodes
-          // outside `kpId`'s ancestor cone cannot appear here at all: `ancestorDistances(seed)` is
-          // a subset of it whenever `seed` is, and a caller-supplied `exercises` entry that is NOT
-          // an ancestor of `kpId` contributes only itself, at distance 1, exactly as §1.2 says.
-          const real = cone.get(aid) ?? d + 1;
-          if (!distance.has(aid) || real < distance.get(aid)) distance.set(aid, real);
+      // ------------------------------------------------------------------------------------------
+      // THE ONE PLACE THIS FUNCTION COULD LEAK, AND WHY IT DOES NOT
+      //
+      // Distance 1 is whatever the caller declared, because that is §1.2's rule and P17 owns the
+      // `exercises` tag. Distance >= 2 is NOT reached from the caller's list — it is reached from
+      // `kpId`'s OWN ancestor cone, and a node that is not in that cone is not credited at all.
+      //
+      // The difference matters because `exercises` is caller data and can be wrong. Tag an item on
+      // `eq-one-add` with `exercises: ["eq-two-step"]` — a DESCENDANT, by mistake — and expanding
+      // that seed's ancestors would walk straight back to `eq-one-add` itself and pay the node a
+      // second, discounted update on top of its own. Reading the cone instead makes that impossible
+      // by construction rather than by the caller being careful: forward credit has no route in.
+      // ------------------------------------------------------------------------------------------
+      //
+      // `seeds.length` gates the whole thing, which preserves §1.2 exactly: an item that exercises
+      // no prerequisite propagates nothing, and the engine's A3 stand-in says a band-1 or band-2
+      // item exercises nothing. Only cone distances >= 2 are added, because distance 1 is the
+      // caller's declaration to make and an undeclared direct prerequisite is a deliberate omission.
+      if (seeds.length) {
+        for (const [aid, d] of this.graph.ancestorDistances(kpId)) {
+          if (aid === kpId || d < 2) continue;
+          if (!distance.has(aid) || d < distance.get(aid)) distance.set(aid, d);
         }
       }
     }
@@ -2004,6 +2016,12 @@ export class Mastery {
         consecutiveWrong: s.consecutiveWrong,
         lastMisconception: s.lastMisconception,
         consecutiveSameMisconception: s.consecutiveSameMisconception,
+        // The fade ladder's two remaining fields. They were absent, which was survivable while
+        // `pendingModel` was only ever set inside one tick of `phaseFor`; it stopped being
+        // survivable when `Scheduler._reenterAfterProbe` began setting it and expecting it to
+        // still be there on the next item, which may be after a reload.
+        modelEvents: s.modelEvents,
+        pendingModel: s.pendingModel,
         event: s.event,
         // Without this, a reload hands the learner a second test-out on a node they already used
         // theirs on — which turns a one-shot 1e-3 probe into an unlimited-ticket lottery.

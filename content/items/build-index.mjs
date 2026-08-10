@@ -19,20 +19,49 @@
  *   groups/<kpId>.mjs   one knowledge point's items. Loaded on demand, cached forever.
  *   groups/index.mjs    kpId -> () => import("./<kpId>.mjs"). Static specifiers, so the bundler
  *                       can see every chunk; a variable specifier would defeat code splitting.
+ *   strings/items-<l>.mjs  ONE locale's item text. Loaded on demand, one per learner.
+ *   spine.mjs           the identity spine. Loaded only when the committed audit table is stale.
  *   manifest.mjs        lessons, per-knowledge-point meta, and per-group byte costs. Eager, tiny.
  *   manifest.json       the same object, readable and diffable. review/measure/P31.mjs asserts
  *                       the two agree, so the shipped copy can never drift from the reviewable one.
- *   index.mjs           the eager barrel: locale strings, the manifest, and the IDENTITY SPINE.
+ *   index.mjs           the eager barrel: the manifest, the loaders, and the fingerprint SCALAR.
  *
- * THE IDENTITY SPINE, and why it still ships eagerly.
+ * ROUND 3 — WHAT LEFT THE EAGER BARREL, AND WHY IT WAS SAFE TO MOVE.
  *
- * `app/src/boot/62-learning.js` (P16's file) fingerprints the whole catalogue on every page load
- * to decide whether `bank-audit.json` still describes the content it prices, and
- * `tools/bank-audit.mjs` and `review/measure/P16.mjs` lint the committed pools out of the same
- * export. Those five strings per item — id, form, family, difficulty, canonical answer — are all
- * any of them read. So `BANK` keeps exactly those and nothing else, encoded as one string and
- * decoded at module init. Everything the item needs to be PRESENTED — stem, givens, hints,
- * distractors, world framing — moved into the group chunk.
+ * Round 2 split the ITEMS out and stopped. The critic then measured what was left and found two
+ * things in it that no learner needs before their first item:
+ *
+ *   1. THE LOCALE TABLE shipped all three languages of all 281 keys to every learner, when a
+ *      learner reads exactly one. `app/src/boot/05-i18n.js` had already established the shape for
+ *      the UI half of this — one bundle per locale, dynamically imported, awaited once at boot so
+ *      every lookup afterwards is synchronous. The item half now does the same thing, key for key
+ *      and locale for locale, with `strings/items-<locale>.mjs`.
+ *
+ *   2. THE IDENTITY SPINE — id, difficulty and canonical answer for all 1152 committed items —
+ *      existed so `app/src/boot/62-learning.js` could recompute `bankAuditFingerprint` at runtime
+ *      and decide whether `bank-audit.json` still prices the content we ship. That is a comparison
+ *      against a value that is FULLY DETERMINED AT BUILD TIME, so the build now computes it and
+ *      exports the eight-character scalar instead of the data it is computed from.
+ *
+ * THE FINGERPRINT SCALAR, and the hole it must not open.
+ *
+ * `bankAuditFingerprint` folds two things together: audit constants that live in
+ * `app/src/learn/Mastery.js` plus the graph's identifiability caps, and then the bank. If the
+ * build baked the scalar and a later edit changed one of those CONSTANTS, a stale scalar would
+ * agree with a stale table and the engine would score on a price that no longer describes it —
+ * which is the exact defect the fingerprint exists to catch, reintroduced one level up.
+ *
+ * So the build exports the scalar AND `BANK_FINGERPRINT_BASIS`, the constants it folded in, as a
+ * plain string. `62-learning.js` recomputes that basis from the LIVE constants and the LIVE graph
+ * on every page load — it is a dozen numbers, not a catalogue — and only trusts the scalar when
+ * the two agree. When they do not, it pulls `spine.mjs` and computes the fingerprint the old way:
+ * slower, loud, and correct. The bank half is covered by the fact that this file writes the scalar
+ * and the groups in the same pass from the same `bankFiles`, and `review/measure/P31.mjs` D1
+ * recomputes the whole fingerprint from `bank/*.json` and fails if it differs by one character.
+ *
+ * `BANK` itself is still exported and still eager IN NODE, where there is no bandwidth to save and
+ * `tools/bank-audit.mjs`, `review/measure/P16.mjs` and four critic scripts read it synchronously.
+ * In the browser it is `null` and the spine chunk is never requested.
  *
  * The five strings are reconstructed byte for byte, in the original order, so
  * `bankAuditFingerprint(BANK)` returns the value it returned before the split and the committed
@@ -55,13 +84,34 @@
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
 
+/**
+ * The audit half of `app/src/learn/Mastery.js`, loaded once at module init so `writeSplitIndex`
+ * can stay SYNCHRONOUS — `build-catalogue.mjs` (P17's tool) calls it that way and reads its return
+ * value directly, and turning that call into a promise would print `{}` in somebody else's build
+ * log for no gain.
+ *
+ * Guarded, because a content build must not fail because an app module moved. When it is missing
+ * the barrel exports a null fingerprint and the app does exactly what it did before this change:
+ * pull `spine.mjs` and compute the fingerprint live. Slower, never wrong, and `review/measure/P31.mjs`
+ * E3 fails loudly so nobody ships that state by accident.
+ */
+let MASTERY = null;
+try {
+  MASTERY = await import(pathToFileURL(path.join(ROOT, "app/src/learn/Mastery.js")).href);
+} catch (err) {
+  console.warn(`build-index: Mastery.js unavailable (${err.message}); the bank fingerprint will be computed at runtime.`);
+}
+
 /** A lesson is capped at this many minutes of scored-item time (`estMinutes` in the graph). */
 export const LESSON_MINUTES = 25;
+
+/** The locales `content/items/strings.json` carries. One chunk each; a learner pulls one. */
+export const SHIPPED_LOCALES = ["en", "es", "pl"];
 
 /* ------------------------------------------------------------------ lessons */
 
@@ -171,6 +221,86 @@ function spineLine(item) {
 }
 
 const gzBytes = (s) => zlib.gzipSync(Buffer.from(s, "utf8")).length;
+
+/** The decode the shipped barrel performs, run here so the build fingerprints the SAME objects. */
+function decodeSpine(spine) {
+  return spine.split("\u0000").map((block) => {
+    const lines = block.split("\n");
+    const items = [];
+    for (let i = 1; i < lines.length; i += 1) {
+      const line = lines[i];
+      const t1 = line.indexOf("\t");
+      const t2 = line.indexOf("\t", t1 + 1);
+      const id = line.slice(0, t1);
+      const s1 = id.indexOf("/");
+      const s2 = id.indexOf("/", s1 + 1);
+      items.push({
+        id,
+        family: id.slice(0, s1),
+        form: id.slice(s1 + 1, s2),
+        difficulty: Number(line.slice(t1 + 1, t2)),
+        answer: { canonical: line.slice(t2 + 1) },
+      });
+    }
+    return { kpId: lines[0], items };
+  });
+}
+
+/**
+ * The fingerprint, and the constants it was folded over, computed at build time.
+ *
+ * Imported dynamically and guarded: `build-catalogue.mjs` (P17's tool) calls into this file, and a
+ * content build must not fail because an app module moved. When it cannot be computed the barrel
+ * exports `null`, and `62-learning.js` then does exactly what it did before this change — pull the
+ * spine and compute it live. Slower, never wrong.
+ */
+function buildFingerprint(bankFiles, kg) {
+  if (!MASTERY) return { fingerprint: null, version: null, basis: null };
+  const M = MASTERY;
+  return {
+    fingerprint: M.bankAuditFingerprint({ bankFiles, model: kg.model }),
+    version: M.BANK_AUDIT_VERSION,
+    basis: BASIS_FN({
+      version: M.BANK_AUDIT_VERSION,
+      perCell: M.BANK_AUDIT_PER_CELL,
+      window: M.BANK_AUDIT_WINDOW,
+      candidates: M.EXECUTED_CANDIDATES,
+      sampleCap: M.EXECUTED_SAMPLE_CAP,
+      forms: M.EXECUTED_FORMS,
+      caps: kg.model?.bkt?.identifiabilityCaps ?? {},
+    }),
+  };
+}
+
+/**
+ * The basis key, as SOURCE, so the build and the shipped barrel run the same function rather than
+ * two implementations that agree until one of them is edited. `writeSplitIndex` inlines this text
+ * into `index.mjs`; the build evaluates it here. `review/measure/P31.mjs` E4 recomputes the key
+ * through the SHIPPED copy and fails if it does not reproduce the constant the build wrote, which
+ * is what makes the two-copies arrangement checkable rather than hopeful.
+ *
+ * It hashes rather than concatenates because one of the identifiability caps is a 900-character
+ * prose note, and shipping 900 characters of documentation to every learner to compare eight
+ * characters of fingerprint would be exactly the kind of thing this piece exists to stop.
+ */
+const BASIS_SOURCE = `export function bankFingerprintBasis({ version, perCell, window, candidates, sampleCap, forms, caps }) {
+  const parts = [
+    "v" + version,
+    perCell,
+    window,
+    candidates,
+    sampleCap,
+    (forms || []).join(","),
+    ...Object.keys(caps || {}).sort().map((k) => k + "=" + caps[k]),
+  ].join("|");
+  let h = 0x811c9dc5;
+  for (let i = 0; i < parts.length; i += 1) {
+    h ^= parts.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return (h >>> 0).toString(16).padStart(8, "0");
+}`;
+const BASIS_FN = new Function(`${BASIS_SOURCE.replace(/^export /, "")}; return bankFingerprintBasis;`)();
 
 /**
  * Write groups, manifest and index. `index` is the object `build-catalogue.mjs` just wrote to
@@ -292,30 +422,75 @@ export default MANIFEST;
 `
   );
 
+  /* ---------------------------------------------------------------- one locale per chunk */
+
+  const stringsDir = path.join(HERE, "strings");
+  fs.rmSync(stringsDir, { recursive: true, force: true });
+  fs.mkdirSync(stringsDir, { recursive: true });
+
+  const localeBytes = {};
+  for (const locale of SHIPPED_LOCALES) {
+    // The SAME key order as strings.json, in every locale, so reassembling the three tables in
+    // Node reproduces `strings.json` key for key — which is what P17's C-claim compares against.
+    const table = {};
+    for (const [key, entry] of Object.entries(strings)) {
+      if (typeof entry[locale] !== "string") {
+        throw new Error(`content/items/strings.json: key "${key}" has no "${locale}" string`);
+      }
+      table[key] = entry[locale];
+    }
+    const body = `/* GENERATED by content/items/build-index.mjs — do not hand-edit.
+ *
+ * ONE LOCALE of the item text. A learner reads exactly one of these and the other two are never
+ * requested — the same split, for the same reason, as content/locales/<locale>.json is for the UI.
+ */
+export default ${JSON.stringify(table)};
+`;
+    fs.writeFileSync(path.join(stringsDir, `items-${locale}.mjs`), body);
+    localeBytes[locale] = { raw: body.length, gzip: gzBytes(body) };
+  }
+
   const spine = spineBlocks.join("\u0000");
+  const spineBody = `/* GENERATED by content/items/build-index.mjs — do not hand-edit.
+ *
+ * The identity spine: id, difficulty and canonical answer for every committed item, in the
+ * committed order. \`index.mjs\` decodes it into the round-1 \`BANK\` shape.
+ *
+ * LAZY ON PURPOSE. The only thing the running game ever did with it was recompute
+ * \`bankAuditFingerprint\`, and \`index.mjs\` now exports that value as an eight-character scalar
+ * computed at build time. This chunk is pulled only when the live audit constants no longer match
+ * the ones the scalar was computed over — i.e. only when the answer would actually be different.
+ */
+export const SPINE = ${JSON.stringify(spine)};
+export default SPINE;
+`;
+  fs.writeFileSync(path.join(HERE, "spine.mjs"), spineBody);
+
+  const fp = buildFingerprint(decodeSpine(spine), kg);
+
   const barrel = `/**
  * index.mjs — the EAGER half of the shipped item bank.
  *
  * GENERATED by content/items/build-index.mjs — do not hand-edit.
  *
- * The items are NOT here. They live one chunk per knowledge point under \`groups/\`, and
- * \`app/src/learn/ItemBank.js\` pulls a group the first time a session needs it. What is here is
- * only what every page load genuinely needs before the first item is drawn:
+ * NOTHING WITH A PER-ITEM OR PER-LOCALE COST IS IN HERE. What a page load pays for, in full: the
+ * manifest (lessons and per-knowledge-point meta, no items), three loader tables, and one
+ * eight-character fingerprint. Everything with a size is behind an \`import()\`:
  *
- *   STRINGS    every locale key. A generated item can name any of them, so this cannot be split
- *              by knowledge point; it could be split by LOCALE, which is a separate piece of work.
- *   MANIFEST   lessons, and per-knowledge-point meta with no items in it.
- *   BANK       the identity spine — id, form, family, difficulty, canonical answer, per item.
- *              \`app/src/boot/62-learning.js\` folds it into the fingerprint that decides whether
- *              \`bank-audit.json\` still prices the content we ship, and \`tools/bank-audit.mjs\` and
- *              \`review/measure/P16.mjs\` lint the committed pools out of it. Those five strings are
- *              everything any of them read, and they are reconstructed here in the original order,
- *              so the fingerprint is the same value it was before the catalogue was split.
+ *   groups/<kpId>.mjs        the items, one chunk per knowledge point, pulled per lesson.
+ *   strings/items-<l>.mjs    the item text, one chunk per locale, one pulled per learner.
+ *   spine.mjs                the identity spine, pulled only when the fingerprint basis moved.
+ *
+ * In NODE all of it is pulled eagerly at module init — \`tools/bank-audit.mjs\`,
+ * \`review/measure/P16.mjs\`, \`review/measure/P17.mjs\` and four critic scripts read \`BANK\` and
+ * \`STRINGS\` synchronously, there is no bandwidth to save offline, and a DELIVERY decision must not
+ * change a single measured value. In the BROWSER both are \`null\` and neither chunk is requested:
+ * \`ItemBank\` reaches the locale table through \`STRING_LOADERS\`, and nothing in the running game
+ * reads the spine at all.
  *
  * \`form\` and \`family\` are slices of the id, which is \`\${family}/\${form}/\${hash}\` by construction.
  */
-export const STRINGS = ${JSON.stringify(strings)};
-export const LOCALES = ["en", "es", "pl"];
+export const LOCALES = ${JSON.stringify(SHIPPED_LOCALES)};
 
 export { MANIFEST, LESSONS, KP_META } from "./manifest.mjs";
 export { GROUP_IDS, GROUP_LOADERS } from "./groups/index.mjs";
@@ -324,37 +499,94 @@ import { MANIFEST as _M } from "./manifest.mjs";
 /** The build-time index, kept under its round-1 name because P17's stats surface reads it. */
 export const BANK_INDEX = _M;
 
-const SPINE = ${JSON.stringify(spine)};
+/**
+ * One static specifier per locale, for the same reason \`groups/index.mjs\` has one per knowledge
+ * point: a computed specifier is either left alone by the bundler and 404s in production, or swept
+ * into a glob that pulls all three languages back into one chunk.
+ */
+export const STRING_LOADERS = {
+${SHIPPED_LOCALES.map((l) => `  ${JSON.stringify(l)}: () => import(${JSON.stringify(`./strings/items-${l}.mjs`)}),`).join("\n")}
+};
+
+/** One locale's item text as \`{ key: string }\`. \`null\` for a locale we do not ship. */
+export async function loadItemStrings(locale) {
+  const loader = STRING_LOADERS[locale];
+  if (!loader) return null;
+  const mod = await loader();
+  return mod.default ?? mod;
+}
+
+/**
+ * \`bankAuditFingerprint({ bankFiles: BANK, model })\`, computed at BUILD time over the spine.
+ *
+ * \`BANK_FINGERPRINT_BASIS\` keys the audit constants that value was folded over — the Mastery audit
+ * version and its sampling constants, plus the graph's identifiability caps.
+ * \`app/src/boot/62-learning.js\` recomputes the key from the LIVE constants on every page load and
+ * only trusts the scalar when the two agree, so a constant that changed without a rebuild falls
+ * back to the spine instead of silently validating a stale price table.
+ */
+export const BANK_FINGERPRINT = ${JSON.stringify(fp.fingerprint)};
+export const BANK_FINGERPRINT_BASIS = ${JSON.stringify(fp.basis)};
+export const BANK_AUDIT_VERSION_AT_BUILD = ${JSON.stringify(fp.version)};
+
+${BASIS_SOURCE}
 
 /** Decode the spine. 1152 items, one pass, no allocation beyond the objects themselves. */
-export const BANK = SPINE.split("\\u0000").map((block) => {
-  const lines = block.split("\\n");
-  const items = [];
-  for (let i = 1; i < lines.length; i += 1) {
-    const line = lines[i];
-    const t1 = line.indexOf("\\t");
-    const t2 = line.indexOf("\\t", t1 + 1);
-    const id = line.slice(0, t1);
-    const s1 = id.indexOf("/");
-    const s2 = id.indexOf("/", s1 + 1);
-    items.push({
-      id,
-      family: id.slice(0, s1),
-      form: id.slice(s1 + 1, s2),
-      difficulty: Number(line.slice(t1 + 1, t2)),
-      answer: { canonical: line.slice(t2 + 1) },
-    });
-  }
-  return { kpId: lines[0], items };
-});
+export function decodeSpine(spine) {
+  return spine.split("\\u0000").map((block) => {
+    const lines = block.split("\\n");
+    const items = [];
+    for (let i = 1; i < lines.length; i += 1) {
+      const line = lines[i];
+      const t1 = line.indexOf("\\t");
+      const t2 = line.indexOf("\\t", t1 + 1);
+      const id = line.slice(0, t1);
+      const s1 = id.indexOf("/");
+      const s2 = id.indexOf("/", s1 + 1);
+      items.push({
+        id,
+        family: id.slice(0, s1),
+        form: id.slice(s1 + 1, s2),
+        difficulty: Number(line.slice(t1 + 1, t2)),
+        answer: { canonical: line.slice(t2 + 1) },
+      });
+    }
+    return { kpId: lines[0], items };
+  });
+}
+
+/** The round-1 \`BANK\` shape, pulled on demand. The stale-audit branch is the only caller. */
+export async function loadBankSpine() {
+  const mod = await import("./spine.mjs");
+  return decodeSpine(mod.SPINE ?? mod.default);
+}
+
+const IS_NODE =
+  typeof process !== "undefined" && !!process.versions?.node && typeof window === "undefined";
+
+/** Every locale of every key, \`{ key: { en, es, pl } }\` — the round-1 shape. NODE ONLY. */
+async function assembleStrings() {
+  const tables = await Promise.all(LOCALES.map((l) => loadItemStrings(l)));
+  const out = {};
+  LOCALES.forEach((locale, i) => {
+    for (const [key, text] of Object.entries(tables[i])) (out[key] ??= {})[locale] = text;
+  });
+  return out;
+}
+
+export const BANK = IS_NODE ? await loadBankSpine() : null;
+export const STRINGS = IS_NODE ? await assembleStrings() : null;
 `;
   fs.writeFileSync(path.join(HERE, "index.mjs"), barrel);
 
   return {
     groups: ids.length,
     lessons: lessons.length,
-    spine: { raw: spine.length, gzip: gzBytes(spine) },
+    fingerprint: fp,
+    spine: { raw: spineBody.length, gzip: gzBytes(spineBody) },
     strings: { raw: JSON.stringify(strings).length, gzip: gzBytes(JSON.stringify(strings)) },
+    localeBytes,
+    barrel: { raw: barrel.length, gzip: gzBytes(barrel) },
     manifest: { raw: JSON.stringify(manifest).length, gzip: gzBytes(JSON.stringify(manifest)) },
     groupBytes: Object.fromEntries(Object.entries(kpMeta).map(([k, v]) => [k, v.sourceBytes])),
   };
@@ -379,8 +611,9 @@ if (path.resolve(process.argv[1] ?? "") === path.resolve(fileURLToPath(import.me
       {
         groups: out.groups,
         lessons: out.lessons,
-        eager: { spine: out.spine, strings: out.strings, manifest: out.manifest },
-        lazyTotal: totalGroup,
+        fingerprint: out.fingerprint,
+        eager: { barrel: out.barrel, manifest: out.manifest },
+        lazy: { spine: out.spine, locales: out.localeBytes, groupsTotal: totalGroup },
       },
       null,
       2

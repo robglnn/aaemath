@@ -215,6 +215,29 @@ shadow is not arriving.
 **Therefore: a green proof script is worth nothing until someone confirms it runs and measures the real
 game.** Any critic must re-run the builder's script AND check what scene it is actually measuring.
 
+## 6b. THE DOMINANT FAILURE MODE: built, excellent, and wired to nothing
+
+This has now been caught three times by three different critics, each on work that was genuinely good
+in isolation:
+
+1. **P11** — `Materials.js`, a 49 KB flat-shaded factory, imported only by `Lighting.js`. Zero shipped
+   meshes used it, so every colour claim described a synthetic board no player would ever see.
+2. **P31** — the item catalogue was split per knowledge point and the eager chunk really did drop
+   147.0 → 64.3 kB gz, but: *"driving the real built app's Scheduler for 117 items pulled 0/32
+   groups."* The lazy path had no caller.
+3. **P32** — test-out's blind-guess bound of 1e-3 *"rests on never serving a refused generator family,
+   but `ItemBank.js` has 0 occurrences"* of the restriction. The guarantee depended on an
+   unenforced precondition.
+
+**Standing gate, applies to every piece from now on.** Before any claim is accepted:
+- Grep for callers of the thing you built. Zero callers outside your own test = automatic fail.
+- Drive the SHIPPED app and observe the code path executing — not a unit test, not a test scene.
+- If a guarantee depends on a precondition, grep that the precondition is *enforced in code*, not
+  merely stated in a comment or a design doc.
+
+A builder's work being correct is not the same as it being connected. In this project the second has
+failed far more often than the first.
+
 ## 7. Learning-integrity findings that must not regress
 
 Critics found three separate routes by which scaffolded practice could be laundered into unearned

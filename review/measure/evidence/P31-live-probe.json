@@ -1,18 +1,55 @@
 {
- "note": "Read out of the REAL built game with: node tools/review.mjs probe --name=itembank --built. It is the boot state, before any lesson has been opened.",
- "probe": {
+ "generated": "2026-08-10T17:17:20.495Z",
+ "ready": true,
+ "fatal": null,
+ "errors": [],
+ "warnings": [
+  "learning: CONTENT: \"expr-anatomy\" has only construct left after the bank audit, so M3 asks for 1 distinct form(s) instead of 2. Fix the generator families named in bankPricing.rejectedCells and this reverts on its own.",
+  "learning: CONTENT: \"eq-special-cases\" has NO mastery-eligible form left after the bank audit and can never be certified",
+  "learning: TEST-OUT: \"eq-special-cases\" is NOT eligible for a test-out — no mastery-eligible form survives the bank audit. A learner who already knows it must walk the full teaching sequence. The fix is content: more distinct answers in that node's committed pools, never a looser maxBlindPass.",
+  "math: claim \"leaf9-span\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer",
+  "math: claim \"leaf9-share\" reads 31.3 device px per em, under the 33 px legibility floor — its thinnest stroke would be 1.41 px, so the mark stands until the player is closer"
+ ],
+ "warm": {
+  "at": 1786382240326,
+  "kpId": "var-meaning",
+  "lesson": "expressions-1",
+  "groups": 3,
+  "failed": [],
+  "ms": 7.9,
+  "reason": "ok"
+ },
+ "probeAfterWarm": {
   "knowledgePoints": 32,
-  "items": 0,
+  "items": 108,
   "catalogueItems": 1152,
   "generatedThisSession": 0,
   "locale": "en",
   "minItemsPerKp": 36,
   "minItemsPerMisconception": 3,
-  "groups": "0/32 resident, 0 loading",
+  "groups": "3/32 resident, 0 loading",
   "lessons": 22,
-  "residentGroups": [],
+  "residentGroups": [
+   "oo-numeric",
+   "expr-anatomy",
+   "var-meaning"
+  ],
   "degraded": [],
   "issues": 0,
+  "lastIssue": null,
+  "warm": {
+   "at": 1786382240326,
+   "kpId": "var-meaning",
+   "lesson": "expressions-1",
+   "groups": 3,
+   "failed": [],
+   "ms": 7.9,
+   "reason": "ok"
+  },
+  "itemLocale": "en",
+  "localesResident": [
+   "en"
+  ],
   "formsPerKp": {
    "var-meaning": "14/17/5",
    "oo-numeric": "15/16/5",
@@ -46,6 +83,610 @@
    "ineq-one-step": "16/13/7",
    "ineq-negative-flip": "15/14/7",
    "ineq-two-step": "15/14/7"
+  }
+ },
+ "probe": {
+  "knowledgePoints": 32,
+  "items": 144,
+  "catalogueItems": 1152,
+  "generatedThisSession": 0,
+  "locale": "en",
+  "minItemsPerKp": 36,
+  "minItemsPerMisconception": 3,
+  "groups": "4/32 resident, 0 loading",
+  "lessons": 22,
+  "residentGroups": [
+   "oo-numeric",
+   "expr-anatomy",
+   "var-meaning",
+   "oo-structure"
+  ],
+  "degraded": [],
+  "issues": 0,
+  "lastIssue": null,
+  "warm": {
+   "at": 1786382240326,
+   "kpId": "var-meaning",
+   "lesson": "expressions-1",
+   "groups": 3,
+   "failed": [],
+   "ms": 7.9,
+   "reason": "ok"
+  },
+  "itemLocale": "en",
+  "localesResident": [
+   "en"
+  ],
+  "formsPerKp": {
+   "var-meaning": "14/17/5",
+   "oo-numeric": "15/16/5",
+   "expr-anatomy": "16/15/5",
+   "oo-structure": "14/10/12",
+   "eval-substitute": "13/12/11",
+   "eval-signed": "12/13/11",
+   "eval-formula": "13/13/10",
+   "translate-phrase": "13/16/7",
+   "translate-order": "17/14/5",
+   "props-operations": "12/12/12",
+   "like-terms-id": "12/12/12",
+   "like-terms-combine": "12/12/12",
+   "distribute-numeric": "15/14/7",
+   "distribute-variable": "12/12/12",
+   "distribute-negative": "16/13/7",
+   "simplify-expression": "12/13/11",
+   "equivalent-expressions": "11/13/12",
+   "eq-meaning": "12/12/12",
+   "props-equality": "15/14/7",
+   "eq-one-add": "13/16/7",
+   "eq-one-mult": "15/14/7",
+   "eq-two-step": "11/13/12",
+   "eq-combine-side": "10/12/14",
+   "eq-distribute": "12/12/12",
+   "eq-both-sides": "10/14/12",
+   "eq-special-cases": "16/7/13",
+   "translate-sentence": "12/11/13",
+   "eq-model-context": "15/14/7",
+   "ineq-meaning": "14/12/10",
+   "ineq-one-step": "16/13/7",
+   "ineq-negative-flip": "15/14/7",
+   "ineq-two-step": "15/14/7"
+  }
+ },
+ "bankAudit": {
+  "source": "committed",
+  "fingerprintSource": "build-time",
+  "setupMs": 0.1,
+  "fingerprint": "d6e2537d",
+  "version": 2,
+  "sampled": 29754,
+  "catalogueShare": 0.6396
+ },
+ "frontier": [
+  "var-meaning",
+  "oo-numeric"
+ ],
+ "resources": {
+  "atReady": [
+   {
+    "name": "http://127.0.0.1:54284/assets/index-B_i9UVxb.js",
+    "startTime": 8,
+    "encoded": 130654
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/index-BuMqkyig.css",
+    "startTime": 8,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/02-autotier-CvJsEWl2.js",
+    "startTime": 2402,
+    "encoded": 5219
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/05-i18n-BrHXQ5NB.js",
+    "startTime": 2407,
+    "encoded": 4067
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/10-world-DKO-dlm-.js",
+    "startTime": 2415,
+    "encoded": 17608
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/Materials-ohGs5Hmq.js",
+    "startTime": 2415,
+    "encoded": 14564
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/12-sky-BLVLAQR2.js",
+    "startTime": 2421,
+    "encoded": 11272
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/14-lighting-Bs8XkkAh.js",
+    "startTime": 2425,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/16-scatter-Mqi19odW.js",
+    "startTime": 2429,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/20-input-1IhwZ9CQ.js",
+    "startTime": 2433,
+    "encoded": 12822
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/30-locomotion-CF-Ma-bJ.js",
+    "startTime": 2437,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/32-avatar-B7zwp7hE.js",
+    "startTime": 2441,
+    "encoded": 4999
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/40-camera-BQyCkT_p.js",
+    "startTime": 2443,
+    "encoded": 5689
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/52-post-7z0Y5S8E.js",
+    "startTime": 2445,
+    "encoded": 9617
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/60-mathtex-BFYepSBM.js",
+    "startTime": 2448,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 2448,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/62-itembank-B9An2avz.js",
+    "startTime": 2465,
+    "encoded": 645
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/ItemBank-CQNXpR2H.js",
+    "startTime": 2465,
+    "encoded": 29237
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/62-learning-CBnbikAY.js",
+    "startTime": 2472,
+    "encoded": 50344
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/90-flow-D3ToW7A9.js",
+    "startTime": 2481,
+    "encoded": 7644
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/en-DiJtJ4AS.js",
+    "startTime": 2486,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 2567,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 2567,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 2567,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 2567,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 2567,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 2567,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 2567,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 2567,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/items-en-BvtiMYOY.js",
+    "startTime": 2592,
+    "encoded": 7879
+   }
+  ],
+  "afterWarm": [
+   {
+    "name": "http://127.0.0.1:54284/assets/index-B_i9UVxb.js",
+    "startTime": 8,
+    "encoded": 130654
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/index-BuMqkyig.css",
+    "startTime": 8,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/02-autotier-CvJsEWl2.js",
+    "startTime": 2402,
+    "encoded": 5219
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/05-i18n-BrHXQ5NB.js",
+    "startTime": 2407,
+    "encoded": 4067
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/10-world-DKO-dlm-.js",
+    "startTime": 2415,
+    "encoded": 17608
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/Materials-ohGs5Hmq.js",
+    "startTime": 2415,
+    "encoded": 14564
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/12-sky-BLVLAQR2.js",
+    "startTime": 2421,
+    "encoded": 11272
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/14-lighting-Bs8XkkAh.js",
+    "startTime": 2425,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/16-scatter-Mqi19odW.js",
+    "startTime": 2429,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/20-input-1IhwZ9CQ.js",
+    "startTime": 2433,
+    "encoded": 12822
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/30-locomotion-CF-Ma-bJ.js",
+    "startTime": 2437,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/32-avatar-B7zwp7hE.js",
+    "startTime": 2441,
+    "encoded": 4999
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/40-camera-BQyCkT_p.js",
+    "startTime": 2443,
+    "encoded": 5689
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/52-post-7z0Y5S8E.js",
+    "startTime": 2445,
+    "encoded": 9617
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/60-mathtex-BFYepSBM.js",
+    "startTime": 2448,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 2448,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/62-itembank-B9An2avz.js",
+    "startTime": 2465,
+    "encoded": 645
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/ItemBank-CQNXpR2H.js",
+    "startTime": 2465,
+    "encoded": 29237
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/62-learning-CBnbikAY.js",
+    "startTime": 2472,
+    "encoded": 50344
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/90-flow-D3ToW7A9.js",
+    "startTime": 2481,
+    "encoded": 7644
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/en-DiJtJ4AS.js",
+    "startTime": 2486,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 2567,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 2567,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 2567,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 2567,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 2567,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 2567,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 2567,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 2567,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/items-en-BvtiMYOY.js",
+    "startTime": 2592,
+    "encoded": 7879
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 3474,
+    "encoded": 2834
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 3475,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 3475,
+    "encoded": 2239
+   }
+  ],
+  "afterPrefetch": [
+   {
+    "name": "http://127.0.0.1:54284/assets/index-B_i9UVxb.js",
+    "startTime": 8,
+    "encoded": 130654
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/index-BuMqkyig.css",
+    "startTime": 8,
+    "encoded": 759
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/02-autotier-CvJsEWl2.js",
+    "startTime": 2402,
+    "encoded": 5219
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/05-i18n-BrHXQ5NB.js",
+    "startTime": 2407,
+    "encoded": 4067
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/10-world-DKO-dlm-.js",
+    "startTime": 2415,
+    "encoded": 17608
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/Materials-ohGs5Hmq.js",
+    "startTime": 2415,
+    "encoded": 14564
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/12-sky-BLVLAQR2.js",
+    "startTime": 2421,
+    "encoded": 11272
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/14-lighting-Bs8XkkAh.js",
+    "startTime": 2425,
+    "encoded": 6758
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/16-scatter-Mqi19odW.js",
+    "startTime": 2429,
+    "encoded": 12225
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/20-input-1IhwZ9CQ.js",
+    "startTime": 2433,
+    "encoded": 12822
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/30-locomotion-CF-Ma-bJ.js",
+    "startTime": 2437,
+    "encoded": 13486
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/32-avatar-B7zwp7hE.js",
+    "startTime": 2441,
+    "encoded": 4999
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/40-camera-BQyCkT_p.js",
+    "startTime": 2443,
+    "encoded": 5689
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/52-post-7z0Y5S8E.js",
+    "startTime": 2445,
+    "encoded": 9617
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/60-mathtex-BFYepSBM.js",
+    "startTime": 2448,
+    "encoded": 92133
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/60-mathtex-DLVrwanO.css",
+    "startTime": 2448,
+    "encoded": 8044
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/62-itembank-B9An2avz.js",
+    "startTime": 2465,
+    "encoded": 645
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/ItemBank-CQNXpR2H.js",
+    "startTime": 2465,
+    "encoded": 29237
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/62-learning-CBnbikAY.js",
+    "startTime": 2472,
+    "encoded": 50344
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/90-flow-D3ToW7A9.js",
+    "startTime": 2481,
+    "encoded": 7644
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/en-DiJtJ4AS.js",
+    "startTime": 2486,
+    "encoded": 8348
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+    "startTime": 2567,
+    "encoded": 26272
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2",
+    "startTime": 2567,
+    "encoded": 16988
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Main-Bold-Cx986IdX.woff2",
+    "startTime": 2567,
+    "encoded": 25324
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+    "startTime": 2567,
+    "encoded": 16440
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2",
+    "startTime": 2567,
+    "encoded": 5468
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2",
+    "startTime": 2567,
+    "encoded": 5208
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2",
+    "startTime": 2567,
+    "encoded": 4928
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2",
+    "startTime": 2567,
+    "encoded": 28076
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/items-en-BvtiMYOY.js",
+    "startTime": 2592,
+    "encoded": 7879
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/var-meaning-Ct12kn0-.js",
+    "startTime": 3474,
+    "encoded": 2834
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/oo-numeric-BjsVHueV.js",
+    "startTime": 3475,
+    "encoded": 2822
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/expr-anatomy-WYJhDm_0.js",
+    "startTime": 3475,
+    "encoded": 2239
+   },
+   {
+    "name": "http://127.0.0.1:54284/assets/oo-structure-Bges-2rk.js",
+    "startTime": 3496,
+    "encoded": 2619
+   }
+  ]
+ },
+ "classified": {
+  "criticalPath": {
+   "requests": 30,
+   "groupChunks": [],
+   "itemLocaleChunks": [
+    "items-en-BvtiMYOY.js"
+   ],
+   "spineChunks": [],
+   "encodedBytes": 582717
+  },
+  "warmPulled": {
+   "requests": 3,
+   "groupChunks": [
+    "var-meaning-Ct12kn0-.js",
+    "oo-numeric-BjsVHueV.js",
+    "expr-anatomy-WYJhDm_0.js"
+   ],
+   "itemLocaleChunks": [],
+   "spineChunks": [],
+   "encodedBytes": 7895
+  },
+  "idlePrefetched": {
+   "requests": 1,
+   "groupChunks": [
+    "oo-structure-Bges-2rk.js"
+   ],
+   "itemLocaleChunks": [],
+   "spineChunks": [],
+   "encodedBytes": 2619
   }
  }
 }

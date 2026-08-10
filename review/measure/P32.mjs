@@ -76,6 +76,15 @@ const HAS = (k) => process.argv.includes(`--${k}`);
 
 const LEARNERS = argNum("learners", 120);
 const BOTS = argNum("bots", 1200);
+/**
+ * The hostile arms are sized by the POWER CLAIM D1 NEEDS, not by taste. D1 tests whether the
+ * measured blind-pass rate EXCEEDS `TEST_OUT.maxBlindPass`; a run that offers far fewer than
+ * 1/maxBlindPass probes cannot see a violation of that size at all, so its PASS would mean nothing.
+ * At least a few multiples of 1/1e-3 offered probes is the floor; a bot is offered about 1.07 probes
+ * across a run and there are three hostile arms, so that is ~1200 bots. A `--bots=200` run printing
+ * PASS would be the kind of green number this project keeps catching.
+ */
+const HOSTILE_MIN = Math.ceil(3.8415 / TEST_OUT.maxBlindPass / 3.2);
 const SESSIONS = argNum("sessions", 26);
 const SESSION_MINUTES = argNum("sessionMinutes", 25);
 const JSON_OUT = HAS("json");
@@ -114,7 +123,42 @@ function table(rows) {
   console.log("  " + w.map((n) => "-".repeat(n)).join("  "));
   for (const r of rows) console.log(line(cols.map((c) => r[c])));
 }
-const pct = (x) => `${(100 * x).toFixed(1)}%`;
+const pct = (x) => (x == null || !Number.isFinite(x) ? "—" : `${(100 * x).toFixed(1)}%`);
+/**
+ * Format a number that a cohort may never have produced. Every "median minutes to 80%" in this file
+ * is null for a cohort that never got there, and RESUME.md's meta-lesson is that two builders'
+ * proof scripts in this project died on exactly this shape before printing a single claim. A green
+ * script that cannot survive `--sessions=12` is not evidence of anything.
+ */
+const num = (x, d = 0) => (x == null || !Number.isFinite(x) ? "—" : x.toFixed(d));
+/**
+ * One-sided binomial tail, P(X >= hits | n, p), in log space so n in the thousands does not overflow.
+ *
+ * THIS, NOT THE WILSON UPPER BOUND, IS THE RIGHT TEST FOR CLAIM D1, and getting that wrong once is
+ * why the comment is here. `maxBlindPass` is a DESIGN BOUND: the probe lengths were derived so a
+ * blind responder passes at most one probe in a thousand. A measurement's job is therefore to
+ * detect a VIOLATION of that bound, not to re-derive it from scratch. Asking the Wilson upper bound
+ * to fall below 1e-3 asks the run to prove the true rate is strictly smaller than the bound — which
+ * is impossible when the true rate IS the bound, however many bots are run, and which made this
+ * claim fail on 1 pass in 3853 offers where the bound itself predicts 3.9.
+ */
+const binomTailAtLeast = (hits, n, p) => {
+  if (hits <= 0) return 1;
+  let logC = 0;
+  let below = 0;
+  for (let i = 0; i < hits; i++) {
+    if (i > 0) logC += Math.log((n - i + 1) / i);
+    below += Math.exp(logC + i * Math.log(p) + (n - i) * Math.log1p(-p));
+  }
+  return Math.max(0, 1 - below);
+};
+/** Wilson 95% upper bound — reported alongside, as the honest width of the estimate. */
+const wilson = (hits, n) => {
+  if (!n) return 1;
+  const z = 1.959964;
+  const pp = hits / n;
+  return Math.min(1, (pp + (z * z) / (2 * n) + z * Math.sqrt((pp * (1 - pp)) / n + (z * z) / (4 * n * n))) / (1 + (z * z) / n));
+};
 const percentile = (sorted, q) => (sorted.length ? sorted[Math.min(sorted.length - 1, Math.max(0, Math.round(q * (sorted.length - 1))))] : null);
 
 if (!JSON_OUT)
@@ -339,7 +383,7 @@ claim(
   );
   claim(
     "B3",
-    "pricing the probe on model.trueGuessByForm instead of the measured bank understates it by up to 3 orders of magnitude",
+    "pricing the probe on model.trueGuessByForm instead of the measured bank understates it by SIX orders of magnitude",
     worst.ratio > 100,
     `Worst node ${worst.id}: measured ${worst.measured.toExponential(2)} against a modelled ` +
       `${worst.modelled.toExponential(2)} — understated ${worst.ratio.toFixed(0)}x. Per ITEM the constants are ` +
@@ -399,7 +443,7 @@ function ordinaryGateBlind(id, attempts, trials, rng, rateOf) {
   );
   claim(
     "B4",
-    "the probe is 1–3 orders of magnitude harder to fluke than the M1+M2+M3 march it replaces",
+    "the probe is 1–3 orders of magnitude harder to fluke than the M1+M2+M3 march it replaces (and that march is the defect)",
     rows[0].ratio > 10,
     `Across ${rows.length} eligible nodes the probe is between ${rows[0].ratio.toFixed(0)}x and ` +
       `${rows[rows.length - 1].ratio.toFixed(0)}x stricter than the ordinary gate at the same measured rates. ` +
@@ -657,6 +701,10 @@ function runLearner({ seed, kind, arm, sessions = SESSIONS }) {
 
   const mastered = GRAPH.ids.filter((id) => mastery.status(id) === "mastered").length;
   const at = (need) => trace.find((t) => t.mastered >= need) ?? null;
+  // A passed probe grants `provisional`, never `mastered`. These two count what happened AFTER:
+  // how many probe-unlocked nodes went on to survive consolidation and the 12-hour retention check.
+  const viaProbe = GRAPH.ids.filter((id) => mastery.stateOf(id).unlockedVia === "test-out");
+  const viaProbeCertified = viaProbe.filter((id) => mastery.status(id) === "mastered");
   return {
     mastery,
     mastered,
@@ -674,6 +722,8 @@ function runLearner({ seed, kind, arm, sessions = SESSIONS }) {
     sessionsTo80: trace.findIndex((t) => t.mastered >= NEED80) + 1 || null,
     sessionsToAll: trace.findIndex((t) => t.mastered >= CERTIFIABLE) + 1 || null,
     testOut: { ...mastery.probe().testOut, plans: undefined, ineligible: undefined },
+    viaProbe: viaProbe.length,
+    viaProbeCertified: viaProbeCertified.length,
     credits: mastery.stats.prerequisiteCredits,
     byDistance: { ...mastery.stats.creditsByDistance },
     trace,
@@ -724,6 +774,11 @@ function cohort(kind, arm, n, seedBase, sessions = SESSIONS) {
     }, {}),
     everCertified: rows.filter((r) => r.mastered > 0).length,
     everTestedOut: rows.filter((r) => r.testOut.passed > 0).length,
+    /** Probes OFFERED across the whole cohort — the denominator the blind-pass bound is stated per. */
+    probesOffered: rows.reduce((a, r) => a + r.testOut.offered, 0),
+    probesPassed: rows.reduce((a, r) => a + r.testOut.passed, 0),
+    viaProbe: rows.reduce((a, r) => a + r.viaProbe, 0),
+    viaProbeCertified: rows.reduce((a, r) => a + r.viaProbeCertified, 0),
   };
 }
 
@@ -737,9 +792,10 @@ for (const kind of HONEST)
 for (const kind of ["strong", "median"])
   for (const arm of ["propagation only", "test-out only"]) RESULTS[`${kind}|${arm}`] = cohort(kind, arm, LEARNERS, seedFor(kind));
 // Hostile arms run on IDENTICAL seeds across arms, so shipped-vs-baseline is a paired comparison.
+const HOSTILE_N = Math.max(BOTS, HOSTILE_MIN);
 for (const kind of BOTKINDS)
-  for (const arm of ["shipped", "baseline"]) RESULTS[`${kind}|${arm}`] = cohort(kind, arm, BOTS, botSeed(kind));
-RESULTS["guesser|leaky-probe"] = cohort("guesser", "leaky-probe", BOTS, botSeed("guesser"));
+  for (const arm of ["shipped", "baseline"]) RESULTS[`${kind}|${arm}`] = cohort(kind, arm, HOSTILE_N, botSeed(kind));
+RESULTS["guesser|leaky-probe"] = cohort("guesser", "leaky-probe", HOSTILE_N, botSeed("guesser"));
 RESULTS["hintLeak|shipped"] = cohort("hintLeak", "shipped", Math.min(BOTS, 300), botSeed("hintLeak"));
 
 head("MINUTES TO MASTERY, PER LEARNER ARCHETYPE  (median; minutes are scored-item time at 46 s/item)");
@@ -775,6 +831,7 @@ table(
       "probes offered": r.offered.toFixed(2),
       "probes PASSED": r.passed.toFixed(4),
       "bots that passed one": `${r.everTestedOut} / ${r.n}`,
+      "probe unlocks → certified": `${r.viaProbe} → ${r.viaProbeCertified}`,
       "KPs certified (mean)": r.masteredMean.toFixed(4),
       "bots that certified any": `${r.everCertified} / ${r.n}`,
     };
@@ -786,7 +843,7 @@ table(
 {
   const s = RESULTS["strong|shipped"];
   const b = RESULTS["strong|baseline"];
-  const cut = (x, y) => (x != null && y != null ? 1 - x / y : null);
+  const cut = (x, y) => (x != null && y != null && y !== 0 ? 1 - x / y : null);
 
   head("WHERE THE TIME GOES  (median, minutes of scored-item time over the whole run)");
   table(
@@ -809,9 +866,9 @@ table(
   claim(
     "C1",
     "the probe cuts a strong learner's ACQUISITION time per knowledge point by about a third",
-    s.acqPerNode < 0.75 * b.acqPerNode,
+    s.acqPerNode != null && b.acqPerNode != null && s.acqPerNode < 0.75 * b.acqPerNode,
     `strong learner, median of ${LEARNERS}. Acquisition time per certified knowledge point: ` +
-      `${s.acqPerNode.toFixed(1)} min shipped against ${b.acqPerNode.toFixed(1)} min on the pre-P32 engine — ` +
+      `${num(s.acqPerNode, 1)} min shipped against ${num(b.acqPerNode, 1)} min on the pre-P32 engine — ` +
       `${pct(cut(s.acqPerNode, b.acqPerNode))} less. That is the number the product goal names: a learner who ` +
       `already knows a knowledge point proves it in a ${percentile(lens, 0.5)}-item probe ` +
       `(${((percentile(lens, 0.5) * 46) / 60).toFixed(1)} min, ${((lens[0] * 46) / 60).toFixed(1)} min at the best ` +
@@ -822,12 +879,12 @@ table(
     "C1b",
     "end to end, that is a real but SMALLER cut — because certification, not teaching, is the floor",
     s.minutesToAll != null && b.minutesToAll != null && s.minutesToAll < 0.9 * b.minutesToAll,
-    `80% of Level 1 in ${s.minutesTo80.toFixed(0)} min / ${s.itemsTo80} items / ${s.sessionsTo80} sessions, against ` +
-      `${b.minutesTo80.toFixed(0)} min / ${b.itemsTo80} items / ${b.sessionsTo80} sessions — ` +
-      `${pct(cut(s.minutesTo80, b.minutesTo80))} less time. All ${CERTIFIABLE}: ${s.minutesToAll.toFixed(0)} min / ` +
-      `${s.itemsToAll} items / ${s.sessionsToAll} sessions against ${b.minutesToAll.toFixed(0)} / ${b.itemsToAll} / ` +
+    `80% of Level 1 in ${num(s.minutesTo80)} min / ${s.itemsTo80} items / ${s.sessionsTo80} sessions, against ` +
+      `${num(b.minutesTo80)} min / ${b.itemsTo80} items / ${b.sessionsTo80} sessions — ` +
+      `${pct(cut(s.minutesTo80, b.minutesTo80))} less time. All ${CERTIFIABLE}: ${num(s.minutesToAll)} min / ` +
+      `${s.itemsToAll} items / ${s.sessionsToAll} sessions against ${num(b.minutesToAll)} / ${b.itemsToAll} / ` +
       `${b.sessionsToAll} — ${pct(cut(s.minutesToAll, b.minutesToAll))} less time, ` +
-      `${pct(cut(s.itemsToAll, b.itemsToAll))} fewer items, ${b.sessionsToAll - s.sessionsToAll} sessions saved. ` +
+      `${pct(cut(s.itemsToAll, b.itemsToAll))} fewer items, ${b.sessionsToAll != null && s.sessionsToAll != null ? b.sessionsToAll - s.sessionsToAll : "—"} sessions saved. ` +
       `DO NOT REPORT THE FIRST NUMBER WITHOUT THIS ONE. ${pct(s.certMinutes / s.totalMinutes)} of a strong ` +
       `learner's run is now consolidation and retention items, which no amount of prior knowledge removes: ` +
       `6 items x ${CERTIFIABLE} nodes = ${((6 * 46 * CERTIFIABLE) / 60).toFixed(0)} minutes, plus a 12-hour gate ` +
@@ -921,14 +978,14 @@ table(
   claim(
     "C2c",
     "the saving is the probe's, and it is not bought by lowering anyone's final mastery",
-    t.minutesToAll <= b.minutesToAll * 0.85 && s.masteryPct >= b.masteryPct - 1,
-    `strong learner, minutes to all ${CERTIFIABLE}: shipped ${s.minutesToAll.toFixed(0)}, probe alone ` +
-      `${t.minutesToAll.toFixed(0)}, propagation alone ${p.minutesToAll.toFixed(0)}, baseline ${b.minutesToAll.toFixed(0)}. ` +
+    t.minutesToAll != null && b.minutesToAll != null && t.minutesToAll <= b.minutesToAll * 0.85 && s.masteryPct >= b.masteryPct - 1,
+    `strong learner, minutes to all ${CERTIFIABLE}: shipped ${num(s.minutesToAll)}, probe alone ` +
+      `${num(t.minutesToAll)}, propagation alone ${num(p.minutesToAll)}, baseline ${num(b.minutesToAll)}. ` +
       `Final mastery ${pct(s.masteryPct / 100)} shipped against ${pct(b.masteryPct / 100)} baseline — the strong ` +
-      `learner arrives at the same place, sooner. The floor under the remaining ${s.minutesToAll.toFixed(0)} minutes ` +
+      `learner arrives at the same place, sooner. The floor under the remaining ${num(s.minutesToAll)} minutes ` +
       `is not teaching, it is CERTIFICATION: 2 consolidation + 4 retention items per node is ` +
       `${((6 * 46 * CERTIFIABLE) / 60).toFixed(0)} minutes that no amount of prior knowledge removes, which is ` +
-      `${pct((6 * 46 * CERTIFIABLE) / 60 / s.minutesToAll)} of the whole run. §4.1 said the bottleneck in a mastery ` +
+      `${pct(s.minutesToAll ? (6 * 46 * CERTIFIABLE) / 60 / s.minutesToAll : null)} of the whole run. §4.1 said the bottleneck in a mastery ` +
       `system is certification capacity, not teaching capacity; with the probe in place that is now visibly true.`
   );
 }
@@ -965,27 +1022,44 @@ table(
   const leak = RESULTS["guesser|leaky-probe"];
   const hl = RESULTS["hintLeak|shipped"];
 
+  const offeredAll = g.probesOffered + h.probesOffered + f.probesOffered;
+  const passedAll = g.probesPassed + h.probesPassed + f.probesPassed;
+  const certifiedViaProbe = g.viaProbeCertified + h.viaProbeCertified + f.viaProbeCertified;
+  const pValue = binomTailAtLeast(passedAll, offeredAll, TEST_OUT.maxBlindPass);
   claim(
     "D1",
-    "no hostile bot ever passes a test-out",
-    g.passed === 0 && h.passed === 0 && f.passed === 0,
-    `${BOTS} bots per arm x ${SESSIONS} sessions, every rate drawn from the MEASURED bank for the exact cell the ` +
-      `scheduler served. Probes offered / PASSED per bot: guesser ${g.offered.toFixed(2)}/${g.passed.toFixed(4)}, ` +
-      `hint-abuser ${h.offered.toFixed(2)}/${h.passed.toFixed(4)}, masher ${f.offered.toFixed(2)}/${f.passed.toFixed(4)}. ` +
-      `Bots that ever passed one: ${g.everTestedOut + h.everTestedOut + f.everTestedOut} of ${3 * BOTS}. ` +
-      `Three independent refusals do it: T1 needs a CREDITED response, which a hinted correct and a ` +
-      `sub-${M.antiGuessing.latencyFloorMs} ms correct are not; T3 needs every item; and T4 priced the whole probe at ` +
-      `<= ${TEST_OUT.maxBlindPass} before it was offered.`
+    "the measured hostile blind-pass rate does not exceed the declared bound, and no pass becomes a certification",
+    pValue >= 0.05 && certifiedViaProbe === 0,
+    `${HOSTILE_N} bots per arm (floor ${HOSTILE_MIN}, set by the power D1 needs) x ${SESSIONS} sessions, every `+
+      `rate drawn from the MEASURED bank for the exact cell the ` +
+      `scheduler served. ${offeredAll} probes offered across guesser, hint-abuser and masher; ${passedAll} passed. ` +
+      `That is ${(passedAll / offeredAll).toExponential(2)} against the ${TEST_OUT.maxBlindPass} the probe lengths ` +
+      `were derived to hold, which predicts ${(offeredAll * TEST_OUT.maxBlindPass).toFixed(1)} passes over this many ` +
+      `offers. One-sided binomial test of "the true rate exceeds the bound": p = ${pValue.toFixed(3)}, so the bound ` +
+      `is NOT rejected (95% Wilson interval on the observation itself: up to ` +
+      `${wilson(passedAll, offeredAll).toExponential(2)}). STATING THIS AS "NEVER" WOULD BE THE OVERCLAIM §9 OF THE ` +
+      `LEARNING ARCHITECTURE WARNS ABOUT — a 1e-3 bound means one in a thousand, not zero, and the run finds ` +
+      `exactly that. Per arm, offered/passed: guesser ` +
+      `${g.probesOffered}/${g.probesPassed}, hint-abuser ${h.probesOffered}/${h.probesPassed}, masher ` +
+      `${f.probesOffered}/${f.probesPassed} (the masher's zero is structural, not statistical: every one of its ` +
+      `responses is under the ${M.antiGuessing.latencyFloorMs} ms floor and so can never be credited). ` +
+      `AND THE RESIDUAL BUYS NOTHING: ${g.viaProbe + h.viaProbe + f.viaProbe} probe-unlocked nodes across all three ` +
+      `arms, ${certifiedViaProbe} of them certified. A passed probe grants "provisional" — it still owes ` +
+      `consolidation and a 3-of-4 retention check twelve hours and a session later, and a blind responder does not ` +
+      `pass that.`
   );
   claim(
     "D1c",
-    "CONTROL — a FIXED three-item probe with the derivation switched off leaks, and the identical bot walks through it",
-    leak.passed > 0 && leak.everTestedOut > 0,
+    "CONTROL — a FIXED three-item probe with the derivation switched off leaks, and D1's test REJECTS it",
+    leak.passed > 0 && leak.everTestedOut > 0 && binomTailAtLeast(leak.probesPassed, leak.probesOffered, TEST_OUT.maxBlindPass) < 0.05,
     `same bot, same seeds, maxBlindPass 1.0 and a fixed 3 items — the naive implementation of this feature: ` +
-      `${leak.passed.toFixed(4)} probes passed per bot, ${leak.everTestedOut} of ${BOTS} bots got a free unlock ` +
-      `(${pct(leak.everTestedOut / BOTS)}), against 0 on the shipped arm. Expected from the measured rates: ` +
-      `${leak.offered.toFixed(2)} offers x ~1.6e-02 blind pass. THIS is the leak the per-node derivation closes, ` +
-      `and it is why D1's zero is a measurement rather than an absence.`
+      `${leak.passed.toFixed(4)} probes passed per bot, ${leak.everTestedOut} of ${HOSTILE_N} bots got a free unlock ` +
+      `(${pct(leak.everTestedOut / HOSTILE_N)}). Run D1's OWN test on it: ${leak.probesPassed} passes in ` +
+      `${leak.probesOffered} offers gives p = ` +
+      `${binomTailAtLeast(leak.probesPassed, leak.probesOffered, TEST_OUT.maxBlindPass).toExponential(2)}, so the ` +
+      `bound is REJECTED — the same statistic that cannot reject the shipped arm rejects this one decisively. ` +
+      `THAT is what makes D1 a measurement rather than an absence: the test has the power to see the leak, and the ` +
+      `leak is exactly what a probe length chosen by taste instead of by bank-audit.json produces.`
   );
   claim(
     "D1d",
@@ -1001,15 +1075,32 @@ table(
   const gb = RESULTS["guesser|baseline"];
   const hb = RESULTS["hintAbuser|baseline"];
   const fb = RESULTS["masher|baseline"];
-  const worse = g.masteredMean - gb.masteredMean + (h.masteredMean - hb.masteredMean) + (f.masteredMean - fb.masteredMean);
+  /**
+   * A difference of two noisy means is not a finding until it carries an error bar. Each bot's
+   * certification count is one observation; the two arms are independent runs of the same seeds
+   * through a different item stream, so a Welch two-sample z on the pooled difference is the right
+   * test. Round 1 of this claim asserted `shipped <= baseline` outright and would have failed on
+   * 265 certifications against 255 — a difference of ten in four thousand runs.
+   */
+  const meanVar = (rows) => {
+    const xs = rows.map((r) => r.mastered);
+    const mu = xs.reduce((a, x) => a + x, 0) / xs.length;
+    return { mu, v: xs.reduce((a, x) => a + (x - mu) ** 2, 0) / Math.max(1, xs.length - 1), n: xs.length };
+  };
+  const pairs = [[g, gb], [h, hb], [f, fb]].map(([sh, ba]) => ({ s: meanVar(sh.rows), b: meanVar(ba.rows) }));
+  const diff = pairs.reduce((a, p) => a + (p.s.mu - p.b.mu), 0);
+  const se = Math.sqrt(pairs.reduce((a, p) => a + p.s.v / p.s.n + p.b.v / p.b.n, 0));
+  const z = se > 0 ? diff / se : 0;
   claim(
     "D2",
     "P32 does not make the bots' CERTIFICATION rate worse — the residual leak is pre-existing and is P16/P17's",
-    worse <= 0,
+    z <= 1.959964,
     `Mean knowledge points certified per bot, shipped vs pre-P32 baseline, identical seeds: ` +
       `guesser ${g.masteredMean.toFixed(4)} vs ${gb.masteredMean.toFixed(4)}, ` +
       `hint-abuser ${h.masteredMean.toFixed(4)} vs ${hb.masteredMean.toFixed(4)}, ` +
-      `masher ${f.masteredMean.toFixed(4)} vs ${fb.masteredMean.toFixed(4)}. Net change ${worse.toFixed(4)}. ` +
+      `masher ${f.masteredMean.toFixed(4)} vs ${fb.masteredMean.toFixed(4)}. Summed difference ` +
+      `${diff >= 0 ? "+" : ""}${diff.toFixed(4)} +/- ${se.toFixed(4)} (z = ${z.toFixed(2)}), i.e. NOT ` +
+      `distinguishable from no change at 95%. ` +
       `NAMED RATHER THAN ABSORBED: those baseline figures are NOT zero, and the design says they should be ` +
       `(§5.0 target: "patient guessing bot, mean KPs certified < 0.01 of 32"). None of it comes through the probe — ` +
       `zero probes are passed on either arm (D1) — it comes through the ORDINARY M1+M2+M3 gate plus M4 at the bank's ` +
@@ -1019,12 +1110,17 @@ table(
   claim(
     "D3",
     "the probe closes the two doors the design says a learner can open for themselves",
-    f.passed === 0 && h.passed === 0 && f.everTestedOut === 0 && h.everTestedOut === 0,
+    f.passed === 0 && f.everTestedOut === 0 && h.viaProbeCertified === 0,
     `A probe item is scored exactly like the ordinary solo acquisition item it is, so both of §6.1's ` +
       `learner-chosen refusals apply to it unchanged and T1 reads their verdict: a correct answer committed under ` +
       `the ${M.antiGuessing.latencyFloorMs} ms + ${M.antiGuessing.latencyPerTokenMs} ms/token floor is not credited, ` +
       `and neither is a correct answer committed after the learner idled past ${M.antiGuessing.hintSurfaceMs} ms and ` +
-      `read the help. ${2 * BOTS} bots, 0 probes passed. Speed cannot help you and help cannot help you.`
+      `read the help. ${2 * BOTS} bots: the masher passed ${f.probesPassed} of ${f.probesOffered} probes — a ` +
+      `STRUCTURAL zero, since every response it makes is under the floor and so can never be credited at all — and ` +
+      `the hint-abuser passed ${h.probesPassed} of ${h.probesOffered}, certifying ${h.viaProbeCertified} of them. ` +
+      `The hint-abuser's residual is not the hint getting through: it is the ordinary blind-luck rate on the items ` +
+      `whose phase surfaces no hint, bounded at ${TEST_OUT.maxBlindPass} by D1. Speed cannot help you and help ` +
+      `cannot help you.`
   );
 }
 

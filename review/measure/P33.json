@@ -1,0 +1,3251 @@
+{
+ "headline": {
+  "sprinter": [
+   {
+    "n": 1,
+    "minutes": 20.1,
+    "minutesExact": 20.096066666666665,
+    "items": 83,
+    "beats": 32,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 20,
+    "paceRatio": 0.24,
+    "secondsPerItem": 15.35,
+    "certified": 0,
+    "set": 12,
+    "level1": 0,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 32,
+     "matched": 6,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 12,
+    "lines": {
+     "open": [
+      "The field is quiet. Claims are standing."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 2,
+    "minutes": 20.14,
+    "minutesExact": 20.144566666666666,
+    "items": 79,
+    "beats": 37,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 30,
+    "plannedMinutes": 19.95,
+    "paceRatio": 0.23,
+    "secondsPerItem": 14.79,
+    "certified": 1,
+    "set": 4,
+    "level1": 3.125,
+    "adherence": {
+     "plannedBeats": 30,
+     "servedBeats": 37,
+     "matched": 16,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 15,
+    "lines": {
+     "open": [
+      "12 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 3,
+    "minutes": 20.12,
+    "minutesExact": 20.12251666666667,
+    "items": 77,
+    "beats": 28,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 25,
+    "plannedMinutes": 20.21,
+    "paceRatio": 0.24,
+    "secondsPerItem": 15.3,
+    "certified": 7,
+    "set": 6,
+    "level1": 25,
+    "adherence": {
+     "plannedBeats": 25,
+     "servedBeats": 28,
+     "matched": 11,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 14,
+    "lines": {
+     "open": [
+      "1 certainties hold from before.",
+      "15 claims are ready to be set."
+     ],
+     "close": [
+      "7 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 4,
+    "minutes": 20.06,
+    "minutesExact": 20.05841666666667,
+    "items": 74,
+    "beats": 30,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 27,
+    "plannedMinutes": 20.4,
+    "paceRatio": 0.25,
+    "secondsPerItem": 16.26,
+    "certified": 4,
+    "set": 6,
+    "level1": 37.5,
+    "adherence": {
+     "plannedBeats": 27,
+     "servedBeats": 30,
+     "matched": 13,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 16,
+    "lines": {
+     "open": [
+      "8 certainties hold from before.",
+      "15 claims are ready to be set."
+     ],
+     "close": [
+      "4 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 5,
+    "minutes": 19.6,
+    "minutesExact": 19.59855,
+    "items": 64,
+    "beats": 27,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 24,
+    "plannedMinutes": 20.05,
+    "paceRatio": 0.32,
+    "secondsPerItem": 19.19,
+    "certified": 2,
+    "set": 2,
+    "level1": 43.75,
+    "adherence": {
+     "plannedBeats": 24,
+     "servedBeats": 27,
+     "matched": 7,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 1,
+    "provisional": 15,
+    "lines": {
+     "open": [
+      "12 certainties hold from before.",
+      "28 claims are ready to be set."
+     ],
+     "close": [
+      "2 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 6,
+    "minutes": 19.75,
+    "minutesExact": 19.750066666666665,
+    "items": 68,
+    "beats": 27,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 19,
+    "plannedMinutes": 19.83,
+    "paceRatio": 0.25,
+    "secondsPerItem": 15.34,
+    "certified": 3,
+    "set": 4,
+    "level1": 53.125,
+    "adherence": {
+     "plannedBeats": 19,
+     "servedBeats": 27,
+     "matched": 12,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 3,
+    "provisional": 14,
+    "lines": {
+     "open": [
+      "14 certainties hold from before.",
+      "21 claims are ready to be set."
+     ],
+     "close": [
+      "3 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 7,
+    "minutes": 20.12,
+    "minutesExact": 20.11545,
+    "items": 75,
+    "beats": 25,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 26,
+    "plannedMinutes": 17.39,
+    "paceRatio": 0.27,
+    "secondsPerItem": 16.88,
+    "certified": 9,
+    "set": 2,
+    "level1": 81.25,
+    "adherence": {
+     "plannedBeats": 26,
+     "servedBeats": 25,
+     "matched": 18,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 5,
+    "provisional": 5,
+    "lines": {
+     "open": [
+      "17 certainties hold from before.",
+      "26 claims are ready to be set."
+     ],
+     "close": [
+      "9 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 8,
+    "minutes": 16.08,
+    "minutesExact": 16.07945,
+    "items": 60,
+    "beats": 24,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 27,
+    "plannedMinutes": 16.88,
+    "paceRatio": 0.3,
+    "secondsPerItem": 18.19,
+    "certified": 4,
+    "set": 1,
+    "level1": 93.75,
+    "adherence": {
+     "plannedBeats": 27,
+     "servedBeats": 24,
+     "matched": 19,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 6,
+    "provisional": 1,
+    "lines": {
+     "open": [
+      "26 certainties hold from before.",
+      "27 claims are ready to be set."
+     ],
+     "close": [
+      "4 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 9,
+    "minutes": 15.14,
+    "minutesExact": 15.138883333333332,
+    "items": 58,
+    "beats": 28,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "review/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 4,
+    "plannedMinutes": 2.43,
+    "paceRatio": 0.27,
+    "secondsPerItem": 16.32,
+    "certified": 1,
+    "set": 0,
+    "level1": 96.875,
+    "adherence": {
+     "plannedBeats": 4,
+     "servedBeats": 28,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 6,
+    "provisional": 0,
+    "lines": {
+     "open": [
+      "30 certainties hold from before.",
+      "4 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 10,
+    "minutes": 15.16,
+    "minutesExact": 15.156183333333333,
+    "items": 60,
+    "beats": 30,
+    "closeReason": "plan-complete",
+    "closingWin": "stood",
+    "lastBeat": "review/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 0,
+    "plannedMinutes": 0,
+    "paceRatio": 0.24,
+    "secondsPerItem": 15.05,
+    "certified": 0,
+    "set": 0,
+    "level1": 96.875,
+    "adherence": {
+     "plannedBeats": 0,
+     "servedBeats": 30,
+     "matched": 0,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 6,
+    "provisional": 0,
+    "lines": {
+     "open": [
+      "31 certainties hold from before."
+     ],
+     "close": [
+      "The last claim stands.",
+      "The light is going. The field rests."
+     ]
+    }
+   }
+  ],
+  "quick": [
+   {
+    "n": 1,
+    "minutes": 18.92,
+    "minutesExact": 18.924516666666666,
+    "items": 52,
+    "beats": 20,
+    "closeReason": "no-closing-win",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 20,
+    "paceRatio": 0.42,
+    "secondsPerItem": 23.73,
+    "certified": 0,
+    "set": 6,
+    "level1": 0,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 20,
+     "matched": 7,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 6,
+    "lines": {
+     "open": [
+      "The field is quiet. Claims are standing."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 2,
+    "minutes": 19.3,
+    "minutesExact": 19.29905,
+    "items": 52,
+    "beats": 23,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 18,
+    "plannedMinutes": 18.98,
+    "paceRatio": 0.41,
+    "secondsPerItem": 23.01,
+    "certified": 2,
+    "set": 3,
+    "level1": 6.25,
+    "adherence": {
+     "plannedBeats": 18,
+     "servedBeats": 23,
+     "matched": 12,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 7,
+    "lines": {
+     "open": [
+      "6 claims are ready to be set."
+     ],
+     "close": [
+      "2 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 3,
+    "minutes": 19.67,
+    "minutesExact": 19.667666666666666,
+    "items": 56,
+    "beats": 20,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 16,
+    "plannedMinutes": 19.56,
+    "paceRatio": 0.4,
+    "secondsPerItem": 22.89,
+    "certified": 4,
+    "set": 4,
+    "level1": 18.75,
+    "adherence": {
+     "plannedBeats": 16,
+     "servedBeats": 20,
+     "matched": 11,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 7,
+    "lines": {
+     "open": [
+      "2 certainties hold from before.",
+      "7 claims are ready to be set."
+     ],
+     "close": [
+      "4 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 4,
+    "minutes": 19.73,
+    "minutesExact": 19.726433333333333,
+    "items": 44,
+    "beats": 18,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 18,
+    "plannedMinutes": 19.46,
+    "paceRatio": 0.48,
+    "secondsPerItem": 26.52,
+    "certified": 2,
+    "set": 2,
+    "level1": 25,
+    "adherence": {
+     "plannedBeats": 18,
+     "servedBeats": 18,
+     "matched": 8,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 7,
+    "lines": {
+     "open": [
+      "6 certainties hold from before.",
+      "9 claims are ready to be set."
+     ],
+     "close": [
+      "2 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 5,
+    "minutes": 18.94,
+    "minutesExact": 18.943766666666665,
+    "items": 42,
+    "beats": 17,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 13,
+    "plannedMinutes": 19,
+    "paceRatio": 0.48,
+    "secondsPerItem": 26.46,
+    "certified": 2,
+    "set": 2,
+    "level1": 31.25,
+    "adherence": {
+     "plannedBeats": 13,
+     "servedBeats": 17,
+     "matched": 6,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 7,
+    "lines": {
+     "open": [
+      "8 certainties hold from before.",
+      "15 claims are ready to be set."
+     ],
+     "close": [
+      "2 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 6,
+    "minutes": 19.76,
+    "minutesExact": 19.75815,
+    "items": 44,
+    "beats": 19,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "review/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 14,
+    "plannedMinutes": 19.41,
+    "paceRatio": 0.49,
+    "secondsPerItem": 26.39,
+    "certified": 2,
+    "set": 1,
+    "level1": 37.5,
+    "adherence": {
+     "plannedBeats": 14,
+     "servedBeats": 19,
+     "matched": 6,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 6,
+    "lines": {
+     "open": [
+      "10 certainties hold from before.",
+      "13 claims are ready to be set."
+     ],
+     "close": [
+      "2 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 7,
+    "minutes": 19.66,
+    "minutesExact": 19.65935,
+    "items": 46,
+    "beats": 18,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 14,
+    "plannedMinutes": 19.35,
+    "paceRatio": 0.53,
+    "secondsPerItem": 28.43,
+    "certified": 1,
+    "set": 2,
+    "level1": 40.625,
+    "adherence": {
+     "plannedBeats": 14,
+     "servedBeats": 18,
+     "matched": 8,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 5,
+    "lines": {
+     "open": [
+      "12 certainties hold from before.",
+      "8 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 8,
+    "minutes": 19.07,
+    "minutesExact": 19.073516666666666,
+    "items": 38,
+    "beats": 16,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 14,
+    "plannedMinutes": 19.43,
+    "paceRatio": 0.56,
+    "secondsPerItem": 29.72,
+    "certified": 2,
+    "set": 4,
+    "level1": 46.875,
+    "adherence": {
+     "plannedBeats": 14,
+     "servedBeats": 16,
+     "matched": 9,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 7,
+    "lines": {
+     "open": [
+      "13 certainties hold from before.",
+      "11 claims are ready to be set."
+     ],
+     "close": [
+      "2 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 9,
+    "minutes": 19.25,
+    "minutesExact": 19.25251666666667,
+    "items": 46,
+    "beats": 20,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 13,
+    "plannedMinutes": 18.82,
+    "paceRatio": 0.49,
+    "secondsPerItem": 26.79,
+    "certified": 2,
+    "set": 3,
+    "level1": 53.125,
+    "adherence": {
+     "plannedBeats": 13,
+     "servedBeats": 20,
+     "matched": 8,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 8,
+    "lines": {
+     "open": [
+      "15 certainties hold from before.",
+      "20 claims are ready to be set."
+     ],
+     "close": [
+      "2 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 10,
+    "minutes": 20.78,
+    "minutesExact": 20.7844,
+    "items": 46,
+    "beats": 22,
+    "closeReason": "arc-complete",
+    "closingWin": "set",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 16,
+    "plannedMinutes": 19.64,
+    "paceRatio": 0.51,
+    "secondsPerItem": 27.29,
+    "certified": 0,
+    "set": 1,
+    "level1": 53.125,
+    "adherence": {
+     "plannedBeats": 16,
+     "servedBeats": 22,
+     "matched": 9,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 3,
+    "provisional": 8,
+    "lines": {
+     "open": [
+      "17 certainties hold from before.",
+      "21 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   }
+  ],
+  "steady": [
+   {
+    "n": 1,
+    "minutes": 19.88,
+    "minutesExact": 19.87548333333333,
+    "items": 37,
+    "beats": 14,
+    "closeReason": "no-closing-win",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 20,
+    "paceRatio": 0.66,
+    "secondsPerItem": 34.33,
+    "certified": 0,
+    "set": 4,
+    "level1": 0,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 14,
+     "matched": 7,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 4,
+    "lines": {
+     "open": [
+      "The field is quiet. Claims are standing."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 2,
+    "minutes": 18.17,
+    "minutesExact": 18.1728,
+    "items": 31,
+    "beats": 14,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 12,
+    "plannedMinutes": 18.31,
+    "paceRatio": 0.67,
+    "secondsPerItem": 35.13,
+    "certified": 1,
+    "set": 1,
+    "level1": 3.125,
+    "adherence": {
+     "plannedBeats": 12,
+     "servedBeats": 14,
+     "matched": 7,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 4,
+    "lines": {
+     "open": [
+      "4 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 3,
+    "minutes": 18.65,
+    "minutesExact": 18.651883333333334,
+    "items": 33,
+    "beats": 11,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 10,
+    "plannedMinutes": 19.32,
+    "paceRatio": 0.63,
+    "secondsPerItem": 33.38,
+    "certified": 3,
+    "set": 4,
+    "level1": 12.5,
+    "adherence": {
+     "plannedBeats": 10,
+     "servedBeats": 11,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 5,
+    "lines": {
+     "open": [
+      "1 certainties hold from before.",
+      "5 claims are ready to be set."
+     ],
+     "close": [
+      "3 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 4,
+    "minutes": 18.45,
+    "minutesExact": 18.44935,
+    "items": 26,
+    "beats": 13,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 13,
+    "plannedMinutes": 18.36,
+    "paceRatio": 0.78,
+    "secondsPerItem": 40.44,
+    "certified": 0,
+    "set": 1,
+    "level1": 12.5,
+    "adherence": {
+     "plannedBeats": 13,
+     "servedBeats": 13,
+     "matched": 7,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 6,
+    "lines": {
+     "open": [
+      "4 certainties hold from before.",
+      "9 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 5,
+    "minutes": 18.17,
+    "minutesExact": 18.17118333333333,
+    "items": 32,
+    "beats": 15,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 17.53,
+    "paceRatio": 0.68,
+    "secondsPerItem": 35.56,
+    "certified": 1,
+    "set": 2,
+    "level1": 15.625,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 15,
+     "matched": 3,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 7,
+    "lines": {
+     "open": [
+      "4 certainties hold from before.",
+      "9 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 6,
+    "minutes": 19.7,
+    "minutesExact": 19.703500000000002,
+    "items": 34,
+    "beats": 12,
+    "closeReason": "arc-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 10,
+    "plannedMinutes": 19.56,
+    "paceRatio": 0.64,
+    "secondsPerItem": 33.91,
+    "certified": 3,
+    "set": 2,
+    "level1": 25,
+    "adherence": {
+     "plannedBeats": 10,
+     "servedBeats": 12,
+     "matched": 7,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 6,
+    "lines": {
+     "open": [
+      "5 certainties hold from before.",
+      "8 claims are ready to be set."
+     ],
+     "close": [
+      "3 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 7,
+    "minutes": 17.89,
+    "minutesExact": 17.887566666666665,
+    "items": 23,
+    "beats": 9,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 12,
+    "plannedMinutes": 18.65,
+    "paceRatio": 0.85,
+    "secondsPerItem": 43.59,
+    "certified": 0,
+    "set": 2,
+    "level1": 25,
+    "adherence": {
+     "plannedBeats": 12,
+     "servedBeats": 9,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 1,
+    "provisional": 7,
+    "lines": {
+     "open": [
+      "8 certainties hold from before.",
+      "11 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 8,
+    "minutes": 20.38,
+    "minutesExact": 20.38475,
+    "items": 34,
+    "beats": 16,
+    "closeReason": "arc-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 18.89,
+    "paceRatio": 0.74,
+    "secondsPerItem": 38.22,
+    "certified": 1,
+    "set": 1,
+    "level1": 28.125,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 16,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 1,
+    "provisional": 7,
+    "lines": {
+     "open": [
+      "8 certainties hold from before.",
+      "15 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 9,
+    "minutes": 19.73,
+    "minutesExact": 19.729300000000002,
+    "items": 29,
+    "beats": 12,
+    "closeReason": "arc-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 9,
+    "plannedMinutes": 19.11,
+    "paceRatio": 0.81,
+    "secondsPerItem": 41.29,
+    "certified": 1,
+    "set": 2,
+    "level1": 31.25,
+    "adherence": {
+     "plannedBeats": 9,
+     "servedBeats": 12,
+     "matched": 3,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 1,
+    "provisional": 8,
+    "lines": {
+     "open": [
+      "9 certainties hold from before.",
+      "13 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 10,
+    "minutes": 19.27,
+    "minutesExact": 19.274766666666668,
+    "items": 34,
+    "beats": 13,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 17.89,
+    "paceRatio": 0.71,
+    "secondsPerItem": 37.13,
+    "certified": 2,
+    "set": 2,
+    "level1": 37.5,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 13,
+     "matched": 5,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 7,
+    "lines": {
+     "open": [
+      "10 certainties hold from before.",
+      "16 claims are ready to be set."
+     ],
+     "close": [
+      "2 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   }
+  ],
+  "deliberate": [
+   {
+    "n": 1,
+    "minutes": 16.69,
+    "minutesExact": 16.686833333333333,
+    "items": 21,
+    "beats": 8,
+    "closeReason": "no-closing-win",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 20,
+    "paceRatio": 1.01,
+    "secondsPerItem": 50.54,
+    "certified": 0,
+    "set": 2,
+    "level1": 0,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 8,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 2,
+    "lines": {
+     "open": [
+      "The field is quiet. Claims are standing."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 2,
+    "minutes": 16.89,
+    "minutesExact": 16.894033333333333,
+    "items": 16,
+    "beats": 7,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 18.53,
+    "paceRatio": 1.18,
+    "secondsPerItem": 58.64,
+    "certified": 1,
+    "set": 1,
+    "level1": 3.125,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 7,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 2,
+    "lines": {
+     "open": [
+      "2 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 3,
+    "minutes": 17.01,
+    "minutesExact": 17.01285,
+    "items": 22,
+    "beats": 8,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 6,
+    "plannedMinutes": 17.59,
+    "paceRatio": 0.98,
+    "secondsPerItem": 49.4,
+    "certified": 2,
+    "set": 1,
+    "level1": 9.375,
+    "adherence": {
+     "plannedBeats": 6,
+     "servedBeats": 8,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 1,
+    "lines": {
+     "open": [
+      "1 certainties hold from before.",
+      "2 claims are ready to be set."
+     ],
+     "close": [
+      "2 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 4,
+    "minutes": 18.47,
+    "minutesExact": 18.474300000000003,
+    "items": 20,
+    "beats": 10,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "review/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 16.47,
+    "paceRatio": 1.08,
+    "secondsPerItem": 53.89,
+    "certified": 0,
+    "set": 1,
+    "level1": 9.375,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 10,
+     "matched": 5,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 2,
+    "lines": {
+     "open": [
+      "3 certainties hold from before.",
+      "4 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 5,
+    "minutes": 17.11,
+    "minutesExact": 17.112433333333335,
+    "items": 22,
+    "beats": 8,
+    "closeReason": "plan-complete",
+    "closingWin": "stood",
+    "lastBeat": "retention/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 6,
+    "plannedMinutes": 16.17,
+    "paceRatio": 0.95,
+    "secondsPerItem": 48.07,
+    "certified": 0,
+    "set": 0,
+    "level1": 9.375,
+    "adherence": {
+     "plannedBeats": 6,
+     "servedBeats": 8,
+     "matched": 3,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 0,
+    "lines": {
+     "open": [
+      "3 certainties hold from before.",
+      "2 claims are ready to be set."
+     ],
+     "close": [
+      "The last claim stands.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 6,
+    "minutes": 17.07,
+    "minutesExact": 17.0663,
+    "items": 13,
+    "beats": 5,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 7,
+    "plannedMinutes": 16.83,
+    "paceRatio": 1.32,
+    "secondsPerItem": 64.86,
+    "certified": 0,
+    "set": 2,
+    "level1": 9.375,
+    "adherence": {
+     "plannedBeats": 7,
+     "servedBeats": 5,
+     "matched": 3,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 2,
+    "lines": {
+     "open": [
+      "3 certainties hold from before."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 7,
+    "minutes": 16.56,
+    "minutesExact": 16.561433333333333,
+    "items": 23,
+    "beats": 11,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 6,
+    "plannedMinutes": 16.21,
+    "paceRatio": 1.04,
+    "secondsPerItem": 51.56,
+    "certified": 0,
+    "set": 1,
+    "level1": 9.375,
+    "adherence": {
+     "plannedBeats": 6,
+     "servedBeats": 11,
+     "matched": 5,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 3,
+    "lines": {
+     "open": [
+      "3 certainties hold from before.",
+      "5 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 8,
+    "minutes": 16.13,
+    "minutesExact": 16.131266666666665,
+    "items": 13,
+    "beats": 5,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 6,
+    "plannedMinutes": 17.19,
+    "paceRatio": 1.11,
+    "secondsPerItem": 55.39,
+    "certified": 1,
+    "set": 0,
+    "level1": 12.5,
+    "adherence": {
+     "plannedBeats": 6,
+     "servedBeats": 5,
+     "matched": 1,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 2,
+    "lines": {
+     "open": [
+      "3 certainties hold from before.",
+      "4 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 9,
+    "minutes": 19.94,
+    "minutesExact": 19.937133333333335,
+    "items": 23,
+    "beats": 10,
+    "closeReason": "arc-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 6,
+    "plannedMinutes": 16.62,
+    "paceRatio": 1.1,
+    "secondsPerItem": 55.28,
+    "certified": 1,
+    "set": 1,
+    "level1": 15.625,
+    "adherence": {
+     "plannedBeats": 6,
+     "servedBeats": 10,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 2,
+    "lines": {
+     "open": [
+      "4 certainties hold from before.",
+      "3 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 10,
+    "minutes": 16.7,
+    "minutesExact": 16.695433333333334,
+    "items": 18,
+    "beats": 8,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 6,
+    "plannedMinutes": 16.58,
+    "paceRatio": 1.11,
+    "secondsPerItem": 55.66,
+    "certified": 0,
+    "set": 2,
+    "level1": 15.625,
+    "adherence": {
+     "plannedBeats": 6,
+     "servedBeats": 8,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 3,
+    "provisional": 3,
+    "lines": {
+     "open": [
+      "5 certainties hold from before.",
+      "2 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   }
+  ],
+  "slow": [
+   {
+    "n": 1,
+    "minutes": 18.93,
+    "minutesExact": 18.932833333333335,
+    "items": 15,
+    "beats": 5,
+    "closeReason": "arc-complete",
+    "closingWin": "stood",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 20,
+    "paceRatio": 1.64,
+    "secondsPerItem": 79.76,
+    "certified": 0,
+    "set": 0,
+    "level1": 0,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 5,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 0,
+    "lines": {
+     "open": [
+      "The field is quiet. Claims are standing."
+     ],
+     "close": [
+      "The last claim stands.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 2,
+    "minutes": 15.52,
+    "minutesExact": 15.522016666666667,
+    "items": 13,
+    "beats": 5,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 4,
+    "plannedMinutes": 15.95,
+    "paceRatio": 1.49,
+    "secondsPerItem": 72.63,
+    "certified": 0,
+    "set": 1,
+    "level1": 0,
+    "adherence": {
+     "plannedBeats": 4,
+     "servedBeats": 5,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 1,
+    "lines": {
+     "open": [],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 3,
+    "minutes": 18.29,
+    "minutesExact": 18.2908,
+    "items": 14,
+    "beats": 6,
+    "closeReason": "arc-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 5,
+    "plannedMinutes": 16.95,
+    "paceRatio": 1.54,
+    "secondsPerItem": 74.74,
+    "certified": 1,
+    "set": 1,
+    "level1": 3.125,
+    "adherence": {
+     "plannedBeats": 5,
+     "servedBeats": 6,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 1,
+    "lines": {
+     "open": [
+      "1 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 4,
+    "minutes": 15.36,
+    "minutesExact": 15.355716666666666,
+    "items": 7,
+    "beats": 3,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 5,
+    "plannedMinutes": 17.44,
+    "paceRatio": 1.7,
+    "secondsPerItem": 82.25,
+    "certified": 0,
+    "set": 1,
+    "level1": 3.125,
+    "adherence": {
+     "plannedBeats": 5,
+     "servedBeats": 3,
+     "matched": 2,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 2,
+    "lines": {
+     "open": [
+      "Someone's working is still on the slab.",
+      "1 certainties hold from before.",
+      "1 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 5,
+    "minutes": 20.32,
+    "minutesExact": 20.3178,
+    "items": 14,
+    "beats": 5,
+    "closeReason": "arc-complete",
+    "closingWin": "certified",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 3,
+    "plannedMinutes": 13.71,
+    "paceRatio": 1.82,
+    "secondsPerItem": 87.76,
+    "certified": 1,
+    "set": 0,
+    "level1": 6.25,
+    "adherence": {
+     "plannedBeats": 3,
+     "servedBeats": 5,
+     "matched": 2,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 1,
+    "lines": {
+     "open": [
+      "1 certainties hold from before.",
+      "3 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 6,
+    "minutes": 15.65,
+    "minutesExact": 15.65365,
+    "items": 13,
+    "beats": 5,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 3,
+    "plannedMinutes": 14.63,
+    "paceRatio": 1.6,
+    "secondsPerItem": 77.69,
+    "certified": 1,
+    "set": 0,
+    "level1": 9.375,
+    "adherence": {
+     "plannedBeats": 3,
+     "servedBeats": 5,
+     "matched": 2,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 0,
+    "lines": {
+     "open": [
+      "2 certainties hold from before.",
+      "3 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 7,
+    "minutes": 15.94,
+    "minutesExact": 15.941916666666666,
+    "items": 11,
+    "beats": 5,
+    "closeReason": "plan-complete",
+    "closingWin": "stood",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 5,
+    "plannedMinutes": 16.83,
+    "paceRatio": 1.71,
+    "secondsPerItem": 82.88,
+    "certified": 0,
+    "set": 0,
+    "level1": 9.375,
+    "adherence": {
+     "plannedBeats": 5,
+     "servedBeats": 5,
+     "matched": 3,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 0,
+    "lines": {
+     "open": [
+      "3 certainties hold from before.",
+      "2 claims are ready to be set."
+     ],
+     "close": [
+      "The last claim stands.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 8,
+    "minutes": 15.73,
+    "minutesExact": 15.728933333333334,
+    "items": 12,
+    "beats": 5,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 4,
+    "plannedMinutes": 15.2,
+    "paceRatio": 1.58,
+    "secondsPerItem": 76.97,
+    "certified": 0,
+    "set": 1,
+    "level1": 9.375,
+    "adherence": {
+     "plannedBeats": 4,
+     "servedBeats": 5,
+     "matched": 2,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 1,
+    "lines": {
+     "open": [
+      "3 certainties hold from before.",
+      "1 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 9,
+    "minutes": 19.28,
+    "minutesExact": 19.2788,
+    "items": 11,
+    "beats": 5,
+    "closeReason": "arc-complete",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 5,
+    "plannedMinutes": 16.68,
+    "paceRatio": 1.92,
+    "secondsPerItem": 92.62,
+    "certified": 0,
+    "set": 1,
+    "level1": 9.375,
+    "adherence": {
+     "plannedBeats": 5,
+     "servedBeats": 5,
+     "matched": 3,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 2,
+    "lines": {
+     "open": [
+      "3 certainties hold from before.",
+      "3 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 10,
+    "minutes": 16.92,
+    "minutesExact": 16.92395,
+    "items": 13,
+    "beats": 5,
+    "closeReason": "arc-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 3,
+    "plannedMinutes": 15.44,
+    "paceRatio": 1.77,
+    "secondsPerItem": 85.78,
+    "certified": 1,
+    "set": 1,
+    "level1": 12.5,
+    "adherence": {
+     "plannedBeats": 3,
+     "servedBeats": 5,
+     "matched": 3,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 2,
+    "lines": {
+     "open": [
+      "Someone's working is still on the slab.",
+      "3 certainties hold from before.",
+      "3 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   }
+  ],
+  "erratic": [
+   {
+    "n": 1,
+    "minutes": 19.14,
+    "minutesExact": 19.141616666666668,
+    "items": 37,
+    "beats": 14,
+    "closeReason": "no-closing-win",
+    "closingWin": "set",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 8,
+    "plannedMinutes": 20,
+    "paceRatio": 0.56,
+    "secondsPerItem": 30.02,
+    "certified": 0,
+    "set": 4,
+    "level1": 0,
+    "adherence": {
+     "plannedBeats": 8,
+     "servedBeats": 14,
+     "matched": 7,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 4,
+    "lines": {
+     "open": [
+      "The field is quiet. Claims are standing."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 2,
+    "minutes": 18.29,
+    "minutesExact": 18.288566666666668,
+    "items": 34,
+    "beats": 15,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 14,
+    "plannedMinutes": 19.01,
+    "paceRatio": 0.54,
+    "secondsPerItem": 29.13,
+    "certified": 1,
+    "set": 2,
+    "level1": 3.125,
+    "adherence": {
+     "plannedBeats": 14,
+     "servedBeats": 15,
+     "matched": 8,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 5,
+    "lines": {
+     "open": [
+      "4 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 3,
+    "minutes": 19.22,
+    "minutesExact": 19.224866666666667,
+    "items": 35,
+    "beats": 12,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 12,
+    "plannedMinutes": 18.45,
+    "paceRatio": 0.54,
+    "secondsPerItem": 29.27,
+    "certified": 3,
+    "set": 3,
+    "level1": 12.5,
+    "adherence": {
+     "plannedBeats": 12,
+     "servedBeats": 12,
+     "matched": 8,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 5,
+    "lines": {
+     "open": [
+      "1 certainties hold from before.",
+      "6 claims are ready to be set."
+     ],
+     "close": [
+      "3 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 4,
+    "minutes": 18.05,
+    "minutesExact": 18.047616666666666,
+    "items": 26,
+    "beats": 13,
+    "closeReason": "plan-complete",
+    "closingWin": "set",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 15,
+    "plannedMinutes": 18.54,
+    "paceRatio": 0.7,
+    "secondsPerItem": 36.54,
+    "certified": 0,
+    "set": 3,
+    "level1": 12.5,
+    "adherence": {
+     "plannedBeats": 15,
+     "servedBeats": 13,
+     "matched": 10,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 8,
+    "lines": {
+     "open": [
+      "Someone's working is still on the slab.",
+      "4 certainties hold from before.",
+      "9 claims are ready to be set."
+     ],
+     "close": [
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 5,
+    "minutes": 17.64,
+    "minutesExact": 17.641416666666665,
+    "items": 28,
+    "beats": 11,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 9,
+    "plannedMinutes": 18.27,
+    "paceRatio": 0.65,
+    "secondsPerItem": 34.17,
+    "certified": 1,
+    "set": 3,
+    "level1": 15.625,
+    "adherence": {
+     "plannedBeats": 9,
+     "servedBeats": 11,
+     "matched": 2,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 10,
+    "lines": {
+     "open": [
+      "4 certainties hold from before.",
+      "11 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 6,
+    "minutes": 18.68,
+    "minutesExact": 18.682216666666665,
+    "items": 41,
+    "beats": 15,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 10,
+    "plannedMinutes": 18.79,
+    "paceRatio": 0.46,
+    "secondsPerItem": 25.82,
+    "certified": 3,
+    "set": 3,
+    "level1": 25,
+    "adherence": {
+     "plannedBeats": 10,
+     "servedBeats": 15,
+     "matched": 6,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 10,
+    "lines": {
+     "open": [
+      "5 certainties hold from before.",
+      "12 claims are ready to be set."
+     ],
+     "close": [
+      "3 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 7,
+    "minutes": 19.69,
+    "minutesExact": 19.689933333333332,
+    "items": 32,
+    "beats": 14,
+    "closeReason": "arc-complete",
+    "closingWin": "certified",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 15,
+    "plannedMinutes": 18.93,
+    "paceRatio": 0.52,
+    "secondsPerItem": 27.73,
+    "certified": 1,
+    "set": 1,
+    "level1": 28.125,
+    "adherence": {
+     "plannedBeats": 15,
+     "servedBeats": 14,
+     "matched": 6,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 10,
+    "lines": {
+     "open": [
+      "8 certainties hold from before.",
+      "13 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 8,
+    "minutes": 17.85,
+    "minutesExact": 17.845216666666666,
+    "items": 26,
+    "beats": 11,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "consolidate/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 12,
+    "plannedMinutes": 18.49,
+    "paceRatio": 0.63,
+    "secondsPerItem": 33.1,
+    "certified": 1,
+    "set": 1,
+    "level1": 31.25,
+    "adherence": {
+     "plannedBeats": 12,
+     "servedBeats": 11,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 0,
+    "provisional": 10,
+    "lines": {
+     "open": [
+      "9 certainties hold from before.",
+      "19 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 9,
+    "minutes": 17.93,
+    "minutesExact": 17.93021666666667,
+    "items": 31,
+    "beats": 12,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 10,
+    "plannedMinutes": 18.2,
+    "paceRatio": 0.58,
+    "secondsPerItem": 31.37,
+    "certified": 1,
+    "set": 0,
+    "level1": 34.375,
+    "adherence": {
+     "plannedBeats": 10,
+     "servedBeats": 12,
+     "matched": 4,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 1,
+    "provisional": 8,
+    "lines": {
+     "open": [
+      "10 certainties hold from before.",
+      "19 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "The light is going. The field rests."
+     ]
+    }
+   },
+   {
+    "n": 10,
+    "minutes": 19.13,
+    "minutesExact": 19.131116666666667,
+    "items": 29,
+    "beats": 12,
+    "closeReason": "plan-complete",
+    "closingWin": "certified",
+    "lastBeat": "acquire/complete",
+    "midItem": false,
+    "midEvent": false,
+    "plannedEvents": 11,
+    "plannedMinutes": 18.82,
+    "paceRatio": 0.62,
+    "secondsPerItem": 33.07,
+    "certified": 1,
+    "set": 2,
+    "level1": 37.5,
+    "adherence": {
+     "plannedBeats": 11,
+     "servedBeats": 12,
+     "matched": 7,
+     "note": "item selection is P16's (§4); this layer plans the mix and the size and admits beats"
+    },
+    "startsOutsideCeiling": 0,
+    "beatsClosedAtItem": 0,
+    "eventsCarried": 0,
+    "lapses": 2,
+    "provisional": 8,
+    "lines": {
+     "open": [
+      "11 certainties hold from before.",
+      "18 claims are ready to be set."
+     ],
+     "close": [
+      "1 certainties set. They will not drift.",
+      "Rung.",
+      "The light is going. The field rests."
+     ]
+    }
+   }
+  ]
+ },
+ "baseline": {
+  "sprinter": [
+   {
+    "n": 1,
+    "minutes": 7.98,
+    "minutesExact": 7.984916666666667,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 0
+   },
+   {
+    "n": 2,
+    "minutes": 8.68,
+    "minutesExact": 8.679133333333333,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": true,
+    "openEvent": "var-meaning retention 3/4",
+    "level1": 0
+   },
+   {
+    "n": 3,
+    "minutes": 8.02,
+    "minutesExact": 8.015866666666666,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 12.5
+   },
+   {
+    "n": 4,
+    "minutes": 11.29,
+    "minutesExact": 11.285533333333333,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 15.625
+   },
+   {
+    "n": 5,
+    "minutes": 8.14,
+    "minutesExact": 8.140366666666667,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 15.625
+   },
+   {
+    "n": 6,
+    "minutes": 8.58,
+    "minutesExact": 8.57615,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 21.875
+   },
+   {
+    "n": 7,
+    "minutes": 9.83,
+    "minutesExact": 9.833683333333333,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": true,
+    "openEvent": "distribute-numeric retention 2/4",
+    "level1": 28.125
+   },
+   {
+    "n": 8,
+    "minutes": 9.51,
+    "minutesExact": 9.5081,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 34.375
+   },
+   {
+    "n": 9,
+    "minutes": 9.77,
+    "minutesExact": 9.77365,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 34.375
+   },
+   {
+    "n": 10,
+    "minutes": 10.06,
+    "minutesExact": 10.0647,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": true,
+    "openEvent": "simplify-expression retention 3/4",
+    "level1": 34.375
+   }
+  ],
+  "quick": [
+   {
+    "n": 1,
+    "minutes": 13.03,
+    "minutesExact": 13.034083333333333,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 0
+   },
+   {
+    "n": 2,
+    "minutes": 13.28,
+    "minutesExact": 13.275566666666666,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 3.125
+   },
+   {
+    "n": 3,
+    "minutes": 13.47,
+    "minutesExact": 13.469233333333333,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 12.5
+   },
+   {
+    "n": 4,
+    "minutes": 14.83,
+    "minutesExact": 14.83195,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 12.5
+   },
+   {
+    "n": 5,
+    "minutes": 12.77,
+    "minutesExact": 12.774016666666666,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 18.75
+   },
+   {
+    "n": 6,
+    "minutes": 14.84,
+    "minutesExact": 14.835916666666666,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 28.125
+   },
+   {
+    "n": 7,
+    "minutes": 15.65,
+    "minutesExact": 15.65015,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 31.25
+   },
+   {
+    "n": 8,
+    "minutes": 13.47,
+    "minutesExact": 13.465166666666667,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 31.25
+   },
+   {
+    "n": 9,
+    "minutes": 13.3,
+    "minutesExact": 13.297733333333333,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 40.625
+   },
+   {
+    "n": 10,
+    "minutes": 14.22,
+    "minutesExact": 14.2249,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 46.875
+   }
+  ],
+  "steady": [
+   {
+    "n": 1,
+    "minutes": 19.5,
+    "minutesExact": 19.498533333333334,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 0
+   },
+   {
+    "n": 2,
+    "minutes": 19.24,
+    "minutesExact": 19.241866666666667,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 6.25
+   },
+   {
+    "n": 3,
+    "minutes": 21.69,
+    "minutesExact": 21.686683333333335,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 9.375
+   },
+   {
+    "n": 4,
+    "minutes": 22.23,
+    "minutesExact": 22.228833333333334,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": true,
+    "openEvent": "eval-substitute retention 3/4",
+    "level1": 15.625
+   },
+   {
+    "n": 5,
+    "minutes": 20.64,
+    "minutesExact": 20.63805,
+    "items": 37,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 18.75
+   },
+   {
+    "n": 6,
+    "minutes": 19.93,
+    "minutesExact": 19.92585,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": true,
+    "openEvent": "like-terms-id retention 3/4",
+    "level1": 21.875
+   },
+   {
+    "n": 7,
+    "minutes": 24.08,
+    "minutesExact": 24.07525,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 31.25
+   },
+   {
+    "n": 8,
+    "minutes": 20.43,
+    "minutesExact": 20.426633333333335,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 34.375
+   },
+   {
+    "n": 9,
+    "minutes": 19.39,
+    "minutesExact": 19.39005,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 37.5
+   },
+   {
+    "n": 10,
+    "minutes": 22.24,
+    "minutesExact": 22.24425,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 40.625
+   }
+  ],
+  "deliberate": [
+   {
+    "n": 1,
+    "minutes": 28.75,
+    "minutesExact": 28.751583333333333,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 0
+   },
+   {
+    "n": 2,
+    "minutes": 30.84,
+    "minutesExact": 30.83985,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 6.25
+   },
+   {
+    "n": 3,
+    "minutes": 36.37,
+    "minutesExact": 36.366033333333334,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 9.375
+   },
+   {
+    "n": 4,
+    "minutes": 36.62,
+    "minutesExact": 36.62173333333333,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 12.5
+   },
+   {
+    "n": 5,
+    "minutes": 29.02,
+    "minutesExact": 29.0155,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 12.5
+   },
+   {
+    "n": 6,
+    "minutes": 29.1,
+    "minutesExact": 29.0957,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 18.75
+   },
+   {
+    "n": 7,
+    "minutes": 35.12,
+    "minutesExact": 35.11501666666667,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 21.875
+   },
+   {
+    "n": 8,
+    "minutes": 29.59,
+    "minutesExact": 29.59225,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 25
+   },
+   {
+    "n": 9,
+    "minutes": 28.58,
+    "minutesExact": 28.579966666666667,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 31.25
+   },
+   {
+    "n": 10,
+    "minutes": 36.62,
+    "minutesExact": 36.624833333333335,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 37.5
+   }
+  ],
+  "slow": [
+   {
+    "n": 1,
+    "minutes": 42.7,
+    "minutesExact": 42.69515,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 0
+   },
+   {
+    "n": 2,
+    "minutes": 45.06,
+    "minutesExact": 45.06041666666667,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 3.125
+   },
+   {
+    "n": 3,
+    "minutes": 47.09,
+    "minutesExact": 47.09251666666667,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 6.25
+   },
+   {
+    "n": 4,
+    "minutes": 60.31,
+    "minutesExact": 60.31111666666666,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 9.375
+   },
+   {
+    "n": 5,
+    "minutes": 42.55,
+    "minutesExact": 42.549733333333336,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 12.5
+   },
+   {
+    "n": 6,
+    "minutes": 43.68,
+    "minutesExact": 43.67948333333333,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 15.625
+   },
+   {
+    "n": 7,
+    "minutes": 51.59,
+    "minutesExact": 51.58631666666667,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 15.625
+   },
+   {
+    "n": 8,
+    "minutes": 43.9,
+    "minutesExact": 43.9035,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 21.875
+   },
+   {
+    "n": 9,
+    "minutes": 42.99,
+    "minutesExact": 42.99401666666667,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 28.125
+   },
+   {
+    "n": 10,
+    "minutes": 50.72,
+    "minutesExact": 50.71978333333333,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 28.125
+   }
+  ],
+  "erratic": [
+   {
+    "n": 1,
+    "minutes": 18.88,
+    "minutesExact": 18.883766666666666,
+    "items": 36,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 0
+   },
+   {
+    "n": 2,
+    "minutes": 17.81,
+    "minutesExact": 17.8093,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 6.25
+   },
+   {
+    "n": 3,
+    "minutes": 19.46,
+    "minutesExact": 19.457516666666667,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 9.375
+   },
+   {
+    "n": 4,
+    "minutes": 20.26,
+    "minutesExact": 20.2577,
+    "items": 33,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": true,
+    "openEvent": "eval-substitute retention 3/4",
+    "level1": 15.625
+   },
+   {
+    "n": 5,
+    "minutes": 16.6,
+    "minutesExact": 16.597266666666666,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 18.75
+   },
+   {
+    "n": 6,
+    "minutes": 17.06,
+    "minutesExact": 17.05976666666667,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 21.875
+   },
+   {
+    "n": 7,
+    "minutes": 23.31,
+    "minutesExact": 23.313366666666667,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 25
+   },
+   {
+    "n": 8,
+    "minutes": 21.34,
+    "minutesExact": 21.343783333333334,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 28.125
+   },
+   {
+    "n": 9,
+    "minutes": 14.29,
+    "minutesExact": 14.293416666666667,
+    "items": 34,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 34.375
+   },
+   {
+    "n": 10,
+    "minutes": 18.96,
+    "minutesExact": 18.95703333333333,
+    "items": 35,
+    "closeReason": "engine-budget-spent",
+    "midItem": false,
+    "midEvent": false,
+    "openEvent": null,
+    "level1": 40.625
+   }
+  ]
+ },
+ "distribution": {
+  "sprinter": {
+   "sessions": 400,
+   "inBand": 400,
+   "outOfBand": [],
+   "midItem": 0,
+   "midEvent": 0,
+   "startsOutsideCeiling": 0,
+   "eventsCarried": 0,
+   "overrunMinutes": [],
+   "n": 400,
+   "min": 15,
+   "p10": 15.21,
+   "median": 19.87,
+   "p90": 20.51,
+   "max": 21.37,
+   "mean": 18.73
+  },
+  "quick": {
+   "sessions": 400,
+   "inBand": 400,
+   "outOfBand": [],
+   "midItem": 0,
+   "midEvent": 0,
+   "startsOutsideCeiling": 0,
+   "eventsCarried": 0,
+   "overrunMinutes": [],
+   "n": 400,
+   "min": 17.93,
+   "p10": 18.89,
+   "median": 19.55,
+   "p90": 20.53,
+   "max": 21.97,
+   "mean": 19.65
+  },
+  "steady": {
+   "sessions": 400,
+   "inBand": 400,
+   "outOfBand": [],
+   "midItem": 0,
+   "midEvent": 0,
+   "startsOutsideCeiling": 0,
+   "eventsCarried": 0,
+   "overrunMinutes": [],
+   "n": 400,
+   "min": 16.31,
+   "p10": 17.96,
+   "median": 18.99,
+   "p90": 20.16,
+   "max": 23.06,
+   "mean": 19.01
+  },
+  "deliberate": {
+   "sessions": 400,
+   "inBand": 400,
+   "outOfBand": [],
+   "midItem": 0,
+   "midEvent": 0,
+   "startsOutsideCeiling": 0,
+   "eventsCarried": 0,
+   "overrunMinutes": [],
+   "n": 400,
+   "min": 15.01,
+   "p10": 16.13,
+   "median": 17.6,
+   "p90": 19.74,
+   "max": 23.9,
+   "mean": 17.76
+  },
+  "slow": {
+   "sessions": 400,
+   "inBand": 400,
+   "outOfBand": [],
+   "midItem": 0,
+   "midEvent": 14,
+   "startsOutsideCeiling": 0,
+   "eventsCarried": 14,
+   "overrunMinutes": [],
+   "n": 400,
+   "min": 15,
+   "p10": 15.45,
+   "median": 17.14,
+   "p90": 20.15,
+   "max": 23.99,
+   "mean": 17.59
+  },
+  "erratic": {
+   "sessions": 400,
+   "inBand": 400,
+   "outOfBand": [],
+   "midItem": 0,
+   "midEvent": 2,
+   "startsOutsideCeiling": 0,
+   "eventsCarried": 2,
+   "overrunMinutes": [],
+   "n": 400,
+   "min": 15.69,
+   "p10": 17.96,
+   "median": 19.09,
+   "p90": 21.15,
+   "max": 24.96,
+   "mean": 19.33
+  }
+ },
+ "claims": [
+  [
+   "C1/C3  every sitting lands in 15-25 minutes",
+   true,
+   "2400/2400 in band"
+  ],
+  [
+   "C1/C3  nothing is STARTED that is not expected to finish inside 25",
+   true,
+   "0 of 2400 sittings served an item outside the ceiling estimate"
+  ],
+  [
+   "C1/C3  the residual is a single long response, never the layer",
+   true,
+   "no overruns"
+  ],
+  [
+   "C1/C3  no sitting ends mid-problem",
+   true,
+   "0 of 2400"
+  ],
+  [
+   "C1/C3  a certification event is CARRIED across the boundary, never abandoned",
+   true,
+   "16 carried of 2400 sittings; 0 faults"
+  ],
+  [
+   "C2     the baseline it replaces does NOT",
+   true,
+   "a control that never fails is measuring nothing"
+  ],
+  [
+   "C6     a bad save is reported, never silently reset",
+   true,
+   ""
+  ]
+ ]
+}

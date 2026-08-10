@@ -1,9 +1,9 @@
 {
   "id": "P30",
-  "state": "building",
+  "state": "critique",
   "round": 2,
-  "gap": "Heuristic is optimistic by default: with no positive weakness signal (privacy-masked or unmatched GPU string, no navigator.deviceMemory, Iris Xe) it boots at high (3072px x3 cascades, 1.5 dpr, 5-pass post), and warmup+window means the first relief arrives at 21 s on a 10 fps machine and 107 s at 2 fps; also the policy ceiling is bootTier not the heuristic's own cap, so a machine capped at medium is promoted back to high and ends at low with the budget spent",
-  "note": "Round 2: invert heuristic default to medium-unless-strong, heuristic cap becomes policy ceiling, per-frame stand-down re-read, fast first decision window + multi-rung first step, AMD/Intel-Iris families, C9 mid-session claim",
+  "gap": "Hysteresis holds by being a one-way ratchet with no re-evaluation: a 4 s transient at boot (classroom Wi-Fi, a Chrome update, 30 Chromebooks loading at once) is decided on frames 1.5-4.0 s after the first render, can leap 3 rungs to potato in one change, and downSteps===0 blocks every promotion for the rest of the session - measured: 120 ms frames for 4 s then 3 minutes of flawless 60 Hz still ends at potato, and no A-group claim tests a transient. Secondary: Lighting.js clamps shadows to 2048 x2 so 'high' and 'medium' build IDENTICAL shadow rigs, making the module doc's and B8's '3072 x3 cascades' justification fiction; and quality:tier has zero subscribers so drawDistance/grassDensity/particleBudget/shadowCascades are emitted and dropped.",
+  "note": "Heuristic default inverted (medium unless the renderer string names a discrete GPU); heuristic cap is now the policy ceiling; stand-down switch re-read every frame and applies the player's tier to the renderer; first decision window cut to 30/45 with wall-clock caps, and a down-step leaps ceil(log2(over-budget)) rungs; Intel Iris/Xe/Arc and AMD APU families added. 39/39 claims pass (A17/B11/C9/D1/D2 new); critic probe 15/17.",
   "evidence": [],
-  "updated": "2026-08-10T16:47:55.719Z"
+  "updated": "2026-08-10T17:21:22.924Z"
 }

@@ -1,9 +1,9 @@
 {
   "id": "P31",
-  "state": "critique",
-  "round": 1,
-  "gap": null,
-  "note": "Catalogue split one chunk per knowledge point + 22-lesson manifest; eager bank chunk 147.0 -> 64.3 kB gz (-82.7), first load -68.5 kB gz (like-for-like -80.0). 18/18 claims in review/measure/P31.mjs. verify PASSED on dev and --built.",
+  "state": "building",
+  "round": 2,
+  "gap": "Per-lesson loading has no caller in the shipped game: driving the real built app's Scheduler for 117 items pulled 0/32 group chunks and made 0 ItemBank.select calls; ensure/ensureLesson/prefetchAround are referenced only by review/measure/P31.mjs, so B1/B2/B4/C1 measure a path the product never executes. Bytes are real and reproduced (eager chunk 147.0->64.3 kB gz, first load 548.0->479.6, like-for-like -80.0), but 28.2 kB gz of the remaining 64.3 is removable dead weight: es+pl item strings -14.7, the 1152-item fingerprint spine -13.5 (measured by variant builds).",
+  "note": "Round 2: wiring ensureLesson into boot/62-itembank.js idle warm, splitting item locale table to en-only, precomputing bank fingerprint, adding FAILED backoff + issue subscriber",
   "evidence": [],
-  "updated": "2026-08-10T16:47:23.072Z"
+  "updated": "2026-08-10T17:00:14.441Z"
 }

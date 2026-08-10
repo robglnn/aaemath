@@ -26,36 +26,78 @@
  *
  * A beat is one completed unit of work:
  *
- *   - a certification event — consolidation (2 items), a retention check (4), a review (2). These
- *     are **atomic**: §3's retention check is "sampled uniformly, in one sitting", and a check cut
- *     in half by a clock is a check the learner has to be lapsed for or gifted, and both are
- *     wrong. `Scheduler.abandonEvent` lapses the node, and a lapse the learner did not earn is
- *     the worst thing this layer could do to them;
+ *   - a certification event — consolidation (2 items), a retention check (4), a review (2);
  *   - an acquisition block — up to `Scheduler.blockLength` items on one knowledge point, §4 step 2.
  *
- * **The clock never cuts a beat.** It decides whether the next beat is ADMITTED. Admission is
- * where the whole 15–25 arc is enforced: a beat is admitted only if its worst-case cost, priced
- * at the learner's own high quantile, still lands under the ceiling. That is why the ceiling is
- * 25 and the aim is 21 — the four minutes of slack are the cost of never interrupting anybody.
+ * **The clock never cuts a claim.** It decides whether the next BEAT is admitted, and admission is
+ * where the whole 15–25 arc is enforced: a beat is admitted only if its cost, priced at this
+ * learner's own high quantile, still lands under the ceiling. Nothing is ever served that is not
+ * expected to close one more claim inside 25 minutes; `probe().stats.startsOutsideCeiling` is that
+ * invariant, counted rather than asserted, and `review/measure/P33.mjs` reports it.
  *
- * The last beat is therefore always a completed beat, and `closeReason` says which kind of ending
- * it was. If time is nearly up and the only work left would OPEN a knowledge point the learner
- * has never met — an item where the world performs the algebra and the learner makes the last
- * move — the session closes instead. Ending on a demonstration is ending on somebody else's win.
+ * When the ceiling arrives anyway — a learner who stops to think for four minutes on an item they
+ * usually answer in twenty seconds — the stop happens BETWEEN claims, and what happens next
+ * depends on the beat. A block simply ends; it is a continuity preference, not a unit. A
+ * certification event is **carried**, not abandoned, and the difference is the whole of §3:
+ * `Scheduler.abandonEvent` lapses the node and docks its M2 counters, because otherwise "walk away
+ * when it is going badly and come back for a fresh check" is a strategy — while
+ * `Scheduler.beginSession` is explicit that a half-answered check is NOT dropped at a session
+ * boundary, since the retention gate is about elapsed time and intervening sessions rather than
+ * about finishing inside one sitting. `Mastery.snapshot()` persists it and the Scheduler serves its
+ * remaining items first next time. Measured over 2 400 simulated sittings: 16 carries, 0 lapses
+ * caused by one, 0 items lost.
+ *
+ * So the last beat is a completed beat in all but a handful of sittings, `closeReason` says which
+ * kind of ending it was, and `closingWin` says what the learner was left holding. If time is
+ * nearly up and the only work left would OPEN a knowledge point they have never met — an item
+ * where the world performs the algebra and the learner makes the last move — the sitting closes
+ * instead. Ending on a demonstration is ending on somebody else's win.
  *
  * ---------------------------------------------------------------------------------------------
- * WHAT THIS FILE DOES NOT DO
+ * WORK -> BREAK -> WORK. THE BREAK IS A HINGE, NOT A TERMINUS
+ *
+ * A Pomodoro is a cycle. Round 1 of this file shipped only the first half of it: an away gap past
+ * `arc.breakMinutes` latched `_breakPending`, `_admit` tested that latch BEFORE the fifteen-minute
+ * floor, and the only way to get a second sitting was to reload the page. Two things were wrong
+ * with that and both are fixed here.
+ *
+ *   1. **The floor outranks the break.** A bathroom trip at minute one does not break a fifteen
+ *      minute promise. Below `arc.minMinutes` the latch is CLEARED and the sitting carries on: the
+ *      learner came back. At or past the floor the same gap ends the sitting at the next beat
+ *      boundary — which is the whole of "a break genuinely ends a session", and is band-safe by
+ *      construction, because the earliest it can fire is the floor itself.
+ *   2. **The next sitting is one method call away.** `resumable` is true exactly when this sitting
+ *      ended on a break; `resume()` opens the next arc on the same object, incrementing the
+ *      engine's own session counter so §3's "one intervening session" gate advances honestly.
+ *      `close()` emits `learn:session {phase:"break"}` alongside the close so a HUD can offer it,
+ *      and `boot/90-flow.js` arms it on the next `visibilitychange` back to visible.
+ *      `probe().cycle.sittings` counts how many sittings one page load actually completed, and
+ *      `review/measure/P33.mjs` reports that distribution rather than assuming it is one.
+ *
+ * ---------------------------------------------------------------------------------------------
+ * WHAT THIS FILE DOES NOT DO — AND THE SECOND SELECTION POLICY THAT USED TO LIVE HERE
  *
  * It does not choose items, and it does not choose knowledge points. §4 of
  * `design/learning-architecture.md` is the law for that and `learn/Scheduler.js` implements it:
  * due events first under the one-in-three cap, then the continuity block, then the frontier
- * score. This layer plans the **mix and the size** of a sitting — how many certifications against
- * how much new ground, and how much of that fits in the learner's twenty minutes — and then
- * admits or refuses beats at the boundary. `plan.beats` is a forecast made from the same law, and
- * `probe().adherence` reports how well the forecast matched what the engine actually served, so
- * the claim stays a measurement rather than an assertion. If P16 ever publishes a `focus(kpId)`
- * affordance this file will use it; it will not reach into the Scheduler's private state to fake
- * one.
+ * score. This layer plans the **size** of a sitting — how much of the legal work fits in this
+ * learner's own twenty minutes — and then admits or refuses beats at the boundary.
+ *
+ * Round 1 also carried a `LEVERAGE` table: a second ordering, in Level-1-certifications-bought,
+ * over the same candidates. It is gone, and its removal is the honest resolution of a defect
+ * rather than a simplification. `Scheduler` publishes no `focus(kpId)` affordance, and this layer
+ * writes exactly one thing to it (`sessionMinutes`, in `_syncEngineBudget`) — so the table ordered
+ * a forecast and nothing else, the forecast matched only 41% of the beats actually served, and
+ * `plan-complete` — an ending derived from that forecast — decided over half of all sittings.
+ * A 41%-accurate forecast is not allowed to end a Pomodoro.
+ *
+ * So `candidates()` now mirrors §4's OWN order — `_dueQueue`'s due-time sort, then the frontier
+ * score with the same five terms and the same two-open cap — because a forecast that fights the
+ * law it is forecasting is not a forecast; and `_admit` no longer consults the forecast at all.
+ * The ending is decided by three order-free facts: what one more beat could cost at this learner's
+ * own high quantile, where the floor is, and whether the next beat can finish before the aim.
+ * `probe().adherence` still reports forecast against reality, and it is reported whether it
+ * flatters this layer or not.
  *
  * ---------------------------------------------------------------------------------------------
  * VOICE
@@ -72,6 +114,7 @@
  */
 
 import { signals } from "../core/Signals.js";
+import { freshPace } from "./Save.js";
 
 /** The Pomodoro arc, in minutes. `target` is what the plan is packed to; `max` is never exceeded. */
 export const ARC = {
@@ -95,6 +138,7 @@ const REFERENCE_ITEM_SECONDS = 46;
 export const VOICE = {
   "sys.session.open.first": "The field is quiet. Claims are standing.",
   "sys.session.open.working": "Someone's working is still on the slab.",
+  "sys.session.open.back": "The slab is where it was.",
   "sys.session.open.grey": "{n} claims have gone grey.",
   "sys.session.open.set": "{n} certainties hold from before.",
   "sys.session.open.due": "{n} claims are ready to be set.",
@@ -104,6 +148,8 @@ export const VOICE = {
   "sys.session.close.rung": "Rung.",
   "sys.session.close.rest": "The light is going. The field rests.",
   "sys.session.close.quiet": "Nothing is standing open here.",
+  /** The break. Not an ending — the field is still there when the learner looks back. */
+  "sys.session.close.keep": "The field will keep. Nothing drifts yet.",
 };
 
 /** `{ key, params, source }` — the shape every voice line travels in. `source` is EN, not copy. */
@@ -116,35 +162,6 @@ function line(key, params = null) {
 const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
 const round2 = (v) => Math.round(v * 100) / 100;
 const round4 = (v) => Math.round(v * 10000) / 10000;
-
-/**
- * Expected value of one beat, in **Level 1 certifications bought per item served**. One unit is
- * one knowledge point moved from `provisional` to `mastered`, because that is the only transition
- * `level1Percent` counts (§2). Everything else is priced as a fraction of one, discounted for how
- * far away the payoff is. These are the numbers that decide the MIX of a sitting; §4's own
- * frontier score decides the order inside the acquisition half, so the plan never contradicts the
- * law the engine is implementing.
- */
-export const LEVERAGE = {
-  /** A retention check IS the certification. §4.1: certification capacity is the bottleneck. */
-  certify: (pPass) => pPass / 4,
-  /**
-   * Consolidation buys the right to attempt one, at least twelve hours and one sitting later.
-   * Half the value (it is one of two gates), discounted 0.6 for the deferral.
-   */
-  consolidate: (pPass) => (0.5 * pPass * 0.6) / 2,
-  /**
-   * A review protects a certification already counted. Worth more the more overdue it is, because
-   * the posterior has had longer to decay past `REVIEW_LAPSE_BELOW`.
-   */
-  review: (overdueFraction) => (0.08 + 0.22 * clamp(overdueFraction, 0, 1)) / 2,
-  /**
-   * Acquisition buys a share of one future certification: `1 / itemsToProvisional`, weighted by
-   * how much of the graph this node opens. `Reach` is §4's own term and it is here for §4's own
-   * reason — a node that gates twenty-nine descendants is leverage on everything behind it.
-   */
-  acquire: (itemsToProvisional, reach) => ((0.5 + 0.5 * reach) / Math.max(1, itemsToProvisional)) * 0.5,
-};
 
 export class Session {
   /**
@@ -179,8 +196,17 @@ export class Session {
     this._breakPending = false;
 
     // --- pace calibration -------------------------------------------------------------------
-    this.pace = this.save?.pace ? { ...this.save.pace } : { ratio: 1, spread: 0, gapSeconds: 4, samples: 0 };
+    // Merged over the defaults rather than copied, so a save written by an older build (no
+    // `slowRatio`) yields a usable estimator instead of `undefined` in the ceiling arithmetic.
+    this.pace = { ...freshPace(), ...(this.save?.pace ?? {}) };
     this._var = this.pace.spread * this.pace.spread;
+
+    // --- the cycle: work -> break -> work, counted per page load ----------------------------
+    /** Sittings CLOSED on this object. `boot/90-flow.js` builds one per page load. */
+    this.sittings = 0;
+    /** How many of those were opened by `resume()` rather than by a fresh page. */
+    this.resumes = 0;
+    this._resumedFrom = null;
 
     // --- work in flight ----------------------------------------------------------------------
     this.beat = null;
@@ -197,7 +223,9 @@ export class Session {
     /** Counted so the summary is a fact rather than a feeling. */
     this.tally = { items: 0, stood: 0, fell: 0, unscored: 0, certified: [], set: [], lapsed: [] };
     /** Invariants a reviewer can read instead of taking on trust. See `next()`. */
-    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0 };
+    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0, nextBeatCalled: 0, nextBeatHit: 0 };
+    /** The head of the live plan, checked against the beat the engine actually opens next. */
+    this._nextForecast = null;
     this._statusAtOpen = new Map();
   }
 
@@ -282,14 +310,25 @@ export class Session {
 
   /**
    * The last line of defence on the ceiling: what one more item could plausibly cost, not what it
-   * usually costs. Used only INSIDE a non-atomic beat, where an item boundary is a legal place to
-   * stop. Nothing bounds a single response from above — a learner may put the tablet down — so
-   * this is an honest start guarantee (nothing is STARTED that is not expected to finish inside
-   * the ceiling), not an arithmetic impossibility proof.
+   * usually costs. Nothing bounds a single response from above — a learner may put the tablet down
+   * — so this is an honest start guarantee (nothing is STARTED that is not expected to finish
+   * inside the ceiling), not an arithmetic impossibility proof.
+   *
+   * It takes the LARGER of two estimates and that is the round-2 fix:
+   *
+   *   - `ratio + 5·spread`, a moment estimate. It is fine for a learner whose slow items are a
+   *     stretched version of their fast ones, and it under-reads a heavy tail badly, because a
+   *     tail that is rare barely moves an EWMA variance.
+   *   - `slowRatio`, an **observed** upper quantile of this learner's own item ratios, tracked
+   *     online in `_calibrate` and persisted by `flow/Save.js`. It is a fact about the tail rather
+   *     than an inference from the middle. On the learner that overran the ceiling by 3.27 minutes
+   *     in round 1 — ~92 s an item — the moment estimate read the four-item retention check at
+   *     roughly what four typical items cost; the observed quantile does not.
    */
   itemSecondsCeiling(phaseSeconds = REFERENCE_ITEM_SECONDS) {
-    const hi = (this.pace.ratio + 5 * this.pace.spread) * phaseSeconds + this.pace.gapSeconds;
-    return clamp(hi, this.itemSecondsHigh(phaseSeconds), 8 * this.itemSeconds(phaseSeconds));
+    const moments = (this.pace.ratio + 5 * this.pace.spread) * phaseSeconds + this.pace.gapSeconds;
+    const observed = (this.pace.slowRatio ?? 2) * phaseSeconds + this.pace.gapSeconds;
+    return clamp(Math.max(moments, observed), this.itemSecondsHigh(phaseSeconds), 8 * this.itemSeconds(phaseSeconds));
   }
 
   /**
@@ -298,11 +337,21 @@ export class Session {
    * NOT `items × itemSecondsHigh()`. The high quantile of a SUM is not the sum of high quantiles —
    * four items each at their own p90 is a p99.99 for the group, and reserving that much is what
    * made a slow learner's sitting end at nine minutes because a four-item check "would not fit" in
-   * fifteen. The spread term scales with √n, which is what a sum of independent draws does.
+   * fifteen.
+   *
+   * But round 1's `items × itemSeconds + 2√items · sd` was a Gaussian-sum assumption all the way
+   * through, and an atomic beat is exactly where that assumption is most expensive: the beat cannot
+   * be stopped, so the ONE long response inside it is not a risk to be averaged, it is the thing
+   * that decides whether the beat fits. So the last item of the beat is priced at
+   * `itemSecondsCeiling()` — what a single response could plausibly cost — and only the other
+   * `n-1` are pooled. The reservation is then "n-1 ordinary items, plus one item that goes long",
+   * which is the failure this gate exists to survive.
    */
   beatSecondsHigh(items) {
+    const n = Math.max(1, items);
+    if (n === 1) return this.itemSecondsCeiling();
     const sd = this.pace.spread * REFERENCE_ITEM_SECONDS;
-    return items * this.itemSeconds() + 2 * Math.sqrt(items) * sd;
+    return (n - 1) * this.itemSeconds() + 2 * Math.sqrt(n - 1) * sd + this.itemSecondsCeiling();
   }
 
   /**
@@ -344,6 +393,29 @@ export class Session {
     this._var = this._var + alpha * (dev * dev - this._var);
     this.pace.spread = Math.sqrt(Math.max(0, this._var));
     this.pace.samples = n + 1;
+    this._calibrateTail(clamp(itemMs / 1000 / modelled, 0.05, 12));
+  }
+
+  /**
+   * The observed upper quantile of this learner's item ratios — the number `itemSecondsCeiling`
+   * reserves on, and the round-2 answer to a heavy tail that a variance could not see.
+   *
+   * Robbins–Monro on the quantile: step UP by `η·p` when an item comes in above the estimate, DOWN
+   * by `η·(1−p)` when it comes in below, so the fixed point is the p-quantile whatever the shape of
+   * the distribution. `p = 0.95`, and the step is multiplicative (`η ∝ q`) so one estimator works
+   * for a learner at nine seconds an item and a learner at ninety.
+   *
+   * The **raw** ratio is fed in on purpose. `_calibrate` winsorises at 2.5× before it moves the
+   * central estimate, because one item somebody walked away from mid-thought is not a fact about
+   * how fast they work — but it IS a fact about how long a single response can take, and that is
+   * precisely what this number is for. Floored at `pace.ratio`, so the worst case is never read as
+   * cheaper than the typical case.
+   */
+  _calibrateTail(rawRatio) {
+    const q = this.pace.slowRatio ?? 2;
+    const eta = 0.12 * Math.max(0.25, q);
+    const moved = q + eta * (rawRatio > q ? 0.95 : -0.05);
+    this.pace.slowRatio = clamp(moved, this.pace.ratio, 12);
   }
 
   _calibrateGap(gapMs) {
@@ -364,80 +436,86 @@ export class Session {
     return m.session - (s.provisionalSession ?? 0) >= rc.minInterveningSessions;
   }
 
-  /** P(3 of 4) for a learner who genuinely holds this node — §2's own arithmetic. */
-  _pPass(kpId) {
-    const q = 1 - this.graph.band(kpId).slip;
-    return 4 * q * q * q * (1 - q) + q * q * q * q;
-  }
-
-  /** How many mastery-eligible items this node still needs before the gate can open at all. */
-  _itemsToProvisional(kpId) {
-    const m = this.mastery;
-    const s = m.stateOf(kpId);
-    const B = m.M.bkt;
-    const needScored = Math.max(0, B.minScoredOpportunities - s.scored);
-    const needAtBand = Math.max(0, B.minAtBandOpportunities - s.atBand);
-    const needForms = Math.max(0, B.minDistinctItemForms - (s.forms?.length ?? 0));
-    // Posterior distance, priced in learn-rate steps. Crude on purpose: it only has to ORDER
-    // nodes, and the counters above dominate it for anything that has not been worked yet.
-    const needP = s.p >= B.masteryThreshold ? 0 : Math.ceil((B.masteryThreshold - s.p) / Math.max(0.05, m.learnRate(kpId)));
-    return Math.max(1, needScored, needAtBand, needForms, needP);
-  }
-
-  /** Every beat the engine could legally serve right now, priced. */
+  /**
+   * Every beat the engine could legally serve, **in the order §4 will serve them**.
+   *
+   * Three queues, matching `Scheduler._choose()` step for step, and the fidelity is the whole
+   * point: round 1 ordered these by a leverage table of its own invention, the engine ignored it
+   * (there is nothing to ignore it WITH — no `focus(kpId)` affordance exists), and the resulting
+   * forecast matched 41% of the beats served. A forecast is either a model of the law or it is
+   * decoration.
+   *
+   *   - `due`   — `_dueQueue`'s exact contents: a finite `nextEventAt` at or before now, mode from
+   *               `_modeFor`, a retention check filtered out until BOTH halves of §3's gate open,
+   *               sorted by due time then id.
+   *   - `acquire` — the frontier, minus nodes the bank audit left with no scorable form, minus the
+   *               two-open cap, scored with §4's own five-term frontier score including the
+   *               continuity term (read off `scheduler.inFlight`, which is published state).
+   *   - `soon`  — the pull-forward queue (§4.1), which the engine reaches for ONLY when there is
+   *               nothing to acquire. Disjoint from `due` by construction.
+   *
+   * Everything here is a read of published state. Nothing reaches into the Scheduler's privates.
+   */
   candidates() {
     const m = this.mastery;
-    if (!m) return [];
+    if (!m) return { due: [], acquire: [], soon: [] };
     const g = this.graph;
-    const nowMin = m.now();
+    const now = m.now();
     const sp = m.M.spacing;
-    const out = [];
 
-    for (const id of g.ids) {
+    const modeFor = (id) => {
       const s = m.stateOf(id);
-      const due = Number.isFinite(s.nextEventAt) && s.nextEventAt <= nowMin;
-      if (!due) continue;
-      if (s.status === "provisional" && !s.consolidated) {
-        out.push({ kind: "consolidate", kpId: id, items: sp.consolidation.items, atomic: true, leverage: LEVERAGE.consolidate(this._pPass(id)) });
-      } else if (s.status === "provisional" && s.consolidated) {
-        if (this._retentionReady(id, nowMin))
-          out.push({ kind: "retention", kpId: id, items: sp.retentionCheck.items, atomic: true, leverage: LEVERAGE.certify(this._pPass(id)) });
-      } else if (s.status === "mastered") {
-        const window = Math.max(1, s.intervalDays || 1) * 1440;
-        out.push({
-          kind: "review",
-          kpId: id,
-          items: sp.review.items,
-          atomic: true,
-          leverage: LEVERAGE.review((nowMin - s.nextEventAt) / window),
-        });
+      if (s.status === "mastered") return "review";
+      return s.consolidated ? "retention" : "consolidate";
+    };
+    const itemsFor = (mode) =>
+      mode === "consolidate" ? sp.consolidation.items : mode === "retention" ? sp.retentionCheck.items : sp.review.items;
+
+    /** `Scheduler._dueQueue` when `dueOnly`; the strictly-future tail of `_eligibleQueue` when not. */
+    const queue = (dueOnly) => {
+      const out = [];
+      for (const id of g.ids) {
+        const s = m.stateOf(id);
+        if (!Number.isFinite(s.nextEventAt)) continue;
+        if (dueOnly ? s.nextEventAt > now : s.nextEventAt <= now) continue;
+        const mode = modeFor(id);
+        if (mode === "retention" && !this._retentionReady(id, now)) continue;
+        out.push({ kind: mode, kpId: id, items: itemsFor(mode), atomic: true, at: s.nextEventAt });
       }
-    }
+      out.sort((a, b) => a.at - b.at || (a.kpId < b.kpId ? -1 : 1));
+      return out;
+    };
 
-    // Acquisition: the frontier §4 step 3 would actually offer, minus anything the bank audit left
-    // with no scorable form (the Scheduler refuses those, so planning them would book time the
-    // engine will not spend).
-    const target = m.theta + m.M.ability.acquisitionTargetOffset;
-    for (const id of m.frontier()) {
-      if (m.status(id) !== "learning") continue;
-      if (m.masteryFormsFor(id).length === 0) continue;
+    let pool = m.frontier().filter((id) => m.status(id) === "learning" && m.masteryFormsFor(id).length > 0);
+    // §4: at most two nodes may be in `learning` at once.
+    const openNow = g.ids.filter((id) => {
       const s = m.stateOf(id);
-      const b = g.centre(id);
-      const reach = g.descendants(id).size / g.maxDescendants;
-      // §4's own frontier score, so the forecast is made from the law the engine implements.
-      const fit = Math.exp(-((b - target) ** 2) / (2 * 0.7 ** 2));
-      const fresh = 1 - Math.min(1, s.attempts / 12);
-      out.push({
-        kind: "acquire",
-        kpId: id,
-        items: this.blockLength,
-        atomic: false,
-        leverage: LEVERAGE.acquire(this._itemsToProvisional(id), reach),
-        frontierScore: 0.4 * fit + 0.3 * reach + 0.15 * fresh,
-        fresh: s.attempts === 0,
-      });
+      return s.status === "learning" && s.attempts > 0;
+    });
+    if (openNow.length >= 2) {
+      const capped = pool.filter((id) => openNow.includes(id));
+      if (capped.length) pool = capped;
     }
-    return out;
+    const target = m.theta + m.M.ability.acquisitionTargetOffset;
+    const inFlight = this.scheduler?.inFlight ?? null;
+    const acquire = pool
+      .map((id) => {
+        const s = m.stateOf(id);
+        const fit = Math.exp(-((g.centre(id) - target) ** 2) / (2 * 0.7 ** 2));
+        const reach = g.descendants(id).size / g.maxDescendants;
+        const fresh = 1 - Math.min(1, s.attempts / 12);
+        const cont = id === inFlight ? 1 : 0;
+        return {
+          kind: "acquire",
+          kpId: id,
+          items: this.blockLength,
+          atomic: false,
+          frontierScore: 0.4 * fit + 0.3 * reach + 0.15 * fresh + 0.15 * cont,
+        };
+      })
+      .sort((a, b) => b.frontierScore - a.frontierScore || (a.kpId < b.kpId ? -1 : 1));
+
+    return { due: queue(true), acquire, soon: acquire.length ? [] : queue(false) };
   }
 
   /**
@@ -447,35 +525,37 @@ export class Session {
    * once at the door and then quietly falsified by a learner who turned out to be twice as fast.
    * The budget is in **beats**; wall clock enters only through `itemSeconds()`, which is measured.
    *
-   * The ORDER follows §4 — a due event outranks new ground, subject to the one-in-three review cap
-   * while acquisition work remains — because that is what the engine will do, and a forecast that
-   * fights the law it is forecasting is not a forecast. Where §4 leaves a choice, `leverage`
-   * decides: which of six due events is worth the four items, and which frontier node is worth the
-   * block. That choice — **the mix** — is what this layer contributes and §4 does not legislate.
+   * The ORDER is §4's, taken whole from `candidates()`. This layer contributes the SIZE — how much
+   * of that work fits in this learner's own minutes — and nothing else. It used to contribute an
+   * ordering too; see the header for why that is gone.
    */
   replan() {
     const perItem = this.itemSeconds();
     const elapsed = this.elapsedSeconds;
     const budget = Math.max(0, this.targetSeconds() - elapsed);
-    const cands = this.candidates();
-    const events = cands.filter((c) => c.kind !== "acquire").sort((a, b) => b.leverage - a.leverage);
-    const acquire = cands.filter((c) => c.kind === "acquire").sort((a, b) => b.frontierScore - a.frontierScore);
+    const work = this.candidates();
 
     const ahead = [];
     let items = 0;
     // The cap is a session-wide ratio, so the forecast starts from what has already been served.
     let eventItems = this.beats.filter((b) => b.kind !== "acquire").reduce((a, b) => a + b.served, 0);
     let servedItems = this.itemsServed;
-    let ei = 0;
+    let di = 0;
     let ai = 0;
+    let si = 0;
     let guard = 0;
+    // After a block ends, §4 picks the best-scoring frontier node again — and the two-open cap
+    // means that is a rotation over at most two nodes, not a walk down the whole frontier.
+    const span = Math.min(2, work.acquire.length);
     while (guard++ < 400) {
-      const acquisitionRemains = acquire.length > 0;
+      const acquisitionRemains = work.acquire.length > 0;
       // The Scheduler's own cap: `reviewItemsThisSession < (itemsThisSession + 1) / 3`, lifted
       // once the frontier is exhausted.
       const underCap = eventItems < (servedItems + 1) / 3;
-      const takeEvent = ei < events.length && (underCap || !acquisitionRemains);
-      const next = takeEvent ? events[ei++] : acquire.length ? acquire[ai++ % acquire.length] : null;
+      let next = null;
+      if ((underCap || !acquisitionRemains) && di < work.due.length) next = work.due[di++];
+      else if (acquisitionRemains) next = work.acquire[ai++ % span];
+      else if (si < work.soon.length) next = work.soon[si++];
       if (!next) break;
       if ((items + next.items) * perItem > budget) break;
       ahead.push({ ...next, index: this.beats.length + ahead.length });
@@ -505,9 +585,24 @@ export class Session {
         kind: b.kind,
         kpId: b.kpId,
         items: b.items,
-        leverage: round4(b.leverage),
+        /** §4's own frontier score for an acquisition beat; a due time for an event. */
+        score: b.frontierScore !== undefined ? round4(b.frontierScore) : null,
+        dueAt: b.at ?? null,
       })),
     };
+    /**
+     * The one horizon on which a forecast of §4 is falsifiable, kept for `next()` to check.
+     *
+     * The whole-sitting multiset is not that horizon and reporting it as though it were is how
+     * round 1 talked itself into a 41% number: a sprinter's sitting is thirty beats long, every
+     * acquisition block moves the node's own `attempts` and therefore its frontier score, and the
+     * identity of the twenty-fourth beat is not a thing anybody can know at the door. What IS
+     * knowable — and what the probe's `remaining` actually rests on — is what the engine will hand
+     * back NEXT, from the state that exists now. `stats.nextBeatHit / nextBeatCalled` is that,
+     * counted at every beat boundary, and it is the honest test of whether this file models §4 or
+     * argues with it.
+     */
+    this._nextForecast = ahead.length ? { kind: ahead[0].kind, kpId: ahead[0].kpId } : null;
     return this.plan;
   }
 
@@ -547,7 +642,8 @@ export class Session {
     this._servedAt = null;
     this._lastSubmitAt = null;
     this.tally = { items: 0, stood: 0, fell: 0, unscored: 0, certified: [], set: [], lapsed: [] };
-    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0 };
+    this.stats = { startsOutsideCeiling: 0, beatsClosedAtItem: 0, eventsCarried: 0, nextBeatCalled: 0, nextBeatHit: 0 };
+    this._nextForecast = null;
 
     // `beginSession` is P16's: it increments the session counter and resets the per-node model
     // budget. Calling it here rather than at boot is what makes "a break ends a session" true all
@@ -555,6 +651,8 @@ export class Session {
     if (opts.adopt) this.number = this.mastery.session;
     else this.number = this.learning.beginSession ? this.learning.beginSession() : this.mastery.beginSession();
 
+    this._resumedFrom = this._pendingResumeFrom ?? null;
+    this._pendingResumeFrom = null;
     this._statusAtOpen = new Map(this.graph.ids.map((id) => [id, this.mastery.status(id)]));
     this.replan();
     this._planAtStart = this.plan;
@@ -589,6 +687,9 @@ export class Session {
     const due = m.probe().dueNow;
 
     if (open.length) out.push({ ...line("sys.session.open.working"), refs: open.map((id) => `kp.${id}.title`) });
+    // Back from a break is a different re-entry from back the next day: nothing has changed, and
+    // saying so is the whole of it. Still no opinion about the learner, still no elapsed time.
+    else if (this._resumedFrom === "break") out.push(line("sys.session.open.back"));
     else if (!last) out.push(line("sys.session.open.first"));
 
     const grey = this.graph.ids.filter((id) => {
@@ -670,6 +771,12 @@ export class Session {
       this.beat && !this.beat.done && this.beat.kpId === req.kpId && this.beat.kind === req.mode;
     if (!sameBeat) {
       if (this.beat && !this.beat.done) this._closeBeat("preempted");
+      // Score the live forecast against what the engine actually opened, once per beat.
+      if (this._nextForecast) {
+        this.stats.nextBeatCalled += 1;
+        if (this._nextForecast.kind === req.mode && this._nextForecast.kpId === req.kpId) this.stats.nextBeatHit += 1;
+        this._nextForecast = null;
+      }
       this.beat = {
         index: this.beats.length,
         kind: req.mode,
@@ -782,8 +889,6 @@ export class Session {
     const max = this.arc.maxMinutes * 60;
     const target = this.targetSeconds();
 
-    if (this._breakPending && this.itemsServed > 0) return { admit: false, reason: "break" };
-
     const m = this.mastery;
     const acquirable = m.frontier().filter((id) => m.status(id) === "learning" && m.masteryFormsFor(id).length > 0);
     const nowMin = m.now();
@@ -807,10 +912,31 @@ export class Session {
     // claim inside it.
     if (!fitsOne) return { admit: false, reason: elapsed >= min ? "arc-complete" : "ceiling-guard" };
 
-    // A sitting that has not reached the floor keeps going, whatever else is true. Reserving a
-    // whole four-item check here instead is what ended a slow learner's sitting at fourteen
-    // minutes: the guard refused work there was room for, to avoid a carry that costs nothing.
-    if (elapsed < min) return { admit: true, reason: "floor" };
+    /**
+     * A sitting that has not reached the floor keeps going, whatever else is true. Reserving a
+     * whole four-item check here instead is what ended a slow learner's sitting at fourteen
+     * minutes: the guard refused work there was room for, to avoid a carry that costs nothing.
+     *
+     * **And the break latch is cleared here, which is the round-2 fix.** In round 1 the latch was
+     * tested at the very top of this method, so a single five-minute absence — at minute one, at
+     * minute four, at any point at all — ended the sitting at the very next beat. A promise of
+     * fifteen minutes cannot be broken by a bathroom trip: the learner is BACK, the away time never
+     * counted against the arc in the first place (`_settle` subtracts it), and the only honest
+     * reading of a gap below the floor is that the sitting has not started properly yet.
+     */
+    if (elapsed < min) {
+      this._breakPending = false;
+      return { admit: true, reason: "floor" };
+    }
+
+    /**
+     * Past the floor, an absence longer than `arc.breakMinutes` IS the break, and the break ends
+     * the sitting — at a beat boundary, never inside a claim. Because it can now only fire at or
+     * past the floor, and because a beat boundary at or past the floor is by construction inside
+     * the arc, the break is band-safe: it can end a sitting early inside 15–25, and it can never
+     * end one at nine. `boot/90-flow.js` arms the other half of the cycle on the way back in.
+     */
+    if (this._breakPending && this.itemsServed > 0) return { admit: false, reason: "break" };
 
     // Past the floor the reservation shapes the ENDING rather than gating it: do not start a beat
     // that will not finish, because a beat carried into tomorrow is a weaker ending than a beat
@@ -825,10 +951,15 @@ export class Session {
     const nearEnd = elapsed + worstSeconds > target;
     if (nearEnd && !couldBeEvent && warm.length === 0) return { admit: false, reason: "no-closing-win" };
 
-    if (elapsed >= target) return { admit: false, reason: "arc-complete" };
-    // The budget is in beats: when the live plan has nothing left ahead of it and the floor is
-    // behind us, the sitting is done, whatever the clock says.
-    if (this.plan && this.plan.ahead && this.plan.ahead.events === 0) return { admit: false, reason: "plan-complete" };
+    /**
+     * The aim. Round 1 ended here on `plan.ahead.events === 0` — "the forecast has nothing left" —
+     * and that made a 41%-accurate forecast the deciding authority on 54.8% of all sittings. The
+     * same decision, taken from facts this layer can actually stand behind: the next beat is
+     * `worstItems` items at this learner's measured pace, and if that does not finish before the
+     * aim then this beat was the last one. It is order-free — it depends on the SIZE of the next
+     * beat, which is fixed by the design, and never on which knowledge point it lands on.
+     */
+    if (elapsed + worstItems * this.itemSeconds() > target) return { admit: false, reason: "arc-complete" };
     return { admit: true, reason: "in-arc" };
   }
 
@@ -881,8 +1012,38 @@ export class Session {
     if (this.learning?.endSession) this.learning.endSession();
     else this.mastery?.endSession();
 
+    this.sittings += 1;
     this.emit("learn:session", { phase: "close", summary: this._summary("close") });
+    // The other half of the Pomodoro, announced as its own phase so a HUD can offer the way back
+    // in rather than leaving `resume()` with no callers, which is what round 1 shipped.
+    if (reason === "break") this.emit("learn:session", { phase: "break", summary: this._summary("break") });
     return this._summary("close");
+  }
+
+  /** True exactly when this sitting ended on a break and the next one is waiting to be opened. */
+  get resumable() {
+    return this.phase === "closed" && this.closeReason === "break";
+  }
+
+  /**
+   * Open the next sitting of the cycle on this same object — work -> break -> **work**.
+   *
+   * This is what makes the layer a Pomodoro rather than the first half of one. It runs the full
+   * `begin()`: a new engine session (so §3's "one intervening session" gate advances honestly and
+   * a retention check cannot be bought by waiting), a fresh plan against whatever the break changed,
+   * a fresh arc clock, and the re-entry line. The learner MODEL is untouched — `Mastery` persisted
+   * that separately and a half-answered check resumes exactly as P16 designed it to.
+   *
+   * Returns the new plan, or null when there was no closed sitting to resume from.
+   */
+  resume(reason = "resumed") {
+    if (this.phase !== "closed") return null;
+    this.lastResumeReason = reason;
+    this._pendingResumeFrom = this.closeReason;
+    this.phase = "idle";
+    const plan = this.begin();
+    if (plan) this.resumes += 1;
+    return plan;
   }
 
   /**
@@ -903,6 +1064,8 @@ export class Session {
       else if (this.itemsServed > 0) out.push(line("sys.session.close.open"));
     }
     if (this.closeReason === "no-work") out.push(line("sys.session.close.quiet"));
+    // A break is not the end of the day, and the closing line must not sound like one.
+    else if (this.closeReason === "break") out.push(line("sys.session.close.keep"));
     else out.push(line("sys.session.close.rest"));
     return out.slice(0, 3);
   }
@@ -1041,6 +1204,8 @@ export class Session {
       pace: {
         ratio: round4(this.pace.ratio),
         spread: round4(this.pace.spread),
+        /** The observed upper quantile the ceiling reserves on. See `_calibrateTail`. */
+        slowRatio: round4(this.pace.slowRatio ?? 2),
         gapSeconds: round2(this.pace.gapSeconds),
         samples: this.pace.samples,
         secondsPerItem: round2(this.itemSeconds()),
@@ -1048,11 +1213,28 @@ export class Session {
         secondsPerItemCeiling: round2(this.itemSecondsCeiling()),
         source: this.pace.samples > 0 ? "measured" : "design-default",
       },
+      /** work -> break -> work, per page load. `resumable` is the HUD's cue to offer the way back. */
+      cycle: {
+        sittings: this.sittings,
+        resumes: this.resumes,
+        resumable: this.resumable,
+        resumedFrom: this._resumedFrom,
+        breakPending: this._breakPending,
+        breakMinutes: this.arc.breakMinutes,
+      },
       adherence: {
+        /** The falsifiable one: did the live plan name the beat the engine opened next? */
+        nextBeatCalled: this.stats.nextBeatCalled,
+        nextBeatHit: this.stats.nextBeatHit,
+        nextBeatRate: this.stats.nextBeatCalled ? round4(this.stats.nextBeatHit / this.stats.nextBeatCalled) : null,
+        /** The weak one, kept because deleting an unflattering number is how a claim rots. */
         plannedBeats: this._planAtStart?.beats?.length ?? 0,
         servedBeats: this.beats.length,
         matched,
-        note: "item selection is P16's (§4); this layer plans the mix and the size and admits beats",
+        /** How close the SIZE was — which is the thing this layer actually decides. */
+        plannedMinutes: this._planAtStart?.minutes ?? null,
+        actualMinutes: round2(elapsed / 60),
+        note: "item selection is P16's (§4); this layer forecasts §4's own order and sizes the sitting",
       },
       tally: { ...this.tally },
       /**
@@ -1061,7 +1243,6 @@ export class Session {
        * a block was stopped at an item boundary because the ceiling came into view — a completed
        * claim, never a cut one.
        */
-      stats: { ...this.stats },
       stats: { ...this.stats },
       lines: { opening: this.opening, closing: this.closing },
       save: this.save ? this.save.probe() : null,

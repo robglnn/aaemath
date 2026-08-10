@@ -21,9 +21,18 @@ import { Session } from "../flow/Session.js";
  * should do with no presenter mounted, and is why nothing here can black out a capture.
  *
  * **Away time is not session time.** A learner who alt-tabs for two minutes has not spent two
- * minutes of their twenty; a learner who alt-tabs for ten has taken their break, and the sitting
- * ends at the next beat boundary rather than resuming at minute fourteen. Both are handled here
- * because visibility is a document concern, not a session-arc concern.
+ * minutes of their twenty; a learner who alt-tabs for ten *past the fifteen-minute floor* has taken
+ * their break, and the sitting ends at the next beat boundary rather than resuming at minute
+ * fourteen. Both are handled here because visibility is a document concern, not a session-arc
+ * concern.
+ *
+ * **And the break is a hinge, not a terminus.** One `visibilitychange` carries both halves of the
+ * cycle: on the way OUT it reports the gap, and on the way BACK IN it opens the next sitting if the
+ * last one ended on a break. Round 1 shipped `restart()` here with zero callers anywhere in
+ * `app/src`, which meant a page reload was the only way to get a second sitting — the work half of
+ * work -> break -> work. The decision itself lives in `Session.resumable` / `Session.resume()`
+ * rather than in this file, so `review/measure/P33.mjs` can drive the same code path offline and
+ * the DOM wiring is three lines that cannot hide a bug.
  */
 export default {
   id: "flow",
@@ -45,8 +54,15 @@ export default {
       );
 
     const session = new Session({ learning, save, emit: (name, value) => signals.emit(name, value) });
-    // Adopt: the engine's own `beginSession()` already ran at order 62 for this page load.
-    session.begin({ adopt: true });
+    try {
+      // Adopt: the engine's own `beginSession()` already ran at order 62 for this page load.
+      session.begin({ adopt: true });
+    } catch (err) {
+      // Planning reads the whole learner model. If that model is in a state this layer cannot
+      // read, the right answer is a named warning and a mounted-but-idle session layer — not a
+      // boot module that throws and takes the probe down with it.
+      warn(`flow: could not plan a sitting — ${String(err?.message || err)}`);
+    }
 
     // ---------------------------------------------------------------- attention
 
@@ -55,10 +71,17 @@ export default {
       if (document.visibilityState === "hidden") {
         hiddenAt = Date.now();
         save.write();
-      } else if (hiddenAt != null) {
+        return;
+      }
+      if (hiddenAt != null) {
         session.noteAway(Date.now() - hiddenAt);
         hiddenAt = null;
       }
+      // The break, ending. A sitting that closed because the learner took one is not the end of the
+      // day: the next time this tab is looked at, the next arc opens. `learn:session {phase:"break"}`
+      // fired when it closed, so a HUD that wants to offer this rather than take it can hold the
+      // resume itself — `flow.restart()` is the same call.
+      if (session.resumable) session.resume("returned");
     };
     const onHide = () => {
       // A browser game is closed, not exited. The live record is what makes the next load able to
@@ -73,9 +96,8 @@ export default {
       save,
       /** End the current sitting and open a fresh arc — what a break, or a menu, asks for. */
       restart(reason = "restarted") {
-        session.close(reason);
-        session.phase = "idle";
-        return session.begin();
+        if (session.phase !== "closed" && session.phase !== "dormant") session.close(reason);
+        return session.resume(reason);
       },
       dispose() {
         removeEventListener("visibilitychange", onVisibility);

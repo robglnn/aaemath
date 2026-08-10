@@ -92,8 +92,8 @@
   },
   "frameCensus": {
     "measured": {
-      "cyanPct": 12.8,
-      "darkPct": 37.23,
+      "cyanPct": 12.78,
+      "darkPct": 37.22,
       "meanY": 0.215
     },
     "reference": {
@@ -352,7 +352,7 @@
       "verdict": "PASS",
       "drawCalls": 138,
       "triangles": 147430,
-      "programs": 21,
+      "programs": 20,
       "threshold": "<= 320 draws, <= 1.6M triangles, <= 90 programs"
     }
   ],

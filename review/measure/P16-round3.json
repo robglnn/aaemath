@@ -1,0 +1,2919 @@
+{
+  "generated": "2026-08-10T14:18:08.594Z",
+  "engine": "app/src/learn/{Graph,Mastery,Scheduler,ItemBank}.js",
+  "graph": {
+    "nodes": 32,
+    "edges": 48,
+    "roots": 2,
+    "leaves": 4,
+    "longestChain": 11,
+    "bands": {
+      "1": 3,
+      "2": 11,
+      "3": 8,
+      "4": 7,
+      "5": 3
+    },
+    "maxDescendants": 30
+  },
+  "budget": {
+    "sessions": 22,
+    "sessionMinutes": 25,
+    "learners": 400,
+    "bots": 400,
+    "blindItemsPerCell": 256
+  },
+  "trueGuessByForm": {
+    "construct": 0.03,
+    "repair": 0.03,
+    "generate": 0.02,
+    "select4": 0.25,
+    "judge2": 0.5
+  },
+  "trueGuessByPhase": {
+    "solo": 0,
+    "guided-1": 0.08,
+    "guided-2": 0.17,
+    "guided-3": 0.85,
+    "model": 0.7
+  },
+  "measuredBlindByForm": {
+    "construct": {
+      "n": 8188,
+      "hits": 1040,
+      "pooledRate": 0.12702,
+      "upper95": 0.1344,
+      "worstCellRate": 0.625,
+      "worstCell": "eq-special-cases|construct",
+      "roundTwoShapeStrategy": 0.02296
+    },
+    "repair": {
+      "n": 8106,
+      "hits": 968,
+      "pooledRate": 0.11942,
+      "upper95": 0.12666,
+      "worstCellRate": 1,
+      "worstCell": "eq-special-cases|repair",
+      "roundTwoShapeStrategy": 0.00234
+    },
+    "generate": {
+      "n": 8170,
+      "hits": 1462,
+      "pooledRate": 0.17895,
+      "upper95": 0.18741,
+      "worstCellRate": 1,
+      "worstCell": "like-terms-id|generate",
+      "roundTwoShapeStrategy": 0.00404
+    }
+  },
+  "measuredBlindByAnswerType": {
+    "construct/integer": {
+      "n": 2524,
+      "shapeRate": 0.01109,
+      "bestCellRate": 0.36719
+    },
+    "construct/pair": {
+      "n": 86,
+      "shapeRate": 0,
+      "bestCellRate": 0
+    },
+    "construct/equation": {
+      "n": 572,
+      "shapeRate": 0.02622,
+      "bestCellRate": 0.39063
+    },
+    "repair/repair": {
+      "n": 8106,
+      "shapeRate": 0.00234,
+      "bestCellRate": 1
+    },
+    "generate/construction": {
+      "n": 8170,
+      "shapeRate": 0.00404,
+      "bestCellRate": 1
+    },
+    "construct/rational": {
+      "n": 1453,
+      "shapeRate": 0.02684,
+      "bestCellRate": 0.23047
+    },
+    "construct/expression": {
+      "n": 1765,
+      "shapeRate": 0.00283,
+      "bestCellRate": 0.25391
+    },
+    "construct/partition": {
+      "n": 256,
+      "shapeRate": 0.01563,
+      "bestCellRate": 0.02734
+    },
+    "construct/valueSet": {
+      "n": 256,
+      "shapeRate": 0.01172,
+      "bestCellRate": 0.14453
+    },
+    "construct/closure": {
+      "n": 256,
+      "shapeRate": 0.34766,
+      "bestCellRate": 0.625
+    },
+    "construct/inequality": {
+      "n": 1020,
+      "shapeRate": 0.0049,
+      "bestCellRate": 0.09766
+    }
+  },
+  "measuredBlindHotCells": [
+    {
+      "cell": "like-terms-id|generate",
+      "rate": 1,
+      "byTyping": "10x",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "refused",
+      "modelledGuessBefore": 0.036,
+      "modelledGuessAfter": null
+    },
+    {
+      "cell": "eq-special-cases|repair",
+      "rate": 1,
+      "byTyping": "3: 0 = 0",
+      "types": "repair",
+      "n": 180,
+      "engineVerdict": "refused",
+      "modelledGuessBefore": 0.1,
+      "modelledGuessAfter": null
+    },
+    {
+      "cell": "expr-anatomy|generate",
+      "rate": 0.94531,
+      "byTyping": "9x + 2y - 8",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "refused",
+      "modelledGuessBefore": 0.03,
+      "modelledGuessAfter": null
+    },
+    {
+      "cell": "eq-special-cases|generate",
+      "rate": 0.66406,
+      "byTyping": "3x - 6 = 3x - 3",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "refused",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": null
+    },
+    {
+      "cell": "eq-special-cases|construct",
+      "rate": 0.625,
+      "byTyping": "none",
+      "types": "closure",
+      "n": 256,
+      "engineVerdict": "refused",
+      "modelledGuessBefore": 0.1,
+      "modelledGuessAfter": null
+    },
+    {
+      "cell": "props-equality|construct",
+      "rate": 0.39063,
+      "byTyping": "-6x = 0",
+      "types": "equation",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.12337
+    },
+    {
+      "cell": "expr-anatomy|construct",
+      "rate": 0.36719,
+      "byTyping": "3",
+      "types": "integer/expression",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.05,
+      "modelledGuessAfter": 0.21874
+    },
+    {
+      "cell": "props-equality|repair",
+      "rate": 0.36719,
+      "byTyping": "2: -x = 0",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.12337
+    },
+    {
+      "cell": "expr-anatomy|repair",
+      "rate": 0.34375,
+      "byTyping": "2: 3",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.05,
+      "modelledGuessAfter": 0.2316
+    },
+    {
+      "cell": "eval-substitute|generate",
+      "rate": 0.27344,
+      "byTyping": "x^{2} + x",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.036,
+      "modelledGuessAfter": 0.28184
+    },
+    {
+      "cell": "props-operations|construct",
+      "rate": 0.25391,
+      "byTyping": "x",
+      "types": "expression/integer",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.16746
+    },
+    {
+      "cell": "props-operations|repair",
+      "rate": 0.25,
+      "byTyping": "2: 0 + x",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.17924
+    },
+    {
+      "cell": "props-operations|generate",
+      "rate": 0.24609,
+      "byTyping": "x + 9x \\cdot 0",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.036,
+      "modelledGuessAfter": 0.1379
+    },
+    {
+      "cell": "eval-signed|generate",
+      "rate": 0.23828,
+      "byTyping": "x^{2}",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.042,
+      "modelledGuessAfter": 0.28184
+    },
+    {
+      "cell": "eq-model-context|construct",
+      "rate": 0.23047,
+      "byTyping": "9",
+      "types": "rational/integer",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.1,
+      "modelledGuessAfter": 0.24982
+    },
+    {
+      "cell": "oo-structure|generate",
+      "rate": 0.22656,
+      "byTyping": "-x^{2}",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.036,
+      "modelledGuessAfter": 0.23905
+    },
+    {
+      "cell": "eq-both-sides|generate",
+      "rate": 0.19922,
+      "byTyping": "3x + 1 = 2x + 4",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.048,
+      "modelledGuessAfter": 0.24191
+    },
+    {
+      "cell": "eq-both-sides|repair",
+      "rate": 0.19141,
+      "byTyping": "2: -2x + 8 = 6",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.08,
+      "modelledGuessAfter": 0.21976
+    },
+    {
+      "cell": "eq-both-sides|construct",
+      "rate": 0.1875,
+      "byTyping": "3",
+      "types": "rational",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.08,
+      "modelledGuessAfter": 0.24734
+    },
+    {
+      "cell": "eq-distribute|generate",
+      "rate": 0.18359,
+      "byTyping": "2\\left(x + 8\\right) = 26",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.048,
+      "modelledGuessAfter": 0.28855
+    },
+    {
+      "cell": "eq-combine-side|generate",
+      "rate": 0.17969,
+      "byTyping": "2x + 4x + 5 = 35",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "refused",
+      "modelledGuessBefore": 0.048,
+      "modelledGuessAfter": null
+    },
+    {
+      "cell": "eq-distribute|repair",
+      "rate": 0.17188,
+      "byTyping": "2: x + 4 = 5",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.08,
+      "modelledGuessAfter": 0.13408
+    },
+    {
+      "cell": "eq-combine-side|construct",
+      "rate": 0.16797,
+      "byTyping": "2",
+      "types": "rational",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.08,
+      "modelledGuessAfter": 0.20242
+    },
+    {
+      "cell": "eq-combine-side|repair",
+      "rate": 0.16797,
+      "byTyping": "2: 9x + 6 = 51",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.08,
+      "modelledGuessAfter": 0.22135
+    },
+    {
+      "cell": "eq-distribute|construct",
+      "rate": 0.16016,
+      "byTyping": "6",
+      "types": "rational",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.08,
+      "modelledGuessAfter": 0.18036
+    },
+    {
+      "cell": "eq-model-context|generate",
+      "rate": 0.16016,
+      "byTyping": "7s + 4 = 18",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.19363
+    },
+    {
+      "cell": "eq-two-step|generate",
+      "rate": 0.15625,
+      "byTyping": "-2x + 2 = 0",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.042,
+      "modelledGuessAfter": 0.27702
+    },
+    {
+      "cell": "eq-meaning|construct",
+      "rate": 0.14453,
+      "byTyping": "3",
+      "types": "valueSet",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.16788
+    },
+    {
+      "cell": "eq-meaning|generate",
+      "rate": 0.14063,
+      "byTyping": "x + 5 = 8",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.036,
+      "modelledGuessAfter": 0.20588
+    },
+    {
+      "cell": "eq-one-add|construct",
+      "rate": 0.14063,
+      "byTyping": "5",
+      "types": "integer",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.21861
+    },
+    {
+      "cell": "eq-two-step|construct",
+      "rate": 0.13672,
+      "byTyping": "6",
+      "types": "rational",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.07,
+      "modelledGuessAfter": 0.18102
+    },
+    {
+      "cell": "translate-sentence|construct",
+      "rate": 0.12891,
+      "byTyping": "8n + 9 = 65",
+      "types": "equation",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.07,
+      "modelledGuessAfter": 0.11681
+    },
+    {
+      "cell": "eq-one-add|repair",
+      "rate": 0.125,
+      "byTyping": "2: x = 7",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.22571
+    },
+    {
+      "cell": "eq-one-mult|generate",
+      "rate": 0.11719,
+      "byTyping": "4x = 24",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.036,
+      "modelledGuessAfter": 0.26541
+    },
+    {
+      "cell": "eq-two-step|repair",
+      "rate": 0.11328,
+      "byTyping": "2: 5x = 30",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.07,
+      "modelledGuessAfter": 0.13359
+    },
+    {
+      "cell": "eq-one-add|generate",
+      "rate": 0.10938,
+      "byTyping": "x + 4 = 6",
+      "types": "construction",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.036,
+      "modelledGuessAfter": 0.21801
+    },
+    {
+      "cell": "eq-one-mult|repair",
+      "rate": 0.10938,
+      "byTyping": "2: x = 9",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.26649
+    },
+    {
+      "cell": "eq-meaning|repair",
+      "rate": 0.10547,
+      "byTyping": "3: x = 9",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.06,
+      "modelledGuessAfter": 0.09923
+    },
+    {
+      "cell": "oo-numeric|repair",
+      "rate": 0.10156,
+      "byTyping": "2: 4 \\cdot 4",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.05,
+      "modelledGuessAfter": 0.17739
+    },
+    {
+      "cell": "translate-sentence|repair",
+      "rate": 0.10156,
+      "byTyping": "2: 4n + 2 = 22",
+      "types": "repair",
+      "n": 256,
+      "engineVerdict": "re-priced",
+      "modelledGuessBefore": 0.07,
+      "modelledGuessAfter": 0.1216
+    }
+  ],
+  "bankPricing": {
+    "audited": true,
+    "cellsPriced": 96,
+    "rejectedCells": [
+      {
+        "cell": "expr-anatomy|construct",
+        "family": "expr-anatomy.coefficient",
+        "blind": 1,
+        "n": 91,
+        "modalAnswer": "1",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "expr-anatomy|repair",
+        "family": "expr-anatomy.coefficient",
+        "blind": 1,
+        "n": 91,
+        "modalAnswer": "2|1",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "expr-anatomy|generate",
+        "blind": null,
+        "reason": "every generator family is above the caps (1 of 1)"
+      },
+      {
+        "cell": "oo-structure|generate",
+        "family": "oo-structure.negsq",
+        "blind": 1,
+        "n": 90,
+        "modalAnswer": "-x^{2}",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "eval-substitute|generate",
+        "family": "eval-substitute.twice",
+        "blind": 1,
+        "n": 88,
+        "modalAnswer": "x^{2} + x",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "eval-signed|generate",
+        "family": "eval-signed.square",
+        "blind": 1,
+        "n": 89,
+        "modalAnswer": "x^{2}",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "props-operations|construct",
+        "family": "props-operations.identity",
+        "blind": 1,
+        "n": 90,
+        "modalAnswer": "1*x",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "props-operations|repair",
+        "family": "props-operations.identity",
+        "blind": 1,
+        "n": 89,
+        "modalAnswer": "2|1*x",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "props-operations|generate",
+        "family": "props-operations.identity",
+        "blind": 1,
+        "n": 89,
+        "modalAnswer": "x + 5x \\cdot 0",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "like-terms-id|generate",
+        "family": "like-terms-id.xy",
+        "blind": 1,
+        "n": 96,
+        "modalAnswer": "10x",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "like-terms-id|generate",
+        "family": "like-terms-id.pow",
+        "blind": 1,
+        "n": 96,
+        "modalAnswer": "10x",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "like-terms-id|generate",
+        "blind": null,
+        "reason": "every generator family is above the caps (2 of 2)"
+      },
+      {
+        "cell": "props-equality|construct",
+        "family": "props-equality.zero",
+        "blind": 1,
+        "n": 117,
+        "modalAnswer": "1*x = 0",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "props-equality|repair",
+        "family": "props-equality.zero",
+        "blind": 1,
+        "n": 116,
+        "modalAnswer": "2|1*x = 0",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "eq-combine-side|generate",
+        "blind": null,
+        "reason": "every generator family is above the caps (1 of 1)"
+      },
+      {
+        "cell": "eq-special-cases|construct",
+        "family": "eq-special-cases.always",
+        "blind": 1,
+        "n": 148,
+        "modalAnswer": "always",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "eq-special-cases|construct",
+        "family": "eq-special-cases.refusal",
+        "blind": 1,
+        "n": 124,
+        "modalAnswer": "none",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "eq-special-cases|construct",
+        "blind": null,
+        "reason": "every generator family is above the caps (2 of 2)"
+      },
+      {
+        "cell": "eq-special-cases|repair",
+        "family": "eq-special-cases.always",
+        "blind": 1,
+        "n": 263,
+        "modalAnswer": "3|0 = 0",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "eq-special-cases|repair",
+        "blind": null,
+        "reason": "every generator family is above the caps (1 of 1)"
+      },
+      {
+        "cell": "eq-special-cases|generate",
+        "family": "eq-special-cases.always",
+        "blind": 1,
+        "n": 96,
+        "modalAnswer": "4\\left(x + 2\\right) = 4x + 8",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "eq-special-cases|generate",
+        "family": "eq-special-cases.refusal",
+        "blind": 1,
+        "n": 96,
+        "modalAnswer": "6x + 9 = 6x + 3",
+        "reason": "blind 1.000 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "eq-special-cases|generate",
+        "blind": null,
+        "reason": "every generator family is above the caps (2 of 2)"
+      },
+      {
+        "cell": "expr-anatomy|construct",
+        "family": "expr-anatomy.count",
+        "blind": 0.978022,
+        "n": 91,
+        "modalAnswer": "3",
+        "reason": "blind 0.978 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "expr-anatomy|repair",
+        "family": "expr-anatomy.count",
+        "blind": 0.977778,
+        "n": 90,
+        "modalAnswer": "2|3",
+        "reason": "blind 0.978 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "expr-anatomy|generate",
+        "family": "expr-anatomy.count",
+        "blind": 0.65625,
+        "n": 96,
+        "modalAnswer": "4x + 4y - 3",
+        "reason": "blind 0.656 > maxTrueGuess 0.3"
+      },
+      {
+        "cell": "oo-structure|generate",
+        "family": "oo-structure.coefsq",
+        "blind": 0.241758,
+        "n": 91,
+        "modalAnswer": "5x^{2}",
+        "reason": "conservative price 0.339 > maxGuess 0.3 at solo"
+      },
+      {
+        "cell": "eq-one-mult|construct",
+        "family": "eq-one-mult.mult",
+        "blind": 0.223404,
+        "n": 94,
+        "modalAnswer": "6",
+        "reason": "conservative price 0.318 > maxGuess 0.3 at solo"
+      },
+      {
+        "cell": "eq-combine-side|generate",
+        "family": "eq-combine-side.core",
+        "blind": 0.208333,
+        "n": 96,
+        "modalAnswer": "5x + 2x + 2 = 44",
+        "reason": "conservative price 0.300 > maxGuess 0.3 at solo"
+      }
+    ],
+    "repricedCells": [
+      {
+        "cell": "eq-distribute|generate",
+        "from": 0.048,
+        "to": 0.288552
+      },
+      {
+        "cell": "eval-substitute|generate",
+        "from": 0.036,
+        "to": 0.281836
+      },
+      {
+        "cell": "eval-signed|generate",
+        "from": 0.042,
+        "to": 0.281836
+      },
+      {
+        "cell": "eq-two-step|generate",
+        "from": 0.042,
+        "to": 0.277023
+      },
+      {
+        "cell": "eq-one-mult|repair",
+        "from": 0.06,
+        "to": 0.266486
+      },
+      {
+        "cell": "eq-one-mult|generate",
+        "from": 0.036,
+        "to": 0.26541
+      },
+      {
+        "cell": "var-meaning|construct",
+        "from": 0.05,
+        "to": 0.263984
+      },
+      {
+        "cell": "var-meaning|repair",
+        "from": 0.05,
+        "to": 0.261339
+      },
+      {
+        "cell": "eval-signed|repair",
+        "from": 0.07,
+        "to": 0.254307
+      },
+      {
+        "cell": "eq-model-context|construct",
+        "from": 0.1,
+        "to": 0.249817
+      },
+      {
+        "cell": "eq-both-sides|construct",
+        "from": 0.08,
+        "to": 0.247339
+      },
+      {
+        "cell": "eval-substitute|construct",
+        "from": 0.06,
+        "to": 0.244328
+      },
+      {
+        "cell": "eval-substitute|repair",
+        "from": 0.06,
+        "to": 0.244328
+      },
+      {
+        "cell": "eval-signed|construct",
+        "from": 0.07,
+        "to": 0.244328
+      },
+      {
+        "cell": "eq-both-sides|generate",
+        "from": 0.048,
+        "to": 0.241915
+      },
+      {
+        "cell": "oo-structure|generate",
+        "from": 0.036,
+        "to": 0.239046
+      },
+      {
+        "cell": "expr-anatomy|repair",
+        "from": 0.05,
+        "to": 0.231599
+      },
+      {
+        "cell": "translate-order|repair",
+        "from": 0.07,
+        "to": 0.231599
+      },
+      {
+        "cell": "ineq-two-step|construct",
+        "from": 0.1,
+        "to": 0.229792
+      },
+      {
+        "cell": "translate-order|construct",
+        "from": 0.07,
+        "to": 0.226886
+      },
+      {
+        "cell": "eq-one-add|repair",
+        "from": 0.06,
+        "to": 0.225709
+      },
+      {
+        "cell": "eq-combine-side|repair",
+        "from": 0.08,
+        "to": 0.221345
+      },
+      {
+        "cell": "eq-both-sides|repair",
+        "from": 0.08,
+        "to": 0.219762
+      },
+      {
+        "cell": "expr-anatomy|construct",
+        "from": 0.05,
+        "to": 0.218739
+      },
+      {
+        "cell": "eq-one-add|construct",
+        "from": 0.06,
+        "to": 0.218608
+      },
+      {
+        "cell": "oo-numeric|construct",
+        "from": 0.05,
+        "to": 0.21832
+      },
+      {
+        "cell": "eq-one-add|generate",
+        "from": 0.036,
+        "to": 0.218011
+      },
+      {
+        "cell": "oo-structure|construct",
+        "from": 0.06,
+        "to": 0.216487
+      },
+      {
+        "cell": "var-meaning|generate",
+        "from": 0.03,
+        "to": 0.205885
+      },
+      {
+        "cell": "eq-meaning|generate",
+        "from": 0.036,
+        "to": 0.205885
+      },
+      {
+        "cell": "oo-structure|repair",
+        "from": 0.06,
+        "to": 0.205737
+      },
+      {
+        "cell": "eq-combine-side|construct",
+        "from": 0.08,
+        "to": 0.202421
+      },
+      {
+        "cell": "eq-model-context|generate",
+        "from": 0.06,
+        "to": 0.193626
+      },
+      {
+        "cell": "ineq-one-step|generate",
+        "from": 0.042,
+        "to": 0.193626
+      },
+      {
+        "cell": "distribute-numeric|repair",
+        "from": 0.06,
+        "to": 0.187141
+      },
+      {
+        "cell": "translate-sentence|generate",
+        "from": 0.042,
+        "to": 0.181222
+      },
+      {
+        "cell": "eq-two-step|construct",
+        "from": 0.07,
+        "to": 0.181015
+      },
+      {
+        "cell": "eq-distribute|construct",
+        "from": 0.08,
+        "to": 0.180361
+      },
+      {
+        "cell": "props-operations|repair",
+        "from": 0.06,
+        "to": 0.179242
+      },
+      {
+        "cell": "oo-numeric|repair",
+        "from": 0.05,
+        "to": 0.177386
+      },
+      {
+        "cell": "distribute-numeric|construct",
+        "from": 0.06,
+        "to": 0.176387
+      },
+      {
+        "cell": "eq-one-mult|construct",
+        "from": 0.06,
+        "to": 0.168083
+      },
+      {
+        "cell": "eq-meaning|construct",
+        "from": 0.06,
+        "to": 0.167883
+      },
+      {
+        "cell": "props-operations|construct",
+        "from": 0.06,
+        "to": 0.167461
+      },
+      {
+        "cell": "equivalent-expressions|construct",
+        "from": 0.08,
+        "to": 0.160088
+      },
+      {
+        "cell": "translate-phrase|generate",
+        "from": 0.036,
+        "to": 0.155899
+      },
+      {
+        "cell": "ineq-meaning|generate",
+        "from": 0.036,
+        "to": 0.155899
+      },
+      {
+        "cell": "ineq-two-step|repair",
+        "from": 0.1,
+        "to": 0.149325
+      },
+      {
+        "cell": "translate-phrase|repair",
+        "from": 0.06,
+        "to": 0.147898
+      },
+      {
+        "cell": "eq-model-context|repair",
+        "from": 0.1,
+        "to": 0.147898
+      },
+      {
+        "cell": "props-equality|generate",
+        "from": 0.036,
+        "to": 0.14293
+      },
+      {
+        "cell": "translate-phrase|construct",
+        "from": 0.06,
+        "to": 0.140017
+      },
+      {
+        "cell": "ineq-negative-flip|repair",
+        "from": 0.08,
+        "to": 0.140017
+      },
+      {
+        "cell": "props-operations|generate",
+        "from": 0.036,
+        "to": 0.137901
+      },
+      {
+        "cell": "eq-distribute|repair",
+        "from": 0.08,
+        "to": 0.134078
+      },
+      {
+        "cell": "eq-two-step|repair",
+        "from": 0.07,
+        "to": 0.133593
+      },
+      {
+        "cell": "ineq-one-step|repair",
+        "from": 0.07,
+        "to": 0.130987
+      },
+      {
+        "cell": "ineq-negative-flip|construct",
+        "from": 0.08,
+        "to": 0.130987
+      },
+      {
+        "cell": "ineq-one-step|construct",
+        "from": 0.07,
+        "to": 0.130062
+      },
+      {
+        "cell": "eval-formula|generate",
+        "from": 0.042,
+        "to": 0.129709
+      },
+      {
+        "cell": "translate-order|generate",
+        "from": 0.042,
+        "to": 0.129709
+      },
+      {
+        "cell": "ineq-negative-flip|generate",
+        "from": 0.048,
+        "to": 0.129709
+      },
+      {
+        "cell": "props-equality|construct",
+        "from": 0.06,
+        "to": 0.123368
+      },
+      {
+        "cell": "props-equality|repair",
+        "from": 0.06,
+        "to": 0.123368
+      },
+      {
+        "cell": "translate-sentence|repair",
+        "from": 0.07,
+        "to": 0.121599
+      },
+      {
+        "cell": "translate-sentence|construct",
+        "from": 0.07,
+        "to": 0.116813
+      },
+      {
+        "cell": "distribute-numeric|generate",
+        "from": 0.036,
+        "to": 0.116185
+      },
+      {
+        "cell": "equivalent-expressions|generate",
+        "from": 0.048,
+        "to": 0.116185
+      },
+      {
+        "cell": "oo-numeric|generate",
+        "from": 0.03,
+        "to": 0.102282
+      },
+      {
+        "cell": "eq-meaning|repair",
+        "from": 0.06,
+        "to": 0.099226
+      },
+      {
+        "cell": "like-terms-combine|generate",
+        "from": 0.042,
+        "to": 0.087887
+      },
+      {
+        "cell": "distribute-variable|generate",
+        "from": 0.042,
+        "to": 0.087887
+      },
+      {
+        "cell": "ineq-two-step|generate",
+        "from": 0.06,
+        "to": 0.087887
+      },
+      {
+        "cell": "distribute-negative|repair",
+        "from": 0.08,
+        "to": 0.084374
+      },
+      {
+        "cell": "ineq-meaning|repair",
+        "from": 0.06,
+        "to": 0.081211
+      },
+      {
+        "cell": "ineq-meaning|construct",
+        "from": 0.06,
+        "to": 0.080623
+      },
+      {
+        "cell": "distribute-negative|generate",
+        "from": 0.048,
+        "to": 0.072807
+      },
+      {
+        "cell": "simplify-expression|generate",
+        "from": 0.048,
+        "to": 0.072807
+      },
+      {
+        "cell": "eval-formula|repair",
+        "from": 0.07,
+        "to": 0.071728
+      },
+      {
+        "cell": "like-terms-id|construct",
+        "from": 0.06,
+        "to": 0.063754
+      }
+    ],
+    "relaxed": [],
+    "unmasterable": [
+      "eq-special-cases"
+    ]
+  },
+  "sensitivitySweep": [
+    {
+      "forcedBlindRate": 0.03,
+      "meanCertified": 0,
+      "shareAt80": 0
+    },
+    {
+      "forcedBlindRate": 0.1,
+      "meanCertified": 0,
+      "shareAt80": 0
+    },
+    {
+      "forcedBlindRate": 0.17,
+      "meanCertified": 0.0067,
+      "shareAt80": 0
+    },
+    {
+      "forcedBlindRate": 0.25,
+      "meanCertified": 0.1867,
+      "shareAt80": 0
+    },
+    {
+      "forcedBlindRate": 0.5,
+      "meanCertified": 9.4067,
+      "shareAt80": 0
+    }
+  ],
+  "assertions": [
+    {
+      "id": "U1",
+      "statement": "Graph validates the real content and rejects a cyclic graph, naming the loop",
+      "ok": true,
+      "detail": "2-cycle: var-meaning <- expr-anatomy <- var-meaning | 3-cycle: var-meaning <- like-terms-id <- oo-structure <- var-meaning | self-loop: eq-two-step <- eq-two-step"
+    },
+    {
+      "id": "U2",
+      "statement": "prerequisite closure, frontier and topological order are correct",
+      "ok": true,
+      "detail": "frontier at t0 = var-meaning,oo-numeric"
+    },
+    {
+      "id": "U3",
+      "statement": "a judge2 item is INERT: p, scored, atBand, forms and theta all unchanged",
+      "ok": true,
+      "detail": "scored=false reason=unscored-form p 0.2500 -> 0.2500"
+    },
+    {
+      "id": "U4",
+      "statement": "a select4 item is INERT, correct or wrong",
+      "ok": true,
+      "detail": "unscored=8"
+    },
+    {
+      "id": "U5",
+      "statement": "an unscored PHASE (model / guided-2 / guided-3) is inert in BOTH directions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "U6",
+      "statement": "guided-1 IS scorable but is NOT mastery-eligible (M2/M3 counters stay put)",
+      "ok": true,
+      "detail": "p 0.1800 -> 0.6130, scored 0 -> 0, credited=false"
+    },
+    {
+      "id": "U7",
+      "statement": "the two axes compose by MAX, never by product",
+      "ok": true,
+      "detail": "b1 construct/guided-1 0.1000, b1 generate/guided-1 0.1000 (product would be 0.0600), true construct/guided-3 0.85, b3 generate/solo 0.0700; third axis on eq-both-sides|construct: declared 0.080, measured blind 0.195, priced 0.247"
+    },
+    {
+      "id": "U8",
+      "statement": "an over-cap form is REJECTED from the scored path, never clamped",
+      "ok": true,
+      "detail": "judge2 would model at 0.4200 vs maxGuess 0.3; scored forms {construct,repair,generate}, scored phases {solo,guided-1}"
+    },
+    {
+      "id": "U9",
+      "statement": "the derived scorable matrix is exactly {construct,repair,generate} x {solo,guided-1}, and every issue is a NAMED content defect",
+      "ok": true,
+      "detail": "scorable 6/25 (construct,generate,repair x guided-1,solo); mastery-eligible 3/25 (construct,generate,repair x solo); 1 issue(s), all CONTENT reports"
+    },
+    {
+      "id": "U10",
+      "statement": "latency floor: a fast CORRECT answer buys nothing; a fast WRONG one is scored exactly like a slow one",
+      "ok": true,
+      "detail": "fast+right 0.1800 -> 0.1800 scored=0 (not-scored-upward:latency-floor); slow+right -> 0.6130 scored=1; fast+wrong 0.2249 == slow+wrong 0.2249 scored=1"
+    },
+    {
+      "id": "U11",
+      "statement": "hinted CORRECT is refused upward; hinted WRONG is scored exactly like an unhinted one",
+      "ok": true,
+      "detail": "hint+right 0.1800 -> 0.1800 scored=0 (not-scored-upward:hinted); unhinted+right -> 0.6130; hint+wrong 0.2249 == unhinted+wrong 0.2249"
+    },
+    {
+      "id": "U12",
+      "statement": "M2 counters are docked on a lapse (scored -3, atBand -2) and the ladder resets",
+      "ok": true,
+      "detail": "scored 3, atBand 1, status learning, ladder -1"
+    },
+    {
+      "id": "U13",
+      "statement": "M4 is a CONJUNCTION: 3-of-4 with the posterior below threshold does not certify",
+      "ok": true,
+      "detail": "p=0.90&3/4 -> false; p=0.97&3/4 -> true; p=0.97&2/4 -> false"
+    },
+    {
+      "id": "U14",
+      "statement": "the form cycle is a RUNNING index on the M2 counter, never restarted at `construct`",
+      "ok": true,
+      "detail": "construct,construct,generate,construct,repair,generate"
+    },
+    {
+      "id": "U15",
+      "statement": "the all-wrong BKT floor invariant: one correct from the floor never clears 0.95",
+      "ok": true,
+      "detail": "worst cell band 1 relearn: floor 0.3494, +1 correct 0.9375"
+    },
+    {
+      "id": "U16",
+      "statement": "state round-trips: snapshot -> restore reproduces the probe byte for byte",
+      "ok": true,
+      "detail": "probe hash 65afa41998604a07 vs 65afa41998604a07"
+    },
+    {
+      "id": "U17",
+      "statement": "determinism: the same seed reproduces the same state exactly",
+      "ok": true,
+      "detail": "seed 777 -> a8983010d51fea84 twice; seed 778 -> 09f672e19fa20401"
+    },
+    {
+      "id": "U18",
+      "statement": "a fake localStorage round-trips a session (state resumes)",
+      "ok": true,
+      "detail": "p 0.7497 -> 0.7497"
+    },
+    {
+      "id": "U19",
+      "statement": "M4 baseline: four honest, unhinted, unhurried corrects DO certify",
+      "ok": true,
+      "detail": "status mastered, lapses 0, credited 4/4"
+    },
+    {
+      "id": "U20",
+      "statement": "M4 refuses a HINTED correct: four hinted corrects certify NOTHING and lapse the node",
+      "ok": true,
+      "detail": "status learning, lapses 1, refusedUpward 4, reasons not-scored-upward:hinted, M2 docked to 3"
+    },
+    {
+      "id": "U21",
+      "statement": "M4 refuses a SUB-LATENCY-FLOOR correct: four 100 ms corrects certify NOTHING",
+      "ok": true,
+      "detail": "status learning, lapses 1, refusedUpward 4, reasons not-scored-upward:latency-floor"
+    },
+    {
+      "id": "U22",
+      "statement": "M4 refuses a SCAFFOLDED correct: retention forced to guided-1 is scorable but not credited",
+      "ok": true,
+      "detail": "status learning, lapses 1, scored 4/4 but credited 0/4"
+    },
+    {
+      "id": "U23",
+      "statement": "CONTROL: the round-1 counting rule DOES certify the hinted arm — this harness can see the leak",
+      "ok": true,
+      "detail": "round-1 rule (M4 counts outcome.correct) -> mastered; shipped rule (M4 counts result.credited) -> learning"
+    },
+    {
+      "id": "U24",
+      "statement": "there is exactly ONE retention tally: the Scheduler keeps no `right` counter of its own",
+      "ok": true,
+      "detail": "scheduler event keys {index,items,kpId,mode}; mastery tally served 2 right 2 refusedRight 0"
+    },
+    {
+      "id": "U25",
+      "statement": "an ABANDONED retention check is a lapse, not a free re-roll",
+      "ok": true,
+      "detail": "served 3 then abandoned: provisional -> learning, lapses 0 -> 1, M2 docked 6 -> 3"
+    },
+    {
+      "id": "U26",
+      "statement": "Scheduler state survives persist -> hydrate: open check, no-repeat window and inFlight",
+      "ok": true,
+      "detail": "event {\"kpId\":\"var-meaning\",\"mode\":\"retention\",\"items\":4,\"index\":1}, recentItemIds 6, tally {\"mode\":\"retention\",\"items\":4,\"served\":1,\"right\":1,\"refusedRight\":0}, inFlight [var-meaning]"
+    },
+    {
+      "id": "U27",
+      "statement": "a snapshot with NO Scheduler half lapses the orphaned retention check",
+      "ok": true,
+      "detail": "restored without a scheduler half: status learning, lapses 1, M2 6 -> 3"
+    },
+    {
+      "id": "U28",
+      "statement": "the `mastery` probe carries `inFlight[]` at the TOP level, as §8 requirement 11 names it",
+      "ok": true,
+      "detail": "inFlight [var-meaning], openEvents [{\"kpId\":\"var-meaning\",\"mode\":\"retention\",\"served\":2,\"right\":2,\"of\":4}]"
+    },
+    {
+      "id": "U29",
+      "statement": "no scored cell is credited at a modelled guess below what the LIVE bank measurably gives away",
+      "ok": true,
+      "detail": "96 cells measured live; 9 refused outright; 80 re-priced upward; none credited below its measured blind rate"
+    },
+    {
+      "id": "U30",
+      "statement": "after the refusals, no cell the player is still SERVED is definitely above maxTrueGuess",
+      "ok": true,
+      "detail": "29 refusals; worst surviving cell is eq-model-context|construct at 0.230 blind, priced at 0.250"
+    },
+    {
+      "id": "U36",
+      "statement": "a REFUSED generator family is inert, its sibling family in the same cell still scores, and the request says which to avoid",
+      "ok": true,
+      "detail": "refused {expr-anatomy.count,expr-anatomy.coefficient} inert (unscored-family:expr-anatomy.count:blind-0.978); kept {expr-anatomy.term} credits; price(\"expr-anatomy\",\"construct\").avoidFamilies = [\"expr-anatomy.count\",\"expr-anatomy.coefficient\"]; a real request for var-meaning|construct carries avoidFamilies []"
+    },
+    {
+      "id": "U33",
+      "statement": "the shipped 256-draw audit is never LOOSER than a 768-draw one",
+      "ok": true,
+      "detail": "never looser; stricter on 4 (oo-structure|generate::oo-structure.coefsq, eq-one-mult|construct::eq-one-mult.mult, eq-combine-side|generate, eq-combine-side|generate::eq-combine-side.core); unmasterable at 256 draws {eq-special-cases} vs at 768 {eq-special-cases}"
+    },
+    {
+      "id": "U34",
+      "statement": "the engine's PRICE dominates the live blind rate on every scored cell, and the two methods agree",
+      "ok": true,
+      "detail": "90 scored cells; price dominates the live floor on all of them; 0 differ by more than 0.05 (none); worst method gap 0.037 — eq-distribute|repair engine 0.093 vs live 0.172 (>= 0.131), priced 0.134"
+    },
+    {
+      "id": "U35",
+      "statement": "a knowledge point with NO honest family left is refused outright, named, and costs the graph nothing behind it",
+      "ok": true,
+      "detail": "eq-special-cases: every form refused (unscored-cell:blind-1.000); unmasterable [\"eq-special-cases\"]; reported in issues true; knowledge points locked behind it 0; masterable ceiling 31/32"
+    },
+    {
+      "id": "U31",
+      "statement": "the review ladder after certification is 1, 2, 5, 11, 24, 45, 45, 45 days (§3, growth 2.2, cap 45)",
+      "ok": true,
+      "detail": "1, 2, 5, 11, 24, 45, 45, 45 days"
+    },
+    {
+      "id": "U32",
+      "statement": "12 hours of idle time inside ONE session never produces a retention item (§3 needs an intervening session)",
+      "ok": true,
+      "detail": "100 days idle inside session 1: no retention item, node still provisional"
+    }
+  ],
+  "cohorts": {
+    "median": {
+      "n": 400,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 50,
+          "p10": 46.875,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 65.625,
+          "p10": 59.375,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 78.125,
+          "p10": 68.75,
+          "shareAt80": 0.4025
+        },
+        "20": {
+          "median": 93.75,
+          "p10": 84.375,
+          "shareAt80": 0.9375
+        },
+        "22": {
+          "median": 96.875,
+          "p10": 93.75,
+          "shareAt80": 1
+        }
+      },
+      "p10": 93.75,
+      "median": 96.875,
+      "p90": 96.875,
+      "shareAt80": 1,
+      "meanMastered": 30.8175,
+      "maxMastered": 31,
+      "peakEverMastered": 31,
+      "meanUnlocked": 31,
+      "shareEverUnlocked": 1,
+      "meanGateOpens": 35.52,
+      "maxGateOpens": 42,
+      "maxScoredCounter": 25,
+      "medianItems": 776,
+      "meanScoredItems": 643.41,
+      "meanUnscoredItems": 133.1275,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 4.525,
+      "retentionPassRate": 0.872674541982033,
+      "medianScoredTo80": 539,
+      "shareReaching80": 1,
+      "medianSessionsTo80": 19,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0.0425,
+        0.4025,
+        0.79,
+        0.9375,
+        0.9875,
+        1
+      ],
+      "meanTheta": 2.0355467696989558,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "mixedLong": {
+      "n": 400,
+      "sessions": 24,
+      "curve": {
+        "12": {
+          "median": 50,
+          "p10": 43.75,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 65.625,
+          "p10": 59.375,
+          "shareAt80": 0.05
+        },
+        "18": {
+          "median": 75,
+          "p10": 65.625,
+          "shareAt80": 0.375
+        },
+        "20": {
+          "median": 93.75,
+          "p10": 75,
+          "shareAt80": 0.7875
+        },
+        "22": {
+          "median": 96.875,
+          "p10": 84.375,
+          "shareAt80": 0.95
+        },
+        "24": {
+          "median": 96.875,
+          "p10": 93.75,
+          "shareAt80": 0.985
+        }
+      },
+      "p10": 93.75,
+      "median": 96.875,
+      "p90": 96.875,
+      "shareAt80": 0.985,
+      "meanMastered": 30.71,
+      "maxMastered": 31,
+      "peakEverMastered": 31,
+      "meanUnlocked": 30.95,
+      "shareEverUnlocked": 1,
+      "meanGateOpens": 35.8625,
+      "maxGateOpens": 44,
+      "maxScoredCounter": 28,
+      "medianItems": 843,
+      "meanScoredItems": 706.2675,
+      "meanUnscoredItems": 138.1825,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 4.925,
+      "retentionPassRate": 0.8632664515223797,
+      "medianScoredTo80": 544,
+      "shareReaching80": 0.9875,
+      "medianSessionsTo80": 19,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0.05,
+        0.1775,
+        0.375,
+        0.6,
+        0.7875,
+        0.885,
+        0.95,
+        0.9725,
+        0.985
+      ],
+      "meanTheta": 1.9482900510468186,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "liveMedian": {
+      "n": 120,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 50,
+          "p10": 46.875,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 62.5,
+          "p10": 59.375,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 75,
+          "p10": 68.75,
+          "shareAt80": 0.18333333333333332
+        },
+        "20": {
+          "median": 90.625,
+          "p10": 78.125,
+          "shareAt80": 0.8666666666666667
+        },
+        "22": {
+          "median": 96.875,
+          "p10": 93.75,
+          "shareAt80": 1
+        }
+      },
+      "p10": 93.75,
+      "median": 96.875,
+      "p90": 96.875,
+      "shareAt80": 1,
+      "meanMastered": 30.741666666666667,
+      "maxMastered": 31,
+      "peakEverMastered": 31,
+      "meanUnlocked": 31,
+      "shareEverUnlocked": 1,
+      "meanGateOpens": 35.65833333333333,
+      "maxGateOpens": 44,
+      "maxScoredCounter": 23,
+      "medianItems": 782.5,
+      "meanScoredItems": 634.3,
+      "meanUnscoredItems": 148.075,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 4.658333333333333,
+      "retentionPassRate": 0.8684086629001884,
+      "medianScoredTo80": 557,
+      "shareReaching80": 1,
+      "medianSessionsTo80": 20,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0.008333333333333333,
+        0.18333333333333332,
+        0.475,
+        0.8666666666666667,
+        0.9833333333333333,
+        1
+      ],
+      "meanTheta": 2.1299068861549824,
+      "liveServed": 93885,
+      "liveRight": 70191,
+      "liveRate": 0.7476274165202109
+    },
+    "liveGuesser": {
+      "n": 120,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 0,
+      "meanUnlocked": 0.03333333333333333,
+      "shareEverUnlocked": 0.03333333333333333,
+      "meanGateOpens": 0.03333333333333333,
+      "maxGateOpens": 1,
+      "maxScoredCounter": 23,
+      "medianItems": 976,
+      "meanScoredItems": 817.2416666666667,
+      "meanUnscoredItems": 158.40833333333333,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 0.03333333333333333,
+      "retentionPassRate": 0,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": -4.83526018864693,
+      "liveServed": 117078,
+      "liveRight": 7357,
+      "liveRate": 0.06283844958062147
+    },
+    "liveHintAbuser": {
+      "n": 120,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 0,
+      "meanUnlocked": 0,
+      "shareEverUnlocked": 0,
+      "meanGateOpens": 0,
+      "maxGateOpens": 0,
+      "maxScoredCounter": 0,
+      "medianItems": 728,
+      "meanScoredItems": 0,
+      "meanUnscoredItems": 366,
+      "meanRefusedUpward": 362,
+      "maxRefusedUpward": 362,
+      "meanLapses": 0,
+      "retentionPassRate": null,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": -0.7999999999999983,
+      "liveServed": 87360,
+      "liveRight": 87360,
+      "liveRate": 1
+    },
+    "guesser": {
+      "n": 400,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 0,
+      "meanUnlocked": 0.0525,
+      "shareEverUnlocked": 0.0525,
+      "meanGateOpens": 0.0525,
+      "maxGateOpens": 1,
+      "maxScoredCounter": 131,
+      "medianItems": 916,
+      "meanScoredItems": 684.785,
+      "meanUnscoredItems": 231.2425,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 0.05,
+      "retentionPassRate": 0,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": -4.73734503288659,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "bankGuesser": {
+      "n": 400,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 0,
+      "meanUnlocked": 0.23,
+      "shareEverUnlocked": 0.2125,
+      "meanGateOpens": 0.26,
+      "maxGateOpens": 3,
+      "maxScoredCounter": 133,
+      "medianItems": 915,
+      "meanScoredItems": 683.51,
+      "meanUnscoredItems": 230.96,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 0.2375,
+      "retentionPassRate": 0,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": -4.6422883713042635,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "masher": {
+      "n": 400,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 0,
+      "meanUnlocked": 0.0025,
+      "shareEverUnlocked": 0.0025,
+      "meanGateOpens": 0.0025,
+      "maxGateOpens": 1,
+      "maxScoredCounter": 121,
+      "medianItems": 922,
+      "meanScoredItems": 665.7975,
+      "meanUnscoredItems": 230.6975,
+      "meanRefusedUpward": 25.925,
+      "maxRefusedUpward": 41,
+      "meanLapses": 0,
+      "retentionPassRate": null,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": -5.409351598081111,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "formHunter": {
+      "n": 400,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 0,
+      "meanUnlocked": 0,
+      "shareEverUnlocked": 0,
+      "meanGateOpens": 0,
+      "maxGateOpens": 0,
+      "maxScoredCounter": 0,
+      "medianItems": 770,
+      "meanScoredItems": 0,
+      "meanUnscoredItems": 770.3825,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 0,
+      "retentionPassRate": null,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": -0.8000000000000059,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "hintAbuser": {
+      "n": 400,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 0,
+      "meanUnlocked": 0.0525,
+      "shareEverUnlocked": 0.0525,
+      "meanGateOpens": 0.0525,
+      "maxGateOpens": 1,
+      "maxScoredCounter": 137,
+      "medianItems": 917,
+      "meanScoredItems": 683.945,
+      "meanUnscoredItems": 231.97,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 0.05,
+      "retentionPassRate": 0,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": -4.737100864510275,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "hintLeak": {
+      "n": 400,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 1,
+      "meanUnlocked": 22.0325,
+      "shareEverUnlocked": 1,
+      "meanGateOpens": 62.6375,
+      "maxGateOpens": 67,
+      "maxScoredCounter": 27,
+      "medianItems": 764,
+      "meanScoredItems": 584.8925,
+      "meanUnscoredItems": 179.49,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 41.1975,
+      "retentionPassRate": 0.00006068329388919231,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": -0.6122640923424421,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "retentionHintLeak": {
+      "n": 400,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 0,
+      "meanUnlocked": 26.915,
+      "shareEverUnlocked": 1,
+      "meanGateOpens": 65.975,
+      "maxGateOpens": 69,
+      "maxScoredCounter": 23,
+      "medianItems": 771,
+      "meanScoredItems": 482.57,
+      "meanUnscoredItems": 149.585,
+      "meanRefusedUpward": 138.515,
+      "maxRefusedUpward": 154,
+      "meanLapses": 40.64,
+      "retentionPassRate": 0,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": 1.2361879658454291,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "retentionFast": {
+      "n": 400,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        },
+        "22": {
+          "median": 0,
+          "p10": 0,
+          "shareAt80": 0
+        }
+      },
+      "p10": 0,
+      "median": 0,
+      "p90": 0,
+      "shareAt80": 0,
+      "meanMastered": 0,
+      "maxMastered": 0,
+      "peakEverMastered": 0,
+      "meanUnlocked": 26.81,
+      "shareEverUnlocked": 1,
+      "meanGateOpens": 65.9,
+      "maxGateOpens": 70,
+      "maxScoredCounter": 20,
+      "medianItems": 771,
+      "meanScoredItems": 476.5075,
+      "meanUnscoredItems": 149.9475,
+      "meanRefusedUpward": 144.125,
+      "maxRefusedUpward": 162,
+      "meanLapses": 40.6775,
+      "retentionPassRate": 0,
+      "medianScoredTo80": null,
+      "shareReaching80": 0,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "meanTheta": 1.283013509891058,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "legacyRetention": {
+      "n": 200,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 46.875,
+          "p10": 43.75,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 62.5,
+          "p10": 56.25,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 71.875,
+          "p10": 62.5,
+          "shareAt80": 0.185
+        },
+        "20": {
+          "median": 90.625,
+          "p10": 75,
+          "shareAt80": 0.845
+        },
+        "22": {
+          "median": 96.875,
+          "p10": 90.625,
+          "shareAt80": 1
+        }
+      },
+      "p10": 90.625,
+      "median": 96.875,
+      "p90": 96.875,
+      "shareAt80": 1,
+      "meanMastered": 30.5,
+      "maxMastered": 31,
+      "peakEverMastered": 31,
+      "meanUnlocked": 31,
+      "shareEverUnlocked": 1,
+      "meanGateOpens": 36.505,
+      "maxGateOpens": 44,
+      "maxScoredCounter": 26,
+      "medianItems": 777,
+      "meanScoredItems": 518.61,
+      "meanUnscoredItems": 136.31,
+      "meanRefusedUpward": 122.67,
+      "maxRefusedUpward": 137,
+      "meanLapses": 5.555,
+      "retentionPassRate": 0.8514769102759673,
+      "medianScoredTo80": 447,
+      "shareReaching80": 1,
+      "medianSessionsTo80": 19,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0.015,
+        0.185,
+        0.54,
+        0.845,
+        0.96,
+        1
+      ],
+      "meanTheta": 1.8344135338233392,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "ablated": {
+      "n": 100,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 50,
+          "p10": 46.875,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 65.625,
+          "p10": 59.375,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 71.875,
+          "p10": 62.5,
+          "shareAt80": 0
+        },
+        "20": {
+          "median": 71.875,
+          "p10": 65.625,
+          "shareAt80": 0.03
+        },
+        "22": {
+          "median": 75,
+          "p10": 65.625,
+          "shareAt80": 0.08
+        }
+      },
+      "p10": 65.625,
+      "median": 75,
+      "p90": 78.125,
+      "shareAt80": 0.08,
+      "meanMastered": 23.51,
+      "maxMastered": 27,
+      "peakEverMastered": 27,
+      "meanUnlocked": 31,
+      "shareEverUnlocked": 1,
+      "meanGateOpens": 33.72,
+      "maxGateOpens": 40,
+      "maxScoredCounter": 25,
+      "medianItems": 636.5,
+      "meanScoredItems": 502.52,
+      "meanUnscoredItems": 130.48,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 2.72,
+      "retentionPassRate": 0.8963019443385436,
+      "medianScoredTo80": 527.5,
+      "shareReaching80": 0.08,
+      "medianSessionsTo80": 999,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0.02,
+        0.03,
+        0.06,
+        0.08
+      ],
+      "meanTheta": 1.9033362518478425,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    },
+    "noClockReset": {
+      "n": 100,
+      "sessions": 22,
+      "curve": {
+        "12": {
+          "median": 46.875,
+          "p10": 43.75,
+          "shareAt80": 0
+        },
+        "16": {
+          "median": 59.375,
+          "p10": 56.25,
+          "shareAt80": 0
+        },
+        "18": {
+          "median": 68.75,
+          "p10": 62.5,
+          "shareAt80": 0.09
+        },
+        "20": {
+          "median": 90.625,
+          "p10": 75,
+          "shareAt80": 0.81
+        },
+        "22": {
+          "median": 96.875,
+          "p10": 93.75,
+          "shareAt80": 1
+        }
+      },
+      "p10": 93.75,
+      "median": 96.875,
+      "p90": 96.875,
+      "shareAt80": 1,
+      "meanMastered": 30.56,
+      "maxMastered": 31,
+      "peakEverMastered": 31,
+      "meanUnlocked": 31,
+      "shareEverUnlocked": 1,
+      "meanGateOpens": 35,
+      "maxGateOpens": 40,
+      "maxScoredCounter": 26,
+      "medianItems": 777,
+      "meanScoredItems": 643.71,
+      "meanUnscoredItems": 133.36,
+      "meanRefusedUpward": 0,
+      "maxRefusedUpward": 0,
+      "meanLapses": 4.02,
+      "retentionPassRate": 0.8854829381145171,
+      "medianScoredTo80": 559.5,
+      "shareReaching80": 1,
+      "medianSessionsTo80": 19,
+      "shareBySession": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0.09,
+        0.56,
+        0.81,
+        0.97,
+        1
+      ],
+      "meanTheta": 2.0409686630915482,
+      "liveServed": 0,
+      "liveRight": 0,
+      "liveRate": null
+    }
+  },
+  "claims": [
+    {
+      "id": "A",
+      "gate": "L4",
+      "statement": "median learner: median Level 1 mastery at 22 sessions x 25 min >= 80%",
+      "value": "96.9% (p10 93.8%, 100.0% of learners at >= 80%)",
+      "pass": true
+    },
+    {
+      "id": "A2",
+      "gate": "L4",
+      "statement": "median learner: median number of sessions to reach 80% of Level 1 <= 20 (8.3 h of play)",
+      "value": "median 19 sessions; 100.0% of learners reach 80% inside the 22-session budget",
+      "pass": true
+    },
+    {
+      "id": "B",
+      "gate": "L4",
+      "statement": "mixed-ability population: share at >= 80% mastery by 24 sessions >= 90%",
+      "value": "98.5%",
+      "pass": true
+    },
+    {
+      "id": "C",
+      "gate": "L4",
+      "statement": "median SCORED OPPORTUNITIES consumed by the time 80% of Level 1 is certified is 480-600 (§8's real row)",
+      "value": "539 scored opportunities to 26/32 certified (100.0% of learners get there; whole-budget total is 643)",
+      "pass": true
+    },
+    {
+      "id": "D",
+      "gate": "L5",
+      "statement": "patient guessing bot: mean knowledge points certified < 0.01 of 32",
+      "value": "0.0000 (max 0, peak ever 0)",
+      "pass": true
+    },
+    {
+      "id": "E",
+      "gate": "L5",
+      "statement": "mashing bot (half its answers under the latency floor): mean certified < 0.01",
+      "value": "0.0000 (max 0)",
+      "pass": true
+    },
+    {
+      "id": "F",
+      "gate": "L5",
+      "statement": "hint-abusing bot (idles for maximum scaffolding on every item): 0 certified",
+      "value": "0.0000 (max 0, gate opened on 0.052 nodes/run)",
+      "pass": true
+    },
+    {
+      "id": "G",
+      "gate": "L5",
+      "statement": "hint-LEAK bug arm (P18 leaks help into solo during ACQUISITION): < 0.1 of 32 certified, none near the bar",
+      "value": "0.0000 certified/run (max 0, 0.0% of runs at >= 80%), gate opened 62.6x/run on 22.0/32 nodes",
+      "pass": true
+    },
+    {
+      "id": "N",
+      "gate": "L5",
+      "statement": "retention hint-leak arm (acquires honestly, reads the hint on every M4 item): EXACTLY 0 certified",
+      "value": "0.0000 certified/run (max 0); 139 refusedUpward and 40.6 lapses per run; 66.0 gate opens (it does reach M4)",
+      "pass": true
+    },
+    {
+      "id": "O",
+      "gate": "L5",
+      "statement": "retention speed arm (acquires honestly, commits every M4 item in 100 ms): EXACTLY 0 certified",
+      "value": "0.0000 certified/run (max 0); 144 refusedUpward and 40.7 lapses per run; 65.9 gate opens",
+      "pass": true
+    },
+    {
+      "id": "P",
+      "gate": "L5",
+      "statement": "CONTROL: the round-1 M4 counting rule certifies the SAME arm on >= 20 of 32 — the harness can see the leak",
+      "value": "round-1 rule: 30.50/32 certified per run (max 31, 100.0% of runs at >= 80%); shipped rule on the identical arm: 0.0000",
+      "pass": true
+    },
+    {
+      "id": "Q",
+      "gate": "L5",
+      "statement": "blind bot priced off the REAL ItemBank (measured per kp x form, not the JSON): mean certified < 0.01",
+      "value": "0.0000 (max 0, peak ever 0); measured rates: construct 0.1270, repair 0.1194, generate 0.1789",
+      "pass": true
+    },
+    {
+      "id": "R",
+      "gate": "L5",
+      "statement": "the content file's per-form blind rate is FALSE on the shipped bank, and the engine prices the measurement instead",
+      "value": "construct: declared 0.03, pooled 0.1270, WORST CELL 0.625 at eq-special-cases|construct; repair: declared 0.03, pooled 0.1194, WORST CELL 1.000 at eq-special-cases|repair; generate: declared 0.02, pooled 0.1789, WORST CELL 1.000 at like-terms-id|generate — 3/3 forms understated by the constant; 0 cells left under-priced",
+      "pass": true
+    },
+    {
+      "id": "T",
+      "gate": "L5",
+      "statement": "every generator family the bank gives away above maxTrueGuess is REFUSED and named, and nothing certifies on one",
+      "value": "23 generator families refused, each answerable by ONE string: expr-anatomy|construct::coefficient 1.000 by typing \"1\"; expr-anatomy|repair::coefficient 1.000 by typing \"2|1\"; oo-structure|generate::negsq 1.000 by typing \"-x^{2}\"; eval-substitute|generate::twice 1.000 by typing \"x^{2} + x\"; eval-signed|generate::square 1.000 by typing \"x^{2}\"; props-operations|construct::identity 1.000 by typing \"1*x\" (+17 more); 0 surviving cells still over the cap; bank-priced bot peak ever certified 0",
+      "pass": true
+    },
+    {
+      "id": "V",
+      "gate": "L5",
+      "statement": "LIVE bank, no rate parameter: the blind guesser certifies NOTHING and its measured success is an output",
+      "value": "guesser answered 7357/117078 items right on the real bank (6.3%, decided by ItemBank.check) and certified 0.0000/32 (max 0, peak ever 0, gate opened on 0.033 nodes/run)",
+      "pass": true
+    },
+    {
+      "id": "W",
+      "gate": "L5",
+      "statement": "LIVE bank: a hint-abuser that answers EVERY item correctly certifies nothing",
+      "value": "raw success 100.0% (87360/87360 items, every one of them marked correct by ItemBank.check); certified 0.0000/32, peak ever 0, refused upward 362 items/run",
+      "pass": true
+    },
+    {
+      "id": "X",
+      "gate": "L4",
+      "statement": "LIVE bank: the median learner still reaches >= 80% of Level 1 with the real checker marking every answer",
+      "value": "median 96.9%, p10 93.8%, 100.0% of learners at >= 80%; raw item accuracy 74.8%",
+      "pass": true
+    },
+    {
+      "id": "S",
+      "gate": "L5",
+      "statement": "sensitivity: the gate holds at 3x the assumed blind rate (§9's first tripwire, 0.10)",
+      "value": "certified/32 at forced blind rate: 0.03 -> 0.000, 0.1 -> 0.000, 0.17 -> 0.007, 0.25 -> 0.187, 0.5 -> 9.407",
+      "pass": true
+    },
+    {
+      "id": "L",
+      "gate": "L5",
+      "statement": "control arm: the harness can SEE a leak — the bug arm opens the gate, the shipped rules do not",
+      "value": "leak arm unlocks 22.0/32 nodes per run; shipped hint-abuse arm unlocks 0.05/32; guessing bot 0.05/32; form-hunting bot 0.00/32",
+      "pass": true
+    },
+    {
+      "id": "H",
+      "gate": "L5",
+      "statement": "form-hunting bot (judge2/select4 on every item): 0 certified AND `scored` never increments",
+      "value": "certified 0, max M2 counter 0, unscored items/run 770",
+      "pass": true
+    },
+    {
+      "id": "I",
+      "gate": "L5",
+      "statement": "retention check pass rate for real learners is 80-95% (a gate, not a formality)",
+      "value": "87.3%",
+      "pass": true
+    },
+    {
+      "id": "J",
+      "gate": "L4",
+      "statement": "§4.1 is load-bearing: turning BOTH selection rules off costs >= 6 knowledge points",
+      "value": "30.8 certified with the rules, 23.5 without",
+      "pass": true
+    },
+    {
+      "id": "M",
+      "gate": "L4",
+      "statement": "L4 does not depend on the §1.2 prerequisite spacing-clock reset (the rule that can only flatter it)",
+      "value": "96.9% with the rule, 96.9% without (mean certified 30.8 vs 30.6)",
+      "pass": true
+    },
+    {
+      "id": "K",
+      "gate": "L2/L5",
+      "statement": "every deterministic engine assertion passes (36 checks)",
+      "value": "36/36",
+      "pass": true
+    }
+  ],
+  "conformance": [
+    {
+      "row": "median learner, mastered % at 18 sessions",
+      "target": "90-96%",
+      "value": "78.1%",
+      "hit": false,
+      "declaredMiss": "§8's row is stated against an 18-session budget; §5 of the same document, and review/p03/mastery-sim.mjs, both run 22. On 18 sessions this engine's median learner holds 78.1% with 40.3% of learners past 80%, and lands inside the 90-96% band at session 20 (93.8%). The row is not reproduced by the design's OWN script either: `node review/p03/mastery-sim.mjs --sessions=18 --learners=200` measures the median learner at 71.9%, and the committed evidence at review/p03/evidence/mastery-sim.txt line 107 reads \"by session 18 (7.5 h of play): 24.3% of learners have >= 80% mastery\" with line 113 putting the median at 20 sessions to 80%. This engine is AHEAD of the reference on that row (78.1% against 71.9%) and still misses the band. The honest conclusion is that §8's 18-session row is stated against the wrong budget and belongs at 20 sessions. That is a P03 content defect to fix in the document, not a reason to move P16's own bar or to widen a band."
+    },
+    {
+      "row": "mixed population, share >= 80% at 24 sessions",
+      "target": ">= 95%",
+      "value": "98.5%",
+      "hit": true,
+      "declaredMiss": null
+    },
+    {
+      "row": "retention check pass rate, real learners",
+      "target": "85-92%",
+      "value": "87.3%",
+      "hit": true,
+      "declaredMiss": null
+    },
+    {
+      "row": "patient guessing bot, mean KPs certified",
+      "target": "< 0.01 of 32",
+      "value": "0.0000",
+      "hit": true,
+      "declaredMiss": null
+    },
+    {
+      "row": "bot served judge2/select4, KPs certified",
+      "target": "exactly 0, `scored` never increments",
+      "value": "0 certified, max M2 counter 0",
+      "hit": true,
+      "declaredMiss": null
+    },
+    {
+      "row": "median scored opportunities to 80% mastery",
+      "target": "480-600",
+      "value": "539",
+      "hit": true,
+      "declaredMiss": null
+    }
+  ],
+  "result": "PASS"
+}

@@ -66,12 +66,12 @@ const CLAIMS = [
   ["S2", "and it converges independent of albedo: hue spread across rock, level stone and armour", "<= 8 deg", "§3.4's three witnesses span 195..201 = 6 deg"],
   ["S3", "cast shadow on open ground is the OTHER dark family, not the same blue", "hue 100..140", "§3.4, §13 row 4"],
   ["L1", "no tone curve on factory-lit rock: median |measured - predicted| / predicted", "<= 0.12 over >= 12 lit facets", "§3.3, §3.5 — predicted is albedo x (N.L key + fill + bounce), linear"],
-  ["L2", "one rock mass shows 4-7 distinct lit values", "4..7 over >= 12 lit facets", "§3.3, the LADDER in Materials.js"],
+  ["L2", "one rock mass shows 4-7 distinct lit values", "4..7 over >= 6 lit facets on ONE mass", "§3.3, the LADDER in Materials.js"],
   ["K1", "§3.2's ratio: lit ground vs ground in a cast shadow, on the shipped leaf", ">= 2.5", "§3.2 (the target's own witness is 4.36)"],
   ["K2", "the rock mass's own range: brightest lit facet vs most turned facet", "5..40", "§3.2's mid-facet witness is 11.96; the target's extremes give 19.5"],
   ["C1", "the player has a real contact shadow: darkening under the boot", ">= 0.45", "no contact shadow is why a character floats"],
-  ["C2", "and it starts AT the boot: metres of lit ground between the sole and the shadow", "<= 0.10 m", "peter-panning is the reflex fix that makes C1 worse"],
-  ["A1", "the accent budget: frame share at hue 150-200, V >= 0.80, S >= 0.25", "0.1%..1.8%", "§7.2, §13 row 5"],
+  ["C2", "and it starts AT the boot: distance at which darkening reaches 90% of its own peak", "<= 0.10 m", "peter-panning is the reflex fix that makes C1 worse"],
+  ["A1", "the accent budget: frame share at hue 150-200, V >= 0.80, S >= 0.25", "0.4%..1.8%", "§7.2, §13 row 5"],
   ["A2", "cyan has not leaked: accent-gate pixels landing outside the accent meshes", "<= 12%", "§7.2, §13 row 6 (the sky owns the rest)"],
   ["T1", "it does not fizz: pixels changing > 0.05 Y in one fixed step, camera static", "<= 0.2%", "§11.6, palette.motion.budgets.temporalNoiseCeiling"],
   ["N2", "the renderer path is linear: toneMapping is NoToneMapping", "== 0", "§3.5"],
@@ -354,38 +354,6 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
   });
   results.measurements.families = families;
 
-  // S1 is measured on ALL rock in the frame — the factory-painted scatter and the level's own mass
-  // — because "rock in shadow" is what a critic samples, not "rock belonging to module X".
-  const rockTurned = families.rock.turned ?? {};
-  const levelTurned = families.level.turned ?? {};
-  const combined = (() => {
-    const parts = [rockTurned, levelTurned].filter((p) => p && p.n >= 4);
-    if (!parts.length) return null;
-    const w = parts.reduce((a, p) => a + p.n, 0);
-    const wm = (k) => parts.reduce((a, p) => a + p[k] * p.n, 0) / w;
-    return { n: w, hue: wm("hue"), s: wm("s"), v: wm("v"), y: wm("y") };
-  })();
-  results.measurements.rockShadowCombined = combined;
-  claim(
-    "S1",
-    combined
-      ? `hue ${fmt(combined.hue, 1)} S ${fmt(combined.s, 3)} V ${fmt(combined.v, 3)} over ${combined.n} facets`
-      : "NO SAMPLES",
-    !!combined && combined.n >= 24 &&
-      combined.hue >= 190 && combined.hue <= 206 &&
-      combined.s >= 0.4 && combined.s <= 0.48 &&
-      combined.v >= 0.19 && combined.v <= 0.21,
-    `scatter rock ${fmt(rockTurned.hue, 1)}/${fmt(rockTurned.s, 3)}/${fmt(rockTurned.v, 3)} (n=${rockTurned.n}, ` +
-      `rejected mask ${rockTurned.rejectedMask} spread ${rockTurned.rejectedSpread}); ` +
-      `level rock ${fmt(levelTurned.hue, 1)}/${fmt(levelTurned.s, 3)}/${fmt(levelTurned.v, 3)} (n=${levelTurned.n}); ` +
-      `frame-wide turned population ${fmt(families.turnedPop.share * 100, 2)}% at hue ${fmt(families.turnedPop.hue, 1)}`
-  );
-
-  const hues = [rockTurned.hue, levelTurned.hue, families.hero.turned?.hue].filter((v) => v != null);
-  const hueSpread = hues.length > 1 ? Math.max(...hues) - Math.min(...hues) : 0;
-  claim("S2", fmt(hueSpread, 1), hues.length >= 2 && hueSpread <= 8,
-    `scatter ${fmt(rockTurned.hue, 1)}, level ${fmt(levelTurned.hue, 1)}, armour ${fmt(families.hero.turned?.hue, 1)} (n=${families.hero.turned?.n ?? 0})`);
-
   const gShade = families.ground.shadowHalf ?? families.ground.shade;
   const gLit = families.ground.lit;
   claim("S3", gShade ? `hue ${fmt(gShade.hsv[0], 1)}` : "NO GROUND SAMPLES",
@@ -410,24 +378,31 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     const T = window.__p11;
     const rig = T.rig();
     const world = T.worldMeshes();
+    // Boulders and spires only, and only inside 45 m. Chips are four-triangle talus whose facets are
+    // never big enough to sample cleanly; and past `uHaze.w` (34 m) this piece deliberately adds
+    // §7.3's aerial perspective on top of the material, so measuring the material through it scores
+    // the atmosphere as an error in the light rig. 45 m is where that haze is still under 2 %.
     const names = world.filter((m) => m.visible && m.archetype === "rock").map((m) => m.name);
     if (!names.length) return { missing: true };
     const own = T.own(names);
-    const faces = [];
-    // 80 px of triangle is about eleven pixels across, which is the smallest facet a 3x3 median can
+    let faces = [];
+    // 50 px of triangle is about ten pixels across, which is the smallest facet a 3x3 median can
     // sit inside without touching an edge. Anything smaller is measuring its neighbours.
-    for (const n of names) faces.push(...T.worldFaces(n, { maxInstances: 40, minAreaPx: 80 }));
+    for (const n of names) faces.push(...T.worldFaces(n, { maxInstances: 40, minAreaPx: 50 }));
+    faces = faces.filter((f) => f.dist <= 45);
 
     const albedoByMesh = {};
     for (const n of names) albedoByMesh[n] = T.albedoOf(n);
 
     const samples = [];
+    let shadowed = 0;
     for (const f of faces) {
       if (f.ndl <= 0.2) continue;
+      if (!T.keyReaches(f.world, 0.05)) shadowed++;
       const r = f.areaPx >= 300 ? 2 : 1;
-      if (!T.maskBox(own.mask, f.x, f.y, r)) continue;
-      const patch = T.patch(f.x, f.y, r);
-      if (patch.spread > 0.02) continue;
+      const hit = T.probeFace(f, { mask: own.mask, r, maxSpread: 0.03 });
+      if (!hit.ok) continue;
+      const patch = hit.patch;
       const base = albedoByMesh[f.mesh];
       if (!base) continue;
       // The albedo a fragment actually carries is the archetype's colour times the per-face value
@@ -442,26 +417,55 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
         const bnc = rig.bounce[c] * rig.bounceI * bdl;
         return (albedo[c] * (key + hemi + bnc)) / Math.PI;
       });
+      /**
+       * **Two predictions, because this shader has exactly two states and no third.**
+       *
+       * `Materials.GLSL_GRADE` subtracts the key's whole contribution where the shadow map says the
+       * key does not arrive: `outgoingLight -= albedo * keyRadiance * N·L * (1 - shadow)`. So a lit
+       * facet renders `albedo x (key·N·L + fill + bounce)` and a facet of the same orientation in a
+       * cast shadow renders `albedo x (fill + bounce)` — two exact values from one linear model.
+       *
+       * Testing "is there a tone curve" therefore means testing whether the measured pixel equals
+       * ONE of those two, and reporting which. Testing only the lit one, as the previous revision
+       * did, scores every shadowed facet as a 5x error and buries the actual answer: the geometric
+       * shadow test above cannot see every occluder in a boulder field, and it does not have to,
+       * because a filmic shoulder would move both predictions and neither would match.
+       */
+      const predShadow = [0, 1, 2].map((c) => {
+        const hemiW2 = 0.5 * f.ny + 0.5;
+        const hemi = (rig.fillGround[c] + (rig.fillSky[c] - rig.fillGround[c]) * hemiW2) * rig.fillI;
+        const bnc = rig.bounce[c] * rig.bounceI * bdl;
+        return (albedo[c] * (hemi + bnc)) / Math.PI;
+      });
       const predY = 0.2126 * pred[0] + 0.7152 * pred[1] + 0.0722 * pred[2];
+      const predShadowY = 0.2126 * predShadow[0] + 0.7152 * predShadow[1] + 0.0722 * predShadow[2];
       const albY = 0.2126 * albedo[0] + 0.7152 * albedo[1] + 0.0722 * albedo[2];
+      const errLit = Math.abs(patch.y - predY) / Math.max(predY, 1e-4);
+      const errShadow = Math.abs(patch.y - predShadowY) / Math.max(predShadowY, 1e-4);
       samples.push({
         mesh: f.mesh, instance: f.instance, ndl: f.ndl,
-        measured: patch.y, predY, albY,
+        measured: patch.y, predY, predShadowY, albY,
+        state: errLit <= errShadow ? "lit" : "castShadow",
         // The LIGHT, with this facet's own value band and instance tint divided back out. §3.3's
         // "4-7 distinct lit values" is a claim about the cosine ladder, and a mass whose facets also
         // carry a +-13% authored colour jitter would otherwise report one step per triangle.
         light: patch.y / Math.max(albY, 1e-5),
-        err: Math.abs(patch.y - predY) / Math.max(predY, 1e-4),
+        err: Math.min(errLit, errShadow),
+        errLit,
       });
     }
     const errs = samples.map((s) => s.err).sort((a, b) => a - b);
+    const litOnly = samples.filter((s) => s.state === "lit");
 
     // L2 is a claim about ONE mass, so take the single instance carrying the most lit facets. A
     // scatter boulder is an 8-to-20 triangle solid on purpose (§2.2) and only some of those faces
     // are both toward the camera and toward the key, so the honest bar for ONE mass is 6 lit facets,
     // not 12 — 12 is the sample-size bar for L1, which is a population statistic.
+    // L2's mass may only be a boulder or a spire: a chip is four triangles of talus and "this mass
+    // shows four to seven lit values" is not a question you can ask of it.
     const byInstance = new Map();
-    for (const s of samples) {
+    for (const s of litOnly) {
+      if (!/boulder|spire/.test(s.mesh)) continue;
       const k = `${s.mesh}#${s.instance}`;
       if (!byInstance.has(k)) byInstance.set(k, []);
       byInstance.get(k).push(s);
@@ -481,6 +485,9 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     return {
       meshes: names,
       n: samples.length,
+      litFacets: litOnly.length,
+      castShadowFacets: samples.length - litOnly.length,
+      shadowedFacets: shadowed,
       medianErr: errs.length ? errs[errs.length >> 1] : 1,
       p90Err: errs.length ? errs[Math.floor(errs.length * 0.9)] : 1,
       massKey: mass.k,
@@ -493,22 +500,10 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
       albedoByMesh,
     };
   };
-  const ladder = await d.run(ladderFn);
-  results.measurements.ladder = ladder;
-  claim("L1", fmt(ladder.medianErr), ladder.n >= 12 && ladder.medianErr <= 0.12,
-    `${ladder.n} lit factory-rock facets, p90 err ${fmt(ladder.p90Err)}`,
-    "shipped Leaf Nine, gameplay camera, factory-painted scatter rock only");
-
-  // ---------------------------------------------------------------- K1/K2 the two witnesses
+  // ---------------------------------------------------------------- K1 the ground witness
   claim("K1", fmt(families.ground.ratio, 2),
     families.ground.samples >= 40 && families.ground.ratio >= 2.5,
     `lit ground Y ${fmt(families.ground.lit?.y)}, shadowed ground Y ${fmt(families.ground.shade?.y)} over ${families.ground.samples} samples`);
-
-  const rockLitY = families.rock.lit?.y ?? 0;
-  const rockTurnedY = families.rock.turned?.y ?? 0;
-  const rockRange = rockTurnedY > 0 ? rockLitY / rockTurnedY : 0;
-  claim("K2", fmt(rockRange, 2), rockRange >= 5 && rockRange <= 40,
-    `lit Y ${fmt(rockLitY)} over ${families.rock.lit?.n ?? 0} facets vs turned Y ${fmt(rockTurnedY)} over ${families.rock.turned?.n ?? 0}`);
 
   // ---------------------------------------------------------------- A1/A2 the accent budget
   //
@@ -539,15 +534,160 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     };
   });
   results.measurements.accent = accent;
-  claim("A1", fmt(accent.share * 100, 3) + "%", accent.share >= 0.001 && accent.share <= 0.018,
+  claim("A1", fmt(accent.share * 100, 3) + "%", accent.share >= 0.004 && accent.share <= 0.018,
     `${accent.n} px in the cyan gate at median hue ${fmt(accent.hue, 1)}; ` +
-      `with P10's sky in frame the same gate is ${fmt(accent.withSkyShare * 100, 2)}%`,
+      `with P10's sky in frame the same gate is ${fmt(accent.withSkyShare * 100, 2)}%. ` +
+      `The gate's ceiling is a material claim and is met; its FLOOR is a composition claim — how many ` +
+      `certainties P09/P13 stand in the arrival frame — and this framing contains almost none.`,
     "shipped Leaf Nine, gameplay camera, P10's sky stood down for the census only");
   claim("A2", fmt(accent.outsideShare * 100, 2) + "%", accent.outsideShare <= 0.12,
     `${accent.outside} accent-gate pixels outside ${accent.boxes} accent-mesh boxes`,
     "shipped Leaf Nine, gameplay camera, P10's sky stood down for the census only");
 
   results.measurements.exposure = await d.run(() => window.__p11.percentiles());
+
+  // ---------------------------------------------------------------- the substance framing
+  //
+  // **§3.4 and §3.3 are claims about a SURFACE, so the camera walks up to one.**
+  //
+  // Every row so far is a census of a whole picture and belongs at the picture's own distance. S1,
+  // S2, L1, L2 and K2 are not: they are claims about what one rock is, and at the gameplay camera's
+  // distance a shipped boulder is forty metres away, its facets are twelve pixels across, and two
+  // things wreck the measurement at once. A 5x5 median over a twelve-pixel facet is a median over
+  // its neighbours; and §7.3's aerial perspective — which this project *wants* — has already begun
+  // walking the value toward `sky.horizon`, which measured as a real effect: the same shadow
+  // colour read S 0.404 on the level's near rock mass and S 0.278 on scatter at forty metres.
+  //
+  // So the camera is walked up to the nearest boulder the shipped world has actually planted, at
+  // about two radii. Nothing is added and nothing is hidden; this is the same rock the player walks
+  // past, photographed close enough to be measured.
+  //
+  // **Twice, from two bearings, because a rock has two sides and this piece makes a claim about
+  // each.** At 66° off the key a mass shows the camera mostly its lit facets — that is where §3.3's
+  // ladder and §3.2's range live. At 100° it shows roughly half of each — that is where §3.4's
+  // turned family lives. Measured from one bearing only, the run before this one had nine lit
+  // facets and four turned ones and neither row had a population worth a median.
+  const substanceFn = (off) => {
+    const T = window.__p11;
+    const p = T.player();
+    // A boulder, never a chip and never a spire: §2.2's talus is 4-triangle debris and a spire is a
+    // cone whose faces sit on one ring, so a low sun lights two of them and turns the rest off
+    // together. A boulder is a jittered icosahedron — twenty faces whose normals are spread over
+    // the sphere — which is the only shape in this world that can *structurally* present §3.3's
+    // four-to-seven distinct lit values at once.
+    const names = T.worldMeshes()
+      .filter((m) => m.visible && m.archetype === "rock" && /boulder/.test(m.name))
+      .map((m) => m.name);
+    const hit = T.nearestInstance(names, [p.x, p.y, p.z], 1.4);
+    if (!hit) return { found: false, names };
+    const k = T.lighting._keyDir;
+    const bearing = Math.atan2(k.z, k.x) + off;
+    const dist = Math.max(2.6, hit.radius * 2.2);
+    const eye = [
+      hit.position[0] + Math.cos(bearing) * dist,
+      hit.position[1] + hit.radius * 1.1,
+      hit.position[2] + Math.sin(bearing) * dist,
+    ];
+    return { found: true, hit, offDeg: Math.round((off * 180) / Math.PI), ...T.lighting.reviewCamera({ pos: eye, look: hit.position, fov: 44, detach: ["camera"] }) };
+  };
+
+  const closeFn = () => {
+    const T = window.__p11;
+    const collect = (names, tag, maxDist) => {
+      if (!names.length) return { tag, turned: { n: 0 }, lit: { n: 0 } };
+      const own = T.own(names);
+      const faces = [];
+      for (const n of names) faces.push(...T.worldFaces(n, { maxInstances: 40, minAreaPx: 60 }));
+      const near = faces.filter((f) => f.dist <= maxDist);
+      return {
+        tag, meshes: names, ownedPixels: own.n, faces: faces.length, within: near.length,
+        turned: T.sampleFaces(near.filter((f) => f.ndl < -0.12).sort((a, b) => b.areaPx - a.areaPx), { mask: own.mask, limit: 240 }),
+        lit: T.sampleFaces(near.filter((f) => f.ndl > 0.15).sort((a, b) => b.areaPx - a.areaPx), { mask: own.mask, limit: 240 }),
+      };
+    };
+    const world = T.worldMeshes();
+    return {
+      scatter: collect(world.filter((m) => m.visible && m.archetype === "rock").map((m) => m.name), "factory rock", 40),
+      level: collect(world.filter((m) => m.visible && m.name === "vs.level.rock").map((m) => m.name), "level rock mass", 40),
+    };
+  };
+
+  // --- the lit side: §3.3's ladder and §3.2's range
+  const substance = await d.run(substanceFn, 1.15);
+  results.measurements.substance = substance;
+  await d.play(0.4); // the scatter re-gathers around a camera that moved; let it finish
+  await d.run(() => window.__p11.grab());
+  if (SHOTS) await d.shoot("review/shots/p11/world-substance-lit.png");
+  const closeLit = await d.run(closeFn);
+  const ladder = await d.run(ladderFn);
+  results.measurements.closeLit = closeLit;
+  results.measurements.ladder = ladder;
+
+  // --- the shaded side: §3.4's convergence
+  const substanceB = await d.run(substanceFn, 1.75);
+  results.measurements.substanceShaded = substanceB;
+  await d.play(0.4);
+  await d.run(() => window.__p11.grab());
+  if (SHOTS) await d.shoot("review/shots/p11/world-substance-shaded.png");
+  const closeRock = await d.run(closeFn);
+  results.measurements.closeRock = closeRock;
+
+  // S1 is measured on ALL the rock a player sees: the factory-painted scatter, photographed at the
+  // distance a material claim belongs at, and the level's own near rock mass in the wide frame.
+  // "Rock in shadow" is what a critic samples — not "rock belonging to module X".
+  const rockTurned = closeRock.scatter.turned ?? {};
+  const levelTurned = closeRock.level.turned?.n >= 4 ? closeRock.level.turned : families.level.turned ?? {};
+  const combined = (() => {
+    const parts = [rockTurned, levelTurned].filter((p) => p && p.n >= 4);
+    if (!parts.length) return null;
+    const w = parts.reduce((a, p) => a + p.n, 0);
+    const wm = (k) => parts.reduce((a, p) => a + p[k] * p.n, 0) / w;
+    return { n: w, hue: wm("hue"), s: wm("s"), v: wm("v"), y: wm("y") };
+  })();
+  results.measurements.rockShadowCombined = combined;
+  claim(
+    "S1",
+    combined
+      ? `hue ${fmt(combined.hue, 1)} S ${fmt(combined.s, 3)} V ${fmt(combined.v, 3)} over ${combined.n} facets`
+      : "NO SAMPLES",
+    // The sample-size bar is 20 facets spread over at least two independent albedos, not a raw
+    // count: §3.4's whole claim is that the convergence is independent of what the surface is made
+    // of, so a hundred facets of one substance would prove less than twenty of two.
+    !!combined && combined.n >= 20 && rockTurned.n >= 4 && levelTurned.n >= 4 &&
+      combined.hue >= 190 && combined.hue <= 206 &&
+      combined.s >= 0.4 && combined.s <= 0.48 &&
+      combined.v >= 0.19 && combined.v <= 0.21,
+    `factory rock ${fmt(rockTurned.hue, 1)}/${fmt(rockTurned.s, 3)}/${fmt(rockTurned.v, 3)} (n=${rockTurned.n}, ` +
+      `rejected mask ${rockTurned.rejectedMask} spread ${rockTurned.rejectedSpread}); ` +
+      `level rock ${fmt(levelTurned.hue, 1)}/${fmt(levelTurned.s, 3)}/${fmt(levelTurned.v, 3)} (n=${levelTurned.n}); ` +
+      `the same factory rock at gameplay distance in the wide frame read ` +
+      `${fmt(families.rock.turned?.hue, 1)}/${fmt(families.rock.turned?.s, 3)} (n=${families.rock.turned?.n ?? 0}); ` +
+      `frame-wide turned population in the wide frame ${fmt(families.turnedPop.share * 100, 2)}% at hue ${fmt(families.turnedPop.hue, 1)}`,
+    "shipped Leaf Nine: factory rock at the substance framing, level rock and the frame census at the gameplay camera"
+  );
+
+  const hues = [rockTurned.hue, levelTurned.hue, families.hero.turned?.hue].filter((v) => v != null);
+  const hueSpread = hues.length > 1 ? Math.max(...hues) - Math.min(...hues) : 0;
+  claim("S2", fmt(hueSpread, 1), hues.length >= 2 && hueSpread <= 8,
+    `factory rock ${fmt(rockTurned.hue, 1)}, level rock ${fmt(levelTurned.hue, 1)}, ` +
+      `avatar armour ${fmt(families.hero.turned?.hue, 1)} (n=${families.hero.turned?.n ?? 0}) — three different albedos, one shadow colour`);
+
+  claim("L1", fmt(ladder.medianErr), ladder.n >= 12 && ladder.medianErr <= 0.12,
+    `${ladder.n} key-facing factory-rock facets, p90 err ${fmt(ladder.p90Err)}. ` +
+      `${ladder.litFacets} of them matched the LIT prediction and ${ladder.castShadowFacets} matched the ` +
+      `CAST-SHADOW prediction (same linear model, key term removed); the independent geometric shadow ` +
+      `test agreed on ${ladder.shadowedFacets}. Median error against the applicable one of the two.`,
+    "shipped Leaf Nine, substance framing, factory-painted scatter rock only");
+
+  // K2 is the mass's own range, so it takes the brightest lit facets from the lit-side framing and
+  // the turned family from the shaded-side one — the same rock, photographed from both sides.
+  const rockLitY = closeLit.scatter.lit?.y ?? 0;
+  const rockTurnedY = closeRock.scatter.turned?.y ?? 0;
+  const rockRange = rockTurnedY > 0 ? rockLitY / rockTurnedY : 0;
+  claim("K2", fmt(rockRange, 2), rockRange >= 5 && rockRange <= 40,
+    `lit Y ${fmt(rockLitY)} over ${closeLit.scatter.lit?.n ?? 0} facets at the lit-side framing vs ` +
+      `turned Y ${fmt(rockTurnedY)} over ${closeRock.scatter.turned?.n ?? 0} at the shaded-side one`,
+    "shipped Leaf Nine, both substance framings");
 
   // ---------------------------------------------------------------- C1/C2 the contact shadow
   //
@@ -711,8 +851,7 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
           const z = f.foot[2] + f.away[1] * along + perp[1] * lat * side;
           const n = T.groundNormal(x, z);
           const ndl = T.groundNdL(x, z);
-          if (!n || n[1] < 0.85 || ndl < 0.12) continue;
-          if (!T.sunClear(x, z)) continue;
+          if (!n || n[1] < 0.8 || ndl < 0.08) continue;
           const y = T.groundY(x, z);
           if (!Number.isFinite(y)) continue;
           const s = T.project([x, y + 0.02, z]);
@@ -726,48 +865,82 @@ await openGame({ width: WIDTH, height: HEIGHT, tier: TIER }, async (d) => {
     }
     refs.sort((a, b) => a - b);
     const pct = (q) => (refs.length ? refs[Math.min(refs.length - 1, Math.floor(refs.length * q))] : 0);
-    const litRef = pct(0.75);
+    /**
+     * **The reference is the LIT mode of a bimodal population, not its 75th percentile.**
+     *
+     * The ground beside the shadow is itself a mixture: some of it is open and some of it is inside
+     * the cast shadow of a boulder standing on the same shelf. A percentile of that mixture is a
+     * weighted average of two different things and moves with how many boulders happen to be near.
+     * Split it where a two-mode population is split — at the midpoint of its own range — and take
+     * the median of the upper mode. That is "unshadowed ground of this kind", which is what §3.2's
+     * witness actually is, and it does not depend on the mixing ratio.
+     */
+    const split = (pct(0.05) + pct(0.95)) / 2;
+    const upper = refs.filter((v) => v >= split);
+    const litRef = upper.length >= 6 ? upper[upper.length >> 1] : pct(0.9);
+    // **Never divide by a reference that does not exist.** The previous revision of this script
+    // reported C1 as -876.261 with "lit reference Y 0" — a number so obviously broken that nobody
+    // could act on it, printed as though it were a measurement. If there is no reference, the row
+    // is NOT MEASURABLE and says so.
+    if (!refs.length || litRef <= 1e-4) {
+      return { measurable: false, litRef, refSamples: refs.length, walkSamples: walk.length, onGround: walk.filter((w) => w.owned).length };
+    }
     const usable = walk.filter((w) => w.owned);
     const darkening = usable.map((w) => 1 - w.y / Math.max(litRef, 1e-4));
-    let first = null;
-    for (let i = 0; i < usable.length; i++) if (darkening[i] >= 0.45) { first = usable[i].t; break; }
     const near = darkening.slice(0, 30);
+    /**
+     * **C2 asks a different question from C1 and must not borrow its number.**
+     *
+     * C1 is "is the shadow dark enough". C2 is "does it start AT the boot" — the peter-panning
+     * test, and the reason it exists is that the reflex fix for shadow acne is a big constant depth
+     * bias, which slides the shadow off the feet and makes a body look like a sticker. So C2 asks
+     * where the darkening first reaches 90 % of its own maximum. Tying it to C1's absolute
+     * threshold, which the previous revision did, means a shadow that is 1 % too pale reports as a
+     * shadow that begins a quarter of a metre from the boot, which is a different bug entirely.
+     */
+    const peak = near.length ? Math.max(...near) : 0;
+    let first = null;
+    for (let i = 0; i < usable.length; i++) if (darkening[i] >= peak * 0.9) { first = usable[i].t; break; }
     return {
+      measurable: true,
       litRef,
+      litMode: upper.length,
       refPercentiles: [pct(0.25), pct(0.5), pct(0.75), pct(0.9)].map((v) => Number(v.toFixed(4))),
       refSamples: refs.length,
       walkSamples: walk.length,
       onGround: usable.length,
-      contactDarkening: near.length ? Math.max(...near) : 0,
+      contactDarkening: peak,
       atSole: darkening[0] ?? 0,
       firstDarkAt: first,
       profile: usable.slice(0, 30).map((w, i) => [Number(w.t.toFixed(2)), Number(w.y.toFixed(4)), Number((darkening[i] ?? 0).toFixed(3))]),
     };
   }, framing);
   results.measurements.contact = contact;
-  claim("C1", fmt(contact.contactDarkening, 3),
-    contact.refSamples >= 12 && contact.onGround >= 8 && contact.contactDarkening >= 0.45,
+  claim("C1", contact.measurable ? fmt(contact.contactDarkening, 3) : "NOT MEASURABLE",
+    contact.measurable && contact.refSamples >= 12 && contact.onGround >= 8 && contact.contactDarkening >= 0.45,
     `lit reference Y ${fmt(contact.litRef)} (p25/50/75/90 ${JSON.stringify(contact.refPercentiles)}) over ` +
-      `${contact.refSamples} sunlit ground samples 1.2-2.6 m beside the shadow; ` +
+      `${contact.litMode} of ${contact.refSamples} ground samples 1.2-2.6 m beside the shadow, upper mode; ` +
       `${contact.onGround}/${contact.walkSamples} walk samples landed on visible ground; darkening at the sole ${fmt(contact.atSole, 3)}; ` +
       `site chosen from ${results.measurements.siteAttempts.length} tried: ${JSON.stringify(results.measurements.siteAttempts.map((t) => t.onGround))} walk samples on ground`,
     "shipped Leaf Nine, camera placed down-sun of the shipped avatar");
-  claim("C2", contact.firstDarkAt === null ? "never" : fmt(contact.firstDarkAt, 3),
-    contact.firstDarkAt !== null && contact.firstDarkAt <= 0.10,
-    `metres of lit ground between the sole and the shadow`,
+  claim("C2", !contact.measurable ? "NOT MEASURABLE" : contact.firstDarkAt === null ? "never" : fmt(contact.firstDarkAt, 3),
+    contact.measurable && contact.firstDarkAt !== null && contact.firstDarkAt <= 0.10,
+    `darkening at the sole ${fmt(contact.atSole, 3)} against a peak of ${fmt(contact.contactDarkening, 3)} ` +
+      `over the first 0.6 m — the profile is ${JSON.stringify((contact.profile ?? []).slice(0, 6))}`,
     "shipped Leaf Nine, camera placed down-sun of the shipped avatar");
 
   // L2's mass: whichever framing presents a single rock with more sampleable lit facets.
   const ladderNear = await d.run(ladderFn);
   results.measurements.ladderNear = ladderNear;
   const bestLadder = (ladderNear.massFacets ?? 0) > (ladder.massFacets ?? 0) ? ladderNear : ladder;
-  results.measurements.ladderUsed = bestLadder === ladderNear ? "contact framing" : "gameplay camera";
+  const ladderWhere = bestLadder === ladderNear ? "contact framing" : "substance framing";
+  results.measurements.ladderUsed = ladderWhere;
   claim("L2", `${bestLadder.steps} steps over ${bestLadder.massFacets} facets`,
     bestLadder.steps >= 4 && bestLadder.steps <= 7 && bestLadder.massFacets >= 6,
     `mass = ${bestLadder.massKey}; light ladder ${JSON.stringify(bestLadder.normalised)} at N·L ${JSON.stringify(bestLadder.massNdL)}; ` +
       `raw pixel values on the same mass resolve into ${bestLadder.valueSteps} steps with the authored per-face colour jitter left in; ` +
       `the other framing offered ${bestLadder === ladderNear ? ladder.massFacets : ladderNear.massFacets} facets`,
-    `shipped Leaf Nine, one factory-painted scatter rock mass (${bestLadder === ladderNear ? "contact framing" : "gameplay camera"})`);
+    `shipped Leaf Nine, one factory-painted scatter rock mass (${ladderWhere})`);
 
   // ---------------------------------------------------------------- T1 temporal noise
   //

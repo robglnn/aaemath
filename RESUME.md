@@ -152,6 +152,22 @@ constraint: **172,694 triangles against a 1.6 M ceiling, 63 draw calls against 3
 **P16 mastery — see §7.** `eq-special-cases|construct` measures **0.335 blind on the shipped bank** —
 above the content file's own `maxTrueGuess` of 0.30 — yet is priced at a modelled 0.10.
 
+### Round 2: a fix that created a worse bug than the one it closed
+
+**P15.** Clamping the raster bounded the allocation and then silently truncated the expression:
+> "Spawn frame shows a FALSE equation: 26.9% of `leaf9-share`'s ink (the whole `\frac{1}{2}`
+> denominator + 2/3 of the bar) is eaten."
+
+A learner was being shown mathematically wrong content — strictly worse than the unbounded-canvas risk
+it replaced. **Rule for anything that clamps, truncates, scales or elides an expression: a claim that
+cannot be rendered in full must never render partially.** Refuse it, scale it to fit, or reflow it —
+and gate it behind a check that the rendered ink accounts for 100% of the expression's ink.
+
+**P09.** `Materials.js:412` `smoothstep(-0.035, 0.14, NdL)` saturates at 1.0 across the entire back
+hemisphere, so every turned face converges on the same shadow value regardless of inclination — there
+is no value ladder on shadowed faces at all. This is why L1/L2 could only ever measure 2 distinct lit
+values against the LADDER's declared five steps.
+
 ### The meta-lesson: two builders' proof scripts were themselves broken
 - `review/measure/P09.mjs:290` references `belowHits`, never declared in the page-evaluate scope. The
   script dies with a ReferenceError before printing a single claim — so claims S1–S4, C1–C3, K1–K3 and

@@ -289,6 +289,14 @@ export function installToolkit() {
             m.instanceColor.getZ(t.id),
           ];
         }
+        // Four places to try on one facet, not one. The scatter grows flora *on* its boulders — the
+        // capture in `review/shots/p11/world-substance-lit.png` shows four clean lit planes on one
+        // rock with blades of grass crossing three of them — so a sample taken only at the centroid
+        // is thrown away by the ownership mask or by the flatness test on facets that are perfectly
+        // measurable two centimetres to the left. One run of this script reported a single facet on
+        // a mass a human eye can count four planes on.
+        const pts = [[cx, cy]];
+        for (const s of [s0, s1, s2]) pts.push([cx + (s[0] - cx) * 0.55, cy + (s[1] - cy) * 0.55]);
         out.push({
           mesh: meshName,
           instance: t.id,
@@ -296,6 +304,7 @@ export function installToolkit() {
           ny: nrm.y,
           x: cx,
           y: cy,
+          pts,
           areaPx,
           dist: centroid.distanceTo(cam),
           faceColor: face,
@@ -312,6 +321,22 @@ export function installToolkit() {
    * screen and (b) came back as one flat colour. Returns medians and, just as importantly, the
    * rejection counts — a row measured on four surviving samples is not a measurement.
    */
+  /**
+   * Read one facet, trying each of its candidate points until one is fully owned by the mask and
+   * comes back flat. Returns `why` when none of them does, so a caller can report the rejection
+   * reason instead of silently shrinking its own population.
+   */
+  T.probeFace = (f, { mask = null, r = 2, maxSpread = 0.02 } = {}) => {
+    let sawMask = false;
+    for (const [x, y] of f.pts ?? [[f.x, f.y]]) {
+      if (mask && !T.maskBox(mask, x, y, r)) { sawMask = true; continue; }
+      const patch = T.patch(x, y, r);
+      if (patch.spread > maxSpread) continue;
+      return { ok: true, patch, x, y };
+    }
+    return { ok: false, why: sawMask ? "mask" : "spread" };
+  };
+
   T.sampleFaces = (faces, { mask = null, r = 2, maxSpread = 0.02, limit = 400 } = {}) => {
     const hs = [], ss = [], vs = [], ys = [], px = [];
     let rejectedMask = 0, rejectedSpread = 0;
@@ -320,12 +345,13 @@ export function installToolkit() {
       // A 5x5 median needs a facet at least ~17 px across to sit inside; below that drop to 3x3
       // rather than throw the facet away, and rely on the spread test to catch a straddle.
       const rr = f.areaPx >= 300 ? r : 1;
-      if (mask && !T.maskBox(mask, f.x, f.y, rr)) { rejectedMask++; continue; }
-      const p = T.patch(f.x, f.y, rr);
-      if (p.spread > maxSpread) { rejectedSpread++; continue; }
+      const hit = T.probeFace(f, { mask, r: rr, maxSpread });
+      if (hit.why === "mask") { rejectedMask++; continue; }
+      if (hit.why === "spread") { rejectedSpread++; continue; }
+      const p = hit.patch;
       const [h, s, v] = T.hsv(...p.rgb);
       hs.push(h); ss.push(s); vs.push(v); ys.push(p.y);
-      px.push({ rgb: p.rgb, ndl: f.ndl, areaPx: f.areaPx, dist: f.dist, x: f.x, y: f.y });
+      px.push({ rgb: p.rgb, ndl: f.ndl, areaPx: f.areaPx, dist: f.dist, x: hit.x, y: hit.y });
     }
     return {
       n: px.length,
@@ -636,6 +662,69 @@ export function installToolkit() {
   };
 
   /**
+   * **Does anything stand between this point and the key?**
+   *
+   * L1 predicts a facet's radiance from `albedo x (N·L key + fill + bounce)` — three's Lambert
+   * accumulation, term for term — and that prediction contains no shadow term, because a shadow is
+   * not a material property. A facet inside the cast shadow of the boulder next to it therefore
+   * measures five times darker than predicted, and a run of this script that sampled a boulder
+   * field reported a median error of 0.53 against a rig that is in fact linear to within 2%.
+   *
+   * The occlusion test has to be independent of the pixel being tested or the row is circular. So it
+   * is geometric: march the terrain's own height query along the sun ray, and test the ray against a
+   * bounding sphere for every instance the scatter has planted. Both are built from the scene graph,
+   * neither looks at the frame.
+   */
+  T._occluders = null;
+  T.occluders = () => {
+    if (T._occluders) return T._occluders;
+    const list = [];
+    for (const name of ["scatter", "level01"]) {
+      const root = T.sys(name)?.root;
+      if (!root) continue;
+      root.traverse((o) => {
+        if (!o.isInstancedMesh || !o.visible) return;
+        o.geometry.computeBoundingSphere?.();
+        const r0 = o.geometry.boundingSphere?.radius ?? 1;
+        if (r0 <= 0) return;
+        o.updateMatrixWorld(true);
+        const mat = new M4();
+        const c = new V3();
+        const s = new V3();
+        for (let i = 0; i < o.count; i++) {
+          o.getMatrixAt(i, mat);
+          mat.premultiply(o.matrixWorld);
+          c.setFromMatrixPosition(mat);
+          s.setFromMatrixScale(mat);
+          const r = r0 * Math.max(s.x, s.y, s.z);
+          if (r < 0.4) continue; // talus and blades do not shadow a facet measurably
+          list.push([c.x, c.y, c.z, r]);
+        }
+      });
+    }
+    T._occluders = list;
+    return list;
+  };
+
+  /** True when the key reaches `p` — no terrain ridge and no planted solid in the way. */
+  T.keyReaches = (p, ownRadius = 0) => {
+    const k = T.lighting._shadowDir;
+    // terrain self-shadowing
+    for (let t = 0.8; t < 90; t *= 1.25) {
+      const g = T.groundY(p[0] + k.x * t, p[2] + k.z * t);
+      if (Number.isFinite(g) && g > p[1] + k.y * t + 0.2) return false;
+    }
+    for (const [ox, oy, oz, r] of T.occluders()) {
+      const dx = ox - p[0], dy = oy - p[1], dz = oz - p[2];
+      const along = dx * k.x + dy * k.y + dz * k.z;
+      if (along <= ownRadius + 0.15) continue; // behind us, or our own mass
+      const perp2 = dx * dx + dy * dy + dz * dz - along * along;
+      if (perp2 < r * r) return false;
+    }
+    return true;
+  };
+
+  /**
    * Every up-facing patch of the shipped terrain that is actually on screen, sampled through the
    * terrain's own ownership mask so a boulder standing in front of it can never be counted as
    * ground. Returns the whole population, sorted by luminance: §3.2's two witnesses are its tails.
@@ -668,6 +757,41 @@ export function installToolkit() {
       }
     pts.sort((a, b) => a.y - b.y);
     return { n: pts.length, pts, ownedPixels: own.n, mask: own.mask, meshes: names };
+  };
+
+  /**
+   * The nearest instance of the named meshes to a world point, with its world position and radius.
+   *
+   * Used to walk the camera up to a real shipped boulder. §3.4 is a claim about a *surface*, and a
+   * surface twelve pixels across cannot be sampled without sampling its neighbours — nor read
+   * without the aerial perspective §7.3 deliberately puts between it and the lens.
+   */
+  T.nearestInstance = (names, from, minRadius = 0.8) => {
+    const p = new V3(from[0], from[1], from[2]);
+    let best = null;
+    for (const name of Array.isArray(names) ? names : [names]) {
+      const m = T.meshByName(name);
+      if (!m) continue;
+      m.updateMatrixWorld(true);
+      m.geometry.computeBoundingSphere?.();
+      const r0 = m.geometry.boundingSphere?.radius ?? 1;
+      const mat = new M4();
+      const o = new V3();
+      const scale = new V3();
+      const count = m.isInstancedMesh ? m.count : 1;
+      for (let i = 0; i < count; i++) {
+        if (m.isInstancedMesh) m.getMatrixAt(i, mat);
+        else mat.copy(m.matrixWorld);
+        if (m.isInstancedMesh) mat.premultiply(m.matrixWorld);
+        o.setFromMatrixPosition(mat);
+        scale.setFromMatrixScale(mat);
+        const radius = r0 * Math.max(scale.x, scale.y, scale.z);
+        if (radius < minRadius) continue; // a chip of talus is not a mass
+        const dist = o.distanceTo(p);
+        if (!best || dist < best.dist) best = { mesh: name, index: i, position: [o.x, o.y, o.z], radius, dist };
+      }
+    }
+    return best;
   };
 
   /** Where the player actually is, read from the shipped avatar rather than assumed. */

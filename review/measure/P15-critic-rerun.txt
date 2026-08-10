@@ -1,6 +1,13 @@
+(node:49012) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  hostile 1/5: long20k (20000 chars, attacks source length)
+  hostile 2/5: deepFrac15 (151 chars, attacks parse depth — the measured renderer crash)
+  hostile 3/5: deepFrac60 (601 chars, attacks parse depth)
+  hostile 4/5: tallMatrix (772 chars, attacks ink height)
+  hostile 5/5: wideLine (1881 chars, attacks ink width)
 {
  "piece": "P15",
- "when": "2026-08-10T14:02:58.095Z",
+ "when": "2026-08-10T14:10:53.179Z",
  "langs": [
   "en",
   "es",
@@ -100,7 +107,7 @@
    "id": "H0b",
    "claim": "the over-length claim never reaches the parser",
    "threshold": "cost < 20% of typesetting a 1,881-char claim",
-   "value": "0.01 ms vs 15.9 ms",
+   "value": "0.01 ms vs 15.2 ms",
    "pass": true,
    "note": null
   },
@@ -140,7 +147,7 @@
    "id": "H0g",
    "claim": "every expression in the shipped bank passes every offline gate, in every locale",
    "threshold": "0 failures",
-   "value": "0 of 8151 checks (2717 expressions, 177 ms)",
+   "value": "0 of 8151 checks (2717 expressions, 176 ms)",
    "pass": true,
    "note": null
   },
@@ -316,15 +323,15 @@
    "id": "H3",
    "claim": "no hostile claim stalls the game: rasterizing one costs a hitch, not a hang",
    "threshold": "<= 400 ms of raster time",
-   "value": 16.2,
+   "value": 16.5,
    "pass": true,
-   "note": "long20k 2.4ms/1r deepFrac15 0.7ms/1r deepFrac60 1.5ms/1r tallMatrix 6.2ms/1r wideLine 16.2ms/1r"
+   "note": "long20k 2.8ms/1r deepFrac15 1.1ms/1r deepFrac60 1.3ms/1r tallMatrix 4.5ms/1r wideLine 16.5ms/1r"
   },
   {
    "id": "H4",
    "claim": "the game survives all four: no crash, clock still advancing, no error but the refusals",
    "threshold": "fatal null, simTime advanced, 0 unexpected errors",
-   "value": "fatal=null sim 6.60->10.60 unexpected=0",
+   "value": "fatal=null sim 6.58->10.58 unexpected=0",
    "pass": true,
    "note": null
   },
@@ -372,7 +379,7 @@
    "id": "H9",
    "claim": "every nesting shape, at the deepest the cap admits, lays out safely and inside the cap",
    "threshold": "7 shapes, all ok, <= 400 ms, inside the cap",
-   "value": "frac n=8/d=16 235x586 7.9ms sqrt n=8/d=16 1004x490 8.2ms paren n=16/d=16 1503x126 5.6ms power n=8/d=16 351x262 5.1ms abs n=16/d=16 1084x126 3.7ms mixed n=4/d=16 603x547 6.1ms overline n=8/d=16 77x257 3.1ms",
+   "value": "frac n=8/d=16 235x586 10.3ms sqrt n=8/d=16 1004x490 20.2ms paren n=16/d=16 1503x126 7ms power n=8/d=16 351x262 5ms abs n=16/d=16 1084x126 4ms mixed n=4/d=16 603x547 7.1ms overline n=8/d=16 77x257 4ms",
    "pass": true,
    "note": null
   },
@@ -380,7 +387,7 @@
    "id": "H8",
    "claim": "asked for a raster 3000 px per em, the pipeline scales it down and keeps the whole claim",
    "threshold": "inside the cap, ok:true, bound=scaled",
-   "value": "4092x850 at 812px, bound=scaled, ok=true, 3.6ms",
+   "value": "4092x850 at 812px, bound=scaled, ok=true, 4.2ms",
    "pass": true,
    "note": null
   },
@@ -388,7 +395,7 @@
    "id": "C15",
    "claim": "the ink is pure white, as it is in the target",
    "threshold": ">= 248.0 (target 254)",
-   "value": 250.1,
+   "value": 250,
    "pass": true,
    "note": null
   },
@@ -404,9 +411,9 @@
    "id": "C16",
    "claim": "no panel, no frame and no glow: the sky 3-5 px from the ink is not darker than the sky 12-20 px away",
    "threshold": ">= -3.0 (target 5.3)",
-   "value": -4.7,
+   "value": -4.9,
    "pass": false,
-   "note": "our own raster's alpha halo: 0 | leaf9-span halo 16.4 bgGradient 3.1 bg 159.8 | leaf9-share halo -4.7 bgGradient -3.3 bg 134.6 | leaf9-working halo 1.9 bgGradient 5.7 bg 176.7 | leaf9-mark halo -0.4 bgGradient -2.2 bg 183.9 | leaf9-span halo 16.5 bgGradient 3 bg 159.7 | leaf9-share halo -4.7 bgGradient -3.4 bg 134.6 | leaf9-working halo 1.9 bgGradient 5.7 bg 176.7 | leaf9-mark halo -0.4 bgGradient -2.2 bg 183.9 | leaf9-span halo 16.4 bgGradient 3 bg 159.6 | leaf9-share halo -4.7 bgGradient -3.3 bg 134.5 | leaf9-working halo 1.9 bgGradient 5.7 bg 176.7 | leaf9-mark halo -0.4 bgGradient -2.2 bg 183.9 | leaf9-span halo 5.3 bgGradient 7.8 bg 170.7 | leaf9-share halo 1.1 bgGradient -4.3 bg 127.1 | leaf9-working halo 0.3 bgGradient 1 bg 177.9 | leaf9-mark halo -1.1 bgGradient -2.1 bg 182.2 | leaf9-span halo 4.9 bgGradient 7.5 bg 171.2 | leaf9-share halo 0.8 bgGradient -4.4 bg 127.2 | leaf9-working halo 0.4 bgGradient 1.2 bg 178 | leaf9-mark halo -1.1 bgGradient -2.1 bg 182.2 | leaf9-span halo 5.6 bgGradient 7.7 bg 170.3 | leaf9-share halo 0.9 bgGradient -4.2 bg 127 | leaf9-working halo 0.2 bgGradient 1 bg 177.9 | leaf9-mark halo -1.1 bgGradient -2.1 bg 182.2"
+   "note": "our own raster's alpha halo: 0 | leaf9-span halo 16.5 bgGradient 3 bg 159.7 | leaf9-share halo -4.8 bgGradient -3.4 bg 134.6 | leaf9-working halo 1.9 bgGradient 5.7 bg 176.7 | leaf9-mark halo -0.4 bgGradient -2.2 bg 183.9 | leaf9-span halo 16.4 bgGradient 3.3 bg 159.9 | leaf9-share halo -4.9 bgGradient -3.3 bg 134.7 | leaf9-working halo 2 bgGradient 5.6 bg 176.6 | leaf9-mark halo -0.4 bgGradient -2.2 bg 183.9 | leaf9-span halo 16.4 bgGradient 3.1 bg 159.8 | leaf9-share halo -4.8 bgGradient -3.3 bg 134.6 | leaf9-working halo 1.9 bgGradient 5.7 bg 176.7 | leaf9-mark halo -0.4 bgGradient -2.2 bg 183.9 | leaf9-span halo 4.9 bgGradient 6.1 bg 171.4 | leaf9-share halo 0.1 bgGradient -4.5 bg 127.7 | leaf9-working halo 0 bgGradient 1.4 bg 178.6 | leaf9-mark halo -1.1 bgGradient -2.1 bg 182.3 | leaf9-span halo 4.9 bgGradient 6.1 bg 171.4 | leaf9-share halo 0.1 bgGradient -4.5 bg 127.6 | leaf9-working halo 0 bgGradient 1.4 bg 178.6 | leaf9-mark halo -1.1 bgGradient -2.1 bg 182.3 | leaf9-span halo 4.8 bgGradient 6.2 bg 171.4 | leaf9-share halo 0.3 bgGradient -4.5 bg 127.6 | leaf9-working halo -0.3 bgGradient 1.5 bg 178.8 | leaf9-mark halo -1.1 bgGradient -2.1 bg 182.3"
   },
   {
    "id": "C17",
@@ -420,7 +427,7 @@
    "id": "C18",
    "claim": "still hard-edged at 3840x2160 (no upscaled texture)",
    "threshold": "<= 2.0 px",
-   "value": 1.05,
+   "value": 1.03,
    "pass": true,
    "note": null
   },
@@ -564,7 +571,7 @@
    },
    "longChars": 20000,
    "longRefuseMs": 0.007,
-   "wideTypesetMs": 15.9,
+   "wideTypesetMs": 15.2,
    "deep": [
     {
      "id": "deepFrac15",
@@ -615,7 +622,7 @@
     "failures": 0,
     "maxChars": 41,
     "maxDepth": 3,
-    "ms": 177
+    "ms": 176
    },
    "attacks": [
     {
@@ -1426,10 +1433,10 @@
     "inkCoverage": 0.0245,
     "inkLuminance": 251.2,
     "nearBgLuminance": 176.2,
-    "farBgLuminance": 159.8,
+    "farBgLuminance": 159.7,
     "veryFarBgLuminance": 156.7,
-    "haloDelta": 16.4,
-    "bgGradient": 3.1,
+    "haloDelta": 16.5,
+    "bgGradient": 3,
     "perimeter": 461,
     "edgeWidthPx": 1.23,
     "contrastRatio": 2.49
@@ -1446,101 +1453,17 @@
     "inkCount": 493,
     "inkCoverage": 0.0158,
     "inkLuminance": 250.4,
-    "nearBgLuminance": 129.9,
+    "nearBgLuminance": 129.8,
     "farBgLuminance": 134.6,
-    "veryFarBgLuminance": 137.9,
-    "haloDelta": -4.7,
-    "bgGradient": -3.3,
-    "perimeter": 373,
-    "edgeWidthPx": 1.28,
-    "contrastRatio": 3.36
-   },
-   {
-    "label": "en-1600x900",
-    "id": "leaf9-working",
-    "box": [
-     888,
-     153,
-     1077,
-     342
-    ],
-    "inkCount": 566,
-    "inkCoverage": 0.0158,
-    "inkLuminance": 250.1,
-    "nearBgLuminance": 178.6,
-    "farBgLuminance": 176.7,
-    "veryFarBgLuminance": 171,
-    "haloDelta": 1.9,
-    "bgGradient": 5.7,
-    "perimeter": 525,
-    "edgeWidthPx": 0.88,
-    "contrastRatio": 2
-   },
-   {
-    "label": "en-1600x900",
-    "id": "leaf9-mark",
-    "box": [
-     1122,
-     268,
-     1304,
-     344
-    ],
-    "inkCount": 120,
-    "inkCoverage": 0.0087,
-    "inkLuminance": 251,
-    "nearBgLuminance": 183.6,
-    "farBgLuminance": 183.9,
-    "veryFarBgLuminance": 186.1,
-    "haloDelta": -0.4,
-    "bgGradient": -2.2,
-    "perimeter": 118,
-    "edgeWidthPx": 1.03,
-    "contrastRatio": 1.82
-   },
-   {
-    "label": "es-1600x900",
-    "id": "leaf9-span",
-    "box": [
-     503,
-     154,
-     763,
-     256
-    ],
-    "inkCount": 649,
-    "inkCoverage": 0.0245,
-    "inkLuminance": 251.2,
-    "nearBgLuminance": 176.2,
-    "farBgLuminance": 159.7,
-    "veryFarBgLuminance": 156.7,
-    "haloDelta": 16.5,
-    "bgGradient": 3,
-    "perimeter": 461,
-    "edgeWidthPx": 1.23,
-    "contrastRatio": 2.5
-   },
-   {
-    "label": "es-1600x900",
-    "id": "leaf9-share",
-    "box": [
-     535,
-     220,
-     737,
-     374
-    ],
-    "inkCount": 493,
-    "inkCoverage": 0.0158,
-    "inkLuminance": 250.4,
-    "nearBgLuminance": 129.9,
-    "farBgLuminance": 134.6,
-    "veryFarBgLuminance": 137.9,
-    "haloDelta": -4.7,
+    "veryFarBgLuminance": 138,
+    "haloDelta": -4.8,
     "bgGradient": -3.4,
     "perimeter": 373,
     "edgeWidthPx": 1.28,
     "contrastRatio": 3.36
    },
    {
-    "label": "es-1600x900",
+    "label": "en-1600x900",
     "id": "leaf9-working",
     "box": [
      888,
@@ -1561,6 +1484,90 @@
     "contrastRatio": 1.99
    },
    {
+    "label": "en-1600x900",
+    "id": "leaf9-mark",
+    "box": [
+     1122,
+     268,
+     1304,
+     344
+    ],
+    "inkCount": 120,
+    "inkCoverage": 0.0087,
+    "inkLuminance": 251,
+    "nearBgLuminance": 183.6,
+    "farBgLuminance": 183.9,
+    "veryFarBgLuminance": 186.1,
+    "haloDelta": -0.4,
+    "bgGradient": -2.2,
+    "perimeter": 118,
+    "edgeWidthPx": 1.03,
+    "contrastRatio": 1.82
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-span",
+    "box": [
+     503,
+     154,
+     763,
+     256
+    ],
+    "inkCount": 649,
+    "inkCoverage": 0.0245,
+    "inkLuminance": 251.2,
+    "nearBgLuminance": 176.3,
+    "farBgLuminance": 159.9,
+    "veryFarBgLuminance": 156.7,
+    "haloDelta": 16.4,
+    "bgGradient": 3.3,
+    "perimeter": 461,
+    "edgeWidthPx": 1.23,
+    "contrastRatio": 2.49
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-share",
+    "box": [
+     535,
+     220,
+     737,
+     374
+    ],
+    "inkCount": 494,
+    "inkCoverage": 0.0159,
+    "inkLuminance": 250.4,
+    "nearBgLuminance": 129.7,
+    "farBgLuminance": 134.7,
+    "veryFarBgLuminance": 138,
+    "haloDelta": -4.9,
+    "bgGradient": -3.3,
+    "perimeter": 374,
+    "edgeWidthPx": 1.28,
+    "contrastRatio": 3.36
+   },
+   {
+    "label": "es-1600x900",
+    "id": "leaf9-working",
+    "box": [
+     888,
+     153,
+     1077,
+     342
+    ],
+    "inkCount": 567,
+    "inkCoverage": 0.0159,
+    "inkLuminance": 250,
+    "nearBgLuminance": 178.6,
+    "farBgLuminance": 176.6,
+    "veryFarBgLuminance": 171,
+    "haloDelta": 2,
+    "bgGradient": 5.6,
+    "perimeter": 526,
+    "edgeWidthPx": 0.88,
+    "contrastRatio": 2
+   },
+   {
     "label": "es-1600x900",
     "id": "leaf9-mark",
     "box": [
@@ -1593,14 +1600,14 @@
     "inkCount": 649,
     "inkCoverage": 0.0245,
     "inkLuminance": 251.2,
-    "nearBgLuminance": 176,
-    "farBgLuminance": 159.6,
-    "veryFarBgLuminance": 156.6,
+    "nearBgLuminance": 176.2,
+    "farBgLuminance": 159.8,
+    "veryFarBgLuminance": 156.7,
     "haloDelta": 16.4,
-    "bgGradient": 3,
+    "bgGradient": 3.1,
     "perimeter": 461,
     "edgeWidthPx": 1.23,
-    "contrastRatio": 2.5
+    "contrastRatio": 2.49
    },
    {
     "label": "pl-1600x900",
@@ -1614,10 +1621,10 @@
     "inkCount": 493,
     "inkCoverage": 0.0158,
     "inkLuminance": 250.4,
-    "nearBgLuminance": 129.8,
-    "farBgLuminance": 134.5,
-    "veryFarBgLuminance": 137.9,
-    "haloDelta": -4.7,
+    "nearBgLuminance": 129.9,
+    "farBgLuminance": 134.6,
+    "veryFarBgLuminance": 138,
+    "haloDelta": -4.8,
     "bgGradient": -3.3,
     "perimeter": 373,
     "edgeWidthPx": 1.28,
@@ -1641,8 +1648,8 @@
     "haloDelta": 1.9,
     "bgGradient": 5.7,
     "perimeter": 525,
-    "edgeWidthPx": 0.89,
-    "contrastRatio": 2
+    "edgeWidthPx": 0.88,
+    "contrastRatio": 1.99
    },
    {
     "label": "pl-1600x900",
@@ -1674,17 +1681,17 @@
      641,
      271
     ],
-    "inkCount": 5067,
+    "inkCount": 5071,
     "inkCoverage": 0.0333,
     "inkLuminance": 254,
-    "nearBgLuminance": 176,
-    "farBgLuminance": 170.7,
-    "veryFarBgLuminance": 162.8,
-    "haloDelta": 5.3,
-    "bgGradient": 7.8,
-    "perimeter": 1656,
-    "edgeWidthPx": 0.99,
-    "contrastRatio": 2.24
+    "nearBgLuminance": 176.3,
+    "farBgLuminance": 171.4,
+    "veryFarBgLuminance": 165.3,
+    "haloDelta": 4.9,
+    "bgGradient": 6.1,
+    "perimeter": 1655,
+    "edgeWidthPx": 0.96,
+    "contrastRatio": 2.22
    },
    {
     "label": "en-3840x2160",
@@ -1695,17 +1702,17 @@
      567,
      541
     ],
-    "inkCount": 4084,
-    "inkCoverage": 0.0259,
+    "inkCount": 4120,
+    "inkCoverage": 0.0262,
     "inkLuminance": 253.9,
-    "nearBgLuminance": 128.2,
-    "farBgLuminance": 127.1,
-    "veryFarBgLuminance": 131.3,
-    "haloDelta": 1.1,
-    "bgGradient": -4.3,
-    "perimeter": 1426,
-    "edgeWidthPx": 1.04,
-    "contrastRatio": 3.82
+    "nearBgLuminance": 127.8,
+    "farBgLuminance": 127.7,
+    "veryFarBgLuminance": 132.1,
+    "haloDelta": 0.1,
+    "bgGradient": -4.5,
+    "perimeter": 1437,
+    "edgeWidthPx": 1.03,
+    "contrastRatio": 3.79
    },
    {
     "label": "en-3840x2160",
@@ -1719,14 +1726,14 @@
     "inkCount": 7089,
     "inkCoverage": 0.0406,
     "inkLuminance": 254.1,
-    "nearBgLuminance": 178.1,
-    "farBgLuminance": 177.9,
-    "veryFarBgLuminance": 176.8,
-    "haloDelta": 0.3,
-    "bgGradient": 1,
+    "nearBgLuminance": 178.5,
+    "farBgLuminance": 178.6,
+    "veryFarBgLuminance": 177.1,
+    "haloDelta": 0,
+    "bgGradient": 1.4,
     "perimeter": 2534,
-    "edgeWidthPx": 0.48,
-    "contrastRatio": 2.03
+    "edgeWidthPx": 0.47,
+    "contrastRatio": 2.02
    },
    {
     "label": "en-3840x2160",
@@ -1740,13 +1747,13 @@
     "inkCount": 1577,
     "inkCoverage": 0.0281,
     "inkLuminance": 253,
-    "nearBgLuminance": 181,
-    "farBgLuminance": 182.2,
-    "veryFarBgLuminance": 184.3,
+    "nearBgLuminance": 181.2,
+    "farBgLuminance": 182.3,
+    "veryFarBgLuminance": 184.5,
     "haloDelta": -1.1,
     "bgGradient": -2.1,
     "perimeter": 982,
-    "edgeWidthPx": 0.69,
+    "edgeWidthPx": 0.68,
     "contrastRatio": 1.88
    },
    {
@@ -1758,16 +1765,16 @@
      641,
      271
     ],
-    "inkCount": 5066,
+    "inkCount": 5071,
     "inkCoverage": 0.0333,
     "inkLuminance": 254,
-    "nearBgLuminance": 176.1,
-    "farBgLuminance": 171.2,
-    "veryFarBgLuminance": 163.7,
+    "nearBgLuminance": 176.3,
+    "farBgLuminance": 171.4,
+    "veryFarBgLuminance": 165.2,
     "haloDelta": 4.9,
-    "bgGradient": 7.5,
-    "perimeter": 1656,
-    "edgeWidthPx": 0.98,
+    "bgGradient": 6.1,
+    "perimeter": 1655,
+    "edgeWidthPx": 0.96,
     "contrastRatio": 2.22
    },
    {
@@ -1779,17 +1786,17 @@
      567,
      541
     ],
-    "inkCount": 4098,
-    "inkCoverage": 0.026,
+    "inkCount": 4122,
+    "inkCoverage": 0.0262,
     "inkLuminance": 253.9,
-    "nearBgLuminance": 128.1,
-    "farBgLuminance": 127.2,
-    "veryFarBgLuminance": 131.6,
-    "haloDelta": 0.8,
-    "bgGradient": -4.4,
-    "perimeter": 1433,
-    "edgeWidthPx": 1.04,
-    "contrastRatio": 3.81
+    "nearBgLuminance": 127.8,
+    "farBgLuminance": 127.6,
+    "veryFarBgLuminance": 132.1,
+    "haloDelta": 0.1,
+    "bgGradient": -4.5,
+    "perimeter": 1437,
+    "edgeWidthPx": 1.03,
+    "contrastRatio": 3.79
    },
    {
     "label": "es-3840x2160",
@@ -1803,14 +1810,14 @@
     "inkCount": 7089,
     "inkCoverage": 0.0406,
     "inkLuminance": 254.1,
-    "nearBgLuminance": 178.3,
-    "farBgLuminance": 178,
-    "veryFarBgLuminance": 176.8,
-    "haloDelta": 0.4,
-    "bgGradient": 1.2,
+    "nearBgLuminance": 178.5,
+    "farBgLuminance": 178.6,
+    "veryFarBgLuminance": 177.2,
+    "haloDelta": 0,
+    "bgGradient": 1.4,
     "perimeter": 2534,
-    "edgeWidthPx": 0.48,
-    "contrastRatio": 2.03
+    "edgeWidthPx": 0.47,
+    "contrastRatio": 2.02
    },
    {
     "label": "es-3840x2160",
@@ -1824,13 +1831,13 @@
     "inkCount": 1577,
     "inkCoverage": 0.0281,
     "inkLuminance": 253,
-    "nearBgLuminance": 181.1,
-    "farBgLuminance": 182.2,
-    "veryFarBgLuminance": 184.3,
+    "nearBgLuminance": 181.2,
+    "farBgLuminance": 182.3,
+    "veryFarBgLuminance": 184.5,
     "haloDelta": -1.1,
     "bgGradient": -2.1,
     "perimeter": 982,
-    "edgeWidthPx": 0.69,
+    "edgeWidthPx": 0.68,
     "contrastRatio": 1.88
    },
    {
@@ -1842,17 +1849,17 @@
      641,
      271
     ],
-    "inkCount": 5067,
+    "inkCount": 5073,
     "inkCoverage": 0.0333,
     "inkLuminance": 254,
-    "nearBgLuminance": 175.9,
-    "farBgLuminance": 170.3,
-    "veryFarBgLuminance": 162.6,
-    "haloDelta": 5.6,
-    "bgGradient": 7.7,
-    "perimeter": 1656,
-    "edgeWidthPx": 0.99,
-    "contrastRatio": 2.25
+    "nearBgLuminance": 176.2,
+    "farBgLuminance": 171.4,
+    "veryFarBgLuminance": 165.1,
+    "haloDelta": 4.8,
+    "bgGradient": 6.2,
+    "perimeter": 1655,
+    "edgeWidthPx": 0.96,
+    "contrastRatio": 2.22
    },
    {
     "label": "pl-3840x2160",
@@ -1863,17 +1870,17 @@
      567,
      541
     ],
-    "inkCount": 4083,
-    "inkCoverage": 0.0259,
+    "inkCount": 4130,
+    "inkCoverage": 0.0262,
     "inkLuminance": 253.9,
     "nearBgLuminance": 127.9,
-    "farBgLuminance": 127,
-    "veryFarBgLuminance": 131.2,
-    "haloDelta": 0.9,
-    "bgGradient": -4.2,
-    "perimeter": 1425,
-    "edgeWidthPx": 1.05,
-    "contrastRatio": 3.83
+    "farBgLuminance": 127.6,
+    "veryFarBgLuminance": 132,
+    "haloDelta": 0.3,
+    "bgGradient": -4.5,
+    "perimeter": 1439,
+    "edgeWidthPx": 1.03,
+    "contrastRatio": 3.8
    },
    {
     "label": "pl-3840x2160",
@@ -1887,14 +1894,14 @@
     "inkCount": 7089,
     "inkCoverage": 0.0406,
     "inkLuminance": 254.1,
-    "nearBgLuminance": 178.1,
-    "farBgLuminance": 177.9,
-    "veryFarBgLuminance": 176.8,
-    "haloDelta": 0.2,
-    "bgGradient": 1,
+    "nearBgLuminance": 178.5,
+    "farBgLuminance": 178.8,
+    "veryFarBgLuminance": 177.3,
+    "haloDelta": -0.3,
+    "bgGradient": 1.5,
     "perimeter": 2534,
-    "edgeWidthPx": 0.48,
-    "contrastRatio": 2.03
+    "edgeWidthPx": 0.47,
+    "contrastRatio": 2.01
    },
    {
     "label": "pl-3840x2160",
@@ -1905,17 +1912,17 @@
      1920,
      461
     ],
-    "inkCount": 1577,
+    "inkCount": 1578,
     "inkCoverage": 0.0281,
     "inkLuminance": 253,
-    "nearBgLuminance": 181,
-    "farBgLuminance": 182.2,
-    "veryFarBgLuminance": 184.3,
+    "nearBgLuminance": 181.2,
+    "farBgLuminance": 182.3,
+    "veryFarBgLuminance": 184.5,
     "haloDelta": -1.1,
     "bgGradient": -2.1,
-    "perimeter": 982,
-    "edgeWidthPx": 0.69,
-    "contrastRatio": 1.89
+    "perimeter": 983,
+    "edgeWidthPx": 0.68,
+    "contrastRatio": 1.88
    }
   ],
   "a11y": [
@@ -2855,8 +2862,8 @@
      "ok": false,
      "speech": "unreadable claim",
      "rasters": 1,
-     "rasterMs": 2.4,
-     "wallMs": 31,
+     "rasterMs": 2.8,
+     "wallMs": 40,
      "newErrors": 1,
      "lastError": "KaTeX refused a claim [en,display]: expression too long: 20000 characters, cap 2000 — source withheld from the world, fallback shown",
      "sourceInDom": false,
@@ -2904,8 +2911,8 @@
      "ok": false,
      "speech": "unreadable claim",
      "rasters": 1,
-     "rasterMs": 0.7,
-     "wallMs": 22,
+     "rasterMs": 1.1,
+     "wallMs": 34,
      "newErrors": 1,
      "lastError": "KaTeX refused a claim [en,display]: expression nested too deeply: depth 30, cap 16 — source withheld from the world, fallback shown",
      "sourceInDom": false,
@@ -2953,8 +2960,8 @@
      "ok": false,
      "speech": "unreadable claim",
      "rasters": 1,
-     "rasterMs": 1.5,
-     "wallMs": 33,
+     "rasterMs": 1.3,
+     "wallMs": 32,
      "newErrors": 1,
      "lastError": "KaTeX refused a claim [en,display]: expression nested too deeply: depth 120, cap 16 — source withheld from the world, fallback shown",
      "sourceInDom": false,
@@ -3010,8 +3017,8 @@
      "ok": false,
      "speech": "unreadable claim",
      "rasters": 1,
-     "rasterMs": 6.2,
-     "wallMs": 55,
+     "rasterMs": 4.5,
+     "wallMs": 43,
      "newErrors": 1,
      "lastError": "KaTeX refused a claim [en,display]: claim geometry out of bounds: 0.6x219.8 ems, cap 48x24 — source withheld from the world, fallback shown",
      "sourceInDom": false,
@@ -3067,8 +3074,8 @@
      "ok": false,
      "speech": "unreadable claim",
      "rasters": 1,
-     "rasterMs": 16.2,
-     "wallMs": 78,
+     "rasterMs": 16.5,
+     "wallMs": 74,
      "newErrors": 1,
      "lastError": "KaTeX refused a claim [en,display]: claim geometry out of bounds: 979.9x3.5 ems, cap 48x24 — source withheld from the world, fallback shown",
      "sourceInDom": false,
@@ -3081,7 +3088,7 @@
      "name": "frac",
      "nesting": 8,
      "depth": 16,
-     "ms": 7.9,
+     "ms": 10.3,
      "width": 235,
      "height": 586,
      "ok": true
@@ -3090,7 +3097,7 @@
      "name": "sqrt",
      "nesting": 8,
      "depth": 16,
-     "ms": 8.2,
+     "ms": 20.2,
      "width": 1004,
      "height": 490,
      "ok": true
@@ -3099,7 +3106,7 @@
      "name": "paren",
      "nesting": 16,
      "depth": 16,
-     "ms": 5.6,
+     "ms": 7,
      "width": 1503,
      "height": 126,
      "ok": true
@@ -3108,7 +3115,7 @@
      "name": "power",
      "nesting": 8,
      "depth": 16,
-     "ms": 5.1,
+     "ms": 5,
      "width": 351,
      "height": 262,
      "ok": true
@@ -3117,7 +3124,7 @@
      "name": "abs",
      "nesting": 16,
      "depth": 16,
-     "ms": 3.7,
+     "ms": 4,
      "width": 1084,
      "height": 126,
      "ok": true
@@ -3126,7 +3133,7 @@
      "name": "mixed",
      "nesting": 4,
      "depth": 16,
-     "ms": 6.1,
+     "ms": 7.1,
      "width": 603,
      "height": 547,
      "ok": true
@@ -3135,14 +3142,14 @@
      "name": "overline",
      "nesting": 8,
      "depth": 16,
-     "ms": 3.1,
+     "ms": 4,
      "width": 77,
      "height": 257,
      "ok": true
     }
    ],
    "scaleDown": {
-    "ms": 3.6,
+    "ms": 4.2,
     "width": 4092,
     "height": 850,
     "fontPx": 812,
@@ -3173,15 +3180,15 @@
     "contrastRatio": 2.02
    },
    "shot": "review\\shots\\p15\\measure\\hostile.png",
-   "simBefore": 6.6,
+   "simBefore": 6.583,
    "alive": {
-    "simTime": 10.6,
-    "frames": 316,
+    "simTime": 10.583,
+    "frames": 315,
     "fatal": null,
     "ready": true,
     "raster": {
      "rasters": 18,
-     "ms": 93.1,
+     "ms": 106.5,
      "glyphs": 1,
      "paths": 0,
      "rules": 8,
@@ -3202,7 +3209,65 @@
     },
     "unexpectedErrors": []
    },
-   "totalWallMs": 12210
+   "totalWallMs": 15654
   }
  }
 }
+
+P15 — strict KaTeX pipeline, DOM and in-world
+────────────────────────────────────────────────────────────────────────────────────────────────
+PASS  C1     every fixture expression typesets in en/es/pl                   0 failures             got 0
+PASS  C2a    malformed TeX is refused by validate()                          21 refusals            got 21
+PASS  C2b    a refused expression never returns its source, a katex-error n  0 leaks                got 0
+PASS  C3a    every expression has a spoken form in every locale              0 missing              got 0
+PASS  C3b    no spoken form contains TeX notation                            0 with \ { } ^ _       got 0
+PASS  C4     ES/PL take a decimal comma, a centre dot and (PL) a colon for   0 wrong                got 0
+PASS  C5     the plain comparison text is identical in every locale          0 divergent            got 0
+PASS  C6     no banned classroom vocabulary in any player-facing string thi  0 hits (relation readings declared) got 0
+PASS  C7     1000 renders of one expression typeset it exactly once          typesets == 1          got 1
+PASS  H0a    a 20000-character claim is refused in every locale              3 refusals             got 3
+PASS  H0b    the over-length claim never reaches the parser                  cost < 20% of typesetting a 1,881-char claim got 0.01 ms vs 15.2 ms
+PASS  H0c    a refused over-length claim is not retained anywhere in the pi  record and failure log <= 200 chars got record 71, worst failure row 71
+PASS  H0d    the refusal shows the stand-in and says so, without notation    ok:false, speech has no \ { } got ok=false speech="unreadable claim"
+PASS  H0e    the nesting that crashes the renderer is refused before any HT  refused in all 3 locales, 0 fraction markup, < 2 KB of HTML got deepFrac15 depth 30: 3/3 refused, 0 frac markup, 188 B | deepFrac60 depth 120: 3/3 refused, 0 frac markup, 188 B
+PASS  H0f    the depth cap does not reach real mathematics                   all typeset, worst depth well under 16 got 4/6/2/3 of 16
+PASS  H0g    every expression in the shipped bank passes every offline gate  0 failures             got 0 of 8151 checks (2717 expressions, 176 ms)
+PASS  H0h    the caps have real headroom over the content the game actually  >= 5x on both length and depth got length 41/2000, depth 3/16
+PASS  H0i    the geometry attacks get past every offline gate, so the brows  2 of 2 typeset offline got tallMatrix depth 3 nodes 451 ok=true | wideLine depth 0 nodes 941 ok=true
+PASS  C7b    the KaTeX raster is a hard-edged alpha mask, not a blurred one  partial-alpha band <= 1.3 px got 0.67
+PASS  C7c    a raster is produced at a real working resolution               >= 64 px tall          got 344
+PASS  C8a    zero KaTeX failures in every locale and size                    0                      got 0
+PASS  C8b    zero raw-TeX leaks into visible UI                              0 runs leaking         got 0
+PASS  C8c    KaTeX really ran (DOM nodes present in every run)               >= 3                   got 3
+PASS  C9     every claim carries role=math with a localized, notation-free   0 bad rows             got 0
+PASS  C9b    the aria-label language follows the requested locale            has en,es,pl           got en,es,pl
+PASS  C10    no panel is ever magnified: >= 1 texel per device pixel, at 90  >= 1.00                got 1.06
+PASS  C11    the raster grows with the viewport instead of staying fixed     4K bucket > 900p bucket got 96 vs 48
+PASS  C12    the claim standing ~38 m away is still drawn at a legible size  em >= 12 device px     got 17.8
+PASS  C13    120 frames of play cause no re-typeset and no re-raster         0 new typesets, 0 new rasters got 0 / 0
+PASS  C14a   a malformed claim never produces a katex-error node             0                      got 0
+PASS  C14b   the malformed source appears nowhere in the document            false                  got false
+PASS  C14c   no raw TeX reaches the visible UI when a claim is refused       false                  got false
+PASS  C14d   the refusal is logged to __vs.errors so a build cannot ship it  >= 1 new error naming the refusal got 1: KaTeX refused a claim [en,display]: KaTeX parse error: Unexp
+PASS  C14e   the player sees a typeset stand-in, not an empty space          ink present in the panel's rectangle got 445
+PASS  C14f   the stand-in announces itself as unreadable rather than readin  localized fallback phrase got unreadable claim
+PASS  H1     no hostile claim's texture exceeds the cap in either axis or i  <= 4096 px per axis, <= 4194304 px total got long20k 45x44, deepFrac15 45x44, deepFrac60 45x44, tallMatrix 45x44, wideLine 45x44
+PASS  H2     the largest canvas allocated anywhere in the session is inside  <= 4096 px per axis, <= 4194304 px total, over 18 rasters got 4092x850 = 3478200 px
+PASS  H3     no hostile claim stalls the game: rasterizing one costs a hitc  <= 400 ms of raster time got 16.5
+PASS  H4     the game survives all four: no crash, clock still advancing, n  fatal null, simTime advanced, 0 unexpected errors got fatal=null sim 6.58->10.58 unexpected=0
+PASS  H4b    the frame still renders with the attacks standing in it         ink present in the capture got 1246
+PASS  H5     every hostile claim is refused visibly, logged, and never show  0 bad rows             got 5/5 clean
+PASS  H5b    each refusal names the bound it broke, so a build cannot ship   every row logs a 'KaTeX refused' line got long20k: KaTeX refused a claim [en,display]: expression | deepFrac15: KaTeX refused a claim [en,display]: expression | deepFrac60: KaTeX refused a claim [en,display]: expression | tallMatrix: KaTeX refused a claim [en,display]: claim geom | wideLine: KaTeX refused a claim [en,display]: claim geom
+PASS  H6     the cap has real headroom: the shipped claims are nowhere near  >= 10x spare area      got 114x (worst shipped raster 36864 px)
+PASS  H7     no claim the ink-extent gate admits can ever be refused for ra  48x24 ems at 8 px fits the cap got 384x192 px
+PASS  H9     every nesting shape, at the deepest the cap admits, lays out s  7 shapes, all ok, <= 400 ms, inside the cap got frac n=8/d=16 235x586 10.3ms sqrt n=8/d=16 1004x490 20.2ms paren n=16/d=16 1503x126 7ms power n=8/d=16 351x262 5ms abs n=16/d=16 1084x126 4ms mixed n=4/d=16 603x547 7.1ms overline n=8/d=16 77x257 4ms
+PASS  H8     asked for a raster 3000 px per em, the pipeline scales it down  inside the cap, ok:true, bound=scaled got 4092x850 at 812px, bound=scaled, ok=true, 4.2ms
+PASS  C15    the ink is pure white, as it is in the target                   >= 248.0 (target 254)  got 250
+PASS  C16b   the raster this piece draws has no rim, no shadow and no glow   |halo| <= 0.5 in the texture's own alpha got 0
+FAIL  C16    no panel, no frame and no glow: the sky 3-5 px from the ink is  >= -3.0 (target 5.3)   got -4.9
+                our own raster's alpha halo: 0 | leaf9-span halo 16.5 bgGradient 3 bg 159.7 | leaf9-share halo -4.8 bgGradient -3.4 bg 134.6 | leaf9-working halo 1.9 bgGradient 5.7 bg 176.7 | leaf9-mark halo -0.4 bgGradient -2.2 bg 183.9 | leaf9-span halo 16.4 bgGradient 3.3 bg 159.9 | leaf9-share halo -4.9 bgGradient -3.3 bg 134.7 | leaf9-working halo 2 bgGradient 5.6 bg 176.6 | leaf9-mark halo -0.4 bgGradient -2.2 bg 183.9 | leaf9-span halo 16.4 bgGradient 3.1 bg 159.8 | leaf9-share halo -4.8 bgGradient -3.3 bg 134.6 | leaf9-working halo 1.9 bgGradient 5.7 bg 176.7 | leaf9-mark halo -0.4 bgGradient -2.2 bg 183.9 | leaf9-span halo 4.9 bgGradient 6.1 bg 171.4 | leaf9-share halo 0.1 bgGradient -4.5 bg 127.7 | leaf9-working halo 0 bgGradient 1.4 bg 178.6 | leaf9-mark halo -1.1 bgGradient -2.1 bg 182.3 | leaf9-span halo 4.9 bgGradient 6.1 bg 171.4 | leaf9-share halo 0.1 bgGradient -4.5 bg 127.6 | leaf9-working halo 0 bgGradient 1.4 bg 178.6 | leaf9-mark halo -1.1 bgGradient -2.1 bg 182.3 | leaf9-span halo 4.8 bgGradient 6.2 bg 171.4 | leaf9-share halo 0.3 bgGradient -4.5 bg 127.6 | leaf9-working halo -0.3 bgGradient 1.5 bg 178.8 | leaf9-mark halo -1.1 bgGradient -2.1 bg 182.3
+PASS  C17    glyph edges are hard: the partial-coverage band is about one p  <= 2.0 px (target 0.65) got 1.28
+PASS  C18    still hard-edged at 3840x2160 (no upscaled texture)             <= 2.0 px              got 1.03
+PASS  C19    the ink stands out at least as well as it does in the target    >= 1.72 (target 1.91)  got 1.82
+────────────────────────────────────────────────────────────────────────────────────────────────
+51/52 claims passed

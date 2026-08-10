@@ -1,0 +1,90 @@
+(node:52032) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+P09 — Leaf Nine · 1280x720 · tier high
+
+id  verdict  claim
+------------------------------------------------------------------------------------------------
+S1  PASS     terrain is non-indexed with one normal per face
+      indexed                           false
+      flatNormalFraction                1
+      threshold                         "indexed=false, flatNormalFraction=1.0"
+S2  PASS     facets are big enough to count at gameplay distance
+      medianEdgeMetres                  7.26
+      p10EdgeMetres                     4.75
+      threshold                         ">= 4.0 m median triangle edge"
+S3  PASS     the collider is the render geometry
+      vertexOrdinatesCompared           84987
+      structuralMismatches              0
+      worstDeltaMetres                  0
+      threshold                         "the baked p09:leaf-nine soup equals terrain.topGeometry ordinate for ordinate, worst delta < 0.02 m"
+S4  PASS     there is no ground under the leaf, and the ravine is a hole
+      ravinePointsTested                400
+      ravinePointsSolid                 0
+      voidPointsProbedFrom400m          895
+      voidPointsThatFoundAFloor         0
+      floorSample                       []
+      threshold                         "0 solid samples on the ravine centreline, 0 colliders found under any hole"
+C1  FAIL     the Bollard and the Second Lip never share a frame
+      reachableStandsSwept              2283
+      framingsHoldingBoth               3
+      framingsHoldingBothIncludingUnreachableCliffFaces23
+      halfDiagonalFovDeg                51
+      worstCase                         [{"eye":[-136,103,234],"sepDeg":90,"slopeDeg":28},{"eye":[-136,105,234],"sepDeg":90,"slopeDeg":28},{"eye":[-136,109,234],"sepDeg":90,"slopeDeg":28}]
+      threshold                         "0 framings, over every reachable stand at eye heights 1.7/4/8 m"
+C2  PASS     they are the two ends of one body about 600 m long
+      separationMetres                  568
+      threshold                         "500–700 m"
+C3  FAIL     the ravine cannot be walked or jumped
+      narrowestGapMetres                2
+      narrowestAtWorldX                 -141
+      subTwoMetreCracksIgnored          1
+      widestSuchCrackMetres             0.5
+      measuredSpanGapMetres             58
+      threshold                         ">= 16 m at its narrowest (locomotion's best jump is far under this)"
+K1  PASS     five landmarks, five distance bands, all legible at thumbnail size
+      landmarks                         [{"id":"spires","distance":41,"subtendDeg":70.73},{"id":"standingHouse","distance":151,"subtendDeg":7.95},{"id":"knuckle","distance":293,"subtendDeg":7.82},{"id":"secondLip","distance":491,"subtendDeg":2.92},{"id":"certaintyField","distance":481,"subtendDeg":14.21},{"id":"vantis","distance":10800,"subtendDeg":18.92}]
+      legibleCount                      6
+      distinctDistanceBands             4
+      threshold                         ">= 5 landmarks subtending >= 0.6°, in >= 4 half-decade distance bands"
+K2  FAIL     no dead space on the walkable surface
+      walkableSamples                   2321
+      samplesFurtherThan90mFromAnything 558
+      worstDistanceToAnything           160
+      threshold                         "every walkable sample within 90 m of a published anchor"
+K3  PASS     real verticality across the walkable surface
+      walkableHeightRangeMetres         131.7
+      fractionOfSurfaceBetween8And40Deg 0.499
+      slopeBins                         [1082,669,490,80]
+      threshold                         ">= 70 m of height, >= 25% of the surface between 8° and 40°"
+K4  PASS     the horizon poses a question: a massif on the forward bearing, 90 m over brow height
+      measuredOffHeightfield            {"summitY":149.4,"browY":58.4,"aboveBrow":91.1,"distanceFromCamera":484,"elevationDeg":10.57,"bearingOffAxisDeg":14.3,"screen":[484,175],"occluded":false}
+      threshold                         ">= 90 m above the brow, subtending 8-12 deg of screen height above the arrival camera's horizon, within 30 deg of the forward bearing, and not occluded"
+K5  FAIL     the hero carry walks the eye from the foreground to the horizon
+      measuredOnArrivalFrame            {"geometrySamplesVisible":278,"samplesInsideNearBand":121,"samplesPaintedCarryCyan":28,"paintedFractionInsideNearBand":0.231,"topRow":398,"bottomRow":558,"horizonRow":293.8,"rowsBelowHorizon":104.2,"allowedRowsBelowHorizon":108,"worstVerticalGapRows":4,"unpaintedPixelMedianHue":30.39,"unpaintedPixelMedianSat":0.31,"frameHeight":720}
+      threshold                         "the river's own unoccluded triangles must reach below 2/3 frame height and up to within 15% of frame height of the horizon row, with no vertical gap over 6% of frame height, and >= 60% of the ones inside 250 m must actually read as cyan in the capture"
+K6  PASS     no carry is buried in its own channel
+      minRibbonClearanceOverGroundMetres0.45
+      threshold                         ">= 0.2 m, measured at every ribbon cross-section against the ground the terrain built"
+P1  FAIL     near lit rock matches the reference's lit rock
+      measured                          {"n":4840,"Y":0.035,"hue":80,"sat":0.312,"v":0.208}
+      reference                         {"hex":"#B8834D","Y":0.27,"h":30}
+      threshold                         "|ΔY| <= 0.09 and |Δhue| <= 14° against #B8834D"
+P2  FAIL     near shadowed rock is the reference's blue shadow, not a dark orange
+      measured                          null
+      reference                         {"hex":"#1B2B32","Y":0.022,"h":198}
+      threshold                         "|ΔY| <= 0.05 and |Δhue| <= 25° against #1B2B32 (hue 198)"
+P3  FAIL     the lit:shadow luminance ratio sits in the reference's band
+      measuredRatio                     0
+      referenceRatio                    [4.15,5.47]
+      threshold                         "3.2–9.0 (the reference measures 4.15 and 5.47 on two different rocks)"
+P4  PASS     the frame is inside the performance budget
+      drawCalls                         138
+      triangles                         147170
+      programs                          20
+      threshold                         "<= 320 draws, <= 1.6M triangles, <= 90 programs"
+------------------------------------------------------------------------------------------------
+frame census (whole frame, includes other pieces' pixels): {"measured":{"cyanPct":12.82,"darkPct":37.15,"meanY":0.215},"reference":{"cyanPct":9.54,"meanY":0.273}}
+world: {"terrain":{"id":"leaf-nine","cell":6,"grid":[78,116],"bounds":{"x0":-232,"x1":232,"z0":-352,"z1":338},"surfaceTriangles":9443,"lipEdges":405,"indexed":false,"flatNormalFraction":1,"underTriangles":10253},"landmarks":{"spires":16,"boulders":62,"certaintyClusters":90,"vantisTowers":98,"nearLeaves":8,"horizonLeaves":7},"triangles":{"rock":1922,"carries":956,"built":676,"certainties":5200,"archipelago":962,"backdrop":1508},"backdrop":{"compression":10.18,"nearScale":1},"downLeaf":[0,0,-1]}
+
+10/17 claims pass

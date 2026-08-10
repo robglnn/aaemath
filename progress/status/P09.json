@@ -1,9 +1,9 @@
 {
   "id": "P09",
-  "state": "critique",
-  "round": 1,
-  "gap": "Spawn frame has no subject: the teal carry/river that Level01.js's own comment calls 'what walks the eye from foreground to horizon' is invisible in all 360 views, the horizon is a flat ridgeline with no dominant landmark, and large spires render as single-plane cutouts (one uniform value over a 420x420px crop) while using only 11% of the triangle budget (172,694/1.6M, 63/320 draws). review/measure/P09.mjs crashes with ReferenceError: belowHits at line 290, so S1-P4 are all unproven.",
-  "note": "Harness fixed and re-run (it was dying on an undeclared belowHits, so all 14 claims were unproven). 10/17 pass. New: K4 massif (Cutwater, 91 m over brow, 10.6 deg above the arrival camera's horizon), K5 carry-in-frame, K6 no-buried-carry. Residual: K5 paint sub-test, C1 (3 stands), C3, K2, and P1-P3 which are moving under P11's live material work.",
+  "state": "building",
+  "round": 2,
+  "gap": "Turned-face shading is inclination-blind: Materials.js:412 smoothstep(-0.035,0.14,NdL) saturates at 1.0 for the whole back hemisphere, so all four SHOULDERS bands collapse to one constant. Left spire measures 1 value band / lumSpread 0.000 over 240x400px vs the reference's 7 bands / 0.531 on the same crop. Subject test: 0 connected accent-cyan components span lower third to horizon, in both arrival and run frames.",
+  "note": "Round 2: grading shadow by N.L across back hemisphere, raising rim elevation, re-authoring shoulder rings with monotonic elevation assertion, re-routing hero carry diagonally with real cross-section",
   "evidence": [],
-  "updated": "2026-08-10T14:00:15.405Z"
+  "updated": "2026-08-10T14:13:27.571Z"
 }

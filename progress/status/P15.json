@@ -1,9 +1,9 @@
 {
   "id": "P15",
   "state": "building",
-  "round": 1,
-  "gap": "A valid-but-oversized expression is never bounded: TexPanel.rasterize sets canvas.width from ink width with no clamp, so a 20000-char claim built a 941284x44 texture (MAX_TEXTURE_EDGE=4096 is only applied to the font bucket, never to the canvas) - exceeds every GPU max texture size; review/measure/P15.mjs only feeds parse-failures and never a hostile-but-valid input",
-  "note": "Clamping raster in both axes with documented overflow policy; adding hostile-input claims to P15 measure suite",
+  "round": 2,
+  "gap": "Spawn frame shows a FALSE equation: 26.9% of leaf9-share's ink (the whole \\frac{1}{2} denominator + 2/3 of the bar) is eaten by the avatar and the rock spire, in en/es/pl at 900p and 4K. Raster bound is genuinely fixed (20k chars -> 45x44 canvas) but the working/em/panel-count halves of math:show have no gate at all.",
+  "note": "Moving claim anchors off the avatar/spire into open sky, adding occludedPct gate, clamping xTicks/yTicks/em/panel-count, gating a11y register on panel.ok",
   "evidence": [],
-  "updated": "2026-08-10T13:06:51.358Z"
+  "updated": "2026-08-10T14:20:19.571Z"
 }

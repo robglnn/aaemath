@@ -569,6 +569,273 @@ export function claimTex(c) {
   return `${near} ${rel} ${loadTex(c.far ?? [])}`;
 }
 
+// ---------------------------------------------------------------------------- chains: the joins, still open
+//
+// ROUND 2's CRITIC, ON THE WHOLE PIECE: "SPAN is a magnitude dial: you hold a button until a counter
+// reaches the number you already worked out in your head, so the algebra stays in your head and your
+// hands only transcribe it."
+//
+// `parseClaim` above cannot help with that, and it says so at line 300: a chain with two independent
+// numbers in it is REFUSED, because folding `8 + 5 \cdot 4` to `8 + 20` would be the reader
+// performing `oo-numeric` in front of the learner. That was the right call and the wrong conclusion.
+// The claim does not have to be settled to be held — it has to be held with its **joins still open**,
+// so that closing one is the player's act and choosing WHICH one is the mathematics.
+//
+// The bank already speaks this way. `hint.move.oo-numeric.divmul` is "Neither join is privileged.
+// Take them in the order they stand", `hint.move.oo-numeric.addmul` is "The bundle of 5 and 4 settles
+// before the join outside it", and `\design/world.md` §2.1 rule 8 is "outward-in, top first". A chain
+// is that reading: the parts standing in a row, and the joins between them, unclosed.
+
+const JOIN_TEX = { "+": "+", "-": "-", "*": "\\cdot", "/": "\\div" };
+
+/** One thing standing in a chain: `8`, `5x`, `\frac{2}{3}`, `\frac{x}{2}`. No brackets, no powers. */
+function readAtom(toks, start) {
+  let pos = start;
+  let coef = null;
+  let name = null;
+  for (;;) {
+    const k = toks[pos];
+    if (!k) break;
+    if (k.t === "num") {
+      if (coef != null || name != null) break;
+      coef = rat(k.v);
+      pos += 1;
+      continue;
+    }
+    if (k.t === "frac") {
+      if (coef != null) break;
+      const isNum = toks[pos + 1]?.t === "{" && toks[pos + 2]?.t === "num" && toks[pos + 3]?.t === "}";
+      const isName = toks[pos + 1]?.t === "{" && toks[pos + 2]?.t === "name" && toks[pos + 3]?.t === "}";
+      if ((!isNum && !isName) || toks[pos + 4]?.t !== "{" || toks[pos + 5]?.t !== "num" || toks[pos + 6]?.t !== "}") return null;
+      const den = toks[pos + 5].v;
+      if (isName) {
+        if (name) return null;
+        name = toks[pos + 2].v;
+        coef = rat(1, den);
+      } else {
+        coef = rat(toks[pos + 2].v, den);
+      }
+      if (!coef) return null;
+      pos += 7;
+      continue;
+    }
+    if (k.t === "name") {
+      if (name != null) break;
+      name = k.v;
+      pos += 1;
+      // A power is not one thing standing in a row; it is a build. SPAN still poses it.
+      if (toks[pos]?.t === "^") return null;
+      continue;
+    }
+    break;
+  }
+  if (coef == null && name == null) return null;
+  return { t: term(coef ?? R.one, name), pos };
+}
+
+/**
+ * A load with every join still open: `{ parts, ops }`, one more part than there are joins.
+ *
+ * Returns null for anything that is not a flat row — a bracket, a power, a relation. Those are other
+ * verbs' shapes and a chain that quietly flattened one would be a chain telling a lie about it.
+ */
+export function parseChain(tex) {
+  const toks = lex(tex);
+  if (!toks || !toks.length) return null;
+  let pos = 0;
+  let sign = 1;
+  if (toks[0].t === "-") {
+    sign = -1;
+    pos = 1;
+  } else if (toks[0].t === "+") pos = 1;
+  const first = readAtom(toks, pos);
+  if (!first) return null;
+  const parts = [term(R.mul(rat(sign), first.t.c), first.t.v)];
+  const ops = [];
+  pos = first.pos;
+  while (pos < toks.length) {
+    const k = toks[pos];
+    const op = k.t === "+" || k.t === "-" || k.t === "*" || k.t === "/" ? k.t : null;
+    if (!op) return null;
+    const next = readAtom(toks, pos + 1);
+    if (!next) return null;
+    parts.push(next.t);
+    ops.push(op);
+    pos = next.pos;
+  }
+  if (!ops.length) return null;
+  return { parts, ops };
+}
+
+export const cloneChain = (c) => ({ parts: c.parts.map((t) => term(t.c, t.v)), ops: c.ops.slice() });
+
+/**
+ * Will this join close?
+ *
+ * §2.1 rule 9 is the only rule the world enforces by refusing your hands: "A length and a weight will
+ * not stand together, and the socket does not argue about it; it simply will not take them." So a
+ * `+` between unlike kinds refuses, and so does a `\cdot` between two names — that is not a load this
+ * layer reads, and pretending otherwise would put a quadratic in a player's hands.
+ */
+export function joinTakes(a, op, b) {
+  if (!a || !b) return false;
+  if (op === "+" || op === "-") return (a.v ?? null) === (b.v ?? null);
+  if (op === "*") return a.v == null || b.v == null;
+  if (op === "/") return b.v == null && !R.isZero(b.c);
+  return false;
+}
+
+/** Close one join. The two parts it held become one part, and the row gets shorter. */
+export function closeJoin(chain, i) {
+  const a = chain.parts[i];
+  const b = chain.parts[i + 1];
+  const op = chain.ops[i];
+  if (!joinTakes(a, op, b)) return false;
+  let out;
+  if (op === "+") out = term(R.add(a.c, b.c), a.v ?? b.v);
+  else if (op === "-") out = term(R.sub(a.c, b.c), a.v ?? b.v);
+  else if (op === "*") out = term(R.mul(a.c, b.c), a.v ?? b.v);
+  else out = term(R.div(a.c, b.c), a.v);
+  if (!out.c) return false;
+  chain.parts.splice(i, 2, out);
+  chain.ops.splice(i, 1);
+  return true;
+}
+
+/** True when nothing but `+` and `-` is left holding the row, so it can be read as one load. */
+export const chainIsLoad = (chain) => chain.ops.every((o) => o === "+" || o === "-");
+
+/** The chain as a load, `-` folded into the sign of what follows it. Only legal when `chainIsLoad`. */
+export function chainLoad(chain) {
+  const out = [term(chain.parts[0].c, chain.parts[0].v)];
+  for (let i = 0; i < chain.ops.length; i += 1) {
+    const t = chain.parts[i + 1];
+    out.push(chain.ops[i] === "-" ? term(R.neg(t.c), t.v) : term(t.c, t.v));
+  }
+  return out;
+}
+
+const bareTex = (t) => (t.v == null ? R.tex(t.c) : termTex(term(t.c, t.v), true));
+
+/**
+ * A join and the part hanging off it.
+ *
+ * A negative part on a `+` join is drawn the way anybody writes it — `5x - 6`, not
+ * `5x + \left(-6\right)` — because the join and the sign are the same mark and always have been.
+ * On any other join they are not, and `9 - -2` is two marks the eye reads as one, so those keep
+ * their brackets.
+ */
+function joinPartTex(op, t) {
+  const neg = t.c.n < 0;
+  if (op === "+" && neg) return { sym: "-", body: bareTex(term(R.abs(t.c), t.v)) };
+  const sym = JOIN_TEX[op] ?? "+";
+  return { sym, body: neg ? `\\left(${bareTex(t)}\\right)` : bareTex(t) };
+}
+
+/**
+ * The row, drawn with the joins in it and the hand on one of them.
+ *
+ * `gap` is how far the push has closed the held join: the two parts it holds physically approach
+ * each other, and the space between them is the only thing on screen that says what the hands are
+ * doing. Nothing here says whether closing it is a good idea.
+ */
+export function chainTex(chain, held = -1, gap = 1) {
+  let out = bareTex(chain.parts[0]);
+  for (let i = 0; i < chain.ops.length; i += 1) {
+    const { sym, body } = joinPartTex(chain.ops[i], chain.parts[i + 1]);
+    if (i === held) {
+      const s = `\\rule{${Math.max(0.02, gap * 0.55).toFixed(2)}em}{0em}`;
+      out += `${s}\\rule{0.3em}{0.3em}${sym}${s}${body}`;
+    } else {
+      out += `\\;${sym}\\;${body}`;
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------- systems: more than one Sill
+//
+// `x + y = 14,\quad x - y = 0` is 40% of everything a new player is served and NO verb read it, because
+// `lex` refuses a bare comma and `parseClaim` refuses two names. The critic's measurement of round 2
+// is that this one shape is why BALANCE — "the one verb where the hands genuinely perform the algebra"
+// — never posed at all.
+//
+// A comma between two claims is not notation this layer has to understand; it is the gap between two
+// Sills standing side by side. Split there, and each piece is a claim `parseClaim` already reads.
+
+/** Two or more claims standing together, or null if any piece is not a claim. */
+export function parseSystem(tex) {
+  const pieces = String(tex ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (pieces.length < 2) return null;
+  const claims = [];
+  for (const p of pieces) {
+    const c = parseClaim(p);
+    if (!c || !c.far || c.rel !== "=") return null;
+    claims.push(c);
+  }
+  return claims;
+}
+
+/** Every kind standing anywhere in a claim, bundles opened. */
+export function namesOf(c) {
+  const out = new Set();
+  const walk = (load) => {
+    for (const t of load ?? []) {
+      if (isBundle(t)) for (const w of t.inner) {
+        if (w.v) out.add(w.v);
+      }
+      else if (t.v) out.add(t.v);
+    }
+  };
+  walk(c.near);
+  walk(c.far);
+  return out;
+}
+
+/**
+ * The name this claim has been reduced to, or null.
+ *
+ * Looser than `isolated` on purpose: `x = y` IS solved for `x` even though the far pan is not a
+ * number, and that is precisely the state SEAT needs — a core that has been reduced to "wherever the
+ * other one is sitting" is the thing you pick up and set into the other socket.
+ */
+export function solvedFor(c) {
+  if (!c.far) return null;
+  const n = settle(c.near);
+  if (n.length !== 1 || n[0].v == null || !R.eq(n[0].c, R.one)) return null;
+  const name = n[0].v;
+  if (settle(c.far).some((t) => t.v === name)) return null;
+  return name;
+}
+
+/**
+ * Seat one claim into another: every socket cut for `name` takes what the other claim says goes in it.
+ *
+ * `hint.move.var-meaning.twin`, shipped since P17 and never once performable: "The second core has to
+ * sit exactly where the first one does." This is that sentence as a pair of hands.
+ */
+export function substitute(c, name, load) {
+  const rows = settle(load);
+  const sub = (terms) => {
+    const out = [];
+    for (const t of terms ?? []) {
+      if (isBundle(t) || t.v !== name) {
+        out.push(t);
+        continue;
+      }
+      for (const w of rows) out.push(term(R.mul(t.c, w.c), w.v));
+    }
+    return out;
+  };
+  const before = `${loadTex(c.near)}|${loadTex(c.far ?? [])}`;
+  c.near = sub(c.near);
+  if (c.far) c.far = sub(c.far);
+  return `${loadTex(c.near)}|${loadTex(c.far ?? [])}` !== before;
+}
+
 /** Are there still two terms of one kind standing apart on either pan? */
 export function ungathered(c) {
   const check = (load) => {

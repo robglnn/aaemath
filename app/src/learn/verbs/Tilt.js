@@ -232,6 +232,9 @@ class TiltAct {
    * closed to a point.
    */
   read(marked) {
+    // A DECLARED distractor is authored knowledge about this exact item and goes first; see
+    // `Balance.js`'s `read` for the round-2 measurement (20 failures, 20 nulls) that reordered this.
+    if (marked?.misconception && marked?.failKey) return { key: marked.failKey, params: {} };
     if (this.railTurns > this.markTurns) return { key: "fail.mark.unturned", params: {} };
     if (this.claim.rel === "=") return { key: "fail.mark.level", params: {} };
     if (marked?.failKey) return { key: marked.failKey, params: {} };

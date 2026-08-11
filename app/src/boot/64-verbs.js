@@ -44,6 +44,12 @@ import { validate, getLocale } from "../math/Tex.js";
  *      `learn:respond` and `learn:mastery`, and emit `math:show` and `math:hide`. Every one of those
  *      already has both ends, so `node tools/seams.mjs --signals` reports the same orphan counts
  *      after this piece as before it. That is a requirement of the brief and it is checked.
+ *   6. THE FEET AND THE FIELD ARE REACHED BY NAME. `play/Locomotion.js` and `math/TexPanel.js`'s
+ *      `TexField` are two other pieces' files and nothing under `learn/verbs/` imports either. They
+ *      are read here as `kernel.get("locomotion")` and `kernel.get("mathtex")`, which is the access
+ *      `boot/20-input.js`'s header names as the sanctioned alternative to a signal — "consumers do
+ *      not import this module; they either listen to the signals or read the mounted system by
+ *      name". What crosses the boundary is two verbs and two facts, documented at each call site.
  */
 export default {
   id: "verbs",
@@ -80,6 +86,76 @@ export default {
       return teaching;
     };
 
+    /**
+     * PLANT THE FEET WHILE THE HANDS ARE ON A CLAIM.
+     *
+     * The round-2 critic, holding W through a verb: "within about a second and a half every single
+     * thing I have just described was off the screen... I kept holding W, the counter kept climbing,
+     * and I was performing algebra into an empty orange sky." Their first demanded action offers two
+     * fixes and this is the one that removes the failure rather than compensating for it — the left
+     * stick means one thing at a time, and taking a claim on is a stance.
+     *
+     * `moveX` / `moveY` are `Locomotion`'s declared intent, the two fields its own `--- intent` block
+     * names, written by `_onMove` from `input:move` and read by its solver on the next fixed step.
+     * Zeroing them is the same statement `input:move {x:0, y:0}` makes and it is made in the one place
+     * this project allows two pieces to know about each other. Nothing else about the body is touched:
+     * you can still look, still jump, still be pushed by the world. You cannot walk away from a claim
+     * you are holding, which is the point.
+     *
+     * `externalInput` is deliberately left alone — it is the flag that keeps `Locomotion`'s standalone
+     * keyboard fallback out of the way, and clearing it would hand the body back to a code path that
+     * exists for reviewing that piece alone.
+     */
+    let planted = false;
+    const plant = (on) => {
+      const body = kernel.get("locomotion");
+      if (!body) return;
+      if (on) {
+        body.moveX = 0;
+        body.moveY = 0;
+      }
+      planted = !!on;
+    };
+
+    /**
+     * MOVE THE PRESENTER'S COLUMN WITH THE HANDS' ONE.
+     *
+     * The critic's first action asks for BOTH columns to stay in frame, and the question, the given
+     * and the entry slot are `learn/Teaching.js`'s rows: this piece may not lay them out and does not
+     * try to. It reads where they ACTUALLY are — `TexField` is the only thing that knows, because a
+     * row placed from a view anchor gets its world position a quarter of a second after the payload —
+     * expresses each one in the frame the player was standing in when it was stood, and stands it
+     * again at the same place in the frame they are standing in now. The layout is untouched; the
+     * whole column is carried, rigidly, exactly as the verb's own column is.
+     *
+     * `math:hide` before `math:show` because `TexField.add()` ignores `position` for an id it already
+     * holds — the fact that made round 2's restand a no-op in both columns. See `learn/verbs/Verbs.js`.
+     */
+    const rebase = (from, to) => {
+      const field = kernel.get("mathtex");
+      if (!field?.panels || !from || !to) return 0;
+      let moved = 0;
+      for (const [id, panel] of field.panels) {
+        if (!id.startsWith("teach-")) continue;
+        const w = panel.mesh?.position;
+        if (!w) continue;
+        const dx = w.x - from.o[0];
+        const dz = w.z - from.o[2];
+        const fwd = dx * from.f[0] + dz * from.f[1];
+        const lat = dx * from.r[0] + dz * from.r[1];
+        const at = [
+          to.o[0] + to.f[0] * fwd + to.r[0] * lat,
+          to.o[1] + (w.y - from.o[1]),
+          to.o[2] + to.f[1] * fwd + to.r[1] * lat,
+        ];
+        const spec = { id, tex: panel.tex, kpId: panel.kpId ?? null, em: panel.em, billboard: panel.billboard ?? "yaw", display: panel.displayMode !== false, at };
+        signals.emit("math:hide", { id });
+        signals.emit("math:show", spec);
+        moved += 1;
+      }
+      return moved;
+    };
+
     const runtime = new VerbRuntime({
       emit: (name, value) => signals.emit(name, value),
       on: (name, fn) => signals.on(name, fn),
@@ -87,6 +163,8 @@ export default {
       teaching: getTeaching,
       bank: itemBank,
       validateTex: (tex) => validate(tex, { locale: getLocale(), displayMode: true }).ok,
+      plant,
+      rebase,
     }).attach();
 
     kernel.mount("verbs", runtime);
@@ -103,6 +181,22 @@ export default {
         presenter: getTeaching() ? { open: getTeaching().open === true, phase: getTeaching().phase } : null,
         hand: { ...p.hand, column: { right: HAND.right, forward: HAND.forward, em: HAND.em } },
         registry: VERBS.map((v) => v.id),
+        /**
+         * The stance, read back off the body rather than off this module's own belief about it. A
+         * `planted: true` beside a body that is still moving is the failure mode the whole fix has,
+         * and it is a number a reviewer can check rather than a claim they have to take.
+         */
+        stance: {
+          planted,
+          intent: (() => {
+            const b = kernel.get("locomotion");
+            return b ? { x: Math.round((b.moveX ?? 0) * 100) / 100, y: Math.round((b.moveY ?? 0) * 100) / 100 } : null;
+          })(),
+          speed: (() => {
+            const s = kernel.get("locomotion")?.snapshot?.();
+            return Number.isFinite(s?.speed) ? Math.round(s.speed * 100) / 100 : null;
+          })(),
+        },
       };
     });
 

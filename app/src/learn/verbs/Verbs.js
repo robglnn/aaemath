@@ -123,6 +123,35 @@ export const HAND = {
   presenterForward: 14,
   /** Sim seconds a read stands after the claim falls. Shorter than Teaching's own feedback window. */
   readSeconds: 1.5,
+
+  /**
+   * WHERE THE CLAIM IS ALLOWED TO BE BEFORE THE WORLD PUTS IT BACK IN FRONT OF YOU.
+   *
+   * Round 2's off-screen failure, measured by the critic at 1280x720: after 1.6 s of `KeyW` the
+   * presenter's five rows projected to y = −4727 … −1900 and both verb rows were behind the camera.
+   * "Two of my three mid-performance screenshots contain no mathematics at all."
+   *
+   * There were two separate bugs under that one sentence and the second is the one that matters:
+   *
+   *   1. The body walked while the hands worked, because the left stick is both axes. Fixed by the
+   *      stance — see `VerbRuntime.fixed`.
+   *   2. **A column that had drifted could not be moved.** `math/TexPanel.js`'s `TexField.add()`
+   *      calls `setTex` and `setLocale` on an id it already holds and NEVER reads `position`, so
+   *      round 2's one-shot restand — which re-emitted `math:show` with a fresh `at` — did precisely
+   *      nothing, in either column. It was not that the restand fired too rarely. It never moved a
+   *      single panel in its life. Moving a claim means `math:hide` and then `math:show`, and that is
+   *      what `_restand` now does.
+   *
+   * The box below is checked EVERY step while a claim is held, in the camera's own frame: how far
+   * ahead the column is, and how far off the axis it has got as a fraction of that. The limits sit
+   * inside the frustum with room to spare, so a column is put back before it clips rather than after.
+   */
+  keepAhead: 3.2,
+  keepBehind: 26,
+  keepLateral: 0.5,
+  keepVertical: 0.32,
+  /** Sim seconds between restands, so a player spinning on the spot is not a raster storm. */
+  restandEvery: 0.35,
 };
 
 const PREFIX = "verb-";
@@ -182,10 +211,25 @@ export class VerbRuntime {
     this.getTeaching = opts.teaching ?? (() => null);
     this.bank = opts.bank ?? null;
     this.validateTex = opts.validateTex ?? null;
+    /**
+     * PLANT THE FEET. Injected, because the body is `play/Locomotion.js`'s and this is not that piece
+     * — `boot/64-verbs.js` is where the two are allowed to meet, and its header carries the argument.
+     * Called with `true` on every step a claim is held and `false` the step it is set down.
+     */
+    this.plantBody = opts.plant ?? (() => {});
+    /**
+     * MOVE THE PRESENTER'S COLUMN. Also injected: the question, the given and the entry slot are
+     * `learn/Teaching.js`'s rows and this piece does not own their layout. What it hands over is a
+     * change of basis — where the player was when the claim was stood, where they are now — and the
+     * boot module re-stands whatever is actually in the field at the same place in the new frame.
+     */
+    this.rebase = opts.rebase ?? (() => 0);
 
     this.simTime = 0;
     this.act = null;
     this.ctx = null;
+    /** The last `learn:present` payload, so a claim you put down can be picked back up. */
+    this.present = null;
     this.anchor = null;
     this.standing = new Map();
     this.hand = { move: { x: 0, y: 0 }, held: new Set(), work: 0 };
@@ -207,8 +251,15 @@ export class VerbRuntime {
     this.trigger = { push: 0, pull: 0, since: 0 };
     this.stepCharge = 0;
     this.readUntil = 0;
-    /** How many times a column had to re-stand because the player walked past it. */
+    /** How many times a column had to re-stand because the player looked away from it. */
     this.restands = 0;
+    this.restandAt = -9;
+    /** Sim steps the body was held still because the hands were on a claim. */
+    this.planted = 0;
+    /** Claims picked up and put down again without an answer. Never a stuck player. */
+    this.letGos = 0;
+    /** What the entry slot last had synced into it, so an unchanged build costs no raster. */
+    this.entrySynced = null;
     this.lastResponse = null;
     this.phase = "idle";
 
@@ -220,6 +271,10 @@ export class VerbRuntime {
       unposedByType: {},
       committed: 0,
       correct: 0,
+      /** Distinct verb ids this session has actually posed. One is the round-2 failure state. */
+      distinctVerbs: 0,
+      /** Characters the presenter's own keyboard handler put in the slot while a claim was held. */
+      strayChars: 0,
       /** Responses whose family reached `Mastery` — the number P34's delivery defect shows up in. */
       familyOnWire: 0,
       /** Characters `ItemBank.ENTRY_GRAMMAR` refused. Must stay 0: a mangled response is a lie. */
@@ -249,6 +304,7 @@ export class VerbRuntime {
       this.on("learn:present", (e) => {
         if (!e) return;
         this.stats.presented += 1;
+        this.present = e;
         this._pose(e);
       })
     );
@@ -257,6 +313,16 @@ export class VerbRuntime {
       this.on("input:move", (e) => {
         this.hand.move.x = Number.isFinite(e?.x) ? e.x : 0;
         this.hand.move.y = Number.isFinite(e?.y) ? e.y : 0;
+        /**
+         * The stance, taken on the edge rather than a step later.
+         *
+         * `play/Input.js` emits `input:move` only when the vector CHANGES, and `play/Locomotion.js`
+         * registered its listener first (order 30 against this piece's 64), so the body has already
+         * taken the new intent by the time this runs. Planting here means the step the stick moves is
+         * the step the body does not — see `fixed` for the standing guard that covers the other case,
+         * a claim posed while the stick is already held over.
+         */
+        if (this.phase === "performing") this.plantBody(true);
       })
     );
 
@@ -265,7 +331,10 @@ export class VerbRuntime {
      * keyboard in `play/bindings.js`'s default tables, which is what makes these verbs playable on a
      * controller: `interact` is Pad:X, `primary` is Pad:RT, `secondary` is Pad:LT, and
      * `cyclePrev`/`cycleNext` are Pad:LB/Pad:RB. The continuous axis is the left stick, arriving as
-     * `input:move`, so the deck is walked out with the same thumb that walks the player.
+     * `input:move`, so the deck is walked out with the same thumb that walks the player — and while
+     * a claim is in your hands that thumb ONLY does that, because the feet are planted. Round 2 wired
+     * the stick to both at once and the critic measured the consequence: "I kept holding W, the
+     * counter kept climbing, and I was performing algebra into an empty orange sky."
      */
     this._offs.push(
       this.on("input:action", (e) => {
@@ -276,11 +345,12 @@ export class VerbRuntime {
         if (e.action === "primary") this.trigger.push = down ? Math.max(0.35, Number(e.value) || 1) : 0;
         if (e.action === "secondary") this.trigger.pull = down ? Math.max(0.35, Number(e.value) || 1) : 0;
         if (down && (e.action === "primary" || e.action === "secondary")) this.trigger.since = this.simTime;
+        if (e.action === "interact" && down) {
+          this._interact();
+          return;
+        }
         if (!this.act) return;
         switch (e.action) {
-          case "interact":
-            if (down) this._setDown();
-            break;
           case "primary":
             // Tap: the act appropriate to what is under your hand. Hold: the same work the body
             // does by leaning into it, without taking a step. See `_work`.
@@ -344,6 +414,9 @@ export class VerbRuntime {
     for (const off of this._offs) off?.();
     this._offs.length = 0;
     this._retire();
+    // A torn-down runtime that left the feet planted would be a piece that removed the player's
+    // ability to walk on its way out.
+    this.plantBody(false);
   }
 
   // ------------------------------------------------------------------------ posing
@@ -398,6 +471,8 @@ export class VerbRuntime {
     this.startedAt = this.simTime;
     this.stats.posed += 1;
     this.stats.byVerb[act.id] = (this.stats.byVerb[act.id] ?? 0) + 1;
+    this.stats.distinctVerbs = Object.keys(this.stats.byVerb).length;
+    this.entrySynced = null;
     // NOT rendered here. `Teaching._present()` emits `learn:present` and only THEN stands its own
     // rows, so a column measured inside this handler is measured against the claim before this one.
     // The first `fixed()` is the earliest moment the presenter can honestly be asked how tall it is.
@@ -450,29 +525,30 @@ export class VerbRuntime {
   fixed(step, simTime) {
     this.simTime = simTime ?? this.simTime + step;
     if (this.phase === "read" && this.simTime >= this.readUntil) this._retire();
-    if (!this.act || this.phase !== "performing") return;
+
     /**
-     * THE CLAIM STANDS STILL UNTIL THE PLAYER HAS GENUINELY LEFT IT.
+     * THE STANCE. Your feet are planted for exactly as long as your hands are on the claim.
      *
-     * It does not follow the head — a row re-resolved against a live camera every step is a HUD
-     * wearing world space, and this project's whole art direction is that the mathematics is IN the
-     * world. But a claim you have taken on and then walked eleven metres past is a claim you cannot
-     * read, and the left stick both works a verb and walks a body. So the column re-stands, once, as
-     * a discrete move, when the player is further from it than a person can read at. In ordinary play
-     * this never fires; it fires when someone holds forward for two seconds, which is exactly when
-     * a claim silently left the frame in round 1.
+     * This is the first of the critic's two sanctioned fixes for the off-screen failure — "freeze the
+     * body's translation while a claim is held so the stick is purely the verb axis" — and it is the
+     * one that is also better to play. Taking a claim on is a stance, the way drawing a bow is a
+     * stance: you stop, you work it, you set it down and you walk on. It costs nothing, it removes a
+     * whole class of failure rather than compensating for it, and it makes the left stick mean one
+     * thing at a time instead of two.
+     *
+     * Re-asserted every step and not once on entry, because a claim can be posed while the stick is
+     * already held over and no further `input:move` will ever arrive to notice — and released the
+     * same way, on the step the hands come off, so the read that stands afterwards is walkable.
      */
-    const b = this.basis();
-    if (b && this.anchor) {
-      const dx = b.o[0] - this.anchor.o[0];
-      const dz = b.o[2] - this.anchor.o[2];
-      const behind = dx * this.anchor.f[0] + dz * this.anchor.f[1] > HAND.forward - 2.5;
-      if (behind || Math.hypot(dx, dz) > 11) {
-        this.anchor = b;
-        this.restands += 1;
-        for (const v of this.standing.values()) v.tex = "";
-      }
-    }
+    const holding = this.phase === "performing" && !!this.act;
+    this.plantBody(holding);
+    if (!holding) return;
+    this.planted += 1;
+
+    this._keepInFrame();
+    // The presenter's own keyboard handler admits `w`, `a`, `s` and `d`; while a claim is in your
+    // hands the slot says what your hands built and nothing else. See `_syncEntry`.
+    this._syncEntry();
     // The second grip is a state, not an edge: a verb reads it every step.
     if (!this.hand.held.has("crouch") && this.act.fine) this.act.act("release", this.hand);
     this._slide(step);
@@ -485,7 +561,136 @@ export class VerbRuntime {
     this._render();
   }
 
+  /**
+   * Put the claim back in front of the player when it has genuinely left the frame.
+   *
+   * With the feet planted this is about the HEAD, not the body: a player who turns to look at
+   * something has not abandoned the claim they are holding, and a claim in your hands does not stay
+   * behind you. The test is the camera's own frame — how far ahead the column is and how far off the
+   * axis as a fraction of that — with margins inside the frustum so a column is put back before it
+   * clips rather than after.
+   *
+   * Both columns move together, in one change of basis, so the question and the hands keep exactly
+   * the separation `_top()` measured for them. Round 2's two columns re-based independently and
+   * "diverged in opposite directions"; there is only one transform here and both take it.
+   */
+  _keepInFrame() {
+    const b = this.basis();
+    if (!b || !this.anchor) return false;
+    if (this.simTime - this.restandAt < HAND.restandEvery) return false;
+    const p = this._place({ up: 0, right: 0 });
+    if (!p) return false;
+    const dx = p[0] - b.o[0];
+    const dy = p[1] - b.o[1];
+    const dz = p[2] - b.o[2];
+    const fwd = dx * b.f[0] + dz * b.f[1];
+    const lat = dx * b.r[0] + dz * b.r[1];
+    const inFrame =
+      fwd > HAND.keepAhead &&
+      fwd < HAND.keepBehind &&
+      Math.abs(lat) < fwd * HAND.keepLateral &&
+      Math.abs(dy) < fwd * HAND.keepVertical;
+    if (inFrame) return false;
+
+    const from = this.anchor;
+    this.anchor = b;
+    this.restands += 1;
+    this.restandAt = this.simTime;
+    /**
+     * A MOVE IS A HIDE AND THEN A SHOW, and this line is the whole of round 2's second bug.
+     * `TexField.add()` on an id it already holds calls `setTex` and `setLocale` and never touches
+     * `position`, so re-emitting `math:show` at a new `at` moved nothing at all. Standing the rows
+     * down first is what makes the new position real.
+     */
+    for (const id of [...this.standing.keys()]) {
+      this.emit("math:hide", { id });
+      this.stats.hides += 1;
+    }
+    this.standing.clear();
+    try {
+      this.rebase(from, b);
+    } catch {
+      /* the presenter's column staying put is a worse frame, never a broken one */
+    }
+    this._render(true);
+    return true;
+  }
+
+  /**
+   * The entry slot says what the hands built, and nothing else can write in it.
+   *
+   * `boot/92-teaching.js` feeds every character `ItemBank.ENTRY_GRAMMAR` admits from a raw `keydown`
+   * straight to `Teaching.type()`, and that grammar contains `w`, `a`, `s`, `d` and space. The critic
+   * measured it on the shipped app: "holding W then A then S puts the string `was` in the world-space
+   * answer slot, the presenter renders it as `wad \;\rule{1em}{1pt}` beside the claim, and pressing
+   * Enter commits it — Mastery scored it and theta went to −1.173476."
+   *
+   * That handler is P34's file and this piece does not edit it. It does not have to: while a claim is
+   * in the verb runtime's hands, the runtime OWNS the slot and writes the current build into it every
+   * step it changes. A stray movement key survives at most one sixtieth of a second, Enter commits
+   * what the hands built rather than what the feet typed, and the strays are counted rather than
+   * silently swallowed so a regression shows up as a number.
+   *
+   * It also earns its keep in the other direction: the slot under the question is now a live reading
+   * of the deck, the row or the system you are holding, in the presenter's own column, in the
+   * player's own language of notation.
+   */
+  _syncEntry() {
+    const teaching = this.getTeaching();
+    if (!teaching || teaching.open !== true) return;
+    let want = null;
+    try {
+      want = this.act?.response?.() ?? null;
+    } catch {
+      want = null;
+    }
+    want = typeof want === "string" ? want : "";
+    const have = typeof teaching.response === "string" ? teaching.response : "";
+    if (have === want) {
+      this.entrySynced = want;
+      return;
+    }
+    // Anything in the slot that is not the build is a stray: count the difference honestly rather
+    // than assuming every mismatch is a keystroke.
+    if (this.entrySynced != null && have !== this.entrySynced) this.stats.strayChars += Math.abs(have.length - this.entrySynced.length) || 1;
+    let guard = 0;
+    while (typeof teaching.response === "string" && teaching.response.length && guard < 96) {
+      teaching.erase();
+      guard += 1;
+    }
+    let refused = 0;
+    for (const ch of want) if (teaching.type(ch) !== true) refused += 1;
+    this.stats.refusedChars += refused;
+    this.entrySynced = want;
+  }
+
   // ------------------------------------------------------------------------ setting it down
+
+  /**
+   * `interact` — the one button, and it always resolves.
+   *
+   * Hands empty: pick the claim back up. Hands full and the build is readable: set it down. Hands
+   * full and it is not readable yet — a numeric row with a `\cdot` still open in it is not a quantity
+   * — let go of it, feet free, and the presenter's typed entry is still standing behind the claim.
+   *
+   * The "always" is load-bearing. The feet are planted while a claim is held, so a route out of the
+   * stance that could ever refuse would be a player standing in a field unable to move, which is a
+   * worse bug than the one the stance fixes.
+   */
+  _interact() {
+    if (this.phase === "performing" && this.act) {
+      if (!this._setDown()) this._letGo();
+      return;
+    }
+    if (!this.act && this.present && this.getTeaching()?.open === true) this._pose(this.present);
+  }
+
+  /** Put the claim down without answering it. Nothing is committed and nothing is scored. */
+  _letGo() {
+    this.letGos += 1;
+    this._retire();
+    this.plantBody(false);
+  }
 
   /**
    * Set it down. This is the only route from a pair of hands to the learner model, and every part of
@@ -504,15 +709,10 @@ export class VerbRuntime {
     }
     if (!response || !this.act.ready()) return null;
 
-    // Anything the learner already typed comes off first, so a response is never two responses.
-    let guard = 0;
-    while (typeof teaching.response === "string" && teaching.response.length && guard < 64) {
-      teaching.erase();
-      guard += 1;
-    }
-    let refused = 0;
-    for (const ch of response) if (teaching.type(ch) !== true) refused += 1;
-    this.stats.refusedChars += refused;
+    // The slot has been carrying the build every step (`_syncEntry`); this is the flush that
+    // guarantees it, so a commit can never send a response the player was not looking at.
+    this._syncEntry();
+    const refused = 0;
 
     const latencyMs = Math.max(0, Math.round((this.simTime - (this.startedAt ?? this.simTime)) * 1000));
     this.lastResponse = {
@@ -680,6 +880,19 @@ export class VerbRuntime {
      * and so does the last render of a claim, so the state a capture reads is never a stale one.
      */
     if (!force && was && this.simTime - (was.shownAt ?? -9) < 0.09) return;
+    /**
+     * A ROW THAT HAS MOVED HAS TO STAND DOWN FIRST.
+     *
+     * `TexField.add()` on an id it already holds calls `setTex` and `setLocale` and never reads
+     * `position`. Round 2 leaned BALANCE's pans by sending the same ids at new heights and not one of
+     * them ever moved a millimetre — Law 3's "the world never says wrong, it leans" was drawn by code
+     * that could not lean. `math:hide` then `math:show` is what makes a new position real, and it is
+     * sent only when the position actually changed, which for a pan is once per act.
+     */
+    if (was && at && was.at && (Math.abs(was.at[0] - at[0]) > 0.02 || Math.abs(was.at[1] - at[1]) > 0.02 || Math.abs(was.at[2] - at[2]) > 0.02)) {
+      this.emit("math:hide", { id });
+      this.stats.hides += 1;
+    }
     this.emit("math:show", {
       id,
       tex,
@@ -760,6 +973,11 @@ export class VerbRuntime {
         held: [...this.hand.held],
       },
       restands: this.restands,
+      /** Simulation steps the body was held still because the hands were on a claim. */
+      plantedSteps: this.planted,
+      letGos: this.letGos,
+      /** What the runtime has written into the presenter's entry slot, so a stray can be seen. */
+      entry: this.entrySynced,
       columnTop: this._topUp == null ? null : round2(this._topUp),
       standing: [...this.standing.keys()],
       rows: [...this.standing.entries()].map(([id, r]) => ({ id, tex: r.tex, em: r.em })),

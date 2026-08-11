@@ -129,6 +129,9 @@ class DistributeAct {
   }
 
   read(marked) {
+    // A DECLARED distractor is authored knowledge about this exact item and goes first; see
+    // `Balance.js`'s `read` for the round-2 measurement (20 failures, 20 nulls) that reordered this.
+    if (marked?.misconception && marked?.failKey) return { key: marked.failKey, params: {} };
     const b = this.bundleTerm;
     if (b && b.reached > 0 && b.reached < b.inner.length) return { key: "fail.partial.open", params: {} };
     if (b && b.reached === 0) return { key: "fail.load.unsettled", params: {} };

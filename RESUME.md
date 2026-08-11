@@ -299,6 +299,34 @@ The five verbs are SPAN / BALANCE / COMBINE / DISTRIBUTE / TILT, plus `Claim.js`
    credit the engine did not grant. Given three separate critics found ways scaffolded practice could
    launder into unearned mastery, one authoritative place to say "this counts" is worth the indirection.
 
+### But the loop closing is NOT the same as the maths being the mechanic (P19 round 1 verdict)
+
+The play-test critic played a real session and rejected it, correctly:
+
+> "Every item a player actually meets poses SPAN (**20/20** in a real session) — a number dial you hold
+> a button on until the counter matches the answer you already did in your head. **BALANCE, the one verb
+> where the hands perform the algebra, never poses.** And on the stick — the designed primary axis —
+> the mathematics leaves the frame within 1.6 s."
+
+This is gate L1 doing its job. A closed signal trace proves the plumbing; it says nothing about whether
+the player is *doing* algebra. Here the player solves the equation in their head and then operates a
+dial — which is data entry with a nice skybox, and is precisely the edutainment failure the whole
+design exists to avoid.
+
+**Three things to fix, in order:**
+1. **Verb selection is broken, not just unbalanced.** 20/20 posing SPAN means item→verb matching is
+   effectively constant. Find why BALANCE never poses; a knowledge point about properties of equality
+   should never be served as a number dial.
+2. **SPAN itself may not be salvageable as designed.** If the answer is known before the verb begins,
+   the verb is not the mathematics. Either the dial has to become a genuine act of solving, or SPAN
+   should pose only where a magnitude genuinely IS the unknown.
+3. **Gamepad framing.** The maths leaving frame within 1.6 s on the stick makes the primary input path
+   the worst one to learn on.
+
+**The standing rule this establishes:** never accept a signal trace as evidence that a learning
+interaction is good. The trace answers "did a response reach the engine". Gate L1 asks "was what the
+player did with their hands algebra", and only a human-equivalent play-test answers it.
+
 Still open on this path:
  - `math:show` fires ~17x per presentation (51 for 3). Almost certainly redundant re-issue rather than
    one show per item; check before building anything on the show/hide pair.

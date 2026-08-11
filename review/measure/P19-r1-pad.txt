@@ -1,0 +1,14 @@
+(node:60512) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+device: {"active":"kbm","style":"kbm","padId":"Xbox Wireless Controller (STANDARD GAMEPAD)","padConnected":true,"padVirtual":true,"everPad":false,"switches":0,"switchedAt":-1,"dwell":0.35,"pending":null,"usedAt":{"kbm":-1,"pad":-1}}
+after Pad:X — phase: performing verb: span item: var-meaning.seat/generate/1spvqlx
+state: {"mode":"cut","grip":0,"head":0,"fine":false,"acts":0,"sockets":[{"name":"p","n":0,"d":1,"charged":false},{"name":"q","n":0,"d":1,"charged":false}]}
+after RT held 1.4s — state: {"mode":"cut","grip":0,"head":0,"fine":false,"acts":9,"sockets":[{"name":"p","n":9,"d":1,"charged":true},{"name":"q","n":0,"d":1,"charged":false}]}
+rows: [{"id":"verb-value","tex":"\\rule{0.34em}{0.34em}\\,p = 9,\\; q = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{5.58em}{0.14em}","em":0.66}]
+after B+RT (second grip) — state: {"mode":"cut","grip":0,"head":0,"fine":false,"acts":14,"sockets":[{"name":"p","n":59,"d":1,"charged":true},{"name":"q","n":0,"d":1,"charged":false}]}
+after LEFT STICK forward 1.4s — state: {"mode":"cut","grip":0,"head":0,"fine":false,"acts":23,"sockets":[{"name":"p","n":68,"d":1,"charged":true},{"name":"q","n":0,"d":1,"charged":false}]}
+teaching.response (pad player cannot type): ""
+
+after Pad:X set down — lastResponse: {"itemId":"var-meaning.seat/generate/1spvqlx","kpId":"var-meaning","verb":"span","response":"p = 68, q = 0","refusedChars":0,"latencyMs":12417,"scaffoldLevel":0,"acts":23,"at":14.12,"correct":false,"scored":true,"credited":false,"family":"var-meaning.seat","misconception":null,"form":"generate","phase":"solo","engineLatencyMs":12417,"read":"fail.seat.partial"}
+stats: {"presented":2,"posed":2,"unposed":0,"byVerb":{"span":2},"unposedByType":{},"committed":1,"correct":0,"familyOnWire":1,"refusedChars":0,"reads":1,"readsRefused":0,"shows":42,"hides":4,"respondHeard":1,"masteryHeard":1}
+console errors: [33m0[39m []

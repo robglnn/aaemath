@@ -30,6 +30,13 @@ import { R, rat } from "./Claim.js";
 /** Names already spoken for by the claim, so a cut socket never collides with one. */
 const NAME_POOL = "pqrsuvwkmn".split("");
 
+/** Sim seconds a held push waits after laying its first segment, so a short push means exactly one. */
+const LEAD = 0.34;
+/** Sim seconds the deck takes to get from two segments a second up to seven. */
+const RAMP = 1.4;
+/** The deck length at which the second grip becomes a x10 gear rather than a single span. */
+const GEAR_AT = 20;
+
 /** Single letters standing in a stem, in the order they first appear. `a,\; b` -> ["a","b"]. */
 function namesIn(tex) {
   const out = [];
@@ -90,24 +97,56 @@ class SpanAct {
     return this.sockets[Math.min(this.grip, this.sockets.length - 1)];
   }
 
-  /** The deck is walked with the body: forward grows it, back brings it in. */
+  /**
+   * The deck is walked with the body: forward grows it, back brings it in.
+   *
+   * ==================================================================================================
+   * ROUND 3's REGEAR, WHICH THE CRITIC MEASURED RATHER THAN GUESSED AT
+   *
+   * "On the pad the second grip took p from 9 to 59 in one second and the left stick added nine more;
+   * landing exactly on 5 is a fight against acceleration, not a measurement. Small targets are the
+   * common case in Algebra I."
+   *
+   * Round 2 started at 2.5 segments a second and reached 8, from the first frame of the push, with a
+   * flat ten-at-a-time on the second grip. That is a dial you cannot stop on 5 and a gearbox with no
+   * neutral. Three changes, and none of them touches the answer:
+   *
+   *   1. **The first segment lands on the edge, then the deck holds still for `LEAD` seconds.** Every
+   *      key-repeat in every operating system works this way and for this reason: a short push must
+   *      mean exactly one, or one is the hardest number in the range to build.
+   *   2. **It ramps from 2 to 7 over `RAMP` seconds** rather than opening at 2.5 and being at 8 in
+   *      under a second.
+   *   3. **The second grip is a x10 gear that will not engage below `GEAR_AT`.** Ten spans at a time
+   *      is for the 33 committed answers above 40 and the one at 180; near zero it is a way to
+   *      overshoot the whole of Algebra I in a single frame.
+   *
+   * WHAT IT DELIBERATELY IS NOT: a detent at the right answer. The critic's own suggestion was to
+   * "decay the rate near a value the given implies", and this verb will not — a deck that gets heavy
+   * near the value that closes it is the world leaning toward the correct answer, which is exactly
+   * the strategy `Claim.js`'s header exists to forbid. The gearing is shaped by the INPUT and nothing
+   * else, so it feels identical whether the deck is right or wrong.
+   */
   fixed(step, hand) {
     const y = hand.move.y;
     if (Math.abs(y) < 0.12) {
       this.push = 0;
       this.carry = 0;
+      this.led = false;
+      return;
+    }
+    const dir = Math.sign(y);
+    if (!this.led) {
+      // The edge of the push lays exactly one, which is what a player who wants 5 reaches for.
+      this.led = true;
+      this.push = 0;
+      this._step(dir);
       return;
     }
     this.push += step;
-    /**
-     * Two and a half segments a second from a standing start, eight a second once the deck is
-     * running. Fortnite's build verb resolves in a few frames and a deck a learner has to hold a key
-     * on for nine seconds to reach 9 is a wait, not a verb — but the ceiling is 8/s and not 14/s for
-     * a measured reason: every segment re-typesets two rows, and a deck outrunning the raster gate
-     * shows a player a number that skips. The second grip lays ten at a time for the long ones.
-     */
-    const rate = 2.5 + Math.min(5.5, this.push * 6);
-    this.carry += rate * step * Math.sign(y) * Math.min(1, Math.abs(y));
+    if (this.push < LEAD) return;
+    const t = Math.min(1, (this.push - LEAD) / RAMP);
+    const rate = 2 + t * 5;
+    this.carry += rate * step * dir * Math.min(1, Math.abs(y));
     while (this.carry >= 1) {
       this.carry -= 1;
       this._step(1);
@@ -129,7 +168,9 @@ class SpanAct {
   _step(dir) {
     const s = this.socket;
     if (!s) return;
-    s.n = Math.max(-999, Math.min(999, s.n + dir * (this.fine ? 10 : 1)));
+    // The x10 gear only engages once the deck is long enough that ten is a sensible unit of it.
+    const gear = this.fine && Math.abs(s.n) >= GEAR_AT ? 10 : 1;
+    s.n = Math.max(-999, Math.min(999, s.n + dir * gear));
     s.charged = true;
     this.acts += 1;
   }
@@ -257,6 +298,11 @@ class SpanAct {
    * house fallback line here on purpose: a fallback line is generic failure text with a key.
    */
   read(marked) {
+    // The bank goes first when it recognised the response as a DECLARED misconception — see
+    // `Balance.js`'s `read` for the measurement that reordered this. `check()`'s undiagnosed
+    // `fail.slip` carries no misconception and stays last, so the structural read below still covers
+    // everything the bank has no name for.
+    if (marked?.misconception && marked?.failKey) return { key: marked.failKey, params: {} };
     if (this.mode === "cut" && new Set(this.sockets.map((s) => R.canon(s.value))).size > 1)
       return { key: "fail.seat.partial", params: {} };
     if (marked?.failKey) return { key: marked.failKey, params: {} };

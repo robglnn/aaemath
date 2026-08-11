@@ -3,3 +3,11 @@
 response after walking WASD: "was"
 lastResponse after ENTER-while-walking: null
 mastery after walk-commit: {"theta":-1.173476,"responses":1}
+
+verbs actually posed over 24 attempts: {"span":19}
+answerTypes seen: ["pair","equation"]
+kps seen: ["var-meaning"]
+sample stems: ["x + y = 20,\\quad x - y = 0","x + y = 16,\\quad x - y = 0","a,\\; b","a,\\; b","a,\\; b","x + y = 14,\\quad x - y = 0","x + y = 8,\\quad x - y = 0","x + y = 18,\\quad x - y = 0","a,\\; b","x + y = 24,\\quad x - y = 0","a,\\; b","a,\\; b"]
+
+verbs.stats: {"presented":20,"posed":20,"unposed":0,"byVerb":{"span":20},"unposedByType":{},"committed":19,"correct":0,"familyOnWire":20,"refusedChars":0,"reads":20,"readsRefused":0,"shows":188,"hides":80,"respondHeard":20,"masteryHeard":18}
+console errors: [33m0[39m []

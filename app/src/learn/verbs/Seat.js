@@ -367,24 +367,10 @@ class SeatAct {
     const here = this.at;
     const held = here?.kind === "join" ? here.index : -1;
     const gap = 1 - this.push;
-    let row = chainTex(this.chain, held, gap);
-    if (here?.kind === "socket") {
-      // The plate rests on the socket that is open under your hand. `chainTex` draws the row and the
-      // marks belong on top of it, so the socket is re-drawn rather than the row re-built.
-      const parts = this.chain.parts;
-      const p = parts[here.index];
-      const glyph = p.v != null && R.eq(p.c, R.one) ? p.v : null;
-      if (glyph) {
-        const marked = `\\rule{0.3em}{0.3em}\\,${glyph}`;
-        // Replace the FIRST unmarked occurrence at or after the socket's position in the drawn row.
-        const before = parts.slice(0, here.index).filter((q) => q.v === p.v && R.eq(q.c, R.one)).length;
-        let seen = -1;
-        row = row.replace(new RegExp(`${glyph}`, "g"), (m) => {
-          seen += 1;
-          return seen === before ? marked : m;
-        });
-      }
-    }
+    const row =
+      here?.kind === "socket"
+        ? markedRowTex(this.chain, here.index)
+        : chainTex(this.chain, held, gap);
     const out = [{ key: "row", tex: row, up: 0, right: 0 }];
     const charge = here?.kind === "socket" ? this.charges.get(this.chain.parts[here.index]?.v ?? "") : null;
     out.push({

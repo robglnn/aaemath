@@ -73,6 +73,7 @@ import Distribute from "./Distribute.js";
 import Tilt from "./Tilt.js";
 import Repair from "./Repair.js";
 import Seat from "./Seat.js";
+import Forge from "./Forge.js";
 
 /**
  * Order matters and it is not arbitrary. A working with a joint in it is REPAIR's before anything
@@ -82,10 +83,12 @@ import Seat from "./Seat.js";
  * opened before a load is gathered (§2.1 rule 8, outward-in, top first), so DISTRIBUTE precedes
  * COMBINE. SEAT comes before BALANCE and SPAN because a row with a charge standing beside it is
  * settled, not solved and not dialled — see `Span.js`'s round-3 note. A claim across a Sill is
- * BALANCE's. SPAN is last because it poses anything that closes at a quantity and letting it go first
- * would swallow claims the others say better.
+ * BALANCE's. SPAN is last of the closing verbs because it poses anything that closes at a quantity and
+ * letting it go first would swallow claims the others say better. FORGE is last of all: it is the only
+ * verb that builds rather than closes, and everything that reaches it is something none of the others
+ * could read — which on a gamepad is the difference between an answerable item and a dead one.
  */
-export const VERBS = [Repair, Tilt, Distribute, Combine, Seat, Balance, Span];
+export const VERBS = [Repair, Tilt, Distribute, Combine, Seat, Balance, Span, Forge];
 
 /** Where the verb's hands stand: nearer the camera than the claim, so the two never share a plane. */
 export const HAND = {
@@ -163,6 +166,34 @@ export const HAND = {
   keepVertical: 0.22,
   /** Sim seconds between restands, so a player spinning on the spot is not a raster storm. */
   restandEvery: 0.2,
+
+  /**
+   * ROUND 3, ACTION 6: THE TOP OF THE COLUMN, CLAMPED AGAINST THE FRUSTUM.
+   *
+   * > "The question is clipped off the top of the frame at 1280x720. The first line of 'Cut two
+   * > sockets under different names that hold the same value' is sliced in half by the viewport's top
+   * > edge — a player at 720p cannot read what they are being asked. The feet-planting fixed round
+   * > 2's walk-away failure, but the presenter's column is simply taller than a 720p frustum."
+   *
+   * The lateral limits above are a fraction of the forward distance, which is a small-angle stand-in
+   * for the frustum and is good enough sideways because the horizontal field is wide. It is NOT good
+   * enough upward: the presenter's column grows a row per `given`, per `working` line, per wrapped
+   * line of the ask and per line of a said claim, its rows are at different depths *and* different
+   * heights, and how much of that fits depends on the vertical field of view and the aspect ratio of
+   * the window the player happens to have open. A ratio cannot answer that question.
+   *
+   * So this one is MEASURED rather than modelled: `boot/64-verbs.js` projects the real top edge of
+   * every standing row through the real camera and reports how many metres the tallest one is above
+   * the ceiling. Both columns then come down by that much, together, so the layout the presenter
+   * chose is preserved exactly and only its position changes.
+   *
+   * `ceiling` is NDC and not 1.0 because a row whose top edge is exactly at the frame's edge is a row
+   * with its ink against the glass. 0.9 leaves a tenth of the half-height of margin above the tallest
+   * thing on the screen.
+   */
+  ceiling: 0.9,
+  /** Metres of drop below which it is not worth a re-raster of both columns. */
+  dropEpsilon: 0.06,
 };
 
 const PREFIX = "verb-";
@@ -235,7 +266,33 @@ export class VerbRuntime {
      * boot module re-stands whatever is actually in the field at the same place in the new frame.
      */
     this.rebase = opts.rebase ?? (() => 0);
+    /**
+     * HOW FAR THE TALLEST ROW ON THE SCREEN IS ABOVE THE CEILING, IN METRES. Injected for the same
+     * reason `rebase` is: the camera and the field are two other pieces' objects and `boot/64-verbs.js`
+     * is the one place this piece is allowed to read them. It returns 0 when everything fits.
+     */
+    this.overhead = opts.overhead ?? (() => 0);
+    /** Move the presenter's rows down by this many metres. Also `boot/64-verbs.js`'s. */
+    this.lower = opts.lower ?? (() => 0);
+    /**
+     * TAKE THE PRESENTER'S WORKING ROWS DOWN WHILE THE HANDS ARE HOLDING THEM, AND PUT THEM BACK.
+     *
+     * REPAIR stands the working itself — that is the whole verb — and the presenter stands the same
+     * lines in its own column. Two copies of a three-row stack is the taller of the two frames the
+     * round-3 critic could not read at 720p, and the duplicate is not even a second reading: it is
+     * the same rows twice. So the presenter's copy is veiled for exactly as long as a verb that
+     * declares `veilWorking` is holding the claim, snapshotted before it goes and stood back up on
+     * let-go. Nothing is lost if the player puts the claim down without answering it.
+     */
+    this.veil = opts.veil ?? (() => 0);
+    this.unveil = opts.unveil ?? (() => 0);
 
+    /** Metres the whole standing composition has been dropped to keep its top edge inside the frame. */
+    this.drop = 0;
+    this.drops = 0;
+    this.dropAt = -9;
+    /** Presenter rows this runtime has taken down on a verb's behalf, and will stand back up. */
+    this.veiled = 0;
     this.simTime = 0;
     this.act = null;
     this.ctx = null;
@@ -490,6 +547,14 @@ export class VerbRuntime {
     }
 
     this.act = act;
+    // A verb that stands the working itself takes the presenter's copy of it down; see `veil`.
+    if (act.veilWorking === true) {
+      try {
+        this.veiled = this.veil() || 0;
+      } catch {
+        this.veiled = 0;
+      }
+    }
     this.anchor = this.basis();
     // Sampled on the first render, not here: the presenter emits `learn:present` BEFORE it stands
     // its own rows, so its column depth is still the previous claim's at this instant.
@@ -573,6 +638,7 @@ export class VerbRuntime {
     this.planted += 1;
 
     this._keepInFrame();
+    this._keepUnderCeiling();
     // The presenter's own keyboard handler admits `w`, `a`, `s` and `d`; while a claim is in your
     // hands the slot says what your hands built and nothing else. See `_syncEntry`.
     this._syncEntry();
@@ -639,6 +705,47 @@ export class VerbRuntime {
     } catch {
       /* the presenter's column staying put is a worse frame, never a broken one */
     }
+    this._render(true);
+    return true;
+  }
+
+  /**
+   * Bring the whole composition down until its tallest row's top edge is inside the frame.
+   *
+   * Round 3, action 6. The measurement is `boot/64-verbs.js`'s, because the camera and the standing
+   * panels are two other pieces' objects; what happens with the number is here. Both columns take the
+   * SAME drop — the presenter's rows by a re-stand, this one's by an offset in `_place` — so the
+   * separation `_top()` measured between the question and the hands survives it exactly.
+   *
+   * It only ever moves DOWN and it never gives the metres back while a claim is standing. A clamp
+   * that relaxed as soon as it fit would oscillate: the drop makes it fit, fitting removes the drop,
+   * and the column bounces once a frame. The offset is cleared when the claim is retired, which is
+   * the only moment the composition is genuinely different.
+   */
+  _keepUnderCeiling() {
+    if (this.simTime - this.dropAt < HAND.restandEvery) return false;
+    this.dropAt = this.simTime;
+    let need = 0;
+    try {
+      need = Number(this.overhead()) || 0;
+    } catch {
+      need = 0;
+    }
+    if (!(need > HAND.dropEpsilon)) return false;
+    this.drop += need;
+    this.drops += 1;
+    try {
+      this.lower(need);
+    } catch {
+      /* the presenter's column staying put is a worse frame, never a broken one */
+    }
+    // The verb's own rows are placed from `_place`, which reads `this.drop`; they have to stand down
+    // first for the new position to be real. See `_show`.
+    for (const id of [...this.standing.keys()]) {
+      this.emit("math:hide", { id });
+      this.stats.hides += 1;
+    }
+    this.standing.clear();
     this._render(true);
     return true;
   }
@@ -891,7 +998,11 @@ export class VerbRuntime {
     if (!b) return null;
     const f = HAND.forward;
     const r = (socket.right ?? 0) + HAND.right;
-    return [b.o[0] + b.f[0] * f + b.r[0] * r, b.o[1] + this._top() + (socket.up ?? 0), b.o[2] + b.f[1] * f + b.r[1] * r];
+    return [
+      b.o[0] + b.f[0] * f + b.r[0] * r,
+      b.o[1] + this._top() + (socket.up ?? 0) - this.drop,
+      b.o[2] + b.f[1] * f + b.r[1] * r,
+    ];
   }
 
   /**
@@ -998,10 +1109,21 @@ export class VerbRuntime {
       this.stats.hides += 1;
     }
     this.standing.clear();
+    if (this.veiled) {
+      try {
+        this.unveil();
+      } catch {
+        /* a presenter row that cannot be stood back up is a worse frame, never a broken one */
+      }
+      this.veiled = 0;
+    }
     this.act = null;
     this.ctx = null;
     this.anchor = null;
     this._topUp = null;
+    // The composition is about to be a different one; the clamp measures the new one from scratch.
+    this.drop = 0;
+    this.dropAt = -9;
     this.phase = "idle";
   }
 
@@ -1039,6 +1161,15 @@ export class VerbRuntime {
         held: [...this.hand.held],
       },
       restands: this.restands,
+      /**
+       * The frustum clamp, as two numbers: how many times the composition had to come down to keep
+       * its top row inside the frame, and how far down it currently is. Round 3's action 6 was
+       * measured off a capture; this is the same fact readable without one.
+       */
+      drop: round2(this.drop),
+      drops: this.drops,
+      /** Presenter working rows currently taken down because a verb is standing them itself. */
+      veiled: this.veiled,
       /** Simulation steps the body was held still because the hands were on a claim. */
       plantedSteps: this.planted,
       letGos: this.letGos,

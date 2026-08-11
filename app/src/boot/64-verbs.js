@@ -1,6 +1,11 @@
 import { publish, warn } from "../core/Introspect.js";
 import { signals } from "../core/Signals.js";
 import { itemBank } from "../learn/ItemBank.js";
+// The presenter's own published id table. `TEACH.ids` exists so that a surface which has to know
+// which rows belong to the presenter can be told by name rather than by a copied string literal —
+// see `learn/Teaching.js`, where it is exported for exactly this. No behaviour of the presenter is
+// reached from here; the rows are moved with `math:show` / `math:hide` like anybody else's.
+import { TEACH } from "../learn/Teaching.js";
 import { VerbRuntime, HAND, VERBS } from "../learn/verbs/Verbs.js";
 import { validate, getLocale } from "../math/Tex.js";
 
@@ -164,6 +169,110 @@ export default {
       return moved;
     };
 
+    /**
+     * HOW FAR THE TALLEST STANDING ROW IS ABOVE THE TOP OF THE FRAME, IN METRES.
+     *
+     * Round 3, action 6: "the presenter's column is simply taller than a 720p frustum... Clamp the
+     * column's top against the frustum the same way the lateral margins already are." The lateral
+     * margins are a small-angle ratio and that is exactly what will not do here — how much fits
+     * above the eye depends on the vertical field of view, on the aspect ratio of whatever window
+     * the player has open, and on how tall the raster of each row turned out to be. So nothing is
+     * modelled: every standing row's real top edge is projected through the real camera.
+     *
+     * `mesh.scale.y` is the panel's world height (`TexPanel` sets it from its own measured ink), the
+     * panels billboard on yaw so that height is vertical in the world, and `Vector3.project` is the
+     * camera's own transform. The slope — how much NDC a metre of drop is worth at that row's depth
+     * — is measured by projecting the same point a metre lower rather than derived, because the two
+     * columns sit at different depths and a single constant would be wrong for one of them.
+     */
+    const overhead = () => {
+      const cam = kernel.camera;
+      const field = kernel.get("mathtex");
+      if (!cam || !field?.panels) return 0;
+      cam.updateMatrixWorld();
+      let worst = 0;
+      for (const [id, panel] of field.panels.entries()) {
+        if (!id.startsWith("teach-") && !id.startsWith("verb-")) continue;
+        const m = panel.mesh;
+        if (!m?.position || panel.ok === false) continue;
+        const top = m.position.clone();
+        top.y += (m.scale?.y ?? 0) * 0.5;
+        const ndc = top.project(cam);
+        // Behind the camera `project` mirrors the point; a row that is not in front is not clipping.
+        if (!Number.isFinite(ndc.y) || ndc.z > 1 || ndc.y <= HAND.ceiling) continue;
+        const lower = m.position.clone();
+        lower.y += (m.scale?.y ?? 0) * 0.5 - 1;
+        const slope = ndc.y - lower.project(cam).y;
+        if (!(slope > 1e-4)) continue;
+        worst = Math.max(worst, (ndc.y - HAND.ceiling) / slope);
+      }
+      return worst;
+    };
+
+    /** Bring the presenter's rows down by this many metres. A move is a hide and then a show. */
+    const lower = (metres) => {
+      const field = kernel.get("mathtex");
+      if (!field?.panels || !(metres > 0)) return 0;
+      let moved = 0;
+      for (const [id, panel] of [...field.panels.entries()]) {
+        if (!id.startsWith("teach-")) continue;
+        const w = panel.mesh?.position;
+        if (!w) continue;
+        const spec = {
+          id,
+          tex: panel.tex,
+          kpId: panel.kpId ?? null,
+          em: panel.em,
+          billboard: panel.billboard ?? "yaw",
+          display: panel.displayMode !== false,
+          at: [w.x, w.y - metres, w.z],
+        };
+        signals.emit("math:hide", { id });
+        signals.emit("math:show", spec);
+        moved += 1;
+      }
+      return moved;
+    };
+
+    /**
+     * TAKE THE PRESENTER'S WORKING ROWS DOWN, AND REMEMBER THEM WELL ENOUGH TO PUT THEM BACK.
+     *
+     * REPAIR stands the working as the object the player has their hands on. The presenter stands the
+     * same lines as part of the question. One of the two has to go while the hands are on it, and it
+     * is not the one the player is holding. `learn/Teaching.js` is P18/P34's file and is not edited
+     * for this: what happens here is a `math:hide` of rows the presenter itself asked for, followed
+     * by a `math:show` of exactly the payload that was taken down — the same pair of signals
+     * `rebase` above already uses, and the field is the only thing that knows where a row ended up.
+     */
+    let veiledRows = [];
+    const veil = () => {
+      const field = kernel.get("mathtex");
+      if (!field?.panels) return 0;
+      veiledRows = [];
+      for (const [id, panel] of [...field.panels.entries()]) {
+        if (!id.startsWith(TEACH.ids.working)) continue;
+        const w = panel.mesh?.position;
+        if (!w) continue;
+        veiledRows.push({
+          id,
+          tex: panel.tex,
+          kpId: panel.kpId ?? null,
+          em: panel.em,
+          billboard: panel.billboard ?? "yaw",
+          display: panel.displayMode !== false,
+          at: [w.x, w.y, w.z],
+        });
+        signals.emit("math:hide", { id });
+      }
+      return veiledRows.length;
+    };
+    const unveil = () => {
+      const n = veiledRows.length;
+      for (const spec of veiledRows) signals.emit("math:show", spec);
+      veiledRows = [];
+      return n;
+    };
+
     const runtime = new VerbRuntime({
       emit: (name, value) => signals.emit(name, value),
       on: (name, fn) => signals.on(name, fn),
@@ -173,6 +282,10 @@ export default {
       validateTex: (tex) => validate(tex, { locale: getLocale(), displayMode: true }).ok,
       plant,
       rebase,
+      overhead,
+      lower,
+      veil,
+      unveil,
     }).attach();
 
     kernel.mount("verbs", runtime);
@@ -189,6 +302,37 @@ export default {
         presenter: getTeaching() ? { open: getTeaching().open === true, phase: getTeaching().phase } : null,
         hand: { ...p.hand, column: { right: HAND.right, forward: HAND.forward, em: HAND.em } },
         registry: VERBS.map((v) => v.id),
+        /**
+         * THE PAD, AND WHETHER THE ITEM IN FRONT OF THE PLAYER CAN BE ANSWERED WITH IT.
+         *
+         * Round 3, action 2: "Shipping a state where the primary input device cannot answer 69% of
+         * the content is the §6b failure in a new costume — the fallback exists but is unreachable
+         * from where the player's hands are." The typed entry behind every claim is bound to a raw
+         * `keydown` in `boot/92-teaching.js`, which is P34's file; a pad cannot reach it and this
+         * piece may not rebind it.
+         *
+         * The answer is not a character wheel. It is that `learn/verbs/Forge.js` poses on every
+         * `generate` item and on every open answer type no other verb reads, entirely through
+         * `input:action` and `input:move`, so the pad's route to the content is a pair of hands
+         * rather than a keyboard. What is left over is 9% of the bank, and this field is where a
+         * reviewer reads whether the claim standing in front of them right now is inside it —
+         * measured off the mounted input system rather than assumed.
+         */
+        pad: (() => {
+          const input = kernel.get("input");
+          const device = input?.device ?? null;
+          return {
+            device,
+            /** True when a verb is holding this claim, which is the whole of "a pad can answer it". */
+            posed: p.verb != null,
+            /**
+             * A claim with no verb on it is answerable only through the presenter's typed slot, and
+             * that slot has no gamepad binding anywhere in the game. On a keyboard this is a
+             * fallback; on a pad it is a dead end, and it is counted rather than described.
+             */
+            unposedOnPad: device === "pad" && p.verb == null && getTeaching()?.open === true,
+          };
+        })(),
         /**
          * The stance, read back off the body rather than off this module's own belief about it. A
          * `planted: true` beside a body that is still moving is the failure mode the whole fix has,

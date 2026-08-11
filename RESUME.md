@@ -9,8 +9,31 @@ serves it. Pages is configured legacy-style from `main` + `/docs`, so there is n
 keep in sync. `vite.config.js` sets `base: "./"` precisely so the same bundle works from the dev
 server, a `file://` open and a Pages subdirectory without a rebuild.
 
-Paused 2026-08-10 ~00:15 ET because the session budget ran out, not because a stage finished.
-Two workflows were stopped mid-flight; nothing below is critic-passed unless it says so.
+**Paused cleanly 2026-08-10 ~22:50 ET at the owner's request.** The P19 verb wave was stopped
+mid-round-3; its work is committed and the build verifies green in all three locales. Nothing below is
+critic-passed unless it says so.
+
+### State at the pause
+
+Critic-passed: **P00** review harness · **P07** input · **P34** learning round trip · **P35** auto-tier.
+55+ builder/critic rounds.
+
+The learning loop is closed and runs in the shipped app — `learn:present -> math:show -> learn:respond
+-> learn:mastery`, measured over **8 consecutive cycles**, with more than one verb posing in a single
+sitting and **10/10 responses reaching Mastery carrying their item family**.
+
+Eight verbs are registered: `repair, tilt, distribute, combine, seat, balance, span, forge`.
+FORGE builds **314/349 (90.0%)** of committed witnesses by hand; REPAIR closes 90%+ of its items.
+
+Four integrity guards hold, and should be treated as invariants:
+ - no verb reads the answer, the distractors, the check spec or `brokenBy`
+ - no verb imports a sibling feature module
+ - no verb emits `learn:respond` itself — it commits through Teaching, and `Mastery` is the sole emitter
+ - no commit ever carried anything but what the hands built
+
+**Not finished:** P19 never received a passing play-test. Its last recorded verdict (round 2) is the
+L8 census — 240/1152 items (20.8%) answered by an act that is itself algebra — and round 3's work to
+raise that was in flight when the wave stopped. Re-run the census before claiming any number.
 
 ---
 

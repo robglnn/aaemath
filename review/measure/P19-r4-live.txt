@@ -1,0 +1,67 @@
+=== A1. which verb poses each of the 1,152 committed items ===
+    349   30.3%  forge
+    342   29.7%  repair
+    105    9.1%  (none)
+     98    8.5%  balance
+     60    5.2%  tilt
+     59    5.1%  span
+     57    4.9%  seat
+     51    4.4%  distribute
+     31    2.7%  combine
+   posed by a verb: 1047 / 1152  (90.9%)
+   still unposed, by form|answerType:
+       77  repair|repair
+       16  construct|closure
+       12  construct|partition
+  ok   at least 1,000 of 1,152 committed items pose a verb  1047
+  ok   REPAIR poses the repair block  342 items
+  ok   FORGE poses the generate block  349 items
+  ok   SEAT poses the substitution block SPAN used to dial  57 items
+
+=== A2. can the hands reach a reading the shipped checker marks correct? ===
+   (a mechanical driver over the DISCRETE acts only — a lower bound, not a ceiling)
+   balance       41 / 98    41.8%
+   combine       31 / 31    100.0%
+   distribute    51 / 51    100.0%
+   repair       330 / 342   96.5%
+   seat          57 / 57    100.0%
+   span          51 / 59    86.4%
+   tilt          60 / 60    100.0%
+   closing verbs overall: 621 / 698  (89.0%)
+  ok   a correct reading is reachable by hand on 85%+ of the closing verbs' items
+  ok   REPAIR: 90%+ of its items are closable by hand
+
+=== A3. can FORGE actually build what the bank asks for? ===
+   (the item's own committed witness, replayed through the act's PUBLIC input surface)
+   forge 314 / 349  (90.0%) of committed witnesses are buildable by hand
+  ok   FORGE can build 85%+ of the committed witnesses
+
+=== A4. the guards ===
+  ok   no verb reads the answer, the distractors, the check spec or brokenBy
+  ok   no verb imports a sibling feature module
+  ok   no verb emits learn:respond itself — it commits through Teaching
+  ok   every registered verb has an id and a pose
+   registry: repair, tilt, distribute, combine, seat, balance, span, forge
+
+=== B. the shipped app, on a keyboard ===
+(node:13620) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+   [capture] span · var-meaning.seat/generate/1spsl3y · {"mode":"cut","grip":1,"head":0,"fine":false,"acts":5,"sockets":[{"name":"p","n":3,"d":1,"charged":true},{"name":"q","n":2,"d":1,"charged":true}]}
+   [capture] balance · var-meaning.twin/construct/1vlr62k · {"system":true,"claims":["-y = -20 + x","x - y = 0"],"names":["x","y"],"grip":0,"holding":"0:near:0","travel":0,"dial":1,"seatReady":null,"seats":0,"carries":4,"flatCarries":0,"tilt":["0","0"],"oneSid
+   learn:present 11 · math:show 574 · learn:respond 10 · learn:mastery 8
+   complete present -> show -> respond -> mastery cycles, in order: 8
+   verbs that actually posed in play: span, balance
+   probe("verbs").stats: {"presented":11,"posed":10,"unposed":49,"byVerb":{"span":5,"balance":5},"unposedByType":{"Emitter/repair/repair":49},"committed":10,"correct":1,"distinctVerbs":2,"strayChars":20,"commitMismatch":0,"familyOnWire":10,"refusedChars":0,"reads":9,"readsRefused":0,"shows":279,"hides":101,"respondHeard":10,"masteryHeard":8}
+   drop=0 drops=0 veiled=0 restands=20 letGos=0
+   lastResponse: {"itemId":"var-meaning.relate/construct/n68np2","kpId":"var-meaning","verb":"span","response":"a = 4*b","latencyMs":2650,"scaffoldLevel":0,"acts":4,"at":58.27,"correct":true,"scored":true,"credited":false,"family":"var-meaning.relate","misconception":null,"form":"construct","phase":"guided-1","engineLatencyMs":2650}
+  ok   learn:present fires
+  ok   math:show fires
+  ok   learn:respond fires — RESUME §6d's baseline was 0
+  ok   learn:mastery fires — RESUME §6d's baseline was 0
+  ok   the whole cycle runs, in order, more than once  8 cycles
+  ok   more than one verb poses in a single sitting  span,balance
+  ok   no commit ever carried anything but what the hands built
+  ok   every response reached Mastery with its family  10/10
+   refusedChars=0 strayChars=20 reads=9 readsRefused=0
+
+P19 CHECKS PASSED

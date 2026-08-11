@@ -1,0 +1,50 @@
+=== A1. which verb poses each of the 1,152 committed items ===
+    419   36.4%  repair
+    349   30.3%  forge
+     98    8.5%  balance
+     60    5.2%  tilt
+     59    5.1%  span
+     57    4.9%  seat
+     51    4.4%  distribute
+     31    2.7%  combine
+     28    2.4%  (none)
+   posed by a verb: 1124 / 1152  (97.6%)
+   still unposed, by form|answerType:
+       16  construct|closure
+       12  construct|partition
+  ok   at least 1,000 of 1,152 committed items pose a verb  1124
+  ok   REPAIR poses the repair block  419 items
+  ok   FORGE poses the generate block  349 items
+  ok   SEAT poses the substitution block SPAN used to dial  57 items
+
+=== A2. can the hands reach a reading the shipped checker marks correct? ===
+   (a mechanical driver over the DISCRETE acts only — a lower bound, not a ceiling)
+   balance       41 / 98    41.8%
+   combine       31 / 31    100.0%
+   distribute    51 / 51    100.0%
+   repair       392 / 419   93.6%
+   seat          57 / 57    100.0%
+   span          53 / 59    89.8%
+   tilt          60 / 60    100.0%
+   closing verbs overall: 685 / 775  (88.4%)
+  ok   a correct reading is reachable by hand on 85%+ of the closing verbs' items
+  ok   REPAIR: 90%+ of its items are closable by hand
+
+=== A3. can FORGE actually build what the bank asks for? ===
+   (the item's own committed witness, replayed through the act's PUBLIC input surface)
+   forge 314 / 349  (90.0%) of committed witnesses are buildable by hand
+  ok   FORGE can build 85%+ of the committed witnesses
+
+=== A4. the guards ===
+  ok   no verb reads the answer, the distractors, the check spec or brokenBy
+  ok   no verb imports a sibling feature module
+  ok   no verb emits learn:respond itself — it commits through Teaching
+  ok   every registered verb has an id and a pose
+   registry: repair, tilt, distribute, combine, seat, balance, span, forge
+
+=== B. the shipped app, on a keyboard ===
+(node:65928) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+   [capture] span · var-meaning.seat/generate/1spsl3y · {"mode":"cut","grip":1,"head":0,"fine":false,"charge":"5","acts":5,"sockets":[{"name":"p","n":3,"d":1,"charged":true},{"name":"q","n":2,"d":1,"charged":true}]}
+   [capture] balance · var-meaning.twin/construct/1vlr62k · {"system":true,"claims":["-y = -20 + x","x - y = 0"],"names":["x","y"],"grip":0,"holding":"0:near:0","travel":0,"dial":1,"seatReady":null,"seats":0,"carries":4,"flatCarries":0,"tilt":["0","0"],"oneSid
+   [capture] repair · var-meaning.relate/repair/m24vtf · {"lines":["a,\\; b","5a = b"],"joints":[2],"joint":2,"struck":2,"source":"a,\\; b","hands":"forge","blow":0,"strikes":1,"acts":6,"inner":{"near":"2 + 2 + 2","far":"0","rel":"=","station":"sill","blank

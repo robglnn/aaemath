@@ -60,6 +60,7 @@ import Distribute from "./Distribute.js";
 import Seat from "./Seat.js";
 import Combine from "./Combine.js";
 import Balance from "./Balance.js";
+import Forge from "./Forge.js";
 import { R, loadCanon, parseChain, parseClaim, parseSystem, settle } from "./Claim.js";
 
 /**
@@ -67,8 +68,14 @@ import { R, loadCanon, parseChain, parseClaim, parseSystem, settle } from "./Cla
  * that leans is never a claim that fell, a lock is opened before a load is gathered, a charged socket
  * is filled before the row is settled, and a Sill is last because most lines that have one also have
  * something simpler standing on them.
+ *
+ * FORGE is behind all of them and always poses, so a joint can always be rebuilt by hand even when
+ * nothing derives the new line from the old one — `translate-phrase`'s bare `n` above a sentence,
+ * `expr-anatomy`'s count of terms, `props-operations`' same load in the other order. That is what
+ * takes `repair` from 342 of 419 items posed to all 419, and it is why a gamepad player is not shut
+ * out of any of them.
  */
-const LINE_VERBS = [Tilt, Distribute, Seat, Combine, Balance];
+const LINE_VERBS = [Tilt, Distribute, Seat, Combine, Balance, Forge];
 
 /** Metres between two rows of the standing stack. Matches the hands' own row spacing. */
 const ROW = 0.82;
@@ -130,6 +137,18 @@ class RepairAct {
     this.strikes = 0;
     this.shear = false;
     this.settleFor = 0;
+  }
+
+  /**
+   * The second grip, proxied to whatever is in your hands.
+   *
+   * `Verbs.js` reads `act.fine` every step to know whether to send a `release` — that is how a verb
+   * learns that the player let go of the second grip, because a held button is a state and not an
+   * edge. Without this getter the `hold` would reach the sub-act and the `release` never would, and
+   * a lock strapped once would stay strapped for the rest of the claim.
+   */
+  get fine() {
+    return this.hands?.fine ?? false;
   }
 
   get joint() {

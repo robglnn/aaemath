@@ -177,6 +177,45 @@ export function openRow(tex) {
 /** Sim seconds a charge takes to travel into a socket under a steady push. */
 const SEAT_TRAVEL = 0.42;
 
+const JOIN_TEX = { "+": "+", "-": "-", "*": "\\cdot", "/": "\\div" };
+
+/** One thing standing in a row, as it is written. */
+function partTex(t) {
+  const mag = R.abs(t.c);
+  if (t.v == null) return R.tex(mag);
+  return R.eq(mag, R.one) ? t.v : `${R.tex(mag)}${t.v}`;
+}
+
+/**
+ * The row with the grip plate on ONE PART, built term by term.
+ *
+ * It is built rather than patched, and that is not a style preference: the obvious implementation is
+ * to draw the row with `chainTex` and then substitute the socket's letter for a marked copy of it,
+ * and that is a KaTeX failure waiting for a particular item. The join glyphs are `\cdot` and `\div`,
+ * this bank names sockets `t`, `c`, `d`, `s` and `r` among others, and a substitution of `t` across
+ * the drawn string turns `\cdot` into `\c` + a rule + `dot` — a claim `Tex.validate` refuses, which
+ * `math/TexPanel.js` correctly renders as nothing at all. `var-meaning` ships `t` as a socket name.
+ */
+function markedRowTex(chain, markIndex) {
+  const plate = "\\rule{0.3em}{0.3em}\\,";
+  let out = "";
+  chain.parts.forEach((t, i) => {
+    const neg = t.c.n < 0;
+    const body = partTex(t);
+    if (i === 0) {
+      out += `${i === markIndex ? plate : ""}${neg ? "-" : ""}${body}`;
+      return;
+    }
+    const op = chain.ops[i - 1];
+    if (op === "+" && neg) out += `\\;-\\;${i === markIndex ? plate : ""}${body}`;
+    else {
+      const piece = neg ? `\\left(-${body}\\right)` : body;
+      out += `\\;${JOIN_TEX[op] ?? "+"}\\;${i === markIndex ? plate : ""}${piece}`;
+    }
+  });
+  return out;
+}
+
 class SeatAct {
   constructor(ctx, chain, charges) {
     this.id = "seat";

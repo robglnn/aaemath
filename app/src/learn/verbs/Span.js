@@ -96,6 +96,8 @@ class SpanAct {
     this.carry = 0;
     /** `cut` mode: how many sockets the player has cut so far. */
     this.cutCount = opts.cutCount ?? sockets.length;
+    /** The charge the world is already holding, in `cut` mode: the thing you carry into a socket. */
+    this.charge = opts.charge ?? null;
     this.head = 0;
     this.set = false;
     this.shear = false;
@@ -203,10 +205,46 @@ class SpanAct {
         this.fine = false;
         return true;
       case "take":
+        /**
+         * CARRY THE CHARGE IN, WHEN THERE IS A CHARGE STANDING TO CARRY.
+         *
+         * Round 3's critic, on first contact with the shipped game, four cold boots out of four:
+         *
+         * > "The number I needed was printed on the screen, `t = 5`, three rows directly above the
+         * > counter I was incrementing. To answer, I read the numeral 5 and pressed a button five
+         * > times. Then I pressed it five more times in the second socket."
+         *
+         * They were right, and the fix is not a better dial. `cut` mode is the one dressing of this
+         * verb where the world is already HOLDING the value — `t = 5` is a charge standing beside
+         * the sockets — and the act the claim is actually about is *seating* it, twice, under two
+         * names. So the second grip carries the standing charge into the socket under your hand and
+         * moves you to the next one: two movements for the whole claim, and the mathematics is that
+         * one value went into two differently-named sockets, which is `var-meaning.seat`'s entire
+         * content and the thing `hint.move.var-meaning.twin` has always said.
+         *
+         * The deck is still there and still walkable. That is deliberate: a player who charges the
+         * two sockets to different numbers has committed `var-must-differ`, the world says
+         * `fail.twin` — "Two names. Nobody said two numbers." — and an act nobody can perform is a
+         * misconception nobody can be taught out of. See `read` below.
+         */
+        if (this.mode === "cut" && this.fine && this.charge) {
+          const s = this.socket;
+          if (s) {
+            s.n = this.charge.n;
+            s.d = this.charge.d;
+            s.charged = true;
+            this.acts += 1;
+            // Move to the next open socket, because carrying a charge is a thing you do to each of
+            // them in turn and re-seating the one you just filled is never what you meant.
+            const next = this.sockets.findIndex((o) => !o.charged);
+            if (next >= 0) this.grip = next;
+            return true;
+          }
+        }
         // The near grip nudges the deck by exactly one, which is what a player reaches for at the
         // last span. Held with the second grip it lays ten. It never does anything else, in any
-        // mode: a button that means two things depending on state is a button that gets pressed by
-        // accident, and here the accident would be a socket nobody wanted.
+        // other mode: a button that means two things depending on state is a button that gets
+        // pressed by accident, and here the accident would be a socket nobody wanted.
         this._step(1);
         return true;
       case "back":
@@ -286,6 +324,9 @@ class SpanAct {
     });
     rows.push({ key: "value", tex: parts.join(",\\; ") || "\\rule{2.4em}{0.06em}", up: 0 });
     rows.push({ key: "deck", tex: this._deck(Math.abs(this.socket?.n ?? 0)), up: -0.72 });
+    // The charge standing in your hands, when there is one to carry. It is drawn as an object with
+    // a length, beside the deck, because it IS one: the same value the sockets are cut to hold.
+    if (this.charge) rows.push({ key: "charge", tex: `${R.tex(this.charge)}\\;${this._deck(Math.abs(this.charge.n))}`, up: -1.44 });
     return rows;
   }
 
@@ -357,6 +398,7 @@ class SpanAct {
       grip: this.grip,
       head: this.head,
       fine: !!this.fine,
+      charge: this.charge ? R.canon(this.charge) : null,
       acts: this.acts,
       sockets: this.sockets.map((s) => ({ name: s.name, n: s.n, d: s.d, charged: s.charged })),
     };
@@ -438,7 +480,7 @@ export default {
       const charge = chargeInGiven(ctx.given);
       if (!charge) return null;
       if (String(ctx.stem ?? "").trim() !== charge.name) return null;
-      const act = new SpanAct(ctx, "cut", []);
+      const act = new SpanAct(ctx, "cut", [], { charge: charge.value });
       act.sockets.push(new Socket(act._freshName()));
       act.sockets.push(new Socket(act._freshName()));
       return act;

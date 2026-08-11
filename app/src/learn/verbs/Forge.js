@@ -442,4 +442,24 @@ export default {
     // everything else starts as a bare load and the player hangs the Sill if the ask wants one.
     return new ForgeAct(ctx, kinds, { rel: t === "inequality" ? ">=" : t === "equation" ? "=" : null });
   },
+
+  /**
+   * The same hands, offered for ONE LINE of a working. `Repair.js` is the caller and this is the last
+   * entry in its list, which is what makes it the verb of last resort for the whole game.
+   *
+   * A joint that will not hold always has SOMETHING that should have been written instead, and when
+   * no other verb can derive that thing from the line above — `translate-phrase`'s working is a bare
+   * `n` above a sentence, `expr-anatomy`'s answer is a count of terms, `props-operations`' is the
+   * same load written in the other order — the honest act is to build the line by hand and set it
+   * there. That is this verb, and because it takes its whole input through `input:action` and
+   * `input:move`, it is also the reason a gamepad player is not shut out of a single `repair` item.
+   */
+  line(tex, ctx) {
+    const names = new Set([...namesIn(tex), ...namesIn(ctx?.stem ?? "")]);
+    for (const g of ctx?.given ?? []) for (const n of namesIn(g)) names.add(n);
+    if (ctx?.unknown) names.add(ctx.unknown);
+    const kinds = [null, ...[...names].filter((n) => /^[a-z]$/.test(n))];
+    const claim = parseClaim(tex);
+    return new ForgeAct(ctx, kinds, { rel: claim?.rel === "=" ? "=" : claim?.rel ? claim.rel : null });
+  },
 };

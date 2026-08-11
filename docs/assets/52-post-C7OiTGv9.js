@@ -1,4 +1,4 @@
-import{a0 as $,a1 as E,a2 as P,a3 as F,a4 as Y,M as X,B as Q,a5 as J,a6 as Z,b as j,S as ee,V as v,h as y,d as g,a7 as te,c as b,w as se,s as U,p as ie,a8 as re,a9 as ae,aa as _,ab as oe,ac as ne}from"./index-eDrWe4s2.js";const R=`
+import{a0 as $,a1 as E,a2 as P,a3 as F,a4 as Y,M as X,B as Q,a5 as J,a6 as Z,b as j,S as ee,V as v,h as y,d as g,a7 as te,c as b,w as se,s as U,p as ie,a8 as re,a9 as ae,aa as _,ab as oe,ac as ne}from"./index-Co_FjsiG.js";const R=`
 float vsLum(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
 `,x={none:0,linear:1,aces:2};function V(a){return a===4?x.aces:a===1?x.linear:x.none}const le=`
 uniform float uShoulder;   // S — value where compression begins. Shipped 1.0 = no compression.

@@ -1,0 +1,104 @@
+(node:20408) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+POSED: {"verb":"span","item":{"itemId":"var-meaning.seat/generate/1spsl3y","kpId":"var-meaning","form":"generate","answerType":"construction","objectClass":"Emitter","unknown":"t","stem":"t","given":["t = 5"]}}
+
+MASTERY BEFORE: {"theta":-0.8,"unlocked":0,"learning":32,"provisional":0,"mastered":0,"total":32,"level1Percent":0,"session":1,"responses":0,"dueNow":0,"due":[],"inFlight":["var-meaning"],"openEvents":[],"unscoredItems":0,"refusedUpward":0,"stats":{"items":0,"scoredItems":0,"unscoredItems":0,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":0,"creditsByDistance":{},"ceilingHits":0,"gateOpens":0,"gateOpensByTestOut":0,"testOutsOffered":1,"testOutsByTrigger":{"ability":1},"testOutsPassed":0,"testOutsPassedByTrigger":{},"testOutsFailed":0,"testOutItems":0,"certifications":0,"lapses":0},"scorablePairs":{"scorable":"construct,generate,repair x guided-1,solo","scorableCells":6,"masteryEligible":"construct,generate,repair x solo","masteryEligibleCells":3,"rejectedForms":["judge2","select4"],"rejectedPhases":["guided-2","guided-3","model"]},"bankPricing":{"audited":true,"cellsPriced":96,"sampled":54796,"mixture":{"catalogue":19032,"generated":35764},"catalogueShare":0.347325,"rejectedCells":[{"cell":"expr-anatomy|construct","family":"expr-anatomy.count","blind":1,"n":120,"modalAnswer":"3","reason":"blind 1.000 > maxTrueGuess 0.3"},{"cell":"expr-ana
+built (deliberately wrong): [{"id":"verb-value","tex":"p = 2,\\; \\rule{0.34em}{0.34em}\\,q = 2","em":0.66},{"id":"verb-deck","tex":"\\rule{1.24em}{0.14em}","em":0.66}] entry: p = 2, q = 2
+
+AFTER WRONG COMMIT:
+ lastResponse: {"itemId":"var-meaning.seat/generate/1spsl3y","kpId":"var-meaning","verb":"span","response":"p = 2, q = 2","latencyMs":1283,"scaffoldLevel":0,"acts":4,"at":3.33,"correct":false,"scored":true,"credited":false,"family":"var-meaning.seat","misconception":null,"form":"generate","phase":"solo","engineLatencyMs":1283,"read":"fail.slip"}
+ rows now standing: [{"id":"verb-value","tex":"p = 2,\\; \\rule{0.34em}{0.34em}\\,q = 2","em":0.66},{"id":"verb-deck","tex":"\\rule{1.24em}{0.14em}\\;\\rule{0.35em}{0.05em}\\;\\rule{0.5em}{0.14em}","em":0.66},{"id":"verb-read-0","tex":"\\text{The shape held. The weight did}","em":0.58},{"id":"verb-read-1","tex":"\\text{not.}","em":0.58}]
+ reads: [33m1[39m readsRefused: [33m0[39m
+
+MASTERY AFTER: {"theta":-1.173476,"unlocked":0,"learning":32,"provisional":0,"mastered":0,"total":32,"level1Percent":0,"session":1,"responses":1,"dueNow":0,"due":[],"inFlight":["var-meaning"],"openEvents":[],"unscoredItems":0,"refusedUpward":0,"stats":{"items":1,"scoredItems":1,"unscoredItems":0,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":0,"creditsByDistance":{},"ceilingHits":0,"gateOpens":0,"gateOpensByTestOut":0,"testOutsOffered":1,"testOutsByTrigger":{"ability":1},"testOutsPassed":0,"testOutsPassedByTrigger":{},"testOutsFailed":1,"testOutItems":1,"certifications":0,"lapses":0},"scorablePairs":{"scorable":"construct,generate,repair x guided-1,solo","scorableCells":6,"masteryEligible":"construct,generate,repair x solo","masteryEligibleCells":3,"rejectedForms":["judge2","select4"],"rejectedPhases":["guided-2","guided-3","model"]},"bankPricing":{"audited":true,"cellsPriced":96,"sampled":54796,"mixture":{"catalogue":19032,"generated":35764},"catalogueShare":0.347325,"rejectedCells":[{"cell":"expr-anatomy|construct","family":"expr-anatomy.count","blind":1,"n":120,"modalAnswer":"3","reason":"blind 1.000 > maxTrueGuess 0.3"},{"cell":"exp
+
+=== 10 rounds ===
+byVerb: {"span":4,"balance":8}
+posed: [33m12[39m unposed: [33m0[39m unposedByType: {}
+respondHeard: [33m8[39m masteryHeard: [33m6[39m familyOnWire: [33m8[39m reads: [33m8[39m
+KPs presented: {"var-meaning":9}
+responses: [
+ {
+  "t": "respond",
+  "kpId": "var-meaning",
+  "family": "var-meaning.seat",
+  "form": "generate",
+  "correct": false,
+  "scored": true,
+  "credited": false,
+  "response": "p = 2, q = 2"
+ },
+ {
+  "t": "respond",
+  "kpId": "var-meaning",
+  "family": "var-meaning.twin",
+  "form": "construct",
+  "correct": false,
+  "scored": false,
+  "credited": false,
+  "response": "1*y = 20 + -1*x, 1*x + -1*y = 0"
+ },
+ {
+  "t": "respond",
+  "kpId": "var-meaning",
+  "family": "var-meaning.twin",
+  "form": "construct",
+  "correct": false,
+  "scored": true,
+  "credited": false,
+  "response": "1*y = 16 + -1*x, 1*x + -1*y = 0"
+ },
+ {
+  "t": "respond",
+  "kpId": "var-meaning",
+  "family": "var-meaning.relate",
+  "form": "construct",
+  "correct": false,
+  "scored": false,
+  "credited": false,
+  "response": "a = 1*b"
+ },
+ {
+  "t": "respond",
+  "kpId": "var-meaning",
+  "family": "var-meaning.relate",
+  "form": "construct",
+  "correct": false,
+  "scored": true,
+  "credited": false,
+  "response": "a = 1*b"
+ },
+ {
+  "t": "respond",
+  "kpId": "var-meaning",
+  "family": "var-meaning.relate",
+  "form": "construct",
+  "correct": false,
+  "scored": true,
+  "credited": false,
+  "response": "a = 1*b"
+ },
+ {
+  "t": "respond",
+  "kpId": "var-meaning",
+  "family": "var-meaning.twin",
+  "form": "construct",
+  "correct": false,
+  "scored": true,
+  "credited": false,
+  "response": "1*y = 14 + -1*x, 1*x + -1*y = 0"
+ },
+ {
+  "t": "respond",
+  "kpId": "var-meaning",
+  "family": "var-meaning.twin",
+  "form": "construct",
+  "correct": false,
+  "scored": true,
+  "credited": false,
+  "response": "1*y = 8 + -1*x, 1*x + -1*y = 0"
+ }
+]
+mastery events: [{"t":"mastery","kpId":"var-meaning","p":0.316788,"delta":-0.033212,"status":"learning"},{"t":"mastery","kpId":"var-meaning","p":0.311905,"delta":-0.004883,"status":"learning"},{"t":"mastery","kpId":"var-meaning","p":0.313207,"delta":0.001302,"status":"learning"},{"t":"mastery","kpId":"var-meaning","p":0.313399,"delta":0.000192,"status":"learning"},{"t":"mastery","kpId":"var-meaning","p":0.31143,"delta":-0.00197,"status":"learning"},{"t":"mastery","kpId":"var-meaning","p":0.311155,"delta":-0.000274,"status":"learning"}]
+MASTERY END: {"theta":-2.722646,"unlocked":0,"learning":32,"provisional":0,"mastered":0,"total":32,"level1Percent":0,"session":1,"responses":6,"dueNow":0,"due":[],"inFlight":["var-meaning"],"openEvents":[],"unscoredItems":2,"refusedUpward":0,"stats":{"items":8,"scoredItems":6,"unscoredItems":2,"unpriceableCellItems":0,"unreportedFamilyItems":0,"offConeSeeds":0,"refusedUpward":0,"prerequisiteCredits":0,"creditsByDistance":{},"ceilingHits":0,"gateOpens":0,"gateOpensByTestOut":0,"testOutsOffered":1,"testOutsByTrigger":{"ability":1},"testOutsPassed":0,"testOutsPassedByTrigger":{},"testOutsFailed":1,"testOutItems":1,"certifications":0,"lapses":0},"scorablePairs":{"scorable":"construct,generate,repair x guided-1,solo","scorableCells":6,"masteryEligible":"construct,generate,repair x solo","masteryEligibleCells":3,"rejectedForms":["judge2","select4"],"rejectedPhases":["guided-2","guided-3","model"]},"bankPricing":{"audited":true,"cellsPriced":96,"sampled":54796,"mixture":{"catalogue":19032,"generated":35764},"catalogueShare":0.347325,"rejectedCells":[{"cell":"expr-anatomy|construct","family":"expr-anatomy.count","blind":1,"n":120,"modalAnswer":"3","reason":"blind 1.000 > maxTrueGuess 0.3"},{"cell":"exp
+errors: []

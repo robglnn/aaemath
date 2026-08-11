@@ -1,0 +1,11 @@
+(node:46536) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+round 0: posed span (var-meaning.seat/generate/1spsl3y) — setting it down unanswered
+round 1: posed span (var-meaning.seat/generate/1spsl3y) — setting it down unanswered
+round 2: posed span (var-meaning.seat/generate/1spsl3y) — setting it down unanswered
+round 3: posed span (var-meaning.seat/generate/1spsl3y) — setting it down unanswered
+round 4: posed span (var-meaning.seat/generate/1spsl3y) — setting it down unanswered
+round 5: posed span (var-meaning.seat/generate/1spsl3y) — setting it down unanswered
+round 6: posed span (var-meaning.seat/generate/1spsl3y) — setting it down unanswered
+round 7: posed span (var-meaning.seat/generate/1spsl3y) — setting it down unanswered
+never reached BALANCE

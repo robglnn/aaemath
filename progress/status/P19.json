@@ -1,9 +1,9 @@
 {
   "id": "P19",
-  "state": "critique",
-  "round": 2,
-  "gap": "Every item a player actually meets poses SPAN (20/20 in a real session) - a number dial you hold a button on until the counter matches the answer you already did in your head. BALANCE, the one verb where the hands perform the algebra, never poses. And on the stick - the designed primary axis - the mathematics leaves the frame within 1.6s.",
-  "note": "Round 3 build: COMBINE rewritten around joins (oo-numeric), BALANCE widened to systems + SEAT + flat carry, stance fixes the off-screen failure, entry slot owned by the hands, SPAN regeared. 9/11 round-3 claims pass; B1/D1 fail on the cold-start scheduler serving one KP.",
+  "state": "building",
+  "round": 3,
+  "gap": "Only 240 of 1152 shipped items (20.8%) are answered by an act that is itself algebra. 796 (69.1%) - every repair item and most generate items - pose NO verb and fall back to typing characters into a KaTeX slot driven by a raw keydown listener with no gamepad binding at all; SPAN (116, 10.1%) is a counter you dial after solving in your head. Four cold boots in a row opened on the same SPAN dial.",
+  "note": "Round 3: building REPAIR verb for the 796 unserved items, gamepad path for typed entry, fixing Span.read twin case and construction distractor matching",
   "evidence": [],
-  "updated": "2026-08-11T00:55:52.820Z"
+  "updated": "2026-08-11T01:20:45.355Z"
 }

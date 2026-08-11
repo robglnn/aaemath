@@ -71,15 +71,21 @@ import Balance from "./Balance.js";
 import Combine from "./Combine.js";
 import Distribute from "./Distribute.js";
 import Tilt from "./Tilt.js";
+import Repair from "./Repair.js";
+import Seat from "./Seat.js";
 
 /**
- * Order matters and it is not arbitrary. A threshold leans by design and must never be posed by a
- * verb that treats a lean as a fall, so TILT sees every claim first. A bundle is opened before a load
- * is gathered (§2.1 rule 8, outward-in, top first), so DISTRIBUTE precedes COMBINE. A claim across a
- * Sill is BALANCE's. SPAN is last because it poses anything that closes at a quantity, which is most
- * of the bank, and letting it go first would swallow claims the other four say better.
+ * Order matters and it is not arbitrary. A working with a joint in it is REPAIR's before anything
+ * else looks at it, because every other verb here reads a stem and a repair item's stem is the thing
+ * the working is about rather than the thing being answered. A threshold leans by design and must
+ * never be posed by a verb that treats a lean as a fall, so TILT sees every claim next. A bundle is
+ * opened before a load is gathered (§2.1 rule 8, outward-in, top first), so DISTRIBUTE precedes
+ * COMBINE. SEAT comes before BALANCE and SPAN because a row with a charge standing beside it is
+ * settled, not solved and not dialled — see `Span.js`'s round-3 note. A claim across a Sill is
+ * BALANCE's. SPAN is last because it poses anything that closes at a quantity and letting it go first
+ * would swallow claims the others say better.
  */
-export const VERBS = [Tilt, Distribute, Combine, Balance, Span];
+export const VERBS = [Repair, Tilt, Distribute, Combine, Seat, Balance, Span];
 
 /** Where the verb's hands stand: nearer the camera than the claim, so the two never share a plane. */
 export const HAND = {
@@ -827,7 +833,26 @@ export class VerbRuntime {
       read = null;
     }
     if (this.lastResponse && marked) this.lastResponse.misconception = marked.misconception ?? this.lastResponse.misconception;
-    if (this.lastResponse) this.lastResponse.read = read?.key ?? null;
+    /**
+     * A MISCONCEPTION THE VERB DIAGNOSED, KEPT APART FROM ONE THE BANK TAGGED.
+     *
+     * Round 3, action 4: `ItemBank.#checkConstruction` matches a `construction` item's distractors by
+     * literal string equality against the single authored example (`"a=7;b=8"`), and SPAN names its
+     * cut sockets out of its own pool, so the bank returned `misconception: null` on every deliberate
+     * wrong answer the critic made. That file is P17/P31's and this piece does not edit it — but a
+     * verb that can tell exactly what went wrong with the object in its hands may say so, and
+     * `Span.read` now does (`var-must-differ`, with `fail.twin`, which had never been reachable).
+     *
+     * It is reported in its OWN field with its own source tag rather than written over the bank's,
+     * because "the checker recognised this" and "the verb worked it out" are different claims and a
+     * probe that blurred them would be exactly the kind of half-honest reporting §6b is about.
+     */
+    if (this.lastResponse) {
+      this.lastResponse.read = read?.key ?? null;
+      this.lastResponse.verbMisconception = read?.misconception ?? null;
+      this.lastResponse.misconceptionSource = marked?.misconception ? "bank" : read?.misconception ? "verb" : null;
+      if (!this.lastResponse.misconception && read?.misconception) this.lastResponse.misconception = read.misconception;
+    }
     this._render(true);
     if (!read?.key || !this.bank?.text) return;
 

@@ -1,0 +1,10 @@
+(node:60028) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+item: {"itemId":"var-meaning.seat/generate/1spsl3y","kpId":"var-meaning","form":"generate","answerType":"construction","objectClass":"Emitter","unknown":"t","stem":"t","given":["t = 5"]}
+mode: cut sockets: [{"name":"p","n":0,"d":1,"charged":false},{"name":"q","n":0,"d":1,"charged":false}]
+built: p = 5, q = 6 | rows: [{"id":"verb-value","tex":"p = 5,\\; \\rule{0.34em}{0.34em}\\,q = 6","em":0.66},{"id":"verb-deck","tex":"\\rule{3.72em}{0.14em}","em":0.66}]
+
+lastResponse: {"itemId":"var-meaning.seat/generate/1spsl3y","kpId":"var-meaning","verb":"span","response":"p = 5, q = 6","latencyMs":3550,"scaffoldLevel":0,"acts":11,"at":5.62,"correct":false,"scored":true,"credited":false,"family":"var-meaning.seat","misconception":null,"form":"generate","phase":"solo","engineLatencyMs":3550,"read":"fail.seat.partial"}
+WHAT THE WORLD SAID: []
+on the wire: [{"family":"var-meaning.seat","form":"generate","correct":false,"scored":true,"credited":false,"response":"p = 5, q = 6"}]
+errors: []

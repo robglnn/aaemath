@@ -105,6 +105,15 @@ and not looked at.
 | L5 | Mastery is *earned*, not given: retention-checked, spaced, not passable by guessing | simulate a guessing bot; it must fail |
 | L6 | ES and PL are real localizations — math conventions, not just translated words | native-level review of decimal marks, variable names, phrasing |
 | L7 | Feedback is immediate, specific to the misconception, and in-world | inspect the wrong-answer path for at least 3 misconceptions |
+| L8 | **A census of the shipped bank: what fraction of items are answered by an act that is itself algebra?** | count every item, not a sample; report the percentage and the fallback path for the remainder |
+
+L8 exists because "the math is the mechanic" stayed an aspiration until somebody counted. The first
+census read: **240 of 1152 items (20.8%)** answered by a genuinely algebraic act; **796 (69.1%)** posed
+no verb at all and fell back to typing characters into a slot on a raw keydown listener **with no
+gamepad binding** — which is also a G6 failure across two-thirds of the bank; and SPAN (116, 10.1%)
+was "a counter you dial after solving in your head". Four cold boots in a row opened on the same dial.
+
+Sampling could never have found this: every individual verb demoed well. Count the bank.
 
 ## 4. How a critic must work
 

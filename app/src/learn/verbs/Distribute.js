@@ -164,4 +164,19 @@ export default {
     if (lock < 0) return null;
     return new DistributeAct(ctx, claim.near, lock);
   },
+
+  /**
+   * The same drive, posed on ONE LINE of a working rather than on a stem. `Repair.js` is the caller:
+   * `-\left(4x + 7\right)` is the line above a joint that did not hold, and driving the outside value
+   * through both wards is what the line below it should have said. Stopping at the first ward builds
+   * `-4x + 7`, which is the tagged misconception `flip-first-term-only` — the same middle state this
+   * verb has always drawn, now standing in a gap in a stack of working.
+   */
+  line(tex, ctx) {
+    const claim = parseClaim(tex);
+    if (!claim || claim.rel !== null) return null;
+    const lock = claim.near.findIndex((term) => isBundle(term) && term.inner.length >= 2);
+    if (lock < 0) return null;
+    return new DistributeAct(ctx, claim.near, lock);
+  },
 };

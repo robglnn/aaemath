@@ -275,4 +275,18 @@ export default {
     if (names.size !== 1 || !names.has(unknown)) return null;
     return new TiltAct(ctx, claim);
   },
+
+  /**
+   * The same act, posed on ONE LINE of a working rather than on a stem. `Repair.js` is the caller.
+   *
+   * The `answerType` gate is deliberately not applied: a line of a working is whatever shape it is,
+   * and a `repair` item's answer type says `repair` about the response, nothing about the line. What
+   * still holds is the shape test — a rail with a mark on it and two pans — because a verb that
+   * cannot read the line must not pose on it.
+   */
+  line(tex, ctx) {
+    const claim = parseClaim(tex);
+    if (!claim || !claim.far || !claim.rel || claim.rel === "=") return null;
+    return new TiltAct(ctx, claim);
+  },
 };

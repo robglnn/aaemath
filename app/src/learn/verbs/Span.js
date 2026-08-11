@@ -26,6 +26,7 @@
  * find out when you set it down.
  */
 import { R, rat } from "./Claim.js";
+import Seat from "./Seat.js";
 
 /** Names already spoken for by the claim, so a cut socket never collides with one. */
 const NAME_POOL = "pqrsuvwkmn".split("");
@@ -305,14 +306,47 @@ class SpanAct {
    * those or it says nothing at all and lets the sheared deck be the sentence. There is no
    * house fallback line here on purpose: a fallback line is generic failure text with a key.
    */
+  /**
+   * ROUND 3, ACTIONS 3 AND 4, AND THEY WERE THE SAME BUG SEEN FROM TWO ENDS.
+   *
+   * The critic built `p = 5, q = 6` with both sockets charged and the world told them, in world-space
+   * text they photographed, `fail.seat.partial` — "One socket took it. The others are still open." —
+   * which is factually false about a state rendered three rows above it. The condition this branch
+   * detects is not a socket that stayed open. It is two names holding two different values, and the
+   * game has had the exactly right sentence authored and localized into all three locales since P17:
+   *
+   *     fail.twin   "Two names. Nobody said two numbers."
+   *
+   * It had never been reachable. `grep -rn "fail.twin" app/src/` returned one hit and it was a
+   * comment. The bank can only produce it through `ItemBank.#checkConstruction`'s distractor match,
+   * which compares the response against the single authored example `"a=7;b=8"` by literal string
+   * equality — and this verb names its cut sockets out of `NAME_POOL` and can never emit `a` or `b`.
+   * So `misconception` came back null on every deliberate wrong answer the critic made.
+   *
+   * The literal-string match lives in `learn/ItemBank.js`, which is P17/P31's file and not this
+   * piece's to edit. What IS this piece's is being right about the object in its own hands, so the
+   * three states are told apart here and the misconception is REPORTED rather than merely named:
+   *
+   *   - nothing was charged at all              -> nothing is said; the sheared deck is the sentence
+   *   - one socket charged, the others not      -> `fail.seat.partial`, which is now true when it says it
+   *   - every socket charged, values disagree   -> `fail.twin` + `var-must-differ`
+   *
+   * `Verbs.js` puts the reported misconception on `probe("verbs").lastResponse` when the bank had
+   * none, tagged with where it came from, so the two can never be confused for each other.
+   */
   read(marked) {
     // The bank goes first when it recognised the response as a DECLARED misconception — see
     // `Balance.js`'s `read` for the measurement that reordered this. `check()`'s undiagnosed
     // `fail.slip` carries no misconception and stays last, so the structural read below still covers
     // everything the bank has no name for.
     if (marked?.misconception && marked?.failKey) return { key: marked.failKey, params: {} };
-    if (this.mode === "cut" && new Set(this.sockets.map((s) => R.canon(s.value))).size > 1)
-      return { key: "fail.seat.partial", params: {} };
+    if (this.mode === "cut") {
+      const charged = this.sockets.filter((s) => s.charged);
+      const values = new Set(charged.map((s) => R.canon(s.value)));
+      if (charged.length && charged.length < this.sockets.length) return { key: "fail.seat.partial", params: {} };
+      if (charged.length === this.sockets.length && values.size > 1)
+        return { key: "fail.twin", params: {}, misconception: "var-must-differ" };
+    }
     if (marked?.failKey) return { key: marked.failKey, params: {} };
     return null;
   }
@@ -341,6 +375,38 @@ export default {
     const unknown = ctx.unknown || "x";
 
     if (t === "integer" || t === "rational" || t === "valueSet") {
+      /**
+       * ROUND 3, ACTION 5: DECIDE WHAT SPAN IS FOR.
+       *
+       * > "`Span.pose()` still claims every `integer | rational | valueSet` answerType, which is the
+       * > whole drill population. Restrict it to claims where a magnitude genuinely IS the unknown,
+       * > and let the items whose answer is computed in the head route to a verb that performs the
+       * > computation."
+       *
+       * The dividing line is whether the world is already holding the CHARGE. `var-meaning`'s `g`
+       * with `g = 8` standing under it, `eval-substitute`'s `x^{2} + x` with `x = 4`,
+       * `oo-structure`'s `4x` with `x = 7` — in every one of those the answer is a computation away
+       * from two things already on the screen, and a deck walked out to it is a transcription of
+       * arithmetic the player did in their head. That is `Seat.js`'s act now: carry the charge into
+       * the socket, then close the joins, and which join closes first is the knowledge point.
+       *
+       * What is LEFT here is what this verb was always for: `expr-anatomy`'s "how many terms are
+       * standing in `7x + 7`", `equivalent-expressions`' open ward `5x + \square`, `eq-model-context`'s
+       * smallest count that clears a threshold, `eq-meaning`'s candidate set. In every one of those
+       * the number is nowhere on the screen, nothing on the screen can be pushed into a socket to
+       * produce it, and the unknown genuinely IS a magnitude you build.
+       *
+       * Shadowing by ordering would have been enough at runtime — `Verbs.js` asks SEAT first — and it
+       * is deliberately not relied on: a verb whose own gate is wrong is a verb that becomes wrong
+       * again the next time the order changes.
+       */
+      let charged = null;
+      try {
+        charged = Seat.line(ctx.stem, ctx);
+      } catch {
+        charged = null;
+      }
+      if (charged) return null;
       return new SpanAct(ctx, "one", [new Socket(unknown)]);
     }
 

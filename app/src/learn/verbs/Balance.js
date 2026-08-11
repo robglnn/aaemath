@@ -521,4 +521,27 @@ export default {
     if (names.size !== 1 || !names.has(unknown)) return null;
     return new BalanceAct(ctx, [claim], [unknown]);
   },
+
+  /**
+   * The same hands, posed on ONE LINE of a working rather than on a stem. `Repair.js` is the caller:
+   * a claim standing at line 2 of a solve is a claim, and rebuilding it means doing to line 1 what
+   * line 2 said was done to it — carrying a term over the Sill, sharing both pans, gathering a load.
+   *
+   * The one-unknown gate from `pose` is relaxed here on purpose. A stem is the whole item and a claim
+   * with two names in it is a load you settle rather than one you close; a working LINE is a step,
+   * and `eval-formula`'s intermediate rows carry two names in the ordinary course of being right.
+   */
+  line(tex, ctx) {
+    const system = parseSystem(tex);
+    if (system && system.length > 1) {
+      const names = new Set();
+      for (const c of system) for (const n of namesOf(c)) names.add(n);
+      return new BalanceAct(ctx, system, namesInOrder(tex).filter((n) => names.has(n)));
+    }
+    const claim = parseClaim(tex);
+    if (!claim || claim.rel !== "=" || !claim.far) return null;
+    const names = namesOf(claim);
+    const ordered = namesInOrder(tex).filter((n) => names.has(n));
+    return new BalanceAct(ctx, [claim], ordered.length ? ordered : [ctx.unknown || "x"]);
+  },
 };

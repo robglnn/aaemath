@@ -49,9 +49,11 @@ import {
   chainTex,
   cloneChain,
   closeJoin,
+  isBundle,
   joinTakes,
   loadCanon,
   parseChain,
+  parseClaim,
 } from "./Claim.js";
 
 /** How far a push gets into a join that will not close. The gap that is left is the refusal. */
@@ -315,6 +317,17 @@ export default {
     }
 
     if (!named) return null;
+    /**
+     * A ROW WITH A PRODUCT IN IT IS SETTLED, NEVER GATHERED, AND ROUND 3 MEASURED WHY.
+     *
+     * `foldSigns` rewrites every join as a `+` so that a load's terms can change places freely, and
+     * that is only true of a row held together by `+` and `-`. `props-operations`' `3x \cdot 0 + x`
+     * folded that way becomes `3x + 0 + x`, which gathers to `4x` — and the item's answer is `x`,
+     * because the whole knowledge point is that the product with zero settles first. A layer that
+     * flattened the `\cdot` would have deleted the knowledge point and then marked the learner wrong
+     * for its own rewrite. Measured on the shipped bank in `review/measure/P19.mjs`.
+     */
+    if (chain.ops.some((o) => o === "*" || o === "/")) return new CombineAct(ctx, chain, "settle");
     const folded = foldSigns(chain);
     // Nothing of a kind to gather is nothing to do. `expr-anatomy`'s `7 - 9x` is a row with no two
     // parts alike in it; posing a gathering verb on one gives a player a pair of hands and nowhere
@@ -322,5 +335,34 @@ export default {
     const gatherable = folded.parts.some((a, i) => folded.parts.some((b, j) => j > i && alike(a, b)));
     if (!gatherable) return null;
     return new CombineAct(ctx, folded, "gather");
+  },
+
+  /**
+   * The same act, posed on ONE LINE of a working rather than on a stem. `Repair.js` is the caller.
+   *
+   * Two readings are tried and the order matters. A row `parseChain` can read keeps its OPERATORS,
+   * because in `9 - 2 + 3` the order the joins were written in is the entire knowledge point. A row
+   * it cannot — `7 + -4x - 8`, where a sign rides on the term rather than on the join — is read as a
+   * LOAD instead and gathered with every join a `+`, which is `simplify-expression`'s own act and is
+   * the shape 51 of the bank's repair items hand over.
+   */
+  line(tex, ctx) {
+    const chain = parseChain(tex);
+    if (chain && chain.ops.length) {
+      const named = chain.parts.some((p) => p.v != null);
+      // A row with a product in it keeps its operators — see `pose` for the measurement.
+      if (!named || chain.ops.some((o) => o === "*" || o === "/")) return new CombineAct(ctx, chain, "settle");
+      const folded = foldSigns(chain);
+      if (folded.parts.some((a, i) => folded.parts.some((b, j) => j > i && alike(a, b))))
+        return new CombineAct(ctx, folded, "gather");
+      return null;
+    }
+    const claim = parseClaim(tex);
+    if (!claim || claim.rel !== null || claim.near.length < 2) return null;
+    // A bundle is a lock and DISTRIBUTE opens it; this verb only ever closes flat joins.
+    if (claim.near.some((t) => isBundle(t))) return null;
+    const asChain = { parts: claim.near.map((t) => ({ c: t.c, v: t.v })), ops: claim.near.slice(1).map(() => "+") };
+    if (!asChain.parts.some((a, i) => asChain.parts.some((b, j) => j > i && alike(a, b)))) return null;
+    return new CombineAct(ctx, asChain, "gather");
   },
 };

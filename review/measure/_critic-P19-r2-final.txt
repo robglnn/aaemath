@@ -1,0 +1,20 @@
+(node:43172) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+item: var-meaning.seat/generate/1spsl3y given: ["t = 5"] mode: cut
+built: p = 5, q = 6 (tagged misconception var-must-differ -> fail.twin)
+read key: fail.seat.partial | misconception on wire: [1mnull[22m
+ROWS STANDING IN THE WORLD:
+    verb-value = p = 5,\; \rule{0.34em}{0.34em}\,q = 6
+    verb-deck = \rule{3.72em}{0.14em}\;\rule{0.35em}{0.05em}\;\rule{0.5em}{0.14em}
+    verb-read-0 = \text{One socket took it. The others are}
+    verb-read-1 = \text{still open.}
+
+1.75s after commit — rows still standing: [33m7[39m phase: performing
+
+=== GAMEPAD ===
+device: {"active":"kbm","style":"kbm","padId":"Xbox Wireless Controller (STANDARD GAMEPAD)","padConnected":true,"padVirtual":true,"everPad":false,"switches":0,"switchedAt":-1,"dwell":0.35,"pending":null,"usedAt":{"kbm":5.6667,"pad":-1}}
+after Pad:X — phase: idle verb: [1mnull[22m item: [90mundefined[39m
+after RT 1.2s — state: null entry: 
+rows: []
+pad set down — lastResponse: {"itemId":"var-meaning.seat/generate/1spsl3y","kpId":"var-meaning","verb":"span","response":"p = 5, q = 6","latencyMs":3583,"scaffoldLevel":0,"acts":11,"at":5.67,"correct":false,"scored":true,"credited":false,"family":"var-meaning.seat","misconception":null,"form":"generate","phase":"solo","engineLatencyMs":3583,"read":"fail.seat.partial"}
+errors: []

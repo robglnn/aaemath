@@ -1,2 +1,147 @@
 (node:64836) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
 (Use `node --trace-deprecation ...` to show where the warning was created)
+=== POSED ===
+{
+ "phase": "performing",
+ "verb": "span",
+ "item": {
+  "itemId": "var-meaning.seat/generate/1spsl3y",
+  "kpId": "var-meaning",
+  "form": "generate",
+  "answerType": "construction",
+  "objectClass": "Emitter",
+  "unknown": "t",
+  "stem": "t",
+  "given": [
+   "t = 5"
+  ]
+ },
+ "state": {
+  "mode": "cut",
+  "grip": 0,
+  "head": 0,
+  "fine": false,
+  "acts": 0,
+  "sockets": [
+   {
+    "name": "p",
+    "n": 0,
+    "d": 1,
+    "charged": false
+   },
+   {
+    "name": "q",
+    "n": 0,
+    "d": 1,
+    "charged": false
+   }
+  ]
+ },
+ "hand": {
+  "move": {
+   "x": 0,
+   "y": 0
+  },
+  "work": 0,
+  "trigger": {
+   "push": 0,
+   "pull": 0
+  },
+  "held": [],
+  "column": {
+   "right": 1.44,
+   "forward": 9.5,
+   "em": 0.66
+  }
+ },
+ "restands": 0,
+ "plantedSteps": 42,
+ "letGos": 0,
+ "entry": "",
+ "columnTop": -0.98,
+ "standing": [
+  "verb-value",
+  "verb-deck"
+ ],
+ "rows": [
+  {
+   "id": "verb-value",
+   "tex": "\\rule{0.34em}{0.34em}\\,p = 0,\\; q = 0",
+   "em": 0.66
+  },
+  {
+   "id": "verb-deck",
+   "tex": "\\rule{0.35em}{0.14em}",
+   "em": 0.66
+  }
+ ],
+ "lastResponse": null,
+ "verbs": [
+  "tilt",
+  "distribute",
+  "combine",
+  "balance",
+  "span"
+ ],
+ "stats": {
+  "presented": 1,
+  "posed": 1,
+  "unposed": 0,
+  "byVerb": {
+   "span": 1
+  },
+  "unposedByType": {},
+  "committed": 0,
+  "correct": 0,
+  "distinctVerbs": 1,
+  "strayChars": 0,
+  "commitMismatch": 0,
+  "familyOnWire": 0,
+  "refusedChars": 0,
+  "reads": 0,
+  "readsRefused": 0,
+  "shows": 2,
+  "hides": 0,
+  "respondHeard": 0,
+  "masteryHeard": 0
+ },
+ "simTime": 2.75,
+ "presenter": {
+  "open": true,
+  "phase": "standing"
+ },
+ "registry": [
+  "tilt",
+  "distribute",
+  "combine",
+  "balance",
+  "span"
+ ],
+ "stance": {
+  "planted": true,
+  "intent": {
+   "x": 0,
+   "y": 0
+  },
+  "speed": 0
+ }
+}
+
+=== HANDS ===
+[W 0.4s] {"verb":"span","rows":[{"id":"verb-value","tex":"\\rule{0.34em}{0.34em}\\,p = 1,\\; q = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{0.62em}{0.14em}","em":0.66}],"entry":"p = 1, q = 0"}
+[W 0.4s] {"verb":"span","rows":[{"id":"verb-value","tex":"\\rule{0.34em}{0.34em}\\,p = 2,\\; q = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{1.24em}{0.14em}","em":0.66}],"entry":"p = 2, q = 0"}
+[Mouse0 take] {"verb":"span","rows":[{"id":"verb-value","tex":"\\rule{0.34em}{0.34em}\\,p = 3,\\; q = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{1.86em}{0.14em}","em":0.66}],"entry":"p = 3, q = 0"}
+[Mouse0 take] {"verb":"span","rows":[{"id":"verb-value","tex":"\\rule{0.34em}{0.34em}\\,p = 4,\\; q = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{2.48em}{0.14em}","em":0.66}],"entry":"p = 4, q = 0"}
+[Mouse2 back] {"verb":"span","rows":[{"id":"verb-value","tex":"\\rule{0.34em}{0.34em}\\,p = 3,\\; q = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{1.86em}{0.14em}","em":0.66}],"entry":"p = 3, q = 0"}
+[BracketRight] {"verb":"span","rows":[{"id":"verb-value","tex":"p = 3,\\; \\rule{0.34em}{0.34em}\\,q = 0","em":0.66},{"id":"verb-deck","tex":"\\rule{0.35em}{0.14em}","em":0.66}],"entry":"p = 3, q = 0"}
+shot written
+file:///C:/dev/math/aaemath/review/measure/_critic-P19-r2-hands.mjs:52
+  log("\nlearning BEFORE:", JSON.stringify(learnBefore).slice(0, 800));
+                                                       ^
+
+TypeError: Cannot read properties of undefined (reading 'slice')
+    at [90mfile:///C:/dev/math/aaemath/[39mreview/measure/_critic-P19-r2-hands.mjs:52:56
+    at async openGame [90m(file:///C:/dev/math/aaemath/[39mtools/lib/session.mjs:250:12[90m)[39m
+    at async [90mfile:///C:/dev/math/aaemath/[39mreview/measure/_critic-P19-r2-hands.mjs:6:1
+
+Node.js v24.11.0

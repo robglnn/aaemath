@@ -129,12 +129,40 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
   // ---------------------------------------------------------------- keyboard
   // Exactly the vocabulary `review/measure/loop-trace.mjs` uses: walk, take the claim on, walk the
   // deck out, set it down. No key here does anything a player's key would not.
+  /**
+   * TWENTY-FOUR ITEMS, and the number is the round-2 critic's.
+   *
+   * "Every item a real player meets poses SPAN — 20 out of 20 presented items in a 24-attempt
+   * session, and span/span/span/span across all four independent sessions I ran... today it would
+   * read {span: 20} and pass silently." Their second demanded action is that this script stop being
+   * able to do that, so the session is now their length and claim P19.12 reads the distribution.
+   */
   await d.page.keyboard.press("KeyE"); // take the mathematics on
   await fast(d, 0.6);
-  for (let i = 0; i < 6; i += 1) {
-    await holdFast(d, "KeyW", 1.2); // walk the deck out / carry the term
+  /**
+   * It looks at its hands before it presses anything. `interact` both takes a claim on and sets it
+   * down, so a driver that presses it a fixed number of times per item falls out of phase with the
+   * presenter after the first commit and then puts down claims it never touched — measured, on the
+   * first round-3 run: 52 presses, 4 items, 21 claims dropped. A player is not blind, and neither is
+   * this loop.
+   */
+  let items = 0;
+  for (let i = 0; i < 96 && items < 24; i += 1) {
+    if ((await d.probe("verbs"))?.phase !== "performing") {
+      await d.page.keyboard.press("KeyE"); // take the claim on
+      await fast(d, 0.45);
+      continue;
+    }
+    // Walk the grip along the object a different distance each time: a harness that performs one
+    // fixed act on twenty-four claims measures the act, not the game.
+    for (let s = 0; s < items % 4; s += 1) {
+      await d.page.keyboard.press("BracketRight");
+      await fast(d, 0.1);
+    }
+    await holdFast(d, "KeyW", 0.9); // work the claim — the feet are planted while it is held
     await d.page.keyboard.press("KeyE"); // set it down
-    await fast(d, 2.4); // the mark stands, then the next claim
+    await fast(d, 1.5); // the mark stands, then the next claim
+    items += 1;
   }
 
   const kb = await d.run(() => ({ trace: window.__p19.slice(), verbs: window.__vs.probe("verbs"), teaching: window.__vs.probe("teaching") }));
@@ -485,6 +513,59 @@ claim(
     ? `last response: verb "${lr.verb}" response ${JSON.stringify(lr.response)} scaffoldLevel ${lr.scaffoldLevel} ` +
       `correct ${lr.correct} scored ${lr.scored} family ${lr.family} misconception ${lr.misconception}`
     : "no response recorded"
+);
+
+/**
+ * P19.12 — the claim the round-2 critic asked for by name, in the words they asked for it in.
+ *
+ * "ROUTE ITEMS TO MORE THAN ONE VERB... Then add an assertion to `review/measure/P19.mjs` that a
+ * 24-item session poses at least three distinct verb ids; today it would read `{span: 20}` and pass
+ * silently."
+ *
+ * The session above is now their 24 items. `byVerb` is the runtime's own count of what it posed, so
+ * this reads the shipped scheduler's real service through the shipped router — not a survey of the
+ * catalogue, which would say nothing about what a player actually meets at level 1.
+ */
+const posedBy = vs.byVerb ?? {};
+claim(
+  "P19.12 a 24-item session poses at least three distinct verbs",
+  Object.keys(posedBy).length >= 3,
+  `${Object.keys(posedBy).length} distinct over ${vs.presented ?? 0} presented items: ${JSON.stringify(posedBy)} ` +
+    `(round 2: {span: 20} of 20) · unposed ${vs.unposed ?? 0} ${JSON.stringify(vs.unposedByType ?? {})}`
+);
+
+/**
+ * P19.13 — the off-screen failure, as the one number that shows it cannot recur.
+ *
+ * The critic's first action: after 1.6 s of `KeyW` the mathematics was gone. The session above holds
+ * `KeyW` for nine tenths of a second on every one of twenty-four claims, which is fourteen times the
+ * move that lost it. `plantedSteps` counts the simulation steps the body was held still because the
+ * hands were on a claim; `probe("verbs").stance` in `boot/64-verbs.js` reads the body back to check
+ * the stance actually took. `review/measure/P19-r3.mjs` section A is the frame measurement itself.
+ */
+claim(
+  "P19.13 the body is planted for as long as a claim is held",
+  (evidence.keyboard?.verbs?.plantedSteps ?? 0) > 0 && (evidence.keyboard?.verbs?.stance?.planted === false || evidence.keyboard?.verbs?.phase !== "performing"),
+  `${evidence.keyboard?.verbs?.plantedSteps ?? 0} simulation steps planted across the session; ` +
+    `${evidence.keyboard?.verbs?.restands ?? 0} restands; ` +
+    `${evidence.keyboard?.verbs?.letGos ?? 0} claims put back down unanswered; feet free again at the end (${JSON.stringify(evidence.keyboard?.verbs?.stance ?? null)})`
+);
+
+/**
+ * P19.14 — the answer slot belongs to the hands.
+ *
+ * "boot/92-teaching.js's raw keydown handler feeds every character ENTRY_GRAMMAR admits... straight
+ * to teaching.type(). Measured on the shipped app: holding W then A then S puts the string `was` in
+ * the world-space answer slot... Mastery scored it and theta went to −1.173476." The session above
+ * holds W on every claim; `strayChars` counts every character that reached the slot and was not the
+ * build, and the runtime overwrites the slot with the build every simulation step.
+ */
+claim(
+  "P19.14 no stray keystroke reached the engine",
+  (vs.commitMismatch ?? 1) === 0 && (vs.committed ?? 0) > 0,
+  `${vs.committed ?? 0} commits, ${vs.commitMismatch ?? "?"} of them with an entry slot that disagreed with what the hands built, ` +
+    `after ${vs.strayChars ?? 0} characters were intercepted and removed across ${vs.presented ?? 0} items of holding KeyW ` +
+    `(round 2: "was", committed, scored, theta to -1.173476)`
 );
 
 claim(

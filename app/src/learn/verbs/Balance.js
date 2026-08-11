@@ -53,6 +53,7 @@ import {
   R,
   rat,
   carry,
+  carryFlat,
   claimTex,
   cloneClaim,
   foldOpenBundles,
@@ -102,6 +103,8 @@ class BalanceAct {
     this.acts = 0;
     this.seats = 0;
     this.carries = 0;
+    /** Terms shoved across the Sill without turning. `fail.sill.sign`, committed rather than asked. */
+    this.flatCarries = 0;
     this.history = [];
     this.oneSided = false;
     this.lastAct = null;
@@ -164,19 +167,26 @@ class BalanceAct {
     // Carrying is a walk, not a click: 0.42 s of push to get a term over the Sill, and the term is
     // visibly between the pans the whole time.
     this.travel = Math.max(-1, Math.min(1, this.travel + y * step * 2.4));
-    if (this.travel >= 1) this._land();
+    // The second grip, away from a Sill, is your weight set against the term: it goes over FLAT.
+    if (this.travel >= 1) this._land(hand.held?.has?.("crouch") === true);
     else if (this.travel <= -1) this._shed();
   }
 
-  _land() {
+  _land(flat = false) {
     const h = this.held;
     this.travel = 0;
     if (!h || h.kind !== "term" || isBundle(h.t)) return;
     this._remember();
-    carry(this.claims[h.claim], h.side, h.index);
+    if (flat) {
+      carryFlat(this.claims[h.claim], h.side, h.index);
+      this.flatCarries += 1;
+      this.lastAct = "shove";
+    } else {
+      carry(this.claims[h.claim], h.side, h.index);
+      this.carries += 1;
+      this.lastAct = "carry";
+    }
     this.acts += 1;
-    this.carries += 1;
-    this.lastAct = "carry";
     this.settleFor = 0.22;
     this._reseat();
   }
@@ -206,7 +216,7 @@ class BalanceAct {
     return null;
   }
 
-  act(name) {
+  act(name, hand) {
     switch (name) {
       case "stepNext":
         this.grip = (this.grip + 1) % this.row.length;
@@ -217,7 +227,7 @@ class BalanceAct {
         this.travel = 0;
         return true;
       case "take":
-        return this._take();
+        return this._take(hand?.held?.has?.("crouch") === true);
       case "hold": {
         /**
          * THE SECOND GRIP, which means two things because there are two kinds of claim in your hands.
@@ -231,7 +241,12 @@ class BalanceAct {
          * whose near pan is half a thing, and no number of shares will ever make it whole;
          * `props-equality` is explicit that both directions are legal on a balance, and 24 committed
          * `eq-one-mult` items are unclosable without it.
+         *
+         * BOTH require you to be standing AT a Sill, and that is not decoration: away from a Sill the
+         * second grip is your weight set against a term, which is what sends it over flat (see
+         * `_land`). One button cannot mean "seat a core" and "shove a term" in the same place.
          */
+        if (!this.atSill) return false;
         const donor = this.isSystem ? this._donor() : null;
         if (donor) {
           this._remember();
@@ -272,7 +287,7 @@ class BalanceAct {
    * object decides what can be done to it — a bundle opens, a pair of like terms gathers, a term
    * crosses the Sill, and the Sill shares. `world.md` §2.1 rule 8: outward-in, top first.
    */
-  _take() {
+  _take(flat = false) {
     const h = this.held;
     if (!h) return false;
     const claim = this.claims[h.claim];
@@ -306,9 +321,10 @@ class BalanceAct {
       return true;
     }
     // Nothing to gather: the grip carries it over instead, which is the same act the body does
-    // slowly with a forward push and the same act a pad player wants on a single button.
+    // slowly with a forward push and the same act a pad player wants on a single button — flat if
+    // the second grip is held, exactly as the slow version is.
     this.travel = 1;
-    this._land();
+    this._land(flat);
     return true;
   }
 
@@ -418,6 +434,9 @@ class BalanceAct {
    */
   read(marked) {
     if (marked?.misconception && marked?.failKey) return { key: marked.failKey, params: {} };
+    // Law 2, broken by hand. This outranks a tilt because a term that went over without turning is a
+    // bigger thing to have happened to the claim than a pan sitting low.
+    if (this.flatCarries > 0) return { key: "fail.sill.sign", params: {} };
     for (const c of this.claims) {
       const tilt = c.tilt ?? R.zero;
       if (!R.isZero(tilt)) {
@@ -445,6 +464,7 @@ class BalanceAct {
       seatReady: this._donor()?.name ?? null,
       seats: this.seats,
       carries: this.carries,
+      flatCarries: this.flatCarries,
       tilt: this.claims.map((c) => R.canon(c.tilt ?? R.zero)),
       oneSided: this.oneSided,
       lastAct: this.lastAct,

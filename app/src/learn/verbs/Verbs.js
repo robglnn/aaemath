@@ -145,13 +145,18 @@ export const HAND = {
    * The box below is checked EVERY step while a claim is held, in the camera's own frame: how far
    * ahead the column is, and how far off the axis it has got as a fraction of that. The limits sit
    * inside the frustum with room to spare, so a column is put back before it clips rather than after.
+   *
+   * The lateral limit is `tan 17deg` and not the frustum's own `tan 39deg`, because the test is run
+   * against the column's ANCHOR and a row of prose is two metres wide either side of it. Round 3's
+   * first capture (`review/shots/P19-r3/A-after-turning.png`) is what set the number: every anchor
+   * projected on screen and the left third of "Cut two sockets under different names" did not.
    */
   keepAhead: 3.2,
   keepBehind: 26,
-  keepLateral: 0.5,
-  keepVertical: 0.32,
+  keepLateral: 0.3,
+  keepVertical: 0.22,
   /** Sim seconds between restands, so a player spinning on the spot is not a raster storm. */
-  restandEvery: 0.35,
+  restandEvery: 0.2,
 };
 
 const PREFIX = "verb-";
@@ -275,6 +280,12 @@ export class VerbRuntime {
       distinctVerbs: 0,
       /** Characters the presenter's own keyboard handler put in the slot while a claim was held. */
       strayChars: 0,
+      /**
+       * Commits where the slot did not hold what the hands built. Must stay 0: it is the number that
+       * says no stray keystroke ever reached `Mastery`, which is the round-2 defect stated as a
+       * measurement rather than as a mechanism.
+       */
+      commitMismatch: 0,
       /** Responses whose family reached `Mastery` — the number P34's delivery defect shows up in. */
       familyOnWire: 0,
       /** Characters `ItemBank.ENTRY_GRAMMAR` refused. Must stay 0: a mangled response is a lie. */
@@ -386,6 +397,16 @@ export class VerbRuntime {
         if (!e || !this.act) return;
         this.stats.respondHeard += 1;
         if (e.family != null && typeof e.family === "string") this.stats.familyOnWire += 1;
+        /**
+         * A COMMIT THIS RUNTIME DID NOT MAKE IS STILL THIS RUNTIME'S BUILD.
+         *
+         * `boot/92-teaching.js` binds Enter straight to `Teaching.commit()`, and since `_syncEntry`
+         * keeps the entry slot holding what the hands built, Enter is now a second, legitimate way to
+         * set a claim down. Without this the record would still describe the PREVIOUS claim and
+         * `probe("verbs").lastResponse` would quietly disagree with the signal beside it — which is
+         * exactly the class of half-connected reporting `RESUME.md` §6b is about.
+         */
+        if (this.lastResponse?.itemId !== (e.itemId ?? null)) this._record(this.entrySynced ?? "");
         if (this.lastResponse) {
           this.lastResponse.correct = e.correct === true;
           this.lastResponse.scored = e.scored === true;
@@ -712,15 +733,36 @@ export class VerbRuntime {
     // The slot has been carrying the build every step (`_syncEntry`); this is the flush that
     // guarantees it, so a commit can never send a response the player was not looking at.
     this._syncEntry();
-    const refused = 0;
+    this._record(response);
 
+    /**
+     * The last gate before the engine, and it is a number rather than a promise.
+     *
+     * `_syncEntry` has just written the build into the slot; if the slot still disagrees, something
+     * put a character there that this runtime did not, and the response about to be priced is not the
+     * one the player built. Round 2's defect — `was`, committed, scored, theta to −1.173476 — is
+     * exactly this condition, so it is counted rather than assumed away, and `review/measure/P19.mjs`
+     * fails the run on a non-zero.
+     */
+    if (teaching.response !== response) this.stats.commitMismatch += 1;
+
+    this.stats.committed += 1;
+    try {
+      teaching.commit();
+    } catch {
+      /* the presenter's own guards decide what a refused commit means */
+    }
+    return this.lastResponse;
+  }
+
+  /** The runtime's own record of what the hands built, beside what the engine says about it. */
+  _record(response) {
     const latencyMs = Math.max(0, Math.round((this.simTime - (this.startedAt ?? this.simTime)) * 1000));
     this.lastResponse = {
       itemId: this.ctx?.itemId ?? null,
       kpId: this.ctx?.kpId ?? null,
-      verb: this.act.id,
+      verb: this.act?.id ?? null,
       response,
-      refusedChars: refused,
       latencyMs,
       /**
        * `scaffoldLevel` is this runtime's own record of how much the world put on the screen that the
@@ -730,8 +772,14 @@ export class VerbRuntime {
        * scoring the response upward. The two must never disagree, and `review/measure/P19.mjs`
        * asserts they do not.
        */
-      scaffoldLevel: this.act.scaffoldLevel ?? 0,
-      acts: this.act.state?.().acts ?? null,
+      scaffoldLevel: this.act?.scaffoldLevel ?? 0,
+      acts: (() => {
+        try {
+          return this.act?.state?.().acts ?? null;
+        } catch {
+          return null;
+        }
+      })(),
       at: round2(this.simTime),
       correct: null,
       scored: null,
@@ -739,13 +787,6 @@ export class VerbRuntime {
       family: null,
       misconception: null,
     };
-
-    this.stats.committed += 1;
-    try {
-      teaching.commit();
-    } catch {
-      /* the presenter's own guards decide what a refused commit means */
-    }
     return this.lastResponse;
   }
 

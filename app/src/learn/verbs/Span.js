@@ -34,8 +34,16 @@ const NAME_POOL = "pqrsuvwkmn".split("");
 const LEAD = 0.34;
 /** Sim seconds the deck takes to get from two segments a second up to seven. */
 const RAMP = 1.4;
-/** The deck length at which the second grip becomes a x10 gear rather than a single span. */
-const GEAR_AT = 20;
+/**
+ * The deck length at which the second grip becomes a x10 gear rather than a single span.
+ *
+ * Twelve rather than twenty, measured: with `LEAD` and `RAMP` in front of it a deck reaches twenty in
+ * about four seconds of holding, and a gearbox you have to wait four seconds to engage is a gearbox
+ * nobody uses. Twelve is reached in about two and a half, it is above every single-digit answer in
+ * Algebra I, and it is the smallest number for which "ten at a time" is a sensible unit of the thing
+ * you are already holding.
+ */
+const GEAR_AT = 12;
 
 /** Single letters standing in a stem, in the order they first appear. `a,\; b` -> ["a","b"]. */
 function namesIn(tex) {
@@ -145,7 +153,7 @@ class SpanAct {
     this.push += step;
     if (this.push < LEAD) return;
     const t = Math.min(1, (this.push - LEAD) / RAMP);
-    const rate = 2 + t * 5;
+    const rate = 2 + t * 6;
     this.carry += rate * step * dir * Math.min(1, Math.abs(y));
     while (this.carry >= 1) {
       this.carry -= 1;

@@ -1,0 +1,25 @@
+(node:64612) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+================ A · THE FRAME (round 2: y = -4727..-1900, two rows behind) ======
+  posed, body still:   verb=span rows=7 onScreen=7
+  after 1.6s of KeyW:  verb=span phase=performing restands=0
+     stance={"planted":true,"intent":{"x":0,"y":0},"speed":0}
+     teach-ask-0      x=  705 y=    61 onScreen=true behind=false
+     teach-ask-1      x=  704 y=   114 onScreen=true behind=false
+     teach-claim      x=  703 y=   167 onScreen=true behind=false
+     teach-given-0    x=  703 y=   225 onScreen=true behind=false
+     teach-entry      x=  702 y=   283 onScreen=true behind=false
+     verb-value       x=  730 y=   356 onScreen=true behind=false
+     verb-deck        x=  730 y=   400 onScreen=true behind=false
+PASS  A1 nothing leaves the frame while a claim is held  —  7/7 rows on screen, y range 61..400 in a 720px frame (round 2: -4727..-1900, 2 rows behind the camera)
+PASS  A2 the feet are planted while the hands are on a claim  —  planted=true intent={"x":0,"y":0} speed=0 m/s
+  after turning ~90deg: restands=2 onScreen=7/7
+PASS  A3 a column the player turned away from is put back in front of them  —  restands 0 -> 2, 7/7 rows on screen
+
+================ C · THE ANSWER SLOT (round 2: holding W,A,S typed `was`) ========
+  teaching.response = "p = 6, q = 0"   verbs.entry = "p = 6, q = 0"
+PASS  C1 movement keys cannot write into the answer slot  —  after holding W, A and S the slot holds "p = 6, q = 0" — which is what the hands built ("p = 6, q = 0"), not what the feet typed (round 2: "was", and Enter committed it)
+  (verb was span; the slot is re-synced from the build every simulation step)
+
+================ B/D/F · AN UNASSISTED SESSION ===================================

@@ -448,6 +448,33 @@ export function carry(c, side, index) {
 }
 
 /**
+ * Shove a term across the Sill WITHOUT lifting it, so it lands the same way up.
+ *
+ * ROUND 3, AND IT IS AN AFFORDANCE FOR MAKING A MISTAKE ON PURPOSE.
+ *
+ * `world.md` Law 2 is that a term carried over the Sill turns around on the way, and `carry` above
+ * enforces it. That made `moved-without-inverting` — 124 committed items carry it, tagged
+ * `fail.sill.sign`, "It came over the Sill and did not turn around" — a thing no pair of hands in
+ * this game could do. The round-2 critic named the consequence: "the best line in the piece... is
+ * unreachable."
+ *
+ * TILT already had the matching pair, and it is the model: `turn(claim, false)` sends the rail over
+ * and deliberately leaves the mark, which is how `fail.mark.unturned` is committed rather than asked
+ * about. This is the same shape one rung down. Lifting a term is work; shoving it is not, and a
+ * player with their weight set (the second grip) can push it flat across the Sill instead. The claim
+ * does not object at the time. The world says what happened when it is set down.
+ */
+export function carryFlat(c, side, index) {
+  const from = side === "near" ? c.near : c.far;
+  const to = side === "near" ? c.far : c.near;
+  if (!from || !to || !from[index] || isBundle(from[index])) return false;
+  const t = from.splice(index, 1)[0];
+  to.push(term(t.c, t.v));
+  c.shoved = true;
+  return true;
+}
+
+/**
  * Shed a term off the pan you are standing at without carrying it anywhere.
  *
  * This is the one-sided move, and it is reachable on purpose: `world.md` Law 3 says the world never

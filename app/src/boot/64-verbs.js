@@ -135,7 +135,15 @@ export default {
       const field = kernel.get("mathtex");
       if (!field?.panels || !from || !to) return 0;
       let moved = 0;
-      for (const [id, panel] of field.panels) {
+      /**
+       * SNAPSHOT FIRST, AND THIS IS NOT DEFENSIVE STYLE — IT IS A HANG.
+       *
+       * `math:hide` deletes the id from `TexField.panels` and `math:show` inserts it again, which in
+       * a `Map` puts it at the END of the insertion order. Iterating the live map therefore hands the
+       * re-inserted id back to the same loop, which hides and shows it again, forever. Measured: the
+       * first restand of the first evidence run never returned.
+       */
+      for (const [id, panel] of [...field.panels.entries()]) {
         if (!id.startsWith("teach-")) continue;
         const w = panel.mesh?.position;
         if (!w) continue;

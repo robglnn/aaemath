@@ -1,0 +1,66 @@
+=== parser spot checks ===
+"8 + 5 \\cdot 4"       chain=8,5,4 ops=+*
+"12 \\div 6 \\cdot 5"  chain=12,6,5 ops=/*
+"9 - 2 + 3"            chain=9,2,3 ops=-+
+"3x + 2x + 6"          chain=3*x,2*x,6 ops=++
+"7 - 9x"               chain=7,9*x ops=-
+"7x + 7"               chain=7*x,7 ops=+
+"x + 5 = 12"           chain=null
+"g"                    chain=null
+"3x^{2}"               chain=null
+system  -> x + y = 14  ||  x - y = 0
+
+=== routing over the whole committed bank ===
+  null  796
+  span  116
+  balance  98
+  tilt  60
+  distribute  51
+  combine  31
+
+=== the two knowledge points a level-1 player is actually served ===
+  oo-numeric|construct|integer               combine:12
+  oo-numeric|construct|rational              combine:3
+  oo-numeric|generate|construction           null:5
+  oo-numeric|repair|repair                   null:16
+  var-meaning|construct|equation             span:4
+  var-meaning|construct|integer              span:5
+  var-meaning|construct|pair                 balance:5
+  var-meaning|generate|construction          span:5
+  var-meaning|repair|repair                  null:17
+
+=== can the hands close it? (drive each level-1 shape to a response) ===
+  8 + 5 \cdot 4  ans=28
+     right order (join 2 then join 1): { verb: [32m'combine'[39m, response: [32m'28'[39m }
+     left to right (join 1 then join 2): { verb: [32m'combine'[39m, response: [32m'52'[39m }
+  12 \div 6 \cdot 5  ans=10
+     as they stand: { verb: [32m'combine'[39m, response: [32m'10'[39m }
+     mult first:    { verb: [32m'combine'[39m, response: [32m'2/5'[39m }
+  x + y = 14,\quad x - y = 0  ans=x=7;y=7
+     verb=balance
+       walk to 1:near:1
+       take -> x + y = 14 || x = 0 + y
+       walk to sill:0
+       hold -> y + y = 14 || x = 0 + y
+       walk to 0:near:0
+       take -> 2y = 14 || x = 0 + y
+       walk to sill:0
+       dial 2
+       take -> y = 7 || x = 0 + y
+       walk to sill:1
+       hold -> y = 7 || x = 0 + 7
+     response="x = 7, y = 7"
+
+=== carrying a term over the Sill WITHOUT letting it turn ===
+  6x + 5 = 4x + 17   verb=balance   ans=6
+     shoved:  6x + 5 + 4x = 17   flatCarries=1
+     the world's read: {"key":"fail.sill.sign","params":{}}
+     which says: "It came over the Sill and did not turn around."
+
+=== does the SHIPPED checker tag what the hands can build? ===
+  8 + 5 \cdot 4                "28"               correct=true  misconception=null                       failKey=null                   ""
+  8 + 5 \cdot 4                "52"               correct=false misconception=oo-strict-left-to-right    failKey=fail.load.unsettled    "The bundle was still shut when you read it."
+  12 \div 6 \cdot 5            "10"               correct=true  misconception=null                       failKey=null                   ""
+  12 \div 6 \cdot 5            "2/5"              correct=false misconception=oo-mult-before-div         failKey=fail.load.unsettled    "The bundle was still shut when you read it."
+  x + y = 14,\quad x - y = 0   "x = 7, y = 7"     correct=true  misconception=null                       failKey=null                   ""
+  x + y = 14,\quad x - y = 0   "x = 3, y = 11"    correct=false misconception=var-must-differ            failKey=fail.twin              "Two names. Nobody said two numbers."

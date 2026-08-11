@@ -1,9 +1,9 @@
 {
   "id": "P19",
-  "state": "building",
+  "state": "critique",
   "round": 2,
   "gap": "Every item a player actually meets poses SPAN (20/20 in a real session) - a number dial you hold a button on until the counter matches the answer you already did in your head. BALANCE, the one verb where the hands perform the algebra, never poses. And on the stick - the designed primary axis - the mathematics leaves the frame within 1.6s.",
-  "note": "Round 2: fixing off-screen anchoring, routing items to multiple verbs, gating movement keys, bank misconceptions, span gearing",
+  "note": "Round 3 build: COMBINE rewritten around joins (oo-numeric), BALANCE widened to systems + SEAT + flat carry, stance fixes the off-screen failure, entry slot owned by the hands, SPAN regeared. 9/11 round-3 claims pass; B1/D1 fail on the cold-start scheduler serving one KP.",
   "evidence": [],
-  "updated": "2026-08-10T23:53:37.193Z"
+  "updated": "2026-08-11T00:55:52.820Z"
 }

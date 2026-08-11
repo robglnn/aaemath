@@ -434,9 +434,15 @@ class BalanceAct {
    */
   read(marked) {
     if (marked?.misconception && marked?.failKey) return { key: marked.failKey, params: {} };
-    // Law 2, broken by hand. This outranks a tilt because a term that went over without turning is a
-    // bigger thing to have happened to the claim than a pan sitting low.
-    if (this.flatCarries > 0) return { key: "fail.sill.sign", params: {} };
+    /**
+     * Law 2, broken by hand. This outranks a tilt because a term that went over without turning is a
+     * bigger thing to have happened to the claim than a pan sitting low.
+     *
+     * Read off the CLAIM and not off a counter on this act, so that undo undoes it: `cloneClaim` does
+     * not copy `shoved`, so a history entry restored by the second trigger restores a claim that was
+     * never shoved. A tally would have kept accusing a player who took it back.
+     */
+    if (this.claims.some((c) => c.shoved)) return { key: "fail.sill.sign", params: {} };
     for (const c of this.claims) {
       const tilt = c.tilt ?? R.zero;
       if (!R.isZero(tilt)) {

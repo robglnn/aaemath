@@ -1,0 +1,212 @@
+{
+ "claims": [
+  {
+   "id": "A1 nothing leaves the frame while a claim is held",
+   "pass": true,
+   "detail": "7/7 rows on screen, y range 61..400 in a 720px frame (round 2: -4727..-1900, 2 rows behind the camera)"
+  },
+  {
+   "id": "A2 the feet are planted while the hands are on a claim",
+   "pass": true,
+   "detail": "planted=true intent={\"x\":0,\"y\":0} speed=0 m/s"
+  },
+  {
+   "id": "A3 a column the player turned away from is put back in front of them",
+   "pass": true,
+   "detail": "restands 0 -> 2, 7/7 rows on screen"
+  },
+  {
+   "id": "C1 movement keys cannot write into the answer slot",
+   "pass": true,
+   "detail": "after holding W, A and S the slot holds \"p = 6, q = 0\" — which is what the hands built (\"p = 6, q = 0\"), not what the feet typed (round 2: \"was\", and Enter committed it)"
+  },
+  {
+   "id": "C2 no stray keystroke ever reached the engine",
+   "pass": true,
+   "detail": "12 commits, 0 of them with a slot that disagreed with the build, after 20 characters were intercepted and removed"
+  },
+  {
+   "id": "B1 a session poses at least three distinct verbs",
+   "pass": false,
+   "detail": "2 distinct: {\"span\":7,\"balance\":6} (round 2: {span: 20})"
+  },
+  {
+   "id": "F1 the loop closes and repeats",
+   "pass": true,
+   "detail": "learn:present 12 · math:show 481 · learn:respond 12 · learn:mastery 10"
+  },
+  {
+   "id": "F2 every response reaches Mastery with its family",
+   "pass": true,
+   "detail": "12/12 carried a family"
+  },
+  {
+   "id": "D1 a wrong answer reaches a bank-tagged misconception",
+   "pass": false,
+   "detail": "0 of 12 wrong answers carried a declared misconception (round 2: 0 of 20)"
+  },
+  {
+   "id": "E1 a short push lands on a small number",
+   "pass": true,
+   "detail": "a tap lays exactly 1, half a second lays 1 (round 2: the first second reached ~5.5 and the second grip x10'd it from anywhere)"
+  },
+  {
+   "id": "E2 the second grip cannot launch a short deck",
+   "pass": true,
+   "detail": "one second with the second grip held = 3, same as without (3) — the x10 gear will not engage below 20"
+  }
+ ],
+ "counts": {
+  "math:show": 481,
+  "learn:respond": 12,
+  "learn:mastery": 10,
+  "math:hide": 326,
+  "learn:present": 12
+ },
+ "byVerb": {
+  "span": 7,
+  "balance": 6
+ },
+ "probe": {
+  "phase": "performing",
+  "verb": "span",
+  "item": {
+   "itemId": "var-meaning.relate/construct/1qyta96",
+   "kpId": "var-meaning",
+   "form": "construct",
+   "answerType": "equation",
+   "objectClass": "Emitter",
+   "unknown": "x",
+   "stem": "a,\\; b",
+   "given": []
+  },
+  "state": {
+   "mode": "ratio",
+   "grip": 0,
+   "head": 0,
+   "fine": false,
+   "acts": 0,
+   "sockets": [
+    {
+     "name": "a",
+     "n": 0,
+     "d": 1,
+     "charged": false
+    },
+    {
+     "name": "b",
+     "n": 0,
+     "d": 1,
+     "charged": false
+    }
+   ]
+  },
+  "hand": {
+   "move": {
+    "x": 0,
+    "y": 0
+   },
+   "work": 0,
+   "trigger": {
+    "push": 0,
+    "pull": 0
+   },
+   "held": [],
+   "column": {
+    "right": 1.44,
+    "forward": 9.5,
+    "em": 0.66
+   }
+  },
+  "restands": 27,
+  "plantedSteps": 3054,
+  "letGos": 0,
+  "entry": "",
+  "columnTop": -1.86,
+  "standing": [
+   "verb-value",
+   "verb-deck"
+  ],
+  "rows": [
+   {
+    "id": "verb-value",
+    "tex": "a = 0b",
+    "em": 0.66
+   },
+   {
+    "id": "verb-deck",
+    "tex": "\\rule{0.35em}{0.14em}",
+    "em": 0.66
+   }
+  ],
+  "lastResponse": {
+   "itemId": "var-meaning.relate/construct/m2gjx4",
+   "kpId": "var-meaning",
+   "verb": "span",
+   "response": "a = 2*b",
+   "latencyMs": 3383,
+   "scaffoldLevel": 0,
+   "acts": 2,
+   "at": 73.03,
+   "correct": false,
+   "scored": true,
+   "credited": false,
+   "family": "var-meaning.relate",
+   "misconception": null,
+   "form": "construct",
+   "phase": "guided-1",
+   "engineLatencyMs": 3383,
+   "read": "fail.slip"
+  },
+  "verbs": [
+   "tilt",
+   "distribute",
+   "combine",
+   "balance",
+   "span"
+  ],
+  "stats": {
+   "presented": 13,
+   "posed": 13,
+   "unposed": 0,
+   "byVerb": {
+    "span": 7,
+    "balance": 6
+   },
+   "unposedByType": {},
+   "committed": 12,
+   "correct": 0,
+   "distinctVerbs": 2,
+   "strayChars": 20,
+   "commitMismatch": 0,
+   "familyOnWire": 12,
+   "refusedChars": 0,
+   "reads": 12,
+   "readsRefused": 0,
+   "shows": 271,
+   "hides": 130,
+   "respondHeard": 12,
+   "masteryHeard": 10
+  },
+  "simTime": 76.85,
+  "presenter": {
+   "open": true,
+   "phase": "standing"
+  },
+  "registry": [
+   "tilt",
+   "distribute",
+   "combine",
+   "balance",
+   "span"
+  ],
+  "stance": {
+   "planted": true,
+   "intent": {
+    "x": 0,
+    "y": 0
+   },
+   "speed": 0
+  }
+ }
+}

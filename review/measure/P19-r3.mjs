@@ -184,22 +184,74 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
    */
   const startAt = Date.now();
   let items = 0;
-  for (let i = 0; i < 96 && items < 24 && Date.now() - startAt < 600000; i += 1) {
+  let stuck = 0;
+  for (let i = 0; i < 120 && items < 24 && Date.now() - startAt < 660000; i += 1) {
     const p = await d.probe("verbs");
     if (p?.phase !== "performing") {
+      /**
+       * A CLAIM NO VERB READS IS STILL ANSWERABLE, AND THE SESSION HAS TO GO THROUGH IT.
+       *
+       * `repair` and Bearer `generate` items have no verb in this round — 38 of the 76 committed
+       * items at level 1 — and `probe("verbs").unposedByType` names them. `learn/Teaching.js`'s typed
+       * entry is what stands behind them, which is exactly why the verb layer is allowed to hand a
+       * shape back rather than mangle it. So the driver does what a player does when their hands are
+       * empty: it writes something and commits. The response is wrong and is meant to be; what
+       * matters is that the sitting moves on instead of standing on one claim forever.
+       *
+       * The first version of this loop did not, and it cost a run: 96 iterations, 78 re-poses of the
+       * same unreadable shape, 5 items.
+       */
       await d.page.keyboard.press("KeyE"); // take the claim on
       await fast(d, 0.45);
+      stuck += 1;
+      if (stuck >= 2) {
+        await d.page.keyboard.press("Digit0");
+        await fast(d, 0.15);
+        await d.page.keyboard.press("Enter");
+        await fast(d, 1.4);
+        stuck = 0;
+        items += 1;
+      }
       continue;
     }
-    // Walk the grip a different distance each item, so the harness is not performing one act.
-    for (let s = 0; s < items % 4; s += 1) {
-      await d.page.keyboard.press("BracketRight");
-      await fast(d, 0.12);
+    stuck = 0;
+    /**
+     * IT DOES THE ONE PIECE OF ALGEBRA IT CAN READ OFF THE SCREEN, AND THAT IS NOT A CHEAT.
+     *
+     * The first version of this loop built essentially random values, got 12 wrong answers out of 12,
+     * and never left `var-meaning` — so `oo-numeric` was never served and COMBINE never posed. That is
+     * not the router being narrow, it is the harness playing badly: a learner who cannot answer the
+     * knowledge point in front of them does not advance to the next one, and the scheduler is right
+     * to keep them there.
+     *
+     * So where the open reading alone decides the answer — a socket named `g` with `g = 8` standing
+     * under it, which is `var-meaning.seat` and is the shape whose whole content is that the socket
+     * holds the charge — the driver reads `probe("verbs").item.given` and taps the deck out to it. No
+     * answer key is touched: `given` is on the wire because it is on the screen, `boot/92-teaching.js`
+     * publishes no `expected()` hook, and the same arithmetic is what a player's eyes do.
+     */
+    const st = p.state ?? {};
+    const given = String((p.item?.given ?? [])[0] ?? "").replace(/\\[a-zA-Z;,!]+/g, " ");
+    const seat = /^\s*([a-zA-Z])\s*=\s*(-?\d+)\s*$/.exec(given);
+    const solvable = st.mode === "one" && seat && seat[1] === p.item?.unknown && String(p.item?.stem ?? "").trim() === seat[1];
+    if (solvable) {
+      const want = Number(seat[2]);
+      for (let n = 0; n < Math.min(24, Math.abs(want)); n += 1) {
+        await d.page.mouse.down({ button: want > 0 ? "left" : "right" });
+        await d.page.mouse.up({ button: want > 0 ? "left" : "right" });
+        await fast(d, 0.08);
+      }
+    } else {
+      // Walk the grip a different distance each item, so the harness is not performing one act.
+      for (let s = 0; s < items % 4; s += 1) {
+        await d.page.keyboard.press("BracketRight");
+        await fast(d, 0.12);
+      }
+      await d.page.mouse.down({ button: "left" });
+      await fast(d, 0.25 + (items % 5) * 0.18);
+      await d.page.mouse.up({ button: "left" });
     }
-    await d.page.mouse.down({ button: "left" });
-    await fast(d, 0.25 + (items % 5) * 0.18);
-    await d.page.mouse.up({ button: "left" });
-    await fast(d, 0.2);
+    await fast(d, 0.9); // the anti-guessing floor is 900 ms and a faster right answer is not credited
     await d.page.keyboard.press("KeyE"); // set it down
     await fast(d, 0.9);
     items += 1;

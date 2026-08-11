@@ -1,2 +1,169 @@
 (node:67012) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
 (Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "counts": {
+    "learn:teach": 2,
+    "learn:present": 2,
+    "math:show": 57,
+    "learn:respond": 1,
+    "learn:mastery": 1,
+    "learn:session": 1,
+    "math:hide": 16
+  },
+  "firstEvents": [
+    {
+      "n": "learn:teach",
+      "t": 2.6,
+      "d": "var-meaning"
+    },
+    {
+      "n": "learn:present",
+      "t": 2.6,
+      "d": "var-meaning.seat/generate/1spvqlx"
+    },
+    {
+      "n": "math:show",
+      "t": 2.6,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.6,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.6,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.6,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.6,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.62,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 2.62,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.68,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.68,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.68,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 3.7,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.38,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.38,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.4,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.63,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.63,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.65,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.83,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.83,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 4.85,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 5,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 5,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 5.02,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 5.02,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 5.02,
+      "d": "var-meaning"
+    },
+    {
+      "n": "math:show",
+      "t": 5.02,
+      "d": "var-meaning"
+    },
+    {
+      "n": "learn:respond",
+      "t": 5.02,
+      "d": "var-meaning.seat/generate/1spvqlx"
+    },
+    {
+      "n": "learn:mastery",
+      "t": 5.02,
+      "d": "var-meaning"
+    }
+  ]
+}
+
+learn:present 2 · math:show 57 · learn:respond 1 · learn:mastery 1
+A learning cycle FIRED.
+exit=0

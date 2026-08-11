@@ -147,12 +147,29 @@ await openGame({ width: 1280, height: 720 }, async (d) => {
    * this loop.
    */
   let items = 0;
-  for (let i = 0; i < 96 && items < 24; i += 1) {
+  let stuck = 0;
+  for (let i = 0; i < 120 && items < 24; i += 1) {
     if ((await d.probe("verbs"))?.phase !== "performing") {
+      /**
+       * A claim no verb reads is still answerable — `repair` and Bearer `generate` have no verb in
+       * this round, and `probe("verbs").unposedByType` names them — so the driver does what a player
+       * with empty hands does: it writes something and commits. The response is wrong and is meant to
+       * be. Without this the sitting stands on one unreadable claim forever, which cost a whole run.
+       */
       await d.page.keyboard.press("KeyE"); // take the claim on
       await fast(d, 0.45);
+      stuck += 1;
+      if (stuck >= 2) {
+        await d.page.keyboard.press("Digit0");
+        await fast(d, 0.15);
+        await d.page.keyboard.press("Enter");
+        await fast(d, 1.4);
+        stuck = 0;
+        items += 1;
+      }
       continue;
     }
+    stuck = 0;
     // Walk the grip along the object a different distance each time: a harness that performs one
     // fixed act on twenty-four claims measures the act, not the game.
     for (let s = 0; s < items % 4; s += 1) {
